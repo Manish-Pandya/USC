@@ -2,20 +2,19 @@
 
 include_once('logger.php');
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//	Autoloader class. Registers the listed directories to check for .php files
-//		within when a class is not found
-//
-//	Add relative directory path(s) to self::$autoload_dirs to register directory
-//		for Autoload
-//
-////////////////////////////////////////////////////////////////////////////////
+/**
+ * Autoloader class. Registers the listed directories to check for .php files
+ *		within when a class is not found
+ * 
+ * Add relative directory path(s) to self::$autoload_dirs to register directory
+ * 		for Autoload
+ * @author Mitch Martin, GraySail LLC
+ */
 class Autoloader {
 
 	private static $loader;
 	
-	public static $source_dir = "src";
+	/** Array of directory paths to check when Autoloading */
 	public static $autoload_dirs = array(
 		'',
 		'com/graysail/usc/erasmus/domain/'
@@ -32,22 +31,29 @@ class Autoloader {
 		$this->register();
 	}
 	
+	/**
+	 * Function to register custom autoloading
+	 */
 	private function register(){
 		spl_autoload_register( function ($class) {
-			Logger::debug( "Attempting to autoload $class" );
+			//Instantiate logger
+			$LOG = Logger::getLoger();
+			
+			$LOG->debug( "Attempting to autoload $class" );
 				
 			foreach( Autoloader::$autoload_dirs as $directory ){
-				Logger::debug( "Checking $directory" );
+				$LOG->debug( "Checking $directory" );
 				$classfile = "$directory$class.php";
-				Logger::debug( "Checking file $classfile" );
+				$LOG->debug( "Checking file $classfile" );
 		
 				if( file_exists( $classfile ) ){
-					Logger::debug( "File Exists: $classfile" );
+					$LOG->debug( "File Exists: $classfile" );
+					$LOG->info("Autoloading $classfile");
 					include_once( $classfile );
 					break;
 				}
 				else{
-					Logger::debug( "Does Not Exist: $classfile" );
+					$LOG->debug( "Does Not Exist: $classfile" );
 				}
 			}
 		});
