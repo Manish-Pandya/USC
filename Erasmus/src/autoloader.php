@@ -44,6 +44,7 @@ class Autoloader {
 				if( file_exists( $classfile ) ){
 					Logger::debug( "File Exists: $classfile" );
 					include_once( $classfile );
+					break;
 				}
 				else{
 					Logger::debug( "Does Not Exist: $classfile" );
