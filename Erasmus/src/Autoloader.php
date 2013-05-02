@@ -1,6 +1,6 @@
 <?php
 
-include_once('logger.php');
+include_once('Logger.php');
 
 /**
  * Autoloader class. Registers the listed directories to check for .php files
