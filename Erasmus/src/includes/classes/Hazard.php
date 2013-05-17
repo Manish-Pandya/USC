@@ -5,7 +5,16 @@
  * 
  * @author Mitch Martin, GraySail LLC
  */
-class Hazard {
+class Hazard extends GenericCrud {
+	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_hazard";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+			"key_id"	=> "integer",
+			//TODO
+	);
 	
 	/** Array of parent Hazard entities */
 	private $parentHazards;
@@ -24,6 +33,15 @@ class Hazard {
 	
 	public function __construct(){
 	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 }
 ?>
