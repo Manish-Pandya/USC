@@ -1,5 +1,5 @@
 <?php
-//require_once('../../simpletest/autorun.php');
+require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
 require_once(dirname(__FILE__) . '/../../../src/includes/classes/User.php');
 
 /**
@@ -14,7 +14,7 @@ class TestUser extends UnitTestCase {
 	
 		//Build a "DB" array to pass
 		$dbObject = array(
-			"key_id"	=> 1234,
+			"keyid"		=> 1234,
 			"active"	=> true,
 			"roles"		=> array('TEST_ROLE_1', 'TEST_ROLE_2'),
 			"username"	=> 'USER_NAME',
@@ -29,7 +29,7 @@ class TestUser extends UnitTestCase {
 		foreach( $columns as $field ) {
 			
 			//build the accessor method name
-			$fieldName = "get_$field";
+			$fieldName = "get$field";
 			
 			//Compare the accessor's value to the expected value from the mock array
 			$this->assertEqual($user->$fieldName(), $dbObject[$field]);

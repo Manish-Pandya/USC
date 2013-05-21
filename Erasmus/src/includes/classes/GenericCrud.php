@@ -34,8 +34,10 @@ abstract class GenericCrud {
 		//Get just the keys
 		$columns = array_keys( $this->getColumnData() );
 		foreach( $columns as $field ) {
+			$fname = $field;
+			$fname[0] = strtoupper($fname[0]);
 			//Build name of the mutator function
-			$setterName = "set_$field";
+			$setterName = "set$fname";
 			
 			//Pass field value to the mutator
 			$this->$setterName( $record[$field] );

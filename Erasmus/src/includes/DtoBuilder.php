@@ -10,39 +10,60 @@ class DtoBuilder {
 	
 	/**
 	 * Automatically calls setter functions in the given object based on
-	 * values in the request.
+	 * values in the $_REQUEST array.
 	 * 
-	 * @param unknown $obj
+	 * This function simply delegates to DtoBuilder::autoSetFieldsFromArray
+	 * 
+	 * @param unknown $baseObj
 	 * 	Object on which to call setters
 	 * 
 	 * @param string $prefixName
 	 * 	Optional value used to identify valid key/values in the request. If
-	 * 	omitted, the name of $obj's class will be used.
+	 * 	omitted, the name of $baseObj's class will be used.
 	 * 
-	 * @see $_REQUEST
+	 * @see DtoBuilder::autoSetFieldsFromArray
 	 */
-	public static function autoSetFieldsFromRequest($obj, $prefixName = null) {
+	public static function autoSetFieldsFromRequest($baseObject, $prefixName = null) {
+		return self::autoSetFieldsFromArray($_REQUEST, $baseObject, $prefixName);
+	}
+	
+	/**
+	 * Automatically calls setter functions in the given object based on
+	 * values in the given Array.
+	 * 
+	 * @param Array $array
+	 * 	Array from which to obtain values for $baseObject
+	 * 
+	 * @param unknown $baseObj
+	 * 	Object on which to call setters
+	 * 
+	 * @param string $prefixName
+	 * 	Optional value used to identify valid key/values in the request. If
+	 * 	omitted, the name of $baseObj's class will be used.
+	 */
+	public static function autoSetFieldsFromArray(Array $array, $baseObject, $prefixName = null){
 		// Get the keys in the request
-		$keys = array_keys($_REQUEST);
-	
-		var_dump($keys);
-	
+		$keys = array_keys($array);
+		
 		//Make sure we have a prefix to look for.
 		if($prefixName == null) {
 			//Default to object's class name
-			$prefixName = get_class($obj);
-	
+			$prefixName = get_class($baseObject);
+		
 			// lower case
 			$prefixName[0] = strtolower($prefixName[0]);
 		}
-	
+		
 		// Append underscore to the prefix
 		// Request keys use underscore instead of period
 		$prefixName .= "_";
-	
+		
 		// Check each key for the prefix
 		foreach($keys as $key) {
-	
+		
+			//Note: Array values will be handled if the fields are keyed as arrays,
+			//	like: name="obj.fieldname[]"
+				
 			//If key contains prefix
 			if(strstr($key, $prefixName)) {
 				// Split key by prefix so we can infer the prefixed field name
@@ -50,15 +71,26 @@ class DtoBuilder {
 					
 				// Ensure that the field name begins with an upper-case letter
 				$fName[1][0] = strtoupper($fName[1][0]);
+		
+				//Ensure the function exists before it is called
+				$setterName = "set".$fName[1];
+				$callable = array( $baseObject, $setterName );
 				
-				//TODO: Check for method existence / handle error
-				//	This will result in a Fatal error if the generated
-				//	method name does not exist!
-				
-				// Call the setter for the field with the request value
-				$obj->{"set".$fName[1]}($_REQUEST[$key]);
+				if( is_callable($callable) ){
+					// Call the setter for the field with the request value
+					$baseObject->$setterName($array[$key]);
+				}
+				else{
+					//Generated function cannot be called on the given object.
+					
+					//TODO Warn that the function does not exist!
+					//echo "No Such Function: '$setterName' on class " . get_class($baseObject);
+				}
 			}
 		}
+		
+		//Just regurgitate $baseObject
+		return $baseObject;
 	}
 }
 
