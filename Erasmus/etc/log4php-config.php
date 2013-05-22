@@ -6,15 +6,15 @@ return array(
 		'appenders' => array(
 			'fileAppender',
 		),
-		'level' => 'DEBUG'
+		'level' => 'INFO'
 	),
 	//Other loggers
 	'loggers' => array(
-		'Test' => array(
+		'Autoloader' => array(
 			'appenders' => array(
 				'fileAppender'
 			),
-			'level' => 'DEBUG'
+			'level' => 'INFO'
 		),
 	),
 	

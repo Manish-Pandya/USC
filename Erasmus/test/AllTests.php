@@ -12,10 +12,12 @@ class AllTests extends TestSuite {
 	function __construct(){
 		parent::__construct();
 		
+		$testCollector = new SimplePatternCollector('/Test.*.php/');
+		
 		// TODO: Search tree
 		// Collect php files that begin with Test in /includes/classes
-		$this->collect(dirname(__FILE__) . '/includes/classes',
-				new SimplePatternCollector('/Test.*.php/'));
+		$this->collect(dirname(__FILE__) . '/includes', $testCollector);
+		$this->collect(dirname(__FILE__) . '/includes/classes', $testCollector);
 	}
 	
 }

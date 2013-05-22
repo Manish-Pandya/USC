@@ -1,6 +1,6 @@
 <?php
 
-require_once 'logging/Logger.php';
+require_once 'Application.php';
 
 /**
  * Autoloader class. Registers local directories to check for .php files
@@ -37,26 +37,26 @@ class Autoloader {
 	function __construct( ){
 		//Define logger
 		self::$LOG = Logger::getLogger(__CLASS__);
-		self::$LOG->debug("Initializing Autoloader");
+		self::$LOG->trace("Initializing Autoloader");
 		
 		Autoloader::scan_directories();
 		$this->register();
 		
-		self::$LOG->debug("Autoloader initialized");
+		self::$LOG->trace("Autoloader initialized");
 	}
 	
 	/**
 	 * Recursively scans the local directory for directory paths 
 	 */
 	static function scan_directories(){
-		self::$LOG->debug("Scanning for directories");
+		self::$LOG->trace("Scanning for directories");
 		$dir = dirname(__FILE__);
 		
 		Autoloader::$autoload_dirs = array();
 		Autoloader::scanDirectoriesToArray($dir, Autoloader::$autoload_dirs);
 		
 		$dircount = sizeof(Autoloader::$autoload_dirs);
-		self::$LOG->debug("Loaded $dircount directories");
+		self::$LOG->trace("Loaded $dircount directories");
 	}
 	
 	/**

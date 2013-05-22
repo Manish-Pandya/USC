@@ -1,5 +1,7 @@
 <?php
 
+include_once dirname(__FILE__) . '/../Application.php';
+
 /**
  * Utility class containing static functions used to build Data Transfer Objects (DTOs).
  * 
@@ -42,6 +44,8 @@ class DtoBuilder {
 	 * 	omitted, the name of $baseObj's class will be used.
 	 */
 	public static function autoSetFieldsFromArray(Array $array, $baseObject, $prefixName = null){
+		$LOG = Logger::getLogger(__CLASS__);
+		
 		// Get the keys in the request
 		$keys = array_keys($array);
 		
@@ -78,13 +82,14 @@ class DtoBuilder {
 				
 				if( is_callable($callable) ){
 					// Call the setter for the field with the request value
+					$LOG->trace("Calling $setterName()");
 					$baseObject->$setterName($array[$key]);
 				}
 				else{
 					//Generated function cannot be called on the given object.
 					
-					//TODO Warn that the function does not exist!
-					//echo "No Such Function: '$setterName' on class " . get_class($baseObject);
+					//Warn that the function does not exist
+					$LOG->warn("No Such Function: '$setterName' on class " . get_class($baseObject));
 				}
 			}
 		}
