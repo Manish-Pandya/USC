@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . '/../simpletest/autorun.php');
 require_once(dirname(__FILE__) . '/../../src/includes/DtoBuilder.php');
-require_once(dirname(__FILE__) . '/../../src/Autoloader.php');
+require_once(dirname(__FILE__) . '/../../src/includes/classes/User.php');
 
 /**
  * Test case for testing the DtoBuilder.

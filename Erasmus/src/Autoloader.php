@@ -1,5 +1,7 @@
 <?php
 
+require_once 'logging/Logger.php';
+
 /**
  * Autoloader class. Registers local directories to check for .php files
  *		within when a class is not found
@@ -9,6 +11,9 @@
  * @author Mitch Martin, GraySail LLC
  */
 class Autoloader {
+	
+	/** Static reference to a logger */
+	private static $LOG;
 
 	private static $loader;
 	
@@ -30,18 +35,28 @@ class Autoloader {
 	 * to use for scanning, and then registers the Autoloader
 	 */
 	function __construct( ){
+		//Define logger
+		self::$LOG = Logger::getLogger(__CLASS__);
+		self::$LOG->debug("Initializing Autoloader");
+		
 		Autoloader::scan_directories();
 		$this->register();
+		
+		self::$LOG->debug("Autoloader initialized");
 	}
 	
 	/**
 	 * Recursively scans the local directory for directory paths 
 	 */
 	static function scan_directories(){
+		self::$LOG->debug("Scanning for directories");
 		$dir = dirname(__FILE__);
 		
 		Autoloader::$autoload_dirs = array();
 		Autoloader::scanDirectoriesToArray($dir, Autoloader::$autoload_dirs);
+		
+		$dircount = sizeof(Autoloader::$autoload_dirs);
+		self::$LOG->debug("Loaded $dircount directories");
 	}
 	
 	/**
@@ -73,23 +88,28 @@ class Autoloader {
 	private function register(){
 		spl_autoload_register( function ($class) {
 			
-			//$LOG->debug( "Attempting to autoload $class" );
+			//Define new logger as we can't access self
+			$LOG = Logger::getLogger(__CLASS__);
+			
+			$LOG->debug( "Attempting to autoload $class" );
+			$loaded = FALSE;
 			
 			foreach( Autoloader::$autoload_dirs as $directory ){
-				//$LOG->debug( "Checking $directory" );
+				$LOG->trace( "Checking $directory for $class" );
 				$classfile = "$directory/$class.php";
-				//$LOG->debug( "Checking file $classfile" );
 		
 				if( file_exists( $classfile ) ){
-					//$LOG->debug( "File Exists: $classfile" );
-					//$LOG->info("Autoloading $classfile");
+					$LOG->debug("Autoloading class file: $classfile");
 					
 					include_once( $classfile );
+					$loaded = TRUE;
 					break;
 				}
-				else{
-					//$LOG->debug( "Does Not Exist: $classfile" );
-				}
+			}
+			
+			if( !$loaded ){
+				//This is fatal because class-not-found results in a fatal error
+				$LOG->fatal("Unable to autoload class '$class' - no such file '$class.php' found.");
 			}
 		});
 	}
