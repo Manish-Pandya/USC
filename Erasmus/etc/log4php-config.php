@@ -4,7 +4,8 @@ return array(
 	//Root logger
 	'rootLogger' => array(
 		'appenders' => array(
-			'fileAppender',
+			'logFileAppender',
+			'htmlFileAppender',
 		),
 		'level' => 'INFO'
 	),
@@ -12,25 +13,49 @@ return array(
 	'loggers' => array(
 		'Autoloader' => array(
 			'appenders' => array(
-				'fileAppender'
+				'logFileAppender',
+				'htmlFileAppender',
 			),
 			'level' => 'INFO'
+		),
+		
+		'DtoManager' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
 		),
 	),
 	
 	//Appenders
 	'appenders' => array(
-		'fileAppender' => array(
+		'logFileAppender' => array(
 			'class' => 'LoggerAppenderRollingFile',
 			'layout' => array(
 				'class' => 'LoggerLayoutPattern',
 				'params' => array(
-					'conversionPattern' => '%date{Y-m-d G:i:s} [%5p] [%15logger] [%.-20F:%4L] %message%newline'
+					'conversionPattern' => '%date{Y-m-d H:i:s} [%5p] [%15logger] [%.-20F:%4L] %message%newline'
 				)
 			),
 			'params' => array(
-				'file' => '/logs/erasmus.log',
+				'file' => DIR_PATH . '/../logs/erasmus.log',
 				'append' => true
+			)
+		),
+		
+		'htmlFileAppender' => array(
+			'class' => 'LoggerAppenderRollingFile',
+			'layout' => array(
+					'class' => 'LoggerLayoutHtml',
+					'params' => array(
+						'locationinfo' => 'true',
+						'title' => 'RSMS Log Messages'
+					)
+			),
+			'params' => array(
+					'file' => DIR_PATH . '/../logs/erasmus-log.html',
+					'append' => true
 			)
 		),
 	)

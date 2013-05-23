@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-define('DIR_PATH', getcwd());
+define('DIR_PATH', dirname(__FILE__) );
 define('URL_PATH', 'http://localhost');
 define('ADMIN_MAIL', 'hoke@graysail.com');
 define('LOGIN_PAGE','login.php');
@@ -16,8 +16,8 @@ define('LOGIN_PAGE','login.php');
 // Set up Logging
 //
 ////////////////////////////////////////////////////////////////////////////////
-require_once 'logging/Logger.php';
-Logger::configure("../etc/log4php-config.php");
+require_once dirname(__FILE__) . '/logging/Logger.php';
+Logger::configure( dirname(__FILE__) . "/../etc/log4php-config.php");
 
 ////////////////////////////////////////////////////////////////////////////////
 //
