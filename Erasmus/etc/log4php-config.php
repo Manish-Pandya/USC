@@ -26,6 +26,14 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
+		
+		'ValidationManager' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
+		),
 	),
 	
 	//Appenders
