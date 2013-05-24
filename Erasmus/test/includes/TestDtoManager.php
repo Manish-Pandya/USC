@@ -10,7 +10,7 @@ require_once(dirname(__FILE__) . '/../../src/includes/classes/User.php');
  */
 class TestDtoManager extends UnitTestCase {
 	
-	function test_autoSetFieldsFromArray() {
+	function test_autoSetFieldsFromArrayWithPrefix() {
 		
 		$prefix = 'test';
 		
@@ -21,6 +21,18 @@ class TestDtoManager extends UnitTestCase {
 		$baseObject = new User();
 		$baseObject = DtoManager::autoSetFieldsFromArray($array, $baseObject, $prefix);
 		
+		$this->assertEqual('USERNAME', $baseObject->getUsername());
+	}
+	
+	function test_autoSetFieldsFromArrayWithNoPrefix() {
+	
+		$array = array(
+				"user_username"=>'USERNAME',
+		);
+	
+		$baseObject = new User();
+		$baseObject = DtoManager::autoSetFieldsFromArray($array, $baseObject);
+	
 		$this->assertEqual('USERNAME', $baseObject->getUsername());
 	}
 	
@@ -35,7 +47,14 @@ class TestDtoManager extends UnitTestCase {
 		$baseObject = DtoManager::autoSetFieldsFromArray($array, $baseObject, $prefix);
 	}
 	
-	function testGetPrefix(){
+	function testGetPrefix_emptyValue(){
+		$name = "";
+		$validPrefix = "";
+		$prefix = DtoManager::getPrefix($name);
+		$this->assertEqual($validPrefix, $prefix);
+	}
+	
+	function testGetPrefix_withValue(){
 		$name = "name";
 		$validPrefix = "name_";
 		$prefix = DtoManager::getPrefix($name);
