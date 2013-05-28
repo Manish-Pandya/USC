@@ -1,8 +1,6 @@
 <?php
 
 require_once('simpletest/autorun.php');
-require_once('../src/Autoloader.php');
-Autoloader::init();
 
 /**
  * Master Test Suite; Finds and executes all tests.

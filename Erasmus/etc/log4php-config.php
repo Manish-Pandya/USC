@@ -34,6 +34,14 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
+		
+		'JsonManager' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
+		),
 	),
 	
 	//Appenders
@@ -43,7 +51,7 @@ return array(
 			'layout' => array(
 				'class' => 'LoggerLayoutPattern',
 				'params' => array(
-					'conversionPattern' => '%date{Y-m-d H:i:s} [%5p] [%15logger] [%.-20F:%4L] %message%newline'
+					'conversionPattern' => '%date{Y-m-d H:i:s} [%5p] [%20logger] [%.-20F:%4L] %message%newline'
 				)
 			),
 			'params' => array(

@@ -79,13 +79,42 @@ class TestDtoManager extends UnitTestCase {
 		$this->assertEqual($expectedArray, $array);
 	}
 	
+	function test_getPrefixedFieldNamesAndValuesFromArray_emptyPrefix(){
+		$baseArray = array(
+			"username"	=>'USERNAME',
+			"name"		=>'NAME',
+			"nickname"	=>'NICKNAME',
+		);
+		
+		$expectedArray = array(
+			"username"	=>'USERNAME',
+			"name"		=>'NAME',
+			"nickname"	=>'NICKNAME',
+		);
+		
+		$array = DtoManager::getPrefixedFieldNamesAndValuesFromArray('', $baseArray);
+		
+		$this->assertEqual($expectedArray, $array);
+	}
+	
 	function test_getFieldNameFromPrefixedKey(){
 		
+		//Test populated prefix
 		$prefix = 'test_';
 		$key = 'test_username';
 		$expectedValue = 'username';
 		$fieldName = DtoManager::getFieldNameFromPrefixedKey($prefix, $key);
 		
+		$this->assertEqual($expectedValue, $fieldName);
+	}
+	
+	function test_getFieldNameFromPrefixedKey_emptyPrefix(){
+	
+		//Test empty prefix
+		$prefix = '';
+		$key = 'username';
+		$expectedValue = 'username';
+		$fieldName = DtoManager::getFieldNameFromPrefixedKey($prefix, $key);
 		$this->assertEqual($expectedValue, $fieldName);
 	}
 	

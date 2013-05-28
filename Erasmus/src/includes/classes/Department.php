@@ -15,6 +15,6 @@ class Department {
 	}
 	
 	public function getprincipalInvestigators(){ return $this->principalInvestigators; }
-	public function setPrincipalInvestigators(principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+	public function setPrincipalInvestigators( $principalInvestigators ){ $this->principalInvestigators = $principalInvestigators; }
 }
 ?>

@@ -47,11 +47,11 @@ class DtoManager {
 		$LOG = Logger::getLogger(__CLASS__);
 		
 		//Make sure we have a prefix to look for.
-		if($prefixName == null) {
+		if($prefixName === null) {
 			$prefixName = DtoManager::getDefaultPrefixNameForObject($baseObject);
 		}
 		
-		$LOG->trace("Collecting request information for object of class " . get_class($baseObject) . " using prefix '$prefixName'");
+		$LOG->trace("Collecting information from array for object of class " . get_class($baseObject) . " using prefix '$prefixName'");
 		
 		// Get the field names that are prefixed as keys from the array
 		$fieldNamesAndValues = DtoManager::getPrefixedFieldNamesAndValuesFromArray($prefixName, $array);
@@ -117,7 +117,7 @@ class DtoManager {
 		$fieldNamesAndValues = array();
 		
 		foreach( $keys as $key ){
-			if(strstr($key, $prefix)) {
+			if( strlen($prefix) == 0 || strstr($key, $prefix)) {
 				$fieldName = DtoManager::getFieldNameFromPrefixedKey($prefix, $key);
 				$fieldNamesAndValues[$fieldName] = $array[$key];
 			}
@@ -134,13 +134,18 @@ class DtoManager {
 	 * @return string
 	 */
 	public static function getFieldNameFromPrefixedKey( $prefix, $key ){
-		// Split they key by prefix
-		$keySplit = explode($prefix, $key);
-		
-		//	The field name will be the second index; we can ignore the rest
-		$fieldName = $keySplit[1];
-		
-		return $fieldName;
+		if( strlen($prefix) == 0 ){
+			return $key;
+		}
+		else{
+			// Split they key by prefix
+			$keySplit = explode($prefix, $key);
+			
+			//	The field name will be the second index; we can ignore the rest
+			$fieldName = $keySplit[1];
+			
+			return $fieldName;
+		}
 	}
 	
 	/**
@@ -180,6 +185,8 @@ class DtoManager {
 		
 		return $prefixName;
 	}
+	
+	
 }
 
 ?>
