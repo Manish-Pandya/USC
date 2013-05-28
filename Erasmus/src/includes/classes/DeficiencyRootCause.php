@@ -16,5 +16,11 @@ class DeficiencyRootCause {
 	public function __construct(){
 	
 	}
+	
+	public function getQuestion(){ return $this->question; }
+	public function setQuestion($question){ $this->question = $question; }
+	
+	public function getText(){ return $this->text; }
+	public function setText($text){ $this->text = $text; }
 }
 ?>

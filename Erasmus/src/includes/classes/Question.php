@@ -29,5 +29,23 @@ class Question {
 	public function __construct(){
 	
 	}
+	
+	public function getText(){ return $this->text; }
+	public function setText($text){ $this->text = $text; }
+	
+	public function getStandardsAndGuidelines(){ return $this->standardsAndGuidelines; }
+	public function setStandardsAndGuidelines($standardsAndGuidelines){ $this->standardsAndGuidelines = $standardsAndGuidelines; }
+	
+	public function getIsMandatory(){ return $this->isMandatory; }
+	public function setIsMandatory($isMandatory){ $this->isMandatory = $isMandatory; }
+	
+	public function getDeficiencies(){ return $this->deficiencies; }
+	public function setDeficiencies($deficiencies){ $this->deficiencies = $deficiencies; }
+	
+	public function getDeficiencyRootCauses(){ return $this->deficiencyRootCauses; }
+	public function setDeficiencyRootCauses($deficiencyRootCauses){ $this->deficiencyRootCauses = $deficiencyRootCauses; }
+	
+	public function getRecommendations(){ return $this->recommendations; }
+	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
 }
 ?>

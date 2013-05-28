@@ -25,5 +25,20 @@ class DeficiencySelection {
 	public function __construct(){
 	
 	}
+	
+	public function getResponse(){ return $this->response; }
+	public function setResponse($response){ $this->response = $response; }
+	
+	public function getRoom(){ return $this->room; }
+	public function setRoom($room){ $this->room = $room; }
+	
+	public function getDeficiency(){ return $this->deficiency; }
+	public function setDeficiency($deficiency){ $this->deficiency = $deficiency; }
+	
+	public function getDeficiencyRootCauses(){ return $this->deficiencyRootCauses; }
+	public function setDeficiencyRootCauses($deficiencyRootCauses){ $this->deficiencyRootCauses = $deficiencyRootCauses; }
+	
+	public function getCorrectiveActions(){ return $this->correctiveActions; }
+	public function setCorrectiveActions($correctiveActions){ $this->correctiveActions = $correctiveActions; }
 }
 ?>

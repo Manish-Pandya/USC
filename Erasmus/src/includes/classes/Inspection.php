@@ -21,5 +21,14 @@ class Inspection {
 	public function __construct(){
 	
 	}
+	
+	public function getInspectors(){ return $this->inspectors; }
+	public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
+	
+	public function getPrincipalInvestigator(){ return $this->principalInvestigator; }
+	public function setPrincipalInvestigator($principalInvestigator){ $this->principalInvestigator = $principalInvestigator; }
+	
+	public function getResponses(){ return $this->responses; }
+	public function setResponses($responses){ $this->responses = $responses; }
 }
 ?>

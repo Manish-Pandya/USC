@@ -13,5 +13,9 @@ class Building {
 	public function __construct(){
 
 	}
+	
+	public function getRooms(){ return $this->rooms; }
+	public function setRooms($rooms){ $this->rooms = $rooms; }
+	
 }
 ?>

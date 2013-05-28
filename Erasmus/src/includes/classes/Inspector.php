@@ -13,5 +13,8 @@ class Inspector extends User {
 	public function __construct(){
 		parent::__construct();
 	}
+	
+	public function getinspections(){ return $this->inspections; }
+	public function setinspections($inspections){ $this->inspections = $inspections; }
 }
 ?>

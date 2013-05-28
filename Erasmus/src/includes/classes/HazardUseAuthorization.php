@@ -16,5 +16,11 @@ class HazardUseAuthorization {
 	public function __construct(){
 	
 	}
+	
+	public function getHazard(){ return $this->hazard; }
+	public function setHazard($hazard){ $this->hazard = $hazard; }
+	
+	public function getPrincipalInvestigator(){ return $this->principalInvestigator; }
+	public function setPrincipalInvestigator($principalInvestigator){ $this->principalInvestigator = $principalInvestigator; }
 }
 ?>

@@ -13,5 +13,8 @@ class Department {
 	public function __construct(){
 	
 	}
+	
+	public function getprincipalInvestigators(){ return $this->principalInvestigators; }
+	public function setPrincipalInvestigators(principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
 }
 ?>
