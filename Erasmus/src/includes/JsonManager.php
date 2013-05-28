@@ -10,6 +10,32 @@ class JsonManager {
 	public static $FUNCTION_TO_JSON = 'toJson';
 	
 	/**
+	 * Encodes the given value to JSON. If the given value is an object, 
+	 * it is processed by JsonManager::objectToJson; otherwise
+	 * json_encode is called.
+	 * 
+	 * @param unknown $value
+	 * @return string
+	 */
+	public static function encode($value){
+		if( is_object($value) ){
+			return JsonManager::objectToJson($value);
+		}
+		else{
+			return json_encode($value);
+		}
+	}
+	
+	/**
+	 * Alias of jsonToObject 
+	 * @param unknown $json
+	 * @param unknown $object
+	 */
+	public static function decode($json, $object){
+		return JsonManager::jsonToObject($json, $object);
+	}
+	
+	/**
 	 * Decodes the given JSON string and uses the key/value pairs to call
 	 * mutator methods on $object.
 	 * 
@@ -19,10 +45,8 @@ class JsonManager {
 	 * @see DtoManager
 	 */
 	public static function jsonToObject($json, $object){
-		$jsonService = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
-		
-		//Decode the json to associative array (indicated by SERVICES_JSON_LOOSE_TYPE)
-		$decodedArray = $jsonService->decode($json);
+		//Decode the json to associative array
+		$decodedArray = json_decode($json, true);
 		
 		//Transform the decoded array into the object
 		//	This can be done by the DtoManager using an empty prefix
@@ -66,14 +90,50 @@ class JsonManager {
 	public static function inferJsonProperties($object){
 		$LOG = Logger::getLogger( __CLASS__ );
 		
-		//Use Services_JSON to encode object
-		$jsonService = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
+		//Call Accessors
+		$objectVars = JsonManager::callObjectAccessors($object);
 		
-		//Call Accessors instead of reading public properties
+		//Build and encode key/value pairs
+		$jsonProperties = JsonManager::encodeJsonKeyValuePairs($objectVars);
+		
+		//TODO: check for errors?
+		
+		return '{' . join(',', $jsonProperties) . '}';
+	}
+	
+	/**
+	 * Transforms the given associative array into a JSON-encoded key-value pair.
+	 * 
+	 * @param Array $array
+	 * @return string
+	 */
+	public static function encodeJsonKeyValuePairs($array){
+		$jsonProperties = array();
+		
+		foreach( $array as $key=>$value){
+			$encoded_value = JsonManager::encode($value);
+			//TODO: check for error?
+			$encoded_key = JsonManager::encode( strval($key) );
+			$jsonProperties[] = $encoded_key . ':' . $encoded_value;
+		}
+		
+		return $jsonProperties;
+	}
+	
+	/**
+	 * Returns an associative array containing the results of
+	 * calling all 'getter' functions on the given object.
+	 * 
+	 * @param mixed $object
+	 * @return Array
+	 */
+	public static function callObjectAccessors($object){
+		$LOG = Logger::getLogger( __CLASS__ );
+		
 		$classname = get_class($object);
 		$functions = get_class_methods( $classname);
 		
-		$LOG->debug("Ecoding $classname object to JSON");
+		$LOG->trace("Calling accessors on $classname");
 		
 		//get all functions named get*
 		$objectVars = array();
@@ -81,6 +141,7 @@ class JsonManager {
 			//IGNORE getTableName and getColumnData
 			//TODO: don't reference these functions by name!
 			if( strstr($func, 'get') && $func != 'getTableName' && $func != 'getColumnData' ){
+				$LOG->trace("Calling $classname#$func()");
 				//Call function to get value
 				$value = $object->$func();
 		
@@ -92,30 +153,7 @@ class JsonManager {
 			}
 		}
 		
-		// ALSO check public properties
-		// (Taken from Services_JSON)
-		$objectVars = array_merge( $objectVars, get_object_vars($object) );
-		
-		//Call name_value on Service_JSON to print the name / value pair
-		// (Taken from Services_JSON)
-		//This will also recursively evaluate/encode values in objectVars
-		$properties = array_map(
-			array($jsonService, 'name_value'),
-			array_keys($objectVars),
-			array_values($objectVars)
-		);
-		
-		// Check for error(s)
-		// (Taken from Services_JSON)
-		foreach($properties as $property) {
-			if($jsonService->isError($property)) {
-				$LOG->error("Error encoding $classname object to JSON: $property");
-				return $property;
-			}
-		}
-		
-		// (Taken from Services_JSON)
-		return '{' . join(',', $properties) . '}';
+		return $objectVars;
 	}
 }
 ?>
