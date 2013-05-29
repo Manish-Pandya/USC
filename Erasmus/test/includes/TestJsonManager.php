@@ -8,6 +8,51 @@ Mock::generate('User');
 
 class TestJsonManager extends UnitTestCase {
 	
+	function test_decode(){
+		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		
+		$expectedObject = new User();
+		$expectedObject->setActive(TRUE);
+		$expectedObject->setEmail('email@host.com');
+		$expectedObject->setKeyid(1234);
+		$expectedObject->setName("name");
+		$expectedObject->setRoles(array('role1', 'role2'));
+		$expectedObject->setUsername("username");
+		
+		$actualObject = JsonManager::decode($json);
+		
+		$this->assertEqual($expectedObject, $actualObject);
+	}
+	
+	function test_buildModelObject(){
+		$array = array('Class' => 'JsonTestUser');
+		
+		// Assert that passing no object will result in type inference
+		$actualObject = JsonManager::buildModelObject($array);
+		$this->assertTrue( is_a($actualObject, 'JsonTestUser') );
+		
+		// Assert that passing an object results in no type inference
+		$modelObject = new User();
+		$actualObject = JsonManager::buildModelObject($array, $modelObject);
+		$this->assertFalse( is_a($actualObject, 'JsonTestUser'));
+	}
+	
+	function test_assembleObjectFromDecodedArray(){
+		$expectedObject = new User();
+		$expectedObject->setUsername('Test');
+		$expectedObject->setName('Testerson');
+		
+		$array = array(
+			'Class'    => 'User',
+			'Username' => 'Test',
+			'Name'     => 'Testerson',
+		);
+		
+		$actualObject = JsonManager::assembleObjectFromDecodedArray($array);
+		
+		$this->assertEqual($expectedObject, $actualObject);
+	}
+	
 	function test_encodeJsonKeyValuePairs(){
 		//Build array to encode
 		$arrayToEncode = array(
@@ -73,7 +118,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->setRoles(array('role1', 'role2'));
 		$object->setUsername("username");
 	
-		$expectedJson = '{"Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		$expectedJson = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
 		$actualJson = JsonManager::objectToJson($object);
 	
 		$this->assertEqual($expectedJson, $actualJson);
@@ -89,22 +134,6 @@ class TestJsonManager extends UnitTestCase {
 		$this->assertEqual($expectedJson, $actualJson);
 	}
 	
-	function test_encode_inferJson(){
-	
-		$object = new User();
-		$object->setActive(TRUE);
-		$object->setEmail('email@host.com');
-		$object->setKeyid(1234);
-		$object->setName("name");
-		$object->setRoles(array('role1', 'role2'));
-		$object->setUsername("username");
-	
-		$expectedJson = '{"Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
-		$actualJson = JsonManager::encode($object);
-	
-		$this->assertEqual($expectedJson, $actualJson);
-	}
-	
 	function test_jsonToObject(){
 		$expectedObject = new User();
 		$expectedObject->setActive(TRUE);
@@ -114,7 +143,7 @@ class TestJsonManager extends UnitTestCase {
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
 		
-		$json = '{"Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
 		$object = new User();
 		$object = JsonManager::jsonToObject($json, $object);
 		
@@ -124,10 +153,10 @@ class TestJsonManager extends UnitTestCase {
 
 class JsonTestUser {
 	private $username;
-	public function __construct($username){
+	public function __construct($username = 'default_username'){
 		$this->username = $username;
 	}
-	
+		
 	public function toJson(){
 		return '{"Username":"' . $this->username . '"}';
 	}

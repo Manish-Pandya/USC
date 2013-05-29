@@ -28,10 +28,10 @@ class JsonManager {
 	
 	/**
 	 * Alias of jsonToObject 
-	 * @param unknown $json
-	 * @param unknown $object
+	 * @param string $json
+	 * @param mixed $object (optional)
 	 */
-	public static function decode($json, $object){
+	public static function decode($json, $object = NULL){
 		return JsonManager::jsonToObject($json, $object);
 	}
 	
@@ -44,13 +44,83 @@ class JsonManager {
 	 * 
 	 * @see DtoManager
 	 */
-	public static function jsonToObject($json, $object){
+	public static function jsonToObject($json, $object = NULL){
+		$LOG = Logger::getLogger( __CLASS__ );
+		
 		//Decode the json to associative array
-		$decodedArray = json_decode($json, true);
+		$LOG->trace("Decoding JSON: $json");
+		$decodedJsonArray = json_decode($json, true);
+		
+		return JsonManager::assembleObjectFromDecodedArray($decodedJsonArray, $object);
+	}
+	
+	/**
+	 * Given an associative array and an optional model object, populate the model object
+	 * with the data contained in the array. If no model object is provided, the type
+	 * is inferred from an array index called 'Class'. If no such index exists, returns NULL
+	 * 
+	 * @param Array $decodedJsonArray
+	 * @param string $object
+	 * @return Object populated by the array
+	 */
+	public static function assembleObjectFromDecodedArray($decodedJsonArray, $object = NULL){
+		$LOG = Logger::getLogger( __CLASS__ );
+		
+		//if object is null, pull ["Class"] from decode to infer type
+		$object = JsonManager::buildModelObject($decodedJsonArray, $object);
+		
+		//Make sure we have a base object
+		if( $object == NULL ){
+			// We have a problem!
+			$LOG->error("Error assembling object from decoded JSON - NULL base object");
+			return NULL;
+		}
+		
+		// assembe embedded entities
+		// For each value in the array...
+		foreach( $decodedJsonArray as $key=>$value){
+			// ...If value is an Array that contains the key "Class",
+			if( is_array($value) && array_key_exists('Class', $value) ){
+				// ...Transform it into an entity (through this function)
+				$entity = JsonManager::assembleObjectFromDecodedArray($value);
+				
+				// ...and reset value to entity
+				$decodedJsonArray[$key] = $entity;
+			}
+		}
 		
 		//Transform the decoded array into the object
 		//	This can be done by the DtoManager using an empty prefix
-		return DtoManager::autoSetFieldsFromArray($decodedArray, $object, '');
+		return DtoManager::autoSetFieldsFromArray($decodedJsonArray, $object, '');
+	}
+	
+	/**
+	 * If $object is omitted or NULL, infers a class from the array's 'Class' index,
+	 * instantiates it, and returns it. If $object is given and not null,
+	 * the object is returned unchanged.
+	 * 
+	 * @param unknown $decodedJsonArray
+	 * @param string $object
+	 * @return unknown|string
+	 */
+	public static function buildModelObject($decodedJsonArray, $object = NULL){
+		$LOG = Logger::getLogger( __CLASS__ );
+		
+		if( $object == NULL && array_key_exists('Class', $decodedJsonArray) ){
+			//Pull class name from decoded array
+			$classname = $decodedJsonArray['Class'];
+			
+			$LOG->trace("Inferring object type: '$classname'");
+			
+			//Instantiate a new object
+			$inferredObject = new $classname();
+			
+			//Return new object
+			return $inferredObject;
+		}
+		
+		//Spit object back out
+		return $object;
 	}
 	
 	/**
@@ -135,8 +205,10 @@ class JsonManager {
 		
 		$LOG->trace("Calling accessors on $classname");
 		
+		//Retain the object's type in the json
+		$objectVars = array('Class'=>$classname);
+		
 		//get all functions named get*
-		$objectVars = array();
 		foreach( $functions as $func ){
 			//IGNORE getTableName and getColumnData
 			//TODO: don't reference these functions by name!
