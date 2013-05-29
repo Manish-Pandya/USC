@@ -11,13 +11,13 @@
  *
  */
 class ActionMapping {
-	public $action;
+	public $actionFunctionName;
 	public $success_page;
 	public $error_page;
 	public $roles;
 	
 	public function __construct($action, $success_page, $error_page, $roles){
-		$this->action = $action;
+		$this->actionFunctionName = $action;
 		$this->success_page = $success_page;
 		$this->error_page = $error_page;
 		$this->roles = $roles;

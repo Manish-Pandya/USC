@@ -7,7 +7,7 @@
  */
 class ActionMappingDefinitions {
 	//Define function to obtain array of Action Mappings
-	public staticfunction readActionConfig(){
+	public static function readActionConfig(){
 		return array(
 				"savePI"=> new ActionMapping(
 						"savePIAction",
