@@ -18,5 +18,11 @@ class CorrectiveAction {
 	public function __construct(){
 	
 	}
+	
+	public function getDeficiencySelection(){ return $this->deficiencySelection; }
+	public function setDeficiencySelection($selection){ $this->deficiencySelection = $selection; }
+	
+	public function getText(){ return $this->text; }
+	public function setText($text){ $this->text = $text; }
 }
 ?>

@@ -43,5 +43,20 @@ class Hazard extends GenericCrud {
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
+	
+	public function getParentHazards(){ return $this->parentHazards; }
+	public function setParentHazards($parentHazards){ $this->parentHazards = $parentHazards; }
+	
+	public function getSubHazards(){ return $this->subHazards; }
+	public function setSubHazards($subHazards){ $this->subHazards = $subHazards; }
+	
+	public function getChecklists(){ return $this->checklists; }
+	public function setChecklists($checklists){ $this->checklists = $checklists; }
+	
+	public function getRooms(){ return $this->rooms; }
+	public function setRooms($rooms){ $this->rooms = $rooms; }
+	
+	public function getAuthorizedPrincipalInvestigators(){ return $this->authorizedPrincipalInvestigators; }
+	public function setAuthorizedPrincipalInvestigators($authorizedPrincipalInvestigators){ $this->authorizedPrincipalInvestigators = $authorizedPrincipalInvestigators; }
 }
 ?>

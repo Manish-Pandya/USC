@@ -23,5 +23,17 @@ class Response {
 	public function __construct(){
 	
 	}
+	
+	public function getquestion(){ return $this->question; }
+	public function setquestion($question){ $this->question = $question; }
+	
+	public function getanswer(){ return $this->answer; }
+	public function setanswer($answer){ $this->answer = $answer; }
+	
+	public function getdeficiencySelections(){ return $this->deficiencySelections; }
+	public function setdeficiencySelections($deficiencySelections){ $this->deficiencySelections = $deficiencySelections; }
+	
+	public function getrecommendations(){ return $this->recommendations; }
+	public function setrecommendations($recommendations){ $this->recommendations = $recommendations; }
 }
 ?>

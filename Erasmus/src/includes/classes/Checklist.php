@@ -16,5 +16,11 @@ class Checklist {
 	public function __construct(){
 	
 	}
+	
+	public function getHazards(){ return $this->hazards; }
+	public function setHazards($hazards){ $this->hazards = $hazards; }
+
+	public function getQuestions(){ return $this->questions; }
+	public function setQuestions($questions){ $this->questions = $questions; }
 }
 ?>

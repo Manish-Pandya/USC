@@ -16,12 +16,12 @@ class Room extends GenericCrud {
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"key_id"	=> "integer",
+		"keyid"		=> "integer",
 		"active"	=> "bolean",
 		"name"		=> "text",
 	);
 	
-	private $key_id;
+	private $keyid;
 	private $active;
 	private $name;
 	
@@ -48,14 +48,14 @@ class Room extends GenericCrud {
 	}
 	
 	// Accessors / Mutators
-	public function get_key_id(){ return $this->key_id; }
-	public function set_key_id($key_id){ $this->key_id = $key_id; }
+	public function getKeyid(){ return $this->keyid; }
+	public function setKeyid($keyid){ $this->keyid = $keyid; }
 	
-	public function get_active(){ return $this->active; }
-	public function set_active($active){ $this->active = $active; }
+	public function getActive(){ return $this->active; }
+	public function setActive($active){ $this->active = $active; }
 	
-	public function get_name(){ return $this->name; }
-	public function set_name($name){ $this->name = $name; }
+	public function getName(){ return $this->name; }
+	public function setName($name){ $this->name = $name; }
 	
 }
 ?>

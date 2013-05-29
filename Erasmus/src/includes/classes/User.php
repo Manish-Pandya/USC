@@ -16,7 +16,7 @@ class User extends GenericCrud{
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"key_id"	=> "integer",
+		"keyid"	=> "integer",
 		"active"	=> "bolean",
 		//"roles"	=>
 		"username"	=> "text",
@@ -25,7 +25,7 @@ class User extends GenericCrud{
 	);
 	
 	/** Primary Key for this entity */
-	private $key_id;
+	private $keyid;
 	
 	/** Boolean value specifying if this user account is active or disabled */
 	private $active;
@@ -61,27 +61,27 @@ class User extends GenericCrud{
 	}
 	
 	public function __toString(){
-		return "[User key_id=$this->key_id]";
+		return "[User keyid=$this->keyid]";
 	}
 	
 	// Accessors / Mutators
 
-	public function get_key_id(){ return $this->key_id; }
-	public function set_key_id($keyId){ $this->key_id = $keyId; }
+	public function getKeyid(){ return $this->keyid; }
+	public function setKeyid($keyId){ $this->keyid = $keyId; }
 	
-	public function get_active(){ return $this->active; }
-	public function set_active($active){ $this->active = $active; }
+	public function getActive(){ return $this->active; }
+	public function setActive($active){ $this->active = $active; }
 	
-	public function get_roles(){ return $this->roles; }
-	public function set_roles($roles){ $this->roles = $roles; }
+	public function getRoles(){ return $this->roles; }
+	public function setRoles($roles){ $this->roles = $roles; }
 	
-	public function get_username(){ return $this->username; }
-	public function set_username($username){ $this->username = $username; }
+	public function getUsername(){ return $this->username; }
+	public function setUsername($username){ $this->username = $username; }
 	
-	public function get_name(){ return $this->name; }
-	public function set_name($name){ $this->name = $name; }
+	public function getName(){ return $this->name; }
+	public function setName($name){ $this->name = $name; }
 	
-	public function get_email(){ return $this->email; }
-	public function set_email($email){ $this->email = $email; }
+	public function getEmail(){ return $this->email; }
+	public function setEmail($email){ $this->email = $email; }
 }
 ?>
