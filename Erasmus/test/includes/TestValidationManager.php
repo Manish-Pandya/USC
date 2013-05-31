@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/../../src/includes/ValidationManager.php');
 require_once(dirname(__FILE__) . '/../../src/includes/classes/User.php');
 	
 Mock::generate('ValidationTest');
+Mock::generate('FormValidator');
 
 class TestValidationManager extends UnitTestCase {
 	
@@ -157,6 +158,65 @@ class TestValidationManager extends UnitTestCase {
 		
 		//Assert that the array is what we expect
 		$this->assertEqual($expectedValidationArray, $validator->validator_array);
+	}
+	
+	public function test_addValidationErrorsToArray(){
+		//Get a validator
+		$validator = new MockFormValidator();
+		
+		//Return validation errors
+		$errorArray = array("test_name" => "required field");
+		$validator->returns('GetErrors', $errorArray);
+		
+		//Set up array
+		$array = array();
+		
+		//Get errors
+		$manager = new ValidationManager();
+		$manager->addValidationErrorsToArray($validator, $array);
+		
+		//Error array should be at $array['errors']
+		$this->assertEqual($errorArray, $array['errors']);
+	}
+	
+	public function test_addValidationErrorsToArray_existingErrorsArray(){
+		//Get a validator
+		$validator = new MockFormValidator();
+	
+		//Return validation errors
+		$errorArray = array("test_name" => "required field");
+		$validator->returns('GetErrors', $errorArray);
+	
+		//Set up array
+		$array = array("errors" => array("existing_error" => "something's wrong"));
+	
+		//Get errors
+		$manager = new ValidationManager();
+		$manager->addValidationErrorsToArray($validator, $array);
+	
+		//Error array should be at $array['errors']
+		//And should contain both errors
+		$this->assertEqual( count($array['errors']), 2 );
+	}
+	
+	public function test_addValidationErrorsToArray_existingErrorString(){
+		//Get a validator
+		$validator = new MockFormValidator();
+	
+		//Return validation errors
+		$errorArray = array("test_name" => "required field");
+		$validator->returns('GetErrors', $errorArray);
+	
+		//Set up array
+		$array = array("errors" => "existing_error");
+	
+		//Get errors
+		$manager = new ValidationManager();
+		$manager->addValidationErrorsToArray($validator, $array);
+	
+		//Error array should be at $array['errors']
+		//And should contain both errors
+		$this->assertEqual( count($array['errors']), 2 );
 	}
 	
 }
