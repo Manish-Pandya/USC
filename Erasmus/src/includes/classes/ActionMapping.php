@@ -16,7 +16,7 @@ class ActionMapping {
 	public $error_page;
 	public $roles;
 	
-	public function __construct($action, $success_page, $error_page, Array $roles){
+	public function __construct($action, $success_page, $error_page, Array $roles = array()){
 		$this->actionFunctionName = $action;
 		$this->success_page = $success_page;
 		$this->error_page = $error_page;
