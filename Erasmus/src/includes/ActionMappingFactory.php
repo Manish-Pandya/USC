@@ -32,6 +32,12 @@ class ActionMappingFactory {
 						array("ADMIN")
 				),
 				
+				"logout"=> new ActionMapping(
+						"logoutAction",
+						"login.php",
+						"login.php"
+				),
+				
 				//TODO
 		);
 	}
