@@ -42,6 +42,14 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
+		
+		'ActionDispatcher' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
+		),
 	),
 	
 	//Appenders

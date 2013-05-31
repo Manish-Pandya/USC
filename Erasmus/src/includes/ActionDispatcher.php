@@ -7,7 +7,10 @@
 class ActionDispatcher {
 	
 	private $dataSource;
-	private $defaultErrorPage;
+	private $actionMappingFactory;
+	private $defaultErrorPage = 'forbidden.php';
+	
+	private $LOG;
 	
 	/**
 	 * Constructor
@@ -16,9 +19,28 @@ class ActionDispatcher {
 	 * @param string $defaultErrorPage: Optional field to specify the default
 	 * error page. 
 	 */
-	public function __construct(Array $dataSource, $defaultErrorPage = 'forbidden.php'){
+	public function __construct(Array $dataSource, $actionMappingFactory = NULL){
 		$this->dataSource = $dataSource;
-		$this->defaultErrorPage = $defaultErrorPage;
+		$this->actionMappingFactory = $actionMappingFactory;
+		
+		$this->LOG = Logger::getLogger(__CLASS__);
+	}
+	
+	public function setDefaultErrorPage($errorPage){
+		$this->defaultErrorPage = $errorPage;
+	}
+	
+	public function getDefaultErrorPage(){
+		return $this->defaultErrorPage;
+	}
+	
+	public function getActionMappings(){
+		if( $this->actionMappingFactory == NULL ){
+			return ActionMappingFactory::readActionConfig();
+		}
+		else{
+			return $this->actionMappingFactory->getConfig();
+		}
 	}
 	
 	/**
@@ -27,17 +49,20 @@ class ActionDispatcher {
 	 * @param unknown $actionName
 	 * @return string: Name of the page to forward to
 	 * 
-	 * @see ActionMappingDefinitions
+	 * @see ActionMappingFactory
 	 */
 	public function dispatch( $actionName ){
-		if( $actionName == null ){
+		if( $actionName == NULL ){
+			$this->LOG->error("Error in ActionDispatcher - no action name specified");
 			return $this->dispatchError();
 		}
 		
 		//Read action configuration
-		$actionConfig = ActionMappingDefinitions::readActionConfig();
+		$actionConfig = $this->getActionMappings();
 		
 		if( !array_key_exists($actionName, $actionConfig)){
+			$this->LOG->error("Invalid action name '$actionName' - No such action exists");
+			
 			// Invalid action specified
 			return $this->dispatchError();
 		}
@@ -45,8 +70,10 @@ class ActionDispatcher {
 		// We have a valid action name, so retrieve the details from the config
 		$actionMapping = $actionConfig[$actionName];
 		$action_function = $actionMapping->actionFunctionName;
-		
-		$allowActionExecution = $this->checkRoles($actionMaping);
+
+		$this->LOG->debug("Checking user roles for action $actionName");
+		$allowActionExecution = $this->checkRoles($actionMapping);
+		$this->LOG->debug("Granting user access to $actionName: $allowActionExecution");
 		
 		if( $allowActionExecution ){
 			$functionSuccess = $this->doAction($actionMapping);
@@ -59,6 +86,10 @@ class ActionDispatcher {
 				// Forward to the failure page
 				return $this->dispatchError($actionMapping);
 			}
+		}
+		else{
+			//Access Denied!
+			return $this->dispatchError($actionMapping);
 		}
 	}
 	
@@ -96,12 +127,32 @@ class ActionDispatcher {
 	 * @param ActionMapping $actionMaping
 	 * @return boolean
 	 */
-	public function checkRoles( ActionMapping $actionMaping ){
+	public function checkRoles( ActionMapping $actionMapping ){
+		//Get roles allowed from mapping
 		$allowed_roles = $actionMapping->roles;
 		
-		return 
-			empty($allowed_roles) ||
-			in_array($this->dataSource["ROLE"], $allowed_roles);
+		//Get user's role from our data source
+		$user_roles = array();
+		if( array_key_exists("ROLE", $this->dataSource) ){
+			$user_roles = $this->dataSource["ROLE"];
+		}
+		
+		//Check that we need any roles at all
+		$grantAccess = empty($allowed_roles);
+		
+		if( !$grantAccess ){
+			//Check that user has allowed role(s)
+			foreach( $allowed_roles as $role){
+				$grantAccess = in_array($role, $user_roles);
+				
+				//Don't bother checking others if we find a match
+				if( $grantAccess ){
+					break;
+				}
+			}
+		}
+		
+		return $grantAccess;
 	}
 	
 	/**
@@ -112,20 +163,21 @@ class ActionDispatcher {
 	 * function returns false OR if the function does not exist
 	 */
 	public function doAction( ActionMapping $actionMapping ){
-		//TODO: Encapsulate the function in a testible way?
-		
 		$action_function = $actionMapping->actionFunctionName;
 		
 		if( function_exists( $action_function ) ){
 			//call the specified action function
+			$this->LOG->debug("Executing action function '$action_function'");
 			$functionSuccess = $action_function();
 			return $functionSuccess;
 		}
 		else{
 			//TODO: Show critical error; function doesn't exist
+			$this->LOG->error("Mapped function '$action_function' does not exist");
 			return FALSE;
 		}
 		
 	}
+	
 }
 ?>
