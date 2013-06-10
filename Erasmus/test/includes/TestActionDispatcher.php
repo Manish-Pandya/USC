@@ -60,6 +60,21 @@ class TestActionDispatcher extends UnitTestCase {
 		$dispatcher->getActionMappings();
 	}
 	
+	function test_checkRoles_empty(){
+		$actionMapping = new ActionMapping(
+				"accessDeniedTestAction",
+				"access-denied-success.php",
+				"access-denied-failed.php"
+		);
+		
+		$datasource = array();
+		
+		$dispatcher = new ActionDispatcher($datasource);
+		$access = $dispatcher->checkRoles($actionMapping);
+		
+		$this->assertTrue($access);
+	}
+	
 	function test_checkRoles_fail(){
 		$actionMapping = new ActionMapping(
 				"accessDeniedTestAction",

@@ -176,6 +176,40 @@ class ValidationManager {
 			return DtoManager::getDefaultPrefixNameForObject($arg);
 		}
 	}
+	
+	/**
+	 * Adds the errors from the given FormValidator to the given array. Errors
+	 * are added as an array, and are set to the index "errors". If the "errors"
+	 * index exists, old errors are retained.
+	 * 
+	 * @param FormValidator $validator
+	 * @param array $array
+	 */
+	public function addValidationErrorsToArray(FormValidator $validator, Array &$array){
+		//Expect errors to exist if this method is called!
+		$error_hash = $validator->GetErrors();
+		
+		if( array_key_exists('errors', $array) ) {
+			//Get existing error(s)
+			$existingErrors = $array['errors'];
+			
+			//What if it is not an array?
+			if( !is_array($existingErrors) ){
+				//Make it one!
+				$existingErrors = array($existingErrors);
+			}
+
+			// Add existing error(s) to hash
+			foreach($existingErrors as $index => $error){
+				$error_hash[$index] = $error;
+			}
+		}
+		
+		//Set errors to array
+		$array['errors'] = $error_hash;
+		
+		//TODO: return anything?
+	}
 }
 
 ?>
