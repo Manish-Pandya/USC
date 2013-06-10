@@ -2245,7 +2245,7 @@ table th[class*="span"],
   background-color: #dff0d8;
 }
 
-.table tbody tr.error > td {
+.table tbody tr.error > td, li.error {
   background-color: #f2dede;
 }
 

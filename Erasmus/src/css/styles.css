@@ -3,22 +3,22 @@
 /**
  * A "deeper" indented text effect with the :before and :after pseudo-elements.
  */
- 
-html, body {
-    height: 100%;
-}
+html{height: 100%;}
+body{min-height:100%;}
 
 body {
     margin: 0;
-    overflow: hidden;
     background: #003b3b;
     background: #01102b;
     background: #004754;
-    background: #fff;
+    background: #ddd;
     font-family: 'Open Sans', sans-serif;
 }
 #wrapper{
 	}
+.whitebg{
+	background:#fff;
+}
 
 /******************************************************************************
 *
@@ -67,7 +67,7 @@ a{
 .text-shadow{ text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43); }
 .center { float: none; margin-left: auto; margin-right: auto; }
 .shadow { box-shadow:0 0 10px rgba(0,0,0,.7); }
-
+.current{background: white; padding:75px 10px 10px 10px;}
 /*************************************************************
 RSMS Center specific styles
 *************************************************************/
@@ -116,7 +116,35 @@ RSMS Center specific styles
 	padding: 5px;
 	font-size: 2.3em;
 }
-
+/*******************************************************
+*	Checklist Hub Styles
+*******************************************************/
+#parentChecklistsContainer, #addChecklist{
+	margin:30px 0;
+}
+a#addChecklistToHazard{
+	margin-top: -9px;
+}
+ul.questionList, ul#parentHazards, ul.deficiencyList{
+	list-style:none;
+}
+ul.questionList li, ul#parentHazards li, ul.deficiencyList li{
+	padding: 10px;
+	border-bottom:1px solid #ddd;
+}
+ul.questionList li a{
+	margin: 10px;
+}
+ul#parentHazards li a{
+	margin-left:8px;
+}
+ul.deficiencyList li{
+	background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
+	padding-left:32px;
+}
+ul.deficiencyList li.error{
+	background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
+}
 /* Common css rules for metro-ui-light & metro-ui-dark */
 
 
@@ -1606,7 +1634,7 @@ FlipView control.
    transition: none 0s ease 0s;
 }
 
-.btn-large {
+.btn-large, .btn, .btn-mini {
    -webkit-border-radius: 0;
    -moz-border-radius: 0;
    border-radius: 0;

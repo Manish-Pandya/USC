@@ -1,20 +1,20 @@
 <?php
 require_once '../top_view.php';
 ?>
-<div class="pageMenu" style="background: #86b32d; color:white; padding: 4px 0 0 0;">
-<ul class="nav"  style="height:50px">
-	<li class="span2">
+
+<div class="navbar">
+<ul class="nav pageMenu" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
+	<li class="span3">
 		<img src="../../img/user-icon.png" class="pull-left" style="height:50px" />
-		<h2 style="padding: 11px 0 5px 85px;">User Hub</h2>
+		<h2  style="padding: 11px 0 5px 85px;">User Hub</h2>	
 	</li>
-	<li class="divider-vertical"></li>
 	<li>
-		<a class="addUser"><img href="#addUser" data-toggle="modal" src='../../img/add-user-icon.png'>Add User</a>
+		<a class="addUser" style="text-shadow: none; color:white; background:#555" data-toggle="modal"  href="#addUser" ><img src='../../img/add-user-icon.png'>Add User</a>
 	</li>
 	
 </ul>
-</div>
 
+</div>
 
 <table class="userList table table-striped table-hover">
 <thead>
@@ -93,18 +93,76 @@ require_once '../top_view.php';
     </div>
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Close</a>
-    <a href="#" class="btn btn-primary">Save changes</a>
+    <a href="#" class="btn btn-danger btn-large" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary btn-large">Save changes</a>
   </div>
   </form>
 </div>
 <!-- end edit user modal dialogue -->
 
+
 <!-- begin add new user modal dialogue -->
 <div class="modal hide fade" id="addUser">
+	<div class="modal-header">
+		<h3>Add a New User</h3>
+	</div>
+	<form style="padding:0; margin:0;" class="form-horizontal">
+	<div class="modal-body">
 
+	<div class="control-group">
+	    <label class="control-label" for="fName">LDAP ID</label>
+	    <div class="controls">
+	      <input type="text" name="fName" id="ldapID" placeholder="" value="">
+	    </div>
+    </div>
+    
+	<div class="control-group">
+	    <label class="control-label" for="fName">First Name</label>
+	    <div class="controls">
+	      <input type="text" name="fName" id="fNameNew"  >
+	    </div>
+    </div>
+    
+    <div class="control-group">
+	    <label class="control-label" for="lName">Last Name</label>
+	    <div class="controls">
+	      <input type="text" name="lNameNew" id="lNameNew" >
+	    </div>
+    </div>
+    
+    <div class="control-group">
+	    <label class="control-label" for="email">Email</label>
+	    <div class="controls">
+	      <input type="text" name="email" id="emailNew">
+	    </div>
+    </div>
+    
+    <div class="control-group">
+	    <label class="control-label" for="role">Role</label>
+	    <div class="controls">
+	      <select name="role" id="role">
+	      	<option>Administrator</option>
+	      	<option>Inpsector</option>
+	      	<option>Lab User</option>
+	      	<option>Principle Investigator</option>
+	      </select>
+	    </div>
+    </div>
+		
+	</div>
+	 <div class="modal-footer">
+    <a href="#" class="btn btn-danger btn-large" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary btn-large">Create</a>
+  </div>
 </div>
 <!-- end add new user modal dialogue -->
+<script>
+$('#ldapID').change(function(){
+	$('#fNameNew').val('Robert');
+	$('#lNameNew').val('Userington');
+	$('#emailNew').val('ruserington@sc.edu');
+})
+</script>
 <?php
 require_once '../bottom_view.php';
 ?>
