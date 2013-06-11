@@ -1,6 +1,6 @@
 <?php
-require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
-require_once(dirname(__FILE__) . '/../../../src/includes/ErrorHandler.php');
+require_once(dirname(__FILE__) . '/../simpletest/autorun.php');
+require_once(dirname(__FILE__) . '/../../src/includes/ErrorHandler.php');
 
 class TestErrorHandler extends UnitTestCase {
 	
