@@ -3,18 +3,28 @@
 //Setup logging, autoload, etc
 require_once( dirname(__FILE__) . '/Application.php');
 
-// Clear our session params
-unset($_SESSION['success']);
-unset($_SESSION['output']);
-unset($_SESSION["errors"]);
+$sessionDataSource = array();
+
+//Set default action. BECAUSE, THAT'S WHY!
+$actionName = "login";
+
+// Check that there is a SESSION object
+if( isset( $_SESSION ) ){
+	// Clear our session params
+	unset($_SESSION['success']);
+	unset($_SESSION['output']);
+	unset($_SESSION["errors"]);
+	
+	//Get name of requested action
+	$actionName = $_POST["action"];
+	
+	$sessionDataSource = $_SESSION;
+}
 
 //TODO: additional setup?
 
-//Get name of requested action
-$actionName = $_POST["action"];
-
 // Create Dispatcher (based on $_SESSION)
-$actionDispatcher = new ActionDispatcher($_SESSION);
+$actionDispatcher = new ActionDispatcher($sessionDataSource);
 
 // Attempt to dispatch to the requested action
 $destinationPage = $actionDispatcher->dispatch($actionName);
@@ -23,59 +33,58 @@ $destinationPage = $actionDispatcher->dispatch($actionName);
 header("location: " . $destinationPage);
 
 //Action functions
+//TODO: Include these from other files?
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// 	USER AUTHENTICATION AND AUTHORIZATION
-//
-////////////////////////////////////////////////////////////////////////////////
+function loginAction(){ };
+function logoutAction(){ };
 
-//Check session for Admin flag
-function isAdminUser(){
-	//TODO
-}
+// Users Hub
+function getAllUsers(){ };
+function saveUser(){ };
+function activateUser(){ };
+function deactivateUser(){ };
+function getAllRoles(){ };
 
-function securityCheck(){
-	//TODO
-}
+// Checklist Hub
+function getChecklist(){ };
+function getQuestions(){ };
+function saveChecklist(){ };
+function saveQuestion(){ };
 
-function login($username,$password) {
-	//TODO
-}
+// Hazards Hub
+function getHazards(){ };
+function saveHazards(){ };
+//function saveChecklist(){ };	//DUPLICATE FUNCTION
 
-function logout() {
-	session_destroy();
-	return true;
-}
+// Question Hub
+function getQuestion(){ };
+function saveQuestionRelation(){ };
+function saveDeficiencyRelation(){ };
+function saveRecommendationRelation(){ };
 
-//////////////////////////////////////////////////
+// Inspection, step 1 (PI / Room assessment)
+function getPI(){ };
+function getRooms(){ };
+function saveInspection(){ };
 
-function createNewPI(){
-	
-	//TODO: Get PI information
-	//	From session? JSON?
-	
-	$pi_input = new PrincipalInvestigator();
-	
-	$validationmanager = new ValidationManager();
-	$validator = $validationmanager->getValidator($pi_input);
-	
-	if( $validator->ValidateForm() ) {
-		//TODO: Save PI
-		
-		//Return successfully
-		return true;
-	}
-	else{
-		//TODO: Process errors
-		
-		//Return failure
-		return false;
-	}
-}
+// Inspection, step 2 (Hazard Assessment)
+function getHazardsInRoom(){ };
+function saveHazardRelation(){ };
+function saveRoomRelation(){ };
 
-function savePI(){
-	
-}
+// Inspection, step 3 (Checklist)
+//function getQuestions(){ };	//DUPLICATE FUNCTION
+function getDeficiency(){ };
+function saveResponse(){ };
+function saveDeficiencySelection(){ };
+function saveRootCause(){ };
+function saveCorrectiveAction(){ };
+
+// Inspection, step 4 (Review, deficiency report)
+function getDeficiencySelections(){ };
+function getRecommendations(){ };
+
+// Inspection, step 5 (Details, Full Report)
+function getResponses(){ };
 
 ?>
