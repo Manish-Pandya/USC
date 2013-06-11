@@ -73,7 +73,8 @@ class ActionDispatcher {
 
 		$this->LOG->debug("Checking user roles for action $actionName");
 		$allowActionExecution = $this->checkRoles($actionMapping);
-		$this->LOG->debug("Granting user access to $actionName: $allowActionExecution");
+		$allowStr = $allowActionExecution ? "TRUE" : "FALSE";
+		$this->LOG->debug("Granting user access to $actionName: $allowStr" );
 		
 		if( $allowActionExecution ){
 			$functionSuccess = $this->doAction($actionMapping);
