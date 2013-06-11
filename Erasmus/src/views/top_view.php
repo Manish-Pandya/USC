@@ -14,7 +14,7 @@
 <script type="text/javascript" src="/Erasmus/src/js/lib/bootstrap.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/jquery.cookie.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/jquery.hotkeys.js"></script>
-<script type="text/javascript" src="/Erasmus/src/js/lib/jquery.jstree.js"></script
+<script type="text/javascript" src="/Erasmus/src/js/lib/jquery.jstree.js"></script>
 
 
 <!-- user activation placeholder jQuery script for changing view state of row in users table -->
