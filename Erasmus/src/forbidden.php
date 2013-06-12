@@ -1,0 +1,1 @@
+Placeholder for the default error page
