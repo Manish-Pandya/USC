@@ -16,8 +16,11 @@ class Hazard extends GenericCrud {
 			//TODO
 	);
 	
-	/** Array of parent Hazard entities */
-	private $parentHazards;
+	/** Name of the hazard */
+	private $name;
+	
+	/** parent Hazard entity */
+	private $parentHazard;
 	
 	/** Array of child Hazard entities */
 	private $subHazards;
@@ -44,8 +47,11 @@ class Hazard extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function getParentHazards(){ return $this->parentHazards; }
-	public function setParentHazards($parentHazards){ $this->parentHazards = $parentHazards; }
+	public function getName(){ return $this->name; }
+	public function setName($name){ $this->name = $name; }
+	
+	public function getParentHazard(){ return $this->parentHazard; }
+	public function setParentHazard($parentHazard){ $this->parentHazard = $parentHazard; }
 	
 	public function getSubHazards(){ return $this->subHazards; }
 	public function setSubHazards($subHazards){ $this->subHazards = $subHazards; }
