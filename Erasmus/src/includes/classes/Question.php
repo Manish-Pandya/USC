@@ -10,6 +10,9 @@ class Question {
 	/** Question text */
 	private $text;
 	
+	/** Question ordering descriptor; index of this question */
+	private $orderIndex;
+	
 	/** String that describes (or excerpts) the Standards and Guidelines to which this Question pertains */
 	private $standardsAndGuidelines;
 	
@@ -32,6 +35,9 @@ class Question {
 	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
+	
+	public function getOrderIndex(){ return $this->orderIndex; }
+	public function setOrderIndex($orderIndex){ $this->orderIndex = $orderIndex; }
 	
 	public function getStandardsAndGuidelines(){ return $this->standardsAndGuidelines; }
 	public function setStandardsAndGuidelines($standardsAndGuidelines){ $this->standardsAndGuidelines = $standardsAndGuidelines; }
