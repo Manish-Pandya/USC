@@ -4,7 +4,8 @@
  * dispatching the requested action, and forwarding to the appropriate
  * destination.
  * 
- * The request is treated as a standard, synchronous request.
+ * The request is treated as an AJAX request whose action result will
+ * be displayed
  */ 
 ?><?php
 
@@ -18,9 +19,11 @@ $actionDispatcher = new ActionDispatcher($sessionDataSource);
 // Attempt to dispatch to the requested action
 $actionResult = $actionDispatcher->dispatch($actionName);
 
-//TODO: set $actionResult->actionFunctionResult to session? should action function do this?
+//TODO: option to encode JSON or not?
 
-// Send to the proper URL
-header("location: " . $actionResult->destinationPage);
+// JSON-Encode result
+$json = JsonManager::encode($actionResult);
 
+// Output JSON
+echo $json;
 ?>
