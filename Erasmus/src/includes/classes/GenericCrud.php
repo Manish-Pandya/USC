@@ -14,11 +14,25 @@ abstract class GenericCrud {
 	/** Retrieves a key/value array mapping DB columns to type names for this entity */
 	public abstract function getColumnData();
 	
+	// Member fields
+	private $key_id;
+	
 	// Accessors / Mutators
 	
-	// CRUD Operations?
+	public function getKeyId(){
+		return $this->key_id;
+	}
+	
+	public function setKeyId($keyid){
+		$this->key_id = $keyid;
+	}
 	
 	// CRUD Utilities
+	
+	/** Returns TRUE if $this has a value for its primary key */
+	public function hasPrimaryKeyValue(){
+		return $this->getKeyId() != null;
+	}
 	
 	/**
 	 * Populates all fields declared in {@code getColumnNames()} on {@code $this}
@@ -28,7 +42,6 @@ abstract class GenericCrud {
 	 * @param unknown $record
 	 */
 	function populateFromDbRecord( $record ){
-		
 		//TODO: What about relationships?
 		
 		//Get just the keys
@@ -43,5 +56,8 @@ abstract class GenericCrud {
 			$this->$setterName( $record[$field] );
 		}
 	}
+	
+	//TODO: Data-Access Operations
+	
 }
 ?>
