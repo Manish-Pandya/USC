@@ -10,20 +10,31 @@
  * @author Matt
  * @author Mitch
  */
-class DAO {
+class GenericDAO {
 	
-	private $LOG;
-	private $logprefix;
-	public $baseObject;
+	/** Logger */
+	protected $LOG;
+	
+	/** Prefix string used in log messages */
+	protected $logprefix;
+	
+	/** Object used as a model from which to obtain class and table data */
+	protected $modelObject;
+	
+	/** Class name of the model object */
+	protected $modelClassName;
 	
 	/**
 	 * Constructs a new Data Access Object for the type of the given object.
-	 * @param GenericCrud $obj
+	 * @param GenericCrud $model_object
 	 */
-	public function __construct(GenericCrud $obj){
-		$this->baseObject = $obj;
+	public function __construct(GenericCrud $model_object){
 		$this->LOG = Logger::getLogger( __CLASS__ );
-		$this->logprefix = '[' . get_class( $this->baseObject ) . ']';
+		
+		$this->modelObject = $model_object;
+		$this->modelClassName = get_class( $model_object );
+		
+		$this->logprefix = "[$this->modelClassName]";
 	}
 	
 	/**
@@ -39,18 +50,23 @@ class DAO {
 		global $mdb2;
 	
 		//Query the table by key_id
-		$result =& $mdb2->query('SELECT * FROM ' . $this->baseObject->getTableName() . ' WHERE key_id = ' . $id);
+		$result =& $mdb2->query('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ' . $id);
 		if (PEAR::isError($result)) {
 			die($result->getMessage());
 		}
 	
 		//Get the first row of query results (should be only one row)
 		$record = $result->fetchRow();
-	
+		
+		//TODO: ensure there is a record!
+		
+		//Build an object to return
+		$object = new $this->modelClassName();
+		
 		//Iterate through the columns and make this object match the values from the database
-		$this->baseObject->populateFromDbRecord($record);
+		$object->populateFromDbRecord($record);
 	
-		return $this->baseObject;
+		return $this->modelObject;
 	}
 	
 	/**
@@ -58,16 +74,22 @@ class DAO {
 	 *
 	 * @return Array of entities
 	 */
-	function getAll(){
-		$this->LOG->debug("$this->logprefix Looking up all entities");
+	function getAll( $sortColumn = NULL ){
+		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 		
 		// Get the db connection
 		global $mdb2;
-		$className = get_class( $this->baseObject );
 		$resultList = array();
 	
+		// Build query
+		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
+		if( $sortColumn != NULL ){
+			//Sort is specified; add ORDER BY clause
+			$query_string .= ' ORDER BY ' . $sortColumn;
+		}
+		
 		//Query the table by key_id
-		$result =& $mdb2->query('SELECT * FROM ' . $this->baseObject->getTableName());
+		$result =& $mdb2->query( $query_string );
 		if (PEAR::isError($result)) {
 			die($result->getMessage());
 		}
@@ -76,7 +98,7 @@ class DAO {
 		while ($record = $result->fetchRow()){
 	
 			//Create a new instance and sync it for each row
-			$item = new $className();
+			$item = new $this->modelClassName();
 			$item->populateFromDbRecord( $record );
 	
 			// Add the results to an array
@@ -89,43 +111,35 @@ class DAO {
 	/**
 	 * Retrieves all entities of this type, ordered by the given field
 	 *
-	 * @param unknown $col
+	 * @param unknown $sortColumn
 	 * @return Array:
 	 */
-	function getAllSorted($col){
-		$this->LOG->debug("$this->logprefix Looking up all entities, sorted by '$col'");
-		
-		// Get the db connection
-		global $mdb2;
-		$className = get_class($this->baseObject);
-		$resultList = array();
-	
-		//Query the table by key_id
-		$result =& $mdb2->query('SELECT * FROM ' . $this->baseObject->getTableName() . ' ORDER BY ' . $col);
-		if (PEAR::isError($result)) {
-			die($result->getMessage());
-		}
-		//Iterate the rows
-	
-		while ($record = $result->fetchRow()){
-	
-			//Create a new instance and sync it for each row
-			$item = new $className();
-			$item->populateFromDbRecord( $record );
-	
-			// Add the results to an array
-			array_push($resultList, $item);
-		}
-	
-		return $resultList;
+	function getAllSorted( $sortColumn ){
+		return $this->getAll( $sortColumn );
 	}
 	
 	/**
 	 * Commits the values of this entity to the database
+	 * 
+	 * @param GenericCrud $object: Object to save. If null, the model object will be used instead
 	 * @return GenericCrud
 	 */
-	function save(){
+	function save(GenericCrud $object = NULL){
 		$this->LOG->debug("$this->logprefix Saving entity");
+		
+		//Make sure we have an object to save
+		if( $object == NULL ){
+			$object = $this->modelObject;
+		}
+		//If $object is given, make sure it's the right type
+		else if( get_class($object) != $this->modelClassName ){
+			// we have a problem!
+			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
+		
+			//NULL return indicates error
+			return NULL;
+		}
+		//else use $object as-is!
 		
 		// Get the db connection
 		global $mdb2;
@@ -133,26 +147,26 @@ class DAO {
 		// Initiate an array that contains the values to be saved
 		$dataClause = array();
 		$dataTypesArray = array();
-		foreach ($this->baseObject->getColumnData() as $columnName => $type){
+		foreach ($object->getColumnData() as $columnName => $type){
 			$getter = "get$columnName";
 			$getter[3] = strtoupper($getter[3]);
-			$dataClause[$columnName] = $this->$getter();
+			$dataClause[$columnName] = $object->$getter();
 			
 			$dataTypesArray[] = $type;
 		}
 		
-		$table = $this->baseObject->getTableName();
+		$table = $object->getTableName();
 	
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
-		if ( $this->baseObject->hasPrimaryKeyValue() ) {
+		if ( $object->hasPrimaryKeyValue() ) {
 			$this->LOG->debug("$this->logprefix Updating existing entity with keyid $id");
 			
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
 				DB_AUTOQUERY_UPDATE,
-				'key_id = ' . $mdb2->quote($this->baseObject->getKeyId(), 'integer'),
+				'key_id = ' . $mdb2->quote($object->getKeyId(), 'integer'),
 				$dataTypesArray
 			);
 			
@@ -182,13 +196,13 @@ class DAO {
 				die($id->getMessage());
 			}
 			
-			$this->baseObject->setKeyId( $id );
+			$object->setKeyId( $id );
 		}
 
-		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $this->baseObject->getKeyId());
+		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKeyId());
 	
 		// return the updated object
-		return $this->baseObject;
+		return $object;
 	}
 	
 	/**
