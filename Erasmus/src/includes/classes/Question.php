@@ -7,6 +7,20 @@
  */
 class Question {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_question";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		"text"						=> "text",
+		"order_index"				=> "integer",
+		"standards_and_guidelines"	=> "text",
+		"is_mandatory"				=> "boolean",
+		//deficiencies is a relationship
+		//deficiency_root_causes is a relationship
+		//recommendations is a relationship
+	);
+	
 	/** Question text */
 	private $text;
 	

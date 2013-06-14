@@ -4,7 +4,25 @@
  * 
  * @author Mitch Martin, GraySail LLC
  */
-class PrincipalInvestigator extends User {
+class PrincipalInvestigator extends GenericCrud {
+	
+	//FIXME: Shouls PrincipalInvestigator just be a role?
+	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_pi";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		//TODO: IS user a relationship?
+		"user_id" => "integer",
+		//departments is a relationship
+		//rooms is a relationship
+		//lab_safetey_managers is a relationship
+		//hazardAuthorizations is a relationship
+	);
+	
+	/** Base User object that this PI represents */
+	private $user;
 	
 	/** Array of Departments to which this PI belongs */
 	private $departments;

@@ -12,8 +12,12 @@ class Hazard extends GenericCrud {
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-			"key_id"	=> "integer",
-			//TODO
+			"name"	=> "text",
+			//parent hazard is a relationship
+			//subhazards are relationships
+			//checklists are relationships
+			//rooms are relationships
+			//authorized PIs are relationships
 	);
 	
 	/** Name of the hazard */

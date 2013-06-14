@@ -16,17 +16,13 @@ class User extends GenericCrud{
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"keyid"	=> "integer",
 		"active"	=> "bolean",
-		//"roles"	=>
+		//roles are a relationship
 		"username"	=> "text",
 		"name"		=> "text",
 		"email"		=> "text", 
 	);
-	
-	/** Primary Key for this entity */
-	private $keyid;
-	
+		
 	/** Boolean value specifying if this user account is active or disabled */
 	private $active;
 	
@@ -61,13 +57,10 @@ class User extends GenericCrud{
 	}
 	
 	public function __toString(){
-		return "[User keyid=$this->keyid]";
+		return "[User keyid=$this->getKeyId()]";
 	}
 	
 	// Accessors / Mutators
-
-	public function getKeyid(){ return $this->keyid; }
-	public function setKeyid($keyId){ $this->keyid = $keyId; }
 	
 	public function getActive(){ return $this->active; }
 	public function setActive($active){ $this->active = $active; }

@@ -7,6 +7,15 @@
  */
 class CorrectiveAction {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_corrective_action";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		//deficiency selection is a relationship
+		"text"		=> "text",
+	);
+	
 	//TODO: "corrected during inspection" vs after
 	
 	/** DeficiencySelection entity describing the Deficiency to which this CorrectiveAction applies */

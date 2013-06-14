@@ -1,8 +1,10 @@
 <?php
 /**
- * Base class for CRUD-related operations.
+ * Base class for CRUD-related operations. This abstract class is 
+ * a basis for entity classes, and provides functions to enable the DAO
  * 
  * @author Mitch
+ * @see GenericDAO.php
  */
 abstract class GenericCrud {
 	
@@ -16,6 +18,10 @@ abstract class GenericCrud {
 	
 	// Member fields
 	private $key_id;
+	
+	//TODO: creation date
+	//TODO: last update date
+	//TODO: Active?
 	
 	// Accessors / Mutators
 	

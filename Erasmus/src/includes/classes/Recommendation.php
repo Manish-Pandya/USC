@@ -7,6 +7,16 @@
  */
 class Recommendation {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_recommendation";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		//Is question a relationship?
+		//"question"	=> "bolean",
+		"text"		=> "text",
+	);
+	
 	/** Reference to the Question entity to which this Recommendation applies */
 	private $question;
 	

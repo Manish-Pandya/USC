@@ -7,6 +7,17 @@
  */
 class Response {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_response";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		"question"	=> "text",
+		"answer"	=> "text",
+		//deficiencySelections are a relationship
+		//recommendations are a relationship
+	);
+	
 	/** Reference to Question entity to which this Response applies */
 	private $question;
 	

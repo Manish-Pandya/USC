@@ -7,6 +7,18 @@
  */
 class DeficiencySelection {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_deficiency_selection";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		//response is a relationship
+		//room is a relationship
+		//deficiency is a relationship
+		//deficiency root causes are relationships
+		//corrective actions are relationships
+	);
+	
 	/** Reference to the Response entity to which the associated Deficiency is applied */
 	private $response;
 	

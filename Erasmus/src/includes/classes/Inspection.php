@@ -7,6 +7,19 @@
  */
 class Inspection {
 	
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "erasmus_inspection";
+	
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		//inspectors are a relationship
+		//TODO: Lead Inspector?
+		"principal_investigator_id" => "integer",
+		//responses are a relationship
+		"date_started"	=> "timestamp",
+		"date_closed"	=> "timestamp",
+	);
+	
 	/** Array of Inspector entities that took part in this Inspection */
 	private $inspectors;
 	
@@ -16,7 +29,11 @@ class Inspection {
 	/** Array of Response entities */
 	private $responses;
 	
-	//TODO: dates: date started, date closed
+	/** Date and time this Inspection began */
+	private $dateStarted;
+	
+	/** Date and time this Inspection was completed */
+	private $dateClosed;
 	
 	public function __construct(){
 	
@@ -30,5 +47,11 @@ class Inspection {
 	
 	public function getResponses(){ return $this->responses; }
 	public function setResponses($responses){ $this->responses = $responses; }
+	
+	public function getDateStarted(){ return $this->dateStarted; }
+	public function setDateStarted($dateStarted){ $this->dateStarted = $dateStarted; }
+	
+	public function getDateClosed(){ return $this->dateClosed; }
+	public function setDateClosed($dateClosed){ $this->dateClosed = $dateClosed; }
 }
 ?>
