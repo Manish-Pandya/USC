@@ -1,25 +1,22 @@
 <?php
 require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
+require_once(dirname(__FILE__) . '/../../../src/includes/classes/GenericCrud.php');
 require_once(dirname(__FILE__) . '/../../../src/includes/classes/User.php');
 
-/**
- * Test case for testing the User class.
- * 
- * @author Mitch Martin
- */
-class TestUser extends UnitTestCase {
+class TestGenericCrud extends UnitTestCase {
 	
+	//Use User as test case
 	function testPopulateFromDbRecord() {
-		$user = new User(); // new MockGenericCrud();
+		$user = new User();
 	
 		//Build a "DB" array to pass
 		$dbObject = array(
-			"keyid"		=> 1234,
-			"active"	=> true,
-			"roles"		=> array('TEST_ROLE_1', 'TEST_ROLE_2'),
-			"username"	=> 'USER_NAME',
-			"name"		=> 'REAL_NAME',
-			"email"		=> 'user@host.com',
+				"keyid"		=> 1234,
+				"active"	=> true,
+				"roles"		=> array('TEST_ROLE_1', 'TEST_ROLE_2'),
+				"username"	=> 'USER_NAME',
+				"name"		=> 'REAL_NAME',
+				"email"		=> 'user@host.com',
 		);
 	
 		$user->populateFromDbRecord( $dbObject );
@@ -27,7 +24,7 @@ class TestUser extends UnitTestCase {
 		//Assert that $user's attributes are equal to the db object's
 		$columns = array_keys( $user->getColumnData() );
 		foreach( $columns as $field ) {
-			
+				
 			//build the accessor method name
 			$fieldName = "get$field";
 			
@@ -35,6 +32,6 @@ class TestUser extends UnitTestCase {
 			$this->assertEqual($user->$fieldName(), $dbObject[$field]);
 		}
 	}
-	
 }
+
 ?>

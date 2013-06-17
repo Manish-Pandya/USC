@@ -118,7 +118,9 @@ class TestJsonManager extends UnitTestCase {
 		$object->setRoles(array('role1', 'role2'));
 		$object->setUsername("username");
 	
-		$expectedJson = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		//TODO: does field order matter?
+		$expectedJson = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
+		
 		$actualJson = JsonManager::objectToJson($object);
 	
 		$this->assertEqual($expectedJson, $actualJson);
@@ -143,7 +145,7 @@ class TestJsonManager extends UnitTestCase {
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
 		
-		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		$json = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
 		$object = new User();
 		$object = JsonManager::jsonToObject($json, $object);
 		
