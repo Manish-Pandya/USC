@@ -32,6 +32,9 @@ class Room extends GenericCrud {
 	/** Array of Hazard entities contained in this Room */
 	private $hazards;
 	
+	/** String containing emergency contact information */
+	private $safetyContactInformation;
+	
 	public function __construct(){
 	
 	}
@@ -51,6 +54,9 @@ class Room extends GenericCrud {
 	
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+	
+	public function getSafetyContactInformation(){ return $this->safetyContactInformation; }
+	public function setSafetyContactInformation($contactInformation){ $this->safetyContactInformation = $contactInformation; }
 	
 }
 ?>
