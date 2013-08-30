@@ -35,8 +35,7 @@ class Hazard extends GenericCrud {
 	/** Array of Room entities in which this Hazard is contained */
 	private $rooms;
 	
-	/** Array of PrincipalInvestigator entities who have explicit authorization to manage this Hazard */
-	private $authorizedPrincipalInvestigators;
+	//TODO: Room relationship should/may contain information about Equipment, etc
 	
 	public function __construct(){
 	

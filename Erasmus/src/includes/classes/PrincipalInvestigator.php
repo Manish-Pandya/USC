@@ -18,7 +18,6 @@ class PrincipalInvestigator extends GenericCrud {
 		//departments is a relationship
 		//rooms is a relationship
 		//lab_safetey_managers is a relationship
-		//hazardAuthorizations is a relationship
 	);
 	
 	/** Base User object that this PI represents */
@@ -32,9 +31,6 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** Array of LabSafetyManager entities */
 	private $labSafetyManagers;
-	
-	/** Hazards for which this PI has explicit authorization to manage */
-	private $hazardAuthorizations;
 	
 	public function __construct(){
 		parent::__construct();
