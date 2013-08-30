@@ -9,7 +9,7 @@ class PrincipalInvestigator extends GenericCrud {
 	//FIXME: Shouls PrincipalInvestigator just be a role?
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_pi";
+	protected static $TABLE_NAME = "erasmus_principal_investigator";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
