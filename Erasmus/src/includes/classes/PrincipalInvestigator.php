@@ -45,8 +45,5 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getLabSafetyManager(){ return $this->labSafetyManager; }
 	public function setLabSafetyManager($labSafetyManager){ $this->labSafetyManager = $labSafetyManager; }
 	
-	public function getHazardAuthorizations(){ return $this->hazardAuthorizations; }
-	public function setHazardAuthorizations($hazardAuthorizations){ $this->hazardAuthorizations = $hazardAuthorizations; }
-	
 }
 ?>
