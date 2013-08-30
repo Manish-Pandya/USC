@@ -24,6 +24,9 @@ class Question {
 	/** Question text */
 	private $text;
 	
+	/** Checklist to which this Question belongs */
+	private $checklist;
+	
 	/** Question ordering descriptor; index of this question */
 	private $orderIndex;
 	
@@ -43,12 +46,18 @@ class Question {
 	/** Array of Recommendation entities that may be selected for this Question */
 	private $recommendations;
 	
+	/** Array of Observation entities that may be selected for this Question */
+	private $observations;
+	
 	public function __construct(){
 	
 	}
 	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
+	
+	public function getChecklist(){ return $this->checklist; }
+	public function setChecklist($checklist){ $this->checklist = $checklist; }
 	
 	public function getOrderIndex(){ return $this->orderIndex; }
 	public function setOrderIndex($orderIndex){ $this->orderIndex = $orderIndex; }
@@ -67,5 +76,8 @@ class Question {
 	
 	public function getRecommendations(){ return $this->recommendations; }
 	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
+	
+	public function getObservations(){ return $this->observations; }
+	public function setObservations($observations){ $this->observations = $observations; }
 }
 ?>
