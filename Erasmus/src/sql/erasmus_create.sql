@@ -6,6 +6,7 @@
 --	Add Foreign keys for mapping tables?
 --	User password hash
 --	Unique columns
+--	What datatype should 'answer' be for Response?
 
 -- NOTES:
 --
@@ -19,6 +20,7 @@
 CREATE DATABASE IF NOT EXISTS erasmus;
 USE erasmus;
 
+-- Define erasmus_user for holding base User entities
 DROP TABLE IF EXISTS erasmus_user;
 CREATE TABLE erasmus_user (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -36,6 +38,7 @@ CREATE TABLE erasmus_user (
 	UNIQUE (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to hold User <-> Role mappings
 DROP TABLE IF EXISTS user_role;
 CREATE TABLE user_role (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -44,6 +47,7 @@ CREATE TABLE user_role (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to hold Role entities
 DROP TABLE IF EXISTS ROLE;
 CREATE TABLE ROLE (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -52,7 +56,7 @@ CREATE TABLE ROLE (
 	UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table structure defining Building entities
+-- Define building to hold Building entities
 DROP TABLE IF EXISTS building;
 CREATE TABLE building (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -65,7 +69,7 @@ CREATE TABLE building (
 	UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table structure defining Room entities
+-- Define table to hold Room entities
 DROP TABLE IF EXISTS room;
 CREATE TABLE room (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -132,7 +136,8 @@ CREATE TABLE hazard_checklist (
 	hazard_id int(11) NOT NULL,
 	PRIMARY KEY (`key_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-	
+
+-- Define table for Checklist entities
 DROP TABLE IF EXISTS checklist;
 CREATE TABLE checklist (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -140,12 +145,12 @@ CREATE TABLE checklist (
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
-	-- TODO?
 	-- hazard_checklist => *hazards
 	-- question.checklist_id => *questions
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Question entities
 DROP TABLE IF EXISTS question;
 CREATE TABLE question (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -166,6 +171,7 @@ CREATE TABLE question (
 	CONSTRAINT fk_question_checklist FOREIGN KEY (checklist_id) REFERENCES checklist (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION	
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Deficiency entiteis
 DROP TABLE IF EXISTS deficiency;
 CREATE TABLE deficiency (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -179,6 +185,7 @@ CREATE TABLE deficiency (
 	CONSTRAINT fk_deficiency_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for DeficiencyRootCause entities
 DROP TABLE IF EXISTS deficiency_root_cause;
 CREATE TABLE deficiency_root_cause (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -192,6 +199,7 @@ CREATE TABLE deficiency_root_cause (
 	CONSTRAINT fk_deficiency_root_cause_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Response entities
 DROP TABLE IF EXISTS response;
 CREATE TABLE response (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -212,6 +220,7 @@ CREATE TABLE response (
 	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Response entities to Recommendation entiteis
 DROP TABLE IF EXISTS response_recommendation;
 CREATE TABLE response_recommendation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -220,6 +229,7 @@ CREATE TABLE response_recommendation (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Response entities to Observation entiteis
 DROP TABLE IF EXISTS response_observation;
 CREATE TABLE response_observation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -228,6 +238,7 @@ CREATE TABLE response_observation (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for DeficiencySelection entities
 DROP TABLE IF EXISTS deficiency_selection;
 CREATE TABLE deficiency_selection (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -246,6 +257,7 @@ CREATE TABLE deficiency_selection (
 	CONSTRAINT fk_deficiency_selection_deficiency FOREIGN KEY (deficiency_id) REFERENCES deficiency (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for CorrectiveAction entities
 DROP TABLE IF EXISTS corrective_action;
 CREATE TABLE corrective_action (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -259,7 +271,7 @@ CREATE TABLE corrective_action (
 	CONSTRAINT fk_deficiency_selection FOREIGN KEY (deficiency_selection_id) REFERENCES deficiency_selection (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- selected root causes
+-- Define table to map DeficiencySelection entities with their associated DeficiencyRootCause entities
 DROP TABLE IF EXISTS deficiency_selection_root_cause;
 CREATE TABLE deficiency_selection_root_cause (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -268,7 +280,7 @@ CREATE TABLE deficiency_selection_root_cause (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- selected corrective actions
+-- Define table to map DeficiencySelection entities with their associated CorrectiveAction entities
 DROP TABLE IF EXISTS deficiency_selection_corrective_action;
 CREATE TABLE deficiency_selection_corrective_action (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -277,6 +289,7 @@ CREATE TABLE deficiency_selection_corrective_action (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Department entities
 DROP TABLE IF EXISTS department;
 CREATE TABLE department (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -289,6 +302,7 @@ CREATE TABLE department (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Department entities to associated PrincipalInvestigator entities
 DROP TABLE IF EXISTS principal_investigator_department;
 CREATE TABLE principal_investigator_department (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -297,6 +311,7 @@ CREATE TABLE principal_investigator_department (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Inspection entities to their Inspector entities
 DROP TABLE IF EXISTS inspection_inspector;
 CREATE TABLE inspection_inspector (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -305,6 +320,7 @@ CREATE TABLE inspection_inspector (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Inspector entities
 DROP TABLE IF EXISTS inspector;
 CREATE TABLE inspector (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -318,6 +334,7 @@ CREATE TABLE inspector (
 	CONSTRAINT fk_inspector_user FOREIGN KEY (user_id) REFERENCES erasmus_user (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Observation entities
 DROP TABLE IF EXISTS observation;
 CREATE TABLE observation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -331,6 +348,7 @@ CREATE TABLE observation (
 	CONSTRAINT fk_observation_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for PrincipalInvestigator entities
 DROP TABLE IF EXISTS principal_investigator;
 CREATE TABLE principal_investigator (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -346,6 +364,7 @@ CREATE TABLE principal_investigator (
 	CONSTRAINT fk_pi_user FOREIGN KEY (user_id) REFERENCES erasmus_user (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map PrincipalInvestigator entities with their associated LabPersonnel entities
 DROP TABLE IF EXISTS pi_lab_personnel;
 CREATE TABLE pi_lab_personnel (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -355,6 +374,7 @@ CREATE TABLE pi_lab_personnel (
 	CONSTRAINT fk_lab_personnel_user FOREIGN KEY (user_id) REFERENCES erasmus_user (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Inspection entities
 DROP TABLE IF EXISTS inspection;
 CREATE TABLE inspection (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -371,6 +391,7 @@ CREATE TABLE inspection (
 	CONSTRAINT fk_inspection_pi FOREIGN KEY (principal_investigator_id) REFERENCES principal_investigator (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Inspection entities with their associated Response entities
 DROP TABLE IF EXISTS inspection_response;
 CREATE TABLE inspection_response (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
@@ -379,6 +400,7 @@ CREATE TABLE inspection_response (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Recommendation entities
 DROP TABLE IF EXISTS recommendation;
 CREATE TABLE recommendation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
