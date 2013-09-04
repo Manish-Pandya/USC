@@ -8,7 +8,7 @@
 class Recommendation {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_recommendation";
+	protected static $TABLE_NAME = "recommendation";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

@@ -8,7 +8,7 @@
 class Building {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_building";
+	protected static $TABLE_NAME = "building";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

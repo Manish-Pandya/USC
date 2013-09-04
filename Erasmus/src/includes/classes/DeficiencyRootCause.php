@@ -8,7 +8,7 @@
 class DeficiencyRootCause {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_deficiency_root_cause";
+	protected static $TABLE_NAME = "deficiency_root_cause";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

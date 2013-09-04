@@ -9,7 +9,7 @@ class PrincipalInvestigator extends GenericCrud {
 	//FIXME: Shouls PrincipalInvestigator just be a role?
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_principal_investigator";
+	protected static $TABLE_NAME = "principal_investigator";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -17,7 +17,7 @@ class PrincipalInvestigator extends GenericCrud {
 		"user_id" => "integer",
 		//departments is a relationship
 		//rooms is a relationship
-		//lab_safetey_managers is a relationship
+		//lab_personnel is a relationship
 	);
 	
 	/** Base User object that this PI represents */
@@ -29,8 +29,8 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of Room entities managed by this PI */
 	private $rooms;
 	
-	/** Array of LabSafetyManager entities */
-	private $labSafetyManagers;
+	/** Array of LabPersonnel entities */
+	private $labPersonnel;
 	
 	public function __construct(){
 		parent::__construct();
@@ -42,8 +42,8 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getRooms(){ return $this->rooms; }
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
-	public function getLabSafetyManager(){ return $this->labSafetyManager; }
-	public function setLabSafetyManager($labSafetyManager){ $this->labSafetyManager = $labSafetyManager; }
+	public function getLabPersonnel(){ return $this->labPersonnel; }
+	public function setLabPersonnel($labPersonnel){ $this->labPersonnel = $labPersonnel; }
 	
 }
 ?>

@@ -8,7 +8,7 @@
 class Department extends GenericCrud {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_department";
+	protected static $TABLE_NAME = "department";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

@@ -8,7 +8,7 @@
 class Checklist {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_checklist";
+	protected static $TABLE_NAME = "checklist";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

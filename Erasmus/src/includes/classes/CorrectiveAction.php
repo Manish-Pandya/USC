@@ -8,7 +8,7 @@
 class CorrectiveAction {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_corrective_action";
+	protected static $TABLE_NAME = "corrective_action";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

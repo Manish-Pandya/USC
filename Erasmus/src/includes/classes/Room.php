@@ -12,7 +12,7 @@ include_once 'Hazard.php';
 class Room extends GenericCrud {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_room";
+	protected static $TABLE_NAME = "room";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

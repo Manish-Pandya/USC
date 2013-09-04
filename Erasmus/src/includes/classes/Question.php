@@ -8,7 +8,7 @@
 class Question {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_question";
+	protected static $TABLE_NAME = "question";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(

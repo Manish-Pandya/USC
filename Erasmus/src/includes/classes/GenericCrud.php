@@ -17,11 +17,18 @@ abstract class GenericCrud {
 	public abstract function getColumnData();
 	
 	// Member fields
+	
+	// Primary key
 	private $key_id;
 	
-	//TODO: creation date
-	//TODO: last update date
-	//TODO: Active?
+	// creation date
+	private $dateCreated;
+	
+	// last update date
+	private $dateLastModified;
+	
+	// Active
+	private $isActive;
 	
 	// Accessors / Mutators
 	
@@ -32,6 +39,29 @@ abstract class GenericCrud {
 	public function setKeyId($keyid){
 		$this->key_id = $keyid;
 	}
+	
+	public function getDateCreated(){
+		return $this->dateCreated;
+	}
+	
+	public function setdateCreated($dateCreated){
+		$this->dateCreated = $dateCreated;
+	}
+	
+	public function getDateLastModified(){
+		return $this->dateLastModified;
+	}
+	
+	public function setdateLastModified($dateLastModified){
+		$this->dateLastModified = $dateLastModified;
+	}
+	
+	public function getIsActive(){
+		return $this->isActive;
+	}
+	
+	public function setisActive($isActive){
+		$this->isActive = $isActive; }
 	
 	// CRUD Utilities
 	

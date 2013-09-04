@@ -8,7 +8,7 @@
 class Response {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_response";
+	protected static $TABLE_NAME = "response";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
