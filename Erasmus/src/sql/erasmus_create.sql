@@ -119,7 +119,7 @@ CREATE TABLE hazard (
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
-	name varchar(90),
+	name varchar(256),
 	-- nullable, for top-level hazards
 	parent_hazard_id int(11),
 	-- map using parent_hazard_id => *sub_hazards
