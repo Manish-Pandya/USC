@@ -1,12 +1,12 @@
 -- TODO:
 --
---	Add field(s) to entities:
---		active boolean DEFAULT '1'?
+--	What about Equipment?
 --	Double-check varchar field lengths
 --	Add Foreign keys for mapping tables?
 --	User password hash
 --	Unique columns
 --	What datatype should 'answer' be for Response?
+--		Yes / No / NotApplicable / NoResponse
 
 -- NOTES:
 --
@@ -24,6 +24,7 @@ USE erasmus;
 DROP TABLE IF EXISTS erasmus_user;
 CREATE TABLE erasmus_user (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -60,6 +61,7 @@ CREATE TABLE ROLE (
 DROP TABLE IF EXISTS building;
 CREATE TABLE building (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	name varchar(90),
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -73,6 +75,7 @@ CREATE TABLE building (
 DROP TABLE IF EXISTS room;
 CREATE TABLE room (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -111,6 +114,7 @@ CREATE TABLE hazard_room (
 DROP TABLE IF EXISTS hazard;
 CREATE TABLE hazard (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -141,6 +145,7 @@ CREATE TABLE hazard_checklist (
 DROP TABLE IF EXISTS checklist;
 CREATE TABLE checklist (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -154,6 +159,7 @@ CREATE TABLE checklist (
 DROP TABLE IF EXISTS question;
 CREATE TABLE question (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -175,6 +181,7 @@ CREATE TABLE question (
 DROP TABLE IF EXISTS deficiency;
 CREATE TABLE deficiency (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -189,6 +196,7 @@ CREATE TABLE deficiency (
 DROP TABLE IF EXISTS deficiency_root_cause;
 CREATE TABLE deficiency_root_cause (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -203,6 +211,7 @@ CREATE TABLE deficiency_root_cause (
 DROP TABLE IF EXISTS response;
 CREATE TABLE response (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -219,6 +228,16 @@ CREATE TABLE response (
 	PRIMARY KEY (key_id),
 	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Define table for Answer values
+-- 	'Yes' / 'No' / 'NotApplicable' / 'NoResponse'
+-- DROP TABLE IF EXISTS response_answer;
+-- CREATE TABLE response_answer (
+-- 	key_id int(11) NOT NULL AUTO_INCREMENT,
+-- 	text varchar(16) NOT NULL,
+-- 	PRIMARY KEY (key_id),
+-- 	UNIQUE (text)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table to map Response entities to Recommendation entiteis
 DROP TABLE IF EXISTS response_recommendation;
@@ -242,6 +261,7 @@ CREATE TABLE response_observation (
 DROP TABLE IF EXISTS deficiency_selection;
 CREATE TABLE deficiency_selection (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -261,6 +281,7 @@ CREATE TABLE deficiency_selection (
 DROP TABLE IF EXISTS corrective_action;
 CREATE TABLE corrective_action (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -293,6 +314,7 @@ CREATE TABLE deficiency_selection_corrective_action (
 DROP TABLE IF EXISTS department;
 CREATE TABLE department (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -324,6 +346,7 @@ CREATE TABLE inspection_inspector (
 DROP TABLE IF EXISTS inspector;
 CREATE TABLE inspector (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -338,6 +361,7 @@ CREATE TABLE inspector (
 DROP TABLE IF EXISTS observation;
 CREATE TABLE observation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -352,6 +376,7 @@ CREATE TABLE observation (
 DROP TABLE IF EXISTS principal_investigator;
 CREATE TABLE principal_investigator (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -378,6 +403,7 @@ CREATE TABLE pi_lab_personnel (
 DROP TABLE IF EXISTS inspection;
 CREATE TABLE inspection (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
@@ -404,6 +430,7 @@ CREATE TABLE inspection_response (
 DROP TABLE IF EXISTS recommendation;
 CREATE TABLE recommendation (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	created_user_id int(11) NOT NULL,
