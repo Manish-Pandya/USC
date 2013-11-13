@@ -10,6 +10,10 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_todo(){
 		$this->fail("TODO: Add test cases for Action Functions");
 	}
+	
+	public function test_getAllUsers(){
+		
+	}
 }
 
 ?>

@@ -12,7 +12,7 @@ class TestGenericCrud extends UnitTestCase {
 		//Build a "DB" array to pass
 		$dbObject = array(
 				"keyid"		=> 1234,
-				"active"	=> true,
+				"isActive"	=> true,
 				"roles"		=> array('TEST_ROLE_1', 'TEST_ROLE_2'),
 				"username"	=> 'USER_NAME',
 				"name"		=> 'REAL_NAME',
