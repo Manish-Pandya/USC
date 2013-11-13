@@ -168,8 +168,7 @@ class TestActionDispatcher extends UnitTestCase {
 		$dispatcher = new ActionDispatcher(array());
 		
 		$action = NULL;
-		$dispatchedResult = $dispatcher->dispatch($action);
-		$dispatchedPage = $dispatchedResult->destinationPage;
+		$dispatchedPage = $dispatcher->dispatch($action);
 		
 		$this->assertEqual($dispatchedPage, 'forbidden.php');
 	}
@@ -179,8 +178,7 @@ class TestActionDispatcher extends UnitTestCase {
 		$factory->returns('getConfig', array());
 		
 		$dispatcher = new ActionDispatcher(array(), $factory);
-		$dispatchedResult = $dispatcher->dispatch('noSuchAction');
-		$dispatchedPage = $dispatchedResult->destinationPage;
+		$dispatchedPage = $dispatcher->dispatch('noSuchAction');
 		
 		$this->assertEqual($dispatchedPage, 'forbidden.php');
 	}
@@ -196,8 +194,7 @@ class TestActionDispatcher extends UnitTestCase {
 		));
 		
 		$dispatcher = new ActionDispatcher(array(), $factory);
-		$dispatchedResult = $dispatcher->dispatch('accessDeniedTest');
-		$dispatchedPage = $dispatchedResult->destinationPage;
+		$dispatchedPage = $dispatcher->dispatch('accessDeniedTest');
 		
 		$this->assertEqual($dispatchedPage, 'access-denied-failed.php');
 	}
@@ -213,8 +210,7 @@ class TestActionDispatcher extends UnitTestCase {
 		));
 		
 		$dispatcher = new ActionDispatcher(array(), $factory);
-		$dispatchedResult = $dispatcher->dispatch('dispatchActionFailTest');
-		$dispatchedPage = $dispatchedResult->destinationPage;
+		$dispatchedPage = $dispatcher->dispatch('dispatchActionFailTest');
 		
 		//Method doesn't exist, so dispatch will fail
 		
@@ -238,8 +234,7 @@ class TestActionDispatcher extends UnitTestCase {
 			return true;
 		}
 		
-		$dispatchedResult = $dispatcher->dispatch('dispatchActionSuccessTest');
-		$dispatchedPage = $dispatchedResult->destinationPage;
+		$dispatchedPage = $dispatcher->dispatch('dispatchActionSuccessTest');
 		
 		$this->assertEqual($dispatchedPage, 'dispatchActionSuccessSuccess.php');
 	}
