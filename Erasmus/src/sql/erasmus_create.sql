@@ -1,12 +1,10 @@
 -- TODO:
 --
---	What about Equipment?
+--	'Requires Serial Number' flag for Hazard?
 --	Double-check varchar field lengths
 --	Add Foreign keys for mapping tables?
 --	User password hash
 --	Unique columns
---	What datatype should 'answer' be for Response?
---		Yes / No / NotApplicable / NoResponse
 
 -- NOTES:
 --
@@ -101,15 +99,6 @@ CREATE TABLE principal_investigator_room (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table linking Hazard entities to their associated Room entities
-DROP TABLE IF EXISTS hazard_room;
-CREATE TABLE hazard_room (
-	key_id int(11) NOT NULL AUTO_INCREMENT,
-	room_id int(11),
-	hazard_id int(11),
-	PRIMARY KEY (key_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- Table structure defining Hazard entities
 DROP TABLE IF EXISTS hazard;
 CREATE TABLE hazard (
@@ -125,11 +114,25 @@ CREATE TABLE hazard (
 	-- map using parent_hazard_id => *sub_hazards
 	-- hazard_checklists => *checklists
 	-- 'hazard_room => *rooms
+	requires_serial_number boolean NOT NULL DEFAULT 0,
 	PRIMARY KEY (key_id),
 	KEY parent_hazard (parent_hazard_id),
 	KEY fk_parent_hazard (parent_hazard_id),
 	CONSTRAINT fk_parent_hazard FOREIGN KEY (parent_hazard_id) REFERENCES hazard (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 	-- TODO: UNIQUE (name)?
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Table linking Hazard entities to their associated Room entities
+--	This table ALSO defines physical equipment (serial nums, etc)
+DROP TABLE IF EXISTS hazard_room;
+CREATE TABLE hazard_room (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	room_id int(11) NOT NULL,
+	hazard_id int(11) NOT NULL,
+	equipment_serial_number varchar(64),
+	PRIMARY KEY (key_id),
+	CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES room (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+	CONSTRAINT fk_hazard FOREIGN KEY (hazard_id) REFERENCES hazard (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Table linking Checklist entities to their associated Hazard entities
@@ -207,6 +210,16 @@ CREATE TABLE deficiency_root_cause (
 	CONSTRAINT fk_deficiency_root_cause_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table for Answer values
+-- 	'Yes' / 'No' / 'NotApplicable' / 'NoResponse'
+DROP TABLE IF EXISTS response_answer;
+CREATE TABLE response_answer (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	text varchar(16) NOT NULL,
+	PRIMARY KEY (key_id),
+	UNIQUE (text)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Define table for Response entities
 DROP TABLE IF EXISTS response;
 CREATE TABLE response (
@@ -217,27 +230,14 @@ CREATE TABLE response (
 	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
-	-- TODO: what datatype should answer be?
-	--	answer is typcially YES, NO, NONE
-	--	foreign key to an answer?
-	--	full text of selected answer?
-	answer varchar(1024),
+	answer_id int(11),
 	-- deficiency_selection.response_id => *deficiency_selections
 	-- response_recommendation => *recommendations
 	-- response_observation => *observations?
 	PRIMARY KEY (key_id),
-	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+	CONSTRAINT fk_response_answer FOREIGN KEY (answer_id) REFERENCES response_answer (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Define table for Answer values
--- 	'Yes' / 'No' / 'NotApplicable' / 'NoResponse'
--- DROP TABLE IF EXISTS response_answer;
--- CREATE TABLE response_answer (
--- 	key_id int(11) NOT NULL AUTO_INCREMENT,
--- 	text varchar(16) NOT NULL,
--- 	PRIMARY KEY (key_id),
--- 	UNIQUE (text)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table to map Response entities to Recommendation entiteis
 DROP TABLE IF EXISTS response_recommendation;
