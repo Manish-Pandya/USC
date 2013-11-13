@@ -22,7 +22,11 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 //TODO: option to encode JSON or not?
 
 // JSON-Encode result
-$json = JsonManager::encode($actionResult);
+$json = JsonManager::encode($actionResult->actionFunctionResult);
+
+// Echo request-param 'callback'
+//TODO: Check for callback existence?
+echo $_GET["callback"];
 
 // Output JSON
 echo $json;
