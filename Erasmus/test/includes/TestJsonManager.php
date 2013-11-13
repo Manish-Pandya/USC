@@ -111,7 +111,9 @@ class TestJsonManager extends UnitTestCase {
 	function test_objectToJson_inferJson(){
 	
 		$object = new User();
-		$object->setActive(TRUE);
+		$object->setIsActive(TRUE);
+		$object->setDateCreated( NULL );
+		$object->setDateLastModified( NULL );
 		$object->setEmail('email@host.com');
 		$object->setKeyid(1234);
 		$object->setName("name");
@@ -119,7 +121,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->setUsername("username");
 	
 		//TODO: does field order matter?
-		$expectedJson = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
+		$expectedJson = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234,"DateCreated":null,"DateLastModified":null,"IsActive":null}';
 		
 		$actualJson = JsonManager::objectToJson($object);
 	
