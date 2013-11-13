@@ -12,14 +12,14 @@ require_once 'top_view.php';
 	</div>
 	
 	<div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
-		<a href="hubs/UserHub.php" class="span12" style="background: #86b32d;">
+		<a href="hubs/UserHub.php" class="span12 bg-color-green " style="background: #86b32d;">
 			<img class="" src="../img/user-icon.png" />
 			<p>User Hub</p>
 		</a>
 	</div>
 
 	<div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
-		<a href="hubs/PIHub.php" class="span12" style="background: #5ccccc;">
+		<a href="hubs/PIHub.php" class="span12 bg-color-blue" >
 			<img class="pull-right" src="../img/pi-icon.png" />
 			<p>PI Hub</p>
 		</a>

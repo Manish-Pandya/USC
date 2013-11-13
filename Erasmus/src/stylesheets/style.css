@@ -1,0 +1,847 @@
+@CHARSET "ISO-8859-1";
+/**
+ * A "deeper" indented text effect with the :before and :after pseudo-elements.
+ */
+/* line 20, ../sass/style.scss */
+html {
+  height: 100%;
+  background: #aaa;
+}
+
+/* line 22, ../sass/style.scss */
+body {
+  min-height: 100%;
+}
+
+/* line 24, ../sass/style.scss */
+body {
+  margin: 0;
+  background: #003b3b;
+  background: #01102b;
+  background: #004754;
+  background: #ddd;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* line 32, ../sass/style.scss */
+.whitebg {
+  background: #fff;
+}
+
+/******************************************************************************
+*
+* Typography Overrides
+*
+*******************************************************************************/
+/* line 41, ../sass/style.scss */
+h1, h2, h3, h4, h5, p, a {
+  font-family: 'Open Sans', sans-serif;
+}
+
+@font-face {
+  font-family: 'icomoon';
+  src: url("../fonts/icomoon.eot");
+  src: url("../fonts/icomoon.eot?#iefix") format("embedded-opentype"), url("../fonts/icomoon.svg#icomoon") format("svg"), url("../fonts/icomoon.woff") format("woff"), url("../fonts/icomoon.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* line 56, ../sass/style.scss */
+.iconGlyph {
+  font-family: "icomoon";
+}
+
+/* line 60, ../sass/style.scss */
+a {
+  	    /**
+      * Apply transitions to all hover states, etc
+      **/
+  -webkit-transition: all .1s ease-in-out;
+  -moz-transition: all .1s ease-in-out;
+  -o-transition: all .1s ease-in-out;
+  transition: all .1s ease-in-out;
+}
+
+/* line 69, ../sass/style.scss */
+.siteTitle {
+  color: #cb5a47 !important;
+  font-size: 2em !important;
+  line-height: .9em;
+  font-weight: bold;
+}
+
+/* line 75, ../sass/style.scss */
+.header {
+  padding-bottom: 50px;
+  border-bottom: dashed 2px #bfccd3;
+}
+
+/**************************************************************
+*************	Utility CLASSES
+**************************************************************/
+/* line 85, ../sass/style.scss */
+.text-shadow {
+  text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43);
+}
+
+/* line 86, ../sass/style.scss */
+.center {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* line 87, ../sass/style.scss */
+.blue-border {
+  border-left: 3px solid #49afcd;
+}
+
+/* line 88, ../sass/style.scss */
+tr.blue-border {
+  border: 4px solid #49afcd;
+}
+
+/* line 89, ../sass/style.scss */
+.shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  margin-left: 5px;
+}
+
+/* line 90, ../sass/style.scss */
+td.shadow {
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.3), 6px -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* line 91, ../sass/style.scss */
+.current {
+  background: white;
+  padding: 75px 10px 10px 10px;
+}
+
+/* line 92, ../sass/style.scss */
+.shadow .jqtree-toggler {
+  left: -1.3em !important;
+}
+
+/*************************************************************
+RSMS Center specific styles
+*************************************************************/
+/* line 101, ../sass/style.scss */
+div.rsmsCenterIconContainer a {
+  padding-top: 5px;
+  position: relative;
+  margin: 500 auto !important;
+}
+/* line 107, ../sass/style.scss */
+div.rsmsCenterIconContainer a:hover {
+  -webkit-transform: scale(1.06);
+  -moz-transform: scale(1.06);
+  -o-transform: scale(1.06);
+  -ms-transform: scale(1.06);
+  text-decoration: none !Important;
+}
+@media (max-width: 1200px) {
+  /* line 107, ../sass/style.scss */
+  div.rsmsCenterIconContainer a:hover {
+    -webkit-transform: scale(1.03);
+    -moz-transform: scale(1.03);
+    -o-transform: scale(1.03);
+    -ms-transform: scale(1.03);
+  }
+}
+/* line 121, ../sass/style.scss */
+div.rsmsCenterIconContainer a p {
+  color: white;
+  line-height: normal;
+  text-decoration: none !important;
+  padding: 5px;
+  font-size: 2.3em;
+}
+@media (max-width: 1200px) {
+  /* line 129, ../sass/style.scss */
+  div.rsmsCenterIconContainer a img {
+    float: right;
+    height: 45px;
+    padding-right: 5px;
+    max-width: 277px;
+  }
+}
+
+/*******************************************************
+*	HAZARD HUB STYLES
+*******************************************************/
+/* line 144, ../sass/style.scss */
+#hazardTree {
+  font-size: 25px;
+}
+/* line 147, ../sass/style.scss */
+#hazardTree li {
+  display: block;
+  min-height: 25px;
+  line-height: 45px;
+  white-space: wrap;
+  margin-left: 18px;
+  min-width: 18px;
+}
+
+/* line 158, ../sass/style.scss */
+.hazarNodeButtons {
+  display: inline-block;
+  float: right;
+}
+
+/*******************************************************
+*	Checklist Hub Styles
+*******************************************************/
+/* line 166, ../sass/style.scss */
+#parentChecklistsContainer, #addChecklist {
+  margin: 30px 0;
+}
+
+/* line 169, ../sass/style.scss */
+a#addChecklistToHazard {
+  margin-top: -9px;
+}
+
+/* line 172, ../sass/style.scss */
+ul.questionList, ul#parentHazards, ul.listWithChecks {
+  list-style: none;
+}
+/* line 175, ../sass/style.scss */
+ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* line 181, ../sass/style.scss */
+ul.questionList li a {
+  margin: 10px;
+}
+
+/* line 184, ../sass/style.scss */
+ul#parentHazards li a {
+  margin-left: 8px;
+}
+
+/* line 187, ../sass/style.scss */
+ul.listWithChecks li {
+  background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
+  padding-left: 32px;
+}
+/* line 191, ../sass/style.scss */
+ul.listWithChecks li .error {
+  background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
+}
+
+/* line 196, ../sass/style.scss */
+label.deficiencyRoomList {
+  background: #fff;
+}
+
+/* line 199, ../sass/style.scss */
+div.deficiencyRoomList {
+  margin: 10px;
+  padding: 10px;
+}
+
+/* line 203, ../sass/style.scss */
+.resolvedDeficiencies {
+  margin: 0 10px 10px 10px;
+  padding: 10px;
+}
+
+/* Common css rules for metro-ui-light & metro-ui-dark */
+/* Body & Footer & headers
+-------------------------------------------------- */
+/* line 213, ../sass/style.scss */
+body {
+  padding-top: 14px;
+  position: relative;
+  font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+  font-weight: 300;
+  font-size: 11px;
+}
+
+/* line 223, ../sass/style.scss */
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+
+/* line 231, ../sass/style.scss */
+.clearfix {
+  display: inline-block;
+  zoom: 1;
+}
+
+/* line 235, ../sass/style.scss */
+html[xmlns] .clearfix {
+  display: block;
+}
+
+/* line 238, ../sass/style.scss */
+* html .clearfix {
+  height: 1%;
+}
+
+/********************ROOM SELECTION & HAZARD ASSESMENT*************/
+/* line 243, ../sass/style.scss */
+.rooms label, .hazards label {
+  margin: 20px 0;
+}
+
+/* line 247, ../sass/style.scss */
+.hazards {
+  width: 100%;
+}
+
+/* line 250, ../sass/style.scss */
+.hazard {
+  background: #f7f7f7;
+  border-bottom: #d7d7d7 solid 3px;
+  margin: 10px 0;
+  width: 98%;
+  padding: 10px 1%;
+}
+
+/********************CHECKLIST STYLES *****************************/
+/* line 259, ../sass/style.scss */
+.checklist {
+  padding: 0px 1% 15px;
+  margin: 25px 0 25px;
+  background: #f0f0f0;
+}
+
+/* line 264, ../sass/style.scss */
+div.question, li.question {
+  border-bottom: 1px solid #d7d7d7;
+  padding: 10px 2%;
+  margin: 10px 0;
+  width: 93%;
+  background: #f7f7f7;
+}
+
+/* line 271, ../sass/style.scss */
+.hazardBtn i, .hazardBtn span {
+  margin: 0 10px;
+  font-size: 15px;
+}
+
+/* individual page menu bars*/
+/* line 276, ../sass/style.scss */
+.pageMenu {
+  min-height: 55px !important;
+  color: white !important;
+  padding: 2px 0 2px 0;
+  width: 100%;
+}
+/* line 281, ../sass/style.scss */
+.pageMenu a {
+  color: white;
+  margin-left: 13px;
+}
+/* line 286, ../sass/style.scss */
+.pageMenu a img {
+  margin: 0 13px 0 5px;
+}
+
+/* line 291, ../sass/style.scss */
+.questionControls {
+  margin: 10px 0 5px;
+  display: block;
+}
+
+/* line 295, ../sass/style.scss */
+.deficiencies, .recommendations {
+  padding: 15px 0;
+}
+
+/*rotate hide/reveal text for sidenav on checklist*/
+/* line 299, ../sass/style.scss */
+.rotate {
+  -webkit-transform-origin: bottom left;
+  -moz-transform-origin: bottom left;
+  -o-transform-origin: bottom left;
+  -ms-transform-origin: bottom left;
+  transform-origin: bottom left;
+  /* Safari & Chrome */
+  -webkit-transform: rotate(-90deg);
+  /* Firefox */
+  -moz-transform: rotate(-90deg);
+  /* IE */
+  -ms-transform: rotate(-90deg);
+  /* Opera */
+  -o-transform: rotate(-90deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+/****************************************************************
+*****           HAZARD ASSESSMENT   ****************************
+*****************************************************************/
+/* line 328, ../sass/style.scss */
+.hazardRooms {
+  margin-top: -20px;
+}
+/* line 330, ../sass/style.scss */
+.hazardRooms p {
+  margin-bottom: -25px;
+}
+
+/* line 335, ../sass/style.scss */
+.jqtree_common .input-append {
+  margin-bottom: -35px;
+}
+
+/* line 338, ../sass/style.scss */
+.hazardList, .hazardList ul {
+  list-style: none !Important;
+}
+
+@media (max-width: 1365px) {
+  /* line 342, ../sass/style.scss */
+  .hazardList {
+    width: 100%;
+    margin-bottom: 40px;
+  }
+}
+@media (min-width: 1366px) {
+  /* line 349, ../sass/style.scss */
+  .hazardList {
+    width: 30%;
+    margin: 0 3% 0 0;
+    float: left;
+  }
+}
+/* line 356, ../sass/style.scss */
+.hazardListHeader {
+  background-size: 45px 45px !important;
+  background-position: left 50%;
+  background-repeat: no-repeat !important;
+  padding-left: 60px;
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+/* line 364, ../sass/style.scss */
+#biologicalMaterials {
+  background: url(../img/biohazard-largeicon.png);
+}
+
+/* line 368, ../sass/style.scss */
+#generalLaboratorySafety {
+  background: url(../img/chemical-safety-large-icon.png);
+}
+
+/* line 371, ../sass/style.scss */
+#radiationSafety {
+  background: url(../img/radiation-large-icon.png);
+}
+
+/*****************************************************************
+*******           PI HUB               ***************************
+******************************************************************/
+/* line 377, ../sass/style.scss */
+#piButtons a {
+  margin: 20px 10px;
+}
+
+/* line 380, ../sass/style.scss */
+.list thead a {
+  margin: 10px;
+}
+
+/* line 384, ../sass/style.scss */
+.list h2 {
+  margin-top: 30px;
+  margin-bottom: -4px;
+}
+
+/* line 389, ../sass/style.scss */
+#departmentList, #specialHazardList {
+  list-style: none;
+}
+
+/* line 393, ../sass/style.scss */
+#departmentList li, #specialHazardList li {
+  font-size: 20px;
+  line-height: 34px;
+}
+
+/* line 398, ../sass/style.scss */
+textarea, input {
+  border-color: #333 !important;
+}
+
+/* line 402, ../sass/style.scss */
+.hazard-assessment-modal {
+  height: 400px;
+  overflow: hidden !important;
+  left: 0;
+  margin: 0;
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  margin-left: 70px;
+  width: auto;
+}
+
+/* line 418, ../sass/style.scss */
+.hazard-assessment-modal .modal-body {
+  overflow: hidden;
+  padding-right: 0;
+}
+
+/* line 422, ../sass/style.scss */
+.hazard-assessment-modal .tabbable .nav-stacked {
+  border-left: 1px solid #ccc;
+  float: left;
+  overflow-x: hidden;
+  height: 315px;
+}
+
+/* line 429, ../sass/style.scss */
+.hazard-assessment-modal .tabbable .nav-stacked > li {
+  padding-right: 15px;
+  margin-left: 10px;
+  width: 450px;
+}
+
+@media (max-width: 1200px) {
+  /* line 435, ../sass/style.scss */
+  .hazard-assessment-modal .tabbable .nav-stacked > li {
+    padding-right: 15px;
+    margin-left: 10px;
+    width: 250px;
+  }
+}
+/* line 441, ../sass/style.scss */
+.hazard-assessment-modal .tab-content {
+  height: 330px;
+  overflow: hidden !important;
+}
+
+/* line 445, ../sass/style.scss */
+.hazard-assessment-modal .modal-header, .hazard-assessment-modal li.active a {
+  background: #e67e1d !important;
+  color: white !important;
+}
+
+/* line 449, ../sass/style.scss */
+.hazard-assessment-modal li a {
+  color: #666;
+  cursor: pointer;
+}
+
+/* line 453, ../sass/style.scss */
+.hazard-assessment-modal li a:hover {
+  text-decoration: none !important;
+}
+
+/* line 456, ../sass/style.scss */
+li.active a {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-color: #e67e1d !important;
+}
+
+/* line 460, ../sass/style.scss */
+.nav-tabs.nav-stacked > li > a {
+  border: none;
+}
+
+/***************************************************************
+********* I
+***************************************************************/
+/* Let's get this party started */
+/* line 470, ../sass/style.scss */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+/* line 475, ../sass/style.scss */
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  border: 1px solid #ccc;
+}
+
+/* Handle */
+/* line 483, ../sass/style.scss */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* line 489, ../sass/style.scss */
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* line 494, ../sass/style.scss */
+.checklist:before {
+  display: block;
+  content: " ";
+  margin-top: -265px;
+  height: 285px;
+  visibility: hidden;
+}
+
+/* line 501, ../sass/style.scss */
+.checklist ul {
+  list-style: none !important;
+}
+
+/* line 504, ../sass/style.scss */
+#sp-nav ul li a {
+  line-height: normal;
+  color: black;
+  margin: 0;
+  border-bottom: 1px solid #c0c0c0;
+  font-size: 17px;
+  padding: 24px 10px 37px 30px;
+  text-shadow: none;
+  box-shadow: none !important;
+}
+
+/* line 515, ../sass/style.scss */
+#sp-nav ul {
+  padding: 0;
+}
+
+/* line 519, ../sass/style.scss */
+#sp-nav ul li a.active {
+  background: white;
+  color: black;
+}
+
+/* line 524, ../sass/style.scss */
+.accordion-toggle h2 {
+  color: black;
+  text-decoration: none !important;
+}
+
+/* line 528, ../sass/style.scss */
+.accordion-toggle:hover {
+  text-decoration: none !important;
+}
+
+/* line 531, ../sass/style.scss */
+.questionAnswerInputs {
+  float: right;
+}
+
+/* line 534, ../sass/style.scss */
+.dropInputs {
+  clear: both;
+  margin-top: 39px;
+  float: none;
+}
+
+/* line 539, ../sass/style.scss */
+.menuIcon {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  color: #333 !important;
+  background: #d5d5d5;
+  padding: 25px 5px 25px 5px !important;
+  top: 91px;
+  display: block;
+  position: fixed;
+  font-size: 45px;
+  margin: -15px 0 -9px 98%;
+  float: left;
+  z-index: 500;
+  border-radius: 0 3px 3px 0;
+  transition: margin-left .2s;
+  -webkit-transition: margin-left .2s;
+}
+
+/* line 555, ../sass/style.scss */
+.menuIcon:hover {
+  padding: 24px 5px 25px 4px !important;
+  border: 1px solid #ccc;
+  text-decoration: none;
+}
+
+/* line 560, ../sass/style.scss */
+.menuIcon:hover:active {
+  color: green !important t;
+}
+
+/* line 563, ../sass/style.scss */
+.pushLeft {
+  transition: margin-left .2s;
+  -webkit-transition: margin-left .2s;
+  margin-left: 20% !important;
+}
+
+/* line 568, ../sass/style.scss */
+span.red {
+  color: #f00;
+}
+
+/* line 571, ../sass/style.scss */
+span.green {
+  color: #090;
+}
+
+/* line 575, ../sass/style.scss */
+.hazardList > ul {
+  margin: 0;
+}
+
+/* line 578, ../sass/style.scss */
+.hazardList > ul li > ul {
+  margin-left: 0;
+}
+
+/* line 581, ../sass/style.scss */
+.topSub h1, .topSub h2, .topSub h3, .topSub h4, .topSub h5, .topSub h6 {
+  color: black;
+}
+
+/* line 584, ../sass/style.scss */
+.topSub {
+  padding: 5px 0;
+  padding: 5px;
+}
+
+/* line 590, ../sass/style.scss */
+.topSub:hover {
+  background: #eeeeee;
+}
+
+/* line 593, ../sass/style.scss */
+.subHazards {
+  margin: -9px 0 11px 39px !important;
+}
+
+/* line 596, ../sass/style.scss */
+.subHazards > li, .subHazards > p, .topSub > p, .topSub > li, .roomRepeat {
+  font-size: 15px;
+  margin: 15px 0;
+}
+
+/****overrides for small room number checkboxes in hazard assessment***************/
+/* line 601, ../sass/style.scss */
+label.checkbox input[type=checkbox] ~ span.smaller::after {
+  font-family: 'IcoMoon';
+  content: "\2003";
+  font-size: 16px !important;
+  position: absolute;
+  top: 7px !important;
+  left: 7px !important;
+  width: 15px !important;
+  height: 15px;
+  z-index: 1000;
+}
+
+/* line 613, ../sass/style.scss */
+.roomRepeat {
+  margin: 3px;
+}
+
+/* line 616, ../sass/style.scss */
+.roomRepeat:after {
+  content: ", ";
+}
+
+/* line 619, ../sass/style.scss */
+.last:after {
+  content: "" !important;
+}
+
+/* line 622, ../sass/style.scss */
+.modal-trigger-plus {
+  color: #090;
+  font-size: 25px;
+  margin-top: 6px;
+}
+
+/* line 628, ../sass/style.scss */
+.subHazards > li h4, .topSub > li h4 {
+  white-space: nowrap;
+}
+
+/* line 631, ../sass/style.scss */
+#footer ul {
+  list-style: none;
+  margin: 15px 0;
+}
+
+/* line 636, ../sass/style.scss */
+#footer li {
+  float: left;
+  width: 25%;
+}
+
+/* line 640, ../sass/style.scss */
+#footer li a {
+  font-size: 1vw;
+}
+
+/* line 643, ../sass/style.scss */
+#footer li a span {
+  margin-left: 10px;
+}
+
+/* line 646, ../sass/style.scss */
+#footer li a img {
+  max-width: 20%;
+}
+
+@media (max-width: 800px) {
+  /* line 650, ../sass/style.scss */
+  #footer li a span {
+    margin-left: 10px;
+    display: block;
+  }
+}
+/* line 655, ../sass/style.scss */
+.clipboard {
+  background: url(../img/clipboard.png);
+}
+
+/* line 656, ../sass/style.scss */
+.phone {
+  background: url(../img/phone.png);
+  padding-left: 140px !important;
+}
+
+/* line 657, ../sass/style.scss */
+.speechBubble {
+  background: url(../img/speechBubble.png);
+  padding-left: 190px !important;
+}
+
+/* line 658, ../sass/style.scss */
+.checkmarkFooter {
+  background: url(../img/checkmarkFooter.png);
+  padding-left: 140px !important;
+}
+
+/* line 660, ../sass/style.scss */
+.accordion:first-child {
+  padding: 10px;
+}
+
+tr.edit{
+  zoom:1.5;
+  margin-bottom:10px !important;
+  border: #999 solid 3px;
+  background: #ffffff !important;
+}
+
+tr.edit td{
+  background: #ffffff !important;
+  box-shadow: 9px 0px 22px rgba(0,0,0,.3);
+}

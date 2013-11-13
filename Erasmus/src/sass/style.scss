@@ -1,0 +1,662 @@
+@CHARSET "ISO-8859-1";
+
+$orange: #e67e1d;
+
+@mixin breakpoint($point) {
+  @if $point == papa-bear {
+    @media (max-width: 1600px) { @content; }
+  }
+  @else if $point == tablet-horizontal {
+    @media (max-width: 1200px) { @content; }
+  }
+  @else if $point == baby-bear {
+    @media (max-width: 650px)  { @content; }
+  }
+}
+
+/**
+ * A "deeper" indented text effect with the :before and :after pseudo-elements.
+ */
+html{height: 100%;
+background: #aaa;}
+body{min-height:100%;}
+
+body {
+    margin: 0;
+    background: #003b3b;
+    background: #01102b;
+    background: #004754;
+    background: #ddd;
+    font-family: 'Open Sans', sans-serif;
+}
+.whitebg{
+	background:#fff;
+}
+
+/******************************************************************************
+*
+* Typography Overrides
+*
+*******************************************************************************/
+h1,h2,h3,h4,h5,p,a{
+	font-family: 'Open Sans', sans-serif;
+}
+
+@font-face {
+	font-family: 'icomoon';
+	src:url('../fonts/icomoon.eot');
+	src:url('../fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/icomoon.svg#icomoon') format('svg'),
+		url('../fonts/icomoon.woff') format('woff'),
+		url('../fonts/icomoon.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.iconGlyph{
+	font-family:"icomoon";
+}
+
+a{
+	    /**
+    * Apply transitions to all hover states, etc
+    **/	
+	-webkit-transition: all .1s ease-in-out;
+    -moz-transition: all .1s ease-in-out;
+    -o-transition: all .1s ease-in-out;
+     transition: all .1s ease-in-out;
+}
+.siteTitle{
+	color: #cb5a47 !important;
+	font-size:2em !important;
+	line-height:.9em;
+	font-weight:bold ;
+}
+.header{
+	padding-bottom:50px;
+	border-bottom: dashed 2px #bfccd3;
+}
+
+
+
+/**************************************************************
+*************	Utility CLASSES
+**************************************************************/
+.text-shadow{ text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43); }
+.center { float: none; margin-left: auto; margin-right: auto; }
+.blue-border{ border-left: 3px solid #49afcd; }
+tr.blue-border{ border:4px solid #49afcd}
+.shadow { box-shadow:0 0 10px rgba(0,0,0,.7); margin-left:5px; }
+td.shadow{box-shadow: 4px 4px 5px rgba(0,0,0,.3), 6px -2px 4px rgba(0,0,0,.3);}
+.current{background: white; padding:75px 10px 10px 10px;}
+.shadow .jqtree-toggler{
+	left: -1.3em !important;
+}
+/*************************************************************
+RSMS Center specific styles
+*************************************************************/
+
+div.rsmsCenterIconContainer{
+
+	a{
+		padding-top:5px;
+		position:relative; 
+		margin:500 auto !important; 
+	}
+
+	a:hover{
+		-webkit-transform: scale(1.06);
+		-moz-transform:    scale(1.06);
+		-o-transform:      scale(1.06);
+		-ms-transform:     scale(1.06);
+		text-decoration:none !Important;
+
+		@include breakpoint(tablet-horizontal) {
+			-webkit-transform: scale(1.03);
+			-moz-transform:    scale(1.03);
+			-o-transform:      scale(1.03);
+			-ms-transform:     scale(1.03);
+		}
+	}
+	a p{
+	color: white;
+	line-height: normal;
+	text-decoration: none !important;
+	padding: 5px;
+	font-size: 2.3em;
+	}
+
+	a img{
+		@include breakpoint(tablet-horizontal) {
+			float:right;
+			height:45px;
+			padding-right:5px;
+		    max-width:277px; 
+		}
+	}
+}
+
+
+
+/*******************************************************
+*	HAZARD HUB STYLES
+*******************************************************/
+#hazardTree{
+	font-size:25px;
+
+	li {
+		display: block;
+		min-height: 25px;
+		line-height: 45px;
+		white-space: wrap;
+		margin-left: 18px;
+		min-width: 18px;
+	}
+
+}
+
+.hazarNodeButtons{
+	display: inline-block;
+	float:right;
+	
+}
+/*******************************************************
+*	Checklist Hub Styles
+*******************************************************/
+#parentChecklistsContainer, #addChecklist{
+	margin:30px 0;
+}
+a#addChecklistToHazard{
+	margin-top: -9px;
+}
+ul.questionList, ul#parentHazards, ul.listWithChecks{
+	list-style:none;
+
+	li{
+		padding: 10px;
+		border-bottom:1px solid #ddd;
+	}
+}
+
+ul.questionList li a{
+	margin: 10px;
+}
+ul#parentHazards li a{
+	margin-left:8px;
+}
+ul.listWithChecks li{
+	background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
+	padding-left:32px;
+
+	.error{
+		background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
+	}
+}
+
+label.deficiencyRoomList{
+	background: #fff;
+}
+div.deficiencyRoomList{
+	margin:10px;
+	padding:10px;
+}
+.resolvedDeficiencies {
+	margin: 0 10px 10px 10px;
+	padding: 10px;
+}
+/* Common css rules for metro-ui-light & metro-ui-dark */
+
+
+/* Body & Footer & headers
+-------------------------------------------------- */
+
+body {
+   padding-top: 14px;
+   //padding-bottom: 88px;
+   position: relative;
+   font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+   font-weight: 300;
+   font-size: 11px;
+}
+
+
+.clearfix:after {
+   content: ".";
+   display: block;
+   clear: both;
+   visibility: hidden;
+   line-height: 0;
+   height: 0;
+}
+.clearfix {
+   display: inline-block;
+   zoom: 1;
+}
+html[xmlns] .clearfix {
+   display: block;
+}
+* html .clearfix {
+   height: 1%;
+}
+/********************ROOM SELECTION & HAZARD ASSESMENT*************/
+.rooms, .hazards{
+	label{
+		margin:20px 0;
+	}
+}
+.hazards{
+	width:100%;
+}
+.hazard{
+	background: #f7f7f7;
+	border-bottom: #d7d7d7 solid 3px;
+	margin: 10px 0;
+	width: 98%;
+	padding: 10px 1%;
+}
+
+/********************CHECKLIST STYLES *****************************/
+.checklist{
+	padding: 0px 1% 15px;
+	margin: 25px 0 25px;
+	background: #f0f0f0;
+}
+div.question, li.question{
+	border-bottom:1px solid #d7d7d7;
+	padding:10px 2%;
+	margin:10px 0;
+	width: 93%;
+	background:#f7f7f7;
+}
+.hazardBtn i, .hazardBtn span{
+	margin:0 10px;
+	font-size:15px;	
+}
+/* individual page menu bars*/
+.pageMenu{
+min-height: 55px !important;
+color: white !important;
+padding: 2px 0 2px 0;
+width: 100%;
+	a{
+		color:white;
+		margin-left:13px;
+	}
+
+	a img{
+		margin: 0 13px 0 5px;
+	}
+}
+
+.questionControls{
+	margin:10px 0 5px;
+	display:block;
+}
+.deficiencies, .recommendations{
+	padding:15px 0;
+}
+/*rotate hide/reveal text for sidenav on checklist*/
+.rotate {
+	-webkit-transform-origin: bottom left;   
+
+    -moz-transform-origin: bottom left; 
+    
+    -o-transform-origin: bottom left; 
+
+    -ms-transform-origin: bottom left; 
+
+    transform-origin: bottom left;  
+	/* Safari & Chrome */
+	-webkit-transform: rotate(-90deg);
+	
+	/* Firefox */
+	-moz-transform: rotate(-90deg);
+	
+	/* IE */
+	-ms-transform: rotate(-90deg);
+	
+	/* Opera */
+	-o-transform: rotate(-90deg);
+	
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+/****************************************************************
+*****           HAZARD ASSESSMENT   ****************************
+*****************************************************************/
+.hazardRooms{
+	margin-top:-20px;
+	p {
+		margin-bottom:-25px;
+	}
+}
+
+.jqtree_common .input-append{
+	margin-bottom:-35px;
+}
+.hazardList, .hazardList ul{
+	list-style: none !Important;
+}
+@media (max-width: 1365px) {
+  .hazardList {
+		width:100%;
+		margin-bottom:40px;
+	}
+}
+
+@media (min-width: 1366px){
+	.hazardList {
+		width:30%;
+		margin: 0 3% 0 0;
+		float:left;
+	}
+}
+
+.hazardListHeader{
+	background-size: 45px 45px !important;
+	background-position: left 50%;
+	background-repeat: no-repeat !important;
+	padding-left:60px;
+	margin-bottom: 10px;
+	font-size: 30px;
+}
+#biologicalMaterials{
+	background:url(../img/biohazard-largeicon.png);
+
+}
+#generalLaboratorySafety{
+	background: url(../img/chemical-safety-large-icon.png);
+}
+#radiationSafety{
+	background: url(../img/radiation-large-icon.png);
+}
+/*****************************************************************
+*******           PI HUB               ***************************
+******************************************************************/
+#piButtons a{
+	margin:20px 10px;
+}
+.list thead a{
+	margin:10px;
+}
+
+.list h2{
+	margin-top: 30px;
+	margin-bottom: -4px;
+}
+
+#departmentList, #specialHazardList{
+	list-style:none;
+}
+
+#departmentList li, #specialHazardList li{
+	font-size: 20px;
+	line-height: 34px;
+}
+
+textarea, input{
+	border-color:#333 !important;
+}
+
+.hazard-assessment-modal{
+	height:400px;
+	overflow: hidden !important;
+	left: 0;
+   margin: 0;
+   border: 0;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+  margin-left:70px;
+  width: auto;
+
+}
+.hazard-assessment-modal .modal-body{
+	overflow: hidden;
+	padding-right:0;
+}
+.hazard-assessment-modal .tabbable .nav-stacked{
+	
+	border-left:1px solid #ccc;
+	float:left;
+	overflow-x: hidden;
+	height: 315px;
+}
+.hazard-assessment-modal .tabbable .nav-stacked>li{
+	padding-right:15px;
+	margin-left:10px;
+	width:450px;
+}
+@media (max-width: 1200px){
+	.hazard-assessment-modal .tabbable .nav-stacked>li{
+	padding-right:15px;
+	margin-left:10px;
+	width:250px;
+}
+}
+.hazard-assessment-modal .tab-content{
+	height: 330px;
+	overflow: hidden !important;
+}
+.hazard-assessment-modal .modal-header, .hazard-assessment-modal li.active a{
+	background: $orange !important;
+	color: white !important;
+}
+.hazard-assessment-modal li a{
+	color:#666;
+	cursor: pointer;
+}
+.hazard-assessment-modal li a:hover{
+	text-decoration: none !important;
+}
+li.active a{
+	box-shadow: 0 0 10px rgba(0,0,0,.3);
+	border-color: $orange !important;
+}
+.nav-tabs.nav-stacked > li > a {
+	border: none;
+}
+
+
+/***************************************************************
+********* I
+***************************************************************/
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 1px solid #ccc;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: rgba(0,0,0,0.3); 
+    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(0,0,0,0.2); 
+}
+
+
+.checklist:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -265px; 
+  height: 285px; 
+  visibility: hidden; 
+}
+.checklist ul{
+	list-style: none !important;
+}
+#sp-nav ul li a{
+	line-height: normal;
+	color: black;
+	margin: 0;
+	border-bottom: 1px solid #c0c0c0;
+	font-size: 17px;
+	padding: 24px 10px 37px 30px;
+	text-shadow: none;
+	box-shadow: none !important;
+}
+
+#sp-nav ul{
+	padding:0;
+}
+
+#sp-nav ul li a.active{
+	background: white;
+	color:black;
+}
+
+.accordion-toggle h2{
+	color:black;
+	text-decoration: none !important;
+}
+.accordion-toggle:hover{
+	text-decoration: none !important;
+}
+.questionAnswerInputs{
+	float:right;
+}
+.dropInputs{
+	clear: both;
+	margin-top: 39px;
+	float: none;
+}
+.menuIcon{
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+	color: #333 !important;
+	background: #d5d5d5;
+	padding: 25px 5px 25px 5px !important;
+	top: 91px;
+	display: block;
+	position: fixed;
+	font-size: 45px;
+	margin: -15px 0 -9px 98%;
+	float: left;
+	z-index: 500;
+	border-radius: 0 3px 3px 0;
+	transition: margin-left .2s;
+ 	-webkit-transition: margin-left .2s;
+}
+.menuIcon:hover{
+	padding: 24px 5px 25px 4px !important;
+	border: 1px solid #ccc;
+	text-decoration: none;
+}
+.menuIcon:hover:active{
+	color:green !importantt;
+}
+.pushLeft{
+	transition: margin-left .2s;
+  	-webkit-transition: margin-left .2s;
+	margin-left:20% !important;
+}
+span.red{
+	color: #f00;
+}
+span.green{
+	color: #090;
+}
+
+.hazardList>ul{
+	margin:0;
+}
+.hazardList>ul li>ul{
+	margin-left:0;
+}
+.topSub h1,.topSub h2,.topSub h3,.topSub h4, .topSub h5, .topSub h6{
+	color:black;
+}
+.topSub{
+	padding:5px 0;
+	//background: rgba(50,50,50,.03);
+	padding:5px;
+	//border-bottom:1px solid #ccc;
+}
+.topSub:hover{
+	background: #eee
+}
+.subHazards{
+	margin:-9px 0 11px 39px !important;
+}
+.subHazards>li, .subHazards>p, .topSub>p, .topSub>li, .roomRepeat{
+	font-size: 15px;
+	margin:15px 0;
+}
+/****overrides for small room number checkboxes in hazard assessment***************/
+label.checkbox input[type=checkbox] ~ span.smaller::after {
+	font-family: 'IcoMoon';
+	content: "\2003";
+	font-size: 16px !important;
+	position: absolute;
+	top: 7px !important;
+	left: 7px !important;
+	width: 15px !important;
+	height: 15px;
+	z-index: 1000;
+}
+
+.roomRepeat{
+	margin:3px;
+}
+.roomRepeat:after{
+	content: ", ";
+}
+.last:after{
+	content: "" !important;
+}
+.modal-trigger-plus{
+
+	color:#090;
+	font-size: 25px;
+	margin-top:6px;
+}
+.subHazards>li h4, .topSub>li h4{
+	white-space: nowrap;
+}
+#footer ul{
+	list-style: none;
+	margin:15px 0;
+
+}
+#footer li{
+	float:left;
+	width:25%;
+}
+#footer li a{
+	font-size: 1vw;
+}
+#footer li a span{
+	margin-left:10px;
+}
+#footer li a img{
+	max-width:20%;
+}
+@media (max-width: 800px){
+	#footer li a span{
+	margin-left:10px;
+	display: block;
+	}
+}
+.clipboard{	background: url(../img/clipboard.png);}
+.phone{	background: url(../img/phone.png);padding-left: 140px !important;}
+.speechBubble{background: url(../img/speechBubble.png);padding-left: 190px !important}
+.checkmarkFooter{background: url(../img/checkmarkFooter.png);padding-left: 140px !important;}
+
+.accordion:first-child{
+	padding:10px;
+}

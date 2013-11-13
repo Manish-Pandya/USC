@@ -1,0 +1,488 @@
+@CHARSET "ISO-8859-1";
+/**
+ * A "deeper" indented text effect with the :before and :after pseudo-elements.
+ */
+html {
+  height: 100%;
+  background: #aaa; }
+
+body {
+  min-height: 100%; }
+
+body {
+  margin: 0;
+  background: #003b3b;
+  background: #01102b;
+  background: #004754;
+  background: #ddd;
+  font-family: 'Open Sans', sans-serif; }
+
+.whitebg {
+  background: #fff; }
+
+/******************************************************************************
+*
+* Typography Overrides
+*
+*******************************************************************************/
+h1, h2, h3, h4, h5, p, a {
+  font-family: 'Open Sans', sans-serif; }
+
+@font-face {
+  font-family: 'icomoon';
+  src: url("../fonts/icomoon.eot");
+  src: url("../fonts/icomoon.eot?#iefix") format("embedded-opentype"), url("../fonts/icomoon.svg#icomoon") format("svg"), url("../fonts/icomoon.woff") format("woff"), url("../fonts/icomoon.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+
+.iconGlyph {
+  font-family: "icomoon"; }
+
+a {
+  	    /**
+      * Apply transitions to all hover states, etc
+      **/
+  -webkit-transition: all .1s ease-in-out;
+  -moz-transition: all .1s ease-in-out;
+  -o-transition: all .1s ease-in-out;
+  transition: all .1s ease-in-out; }
+
+.siteTitle {
+  color: #cb5a47 !important;
+  font-size: 2em !important;
+  line-height: .9em;
+  font-weight: bold; }
+
+.header {
+  padding-bottom: 50px;
+  border-bottom: dashed 2px #bfccd3; }
+
+/**************************************************************
+*************	Utility CLASSES
+**************************************************************/
+.text-shadow {
+  text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43); }
+
+.center {
+  float: none;
+  margin-left: auto;
+  margin-right: auto; }
+
+.blue-border {
+  border-left: 3px solid #49afcd;
+  /*************************************************************
+  RSMS Center specific styles
+  *************************************************************/
+  /*
+  *
+  *	RESPONSIVE STYLES FOR RSMS Center elements
+  *
+  */
+  /*******************************************************
+  *	HAZARD HUB STYLES
+  *******************************************************/
+  /*******************************************************
+  *	Checklist Hub Styles
+  *******************************************************/
+  /* Common css rules for metro-ui-light & metro-ui-dark */
+  /* Body & Footer & headers
+  -------------------------------------------------- */
+  /********************ROOM SELECTION & HAZARD ASSESMENT*************/
+  /********************CHECKLIST STYLES *****************************/
+  /* individual page menu bars*/
+  /*rotate hide/reveal text for sidenav on checklist*/
+  /****************************************************************
+  *****           HAZARD ASSESSMENT   ****************************
+  *****************************************************************/
+  /*****************************************************************
+  *******           PI HUB               ***************************
+  ******************************************************************/
+  /***************************************************************
+  ********* I
+  ***************************************************************/
+  /* Let's get this party started */
+  /* Track */
+  /* Handle */
+  /****overrides for small room number checkboxes in hazard assessment***************/ }
+  .blue-border tr.blue-border {
+    border: 4px solid #49afcd; }
+  .blue-border .shadow {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    margin-left: 5px; }
+  .blue-border td.shadow {
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.3), 6px -2px 4px rgba(0, 0, 0, 0.3); }
+  .blue-border .current {
+    background: white;
+    padding: 75px 10px 10px 10px; }
+  .blue-border .shadow .jqtree-toggler {
+    left: -1.3em !important; }
+  .blue-border .rsmsCenterIconContainer a {
+    padding-top: 5px;
+    position: relative;
+    margin: 0 auto !important; }
+  .blue-border .rsmsCenterIconContainer a:hover {
+    -webkit-transform: scale(1.06);
+    -moz-transform: scale(1.06);
+    -o-transform: scale(1.06);
+    -ms-transform: scale(1.06);
+    text-decoration: none !Important; }
+  @media (max-width: 800px) {
+    .blue-border .rsmsCenterIconContainer a img {
+      float: right;
+      height: 45px;
+      padding-right: 5px;
+      max-width: 277px; }
+    .blue-border .rsmsCenterIconContainer a:hover {
+      -webkit-transform: scale(1.03);
+      -moz-transform: scale(1.03);
+      -o-transform: scale(1.03);
+      -ms-transform: scale(1.03);
+      text-decoration: none !Important; } }
+  .blue-border .rsmsCenterIconContainer a p {
+    color: white;
+    line-height: normal;
+    text-decoration: none !important;
+    padding: 5px;
+    font-size: 2.3em; }
+  .blue-border #hazardTree {
+    font-size: 25px; }
+  .blue-border #hazardTree li {
+    display: block;
+    min-height: 25px;
+    line-height: 45px;
+    white-space: wrap;
+    margin-left: 18px;
+    min-width: 18px; }
+  .blue-border .hazarNodeButtons {
+    display: inline-block;
+    float: right; }
+  .blue-border #parentChecklistsContainer, .blue-border #addChecklist {
+    margin: 30px 0; }
+  .blue-border a#addChecklistToHazard {
+    margin-top: -9px; }
+  .blue-border ul.questionList, .blue-border ul#parentHazards, .blue-border ul.listWithChecks {
+    list-style: none; }
+  .blue-border ul.questionList li, .blue-border ul#parentHazards li, .blue-border ul.listWithChecks li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd; }
+  .blue-border ul.questionList li a {
+    margin: 10px; }
+  .blue-border ul#parentHazards li a {
+    margin-left: 8px; }
+  .blue-border ul.listWithChecks li {
+    background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
+    padding-left: 32px; }
+  .blue-border ul.listWithChecks li.error {
+    background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede; }
+  .blue-border label.deficiencyRoomList {
+    background: #fff; }
+  .blue-border div.deficiencyRoomList {
+    margin: 10px;
+    padding: 10px; }
+  .blue-border .resolvedDeficiencies {
+    margin: 0 10px 10px 10px;
+    padding: 10px; }
+  .blue-border body {
+    padding-top: 14px;
+    position: relative;
+    font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+    font-weight: 300;
+    font-size: 11px; }
+  .blue-border .clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0; }
+  .blue-border .clearfix {
+    display: inline-block;
+    zoom: 1; }
+  .blue-border html[xmlns] .clearfix {
+    display: block; }
+  .blue-border * html .clearfix {
+    height: 1%; }
+  .blue-border .hazards {
+    width: 100%; }
+  .blue-border .hazard {
+    background: #f7f7f7;
+    border-bottom: #d7d7d7 solid 3px;
+    margin: 10px 0;
+    width: 98%;
+    padding: 10px 1%; }
+  .blue-border .rooms label, .blue-border .hazards label {
+    margin: 20px 0; }
+  .blue-border .checklist {
+    padding: 0px 1% 15px;
+    margin: 25px 0 25px;
+    background: #f0f0f0; }
+  .blue-border div.question, .blue-border li.question {
+    border-bottom: 1px solid #d7d7d7;
+    padding: 10px 2%;
+    margin: 10px 0;
+    width: 93%;
+    background: #f7f7f7; }
+  .blue-border .hazardBtn i, .blue-border .hazardBtn span {
+    margin: 0 10px;
+    font-size: 15px; }
+  .blue-border .pageMenu {
+    min-height: 55px !important;
+    color: white !important;
+    padding: 2px 0 2px 0;
+    width: 100%; }
+  .blue-border .pageMenu a {
+    color: white;
+    margin-left: 13px; }
+  .blue-border .pageMenu a img {
+    margin: 0 13px 0 5px; }
+  .blue-border .questionControls {
+    margin: 10px 0 5px;
+    display: block; }
+  .blue-border .deficiencies, .blue-border .recommendations {
+    padding: 15px 0; }
+  .blue-border .rotate {
+    -webkit-transform-origin: bottom left;
+    -moz-transform-origin: bottom left;
+    -o-transform-origin: bottom left;
+    -ms-transform-origin: bottom left;
+    transform-origin: bottom left;
+    /* Safari & Chrome */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
+  .blue-border .hazardRooms {
+    margin-top: -20px; }
+  .blue-border .hazardRooms p {
+    margin-bottom: -25px; }
+  .blue-border .jqtree_common .input-append {
+    margin-bottom: -35px; }
+  .blue-border .hazardList, .blue-border .hazardList ul {
+    list-style: none !Important; }
+  @media (max-width: 1365px) {
+    .blue-border .hazardList {
+      width: 100%;
+      margin-bottom: 40px; } }
+  @media (min-width: 1366px) {
+    .blue-border .hazardList {
+      width: 30%;
+      margin: 0 3% 0 0;
+      float: left; } }
+  .blue-border .hazardListHeader {
+    background-size: 45px 45px !important;
+    background-position: left 50%;
+    background-repeat: no-repeat !important;
+    padding-left: 60px;
+    margin-bottom: 10px;
+    font-size: 30px; }
+  .blue-border #biologicalMaterials {
+    background: url(../img/biohazard-largeicon.png); }
+  .blue-border #generalLaboratorySafety {
+    background: url(../img/chemical-safety-large-icon.png); }
+  .blue-border #radiationSafety {
+    background: url(../img/radiation-large-icon.png); }
+  .blue-border #piButtons a {
+    margin: 20px 10px; }
+  .blue-border .list thead a {
+    margin: 10px; }
+  .blue-border .list h2 {
+    margin-top: 30px;
+    margin-bottom: -4px; }
+  .blue-border #departmentList, .blue-border #specialHazardList {
+    list-style: none; }
+  .blue-border #departmentList li, .blue-border #specialHazardList li {
+    font-size: 20px;
+    line-height: 34px; }
+  .blue-border textarea, .blue-border input {
+    border-color: #333 !important; }
+  .blue-border .hazard-assessment-modal {
+    height: 400px;
+    overflow: hidden !important;
+    left: 0;
+    margin: 0;
+    border: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin-left: 70px;
+    width: auto; }
+  .blue-border .hazard-assessment-modal .modal-body {
+    overflow: hidden;
+    padding-right: 0; }
+  .blue-border .hazard-assessment-modal .tabbable .nav-stacked {
+    border-left: 1px solid #ccc;
+    float: left;
+    overflow-x: hidden;
+    height: 315px; }
+  .blue-border .hazard-assessment-modal .tabbable .nav-stacked > li {
+    padding-right: 15px;
+    margin-left: 10px;
+    width: 450px; }
+  @media (max-width: 1200px) {
+    .blue-border .hazard-assessment-modal .tabbable .nav-stacked > li {
+      padding-right: 15px;
+      margin-left: 10px;
+      width: 250px; } }
+  .blue-border .hazard-assessment-modal .tab-content {
+    height: 330px;
+    overflow: hidden !important; }
+  .blue-border .hazard-assessment-modal .modal-header, .blue-border .hazard-assessment-modal li.active a {
+    background: #e67e1d !important;
+    color: white !important; }
+  .blue-border .hazard-assessment-modal li a {
+    color: #666;
+    cursor: pointer; }
+  .blue-border .hazard-assessment-modal li a:hover {
+    text-decoration: none !important; }
+  .blue-border li.active a {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-color: #e67e1d !important; }
+  .blue-border .nav-tabs.nav-stacked > li > a {
+    border: none; }
+  .blue-border ::-webkit-scrollbar {
+    width: 12px; }
+  .blue-border ::-webkit-scrollbar-track {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 1px solid #ccc; }
+  .blue-border ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: rgba(0, 0, 0, 0.3); }
+  .blue-border ::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(0, 0, 0, 0.2); }
+  .blue-border .checklist:before {
+    display: block;
+    content: " ";
+    margin-top: -265px;
+    height: 285px;
+    visibility: hidden; }
+  .blue-border .checklist ul {
+    list-style: none !important; }
+  .blue-border #sp-nav ul li a {
+    line-height: normal;
+    color: black;
+    margin: 0;
+    border-bottom: 1px solid #c0c0c0;
+    font-size: 17px;
+    padding: 24px 10px 37px 30px;
+    text-shadow: none;
+    box-shadow: none !important; }
+  .blue-border #sp-nav ul {
+    padding: 0; }
+  .blue-border #sp-nav ul li a.active {
+    background: white;
+    color: black; }
+  .blue-border .accordion-toggle h2 {
+    color: black;
+    text-decoration: none !important; }
+  .blue-border .accordion-toggle:hover {
+    text-decoration: none !important; }
+  .blue-border .questionAnswerInputs {
+    float: right; }
+  .blue-border .dropInputs {
+    clear: both;
+    margin-top: 39px;
+    float: none; }
+  .blue-border .menuIcon {
+    box-shadow: 5px 3px 7px rgba(0, 0, 0, 0.5);
+    color: #333 !important;
+    background: #d5d5d5;
+    padding: 25px 5px 25px 5px !important;
+    top: 10%;
+    display: block;
+    position: fixed;
+    font-size: 45px;
+    margin: -15px 0 -9px 98%;
+    float: left;
+    z-index: 500;
+    border-radius: 0 3px 3px 0;
+    transition: margin-left .2s;
+    -webkit-transition: margin-left .2s; }
+  .blue-border .menuIcon:hover {
+    padding: 24px 5px 25px 4px !important;
+    border: 1px solid #ccc;
+    text-decoration: none; }
+  .blue-border .menuIcon:hover:active {
+    color: green !important t; }
+  .blue-border .pushLeft {
+    transition: margin-left .2s;
+    -webkit-transition: margin-left .2s;
+    margin-left: 20% !important; }
+  .blue-border span.red {
+    color: #f00; }
+  .blue-border span.green {
+    color: #090; }
+  .blue-border .hazardList > ul {
+    margin: 0; }
+  .blue-border .hazardList > ul li > ul {
+    margin-left: 0; }
+  .blue-border .topSub h1, .blue-border .topSub h2, .blue-border .topSub h3, .blue-border .topSub h4, .blue-border .topSub h5, .blue-border .topSub h6 {
+    color: black; }
+  .blue-border .topSub {
+    padding: 5px 0;
+    padding: 5px; }
+  .blue-border .topSub:hover {
+    background: #eeeeee; }
+  .blue-border .subHazards {
+    margin: -9px 0 11px 39px !important; }
+  .blue-border .subHazards > li, .blue-border .subHazards > p, .blue-border .topSub > p, .blue-border .topSub > li, .blue-border .roomRepeat {
+    font-size: 15px;
+    margin: 15px 0; }
+  .blue-border label.checkbox input[type=checkbox] ~ span.smaller::after {
+    font-family: 'IcoMoon';
+    content: "\2003";
+    font-size: 16px !important;
+    position: absolute;
+    top: 7px !important;
+    left: 7px !important;
+    width: 15px !important;
+    height: 15px;
+    z-index: 1000; }
+  .blue-border .roomRepeat {
+    margin: 3px; }
+  .blue-border .roomRepeat:after {
+    content: ", "; }
+  .blue-border .last:after {
+    content: "" !important; }
+  .blue-border .modal-trigger-plus {
+    color: #090;
+    font-size: 25px;
+    margin-top: 6px; }
+  .blue-border .subHazards > li h4, .blue-border .topSub > li h4 {
+    white-space: nowrap; }
+  .blue-border #footer ul {
+    list-style: none;
+    margin: 15px 0; }
+  .blue-border #footer li {
+    float: left;
+    width: 25%; }
+  .blue-border #footer li a {
+    font-size: 1vw; }
+  .blue-border #footer li a span {
+    margin-left: 10px; }
+  .blue-border #footer li a img {
+    max-width: 20%; }
+  @media (max-width: 800px) {
+    .blue-border #footer li a span {
+      margin-left: 10px;
+      display: block; } }
+  .blue-border .clipboard {
+    background: url(../img/clipboard.png); }
+  .blue-border .phone {
+    background: url(../img/phone.png);
+    padding-left: 140px !important; }
+  .blue-border .speechBubble {
+    background: url(../img/speechBubble.png);
+    padding-left: 190px !important; }
+  .blue-border .checkmarkFooter {
+    background: url(../img/checkmarkFooter.png);
+    padding-left: 140px !important; }

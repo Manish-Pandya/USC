@@ -1,0 +1,45 @@
+var userList = angular.module('userList', ['ui.bootstrap']);
+
+userList.factory('testFactory', function($http){
+	
+	var tempFactory = {};
+	
+	tempFactory.getUsers = function(onSuccess){
+		
+	$http.jsonp('http://hazmars.graysail.com/api.php?callback=JSON_CALLBACK')
+		.success( function(data) {		
+		   console.log('success');
+		   console.log(data);
+	       onSuccess(data);
+	    })
+	    /*
+	    .error(function(data, status, headers, config){
+            alert('error');
+            console.log(headers());
+            console.log(status);
+            console.log(config);
+        });
+        */
+	};
+	
+	return tempFactory;
+});
+
+
+function UserListCtrl($scope, testFactory) {
+  $scope.users = [];
+  
+  init();
+  
+  function init(){
+	  testFactory.getUsers(onGetUsers);
+	  console.log('init called');
+  };
+  
+  function onGetUsers(data) {
+	  $scope.users = data;
+	  console.log($scope.users);
+  }
+};
+
+userList.controller( 'UserListCtrl', UserListCtrl);

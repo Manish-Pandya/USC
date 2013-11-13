@@ -1,0 +1,15 @@
+<?php 
+	require_once '../top_view.php';
+?>
+<div class="navbar">
+<ul class="nav pageMenu" style="background: #e67e1d;">
+	<li class="span3">
+		<img src="../../img/hazard-icon.png" class="pull-left" style="height:50px" />
+		<h2  style="padding: 11px 0 5px 85px;">Hazard Hub</h2>	
+	</li>
+</ul>
+</div>
+
+<?php 
+require_once '../bottom_view.php';
+?>
