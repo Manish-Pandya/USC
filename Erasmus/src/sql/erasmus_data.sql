@@ -12,6 +12,7 @@ SET foreign_key_checks = 0;
 
 -- Empty tables
 TRUNCATE TABLE erasmus_user;
+TRUNCATE TABLE response_answer;
 TRUNCATE TABLE building;
 TRUNCATE TABLE room;
 TRUNCATE TABLE hazard;
@@ -19,10 +20,18 @@ TRUNCATE TABLE principal_investigator;
 TRUNCATE TABLE inspector;
 TRUNCATE TABLE department;
 TRUNCATE TABLE principal_investigator_department;
+TRUNCATE TABLE hazard_room;
+TRUNCATE TABLE checklist;
+TRUNCATE TABLE question;
+TRUNCATE TABLE deficiency;
+TRUNCATE TABLE deficiency_root_cause;
+TRUNCATE TABLE recommendation;
+TRUNCATE TABLE observation;
 -- TODO: Add Tables
 
 -- Reset counters
 ALTER TABLE erasmus_user AUTO_INCREMENT = 1;
+ALTER TABLE response_answer AUTO_INCREMENT = 1;
 ALTER TABLE building AUTO_INCREMENT = 1;
 ALTER TABLE room AUTO_INCREMENT = 1;
 ALTER TABLE hazard AUTO_INCREMENT = 1;
@@ -30,6 +39,13 @@ ALTER TABLE principal_investigator AUTO_INCREMENT = 1;
 ALTER TABLE inspector AUTO_INCREMENT = 1;
 ALTER TABLE department AUTO_INCREMENT = 1;
 ALTER TABLE principal_investigator_department AUTO_INCREMENT = 1;
+ALTER TABLE hazard_room AUTO_INCREMENT = 1;
+ALTER TABLE checklist AUTO_INCREMENT = 1;
+ALTER TABLE question AUTO_INCREMENT = 1;
+ALTER TABLE deficiency AUTO_INCREMENT = 1;
+ALTER TABLE deficiency_root_cause AUTO_INCREMENT = 1;
+ALTER TABLE recommendation AUTO_INCREMENT = 1;
+ALTER TABLE observation AUTO_INCREMENT = 1;
 -- TODO: Add Tables
 
 SET foreign_key_checks = 1;
@@ -48,6 +64,15 @@ VALUES
 	(null, 1, 1, 'mmartin', 'Mitch Martin', 'mmartin@graysail.com'),
 	(null, 1, 1, 'pi1', 'PI Number 1', 'mmartin+pi1@graysail.com'),
 	(null, 1, 1, 'inpectorgadget', 'Inspector Gadget', 'mmartin+inspectorgadget@graysail.com')
+;
+
+-- Create Answer values for response
+INSERT INTO response_answer ( text )
+VALUES
+	('Yes'),
+	('No'),
+	('NotApplicable'),
+	('NoResponse')
 ;
 
 -- Create Buildings
@@ -159,125 +184,175 @@ VALUES
 ;
 
 -- Create Hazards
-INSERT INTO hazard (date_created, created_user_id, last_modified_user_id, parent_hazard_id, name)
-	VALUES
-		(null, 1, 1, null, 'Biological Materials'),
-		(null, 1, 1, 1, 'Recombinant DNA'),
-		(null, 1, 1, 2, 'Viral Vectors'),
-		(null, 1, 1, 3, 'Adeno-associated Virus (AAV)'),
-		(null, 1, 1, 3, 'Adenovirus'),
-		(null, 1, 1, 3, 'Baculovirus'),
-		(null, 1, 1, 3, 'Epstein-Barr Virus (EBV)'),
-		(null, 1, 1, 3, 'Herpes Simplex Virus (HSV)'),
-		(null, 1, 1, 3, 'Poxvirus / Vaccinia'),
-		(null, 1, 1, 3, 'Retrovirus / Lentivirus (EIAV)'),
-		(null, 1, 1, 3, 'Retrovirus / Lentivirus (FIV)'),
-		(null, 1, 1, 3, 'Retrovirus / Lentivirus (HIV)'),
-		(null, 1, 1, 3, 'Retrovirus / Lentivirus (SIV)'),
-		(null, 1, 1, 3, 'Retrovirus / MMLV (Amphotropic or Pseudotyped)'),
-		(null, 1, 1, 3, 'Retrovirus / MMLV (Ecotropic)'),
-		(null, 1, 1, 1, 'Select AGENTS and Toxins'),	-- 16
-		(null, 1, 1, 16, 'HHS Select Agents and Toxins'),	-- 17
-		(null, 1, 1, 17, 'Abrin'),
-		(null, 1, 1, 17, 'Botulinum neurotoxins'),
-		(null, 1, 1, 17, 'Botulinum neurotoxin producing species of Clostrkey_idium'),
-		(null, 1, 1, 17, 'Cercopithecine herpesvirus 1 (Herpes B virus)'),
-		(null, 1, 1, 17, 'Clostrkey_idium perfringens epsilon toxin'),
-		(null, 1, 1, 17, 'Cocckey_idiokey_ides posadasii/Cocckey_idiokey_ides immitis'),
-		(null, 1, 1, 17, 'Conotoxins'),
-		(null, 1, 1, 17, 'Coxiella burnetii'),
-		(null, 1, 1, 17, 'Crimean-Congo haemorrhagic fever virus'),
-		(null, 1, 1, 17, 'Diacetoxyscirpenol'),
-		(null, 1, 1, 17, 'Eastern Equine Encephalitis virus'),
-		(null, 1, 1, 17, 'Ebola virus'),
-		(null, 1, 1, 17, 'Francisella tularensis'),
-		(null, 1, 1, 17, 'Lassa fever virus'),
-		(null, 1, 1, 17, 'Marburg virus'),
-		(null, 1, 1, 17, 'Monkeypox virus'),
-		(null, 1, 1, 17, 'Reconstructed 1918 Influenza virus'),
-		(null, 1, 1, 17, 'Ricin'),
-		(null, 1, 1, 17, 'Rickettsia prowazekii'),
-		(null, 1, 1, 17, 'Rickettsia rickettsii'),
-		(null, 1, 1, 17, 'Saxitoxin'),
-		(null, 1, 1, 17, 'Shiga-like ribosome inactivating proteins'),
-		(null, 1, 1, 17, 'Shigatoxin'),
-		(null, 1, 1, 17, 'South American Haemorrhagic Fever viruses'),	-- 41
-		(null, 1, 1, 41, 'Flexal'),
-		(null, 1, 1, 41, 'Guanarito'),
-		(null, 1, 1, 41, 'Junin'),
-		(null, 1, 1, 41, 'Machupo'),
-		(null, 1, 1, 41, 'Sabia'),
-		(null, 1, 1, 17, 'Staphylococcal enterotoxins'),
-		(null, 1, 1, 17, 'T-2 toxin'),
-		(null, 1, 1, 17, 'Tetrodotoxin'),
-		(null, 1, 1, 17, 'Tick-borne encephalitis complex (flavi) viruses'),	-- 45
-		(null, 1, 1, 45, 'Central European Tick-borne encephalitis'),
-		(null, 1, 1, 45, 'Far Eastern Tick-borne encephalitis'),
-		(null, 1, 1, 45, 'Kyasanur Forest disease'),
-		(null, 1, 1, 45, 'Omsk Hemorrhagic Fever'),
-		(null, 1, 1, 45, 'Russian Spring and Summer encephalitis'),
-		(null, 1, 1, 17, 'Variola major virus (Smallpox virus)'),
-		(null, 1, 1, 17, 'Variola minor virus (Alastrim)'),
-		(null, 1, 1, 17, 'Yersinia pestis'),
-		(null, 1, 1, 16, 'OVERLAP SELECT AGENTS AND TOXINS'),	-- 59
-		(null, 1, 1, 59, 'Bacillus anthracis'),
-		(null, 1, 1, 59, 'Brucella abortus'),
-		(null, 1, 1, 59, 'Brucella melitensis'),
-		(null, 1, 1, 59, 'Brucella suis'),
-		(null, 1, 1, 59, 'Burkholderia mallei (formerly Pseudomonas mallei)'),
-		(null, 1, 1, 59, 'Burkholderia pseudomallei'),
-		(null, 1, 1, 59, 'Hendra virus'),
-		(null, 1, 1, 59, 'Nipah virus'),
-		(null, 1, 1, 59, 'Rift Valley fever virus'),
-		(null, 1, 1, 59, 'Venezuelan Equine Encephalitis virus'),
-		(null, 1, 1, 16, 'USDA VETERINARY SERVICES (VS) SELECT AGENTS'),	-- 70
-		(null, 1, 1, 70, 'African horse sickness virus'),
-		(null, 1, 1, 70, 'African swine fever virus'),
-		(null, 1, 1, 70, 'Akabane virus'),
-		(null, 1, 1, 70, 'Avian influenza virus (highly pathogenic)'),
-		(null, 1, 1, 70, 'Bluetongue virus (exotic)'),
-		(null, 1, 1, 70, 'Bovine spongiform encephalopathy agent'),
-		(null, 1, 1, 70, 'Camel pox virus'),
-		(null, 1, 1, 70, 'Classical swine fever virus'),
-		(null, 1, 1, 70, 'Ehrlichia ruminantium (Heartwater)'),
-		(null, 1, 1, 70, 'Foot-and-mouth disease virus'),
-		(null, 1, 1, 70, 'Goat pox virus'),
-		(null, 1, 1, 70, 'Japanese encephalitis virus'),
-		(null, 1, 1, 70, 'Lumpy skin disease virus'),
-		(null, 1, 1, 70, 'Malignant catarrhal fever virus (Alcelaphine herpesvirus type 1)'),
-		(null, 1, 1, 70, 'Menangle virus'),
-		(null, 1, 1, 70, 'Mycoplasma capricolum subspecies capripneumoniae (contagious caprine pleuropneumonia)'),
-		(null, 1, 1, 70, 'Mycoplasma mycokey_ides subspecies mycokey_ides small colony (Mmm SC) (contagious bovine pleuropneumonia)'),
-		(null, 1, 1, 70, 'Peste des petits ruminants virus'),
-		(null, 1, 1, 70, 'Rinderpest virus'),
-		(null, 1, 1, 70, 'Sheep pox virus'),
-		(null, 1, 1, 70, 'Swine vesicular disease virus'),
-		(null, 1, 1, 70, 'Vesicular stomatitis virus (exotic): Indiana subtypes VSV-IN2, VSV-IN3'),
-		(null, 1, 1, 70, 'Virulent Newcastle disease virus 1'),
-		(null, 1, 1, 16, 'USDA PPQ SELECT AGENTS AND TOXINS'),	-- 94
-		(null, 1, 1, 94, 'Peronosclerospora philippinensis (Peronosclerospora sacchari)'),
-		(null, 1, 1, 94, 'Phoma glycinicola (formerly Pyrenochaeta glycines)'),
-		(null, 1, 1, 94, 'Ralstonia solanacearum race 3, biovar 2'),
-		(null, 1, 1, 94, 'Rathayibacter toxicus'),
-		(null, 1, 1, 94, 'Sclerophthora rayssiae var zeae'),
-		(null, 1, 1, 94, 'Synchytrium endobioticum'),
-		(null, 1, 1, 94, 'Xanthomonas oryzae'),
-		(null, 1, 1, 94, 'Xylella fastkey_idiosa (citrus variegated chlorosis strain)'),
-		(null, 1, 1, 1, 'Human-derived Materials'),	-- 103
-		(null, 1, 1, 103, 'Blood'),
-		(null, 1, 1, 103, 'Flukey_ids'),
-		(null, 1, 1, 103, 'Cells'),
-		(null, 1, 1, 103, 'Cell line'),
-		(null, 1, 1, 103, 'Other tissue'),
-		(null, 1, 1, 1, 'Biosafety Level 1 (BSL-1)'),
-		(null, 1, 1, 1, 'Biosafety Level 2 (BSL-2)'),
-		(null, 1, 1, 1, 'Biosafety Level 2+ (BSL-2+)'),
-		(null, 1, 1, 1, 'Biosafety Level 3 (BSL-3)'),
-		(null, 1, 1, 1, 'Animal Biosafety Level 1 (ABSL-1)'),
-		(null, 1, 1, 1, 'Animal Biosafety Level 2 (ABSL-2)'),
-		(null, 1, 1, 1, 'Animal Biosafety Level 2+ (ABSL-2+)'),
-		(null, 1, 1, 1, 'Animal Biosafety Level 3 (ABSL-3)'),
-		(null, 1, 1, 1, 'Biosafety Level 1 - Plants (BL1-P)'),
-		(null, 1, 1, 1, 'Biosafety Level 2 - Plants (BL2-P)'),
-		(null, 1, 1, 1, 'Biosafety Level 3 - Plants (BL3-P)')
+INSERT INTO hazard (
+	date_created,
+	created_user_id,
+	last_modified_user_id,
+	parent_hazard_id,
+	name,
+	requires_serial_number
+)
+VALUES
+	(null, 1, 1, null, 'Biological Materials', 0),
+	(null, 1, 1, 1, 'Recombinant DNA', 1),
+	(null, 1, 1, 2, 'Viral Vectors', 1),
+	(null, 1, 1, 3, 'Adeno-associated Virus (AAV)', 0),
+	(null, 1, 1, 3, 'Adenovirus', 0),
+	(null, 1, 1, 3, 'Baculovirus', 0),
+	(null, 1, 1, 3, 'Epstein-Barr Virus (EBV)', 0),
+	(null, 1, 1, 3, 'Herpes Simplex Virus (HSV)', 0),
+	(null, 1, 1, 3, 'Poxvirus / Vaccinia', 0),
+	(null, 1, 1, 3, 'Retrovirus / Lentivirus (EIAV)', 0),
+	(null, 1, 1, 3, 'Retrovirus / Lentivirus (FIV)', 0),
+	(null, 1, 1, 3, 'Retrovirus / Lentivirus (HIV)', 0),
+	(null, 1, 1, 3, 'Retrovirus / Lentivirus (SIV)', 0),
+	(null, 1, 1, 3, 'Retrovirus / MMLV (Amphotropic or Pseudotyped)', 0),
+	(null, 1, 1, 3, 'Retrovirus / MMLV (Ecotropic)', 0),
+	(null, 1, 1, 1, 'Select AGENTS and Toxins', 0),	-- 16
+	(null, 1, 1, 16, 'HHS Select Agents and Toxins', 0),	-- 17
+	(null, 1, 1, 17, 'Abrin', 0),
+	(null, 1, 1, 17, 'Botulinum neurotoxins', 0),
+	(null, 1, 1, 17, 'Botulinum neurotoxin producing species of Clostrkey_idium', 0),
+	(null, 1, 1, 17, 'Cercopithecine herpesvirus 1 (Herpes B virus)', 0),
+	(null, 1, 1, 17, 'Clostrkey_idium perfringens epsilon toxin', 0),
+	(null, 1, 1, 17, 'Cocckey_idiokey_ides posadasii/Cocckey_idiokey_ides immitis', 0),
+	(null, 1, 1, 17, 'Conotoxins', 0),
+	(null, 1, 1, 17, 'Coxiella burnetii', 0),
+	(null, 1, 1, 17, 'Crimean-Congo haemorrhagic fever virus', 0),
+	(null, 1, 1, 17, 'Diacetoxyscirpenol', 0),
+	(null, 1, 1, 17, 'Eastern Equine Encephalitis virus', 0),
+	(null, 1, 1, 17, 'Ebola virus', 0),
+	(null, 1, 1, 17, 'Francisella tularensis', 0),
+	(null, 1, 1, 17, 'Lassa fever virus', 0),
+	(null, 1, 1, 17, 'Marburg virus', 0),
+	(null, 1, 1, 17, 'Monkeypox virus', 0),
+	(null, 1, 1, 17, 'Reconstructed 1918 Influenza virus', 0),
+	(null, 1, 1, 17, 'Ricin', 0),
+	(null, 1, 1, 17, 'Rickettsia prowazekii', 0),
+	(null, 1, 1, 17, 'Rickettsia rickettsii', 0),
+	(null, 1, 1, 17, 'Saxitoxin', 0),
+	(null, 1, 1, 17, 'Shiga-like ribosome inactivating proteins', 0),
+	(null, 1, 1, 17, 'Shigatoxin', 0),
+	(null, 1, 1, 17, 'South American Haemorrhagic Fever viruses', 0),	-- 41
+	(null, 1, 1, 41, 'Flexal', 0),
+	(null, 1, 1, 41, 'Guanarito', 0),
+	(null, 1, 1, 41, 'Junin', 0),
+	(null, 1, 1, 41, 'Machupo', 0),
+	(null, 1, 1, 41, 'Sabia', 0),
+	(null, 1, 1, 17, 'Staphylococcal enterotoxins', 0),
+	(null, 1, 1, 17, 'T-2 toxin', 0),
+	(null, 1, 1, 17, 'Tetrodotoxin', 0),
+	(null, 1, 1, 17, 'Tick-borne encephalitis complex (flavi) viruses', 0),	-- 45
+	(null, 1, 1, 45, 'Central European Tick-borne encephalitis', 0),
+	(null, 1, 1, 45, 'Far Eastern Tick-borne encephalitis', 0),
+	(null, 1, 1, 45, 'Kyasanur Forest disease', 0),
+	(null, 1, 1, 45, 'Omsk Hemorrhagic Fever', 0),
+	(null, 1, 1, 45, 'Russian Spring and Summer encephalitis', 0),
+	(null, 1, 1, 17, 'Variola major virus (Smallpox virus)', 0),
+	(null, 1, 1, 17, 'Variola minor virus (Alastrim)', 0),
+	(null, 1, 1, 17, 'Yersinia pestis', 0),
+	(null, 1, 1, 16, 'OVERLAP SELECT AGENTS AND TOXINS', 0),	-- 59
+	(null, 1, 1, 59, 'Bacillus anthracis', 0),
+	(null, 1, 1, 59, 'Brucella abortus', 0),
+	(null, 1, 1, 59, 'Brucella melitensis', 0),
+	(null, 1, 1, 59, 'Brucella suis', 0),
+	(null, 1, 1, 59, 'Burkholderia mallei (formerly Pseudomonas mallei)', 0),
+	(null, 1, 1, 59, 'Burkholderia pseudomallei', 0),
+	(null, 1, 1, 59, 'Hendra virus', 0),
+	(null, 1, 1, 59, 'Nipah virus', 0),
+	(null, 1, 1, 59, 'Rift Valley fever virus', 0),
+	(null, 1, 1, 59, 'Venezuelan Equine Encephalitis virus', 0),
+	(null, 1, 1, 16, 'USDA VETERINARY SERVICES (VS) SELECT AGENTS', 0),	-- 70
+	(null, 1, 1, 70, 'African horse sickness virus', 0),
+	(null, 1, 1, 70, 'African swine fever virus', 0),
+	(null, 1, 1, 70, 'Akabane virus', 0),
+	(null, 1, 1, 70, 'Avian influenza virus (highly pathogenic)', 0),
+	(null, 1, 1, 70, 'Bluetongue virus (exotic)', 0),
+	(null, 1, 1, 70, 'Bovine spongiform encephalopathy agent', 0),
+	(null, 1, 1, 70, 'Camel pox virus', 0),
+	(null, 1, 1, 70, 'Classical swine fever virus', 0),
+	(null, 1, 1, 70, 'Ehrlichia ruminantium (Heartwater)', 0),
+	(null, 1, 1, 70, 'Foot-and-mouth disease virus', 0),
+	(null, 1, 1, 70, 'Goat pox virus', 0),
+	(null, 1, 1, 70, 'Japanese encephalitis virus', 0),
+	(null, 1, 1, 70, 'Lumpy skin disease virus', 0),
+	(null, 1, 1, 70, 'Malignant catarrhal fever virus (Alcelaphine herpesvirus type 1)', 0),
+	(null, 1, 1, 70, 'Menangle virus', 0),
+	(null, 1, 1, 70, 'Mycoplasma capricolum subspecies capripneumoniae (contagious caprine pleuropneumonia)', 0),
+	(null, 1, 1, 70, 'Mycoplasma mycokey_ides subspecies mycokey_ides small colony (Mmm SC) (contagious bovine pleuropneumonia)', 0),
+	(null, 1, 1, 70, 'Peste des petits ruminants virus', 0),
+	(null, 1, 1, 70, 'Rinderpest virus', 0),
+	(null, 1, 1, 70, 'Sheep pox virus', 0),
+	(null, 1, 1, 70, 'Swine vesicular disease virus', 0),
+	(null, 1, 1, 70, 'Vesicular stomatitis virus (exotic): Indiana subtypes VSV-IN2, VSV-IN3', 0),
+	(null, 1, 1, 70, 'Virulent Newcastle disease virus 1', 0),
+	(null, 1, 1, 16, 'USDA PPQ SELECT AGENTS AND TOXINS', 0),	-- 94
+	(null, 1, 1, 94, 'Peronosclerospora philippinensis (Peronosclerospora sacchari)', 0),
+	(null, 1, 1, 94, 'Phoma glycinicola (formerly Pyrenochaeta glycines)', 0),
+	(null, 1, 1, 94, 'Ralstonia solanacearum race 3, biovar 2', 0),
+	(null, 1, 1, 94, 'Rathayibacter toxicus', 0),
+	(null, 1, 1, 94, 'Sclerophthora rayssiae var zeae', 0),
+	(null, 1, 1, 94, 'Synchytrium endobioticum', 0),
+	(null, 1, 1, 94, 'Xanthomonas oryzae', 0),
+	(null, 1, 1, 94, 'Xylella fastkey_idiosa (citrus variegated chlorosis strain)', 0),
+	(null, 1, 1, 1, 'Human-derived Materials', 0),	-- 103
+	(null, 1, 1, 103, 'Blood', 0),
+	(null, 1, 1, 103, 'Flukey_ids', 0),
+	(null, 1, 1, 103, 'Cells', 0),
+	(null, 1, 1, 103, 'Cell line', 0),
+	(null, 1, 1, 103, 'Other tissue', 0),
+	(null, 1, 1, 1, 'Biosafety Level 1 (BSL-1)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 2 (BSL-2)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 2+ (BSL-2+)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 3 (BSL-3)', 0),
+	(null, 1, 1, 1, 'Animal Biosafety Level 1 (ABSL-1)', 0),
+	(null, 1, 1, 1, 'Animal Biosafety Level 2 (ABSL-2)', 0),
+	(null, 1, 1, 1, 'Animal Biosafety Level 2+ (ABSL-2+)', 0),
+	(null, 1, 1, 1, 'Animal Biosafety Level 3 (ABSL-3)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 1 - Plants (BL1-P)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 2 - Plants (BL2-P)', 0),
+	(null, 1, 1, 1, 'Biosafety Level 3 - Plants (BL3-P)', 0)
 ;
+
+-- Create Equipment
+INSERT INTO hazard_room (
+	hazard_id,
+	room_id,
+	equipment_serial_number
+)
+VALUES
+	(2, 1, '1k2h493233'),
+	(4, 1, null)
+;
+
+-- Create Checklists
+
+-- Create Questions
+INSERT INTO question (
+	date_created,
+	created_user_id,
+	last_modified_user_id,
+	order_index,
+	is_mandatory,
+	checklist_id,
+	text,
+	standards_and_guidelines
+)
+VALUES
+	(null, 1, 1, 1, 1, null, 'Lab supervisor enforces policies that control access to the laboratory', 'Biosafety in Microbiological & Biomedical Labs, 5th Ed.'),
+	(null, 1, 1, 2, 1, null, 'Persons wash their hands after working with hazardous materials and before leaving the lab', 'Biosafety in Microbiological & Biomedical Labs, 5th Ed.'),
+	(null, 1, 1, 3, 1, null, 'Eating, drinking, and storing food for consumption are not permitted in lab areas', 'Biosafety in Microbiological & Biomedical Labs, 5th Ed.'),
+	
+	(null, 1, 1, 1, 1, null, 'Personnel shipping biological samples have completed biological shipping training in the past two years', 'International Air Transport Association (IATA) & DOT'),
+	
+	(null, 1, 1, 1, 1, null, 'Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens', 'OSHA Bloodborne Pathogens (29 CFR 1910.1030)'),
+	(null, 1, 1, 2, 1, null, 'Exposure Control Plan has been reviewed and updated at least annually', 'OSHA Bloodborne Pathogens (29 CFR 1910.1030)')
+;
+
+-- TODO: Create Deficiencies
+
+-- TODO: Create Deficiency Root Causes
+
+-- TODO: Create Recommendations
+
+-- TODO: Create Observations
