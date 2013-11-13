@@ -11,7 +11,26 @@ function loginAction(){ };
 function logoutAction(){ };
 
 // Users Hub
-function getAllUsers(){ };
+function getAllUsers(){
+	$LOG = Logger::getLogger( 'Action:getAllUsers' );
+	$allUsers = array();
+	
+	for( $i = 0; $i < 10; $i++ ){
+		$user = new User();
+		$user->setIsActive(TRUE);
+		$user->setEmail("user$i@host.com");
+		$user->setKeyId($i);
+		$user->setName("User #$i");
+		$user->setUsername("user$i");
+		
+		$LOG->info("Defined User: $user");
+		
+		$allUsers[] = $user;
+	}
+	
+	return $allUsers;
+};
+
 function saveUser(){ };
 function activateUser(){ };
 function deactivateUser(){ };
