@@ -12,6 +12,9 @@ class ActionDispatcher {
 	
 	private $LOG;
 	
+	private $destinationPage;
+	private $action_result;
+	
 	/**
 	 * Constructor
 	 * 
@@ -47,49 +50,81 @@ class ActionDispatcher {
 	 * Dispatch to the named action.
 	 * 
 	 * @param unknown $actionName
-	 * @return string: Name of the page to forward to
+	 * @return ActionResult: Descriptor of the result
 	 * 
 	 * @see ActionMappingFactory
+	 * @see ActionResult
 	 */
 	public function dispatch( $actionName ){
+		$result = new ActionResult();
+		
 		if( $actionName == NULL ){
 			$this->LOG->error("Error in ActionDispatcher - no action name specified");
-			return $this->dispatchError();
+			$result->destinationPage = $this->dispatchError();
+		}
+		else{
+			$this->readActionConfigurationAndDispatch($actionName, $result);
 		}
 		
+		return $result;
+	}
+	
+	/**
+	 * Reads the available action mappings and verifies that $actionName is mapped.
+	 * 
+	 * @param unknown $actionName
+	 * @param unknown $result
+	 */
+	public function readActionConfigurationAndDispatch($actionName, & $result){
 		//Read action configuration
 		$actionConfig = $this->getActionMappings();
 		
+		//Determine if we can dispatch the action
 		if( !array_key_exists($actionName, $actionConfig)){
 			$this->LOG->error("Invalid action name '$actionName' - No such action exists");
-			
-			// Invalid action specified
-			return $this->dispatchError();
-		}
 		
+			// Invalid action specified
+			$result->destinationPage = $this->dispatchError();
+		}
+		else{
+			$this->dispatchValidAction($actionName, $actionConfig, $result);
+		}
+	}
+	
+	/**
+	 * Dispatches the named action from the mappings (actionConfig), storing the
+	 * results in the ActionResult reference.
+	 * 
+	 * @param string $actionName
+	 * @param Array $actionConfig
+	 * @param ActionResult $result
+	 */
+	public function dispatchValidAction($actionName, &$actionConfig, &$result){
 		// We have a valid action name, so retrieve the details from the config
 		$actionMapping = $actionConfig[$actionName];
 		$action_function = $actionMapping->actionFunctionName;
-
+		
 		$this->LOG->debug("Checking user roles for action $actionName");
 		$allowActionExecution = $this->checkRoles($actionMapping);
-		$this->LOG->debug("Granting user access to $actionName: $allowActionExecution");
+		$allowStr = $allowActionExecution ? "TRUE" : "FALSE";
+		$this->LOG->debug("Granting user access to $actionName: $allowStr" );
 		
 		if( $allowActionExecution ){
-			$functionSuccess = $this->doAction($actionMapping);
-			
-			if( $functionSuccess ){
+			$result->actionFunctionResult = $this->doAction($actionMapping);
+				
+			//NULL indicates something was wrong
+			if( $result->actionFunctionResult != NULL ){
 				// Forward to the success page
-				return $this->dispatchSuccess($actionMapping);
+				$result->destinationPage = $this->dispatchSuccess($actionMapping);
 			}
 			else{
 				// Forward to the failure page
-				return $this->dispatchError($actionMapping);
+				$result->destinationPage = $this->dispatchError($actionMapping);
 			}
 		}
 		else{
 			//Access Denied!
-			return $this->dispatchError($actionMapping);
+			$result->destinationPage = $this->dispatchError($actionMapping);
 		}
 	}
 	
@@ -159,8 +194,9 @@ class ActionDispatcher {
 	 * Calls the action function specified in the given action mapping.
 	 * 
 	 * @param ActionMapping $actionMapping
-	 * @return boolean: TRUE if the function call was successfull; FALSE if the
-	 * function returns false OR if the function does not exist
+	 * 
+	 * @return unknown: The return value of the called function,
+	 * 	or NULL if the if the function does not exist
 	 */
 	public function doAction( ActionMapping $actionMapping ){
 		$action_function = $actionMapping->actionFunctionName;
@@ -168,13 +204,16 @@ class ActionDispatcher {
 		if( function_exists( $action_function ) ){
 			//call the specified action function
 			$this->LOG->debug("Executing action function '$action_function'");
-			$functionSuccess = $action_function();
-			return $functionSuccess;
+			
+			// Action functions are expected to return the desired data
+			$functionResult = $action_function();
+			
+			return $functionResult;
 		}
 		else{
 			//TODO: Show critical error; function doesn't exist
 			$this->LOG->error("Mapped function '$action_function' does not exist");
-			return FALSE;
+			return NULL;
 		}
 		
 	}

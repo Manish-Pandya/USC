@@ -9,10 +9,10 @@ Mock::generate('User');
 class TestJsonManager extends UnitTestCase {
 	
 	function test_decode(){
-		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com"}';
+		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","IsActive":true}';
 		
 		$expectedObject = new User();
-		$expectedObject->setActive(TRUE);
+		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
 		$expectedObject->setKeyid(1234);
 		$expectedObject->setName("name");
@@ -78,7 +78,7 @@ class TestJsonManager extends UnitTestCase {
 		$object = new MockUser();
 		
 		//Expect all getter methods to be called once
-		$object->expectOnce('getActive');
+		$object->expectOnce('getIsActive');
 		$object->expectOnce('getEmail');
 		$object->expectOnce('getKeyid');
 		$object->expectOnce('getName');
@@ -88,7 +88,7 @@ class TestJsonManager extends UnitTestCase {
 		//Expect no other method to be called
 		$object->expectNever('getTableName');
 		$object->expectNever('getColumnData');
-		$object->expectNever('setActive');
+		$object->expectNever('setIsActive');
 		$object->expectNever('setEmail');
 		$object->expectNever('setKeyid');
 		$object->expectNever('setName');
@@ -121,7 +121,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->setUsername("username");
 	
 		//TODO: does field order matter?
-		$expectedJson = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234,"DateCreated":null,"DateLastModified":null,"IsActive":null}';
+		$expectedJson = '{"Class":"User","Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234,"DateCreated":null,"DateLastModified":null,"IsActive":true}';
 		
 		$actualJson = JsonManager::objectToJson($object);
 	
@@ -140,14 +140,14 @@ class TestJsonManager extends UnitTestCase {
 	
 	function test_jsonToObject(){
 		$expectedObject = new User();
-		$expectedObject->setActive(TRUE);
+		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
 		$expectedObject->setKeyid(1234);
 		$expectedObject->setName("name");
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
 		
-		$json = '{"Class":"User","Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
+		$json = '{"Class":"User","IsActive":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
 		$object = new User();
 		$object = JsonManager::jsonToObject($json, $object);
 		

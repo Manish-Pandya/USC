@@ -25,20 +25,58 @@ class ActionMappingFactory {
 	 */
 	public function getConfig(){
 		return array(
-				"savePI"=> new ActionMapping(
-						"savePIAction",
-						"PIHub.php",
-						"PIHub.php",
-						array("ADMIN")
-				),
+				//TODO: Correct action names
+				//TODO: Assign locations
+				//TODO: Assign roles
+				"loginAction"=>new ActionMapping("loginAction", "RSMSCenter.php", "login.php"),
+				"logoutAction"=>new ActionMapping("logoutAction", "login.php", "login.php"),
 				
-				"logout"=> new ActionMapping(
-						"logoutAction",
-						"login.php",
-						"login.php"
-				),
+				// Users Hub
+				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
+				"saveUser"=>new ActionMapping("saveUser", "", ""),
+				"activateUser"=>new ActionMapping("activateUser", "", ""),
+				"deactivateUser"=>new ActionMapping("deactivateUser", "", ""),
+				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				
-				//TODO
+				// Checklist Hub
+				"getChecklist"=>new ActionMapping("getChecklist", "", ""),
+				"getQuestions"=>new ActionMapping("getQuestions", "", ""),
+				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
+				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
+				
+				// Hazards Hub
+				"getHazards"=>new ActionMapping("getHazards", "", ""),
+				"saveHazards"=>new ActionMapping("saveHazards", "", ""),
+				
+				// Question Hub
+				"getQuestion"=>new ActionMapping("getQuestion", "", ""),
+				"saveQuestionRelation"=>new ActionMapping("saveQuestionRelation", "", ""),
+				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
+				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
+				
+				// Inspection, step 1 (PI / Room assessment)
+				"getPI"=>new ActionMapping("getPI", "", ""),
+				"getRooms"=>new ActionMapping("getRooms", "", ""),
+				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
+				
+				// Inspection, step 2 (Hazard Assessment)
+				"getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", ""),
+				"saveHazardRelation"=>new ActionMapping("saveHazardRelation", "", ""),
+				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
+				
+				// Inspection, step 3 (Checklist)
+				"getDeficiency"=>new ActionMapping("getDeficiency", "", ""),
+				"saveResponse"=>new ActionMapping("saveResponse", "", ""),
+				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
+				"saveRootCause"=>new ActionMapping("saveRootCause", "", ""),
+				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
+				
+				// Inspection, step 4 (Review, deficiency report)
+				"getDeficiencySelections"=>new ActionMapping("getDeficiencySelections", "", ""),
+				"getRecommendations"=>new ActionMapping("getRecommendations", "", ""),
+				
+				// Inspection, step 5 (Details, Full Report)
+				"getResponses"=>new ActionMapping("getResponses", "", ""),
 		);
 	}
 }
