@@ -18,12 +18,34 @@ class JsonManager {
 	 * @return string
 	 */
 	public static function encode($value){
+		$jsonable = JsonManager::buildJsonableValue($value);
+		
+		return json_encode($jsonable);
+	}
+	
+	public static function buildJsonableValue($value){
+		$jsonable = $value;
+		
 		if( is_object($value) ){
-			return JsonManager::objectToJson($value);
+			//Does object have special encode function?
+			if( JsonManager::objectHasEncodeFunction($value) ){
+				//FIXME: This will escape the to-json function's return value
+				$jsonable = JsonManager::objectToJson($value);
+			}
+			else{
+				$jsonable = JsonManager::objectToBasicArray($value);
+			}
 		}
-		else{
-			return json_encode($value);
+		else if( is_array($value) ){
+			$jsonable = array();
+				
+			foreach( $value as $element ){
+				// json-ify
+				$jsonable[] = JsonManager::buildJsonableValue($element);
+			}
 		}
+		
+		return $jsonable;
 	}
 	
 	/**
@@ -33,6 +55,12 @@ class JsonManager {
 	 */
 	public static function decode($json, $object = NULL){
 		return JsonManager::jsonToObject($json, $object);
+	}
+	
+	public static function objectHasEncodeFunction($object){
+		$callable = array( $object, JsonManager::$FUNCTION_TO_JSON );
+		
+		return is_callable( $callable );
 	}
 	
 	/**
@@ -147,6 +175,19 @@ class JsonManager {
 			$LOG->trace("Encoding object to JSON by inferrence");
 			return JsonManager::inferJsonProperties($object);
 		}
+	}
+	
+	public static function objectToBasicArray($object){
+		//Call Accessors
+		$objectVars = JsonManager::callObjectAccessors($object);
+		
+		foreach( $objectVars as $key=>&$value ){
+			if( is_object($value) ){
+				$value = JsonManager::objectToBasicArray($value);
+			}
+		}
+		
+		return $objectVars;
 	}
 	
 	/**

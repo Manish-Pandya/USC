@@ -18,18 +18,20 @@ $sessionDataSource = array();
 //Set default action to login
 $actionName = "login";
 
+//FIXME: Validate $_SESSION
 // Check that there is a SESSION object
-if( isset( $_SESSION ) ){
+//if( isset( $_SESSION ) ){
 	// Clear our session params
-	unset($_SESSION['success']);
-	unset($_SESSION['output']);
-	unset($_SESSION["errors"]);
+	//unset($_SESSION['success']);
+	//unset($_SESSION['output']);
+	//unset($_SESSION["errors"]);
 	
 	//Get name of requested action
-	$actionName = $_POST["action"];
+	$actionName = $_REQUEST["action"];
 	
-	$sessionDataSource = $_SESSION;
-}
+	//$sessionDataSource = $_SESSION;
+	$sessionDataSource = $_REQUEST;
+//}
 
 //TODO: additional setup?
 ?>
