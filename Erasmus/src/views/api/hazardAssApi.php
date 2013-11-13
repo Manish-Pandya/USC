@@ -533,4 +533,14 @@ children: [
 	    }
 	])
 <?php }
+if (isset($_GET['users'])){
+echo $_GET["callback"]; ?> ([
+	{"id":1, "name": "User 1", email: "tfdsest@test.test", ldap: "bUserington"},
+    {"id":2, "name": "User 2", email: "test@test.test", ldap: "bdUserington"},
+    {"id":3,"name": "User 3", email: "tedfst@test.test", ldap: "bcUserington"},
+    {"id":3,"name": "User 4", email: "tesdfadft@test.test", ldap: "baUserington"},
+    {"id":3,"name": "User 5", email: "teadsfst@test.test", ldap: "bfdfUserington"}
+]);
+}
+
 ?>

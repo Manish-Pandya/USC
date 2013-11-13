@@ -15,40 +15,42 @@ require_once '../top_view.php';
 </ul>
 
 </div>
-<!--
-<table class="userList table table-striped table-hover" ng-app="userList">
+<span ng-app="userList" ng-controller="UserListController">
+<table class="userList table table-striped table-hover">
 <thead>
 	<tr>
 		<th>Edit User</th><th>Activate/Deactivate User</th><th>Name</th><th>LDAP ID</th><th>Email</th><th>Role</th>
 	</tr>
 </thead>
-<tbody ng-controller="UserListController">
-	<tr id="{{user.id}}" ng-repeat="user in users" ng-class="{edit: user.edit}">
-		<td><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></td>
-		<td><a class="btn btn-danger btn-large DeactivateeRow" href="#">Deactivate</a></td>
+<tbody >
+	<tr id="{{user.id}}" ng-repeat="user in users" ng-class="{edit: user.edit, notedit: user.notEdit}">
+		<td ng-hide="user.edit"><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></td><td ng-show="user.edit"><a class="edit btn btn-large btn-info" ng-click="saveUser(user)">Save</a></td>
+		<td ng-hide="user.edit"><a class="btn btn-danger btn-large DeactivateeRow" href="#">Deactivate</a></td><td ng-show="user.edit"><a class="edit btn btn-large btn-danger" ng-click="cancelEdits(user)">Cancel</a></td>
 		<td ng-hide="user.edit">{{user.name}}</td><td ng-show="user.edit"><input ng-model="userCopy.name"/></td>
-		<td>bUserington</td>
-		<td>{{user.email}}</td>
-		<td>Administrator</td>
+		<td ng-hide="user.edit">{{user.ldap}}</td><td ng-show="user.edit"><input ng-model="userCopy.ldap"/></td>
+		<td ng-hide="user.edit">{{user.email}}</td><td ng-show="user.edit"><input ng-model="userCopy.email"/></td>
+		<td ng-hide="user.edit">{{user.role}}Administrator</td><td ng-show="user.edit"><input ng-init="Administrator" ng-model="userCopy.role"/></td>
 	</tr>
 </tbody>
 </table>
--->
+<pre>{{users | json}}</pre>
+</span>
+<!--
 <div ng-app="userList" ng-controller="UserListController">
 	<ul >
 		<li ng-repeat="user in users">
-			<ul>
-				{{user | json}}
-				<li><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></li>
-				<li><a class="btn btn-danger btn-large DeactivateeRow" href="#">Deactivate</a></li>
-				<li ng-hide="user.edit">{{user.name}}</li><td ng-show="user.edit"><input ng-model="userCopy.name"/></li>
-				<li>bUserington</li>
-				<li>{{user.email}}</li>
-				<li>Administrator</li>
+			<ul class="span12">
+				<li class="span1"><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></li>
+				<li class="span2"><a class="btn btn-danger btn-large DeactivateeRow" href="#">Deactivate</a></li>
+				<li class="span2" ng-hide="user.edit">{{user.name}}</li><li ng-show="user.edit"><input ng-model="userCopy.name"/></li>
+				<li class="span2">bUserington</li>
+				<li class="span2">{{user.email}}</li>
+				<li class="span2">Administrator</li>
 			</ul>
 		</li>
 	</ul>
 </div>
+-->
 <!-- begin edit user modal dialogue
 <div class="modal hide fade" id="editUser1">
   <div class="modal-header">

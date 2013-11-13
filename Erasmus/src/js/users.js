@@ -55,12 +55,16 @@ function UserListController($scope, testFactory) {
 
   $scope.editUser = function(user){
 
-  	angular.forEach($scope.users, function(user, key){
-	  user.edit = false;
+  	angular.forEach($scope.users, function(thisUser, key){
+  		console.log(user);
+	  	thisUser.edit = false;
+	  	thisUser.notEdit = true;
 	});
 	
+	user.notEdit = false;
   	user.edit = true;
   	var editedUser = angular.copy(user);
+
   	console.log(editedUser);
 
   	$scope.userCopy = editedUser;
@@ -72,8 +76,27 @@ function UserListController($scope, testFactory) {
    * used for creating and updating users
    * 
    */
-  function saveUser(){
-	  testFactory.saveUser(onGetUsers,'http://hazmars.graysail.com/api.php?callback=JSON_CALLBACK');
+  $scope.saveUser = function(user){
+
+  	$scope.userCopy.edit = false;
+
+  	for (var property in scope.userCopy) {
+	    if (scope.userCopy.hasOwnProperty(property)) {
+	        // do stuff
+	    }
+	}
+
+
+
+  	user.name = $scope.userCopy.name;
+  	user.name = $scope.userCopy.name;
+  	user.name = $scope.userCopy.name;
+  	user.name = $scope.userCopy.name;
+  	user.name = $scope.userCopy.name;
+  	user.edit = $scope.userCopy.edit;
+  	console.log(user);
+
+	//testFactory.saveUser(onGetUsers,'http://hazmars.graysail.com/api.php?callback=JSON_CALLBACK');
   }
   
   function onSaveUser(){

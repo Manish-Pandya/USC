@@ -136,8 +136,24 @@ div.rsmsCenterIconContainer{
 	}
 }
 
+/*******************************************************
+*	USER HUB STYLES
+*******************************************************/
+tr.edit{
+	border:#999 solid 3px;
+	zoom:1.5;
+}
+tr.edit td{
+	box-shadow:4px 5px 8px rgba(0, 0, 0, 0.5);
+	background:#fff !important
+}
+tr.notedit,tr.notedit td{
+	background:none !important;
+}
 
-
+tr.notedit:hover,tr.notedit td:hover{
+	background:#f7f7f7 !important;
+}
 /*******************************************************
 *	HAZARD HUB STYLES
 *******************************************************/
@@ -659,4 +675,7 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 
 .accordion:first-child{
 	padding:10px;
+}
+.test{
+	width:100px;
 }
