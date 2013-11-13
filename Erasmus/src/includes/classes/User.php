@@ -22,9 +22,6 @@ class User extends GenericCrud{
 		"name"		=> "text",
 		"email"		=> "text", 
 	);
-		
-	/** Boolean value specifying if this user account is active or disabled */
-	private $active;
 	
 	// Access information
 	
@@ -61,9 +58,6 @@ class User extends GenericCrud{
 	}
 	
 	// Accessors / Mutators
-	
-	public function getActive(){ return $this->active; }
-	public function setActive($active){ $this->active = $active; }
 	
 	public function getRoles(){ return $this->roles; }
 	public function setRoles($roles){ $this->roles = $roles; }
