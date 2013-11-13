@@ -44,7 +44,7 @@ abstract class GenericCrud {
 		return $this->dateCreated;
 	}
 	
-	public function setdateCreated($dateCreated){
+	public function setDateCreated($dateCreated){
 		$this->dateCreated = $dateCreated;
 	}
 	
@@ -52,7 +52,7 @@ abstract class GenericCrud {
 		return $this->dateLastModified;
 	}
 	
-	public function setdateLastModified($dateLastModified){
+	public function setDateLastModified($dateLastModified){
 		$this->dateLastModified = $dateLastModified;
 	}
 	
@@ -60,7 +60,7 @@ abstract class GenericCrud {
 		return $this->isActive;
 	}
 	
-	public function setisActive($isActive){
+	public function setIsActive($isActive){
 		$this->isActive = $isActive; }
 	
 	// CRUD Utilities
