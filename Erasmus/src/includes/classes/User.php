@@ -16,7 +16,6 @@ class User extends GenericCrud{
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"active"	=> "bolean",
 		//roles are a relationship
 		"username"	=> "text",
 		"name"		=> "text",
@@ -54,11 +53,10 @@ class User extends GenericCrud{
 	}
 	
 	public function __toString(){
-		return "[User keyid=$this->getKeyId()]";
+		return "[User keyid=" . $this->getKeyId() . "]";
 	}
 	
 	// Accessors / Mutators
-	
 	public function getRoles(){ return $this->roles; }
 	public function setRoles($roles){ $this->roles = $roles; }
 	
