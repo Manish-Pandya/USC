@@ -64,8 +64,5 @@ class Hazard extends GenericCrud {
 	
 	public function getRooms(){ return $this->rooms; }
 	public function setRooms($rooms){ $this->rooms = $rooms; }
-	
-	public function getAuthorizedPrincipalInvestigators(){ return $this->authorizedPrincipalInvestigators; }
-	public function setAuthorizedPrincipalInvestigators($authorizedPrincipalInvestigators){ $this->authorizedPrincipalInvestigators = $authorizedPrincipalInvestigators; }
 }
 ?>

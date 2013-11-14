@@ -38,7 +38,7 @@ class JsonManager {
 		}
 		else if( is_array($value) ){
 			$jsonable = array();
-				
+			
 			foreach( $value as $element ){
 				// json-ify
 				$jsonable[] = JsonManager::buildJsonableValue($element);
@@ -182,9 +182,7 @@ class JsonManager {
 		$objectVars = JsonManager::callObjectAccessors($object);
 		
 		foreach( $objectVars as $key=>&$value ){
-			if( is_object($value) ){
-				$value = JsonManager::objectToBasicArray($value);
-			}
+			$value = JsonManager::buildJsonableValue($value);
 		}
 		
 		return $objectVars;

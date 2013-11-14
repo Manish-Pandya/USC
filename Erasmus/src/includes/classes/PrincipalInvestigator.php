@@ -33,7 +33,16 @@ class PrincipalInvestigator extends GenericCrud {
 	private $labPersonnel;
 	
 	public function __construct(){
-		parent::__construct();
+		
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getDepartments(){ return $this->departments; }
