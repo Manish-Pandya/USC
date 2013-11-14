@@ -8,7 +8,6 @@
  * be displayed
  */ 
 ?><?php
-header('content-type: application/javascript');
 
 //Setup basic action data
 //	$sessionDataSource and $actionName are defined here
@@ -20,16 +19,25 @@ $actionDispatcher = new ActionDispatcher($sessionDataSource);
 // Attempt to dispatch to the requested action
 $actionResult = $actionDispatcher->dispatch($actionName);
 
+//TODO: Check for error? and display different HTTP response code?
+
 //TODO: option to encode JSON or not?
 
 // JSON-Encode result
 $json = JsonManager::encode($actionResult->actionFunctionResult);
 
-// Echo request-param 'callback'
-//TODO: Check for callback existence?
-echo $_GET["callback"];
+$output = $json;
 
-// Output JSON
-$parsedJson = '('.$json.')';
-echo $parsedJson;
+//If a callback function is requested
+if( array_key_exists('callback') ){
+	// Echo request-param 'callback' as function
+	$output = $_GET['callback'] . "($json)";
+}
+
+// begin output
+// TODO: Will we ever need to use a different header?
+header('content-type: application/javascript');
+
+// Output JSON (with possible callback)
+echo $output;
 ?>
