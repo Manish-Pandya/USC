@@ -29,7 +29,7 @@ $json = JsonManager::encode($actionResult->actionFunctionResult);
 $output = $json;
 
 //If a callback function is requested
-if( array_key_exists('callback') ){
+if( array_key_exists('callback', $_GET) ){
 	// Echo request-param 'callback' as function
 	$output = $_GET['callback'] . "($json)";
 }
