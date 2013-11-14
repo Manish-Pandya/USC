@@ -14,7 +14,7 @@ class TestJsonManager extends UnitTestCase {
 		$expectedObject = new User();
 		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
-		$expectedObject->setKeyid(1234);
+		$expectedObject->setKeyId(1234);
 		$expectedObject->setName("name");
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
@@ -90,7 +90,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->expectNever('getColumnData');
 		$object->expectNever('setIsActive');
 		$object->expectNever('setEmail');
-		$object->expectNever('setKeyid');
+		$object->expectNever('setKeyId');
 		$object->expectNever('setName');
 		$object->expectNever('setRoles');
 		$object->expectNever('setUsername');
@@ -115,7 +115,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->setDateCreated( NULL );
 		$object->setDateLastModified( NULL );
 		$object->setEmail('email@host.com');
-		$object->setKeyid(1234);
+		$object->setKeyId(1234);
 		$object->setName("name");
 		$object->setRoles(array('role1', 'role2'));
 		$object->setUsername("username");
@@ -142,7 +142,7 @@ class TestJsonManager extends UnitTestCase {
 		$expectedObject = new User();
 		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
-		$expectedObject->setKeyid(1234);
+		$expectedObject->setKeyId(1234);
 		$expectedObject->setName("name");
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
@@ -152,6 +152,32 @@ class TestJsonManager extends UnitTestCase {
 		$object = JsonManager::jsonToObject($json, $object);
 		
 		$this->assertEqual($expectedObject, $object);
+	}
+	
+	function test_buildJsonableValue(){
+		$expectedObject = array(
+			'Class' => 'User',
+			'Roles' => array('role1', 'role2'),
+			'Username' => 'username',
+			'Name' => 'name',
+			'Email' => 'email@host.com',
+			'KeyId' => 1234,
+			'DateCreated' => NULL,
+			'DateLastModified' => NULL,
+			'IsActive' => true,
+		);
+
+		$user = new User();
+		$user->setIsActive(TRUE);
+		$user->setEmail('email@host.com');
+		$user->setKeyId(1234);
+		$user->setName('name');
+		$user->setRoles(array('role1', 'role2'));
+		$user->setUsername('username');
+		
+		$jsonableObject = JsonManager::buildJsonableValue($user);
+		
+		$this->assertEqual($expectedObject, $jsonableObject);
 	}
 }
 
