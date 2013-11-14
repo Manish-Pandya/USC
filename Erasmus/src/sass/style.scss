@@ -139,6 +139,14 @@ div.rsmsCenterIconContainer{
 /*******************************************************
 *	USER HUB STYLES
 *******************************************************/
+.userList tr td{
+	width:1%;
+}
+
+.userList tr {
+	 
+}
+
 tr.edit{
 	border:#999 solid 3px;
 	zoom:1.5;
@@ -146,6 +154,7 @@ tr.edit{
 tr.edit td{
 	box-shadow:4px 5px 8px rgba(0, 0, 0, 0.5);
 	background:#fff !important
+
 }
 tr.notedit,tr.notedit td{
 	background:none !important;
@@ -153,6 +162,10 @@ tr.notedit,tr.notedit td{
 
 tr.notedit:hover,tr.notedit td:hover{
 	background:#f7f7f7 !important;
+}
+
+tr.updated{
+	border:3px solid green;
 }
 /*******************************************************
 *	HAZARD HUB STYLES

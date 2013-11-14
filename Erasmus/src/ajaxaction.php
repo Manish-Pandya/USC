@@ -8,6 +8,7 @@
  * be displayed
  */ 
 ?><?php
+header('content-type: application/javascript');
 
 //Setup basic action data
 //	$sessionDataSource and $actionName are defined here
@@ -29,5 +30,6 @@ $json = JsonManager::encode($actionResult->actionFunctionResult);
 echo $_GET["callback"];
 
 // Output JSON
-echo $json;
+$parsedJson = '('.$json.')';
+echo $parsedJson;
 ?>

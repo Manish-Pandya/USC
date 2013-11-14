@@ -22,14 +22,24 @@ require_once '../top_view.php';
 		<th>Edit User</th><th>Activate/Deactivate User</th><th>Name</th><th>LDAP ID</th><th>Email</th><th>Role</th>
 	</tr>
 </thead>
+<!--
+	"Roles": null,
+    "Username": "user0",
+    "Name": "User #0",
+    "Email": "user0@host.com",
+    "KeyId": 0,
+    "DateCreated": null,
+    "DateLastModified": null,
+    "IsActive": true
+-->
 <tbody >
-	<tr id="{{user.id}}" ng-repeat="user in users" ng-class="{edit: user.edit, notedit: user.notEdit}">
+	<tr id="{{user.id}}" ng-repeat="user in users" ng-class="{edit: user.edit, notedit: user.notEdit, updated: user.updated}">
 		<td ng-hide="user.edit"><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></td><td ng-show="user.edit"><a class="edit btn btn-large btn-info" ng-click="saveUser(user)">Save</a></td>
 		<td ng-hide="user.edit"><a class="btn btn-danger btn-large DeactivateeRow" href="#">Deactivate</a></td><td ng-show="user.edit"><a class="edit btn btn-large btn-danger" ng-click="cancelEdits(user)">Cancel</a></td>
-		<td ng-hide="user.edit">{{user.name}}</td><td ng-show="user.edit"><input ng-model="userCopy.name"/></td>
-		<td ng-hide="user.edit">{{user.ldap}}</td><td ng-show="user.edit"><input ng-model="userCopy.ldap"/></td>
-		<td ng-hide="user.edit">{{user.email}}</td><td ng-show="user.edit"><input ng-model="userCopy.email"/></td>
-		<td ng-hide="user.edit">{{user.role}}Administrator</td><td ng-show="user.edit"><input ng-init="Administrator" ng-model="userCopy.role"/></td>
+		<td ng-hide="user.edit">{{user.Name}}</td><td ng-show="user.edit"><input ng-model="userCopy.Name"/></td>
+		<td ng-hide="user.edit">{{user.Username}}</td><td ng-show="user.edit"><input ng-model="userCopy.Username"/></td>
+		<td ng-hide="user.edit">{{user.Email}}</td><td ng-show="user.edit"><input ng-model="userCopy.Email"/></td>
+		<td ng-hide="user.edit">{{user.Roles}}Administrator</td><td ng-show="user.edit"><input ng-init="Administrator" ng-model="userCopy.Roles"/></td>
 	</tr>
 </tbody>
 </table>

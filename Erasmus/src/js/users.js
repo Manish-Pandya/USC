@@ -43,7 +43,7 @@ function UserListController($scope, testFactory) {
   //we do it this way so that we know we get data before we set the $scope object
   //
   function init(){
-	  testFactory.getUsers(onGetUsers,'http://hazmars.graysail.com/api.php?callback=JSON_CALLBACK');
+	  testFactory.getUsers(onGetUsers,'/Erasmus/src/ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK');
 	  console.log('init called');
   };
   //grab set user list data into the $scrope object
@@ -63,6 +63,7 @@ function UserListController($scope, testFactory) {
 	
 	user.notEdit = false;
   	user.edit = true;
+
   	var editedUser = angular.copy(user);
 
   	console.log(editedUser);
@@ -78,25 +79,44 @@ function UserListController($scope, testFactory) {
    */
   $scope.saveUser = function(user){
 
+
   	$scope.userCopy.edit = false;
 
-  	for (var property in scope.userCopy) {
-	    if (scope.userCopy.hasOwnProperty(property)) {
-	        // do stuff
+  	for (var property in $scope.userCopy) {
+	    if ($scope.userCopy.hasOwnProperty(property)) {
+	    	console.log(property);
+	        user[property] = $scope.userCopy[property];
 	    }
 	}
 
+	for(i=0;i<$scope.users.length;i++){
 
+		thisUser = $scope.users[i];
 
-  	user.name = $scope.userCopy.name;
-  	user.name = $scope.userCopy.name;
-  	user.name = $scope.userCopy.name;
-  	user.name = $scope.userCopy.name;
-  	user.name = $scope.userCopy.name;
-  	user.edit = $scope.userCopy.edit;
-  	console.log(user);
+		thisUser.notEdit = false;
+		thisUser.edit = false;
+		thisUser.updated = false;
+	}
+
+	user.updated = true;
+
+	console.log(user);
 
 	//testFactory.saveUser(onGetUsers,'http://hazmars.graysail.com/api.php?callback=JSON_CALLBACK');
+  }
+
+  $scope.cancelEdits = function(user){
+	user.notEdit = false;
+	user.edit = false;
+
+	for(i=0;i<$scope.users.length;i++){
+
+		thisUser = $scope.users[i];
+
+		thisUser.notEdit = false;
+		thisUser.edit = false;
+		thisUser.updated = false;
+	}
   }
   
   function onSaveUser(){
