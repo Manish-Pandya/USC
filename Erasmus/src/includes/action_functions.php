@@ -56,27 +56,45 @@ function getUserById(){
 	}
 }
 
-function saveUser(){
-	$LOG = Logger::getLogger('Action:saveUser');
+//TODO: Move this utility function
+function convertInputJsonAddKeyId(){
+	$LOG = Logger::getLogger('Action-Util:convertInputJsonAddKeyId');
 	
-	//read user JSON from input stream
-	$stuff = file_get_contents('php://input');
+	//read JSON from input stream
+	$input = file_get_contents('php://input');
 	
-	$LOG->info( 'Read from input stream: ' . $stuff );
+	$LOG->info( 'Read from input stream: ' . $input );
 	
-	//TODO: verify that $stuff is actual data
-	if( !empty( $stuff) ){	
+	//TODO: verify that $input is actual data that can be converted
+	if( !empty( $input) ){
 		//convert to User object
-		$userObject = JsonManager::decode($stuff, new User());
-		
-		$LOG->info( 'Converted to User: ' . $userObject);
-		
-		$userObject->setKeyId( 54321 );
-		
-		return $userObject;
+		try{
+			$decodedObject = JsonManager::decode($input);
+			
+			$LOG->info( 'Converted to: ' . $decodedObject);
+			
+			//Set keyid to mock 'saving'
+			$decodedObject->setKeyId( 54321 );
+			
+			return $decodedObject;
+		}
+		catch( Exception $e){
+			return new ActionError("Unable to decode JSON. Cause: $e");
+		}
 	}
 	else{
 		return new ActionError('No data read from input stream');
+	}
+}
+
+function saveUser(){
+	$LOG = Logger::getLogger('Action:saveUser');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
+	}
+	else{
+		return $decodedObject;
 	}
 };
 
@@ -107,8 +125,28 @@ function getChecklist(){
 };
 
 function getQuestions(){ };
-function saveChecklist(){ };
-function saveQuestion(){ };
+
+function saveChecklist(){
+	$LOG = Logger::getLogger('Action:saveChecklist');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Checklist');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+
+function saveQuestion(){
+	$LOG = Logger::getLogger('Action:saveQuestion');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Question');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Hazards Hub
 function getHazards(){ };
@@ -156,7 +194,16 @@ function getPI(){
 };
 
 function getRooms(){ };
-function saveInspection(){ };
+function saveInspection(){
+	$LOG = Logger::getLogger('Action:saveInspection');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Inspection');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Inspection, step 2 (Hazard Assessment)
 function getHazardsInRoom(){
@@ -192,10 +239,46 @@ function saveRoomRelation(){ };
 // Inspection, step 3 (Checklist)
 //function getQuestions(){ };	//DUPLICATE FUNCTION
 function getDeficiency(){ };
-function saveResponse(){ };
-function saveDeficiencySelection(){ };
-function saveRootCause(){ };
-function saveCorrectiveAction(){ };
+function saveResponse(){
+	$LOG = Logger::getLogger('Action:saveResponse');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Response');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveDeficiencySelection(){
+	$LOG = Logger::getLogger('Action:saveDeficiencySelection');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to DeficiencySelection');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveRootCause(){
+	$LOG = Logger::getLogger('Action:saveRootCause');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to RootCause');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveCorrectiveAction(){
+	$LOG = Logger::getLogger('Action:saveRootCause');
+	$decodedObject = convertInputJsonAddKeyId();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to RootCause');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Inspection, step 4 (Review, deficiency report)
 function getDeficiencySelections(){ };

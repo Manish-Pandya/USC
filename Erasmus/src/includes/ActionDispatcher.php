@@ -113,18 +113,21 @@ class ActionDispatcher {
 			$result->actionFunctionResult = $this->doAction($actionMapping);
 				
 			//NULL indicates something was wrong
-			if( $result->actionFunctionResult != NULL ){
-				// Forward to the success page
-				$result->destinationPage = $this->dispatchSuccess($actionMapping);
-			}
-			else{
+			if( $result->actionFunctionResult == NULL || $result instanceof ActionError ){
 				// Forward to the failure page
 				$result->destinationPage = $this->dispatchError($actionMapping);
+			}
+			else{
+				// Forward to the success page
+				$result->destinationPage = $this->dispatchSuccess($actionMapping);
 			}
 		}
 		else{
 			//Access Denied!
 			$result->destinationPage = $this->dispatchError($actionMapping);
+			
+			// Set value to error message
+			$result->actionFunctionResult = new ActionError('Access denied');
 		}
 	}
 	
