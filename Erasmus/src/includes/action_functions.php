@@ -138,7 +138,25 @@ function getChecklist(){
 	}
 };
 
-function getQuestions(){ };
+function getQuestions(){
+	$LOG = Logger::getLogger( 'Action:getQuestions' );
+	$questions = array();
+	
+	//TODO: Query for Rooms
+	for( $i = 0; $i < 10; $i++ ){
+		$question = new Question();
+		$question->setIsActive(TRUE);
+		$question->setKeyId($i);
+		$question->setText("Question $i");
+		$question->setStandardsAndGuidelines('Standards & Guidelines');
+	
+		$LOG->info("Defined Question: $question");
+	
+		$questions[] = $question;
+	}
+	
+	return $questions;
+};
 
 function saveChecklist(){
 	$LOG = Logger::getLogger('Action:saveChecklist');
@@ -163,7 +181,24 @@ function saveQuestion(){
 };
 
 // Hazards Hub
-function getHazards(){ };
+function getHazards(){
+	$LOG = Logger::getLogger( 'Action:getHazards' );
+	$hazards = array();
+	
+	//TODO: Query for Hazards
+	for( $i = 0; $i < 10; $i++ ){
+		$hazard = new Hazard();
+		$hazard->setKeyId($i);
+		$hazard->setName("Dangerous thing #$i");
+	
+		$LOG->info("Defined Hazard: $hazard");
+	
+		$hazards[] = $hazard;
+	}
+	
+	return $hazards;
+};
+
 function saveHazards(){ };
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
@@ -207,7 +242,26 @@ function getPI(){
 	}
 };
 
-function getRooms(){ };
+function getRooms(){
+	$LOG = Logger::getLogger( 'Action:getRooms' );
+	$allRooms = array();
+	
+	//TODO: Query for Rooms
+	for( $i = 100; $i < 110; $i++ ){
+		$room = new Room();
+		$room->setIsActive(TRUE);
+		$room->setKeyId($i);
+		$room->setName("Room $i");
+		$room->setSafetyContactInformation('Call 911');
+	
+		$LOG->info("Defined Room: $room");
+	
+		$allRooms[] = $room;
+	}
+	
+	return $allRooms;
+};
+
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:saveInspection');
 	$decodedObject = convertInputJson(true);
@@ -228,15 +282,10 @@ function getHazardsInRoom(){
 		$room = new Room();
 		$room->setKeyId($roomId);
 		$room->setName("Room $roomId");
-		$hazards = array();
+		$hazards = getHazards();
 		
-		for( $i = 0; $i < 5; $i++ ){
-			$hazard = new Hazard();
+		foreach( $hazards as &$hazard){
 			$hazard->setRooms( array($room) );
-			$hazard->setKeyId($i);
-			$hazard->setName("Dangerous thing #$i");
-			
-			$hazards[] = $hazard;
 		}
 	
 		return $hazards;
