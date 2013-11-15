@@ -79,7 +79,7 @@ return array(
 			),
 			'params' => array(
 					'file' => DIR_PATH . '/../logs/erasmus-log.html',
-					'append' => true
+					'append' => false
 			)
 		),
 	)

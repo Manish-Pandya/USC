@@ -20,7 +20,6 @@ class Room extends GenericCrud {
 		"name"		=> "text",
 	);
 	
-	private $active;
 	private $name;
 	
 	/** Reference to the Building entity that contains this Room */
@@ -49,9 +48,6 @@ class Room extends GenericCrud {
 	}
 	
 	// Accessors / Mutators
-	public function getActive(){ return $this->active; }
-	public function setActive($active){ $this->active = $active; }
-	
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
 	

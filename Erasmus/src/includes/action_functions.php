@@ -56,32 +56,64 @@ function getUserById(){
 	}
 }
 
+//TODO: Remove this utility function
+function convertInputJson($addKeyId=FALSE){
+	try{
+		$decodedObject = JsonManager::decodeInputStream();
+		
+		if( $decodedObject != NULL ){
+			//set key id?
+			if( $addKeyId ){
+				$decodedObject->setKeyId(54321);
+			}
+		}
+		else{
+			return new ActionError('No data read from input stream');
+		}
+		
+		return $decodedObject;
+	}
+	catch(Exception $e){
+		return new ActionError("Unable to decode JSON. Cause: $e");
+	}
+}
+
 function saveUser(){
 	$LOG = Logger::getLogger('Action:saveUser');
-	
-	//read user JSON from input stream
-	$stuff = file_get_contents('php://input');
-	
-	$LOG->info( 'Read from input stream: ' . $stuff );
-	
-	//TODO: verify that $stuff is actual data
-	if( !empty( $stuff) ){	
-		//convert to User object
-		$userObject = JsonManager::decode($stuff, new User());
-		
-		$LOG->info( 'Converted to User: ' . $userObject);
-		
-		$userObject->setKeyId( 54321 );
-		
-		return $userObject;
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
 	}
 	else{
-		return new ActionError('No data read from input stream');
+		return $decodedObject;
 	}
 };
 
-function activateUser(){ };
-function deactivateUser(){ };
+function activateUser(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:activateUser');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
+	}
+	else{
+		$decodedObject->setIsActive(TRUE);
+		return $decodedObject;
+	}
+};
+
+function deactivateUser(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:deactivateUser');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
+	}
+	else{
+		$decodedObject->setIsActive(FALSE);
+		return $decodedObject;
+	}
+};
 
 function getAllRoles(){
 	return array(
@@ -106,12 +138,67 @@ function getChecklist(){
 	}
 };
 
-function getQuestions(){ };
-function saveChecklist(){ };
-function saveQuestion(){ };
+function getQuestions(){
+	$LOG = Logger::getLogger( 'Action:getQuestions' );
+	$questions = array();
+	
+	//TODO: Query for Rooms
+	for( $i = 0; $i < 10; $i++ ){
+		$question = new Question();
+		$question->setIsActive(TRUE);
+		$question->setKeyId($i);
+		$question->setText("Question $i");
+		$question->setStandardsAndGuidelines('Standards & Guidelines');
+	
+		$LOG->info("Defined Question: $question");
+	
+		$questions[] = $question;
+	}
+	
+	return $questions;
+};
+
+function saveChecklist(){
+	$LOG = Logger::getLogger('Action:saveChecklist');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Checklist');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+
+function saveQuestion(){
+	$LOG = Logger::getLogger('Action:saveQuestion');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Question');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Hazards Hub
-function getHazards(){ };
+function getHazards(){
+	$LOG = Logger::getLogger( 'Action:getHazards' );
+	$hazards = array();
+	
+	//TODO: Query for Hazards
+	for( $i = 0; $i < 10; $i++ ){
+		$hazard = new Hazard();
+		$hazard->setKeyId($i);
+		$hazard->setName("Dangerous thing #$i");
+	
+		$LOG->info("Defined Hazard: $hazard");
+	
+		$hazards[] = $hazard;
+	}
+	
+	return $hazards;
+};
+
 function saveHazards(){ };
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
@@ -155,8 +242,36 @@ function getPI(){
 	}
 };
 
-function getRooms(){ };
-function saveInspection(){ };
+function getRooms(){
+	$LOG = Logger::getLogger( 'Action:getRooms' );
+	$allRooms = array();
+	
+	//TODO: Query for Rooms
+	for( $i = 100; $i < 110; $i++ ){
+		$room = new Room();
+		$room->setIsActive(TRUE);
+		$room->setKeyId($i);
+		$room->setName("Room $i");
+		$room->setSafetyContactInformation('Call 911');
+	
+		$LOG->info("Defined Room: $room");
+	
+		$allRooms[] = $room;
+	}
+	
+	return $allRooms;
+};
+
+function saveInspection(){
+	$LOG = Logger::getLogger('Action:saveInspection');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Inspection');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Inspection, step 2 (Hazard Assessment)
 function getHazardsInRoom(){
@@ -167,15 +282,10 @@ function getHazardsInRoom(){
 		$room = new Room();
 		$room->setKeyId($roomId);
 		$room->setName("Room $roomId");
-		$hazards = array();
+		$hazards = getHazards();
 		
-		for( $i = 0; $i < 5; $i++ ){
-			$hazard = new Hazard();
+		foreach( $hazards as &$hazard){
 			$hazard->setRooms( array($room) );
-			$hazard->setKeyId($i);
-			$hazard->setName("Dangerous thing #$i");
-			
-			$hazards[] = $hazard;
 		}
 	
 		return $hazards;
@@ -192,10 +302,46 @@ function saveRoomRelation(){ };
 // Inspection, step 3 (Checklist)
 //function getQuestions(){ };	//DUPLICATE FUNCTION
 function getDeficiency(){ };
-function saveResponse(){ };
-function saveDeficiencySelection(){ };
-function saveRootCause(){ };
-function saveCorrectiveAction(){ };
+function saveResponse(){
+	$LOG = Logger::getLogger('Action:saveResponse');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Response');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveDeficiencySelection(){
+	$LOG = Logger::getLogger('Action:saveDeficiencySelection');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to DeficiencySelection');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveRootCause(){
+	$LOG = Logger::getLogger('Action:saveRootCause');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to RootCause');
+	}
+	else{
+		return $decodedObject;
+	}
+};
+function saveCorrectiveAction(){
+	$LOG = Logger::getLogger('Action:saveRootCause');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to RootCause');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 
 // Inspection, step 4 (Review, deficiency report)
 function getDeficiencySelections(){ };

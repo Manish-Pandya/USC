@@ -9,7 +9,7 @@
 define('DIR_PATH', dirname(__FILE__) );
 define('URL_PATH', 'http://localhost');
 define('ADMIN_MAIL', 'hoke@graysail.com');
-define('LOGIN_PAGE','login.php');
+define('LOGIN_PAGE', 'login.php');
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -41,15 +41,29 @@ require_once(dirname(__FILE__) . '/includes/ErrorHandler.php');
 
 //Check session for Admin flag
 function isAdminUser(){
-	//TODO
+	return isset($_SESSION['USSER']) && $_SESSION['ADMIN'] == 'Y';
 }
 
 function securityCheck(){
-	//TODO
+	if (!isset($_SESSION["USER"])){
+		//Forward to login page
+		header("location:" . LOGIN_PAGE);
+	}
+	else {
+		return true;
+	}
 }
 
 function login($username,$password) {
-	//TODO
+	//TODO: actually authenticate user
+	$user = new User();
+	$user->setUsername($username);
+	
+	$_SESSION['USER'] = $user;
+	$_SESSION["ADMIN"] = "Y";
+	
+	// return true to indicate success
+	return true;
 }
 
 function logout() {

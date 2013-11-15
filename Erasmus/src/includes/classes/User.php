@@ -52,10 +52,6 @@ class User extends GenericCrud{
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function __toString(){
-		return "[User keyid=" . $this->getKeyId() . "]";
-	}
-	
 	// Accessors / Mutators
 	public function getRoles(){ return $this->roles; }
 	public function setRoles($roles){ $this->roles = $roles; }
