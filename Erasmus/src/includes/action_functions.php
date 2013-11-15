@@ -11,8 +11,47 @@
  */
 ?><?php
 //TODO: Split these functions up into further includes?
+
+function getValueFromRequest( $valueName, $defaultValue = NULL ){
+	if( array_key_exists($valueName, $_REQUEST)){
+		return $_REQUEST[ $valueName ];
+	}
+	else if( $defaultValue !== NULL ){
+		return $defaultValue;
+	}
+	else{
+		return NULL;
+	}
+}
+
 function loginAction(){ };
 function logoutAction(){ };
+
+function activate(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:activate');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to GenericCrud');
+	}
+	else{
+		$decodedObject->setIsActive(TRUE);
+		return $decodedObject;
+	}
+};
+
+function deactivate(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:deactivate');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to GenericCrud');
+	}
+	else{
+		$decodedObject->setIsActive(FALSE);
+		return $decodedObject;
+	}
+};
 
 // Users Hub
 function getAllUsers(){
@@ -21,24 +60,19 @@ function getAllUsers(){
 	
 	//TODO: Query for Users
 	for( $i = 0; $i < 10; $i++ ){
-		$user = new User();
-		$user->setIsActive(TRUE);
-		$user->setEmail("user$i@host.com");
-		$user->setKeyId($i);
-		$user->setName("User #$i");
-		$user->setUsername("user$i");
-		
-		$LOG->info("Defined User: $user");
-		
-		$allUsers[] = $user;
+		$allUsers[] = getUserById($i);
 	}
 	
 	return $allUsers;
 };
 
-function getUserById(){
-	if( array_key_exists( 'id', $_REQUEST)){
-		$keyid = $_REQUEST['id'];
+function getUserById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getUserById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
 	
 		//TODO: query for User with this ID
 		$user = new User();
@@ -47,6 +81,8 @@ function getUserById(){
 		$user->setName("User #$keyid");
 		$user->setUsername("user$keyid");
 		$user->setKeyId($keyid);
+
+		$LOG->info("Defined User: $user");
 	
 		return $user;
 	}
@@ -89,35 +125,10 @@ function saveUser(){
 	}
 };
 
-function activateUser(){
-	//Get the user
-	$LOG = Logger::getLogger('Action:activateUser');
-	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
-		return new ActionError('Error converting input stream to User');
-	}
-	else{
-		$decodedObject->setIsActive(TRUE);
-		return $decodedObject;
-	}
-};
-
-function deactivateUser(){
-	//Get the user
-	$LOG = Logger::getLogger('Action:deactivateUser');
-	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
-		return new ActionError('Error converting input stream to User');
-	}
-	else{
-		$decodedObject->setIsActive(FALSE);
-		return $decodedObject;
-	}
-};
-
 function getAllRoles(){
 	return array(
 		'Administrator',
+		'AppUser',
 	);
 };
 
@@ -181,25 +192,86 @@ function saveQuestion(){
 };
 
 // Hazards Hub
-function getHazards(){
-	$LOG = Logger::getLogger( 'Action:getHazards' );
+function getAllHazards(){
+	$LOG = Logger::getLogger( 'Action:getAllHazards' );
 	$hazards = array();
 	
 	//TODO: Query for Hazards
 	for( $i = 0; $i < 10; $i++ ){
-		$hazard = new Hazard();
-		$hazard->setKeyId($i);
-		$hazard->setName("Dangerous thing #$i");
-	
-		$LOG->info("Defined Hazard: $hazard");
-	
-		$hazards[] = $hazard;
+		$hazards[] = getHazardById($i);
 	}
 	
 	return $hazards;
 };
 
-function saveHazards(){ };
+function getHazardById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getHazardById' );
+	
+	if( $id === NULL ){
+		$LOG->info('NULL parameter $id: ' . $id);
+		$id = $_REQUEST['id'];
+	}
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+		
+		//TODO: query for hazard with this ID
+		$hazard = new Hazard();
+		$hazard->setKeyId($keyid);
+		$hazard->setName("Dangerous thing #$keyid");
+		
+		$LOG->info("Defined Hazard: $hazard");
+		
+		return $hazard;
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+/**
+ * Moves specified hazard to the specified parent
+ */
+function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
+	$LOG = Logger::getLogger( 'Action:moveHazardToParent' );
+	
+	//Get ids
+	$hazardId = getValueFromRequest('hazardId', $hazardId);
+	$parentHazardId = getValueFromRequest('parentHazardId', $parentHazardId);
+	
+	//TODO: validate values
+	
+	$LOG->info("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
+	
+	// get Hazard by ID
+	$hazard = getHazardById( $hazardId );
+	
+	// get Parent Hazard by ID
+	$parent = getHazardById( $parentHazardId );
+	
+	//TODO: Remove $hazard from $hazard->getParentHazard() children
+	
+	//Get children of parent
+	$children = $parent->getSubHazards();
+	
+	//Add hazard to children
+	$children[] = $hazard;
+	
+	$parent->setSubHazards($children);
+	
+	//TODO: What do we return?
+}
+
+function saveHazard(){
+	$LOG = Logger::getLogger('Action:saveHazard');
+	$decodedObject = convertInputJson(true);
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to Hazard');
+	}
+	else{
+		return $decodedObject;
+	}
+};
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
 // Question Hub
@@ -233,6 +305,8 @@ function getPI(){
 		//TODO: query for PI with this ID
 		$pi = new PrincipalInvestigator();
 		$pi->setKeyId($keyid);
+		
+		//TODO: add user
 		
 		return $pi;
 	}

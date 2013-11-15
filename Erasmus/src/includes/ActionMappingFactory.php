@@ -30,13 +30,15 @@ class ActionMappingFactory {
 				//TODO: Assign roles
 				"loginAction"=>new ActionMapping("loginAction", "RSMSCenter.php", "login.php"),
 				"logoutAction"=>new ActionMapping("logoutAction", "login.php", "login.php"),
+
+				//Generic
+				"activate"=>new ActionMapping("activate", "", ""),
+				"deactivate"=>new ActionMapping("deactivate", "", ""),
 				
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
 				"getUserById"=>new ActionMapping("getUserById", "", ""),
 				"saveUser"=>new ActionMapping("saveUser", "", ""),
-				"activateUser"=>new ActionMapping("activateUser", "", ""),
-				"deactivateUser"=>new ActionMapping("deactivateUser", "", ""),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				
 				// Checklist Hub
@@ -46,8 +48,10 @@ class ActionMappingFactory {
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
 				
 				// Hazards Hub
-				"getHazards"=>new ActionMapping("getHazards", "", ""),
-				"saveHazards"=>new ActionMapping("saveHazards", "", ""),
+				"getAllHazards"=>new ActionMapping("getAllHazards", "", ""),
+				"getHazardById"=>new ActionMapping("getHazardById", "", ""),
+				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
+				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
 				
 				// Question Hub
 				"getQuestion"=>new ActionMapping("getQuestion", "", ""),
