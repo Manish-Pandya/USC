@@ -30,6 +30,10 @@ abstract class GenericCrud {
 	// Active
 	private $isActive;
 	
+	public function __toString(){
+		return '[' .get_class($this) . " key_id=" . $this->getKeyId() . "]";
+	}
+	
 	// Accessors / Mutators
 	
 	public function getKeyId(){
