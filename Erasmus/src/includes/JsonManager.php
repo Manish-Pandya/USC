@@ -57,6 +57,44 @@ class JsonManager {
 		return JsonManager::jsonToObject($json, $object);
 	}
 	
+	/**
+	 * Reads data from the given stream and decodes it as JSON.
+	 * 
+	 * The stream defaults to php://input
+	 * 
+	 * @throws Exception
+	 * @return Ambigous <object, NULL>|NULL
+	 */
+	public static function decodeInputStream( $stream='php://input'){
+		$LOG = Logger::getLogger( __CLASS__ );
+		
+		//read JSON from input stream
+		$input = file_get_contents( $stream );
+		
+		$LOG->trace( 'Data read from input stream: ' . $input );
+		
+		//TODO: verify that $input is actual data that can be converted
+		if( !empty( $input) ){
+			
+			//decode JSON to object
+			try{
+				$decodedObject = JsonManager::decode($input);
+				
+				$LOG->trace( 'Decoded to: ' . $decodedObject);
+				
+				return $decodedObject;
+			}
+			catch( Exception $e){
+				throw new Exception('Unable to decode JSON from Input Stream', NULL, $e);
+			}
+		}
+		else{
+			//TODO: No data read from input stream. Throw exception?
+			$LOG->warn( 'No data read from input stream.' );
+			return NULL;
+		}
+	}
+	
 	public static function objectHasEncodeFunction($object){
 		$callable = array( $object, JsonManager::$FUNCTION_TO_JSON );
 		

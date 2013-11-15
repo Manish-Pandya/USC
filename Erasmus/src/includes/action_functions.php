@@ -56,40 +56,31 @@ function getUserById(){
 	}
 }
 
-//TODO: Move this utility function
-function convertInputJsonAddKeyId(){
-	$LOG = Logger::getLogger('Action-Util:convertInputJsonAddKeyId');
-	
-	//read JSON from input stream
-	$input = file_get_contents('php://input');
-	
-	$LOG->info( 'Read from input stream: ' . $input );
-	
-	//TODO: verify that $input is actual data that can be converted
-	if( !empty( $input) ){
-		//convert to User object
-		try{
-			$decodedObject = JsonManager::decode($input);
-			
-			$LOG->info( 'Converted to: ' . $decodedObject);
-			
-			//Set keyid to mock 'saving'
-			$decodedObject->setKeyId( 54321 );
-			
-			return $decodedObject;
+//TODO: Remove this utility function
+function convertInputJson($addKeyId=FALSE){
+	try{
+		$decodedObject = JsonManager::decodeInputStream();
+		
+		if( $decodedObject != NULL ){
+			//set key id?
+			if( $addKeyId ){
+				$decodedObject->setKeyId(54321);
+			}
 		}
-		catch( Exception $e){
-			return new ActionError("Unable to decode JSON. Cause: $e");
+		else{
+			return new ActionError('No data read from input stream');
 		}
+		
+		return $decodedObject;
 	}
-	else{
-		return new ActionError('No data read from input stream');
+	catch(Exception $e){
+		return new ActionError("Unable to decode JSON. Cause: $e");
 	}
 }
 
 function saveUser(){
 	$LOG = Logger::getLogger('Action:saveUser');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to User');
 	}
@@ -98,8 +89,31 @@ function saveUser(){
 	}
 };
 
-function activateUser(){ };
-function deactivateUser(){ };
+function activateUser(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:activateUser');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
+	}
+	else{
+		$decodedObject->setIsActive(TRUE);
+		return $decodedObject;
+	}
+};
+
+function deactivateUser(){
+	//Get the user
+	$LOG = Logger::getLogger('Action:deactivateUser');
+	$decodedObject = convertInputJson();
+	if( $decodedObject == NULL ){
+		return new ActionError('Error converting input stream to User');
+	}
+	else{
+		$decodedObject->setIsActive(FALSE);
+		return $decodedObject;
+	}
+};
 
 function getAllRoles(){
 	return array(
@@ -128,7 +142,7 @@ function getQuestions(){ };
 
 function saveChecklist(){
 	$LOG = Logger::getLogger('Action:saveChecklist');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Checklist');
 	}
@@ -139,7 +153,7 @@ function saveChecklist(){
 
 function saveQuestion(){
 	$LOG = Logger::getLogger('Action:saveQuestion');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Question');
 	}
@@ -196,7 +210,7 @@ function getPI(){
 function getRooms(){ };
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:saveInspection');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Inspection');
 	}
@@ -241,7 +255,7 @@ function saveRoomRelation(){ };
 function getDeficiency(){ };
 function saveResponse(){
 	$LOG = Logger::getLogger('Action:saveResponse');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Response');
 	}
@@ -251,7 +265,7 @@ function saveResponse(){
 };
 function saveDeficiencySelection(){
 	$LOG = Logger::getLogger('Action:saveDeficiencySelection');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to DeficiencySelection');
 	}
@@ -261,7 +275,7 @@ function saveDeficiencySelection(){
 };
 function saveRootCause(){
 	$LOG = Logger::getLogger('Action:saveRootCause');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to RootCause');
 	}
@@ -271,7 +285,7 @@ function saveRootCause(){
 };
 function saveCorrectiveAction(){
 	$LOG = Logger::getLogger('Action:saveRootCause');
-	$decodedObject = convertInputJsonAddKeyId();
+	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to RootCause');
 	}
