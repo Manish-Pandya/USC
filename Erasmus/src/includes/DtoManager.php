@@ -58,6 +58,12 @@ class DtoManager {
 		
 		//Attempt to set each field on the base object
 		foreach($fieldNamesAndValues as $fieldName => $fieldValue) {
+			
+			//TODO: Skip other known non-fields
+			if( $fieldName == 'Class' ){
+				//'Class' is special
+				continue;
+			}
 		
 			//Note: Array values will be handled if the fields are keyed as arrays,
 			//	like: name="obj.fieldname[]"
