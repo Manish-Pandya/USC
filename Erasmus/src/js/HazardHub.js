@@ -181,7 +181,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      hazardHubFactory.getHazardData(onGetHazards,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&hazards=true');
+      hazardHubFactory.getHazardData(onGetHazards,'/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK');
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {

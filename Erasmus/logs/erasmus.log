@@ -28570,3 +28570,643 @@
 2013-11-15 18:41:29 [TRACE] [         JsonManager] [udes\JsonManager.php: 255] Calling User#getDateCreated()
 2013-11-15 18:41:29 [TRACE] [         JsonManager] [udes\JsonManager.php: 255] Calling User#getDateLastModified()
 2013-11-15 18:41:29 [TRACE] [         JsonManager] [udes\JsonManager.php: 255] Calling User#getIsActive()
+2013-11-15 18:59:18 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-15 18:59:18 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-15 18:59:18 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user0","Name":"User #0","Email":"user0@host.com","KeyId":0,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user0","Name":"User #0","Email":"user0@host.com","KeyId":0,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-15 18:59:19 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:19 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=0]
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-15 18:59:19 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-15 18:59:21 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-15 18:59:21 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-15 18:59:21 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-15 18:59:21 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:21 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=54321]
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-15 18:59:21 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=2]
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-15 18:59:22 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-15 18:59:22 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:22 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=5]
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-15 18:59:22 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action getAllUsers
+2013-11-16 03:16:40 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to getAllUsers: TRUE
+2013-11-16 03:16:40 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'getAllUsers'
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=0]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=1]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=2]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=3]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=4]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=5]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=6]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=7]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=8]
+2013-11-16 03:16:40 [ INFO] [  Action:getAllUsers] [action_functions.php:  31] Defined User: [User key_id=9]
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:16:40 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:17:02 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:17:02 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:17:02 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:17:02 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:02 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:17:02 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=1]
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:17:02 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:17:03 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:03 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=2]
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:17:03 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user3","Name":"User #3","Email":"user3@host.com","KeyId":3,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user3","Name":"User #3","Email":"user3@host.com","KeyId":3,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:17:03 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:03 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:17:03 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=3]
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:17:03 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:17:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:17:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:17:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":false}
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:17:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:17:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=5]
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:17:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:17:44 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:17:44 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:17:44 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":0,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":true,"notEdit":false,"updated":false}
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":0,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":true,"notEdit":false,"updated":false}
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:17:44 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:17:44 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=0]
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:17:44 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:08 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:08 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:08 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user3","Name":"User #3","Email":"user3@host.com","KeyId":3,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user3","Name":"User #3","Email":"user3@host.com","KeyId":3,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:08 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:08 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=3]
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:08 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:09 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:09 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:09 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user2","Name":"User #2","Email":"user2@host.com","KeyId":2,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:09 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:09 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=2]
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:09 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:10 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:10 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:10 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:10 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:10 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=54321]
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:10 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:11 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:11 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:11 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:11 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:11 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=1]
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:11 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=54321]
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:12 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user5","Name":"User #5","Email":"user5@host.com","KeyId":5,"DateCreated":null,"DateLastModified":null,"IsActive":true,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:12 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:12 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=5]
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:12 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:16 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"love","Name":"i","Email":"you","KeyId":54321,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:16 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:16 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=54321]
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:16 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
+2013-11-16 03:19:25 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 107] Checking user roles for action saveUser
+2013-11-16 03:19:25 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 110] Granting user access to saveUser: TRUE
+2013-11-16 03:19:25 [DEBUG] [    ActionDispatcher] [ActionDispatcher.php: 209] Executing action function 'saveUser'
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php:  74] Data read from input stream: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 117] Decoding JSON: {"Class":"User","Roles":null,"Username":"user1","Name":"User #1","Email":"user1@host.com","KeyId":1,"DateCreated":null,"DateLastModified":null,"IsActive":false,"edit":false,"notEdit":false,"updated":false}
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 179] Inferring object type: 'User'
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  54] Collecting information from array for object of class User using prefix ''
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'Class' on name '' - No such function: 'setClass' on class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setRoles() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setUsername() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setName() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setEmail() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setKeyId() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateCreated() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setDateLastModified() on object of class User
+2013-11-16 03:19:25 [TRACE] [          DtoManager] [ludes\DtoManager.php:  75] Calling setIsActive() on object of class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'edit' on name '' - No such function: 'setEdit' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'notEdit' on name '' - No such function: 'setNotEdit' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:25 [ WARN] [          DtoManager] [ludes\DtoManager.php:  82] Failed to set field 'updated' on name '' - No such function: 'setUpdated' on class User
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php:  83] Decoded to: [User key_id=1]
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 283] Calling accessors on User
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getRoles()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getUsername()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getName()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getEmail()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getKeyId()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateCreated()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getDateLastModified()
+2013-11-16 03:19:25 [TRACE] [         JsonManager] [udes\JsonManager.php: 293] Calling User#getIsActive()
