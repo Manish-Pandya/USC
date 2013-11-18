@@ -13,6 +13,9 @@ require_once( dirname(__FILE__) . '/Application.php');
 // Include these from other file(s)
 require_once( dirname(__FILE__) . '/includes/action_functions.php' );
 
+//Provides function to cleanly set the HTTP Status code
+require_once( dirname(__FILE__) . '/includes/http_status.php' );
+
 $sessionDataSource = array();
 
 //Set default action to login

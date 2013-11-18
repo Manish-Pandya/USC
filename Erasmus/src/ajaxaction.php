@@ -38,6 +38,9 @@ if( array_key_exists('callback', $_GET) ){
 // TODO: Will we ever need to use a different header?
 header('content-type: application/javascript');
 
+// Set the HTTP status code. ActionResult defaults this to 200
+set_http_response_code( $actionResult->statusCode );
+
 // Output JSON (with possible callback)
 echo $output;
 ?>
