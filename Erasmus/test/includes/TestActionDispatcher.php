@@ -14,31 +14,43 @@ class TestActionDispatcher extends UnitTestCase {
 		$dataSource = array();
 		$dispatcher = new ActionDispatcher($dataSource);
 		
-		$this->assertEqual($dispatcher->dispatchError(), 'forbidden.php');
+		$result = new ActionResult();
+		$dispatcher->dispatchError($result);
+		
+		$this->assertEqual($result->destinationPage, 'forbidden.php');
+		$this->assertEqual($result->statusCode, 500);
 	}
 	
 	function test_dispatchError_setDefault(){
 		$dataSource = array();
 		$dispatcher = new ActionDispatcher($dataSource);
 		$dispatcher->setDefaultErrorPage('error-page.php');
+		
+		$result = new ActionResult();
+		$dispatcher->dispatchError($result);
 	
-		$this->assertEqual($dispatcher->dispatchError(), 'error-page.php');
+		$this->assertEqual($result->destinationPage, 'error-page.php');
+		$this->assertEqual($result->statusCode, 500);
 	}
 	
 	function test_dispatchError_action(){
 		$dispatcher = new ActionDispatcher(array());
 		$mapping = new ActionMapping('action.php', 'success.php', 'error.php', array());
-		$error_page = $dispatcher->dispatchError($mapping);
 		
-		$this->assertEqual($error_page, 'error.php');
+		$result = new ActionResult();
+		$dispatcher->dispatchError($result, $mapping);
+		
+		$this->assertEqual($result->destinationPage, 'error.php');
 	}
 	
 	function test_dispatchSuccess(){
 		$dispatcher = new ActionDispatcher(array());
 		$mapping = new ActionMapping('action.php', 'success.php', 'error.php', array());
-		$success_page = $dispatcher->dispatchSuccess($mapping);
 		
-		$this->assertEqual($success_page, 'success.php');
+		$result = new ActionResult();
+		$dispatcher->dispatchSuccess($result, $mapping);
+		
+		$this->assertEqual($result->destinationPage, 'success.php');
 	}
 	
 	function test_getActionMappings_default(){
@@ -160,7 +172,7 @@ class TestActionDispatcher extends UnitTestCase {
 		$dispatcher = new ActionDispatcher(array());
 		$functionSuccess = $dispatcher->doAction($actionMapping);
 		
-		$this->assertFalse($functionSuccess);
+		$this->assertTrue( $functionSuccess instanceof ActionError);
 	}
 	
 	function test_dispatch_nullAction(){

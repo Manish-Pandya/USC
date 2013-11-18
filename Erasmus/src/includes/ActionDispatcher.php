@@ -115,7 +115,7 @@ class ActionDispatcher {
 			$result->actionFunctionResult = $this->doAction($actionMapping);
 				
 			//NULL indicates something was wrong
-			if( $result->actionFunctionResult == NULL || $result instanceof ActionError ){
+			if( $result->actionFunctionResult == NULL || $result->actionFunctionResult instanceof ActionError ){
 				// Forward to the failure page
 				$this->dispatchError($result, $actionMapping);
 			}
@@ -159,6 +159,8 @@ class ActionDispatcher {
 		
 		$result->destinationPage = $error_page;
 		$result->statusCode = $error_code;
+		
+		$this->LOG->debug("Dispatching error. Code=$result->statusCode | Page=$result->destinationPage");
 	}
 	
 	/**
@@ -172,6 +174,8 @@ class ActionDispatcher {
 	public function dispatchSuccess( ActionResult &$result, ActionMapping $actionMapping ){
 		$result->destinationPage = $actionMapping->success_page;
 		$result->statusCode = $actionMapping->success_code;
+		
+		$this->LOG->debug("Dispatching success. Code=$result->statusCode | Page=$result->destinationPage");
 	}
 	
 	/**
