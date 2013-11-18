@@ -9,6 +9,8 @@ class ActionDispatcher {
 	private $dataSource;
 	private $actionMappingFactory;
 	private $defaultErrorPage = 'forbidden.php';
+	//TODO: Revisit default error code
+	private $defaultErrorCode = 500;
 	
 	private $LOG;
 	
@@ -60,7 +62,7 @@ class ActionDispatcher {
 		
 		if( $actionName == NULL ){
 			$this->LOG->error("Error in ActionDispatcher - no action name specified");
-			$result->destinationPage = $this->dispatchError();
+			$this->dispatchError($result);
 		}
 		else{
 			$this->readActionConfigurationAndDispatch($actionName, $result);
@@ -84,7 +86,7 @@ class ActionDispatcher {
 			$this->LOG->error("Invalid action name '$actionName' - No such action exists");
 		
 			// Invalid action specified
-			$result->destinationPage = $this->dispatchError();
+			$this->dispatchError( $result );
 		}
 		else{
 			$this->dispatchValidAction($actionName, $actionConfig, $result);
@@ -115,47 +117,61 @@ class ActionDispatcher {
 			//NULL indicates something was wrong
 			if( $result->actionFunctionResult == NULL || $result instanceof ActionError ){
 				// Forward to the failure page
-				$result->destinationPage = $this->dispatchError($actionMapping);
+				$this->dispatchError($result, $actionMapping);
 			}
 			else{
 				// Forward to the success page
-				$result->destinationPage = $this->dispatchSuccess($actionMapping);
+				$this->dispatchSuccess($result, $actionMapping);
 			}
 		}
 		else{
 			//Access Denied!
-			$result->destinationPage = $this->dispatchError($actionMapping);
+			
+			//Dispatch as error
+			$this->dispatchError($result, $actionMapping);
 			
 			// Set value to error message
 			$result->actionFunctionResult = new ActionError('Access denied');
+			
+			// Override HTTP status code to not-authorized
+			$result->statusCode = 401;
 		}
 	}
 	
 	/**
-	 * Returns the name of the error page to forward to
+	 * Sets the destination and response code values in the given result
+	 * to their respecive error values
 	 * 
+	 * @param ActionResult $result
 	 * @param ActionMapping $actionMapping
-	 * @return string
 	 * 
 	 * @see ActionMapping
 	 */
-	public function dispatchError( ActionMapping $actionMapping = NULL){
+	public function dispatchError( ActionResult &$result, ActionMapping $actionMapping = NULL){
+		$error_page = $this->defaultErrorPage;
+		$error_code = $this->defaultErrorCode;
+		
 		// Dispatch to error page
-		if( $actionMapping == NULL ){
-			return $this->defaultErrorPage;
+		if( $actionMapping != NULL ){
+			$error_page = $actionMapping->error_page;
+			$error_code = $actionMapping->error_code;
 		}
-		else{
-			return $actionMapping->error_page;
-		}
+		
+		$result->destinationPage = $error_page;
+		$result->statusCode = $error_code;
 	}
 	
 	/**
-	 * Returns the name of the success page to forward to.
+	 * Sets the destination and response code values in the given result
+	 * to their respecive success values
+	 * 
+	 * @param ActionResult $result
 	 * @param ActionMapping $actionMapping
 	 * @see ActionMapping
 	 */
-	public function dispatchSuccess( ActionMapping $actionMapping ){
-		return $actionMapping->success_page;
+	public function dispatchSuccess( ActionResult &$result, ActionMapping $actionMapping ){
+		$result->destinationPage = $actionMapping->success_page;
+		$result->statusCode = $actionMapping->success_code;
 	}
 	
 	/**
@@ -215,8 +231,9 @@ class ActionDispatcher {
 		}
 		else{
 			//TODO: Show critical error; function doesn't exist
-			$this->LOG->error("Mapped function '$action_function' does not exist");
-			return NULL;
+			$msg = "Mapped function '$action_function' does not exist";
+			$this->LOG->error( $msg );
+			return new ActionError( $msg );
 		}
 		
 	}
