@@ -203,6 +203,7 @@ class JsonManager {
 		$LOG = Logger::getLogger( __CLASS__ );
 		
 		//If object has a toJson function, call it
+		//FIXME: Do we really need an overridable encode function?
 		$callable = array( $object, JsonManager::$FUNCTION_TO_JSON );
 		if( is_callable( $callable ) ){
 			$LOG->trace("Encoding object to JSON by calling toJson() function");
