@@ -23,8 +23,8 @@ class Hazard extends GenericCrud {
 	/** Name of the hazard */
 	private $name;
 	
-	/** parent Hazard entity */
-	private $parentHazard;
+	/** KeyId of the parent Hazard entity */
+	private $parentHazardId;
 	
 	/** Array of child Hazard entities */
 	private $subHazards;
@@ -53,8 +53,8 @@ class Hazard extends GenericCrud {
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
 	
-	public function getParentHazard(){ return $this->parentHazard; }
-	public function setParentHazard($parentHazard){ $this->parentHazard = $parentHazard; }
+	public function getParentHazardId(){ return $this->parentHazardId; }
+	public function setParentHazardId($parentHazardId){ $this->parentHazardId = $parentHazardId; }
 	
 	public function getSubHazards(){ return $this->subHazards; }
 	public function setSubHazards($subHazards){ $this->subHazards = $subHazards; }

@@ -220,6 +220,15 @@ function getHazardById( $id = NULL ){
 		$hazard->setKeyId($keyid);
 		$hazard->setName("Dangerous thing #$keyid");
 		
+		//build subhazard
+		$subhazard = new Hazard();
+		$subhazard->setKeyId("$keyid$keyid");
+		$subhazard->setName("Dangerous thing #" . $subhazard->getKeyId());
+		
+		$subhazard->setParentHazardId($hazard->getKeyId());
+		
+		$hazard->setSubHazards( array( $subhazard) );
+		
 		$LOG->info("Defined Hazard: $hazard");
 		
 		return $hazard;
