@@ -35,6 +35,8 @@ hazardHub.directive('yaTree', function () {
         terminal: true,
         compile: function (tElement, tAttrs, transclude) {
 
+            console.log(transclude);
+
             var repeatExpr, childExpr, rootExpr, childrenExpr;
 
             repeatExpr = tAttrs.yaTree.match(/^(.*) in ((?:.*\.)?(.*)) at (.*)$/);
@@ -59,14 +61,13 @@ hazardHub.directive('yaTree', function () {
                 }
 
                 scope.$watch(rootExpr, function (root) {
-                    console.log(root);
                     var currentCache = [];
 
                     // Recurse the data structure
-                    (function walk(children, parentNode, parentScope, depth) {
+                    (function walk(SubHazards, parentNode, parentScope, depth) {
                         //console.log(children);
                         var i = 0,
-                            n = children.length,
+                            n = SubHazards.length,
                             last = n - 1,
                             cursor,
                             child,
@@ -82,7 +83,9 @@ hazardHub.directive('yaTree', function () {
                             // the cached element is being moved into this position.
                             cursor = parentNode.childNodes[i];
 
-                            child = children[i];
+                            child = SubHazards[i];
+
+                            //console.log(child);
 
                             // See if this child has been previously rendered
                             // using a reverse lookup by object reference
@@ -143,6 +146,7 @@ hazardHub.directive('yaTree', function () {
 
                             // If the child has children of its own, recurse 'em.             
                             grandchildren = child[childrenExpr];
+                           // console.log(childrenExpr);
                             if (grandchildren && grandchildren.length) {
                                 walk(grandchildren, cached.branch, childScope, depth + 1);
                             }
@@ -181,17 +185,15 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      hazardHubFactory.getHazardData(onGetHazards,'/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK');
+      hazardHubFactory.getHazardData(onGetHazards,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&hazards=true');
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
-        wrapper = {};
-        wrapper.children = data;
-        $scope.data = wrapper;
+        $scope.SubHazards = data;
     }
 
-    $scope.data = {
-        children: [
+    $scope.SubHazards = {
+        SubHazards: [
 
         ]
     }
@@ -304,7 +306,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
                 parent = attrs.getNamedItem('item');
                 attrs = item.context.attributes;
                 item = attrs.getNamedItem('item');
-                console.log(item, parent);
+              //  console.log(item, parent);
                 //if ( ... ) return false;
                return true;
                 };
