@@ -16,6 +16,7 @@ class AllTests extends TestSuite {
 		// Collect php files that begin with Test in /includes/classes
 		$this->collect(dirname(__FILE__) . '/includes', $testCollector);
 		$this->collect(dirname(__FILE__) . '/includes/classes', $testCollector);
+		$this->collect(dirname(__FILE__) . '/includes/action_functions', $testCollector);
 	}
 	
 }

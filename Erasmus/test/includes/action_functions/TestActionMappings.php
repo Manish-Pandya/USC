@@ -12,7 +12,7 @@ class TestActionMappings extends UnitTestCase {
 		$config = ActionMappingFactory::readActionConfig();
 		
 		foreach( $config as $name => $mapping ){
-			$this->assertTrue( function_exists( $mapping->actionFunctionName ) );
+			$this->assertTrue( function_exists( $mapping->actionFunctionName ), "Action Function '$mapping->actionFunctionName' does not exist." );
 		}
 	}
 	

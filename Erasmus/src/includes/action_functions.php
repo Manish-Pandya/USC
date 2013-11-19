@@ -143,9 +143,12 @@ function getAllRoles(){
 };
 
 // Checklist Hub
-function getChecklist(){
-	if( array_key_exists( 'id', $_REQUEST)){
-		$keyid = $_REQUEST['id'];
+function getChecklistById( $id = NULL ){
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
 	
 		//TODO: query for Checklist with this ID
 		$checklist = new Checklist();
@@ -159,7 +162,7 @@ function getChecklist(){
 	}
 };
 
-function getQuestions(){
+function getAllQuestions(){
 	$LOG = Logger::getLogger( 'Action:getQuestions' );
 	$questions = array();
 	
@@ -217,10 +220,7 @@ function getAllHazards(){
 function getHazardById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:getHazardById' );
 	
-	if( $id === NULL ){
-		$LOG->info('NULL parameter $id: ' . $id);
-		$id = $_REQUEST['id'];
-	}
+	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
 		$keyid = $id;
@@ -259,26 +259,30 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 	$parentHazardId = getValueFromRequest('parentHazardId', $parentHazardId);
 	
 	//TODO: validate values
-	
-	$LOG->info("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
-	
-	// get Hazard by ID
-	$hazard = getHazardById( $hazardId );
-	
-	// get Parent Hazard by ID
-	$parent = getHazardById( $parentHazardId );
-	
-	//TODO: Remove $hazard from $hazard->getParentHazard() children
-	
-	//Get children of parent
-	$children = $parent->getSubHazards();
-	
-	//Add hazard to children
-	$children[] = $hazard;
-	
-	$parent->setSubHazards($children);
-	
-	//TODO: What do we return?
+	if( $hazardId === NULL || $parentHazardId === NULL ){		
+		return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
+	}
+	else{
+		$LOG->info("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
+		
+		// get Hazard by ID
+		$hazard = getHazardById( $hazardId );
+		
+		// get Parent Hazard by ID
+		$parent = getHazardById( $parentHazardId );
+		
+		//TODO: Remove $hazard from $hazard->getParentHazard() children
+		
+		//Get children of parent
+		$children = $parent->getSubHazards();
+		
+		//Add hazard to children
+		$children[] = $hazard;
+		
+		$parent->setSubHazards($children);
+		
+		//TODO: What do we return?
+	}
 }
 
 function saveHazard(){
@@ -294,9 +298,12 @@ function saveHazard(){
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
 // Question Hub
-function getQuestionById(){
-	if( array_key_exists( 'id', $_REQUEST)){
-		$keyid = $_REQUEST['id'];
+function getQuestionById( $id = NULL ){
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
 	
 		//TODO: query for Question with this ID
 		$question = new Question();
@@ -317,9 +324,12 @@ function saveDeficiencyRelation(){ };
 function saveRecommendationRelation(){ };
 
 // Inspection, step 1 (PI / Room assessment)
-function getPI(){
-	if( array_key_exists( 'id', $_REQUEST)){
-		$keyid = $_REQUEST['id'];
+function getPI( $id = NULL ){
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
 		
 		//TODO: query for PI with this ID
 		$pi = new PrincipalInvestigator();
@@ -334,8 +344,8 @@ function getPI(){
 	}
 };
 
-function getRooms(){
-	$LOG = Logger::getLogger( 'Action:getRooms' );
+function getAllRooms(){
+	$LOG = Logger::getLogger( 'Action:getAllRooms' );
 	$allRooms = array();
 	
 	//TODO: Query for Rooms
@@ -366,15 +376,18 @@ function saveInspection(){
 };
 
 // Inspection, step 2 (Hazard Assessment)
-function getHazardsInRoom(){
-	if( array_key_exists( 'id', $_REQUEST)){
-		$roomId = $_REQUEST['id'];
+function getHazardsInRoom( $roomId = NULL ){
+	
+	$roomId = getValueFromRequest('roomId', $roomId);
+	
+	if( $roomId !== NULL ){
+		$roomId = $roomId;
 		
 		//TODO: get Room
 		$room = new Room();
 		$room->setKeyId($roomId);
 		$room->setName("Room $roomId");
-		$hazards = getHazards();
+		$hazards = getAllHazards();
 		
 		foreach( $hazards as &$hazard){
 			$hazard->setRooms( array($room) );
@@ -497,7 +510,7 @@ function getDeficiencySelectionById( $id = NULL ){
 		$selection->setIsActive(True);
 		$selection->setKeyId($keyid);
 	
-		$LOG->info("Defined $recommendation: $selection");
+		$LOG->info("Defined DeficiencySelection: $selection");
 	
 		return $selection;
 	}
@@ -515,7 +528,9 @@ function getDeficiencySelectionsForResponse( $responseId = NULL){
 		$selections = array();
 		
 		for( $i = 0; $i < 2; $i++ ){
-			$selections[] = getDeficiencySelectionById($i);
+			$selection = getDeficiencySelectionById($i);
+			//TODO: set response ID?
+			$selections[] = $selection;
 		}
 		
 		return $selections;
@@ -558,7 +573,9 @@ function getRecommendationsForResponse( $responseId = NULL ){
 		$recommendations = array();
 		
 		for( $i = 0; $i < 2; $i++ ){
-			$recommendations[] = getRecommendationById($i);
+			$recommendation = getRecommendationById($i);
+			//TODO: set response?
+			$recommendations[] = $recommendation;
 		}
 		
 		return $recommendations;
@@ -615,7 +632,9 @@ function getResponsesForInspection( $inspectionId = NULL){
 		//TODO: query for Responses with the specified Inspection ID
 		$responses = array();
 		for( $i = 0; $i < 5; $i++ ){
-			$responses[] = getResponseById($i, $keyid);
+			$response = getResponseById($i, $keyid);
+			//TODO: set Inspection?
+			$responses[] = $response;
 		}
 	
 		return $responses;
