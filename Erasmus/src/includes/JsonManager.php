@@ -7,6 +7,12 @@
  */
 class JsonManager {
 	
+	/** Names of functions JsonManager should ignore when converting to JSON */
+	public static $JSON_IGNORE_FUNCTION_NAMES = array(
+		'getTableName',
+		'getColumnData'
+	);
+	
 	/**
 	 * Encodes the given value to JSON. If the given value is an object, 
 	 * it is processed by JsonManager::objectToJson; otherwise
@@ -21,13 +27,20 @@ class JsonManager {
 		return json_encode($jsonable);
 	}
 	
+	/**
+	 * Constructs a 'JSON-able' value based on the parameter. The returned value is either of a PHP primitive type,
+	 * or an array of such information that can be easily JSON-encoded. 
+	 */
 	public static function buildJsonableValue($value){
 		$jsonable = $value;
 		
+		//Differentiate Objects and Arrays
 		if( is_object($value) ){
+			//Simply convert the object
 			$jsonable = JsonManager::objectToBasicArray($value);
 		}
 		else if( is_array($value) ){
+			//Convert each element of the array
 			$jsonable = array();
 			
 			foreach( $value as $element ){
@@ -205,9 +218,9 @@ class JsonManager {
 		
 		//get all functions named get*
 		foreach( $functions as $func ){
-			//IGNORE getTableName and getColumnData
-			//TODO: don't reference these functions by name!
-			if( strstr($func, 'get') && $func != 'getTableName' && $func != 'getColumnData' ){
+			//Make sure function starts with 'get' and not listed in JSON_IGNORE_FUNCTION_NAMES
+			//TODO: Add class-specific names to ignore?
+			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
 				$LOG->trace("Calling $classname#$func()");
 				//Call function to get value
 				$value = $object->$func();
