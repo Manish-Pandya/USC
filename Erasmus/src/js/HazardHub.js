@@ -203,21 +203,29 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
 
     $scope.addChild = function (child) {
 
-        if(!child.hasOwnProperty('children')){
-            child.children = [];
+        $scope.parentHazard = {};
+
+        if(!child.hasOwnProperty('SubHazards')){
+            child.SubHazards = [];
         }
 
         child.minimized = false;
 
-        child.children.unshift({
+        $scope.hazardCopy = {};
+
+        $scope.parentHazard = child;
+
+        child.SubHazards.unshift({
+            isNew: true,
+            isBeingEdited: true,
             title: '',
-            children: []
+            SubHazards: []
         });
     };
 
     $scope.remove = function (child) {
         function walk(target) {
-            var children = target.children,
+            var children = target.SubHazards,
                 i;
             if (children) {
                 i = children.length;
@@ -230,11 +238,38 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
                 }
             }
         }
-        walk($scope.data);
+        walk($scope.SubHazards);
+    }
+
+    $scope.editHazard = function(hazard){
+
+        hazard.isBeingEdited = true;
+        $scope.hazardCopy = angular.copy(hazard);
+
+    }
+
+    $scope.saveEditedHazard = function(hazard){
+
+        hazard.isBeingEdited = false;
+        hazard.Name = $scope.hazardCopy.Name;
+
+    }
+
+    $scope.cancelHazardEdit = function(hazard, $index){
+     
+        if(hazard.isNew === true){
+            console.log(hazard);
+            console.log($scope.parentHazard);
+            return $scope.parentHazard.SubHazards.splice( $scope.parentHazard.SubHazards.indexOf( hazard ), 1 );
+        }
+
+        hazard.isBeingEdited = false;
+        $scope.hazardCopy = {};
+
     }
 
     $scope.update = function (event, ui) {
-       // console.log(event);
+        console.log(event);
        
         var root = event.target,
             item = ui.item,
@@ -243,10 +278,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
             child = item.scope().child,
             index = item.index();
 
-        target.children || (target.children = []);
+        target.SubHazards || (target.SubHazards = []);
 
         function walk(target, child) {
-            var children = target.children,
+            var children = target.SubHazards,
                 i;
             if (children) {
                 i = children.length;
@@ -261,7 +296,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
         }
         walk($scope.data, child);
 
-        target.children.splice(index, 0, child);
+        target.SubHazards.splice(index, 0, child);
     };
 
 });

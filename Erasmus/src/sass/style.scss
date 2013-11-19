@@ -186,6 +186,11 @@ tr.notedit,tr.notedit td{
 #hazardTree{
 	font-size:25px;
 
+	a i{
+		margin: 3px 12px 0 -2px;
+		width: 1em;
+	}
+
 	li {
 		display: block;
 		min-height: 25px;
@@ -214,7 +219,7 @@ tr.notedit,tr.notedit td{
 	}
 
 	textarea:focus, input:focus, button:focus{
-    outline: 0;
+    	outline: 0;
 	}
 
 	li{
@@ -222,7 +227,7 @@ tr.notedit,tr.notedit td{
 					line-height .3s linear,
 					padding .3s linear,
 					margin .3s linear,
-					border .4s linear ;
+					border .1s linear ;
 	}
 
 	h2{
@@ -239,9 +244,12 @@ tr.notedit,tr.notedit td{
 	.hazarNodeButtons{
 		display: inline-block;
 		float:right;
+
 		a{
 			margin:0 5px;
 		}
+
+		
 	}
 
 	/*********** toggle hidden state of subhazards **********************/
@@ -265,6 +273,11 @@ tr.notedit,tr.notedit td{
 	   	display: none;
 	   }
 	}
+
+	.minimized > ol > li button a{
+		display:none;
+	}
+
 	.minimized > ol {
 	    border: 0 none transparent;
 	    height:0;

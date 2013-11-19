@@ -32,25 +32,27 @@
                     <div>
                         <!--<pre>{{child | json}}</pre>-->
                        <div class="leftThings">
-                            <button class="toggle" ng-click="toggleMinimized(child)">
-                            <ng-switch on="child.SubHazards.length > 0">
-                            <span ng-switch-when="true">
-                                <ng-switch on="child.minimized">
-                                  <span ng-switch-when="false">&#x25BC;</span><span ng-switch-default>&#x25B6;</span>
-                             </span>
-                           </ng-switch>
-                           
-                           
-                            <span ng-hide="child.isBeingEdited">
-                                <h2>{{child.Name}}</h2>
-                            </span>
 
-                            <span ng-show="child.isBeingEdited">
-                                <input ng-model="child.Name" />
-                            </span>
+                                <button class="toggle" ng-click="toggleMinimized(child)">
+                                <ng-switch on="child.SubHazards.length > 0">
+                                <span ng-switch-when="true">
+                                    <ng-switch on="child.minimized">
+                                      <span ng-switch-when="false">&#x25BC;</span><span ng-switch-default>&#x25B6;</span>
+                                 </span>
+                                </ng-switch>
+                               
+                               
+                                <span ng-hide="child.isBeingEdited">
+                                    <h2>{{child.Name}}</h2>
+                                </span>
+
+                                <span ng-show="child.isBeingEdited">
+                                    <input ng-model="hazardCopy.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i>Save</a><a class="btn btn-danger" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel"></i>Cancel</a>
+                                </span>
                             </button>
+
                         </div>
-                        <div class="hazarNodeButtons"><a class="btn btn-large btn-primary hazardBtn"  node-id="'+node.id+'" data-toggle="modal" href="#hazardModal"><span>!</span>Edit Hazard</a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php?id={{child.key_id}}"><i class="icon-checkmark" style="width:1em;"></i>Edit Checklist</a><a data-toggle="modal" href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-primary childHazard" node-id="'+node.id+'">Add Child Hazard</a></div>
+                        <div class="hazarNodeButtons"><a class="btn btn-large btn-primary hazardBtn" node-id="'+node.id+'" ng-click="editHazard(child)" ><i class="icon-pencil"></i>Edit Hazard</a><a data-toggle="modal" href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-success childHazard" node-id="'+node.id+'"><i class="icon-plus"></i>Add Child Hazard</a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php?id={{child.key_id}}"><i class="icon-checkmark" style="width:1em;"></i>Edit Checklist</a></div>
                         <!--<button ng-click="addChild(child)">+</button>
                         
                         <button ng-click="remove(child)">x</button>-->
@@ -59,21 +61,6 @@
                 </li>
             </ol>
         </div>
-        <!--
-        <div class="shadow">
-            <ol>
-                <li ya-tree="child in data.children at ol" class="bg{{$depth%6}}" ng-class="{minimized:child.minimized}">
-                    <div>
-                        <input disabled value="{{child.label}}" /> <em>({{$depth}})</em>
-
-                    </div>
-                    <ol ng-class="{pregnant:child.children.length}"></ol>
-                </li>
-            </ol>
-        </div>
-    </div>
-  -->
-
 <?php 
 require_once '../bottom_view.php';
 ?>
