@@ -218,7 +218,11 @@ tr.notedit,tr.notedit td{
 	}
 
 	li{
-		transition: all .3s linear;
+		transition: height .3s linear,
+					line-height .3s linear,
+					padding .3s linear,
+					margin .3s linear,
+					border .4s linear ;
 	}
 
 	h2{
