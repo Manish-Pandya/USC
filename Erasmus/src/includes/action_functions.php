@@ -324,8 +324,7 @@ function getPI(){
 		//TODO: query for PI with this ID
 		$pi = new PrincipalInvestigator();
 		$pi->setKeyId($keyid);
-		
-		//TODO: add user
+		$pi->setUser( getUserById( $keyid ) );
 		
 		return $pi;
 	}
@@ -576,6 +575,7 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 	
 	$id = getValueFromRequest('id', $id);
 	
+	//TODO: Externalize these to constants?
 	$POSSIBLE_ANSWERS = array('Yes', 'No', 'NotApplicable', 'NoResponse' );
 	
 	if( $id !== NULL ){
