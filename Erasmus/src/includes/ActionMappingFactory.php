@@ -55,7 +55,7 @@ class ActionMappingFactory {
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
 				
 				// Question Hub
-				"getQuestion"=>new ActionMapping("getQuestion", "", ""),
+				"getQuestionById"=>new ActionMapping("getQuestionById", "", ""),
 				"saveQuestionRelation"=>new ActionMapping("saveQuestionRelation", "", ""),
 				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
@@ -71,18 +71,21 @@ class ActionMappingFactory {
 				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
 				
 				// Inspection, step 3 (Checklist)
-				"getDeficiency"=>new ActionMapping("getDeficiency", "", ""),
+				"getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", ""),
 				"saveResponse"=>new ActionMapping("saveResponse", "", ""),
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
 				"saveRootCause"=>new ActionMapping("saveRootCause", "", ""),
 				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
 				
 				// Inspection, step 4 (Review, deficiency report)
-				"getDeficiencySelections"=>new ActionMapping("getDeficiencySelections", "", ""),
-				"getRecommendations"=>new ActionMapping("getRecommendations", "", ""),
+				"getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", ""),
+				"getRecommendationsForResponse"=>new ActionMapping("getRecommendationsForResponse", "", ""),
 				
 				// Inspection, step 5 (Details, Full Report)
-				"getResponses"=>new ActionMapping("getResponses", "", ""),
+				"getResponsesForInspection"=>new ActionMapping("getResponsesForInspection", "", ""),
+				
+				"getInspectionById"=>new ActionMapping("getInspectionById", "", ""),
+				"getResponseById"=>new ActionMapping("getResponseById", "", ""),
 		);
 	}
 }

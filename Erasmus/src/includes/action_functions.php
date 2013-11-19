@@ -12,12 +12,22 @@
 ?><?php
 //TODO: Split these functions up into further includes?
 
-function getValueFromRequest( $valueName, $defaultValue = NULL ){
-	if( array_key_exists($valueName, $_REQUEST)){
-		return $_REQUEST[ $valueName ];
+/**
+ * Chooses a return value based on the parameters. If $paramValue
+ * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.
+ * 
+ * If $valueName is not present in $_REQUEST, NULL is returned.
+ * 
+ * @param unknown $valueName
+ * @param string $paramValue
+ * @return string|unknown|NULL
+ */
+function getValueFromRequest( $valueName, $paramValue = NULL ){
+	if( $paramValue !== NULL ){
+		return $paramValue;
 	}
-	else if( $defaultValue !== NULL ){
-		return $defaultValue;
+	else if( array_key_exists($valueName, $_REQUEST)){
+		return $_REQUEST[ $valueName ];
 	}
 	else{
 		return NULL;
@@ -284,7 +294,7 @@ function saveHazard(){
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
 // Question Hub
-function getQuestion(){
+function getQuestionById(){
 	if( array_key_exists( 'id', $_REQUEST)){
 		$keyid = $_REQUEST['id'];
 	
@@ -384,7 +394,30 @@ function saveRoomRelation(){ };
 
 // Inspection, step 3 (Checklist)
 //function getQuestions(){ };	//DUPLICATE FUNCTION
-function getDeficiency(){ };
+function getDeficiencyById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getDeficiencyById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+	
+		//TODO: query for Inspection with the specified ID
+		$deficiency = new Deficiency();
+		$deficiency->setIsActive(True);
+		$deficiency->setKeyId($keyid);
+		$deficiency->setText("Deficiency #$keyid");
+	
+		$LOG->info("Defined Deficiency: $deficiency");
+	
+		return $deficiency;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 function saveResponse(){
 	$LOG = Logger::getLogger('Action:saveResponse');
 	$decodedObject = convertInputJson(true);
@@ -395,6 +428,7 @@ function saveResponse(){
 		return $decodedObject;
 	}
 };
+
 function saveDeficiencySelection(){
 	$LOG = Logger::getLogger('Action:saveDeficiencySelection');
 	$decodedObject = convertInputJson(true);
@@ -426,10 +460,169 @@ function saveCorrectiveAction(){
 	}
 };
 
+function getInspectionById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getInspectionById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+	
+		//TODO: query for Inspection with the specified ID
+		$inspection = new Inspection();
+		$inspection->setIsActive(True);
+		$inspection->setKeyId($keyid);
+		
+		$inspection->setResponses( getResponsesForInspection($keyid) );
+	
+		$LOG->info("Defined Inspection: $inspection");
+	
+		return $inspection;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getDeficiencySelectionById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getDeficiencySelectionById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+	
+		//TODO: query for DeficiencySelection with the specified ID
+		$selection = new DeficiencySelection();
+		$selection->setIsActive(True);
+		$selection->setKeyId($keyid);
+	
+		$LOG->info("Defined $recommendation: $selection");
+	
+		return $selection;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 // Inspection, step 4 (Review, deficiency report)
-function getDeficiencySelections(){ };
-function getRecommendations(){ };
+function getDeficiencySelectionsForResponse( $responseId = NULL){
+	$responseId = getValueFromRequest('responseId', $responseId);
+	
+	if( $responseId !== NULL ){
+		$selections = array();
+		
+		for( $i = 0; $i < 2; $i++ ){
+			$selections[] = getDeficiencySelectionById($i);
+		}
+		
+		return $selections;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
+function getRecommendationById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:getRecommendationById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+	
+		//TODO: query for DeficiencySelection with the specified ID
+		$recommendation = new Recommendation();
+		$recommendation->setIsActive(True);
+		$recommendation->setKeyId($keyid);
+	
+		$LOG->info("Defined Recommendation: $recommendation");
+	
+		return $recommendation;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getRecommendationsForResponse( $responseId = NULL ){
+	//get Recommendations for Response
+	
+	$responseId = getValueFromRequest('responseId', $responseId);
+	
+	if( $responseId !== NULL ){
+		$recommendations = array();
+		
+		for( $i = 0; $i < 2; $i++ ){
+			$recommendations[] = getRecommendationById($i);
+		}
+		
+		return $recommendations;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
+//TODO: remove HACK specifying inspection ID 
+function getResponseById( $id = NULL, $inspectionId = NULL ){
+	$LOG = Logger::getLogger( 'Action:getResponseById' );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	$POSSIBLE_ANSWERS = array('Yes', 'No', 'NotApplicable', 'NoResponse' );
+	
+	if( $id !== NULL ){
+		$keyid = $id;
+	
+		//TODO: query for Response with the specified ID
+		$response = new Response();
+		$response->setIsActive(True);
+		$response->setKeyId($keyid);
+		$response->setAnswer( $POSSIBLE_ANSWERS[array_rand($POSSIBLE_ANSWERS)] );
+		
+		$response->setInspectionId( $inspectionId );
+		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($keyid) );
+		$response->setQuestion( getQuestionById( "$keyid$keyid") );
+		$response->setRecommendations( getRecommendationsForResponse($keyid) );
+		
+		$LOG->info("Defined Response: $response");
+	
+		return $response;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
 
 // Inspection, step 5 (Details, Full Report)
-function getResponses(){ };
+function getResponsesForInspection( $inspectionId = NULL){
+	//Get responses for Inspection
+	$LOG = Logger::getLogger( 'Action:getResponsesForInspection' );
+
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	
+	if( $inspectionId !== NULL ){
+		$keyid = $inspectionId;
+	
+		//TODO: query for Responses with the specified Inspection ID
+		$responses = array();
+		for( $i = 0; $i < 5; $i++ ){
+			$responses[] = getResponseById($i, $keyid);
+		}
+	
+		return $responses;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
 ?>
