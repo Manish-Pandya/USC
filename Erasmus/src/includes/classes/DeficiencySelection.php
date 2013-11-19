@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class DeficiencySelection {
+class DeficiencySelection extends GenericCrud {
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "deficiency_selection";
@@ -36,6 +36,15 @@ class DeficiencySelection {
 	
 	public function __construct(){
 	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getResponse(){ return $this->response; }

@@ -45,6 +45,9 @@ class PrincipalInvestigator extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
+	public function getUser(){ return $this->user; }
+	public function setUser($user){ $this->user = $user; }
+	
 	public function getDepartments(){ return $this->departments; }
 	public function setDepartments($departments){ $this->departments = $departments; }
 	

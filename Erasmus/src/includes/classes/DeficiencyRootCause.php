@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class DeficiencyRootCause {
+class DeficiencyRootCause extends GenericCrud {
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "deficiency_root_cause";
@@ -24,6 +24,15 @@ class DeficiencyRootCause {
 	
 	public function __construct(){
 	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getQuestion(){ return $this->question; }

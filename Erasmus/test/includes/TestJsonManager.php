@@ -53,27 +53,6 @@ class TestJsonManager extends UnitTestCase {
 		$this->assertEqual($expectedObject, $actualObject);
 	}
 	
-	function test_encodeJsonKeyValuePairs(){
-		//Build array to encode
-		$arrayToEncode = array(
-			'string1'=>'one',
-			'string2'=>'two',
-			'string3'=>3,
-			'stringfalse'=>FALSE
-		);
-		
-		$expectedArray = array(
-			'"string1":"one"',
-			'"string2":"two"',
-			'"string3":3',
-			'"stringfalse":false'
-		);
-		
-		$encodedArray = JsonManager::encodeJsonKeyValuePairs($arrayToEncode);
-		
-		$this->assertEqual($expectedArray, $encodedArray);
-	}
-	
 	function test_callObjectAccessors(){
 		$object = new MockUser();
 		
@@ -96,46 +75,6 @@ class TestJsonManager extends UnitTestCase {
 		$object->expectNever('setUsername');
 		
 		JsonManager::callObjectAccessors($object);
-	}
-	
-	function test_objectToJson_function(){
-		
-		$object = new JsonTestUser("username");
-		
-		$expectedJson = '{"Username":"username"}';
-		$actualJson = JsonManager::objectToJson($object);
-		
-		$this->assertEqual($expectedJson, $actualJson);
-	}
-	
-	function test_objectToJson_inferJson(){
-	
-		$object = new User();
-		$object->setIsActive(TRUE);
-		$object->setDateCreated( NULL );
-		$object->setDateLastModified( NULL );
-		$object->setEmail('email@host.com');
-		$object->setKeyId(1234);
-		$object->setName("name");
-		$object->setRoles(array('role1', 'role2'));
-		$object->setUsername("username");
-	
-		//TODO: does field order matter?
-		$expectedJson = '{"Class":"User","Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234,"DateCreated":null,"DateLastModified":null,"IsActive":true}';
-		
-		$actualJson = JsonManager::objectToJson($object);
-	
-		$this->assertEqual($expectedJson, $actualJson);
-	}
-	
-	function test_encode_function(){
-	
-		$object = new JsonTestUser("username");
-	
-		$expectedJson = '{"Username":"username"}';
-		$actualJson = JsonManager::encode($object);
-	
-		$this->assertEqual($expectedJson, $actualJson);
 	}
 	
 	function test_jsonToObject(){

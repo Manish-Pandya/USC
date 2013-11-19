@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Inspection {
+class Inspection extends GenericCrud {
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "inspection";
@@ -37,6 +37,15 @@ class Inspection {
 	
 	public function __construct(){
 	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getInspectors(){ return $this->inspectors; }

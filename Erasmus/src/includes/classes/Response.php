@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Response {
+class Response extends GenericCrud {
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "response";
@@ -21,6 +21,9 @@ class Response {
 	/** Reference to Question entity to which this Response applies */
 	private $question;
 	
+	/** Reference to the Inspection entity's KeyId to which this Response belongs */
+	private $inspectionId;
+	
 	//TODO: Enum-type object for answer? simple string?
 	/** Answer selected by inspector for the associated Question */
 	private $answer;
@@ -35,16 +38,28 @@ class Response {
 	
 	}
 	
-	public function getquestion(){ return $this->question; }
-	public function setquestion($question){ $this->question = $question; }
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
 	
-	public function getanswer(){ return $this->answer; }
-	public function setanswer($answer){ $this->answer = $answer; }
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
 	
-	public function getdeficiencySelections(){ return $this->deficiencySelections; }
-	public function setdeficiencySelections($deficiencySelections){ $this->deficiencySelections = $deficiencySelections; }
+	public function getQuestion(){ return $this->question; }
+	public function setQuestion($question){ $this->question = $question; }
 	
-	public function getrecommendations(){ return $this->recommendations; }
-	public function setrecommendations($recommendations){ $this->recommendations = $recommendations; }
+	public function getInspectionId(){ return $this->inspectionId; }
+	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
+	
+	public function getAnswer(){ return $this->answer; }
+	public function setAnswer($answer){ $this->answer = $answer; }
+	
+	public function getDeficiencySelections(){ return $this->deficiencySelections; }
+	public function setDeficiencySelections($deficiencySelections){ $this->deficiencySelections = $deficiencySelections; }
+	
+	public function getRecommendations(){ return $this->recommendations; }
+	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
 }
 ?>

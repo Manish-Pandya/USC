@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class CorrectiveAction {
+class CorrectiveAction extends GenericCrud {
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "corrective_action";
@@ -26,6 +26,15 @@ class CorrectiveAction {
 	
 	public function __construct(){
 	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getDeficiencySelection(){ return $this->deficiencySelection; }

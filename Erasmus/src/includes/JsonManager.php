@@ -7,7 +7,11 @@
  */
 class JsonManager {
 	
-	public static $FUNCTION_TO_JSON = 'toJson';
+	/** Names of functions JsonManager should ignore when converting to JSON */
+	public static $JSON_IGNORE_FUNCTION_NAMES = array(
+		'getTableName',
+		'getColumnData'
+	);
 	
 	/**
 	 * Encodes the given value to JSON. If the given value is an object, 
@@ -23,20 +27,20 @@ class JsonManager {
 		return json_encode($jsonable);
 	}
 	
+	/**
+	 * Constructs a 'JSON-able' value based on the parameter. The returned value is either of a PHP primitive type,
+	 * or an array of such information that can be easily JSON-encoded. 
+	 */
 	public static function buildJsonableValue($value){
 		$jsonable = $value;
 		
+		//Differentiate Objects and Arrays
 		if( is_object($value) ){
-			//Does object have special encode function?
-			if( JsonManager::objectHasEncodeFunction($value) ){
-				//FIXME: This will escape the to-json function's return value
-				$jsonable = JsonManager::objectToJson($value);
-			}
-			else{
-				$jsonable = JsonManager::objectToBasicArray($value);
-			}
+			//Simply convert the object
+			$jsonable = JsonManager::objectToBasicArray($value);
 		}
 		else if( is_array($value) ){
+			//Convert each element of the array
 			$jsonable = array();
 			
 			foreach( $value as $element ){
@@ -93,12 +97,6 @@ class JsonManager {
 			$LOG->warn( 'No data read from input stream.' );
 			return NULL;
 		}
-	}
-	
-	public static function objectHasEncodeFunction($object){
-		$callable = array( $object, JsonManager::$FUNCTION_TO_JSON );
-		
-		return is_callable( $callable );
 	}
 	
 	/**
@@ -189,33 +187,6 @@ class JsonManager {
 		return $object;
 	}
 	
-	/**
-	 * Encodes the given object to a JSON string.
-	 * 
-	 * If $object contains a #toJson function, it will be called and returned.
-	 * Otherwise, values are obtained by processing accessor methods on $object
-	 * (identified by get*)
-	 * 
-	 * @param mixed $object
-	 * @return string
-	 */
-	public static function objectToJson($object){
-		$LOG = Logger::getLogger( __CLASS__ );
-		
-		//If object has a toJson function, call it
-		//FIXME: Do we really need an overridable encode function?
-		$callable = array( $object, JsonManager::$FUNCTION_TO_JSON );
-		if( is_callable( $callable ) ){
-			$LOG->trace("Encoding object to JSON by calling toJson() function");
-			return $object->$callable[1]();
-		}
-		//Otherwise, infer the fields to generate JSON
-		else{
-			$LOG->trace("Encoding object to JSON by inferrence");
-			return JsonManager::inferJsonProperties($object);
-		}
-	}
-	
 	public static function objectToBasicArray($object){
 		//Call Accessors
 		$objectVars = JsonManager::callObjectAccessors($object);
@@ -225,47 +196,6 @@ class JsonManager {
 		}
 		
 		return $objectVars;
-	}
-	
-	/**
-	 * Builds a JSON representation of the given object by
-	 * processing it for accessor methods (identified by get*) used
-	 * to generate the key/value pairs.
-	 * 
-	 * @param mixed $object
-	 * @return string
-	 */
-	public static function inferJsonProperties($object){
-		$LOG = Logger::getLogger( __CLASS__ );
-		
-		//Call Accessors
-		$objectVars = JsonManager::callObjectAccessors($object);
-		
-		//Build and encode key/value pairs
-		$jsonProperties = JsonManager::encodeJsonKeyValuePairs($objectVars);
-		
-		//TODO: check for errors?
-		
-		return '{' . join(',', $jsonProperties) . '}';
-	}
-	
-	/**
-	 * Transforms the given associative array into a JSON-encoded key-value pair.
-	 * 
-	 * @param Array $array
-	 * @return string
-	 */
-	public static function encodeJsonKeyValuePairs($array){
-		$jsonProperties = array();
-		
-		foreach( $array as $key=>$value){
-			$encoded_value = JsonManager::encode($value);
-			//TODO: check for error?
-			$encoded_key = JsonManager::encode( strval($key) );
-			$jsonProperties[] = $encoded_key . ':' . $encoded_value;
-		}
-		
-		return $jsonProperties;
 	}
 	
 	/**
@@ -288,9 +218,9 @@ class JsonManager {
 		
 		//get all functions named get*
 		foreach( $functions as $func ){
-			//IGNORE getTableName and getColumnData
-			//TODO: don't reference these functions by name!
-			if( strstr($func, 'get') && $func != 'getTableName' && $func != 'getColumnData' ){
+			//Make sure function starts with 'get' and not listed in JSON_IGNORE_FUNCTION_NAMES
+			//TODO: Add class-specific names to ignore?
+			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
 				$LOG->trace("Calling $classname#$func()");
 				//Call function to get value
 				$value = $object->$func();
