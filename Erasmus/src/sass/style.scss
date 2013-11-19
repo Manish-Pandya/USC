@@ -189,19 +189,90 @@ tr.notedit,tr.notedit td{
 	li {
 		display: block;
 		min-height: 25px;
-		line-height: 45px;
+		padding:20px;
+		margin:20px;
+		border:3px solid #a7a7a7;
 		white-space: wrap;
 		margin-left: 18px;
 		min-width: 18px;
+		background:white;
+	}
+
+	li:hover {
+		border-color:#49afcd;	}
+
+
+	.toggle{
+		width: auto;
+		font-size: 30px;
+		color: #333;
+		margin: -10px 3px 0 0;
+		min-width: 0;
+		height: auto;
+		border: 0 none transparent;
+	    background:transparent;
+	}
+
+	textarea:focus, input:focus, button:focus{
+    outline: 0;
+	}
+
+	li{
+		transition: all .3s linear;
+	}
+
+	h2{
+		display:inline;
+	}
+
+	.leftThings{
+		height: 46px;
+		padding-top: 6px;
+		display: inline-block;
+		width: 53%;
+	}
+
+	.hazarNodeButtons{
+		display: inline-block;
+		float:right;
+		a{
+			margin:0 5px;
+		}
+	}
+
+	/*********** toggle hidden state of subhazards **********************/
+	[ng-cloak] {
+	    display: none;
+	}
+	* {
+	    box-sizing: border-box
+	}
+	.minimized > ol > li {
+	   overflow:hidden;
+	   position:relative;
+	   border:none;
+	   height:0;
+	   line-height:0;
+	   background:none;
+	   margin:0 20px;
+	   padding:0 20px;
+	   width:0;
+	   div{
+	   	display: none;
+	   }
+	}
+	.minimized > ol {
+	    border: 0 none transparent;
+	    height:0;
+	}
+
+	button {
+	    cursor: pointer
 	}
 
 }
 
-.hazarNodeButtons{
-	display: inline-block;
-	float:right;
-	
-}
+
 /*******************************************************
 *	Checklist Hub Styles
 *******************************************************/
