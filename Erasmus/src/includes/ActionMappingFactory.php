@@ -39,12 +39,12 @@ class ActionMappingFactory {
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
 				"getUserById"=>new ActionMapping("getUserById", "", ""),
-				"saveUser"=>new ActionMapping("saveUser", "", ""),
+				"saveUser"=>new ActionMapping("saveUser", "", "", array(), 201),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				
 				// Checklist Hub
-				"getChecklist"=>new ActionMapping("getChecklist", "", ""),
-				"getQuestions"=>new ActionMapping("getQuestions", "", ""),
+				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
+				"getAllQuestions"=>new ActionMapping("getAllQuestions", "", ""),
 				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
 				
@@ -62,7 +62,7 @@ class ActionMappingFactory {
 				
 				// Inspection, step 1 (PI / Room assessment)
 				"getPI"=>new ActionMapping("getPI", "", ""),
-				"getRooms"=>new ActionMapping("getRooms", "", ""),
+				"getAllRooms"=>new ActionMapping("getAllRooms", "", ""),
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				
 				// Inspection, step 2 (Hazard Assessment)
