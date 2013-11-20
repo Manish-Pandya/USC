@@ -221,7 +221,7 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
 	$parentHazardId = getValueFromRequest('parentHazardId', $parentHazardId);
 	
-	//TODO: validate values
+	//validate values
 	if( $hazardId === NULL || $parentHazardId === NULL ){		
 		return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
 	}
@@ -243,6 +243,8 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 		$children[] = $hazard;
 		
 		$parent->setSubHazards($children);
+		
+		//TODO: Save
 		
 		//TODO: What do we return?
 	}
@@ -306,6 +308,18 @@ function getAllRooms(){
 	
 	return $allRooms;
 };
+
+function getRoomById( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		$dao->getRoomById($id);
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
 
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
