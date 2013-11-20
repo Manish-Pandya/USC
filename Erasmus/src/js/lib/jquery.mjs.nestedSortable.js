@@ -155,6 +155,7 @@
       // To find the next sibling in the list, keep stepping forward until we hit a valid list item.
       var nextItem = this.placeholder[0].nextSibling ? $(this.placeholder[0].nextSibling) : null;
       if (nextItem != null) {
+
         while (nextItem[0].nodeName.toLowerCase() != 'li' || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
           if (nextItem[0].nextSibling) {
             nextItem = $(nextItem[0].nextSibling);
@@ -283,6 +284,7 @@
 			return ret;
 
 			function _recursiveItems(item) {
+				
 				var id = ($(item).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
 				if (id) {
 					var currentItem = {"id" : id[2]};
@@ -299,7 +301,6 @@
 		},
 
 		toArray: function(options) {
-
 			var o = $.extend({}, this.options, options),
 				sDepth = o.startDepthCount || 0,
 			    ret = [],

@@ -177,6 +177,56 @@ hazardHub.directive('yaTree', function () {
 });
 
 
+hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
+
+    'use strict';
+
+    var eventTypes = 'Create Start Sort Change BeforeStop Stop Update Receive Remove Over Out Activate Deactivate'.split(' ');
+
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+
+            var options = attrs.uiNestedSortable ? $parse(attrs.uiNestedSortable)() : {};
+
+            angular.forEach(eventTypes, function (eventType) {
+
+                var attr = attrs['uiNestedSortable' + eventType],
+                    callback;
+
+                if (attr) {
+                    callback = $parse(attr);
+                    options[eventType.charAt(0).toLowerCase() + eventType.substr(1)] = function (event, ui) {
+                        scope.$apply(function () {
+                            callback(scope, {
+                                $event: event,
+                                $ui: ui
+                            });
+                        });
+                    };
+                }
+
+            });
+            
+            //note the item="{{child}}" attribute on line 17
+            options.isAllowed = function(item, parent) {
+                if (!parent) return false;
+                var attrs = parent.context.attributes;
+                parent = attrs.getNamedItem('item');
+                attrs = item.context.attributes;
+                item = attrs.getNamedItem('item');
+               // console.log(item, parent);
+                //if ( ... ) return false;
+               return true;
+                };
+
+            element.nestedSortable(options);
+
+        }
+    };
+}]);  
+
+
 hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFactory) {
 
     init();
@@ -193,9 +243,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     }
 
     $scope.SubHazards = {
-        SubHazards: [
-
-        ]
+        SubHazards: []
     }
     $scope.toggleMinimized = function (child) {
         child.minimized = !child.minimized;
@@ -242,7 +290,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     }
 
     $scope.editHazard = function(hazard){
-
+    
         hazard.isBeingEdited = true;
         $scope.hazardCopy = angular.copy(hazard);
 
@@ -269,85 +317,48 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     }
 
     $scope.update = function (event, ui) {
-        console.log(event);
-       
+
         var root = event.target,
             item = ui.item,
             parent = item.parent(),
-            target = (parent[0] === root) ? $scope.data : parent.scope().child,
+            target = (parent[0] === root) ? $scope.SubHazards : parent.scope().child,
             child = item.scope().child,
             index = item.index();
 
-        target.SubHazards || (target.SubHazards = []);
+            console.log('item');
+            console.log(item);
 
+        //if the location we are moving to has no subhazards, set up an empty array for our moved hazard to live in
+        target.SubHazards || (target.SubHazards = []);
+        
+        //loop through the new parent
         function walk(target, child) {
+            console.log('target');
+            console.log(target);
             var children = target.SubHazards,
                 i;
+
             if (children) {
+                console.log('here');
                 i = children.length;
                 while (i--) {
                     if (children[i] === child) {
+                        //if we find a match for the element, splice if FROM the scope to prevent duplicates
+                        console.log('match found');
                         return children.splice(i, 1);
                     } else {
+                        //recurse down and look again for duplicate, assuring we never duplicate an object we mean to move
+                        console.log('rewalking');
                         walk(children[i], child);
                     }
                 }
             }
         }
-        walk($scope.data, child);
 
+        walk(target, child);
+
+        //add the child to the $scope, placing it in the subhazards array of the parent target $scope object
         target.SubHazards.splice(index, 0, child);
     };
 
-});
-
-
-hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
-
-    'use strict';
-
-    var eventTypes = 'Create Start Sort Change BeforeStop Stop Update Receive Remove Over Out Activate Deactivate'.split(' ');
-
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-
-            var options = attrs.uiNestedSortable ? $parse(attrs.uiNestedSortable)() : {};
-
-            angular.forEach(eventTypes, function (eventType) {
-
-                var attr = attrs['uiNestedSortable' + eventType],
-                    callback;
-
-                if (attr) {
-                    callback = $parse(attr);
-                    options[eventType.charAt(0).toLowerCase() + eventType.substr(1)] = function (event, ui) {
-                        scope.$apply(function () {
-
-                            callback(scope, {
-                                $event: event,
-                                $ui: ui
-                            });
-                        });
-                    };
-                }
-
-            });
-            
-            //note the item="{{child}}" attribute on line 17
-            options.isAllowed = function(item, parent) {
-                if (!parent) return false;
-                var attrs = parent.context.attributes;
-                parent = attrs.getNamedItem('item');
-                attrs = item.context.attributes;
-                item = attrs.getNamedItem('item');
-              //  console.log(item, parent);
-                //if ( ... ) return false;
-               return true;
-                };
-
-            element.nestedSortable(options);
-
-        }
-    };
-}]);    
+});  

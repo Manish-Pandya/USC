@@ -19,16 +19,19 @@
             <button ng-click="addChild(data)">+ New</button>
         </div>
         <div class="live">
-            <ol id="hazardTree" ui-nested-sortable="{
-        listType: 'ol',
-        items: 'li',
-        doNotClear: true,
-        placeholder: 'ui-state-highlight',
-        forcePlaceholderSize: true,
-        toleranceElement: '> div'
-      }" ui-nested-sortable-stop="update($event, $ui)">  
+            <ol id="hazardTree" 
+                ui-nested-sortable="{
+                    listType: 'ol',
+                    items: 'li',
+                    doNotClear: true,
+                    placeholder: 'ui-state-highlight',
+                    forcePlaceholderSize: true,
+                    toleranceElement: '> div'
+                  }" 
+                  ui-nested-sortable-stop="update($event, $ui)"
+            >  
      
-                <li ya-tree="child in SubHazards at ol" ng-class="{minimized:child.minimized}" ng-init="child.minimized=true">
+                <li ya-tree="child in SubHazards at ol" ng-class="{minimized:child.minimized}" ng-init="child.minimized=true" item="{{child}}">
                     <div>
                         <!--<pre>{{child | json}}</pre>-->
                        <div class="leftThings">
@@ -40,7 +43,7 @@
                                       <span ng-switch-when="false">&#x25BC;</span><span ng-switch-default>&#x25B6;</span>
                                  </span>
                                 </ng-switch>
-                               
+                                 </button>
                                
                                 <span ng-hide="child.isBeingEdited">
                                     <h2>{{child.Name}}</h2>
@@ -49,7 +52,7 @@
                                 <span ng-show="child.isBeingEdited">
                                     <input ng-model="hazardCopy.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i>Save</a><a class="btn btn-danger" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel"></i>Cancel</a>
                                 </span>
-                            </button>
+                          
 
                         </div>
                         <div class="hazarNodeButtons"><a class="btn btn-large btn-primary hazardBtn" node-id="'+node.id+'" ng-click="editHazard(child)" ><i class="icon-pencil"></i>Edit Hazard</a><a data-toggle="modal" href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-success childHazard" node-id="'+node.id+'"><i class="icon-plus"></i>Add Child Hazard</a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php?id={{child.key_id}}"><i class="icon-checkmark" style="width:1em;"></i>Edit Checklist</a></div>
@@ -60,6 +63,10 @@
                     <ol ng-class="{pregnant:child.children.length}"></ol>
                 </li>
             </ol>
+
+            <pre>{{SubHazards | json}}</pre>
+
+
         </div>
 <?php 
 require_once '../bottom_view.php';

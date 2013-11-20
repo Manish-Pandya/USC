@@ -23,9 +23,11 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
 <script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
   
-  <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-   <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+
 <script src="/Erasmus/src/js/lib/jquery.mjs.nestedSortable.js"></script>
+
 <script type="text/javascript" src="/Erasmus/src/js/lib/angular.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/jquery-1.10.0.min.js"></script>
