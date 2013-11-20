@@ -9,6 +9,17 @@ class MockDAO{
 		$this->LOG = Logger::getLogger(__CLASS__);
 	}
 	
+	public function save( GenericCrud &$obj ){
+		$this->LOG->info("TODO: SAVE $obj");
+		
+		if( $obj->getKeyId() === NULL ){
+			//Assign random key for now
+			$obj->setKeyId( rand(0, 9999) );
+		}
+		
+		//passed by reference; no need to return (for now)
+	}
+	
 	public function getUserById( $keyid ){
 		$user = new User();
 		$user->setIsActive(TRUE);
