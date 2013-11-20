@@ -226,27 +226,49 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 		return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
 	}
 	else{
-		$LOG->info("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
+		$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
 		
 		// get Hazard by ID
 		$hazard = getHazardById( $hazardId );
+		$LOG->trace("Loaded Hazard to move: $hazard");
 		
 		// get Parent Hazard by ID
-		$parent = getHazardById( $parentHazardId );
+		$newParent = getHazardById( $parentHazardId );
+		$LOG->trace("Loaded New Parent Hazard: $newParent");
 		
-		//TODO: Remove $hazard from $hazard->getParentHazard() children
+		// get old Parent Hazard by ID
+		$oldParent = getHazardById( $hazard->getParentHazardId() );
+		$LOG->trace("Loaded Old Parent Hazard: $oldParent");
 		
 		//Get children of parent
-		$children = $parent->getSubHazards();
+		$children = $newParent->getSubHazards();
 		
 		//Add hazard to children
 		$children[] = $hazard;
 		
-		$parent->setSubHazards($children);
+		$newParent->setSubHazards($children);
 		
-		//TODO: Save
+		// Save
+		saveHazard($hazard);
+		saveHazard($newParent);
+		
+		// Remove $hazard from old parent's children
+		if( $oldParent !== NULL && !($oldParent instanceof ActionError) ){
+			$LOG->debug("Removing Hazard #$hazardId from old parent Hazard #$parentHazardId");
+			$siblings = $oldParent->getSubHazards();
+			foreach( $siblings as $key => $sibling ){
+				if( $sibling === $hazard ){
+					unset( $siblings[ $key ] );
+				}
+			}
+			
+			$oldParent->setSubHazards($siblings);
+			saveHazard($oldParent);
+		}
 		
 		//TODO: What do we return?
+		$LOG->info("Moved Hazard #$hazardId to new parent Hazard #$parentHazardId");
+		return '';
 	}
 }
 
@@ -437,7 +459,7 @@ function getInspectionById( $id = NULL ){
 		//get inspection
 		$inspection = $dao->getInspectionById($id);
 		
-		//TODO: get responses
+		// get responses
 		$inspection->setResponses( getResponsesForInspection($id) );
 	
 		return $inspection;

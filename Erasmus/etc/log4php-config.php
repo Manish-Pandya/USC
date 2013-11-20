@@ -58,6 +58,15 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
+		
+		//Action Functions
+		'Action:moveHazardToParent' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
+		),
 	),
 	
 	//Appenders
