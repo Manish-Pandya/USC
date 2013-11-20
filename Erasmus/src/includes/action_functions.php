@@ -39,7 +39,7 @@ function logoutAction(){ };
 
 function activate(){
 	//Get the user
-	$LOG = Logger::getLogger('Action:activate');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to GenericCrud');
@@ -52,7 +52,7 @@ function activate(){
 
 function deactivate(){
 	//Get the user
-	$LOG = Logger::getLogger('Action:deactivate');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to GenericCrud');
@@ -65,7 +65,7 @@ function deactivate(){
 
 // Users Hub
 function getAllUsers(){
-	$LOG = Logger::getLogger( 'Action:getAllUsers' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$allUsers = array();
 	
 	//TODO: Query for Users
@@ -77,24 +77,13 @@ function getAllUsers(){
 };
 
 function getUserById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getUserById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for User with this ID
-		$user = new User();
-		$user->setIsActive(TRUE);
-		$user->setEmail("user$keyid@host.com");
-		$user->setName("User #$keyid");
-		$user->setUsername("user$keyid");
-		$user->setKeyId($keyid);
-
-		$LOG->info("Defined User: $user");
-	
-		return $user;
+		$dao = new MockDAO();
+		return $dao->getUserById($id);
 	}
 	else{
 		//error
@@ -125,7 +114,7 @@ function convertInputJson($addKeyId=FALSE){
 }
 
 function saveUser(){
-	$LOG = Logger::getLogger('Action:saveUser');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to User');
@@ -148,13 +137,8 @@ function getChecklistById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for Checklist with this ID
-		$checklist = new Checklist();
-		$checklist->setKeyId($keyid);
-	
-		return $checklist;
+		$dao = new MockDAO();
+		return $dao->getChecklistById($id);
 	}
 	else{
 		//error
@@ -163,19 +147,13 @@ function getChecklistById( $id = NULL ){
 };
 
 function getAllQuestions(){
-	$LOG = Logger::getLogger( 'Action:getQuestions' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$questions = array();
 	
-	//TODO: Query for Rooms
+	$dao = new MockDAO();
+	
 	for( $i = 0; $i < 10; $i++ ){
-		$question = new Question();
-		$question->setIsActive(TRUE);
-		$question->setKeyId($i);
-		$question->setText("Question $i");
-		$question->setStandardsAndGuidelines('Standards & Guidelines');
-	
-		$LOG->info("Defined Question: $question");
-	
+		$question = $dao->getQuestionById($i);
 		$questions[] = $question;
 	}
 	
@@ -183,7 +161,7 @@ function getAllQuestions(){
 };
 
 function saveChecklist(){
-	$LOG = Logger::getLogger('Action:saveChecklist');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Checklist');
@@ -194,7 +172,7 @@ function saveChecklist(){
 };
 
 function saveQuestion(){
-	$LOG = Logger::getLogger('Action:saveQuestion');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Question');
@@ -206,7 +184,7 @@ function saveQuestion(){
 
 // Hazards Hub
 function getAllHazards(){
-	$LOG = Logger::getLogger( 'Action:getAllHazards' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$hazards = array();
 	
 	//TODO: Query for Hazards
@@ -218,28 +196,13 @@ function getAllHazards(){
 };
 
 function getHazardById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getHazardById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-		
-		//TODO: query for hazard with this ID
-		$hazard = new Hazard();
-		$hazard->setKeyId($keyid);
-		$hazard->setName("Dangerous thing #$keyid");
-		
-		//build subhazard
-		$subhazard = new Hazard();
-		$subhazard->setKeyId("$keyid$keyid");
-		$subhazard->setName("Dangerous thing #" . $subhazard->getKeyId());
-		
-		$subhazard->setParentHazardId($hazard->getKeyId());
-		
-		$hazard->setSubHazards( array( $subhazard) );
-		
-		$LOG->info("Defined Hazard: $hazard");
+		$dao = new MockDAO();
+		$hazard = $dao->getHazardById($id);
 		
 		return $hazard;
 	}
@@ -252,7 +215,7 @@ function getHazardById( $id = NULL ){
  * Moves specified hazard to the specified parent
  */
 function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
-	$LOG = Logger::getLogger( 'Action:moveHazardToParent' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	//Get ids
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
@@ -286,7 +249,7 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 }
 
 function saveHazard(){
-	$LOG = Logger::getLogger('Action:saveHazard');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Hazard');
@@ -303,15 +266,8 @@ function getQuestionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for Question with this ID
-		$question = new Question();
-		$question->setKeyId($keyid);
-		$question->setText('What?');
-		$question->setStandardsAndGuidelines('Because.');
-	
-		return $question;
+		$dao = new MockDAO();
+		return $dao->getQuestionById($id);
 	}
 	else{
 		//error
@@ -329,14 +285,8 @@ function getPI( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-		
-		//TODO: query for PI with this ID
-		$pi = new PrincipalInvestigator();
-		$pi->setKeyId($keyid);
-		$pi->setUser( getUserById( $keyid ) );
-		
-		return $pi;
+		$dao = new MockDAO();
+		return $dao->getPiById($id);
 	}
 	else{
 		//error
@@ -345,19 +295,12 @@ function getPI( $id = NULL ){
 };
 
 function getAllRooms(){
-	$LOG = Logger::getLogger( 'Action:getAllRooms' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$allRooms = array();
 	
-	//TODO: Query for Rooms
+	$dao = new MockDAO();
 	for( $i = 100; $i < 110; $i++ ){
-		$room = new Room();
-		$room->setIsActive(TRUE);
-		$room->setKeyId($i);
-		$room->setName("Room $i");
-		$room->setSafetyContactInformation('Call 911');
-	
-		$LOG->info("Defined Room: $room");
-	
+		$room = $dao->getRoomById($i);
 		$allRooms[] = $room;
 	}
 	
@@ -365,7 +308,7 @@ function getAllRooms(){
 };
 
 function saveInspection(){
-	$LOG = Logger::getLogger('Action:saveInspection');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Inspection');
@@ -383,12 +326,15 @@ function getHazardsInRoom( $roomId = NULL ){
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
 		
-		//TODO: get Room
-		$room = new Room();
-		$room->setKeyId($roomId);
-		$room->setName("Room $roomId");
+		$dao = new MockDAO();
+		
+		//get Room
+		$room = $dao->getRoomById($roomId);
+		
+		//get hazards
 		$hazards = getAllHazards();
 		
+		// Set room in each hazard
 		foreach( $hazards as &$hazard){
 			$hazard->setRooms( array($room) );
 		}
@@ -407,22 +353,16 @@ function saveRoomRelation(){ };
 // Inspection, step 3 (Checklist)
 //function getQuestions(){ };	//DUPLICATE FUNCTION
 function getDeficiencyById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getDeficiencyById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
+		$dao = new MockDAO();
 		$keyid = $id;
 	
-		//TODO: query for Inspection with the specified ID
-		$deficiency = new Deficiency();
-		$deficiency->setIsActive(True);
-		$deficiency->setKeyId($keyid);
-		$deficiency->setText("Deficiency #$keyid");
-	
-		$LOG->info("Defined Deficiency: $deficiency");
-	
-		return $deficiency;
+		// query for Inspection with the specified ID
+		return $dao->getDeficiencyById($id);
 	}
 	else{
 		//error
@@ -431,7 +371,7 @@ function getDeficiencyById( $id = NULL ){
 };
 
 function saveResponse(){
-	$LOG = Logger::getLogger('Action:saveResponse');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to Response');
@@ -442,7 +382,7 @@ function saveResponse(){
 };
 
 function saveDeficiencySelection(){
-	$LOG = Logger::getLogger('Action:saveDeficiencySelection');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to DeficiencySelection');
@@ -452,7 +392,7 @@ function saveDeficiencySelection(){
 	}
 };
 function saveRootCause(){
-	$LOG = Logger::getLogger('Action:saveRootCause');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to RootCause');
@@ -462,7 +402,7 @@ function saveRootCause(){
 	}
 };
 function saveCorrectiveAction(){
-	$LOG = Logger::getLogger('Action:saveRootCause');
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson(true);
 	if( $decodedObject == NULL ){
 		return new ActionError('Error converting input stream to RootCause');
@@ -473,21 +413,18 @@ function saveCorrectiveAction(){
 };
 
 function getInspectionById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getInspectionById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for Inspection with the specified ID
-		$inspection = new Inspection();
-		$inspection->setIsActive(True);
-		$inspection->setKeyId($keyid);
+		$dao = new MockDAO();
 		
-		$inspection->setResponses( getResponsesForInspection($keyid) );
-	
-		$LOG->info("Defined Inspection: $inspection");
+		//get inspection
+		$inspection = $dao->getInspectionById($id);
+		
+		//TODO: get responses
+		$inspection->setResponses( getResponsesForInspection($id) );
 	
 		return $inspection;
 	}
@@ -498,21 +435,13 @@ function getInspectionById( $id = NULL ){
 }
 
 function getDeficiencySelectionById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getDeficiencySelectionById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for DeficiencySelection with the specified ID
-		$selection = new DeficiencySelection();
-		$selection->setIsActive(True);
-		$selection->setKeyId($keyid);
-	
-		$LOG->info("Defined DeficiencySelection: $selection");
-	
-		return $selection;
+		$dao = new MockDAO();
+		return $dao->getDeficiencySelectionById($id);
 	}
 	else{
 		//error
@@ -542,21 +471,13 @@ function getDeficiencySelectionsForResponse( $responseId = NULL){
 };
 
 function getRecommendationById( $id = NULL ){
-	$LOG = Logger::getLogger( 'Action:getRecommendationById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for DeficiencySelection with the specified ID
-		$recommendation = new Recommendation();
-		$recommendation->setIsActive(True);
-		$recommendation->setKeyId($keyid);
-	
-		$LOG->info("Defined Recommendation: $recommendation");
-	
-		return $recommendation;
+		$dao = new MockDAO();
+		return $dao->getRecommendationById($id);
 	}
 	else{
 		//error
@@ -588,28 +509,18 @@ function getRecommendationsForResponse( $responseId = NULL ){
 
 //TODO: remove HACK specifying inspection ID 
 function getResponseById( $id = NULL, $inspectionId = NULL ){
-	$LOG = Logger::getLogger( 'Action:getResponseById' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
-	//TODO: Externalize these to constants?
-	$POSSIBLE_ANSWERS = array('Yes', 'No', 'NotApplicable', 'NoResponse' );
-	
 	if( $id !== NULL ){
-		$keyid = $id;
-	
-		//TODO: query for Response with the specified ID
-		$response = new Response();
-		$response->setIsActive(True);
-		$response->setKeyId($keyid);
-		$response->setAnswer( $POSSIBLE_ANSWERS[array_rand($POSSIBLE_ANSWERS)] );
+		$dao = new MockDAO();
+		$response = $dao->getResponseById($id);
 		
 		$response->setInspectionId( $inspectionId );
-		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($keyid) );
-		$response->setQuestion( getQuestionById( "$keyid$keyid") );
-		$response->setRecommendations( getRecommendationsForResponse($keyid) );
-		
-		$LOG->info("Defined Response: $response");
+		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($id) );
+		$response->setQuestion( getQuestionById( "$id$id") );
+		$response->setRecommendations( getRecommendationsForResponse($id) );
 	
 		return $response;
 	}
@@ -622,7 +533,7 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 // Inspection, step 5 (Details, Full Report)
 function getResponsesForInspection( $inspectionId = NULL){
 	//Get responses for Inspection
-	$LOG = Logger::getLogger( 'Action:getResponsesForInspection' );
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	

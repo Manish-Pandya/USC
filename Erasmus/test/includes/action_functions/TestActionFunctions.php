@@ -15,8 +15,6 @@ class TestActionFunctions extends UnitTestCase {
 		}
 	}
 	
-	//TODO: Test save functions
-	
 	// getValueFromRequest
 	
 	public function test_getValueFromRequest_noValue_noParamValue(){
@@ -109,7 +107,6 @@ class TestActionFunctions extends UnitTestCase {
 	}
 	
 	//TODO: saveChecklist
-	
 	//TODO: saveQuestion
 	
 	//getAllHazards
@@ -409,7 +406,7 @@ class TestActionFunctions extends UnitTestCase {
 	}
 	
 	
-	//TODO: getResponsesForInspection
+	// getResponsesForInspection
 	public function test_getResponsesForInspection_noId(){
 		$responses = getResponsesForInspection();
 		$this->assertTrue( $responses instanceof ActionError );
