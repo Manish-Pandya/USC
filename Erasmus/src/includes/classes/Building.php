@@ -15,6 +15,9 @@ class Building extends GenericCrud {
 		//rooms is a relationship
 	);
 	
+	/** Name of Building */
+	private $name;
+	
 	/** Array of Room entities contained within this Building */
 	private $rooms;
 	
@@ -30,6 +33,9 @@ class Building extends GenericCrud {
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
+	
+	public function getName(){ return $this->name; }
+	public function setName($name){ $this->name = $name; }
 	
 	public function getRooms(){ return $this->rooms; }
 	public function setRooms($rooms){ $this->rooms = $rooms; }

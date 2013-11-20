@@ -199,6 +199,53 @@ class TestActionFunctions extends UnitTestCase {
 		}
 	}
 	
+	//getRoomById
+	public function test_getRoomById_noId(){
+		$room = getRoomById();
+		$this->assertTrue( $room instanceof ActionError );
+	}
+	
+	public function test_getRoomById_passId(){
+		$room = getRoomById(5);
+		$this->assertTrue( $room instanceof Room );
+		$this->assertEqual( $room->getKeyId(), 5);
+	}
+	
+	public function test_getRoomById_requestId(){
+		$_REQUEST['id'] = 4;
+		$room = getRoomById();
+		$this->assertTrue( $room instanceof Room );
+		$this->assertEqual( $room->getKeyId(), 4);
+	}
+	
+	//getAllBuildings
+	public function test_getAllBuildings(){
+		$buildings = getAllBuildings();
+	
+		foreach( $buildings as $building ){
+			$this->assertTrue( $building instanceof Building );
+		}
+	}
+	
+	//getBuildingById
+	public function test_getBuildingById_noId(){
+		$building = getBuildingById();
+		$this->assertTrue( $building instanceof ActionError );
+	}
+	
+	public function test_getBuildingById_passId(){
+		$building = getBuildingById(5);
+		$this->assertTrue( $building instanceof Building );
+		$this->assertEqual( $building->getKeyId(), 5);
+	}
+	
+	public function test_getBuildingById_requestId(){
+		$_REQUEST['id'] = 4;
+		$building = getBuildingById();
+		$this->assertTrue( $building instanceof Building );
+		$this->assertEqual( $building->getKeyId(), 4);
+	}
+	
 	//TODO: saveInspection
 	
 	//getHazardsInRoom

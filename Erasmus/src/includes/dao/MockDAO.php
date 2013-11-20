@@ -9,12 +9,16 @@ class MockDAO{
 		$this->LOG = Logger::getLogger(__CLASS__);
 	}
 	
+	private function getRandomKey(){
+		return mt_rand(0, 9999);
+	}
+	
 	public function save( GenericCrud &$obj ){
 		$this->LOG->info("TODO: SAVE $obj");
 		
 		if( $obj->getKeyId() === NULL ){
 			//Assign random key for now
-			$obj->setKeyId( rand(0, 9999) );
+			$obj->setKeyId( mt_rand(0, $this->getRandomKey() ) );
 		}
 		
 		//passed by reference; no need to return (for now)
@@ -47,15 +51,25 @@ class MockDAO{
 		$hazard->setKeyId($keyid);
 		$hazard->setName("Dangerous thing #$keyid");
 		
-		//TODO: Conditionally build subhazard
-		//build subhazard
-		$subhazard = new Hazard();
-		$subhazard->setKeyId("$keyid$keyid");
-		$subhazard->setName("Dangerous thing #" . $subhazard->getKeyId());
-		
-		//associate hazards
-		$subhazard->setParentHazardId($hazard->getKeyId());
-		$hazard->setSubHazards( array( $subhazard) );
+		// Conditionally build subhazard(s)
+		$randomChance = 6;
+		if( mt_rand(0, $randomChance) === $randomChance ){
+			$subhazards = array();
+			
+			//generate 1-3 of them
+			$count = mt_rand(1, 3);
+			
+			for( $i = 0; $i < $count; $i++ ){
+				//build subhazard
+				$subhazard = getHazardById( $this->getRandomKey()  );
+				
+				//associate hazards
+				$subhazard->setParentHazardId($hazard->getKeyId());
+				$subhazards[] = $subhazard;
+			}
+			
+			$hazard->setSubHazards( $subhazards );
+		}
 		
 		$this->LOG->info("Defined Hazard: $hazard");
 		
@@ -94,6 +108,19 @@ class MockDAO{
 		$this->LOG->info("Defined Room: $room");
 		
 		return $room;
+	}
+	
+	public function getBuildingById($keyid){
+		$building = new Building();
+		$building->setIsActive(TRUE);
+		$building->setKeyId($keyid);
+		$building->setName("Building $keyid");
+		
+		//TODO: rooms?
+		
+		$this->LOG->info("Defined Building: $building");
+		
+		return $building;
 	}
 	
 	public function getDeficiencyById($keyid){

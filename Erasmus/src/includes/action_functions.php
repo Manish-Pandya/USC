@@ -344,7 +344,32 @@ function getRoomById( $id = NULL ){
 	
 	if( $id !== NULL ){
 		$dao = new MockDAO();
-		$dao->getRoomById($id);
+		return $dao->getRoomById($id);
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getAllBuildings( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$allBuildings = array();
+	
+	$dao = new MockDAO();
+	for( $i = 1; $i < 11; $i++ ){
+		$building = $dao->getBuildingById($i);
+		$allBuildings[] = $building;
+	}
+	
+	return $allBuildings;
+}
+
+function getBuildingById( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getBuildingById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
