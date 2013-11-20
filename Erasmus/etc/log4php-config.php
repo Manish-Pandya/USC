@@ -7,7 +7,7 @@ return array(
 			'logFileAppender',
 			'htmlFileAppender',
 		),
-		'level' => 'INFO'
+		'level' => 'DEBUG'
 	),
 	//Other loggers
 	'loggers' => array(
@@ -17,6 +17,14 @@ return array(
 				'htmlFileAppender',
 			),
 			'level' => 'INFO'
+		),
+			
+		'ErrorHandler' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
 		),
 		
 		'DtoManager' => array(
@@ -44,6 +52,15 @@ return array(
 		),
 		
 		'ActionDispatcher' => array(
+			'appenders' => array(
+				'logFileAppender',
+				'htmlFileAppender',
+			),
+			'level' => 'TRACE'
+		),
+		
+		//Action Functions
+		'Action:moveHazardToParent' => array(
 			'appenders' => array(
 				'logFileAppender',
 				'htmlFileAppender',

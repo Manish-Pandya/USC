@@ -18,6 +18,8 @@ class Response extends GenericCrud {
 		//recommendations are a relationship
 	);
 	
+	public static $POSSIBLE_ANSWERS = array('Yes', 'No', 'NotApplicable', 'NoResponse' );
+	
 	/** Reference to Question entity to which this Response applies */
 	private $question;
 	

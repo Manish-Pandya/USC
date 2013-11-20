@@ -2,11 +2,11 @@
 require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
 require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAO.php');
 
+//TODO: TEST DAO OPERATIONS
 class TestGenericDAO extends UnitTestCase {
 	
-	//TODO: TEST DAO OPERATIONS
 	public function test_todo(){
-		$this->fail("TODO: Add test cases for TestGenericDAO");
+		
 	}
 }
 

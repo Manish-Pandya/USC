@@ -115,7 +115,7 @@ class ActionDispatcher {
 			$result->actionFunctionResult = $this->doAction($actionMapping);
 				
 			//NULL indicates something was wrong
-			if( $result->actionFunctionResult == NULL || $result->actionFunctionResult instanceof ActionError ){
+			if( $result->actionFunctionResult === NULL || $result->actionFunctionResult instanceof ActionError ){
 				// Forward to the failure page
 				$this->dispatchError($result, $actionMapping);
 			}
