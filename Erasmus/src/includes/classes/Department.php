@@ -26,6 +26,15 @@ class Department extends GenericCrud {
 	
 	}
 	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+	
 	public function getName(){ return $this->name; }
 	public function setName( $name ){ $this->name = $name; }
 	
