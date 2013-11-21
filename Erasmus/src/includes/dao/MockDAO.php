@@ -89,8 +89,37 @@ class MockDAO{
 	public function getQuestionById($keyid){
 		$question = $this->initGenericCrudObject(new Question());
 		$question->setKeyId($keyid);
+		$question->setOrderIndex($keyid);
 		$question->setText("Is this question $keyid?");
 		$question->setStandardsAndGuidelines("Guidelines for question $keyid");
+		$question->setIsMandatory( (bool) mt_rand(0, 1));
+		
+		// get stock deficiencies
+		$deficiencies = array();
+		for( $i = 0; $i < 2; $i++ ){
+			$def = $this->getDeficiencyById( $this->getRandomKey() );
+			$def->setText( "Stock " . $def->getText() );
+			$deficiencies[] = $def;
+		}
+		$question->setDeficiencies( $deficiencies );
+		
+		// stock recommendations
+		$recommendations = array();
+		for( $i = 0; $i < 2; $i++ ){
+			$rec = $this->getRecommendationById( $this->getRandomKey() );
+			$rec->setText( "Stock " . $rec->getText() );
+			$recommendations[] = $rec;
+		}
+		$question->setRecommendations($recommendations);
+		
+		// stock observations
+		$observations = array();
+		for( $i = 0; $i < 2; $i++ ){
+			$obs = $this->getObservationById( $this->getRandomKey() );
+			$obs->setText( "Stock " . $obs->getText() );
+			$observations[] = $obs;
+		}
+		$question->setObservations($observations);
 		
 		$this->LOG->info("Defined Question: $question");
 		
@@ -190,14 +219,23 @@ class MockDAO{
 		$inspection = $this->initGenericCrudObject(new Inspection());
 		$inspection->setKeyId($keyid);
 		
-		//TODO: Inspector(s)
+		// Inspector(s)
 		$inspection->setInspectors( array(getUserById( $this->getRandomKey() )) );
 		
 		// PI
 		$inspection->setPrincipalInvestigator( $this->getPiById( $this->getRandomKey() ) );
 		
-		//TODO: Responses?
-		//TODO: Start/End date
+		// Responses?
+		$responses = array();
+		for($i = 0; $i < 10; $i++){
+			$res = $this->getResponseById($i);
+			$responses[] = $res;
+		}
+		$inspection->setResponses($responses);
+		
+		// Start/End date
+		$inspection->setDateStarted( time() );
+		$inspection->setDateClosed( time() );
 		
 		$this->LOG->info("Defined Inspection: $inspection");
 		
@@ -216,6 +254,7 @@ class MockDAO{
 	public function getRecommendationById($keyid){
 		$recommendation = $this->initGenericCrudObject(new Recommendation());
 		$recommendation->setKeyId($keyid);
+		$recommendation->setText("Recommendation #$keyid");
 		
 		$this->LOG->info("Defined Recommendation: $recommendation");
 		
@@ -232,6 +271,16 @@ class MockDAO{
 		$this->LOG->info("Defined Response: $response");
 		
 		return $response;
+	}
+	
+	public function getObservationById($keyid){
+		$observation = $this->initGenericCrudObject(new Observation());
+		$observation->setKeyId($keyid);
+		$observation->setText("Observation #$keyid");
+		
+		$this->LOG->info("Defined Observation: $observation");
+		
+		return $observation;
 	}
 }
 

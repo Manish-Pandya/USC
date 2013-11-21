@@ -36,6 +36,9 @@ class Response extends GenericCrud {
 	/** Array of Recommendation entities selected as part of the associated Question */
 	private $recommendations;
 	
+	/** Array of Observation entities selected as part of the associated Question */
+	private $observations;
+	
 	public function __construct(){
 	
 	}
@@ -61,7 +64,10 @@ class Response extends GenericCrud {
 	public function getDeficiencySelections(){ return $this->deficiencySelections; }
 	public function setDeficiencySelections($deficiencySelections){ $this->deficiencySelections = $deficiencySelections; }
 	
-	public function getRecommendations(){ return $this->recommendations; }
-	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
+	public function getRecommendations(){ return $this->observations; }
+	public function setRecommendations($observations){ $this->observations = $observations; }
+	
+	public function getObservations(){ return $this->observations; }
+	public function setObservations($observations){ $this->observations = $observations; }
 }
 ?>
