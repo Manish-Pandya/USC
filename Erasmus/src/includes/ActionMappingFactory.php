@@ -66,6 +66,8 @@ class ActionMappingFactory {
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),
+				"getDepartmentById"=>new ActionMapping("getDepartmentById", "", ""),
+				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				
