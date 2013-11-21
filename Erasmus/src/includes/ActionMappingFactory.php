@@ -86,6 +86,8 @@ class ActionMappingFactory {
 				// Inspection, step 4 (Review, deficiency report)
 				"getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", ""),
 				"getRecommendationsForResponse"=>new ActionMapping("getRecommendationsForResponse", "", ""),
+				"getObservationsForResponse"=>new ActionMapping("getObservationsForResponse", "", ""),
+				"getObservationById"=>new ActionMapping("getObservationById", "", ""),
 				
 				// Inspection, step 5 (Details, Full Report)
 				"getResponsesForInspection"=>new ActionMapping("getResponsesForInspection", "", ""),

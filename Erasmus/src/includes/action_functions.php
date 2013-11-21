@@ -576,6 +576,8 @@ function getDeficiencySelectionsForResponse( $responseId = NULL){
 	}
 };
 
+//TODO: Observations?
+
 function getRecommendationById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
@@ -613,6 +615,44 @@ function getRecommendationsForResponse( $responseId = NULL ){
 	}
 };
 
+function getObservationById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getObservationById($id);
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getObservationsForResponse( $responseId = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	//get Observations for Response
+
+	$responseId = getValueFromRequest('responseId', $responseId);
+
+	if( $responseId !== NULL ){
+		$LOG->debug("Generating Observations for response #$responseId");
+		$observations = array();
+
+		for( $i = 0; $i < 2; $i++ ){
+			$observation = getObservationById($i);
+			$observations[] = $observation;
+		}
+
+		return $observations;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 //TODO: remove HACK specifying inspection ID 
 function getResponseById( $id = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -627,7 +667,8 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($id) );
 		$response->setQuestion( getQuestionById( "$id$id") );
 		$response->setRecommendations( getRecommendationsForResponse($id) );
-	
+		$response->setObservations( getObservationsForResponse($id) );
+		
 		return $response;
 	}
 	else{
@@ -658,7 +699,7 @@ function getResponsesForInspection( $inspectionId = NULL){
 	}
 	else{
 		//error
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'inspectionId' was provided");
 	}
 };
 ?>

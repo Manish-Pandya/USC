@@ -461,6 +461,44 @@ class TestActionFunctions extends UnitTestCase {
 		}	
 	}
 	
+	// getObservationsForResponse
+	public function test_getObservationsForResponse_noId(){
+		$observations = getObservationsForResponse();
+		$this->assertTrue( $observations instanceof ActionError );
+	}
+	
+	public function test_getObservationsForResponse_passId(){
+		$observations = getObservationsForResponse(4);
+	
+		//Expect array...
+		$this->assertTrue( is_array( $observations) );
+	
+		//...Of Observations
+		foreach( $observations as $observation ){
+			$this->assertTrue( $observation instanceof Observation );
+			//TODO: Check that response has ID 4
+		}
+	}
+	
+	// getObservationById
+	public function test_getObservationById_noId(){
+		$observation = getObservationById();
+		$this->assertTrue( $observation instanceof ActionError );
+	}
+	
+	public function test_getObservationById_passId(){
+		$observation = getObservationById(5);
+		$this->assertTrue( $observation instanceof Observation );
+		$this->assertEqual( $observation->getKeyId(), 5);
+	}
+	
+	public function test_getObservationById_requestId(){
+		$_REQUEST['id'] = 4;
+		$observation = getObservationById();
+		$this->assertTrue( $observation instanceof Observation );
+		$this->assertEqual( $observation->getKeyId(), 4);
+	}
+	
 	// getResponseById
 	public function test_getResponseById_noId(){
 		$response = getResponseById();
