@@ -143,6 +143,15 @@ class MockDAO{
 		$room->setName("Room $keyid");
 		$room->setSafetyContactInformation('Call 911');
 		
+		// Hazards
+		$hazards = array();
+		for($i = 0; $i < 3; $i++){
+			$hazard = $this->getHazardById( $this->getRandomKey() );
+			$hazards[] = $hazard;
+		}
+		
+		$room->setHazards( $hazards );
+		
 		$this->LOG->info("Defined Room: $room");
 		
 		return $room;
@@ -153,7 +162,14 @@ class MockDAO{
 		$building->setKeyId($keyid);
 		$building->setName("Building $keyid");
 		
-		//TODO: rooms?
+		//rooms
+		$rooms = array();
+		for($i = 0; $i < 2; $i++ ){
+			$room = getRoomById($this->getRandomKey());
+			$rooms[] = $room;
+		}
+		
+		$building->setRooms( $rooms );
 		
 		$this->LOG->info("Defined Building: $building");
 		
@@ -173,6 +189,15 @@ class MockDAO{
 	public function getInspectionById($keyid){
 		$inspection = $this->initGenericCrudObject(new Inspection());
 		$inspection->setKeyId($keyid);
+		
+		//TODO: Inspector(s)
+		$inspection->setInspectors( array(getUserById( $this->getRandomKey() )) );
+		
+		// PI
+		$inspection->setPrincipalInvestigator( $this->getPiById( $this->getRandomKey() ) );
+		
+		//TODO: Responses?
+		//TODO: Start/End date
 		
 		$this->LOG->info("Defined Inspection: $inspection");
 		
