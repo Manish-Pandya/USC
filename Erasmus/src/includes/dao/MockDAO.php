@@ -19,14 +19,24 @@ class MockDAO{
 		if( $obj->getKeyId() === NULL ){
 			//Assign random key for now
 			$obj->setKeyId( mt_rand(0, $this->getRandomKey() ) );
+			$obj->setDateCreated( time() );
 		}
+		
+		$obj->setDateLastModified( time() );
 		
 		//passed by reference; no need to return (for now)
 	}
 	
+	private function initGenericCrudObject( GenericCrud &$obj ){
+		$obj->setDateCreated(time());
+		$obj->setDateLastModified(time());
+		$obj->setIsActive(TRUE);
+		
+		return $obj;
+	}
+	
 	public function getUserById( $keyid ){
-		$user = new User();
-		$user->setIsActive(TRUE);
+		$user = $this->initGenericCrudObject( new User() );
 		$user->setEmail("user$keyid@host.com");
 		$user->setName("User #$keyid");
 		$user->setUsername("user$keyid");
@@ -38,7 +48,7 @@ class MockDAO{
 	}
 	
 	public function getChecklistById( $keyid ){
-		$checklist = new Checklist();
+		$checklist = $this->initGenericCrudObject(new Checklist());
 		$checklist->setKeyId($keyid);
 		
 		$this->LOG->info("Defined Checklist: $checklist");
@@ -47,7 +57,7 @@ class MockDAO{
 	}
 	
 	public function getHazardById( $keyid ){
-		$hazard = new Hazard();
+		$hazard = $this->initGenericCrudObject(new Hazard());
 		$hazard->setKeyId($keyid);
 		$hazard->setName("Dangerous thing #$keyid");
 		
@@ -77,8 +87,7 @@ class MockDAO{
 	}
 	
 	public function getQuestionById($keyid){
-		$question = new Question();
-		$question->setIsActive(TRUE);
+		$question = $this->initGenericCrudObject(new Question());
 		$question->setKeyId($keyid);
 		$question->setText("Is this question $keyid?");
 		$question->setStandardsAndGuidelines("Guidelines for question $keyid");
@@ -89,18 +98,47 @@ class MockDAO{
 	}
 	
 	public function getPiById($keyid){
-		$pi = new PrincipalInvestigator();
+		$pi = $this->initGenericCrudObject(new PrincipalInvestigator());
 		$pi->setKeyId($keyid);
 		$pi->setUser( $this->getUserById( $keyid ) );
+		
+		// depts
+		$depts = array();
+		for($i = $keyid; $i < $keyid + 1; ++$i ){
+			$dept = $this->getDepartmentById( $this->getRandomKey() );
+			$depts[] = $dept;
+		}
+		
+		$pi->setDepartments( $depts );
+		
+		// rooms
+		$rooms = array();
+		for($i = 0; $i < 2; $i++ ){
+			$room = getRoomById($this->getRandomKey());
+			$rooms[] = $room;
+		}
+		
+		$pi->setRooms( $rooms );
+		
+		//TODO: personnel
 		
 		$this->LOG->info("Defined PrincipalInvestigator: $pi");
 		
 		return $pi;
 	}
 	
+	public function getDepartmentById($keyid){
+		$dept = $this->initGenericCrudObject(new Department());
+		$dept->setKeyId($keyid);
+		$dept->setName("Department $keyid");
+		
+		//TODO: PIs
+		
+		return $dept;
+	}
+	
 	public function getRoomById($keyid){
-		$room = new Room();
-		$room->setIsActive(TRUE);
+		$room = $this->initGenericCrudObject(new Room());
 		$room->setKeyId($keyid);
 		$room->setName("Room $keyid");
 		$room->setSafetyContactInformation('Call 911');
@@ -111,8 +149,7 @@ class MockDAO{
 	}
 	
 	public function getBuildingById($keyid){
-		$building = new Building();
-		$building->setIsActive(TRUE);
+		$building = $this->initGenericCrudObject(new Building());
 		$building->setKeyId($keyid);
 		$building->setName("Building $keyid");
 		
@@ -124,8 +161,7 @@ class MockDAO{
 	}
 	
 	public function getDeficiencyById($keyid){
-		$deficiency = new Deficiency();
-		$deficiency->setIsActive(True);
+		$deficiency = $this->initGenericCrudObject(new Deficiency());
 		$deficiency->setKeyId($keyid);
 		$deficiency->setText("Deficiency #$keyid");
 		
@@ -135,8 +171,7 @@ class MockDAO{
 	}
 	
 	public function getInspectionById($keyid){
-		$inspection = new Inspection();
-		$inspection->setIsActive(True);
+		$inspection = $this->initGenericCrudObject(new Inspection());
 		$inspection->setKeyId($keyid);
 		
 		$this->LOG->info("Defined Inspection: $inspection");
@@ -145,8 +180,7 @@ class MockDAO{
 	}
 	
 	public function getDeficiencySelectionById($keyid){
-		$selection = new DeficiencySelection();
-		$selection->setIsActive(True);
+		$selection = $this->initGenericCrudObject(new DeficiencySelection());
 		$selection->setKeyId($keyid);
 		
 		$this->LOG->info("Defined DeficiencySelection: $selection");
@@ -155,8 +189,7 @@ class MockDAO{
 	}
 	
 	public function getRecommendationById($keyid){
-		$recommendation = new Recommendation();
-		$recommendation->setIsActive(True);
+		$recommendation = $this->initGenericCrudObject(new Recommendation());
 		$recommendation->setKeyId($keyid);
 		
 		$this->LOG->info("Defined Recommendation: $recommendation");
@@ -165,8 +198,7 @@ class MockDAO{
 	}
 	
 	public function getResponseById($keyid){
-		$response = new Response();
-		$response->setIsActive(TRUE);
+		$response = $this->initGenericCrudObject(new Response());
 		$response->setKeyId($keyid);
 		
 		$randomAnswerKey = array_rand(Response::$POSSIBLE_ANSWERS);
