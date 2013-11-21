@@ -27,7 +27,7 @@ function getValueFromRequest( $valueName, $paramValue = NULL ){
 		return $paramValue;
 	}
 	else if( array_key_exists($valueName, $_REQUEST)){
-		return $_REQUEST[ $valueName ];
+		return (int) $_REQUEST[ $valueName ];
 	}
 	else{
 		return NULL;
@@ -345,6 +345,31 @@ function getRoomById( $id = NULL ){
 	if( $id !== NULL ){
 		$dao = new MockDAO();
 		return $dao->getRoomById($id);
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getAllDepartments(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$allDepartments = array();
+
+	$dao = new MockDAO();
+	for( $i = 1; $i < 11; $i++ ){
+		$dept = $dao->getDepartmentById($i);
+		$allDepartments[] = $dept;
+	}
+
+	return $allDepartments;
+};
+
+function getDepartmentById( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getDepartmentById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");

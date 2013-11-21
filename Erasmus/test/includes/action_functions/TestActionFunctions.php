@@ -218,6 +218,34 @@ class TestActionFunctions extends UnitTestCase {
 		$this->assertEqual( $room->getKeyId(), 4);
 	}
 	
+	//getAllDepartments
+	public function test_getAllDepartments(){
+		$depts = getAllDepartments();
+	
+		foreach( $depts as $dept ){
+			$this->assertTrue( $dept instanceof Department );
+		}
+	}
+	
+	//getDepartmentById
+	public function test_getDepartmentById_noId(){
+		$dept = getDepartmentById();
+		$this->assertTrue( $dept instanceof ActionError );
+	}
+	
+	public function test_getDepartmentById_passId(){
+		$dept = getDepartmentById(5);
+		$this->assertTrue( $dept instanceof Department );
+		$this->assertEqual( $dept->getKeyId(), 5);
+	}
+	
+	public function test_getDepartmentById_requestId(){
+		$_REQUEST['id'] = 4;
+		$dept = getDepartmentById();
+		$this->assertTrue( $dept instanceof Department );
+		$this->assertEqual( $dept->getKeyId(), 4);
+	}
+	
 	//getAllBuildings
 	public function test_getAllBuildings(){
 		$buildings = getAllBuildings();
