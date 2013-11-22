@@ -125,10 +125,8 @@ function saveUser(){
 };
 
 function getAllRoles(){
-	return array(
-		'Administrator',
-		'AppUser',
-	);
+	$dao = new MockDAO();
+	return $dao->getAllRoles();
 };
 
 // Checklist Hub
