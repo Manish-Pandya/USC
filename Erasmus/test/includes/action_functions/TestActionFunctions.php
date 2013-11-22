@@ -171,6 +171,43 @@ class TestActionFunctions extends UnitTestCase {
 	//TODO: saveDeficiencyRelation
 	//TODO: saveRecommendationRelation
 	
+	//getAllInspectors
+	public function test_getAllInspectors(){
+		$inspectors = getAllInspectors();
+	
+		foreach( $inspectors as $inspector ){
+			$this->assertTrue( $inspector instanceof Inspector );
+		}
+	}
+	
+	//getInspectorById
+	public function test_getInspectorById_noId(){
+		$inspector = getInspector();
+		$this->assertTrue( $inspector instanceof ActionError );
+	}
+	
+	public function test_getInspectorById_passId(){
+		$inspector = getInspector(5);
+		$this->assertTrue( $inspector instanceof Inspector );
+		$this->assertEqual( $inspector->getKeyId(), 5);
+	}
+	
+	public function test_getInspectorById_requestId(){
+		$_REQUEST['id'] = 4;
+		$inspector = getInspector();
+		$this->assertTrue( $inspector instanceof Inspector );
+		$this->assertEqual( $inspector->getKeyId(), 4);
+	}
+
+	//getAllPIs
+	public function test_getAllPIs(){
+		$pis = getAllPIs();
+	
+		foreach( $pis as $pi ){
+			$this->assertTrue( $pi instanceof PrincipalInvestigator );
+		}
+	}
+	
 	//getPI
 	public function test_getPI_noId(){
 		$pi = getPI();
