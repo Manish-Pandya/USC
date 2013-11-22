@@ -59,10 +59,6 @@ class ActionMappingFactory {
 				"saveQuestionRelation"=>new ActionMapping("saveQuestionRelation", "", ""),
 				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
-
-				"getInspector"=>new ActionMapping("getInspector", "", ""),
-				"getAllInspectors"=>new ActionMapping("getAllInspectors", "", ""),
-				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
 				
 				// Inspection, step 1 (PI / Room assessment)
 				"getPI"=>new ActionMapping("getPI", "", ""),

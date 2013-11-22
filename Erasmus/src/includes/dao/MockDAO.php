@@ -27,13 +27,6 @@ class MockDAO{
 		//passed by reference; no need to return (for now)
 	}
 	
-	public function getAllRoles(){
-		return array(
-			'Administrator',
-			'AppUser',
-		);
-	}
-	
 	private function initGenericCrudObject( GenericCrud &$obj ){
 		$obj->setDateCreated(time());
 		$obj->setDateLastModified(time());
@@ -48,7 +41,6 @@ class MockDAO{
 		$user->setName("User #$keyid");
 		$user->setUsername("user$keyid");
 		$user->setKeyId($keyid);
-		$user->setRoles( $this->getAllRoles() );
 		
 		$this->LOG->info("Defined User: $user");
 		
@@ -58,13 +50,6 @@ class MockDAO{
 	public function getChecklistById( $keyid ){
 		$checklist = $this->initGenericCrudObject(new Checklist());
 		$checklist->setKeyId($keyid);
-		
-		//add some questions
-		$questions = array();
-		for($i = 0; $i < 5; $i++){
-			$questions[] = $this->getQuestionById($this->getRandomKey());
-		}
-		$checklist->setQuestions($questions);
 		
 		$this->LOG->info("Defined Checklist: $checklist");
 		
@@ -95,8 +80,6 @@ class MockDAO{
 			
 			$hazard->setSubHazards( $subhazards );
 		}
-		
-		$hazard->setChecklists( $this->getChecklistById($this->getRandomKey()));
 		
 		$this->LOG->info("Defined Hazard: $hazard");
 		
@@ -171,26 +154,6 @@ class MockDAO{
 		$this->LOG->info("Defined PrincipalInvestigator: $pi");
 		
 		return $pi;
-	}
-	
-	public function getInspectorById($keyid){
-		$inspector = $this->initGenericCrudObject( new Inspector() );
-		$inspector->setKeyId($keyid);
-		$inspector->setEmail("inspector$keyid@host.com");
-		$inspector->setName("Inspector #$keyid");
-		$inspector->setUsername("inspector$keyid");
-		$inspector->setRoles( $this->getAllRoles() );
-		
-		$inspections = array();
-		for( $i = 0; $i < 2; $i++){
-			$inspection = $this->getInspectionById( $this->getRandomKey() );
-			$inspections[] = $inspection;
-		}
-		$inspector->setInspections( $inspections );
-
-		$this->LOG->info("Defined Inspector: $inspector");
-		
-		return $inspector;
 	}
 	
 	public function getDepartmentById($keyid){

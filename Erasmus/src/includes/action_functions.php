@@ -125,8 +125,10 @@ function saveUser(){
 };
 
 function getAllRoles(){
-	$dao = new MockDAO();
-	return $dao->getAllRoles();
+	return array(
+		'Administrator',
+		'AppUser',
+	);
 };
 
 // Checklist Hub
@@ -309,31 +311,6 @@ function saveQuestionRelation(){ };
 function saveDeficiencyRelation(){ };
 function saveRecommendationRelation(){ };
 
-function getInspector( $id = NULL ){
-	$id = getValueFromRequest('id', $id);
-	
-	if( $id !== NULL ){
-		$dao = new MockDAO();
-		return $dao->getInspectorById($id);
-	}
-	else{
-		//error
-		return new ActionError("No request parameter 'id' was provided");
-	}
-}
-
-function getAllInspectors(){
-	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$inspectors = array();
-
-	$dao = new MockDAO();
-	for( $i = 0; $i < 10; $i++ ){
-		$inspectors[] = $dao->getInspectorById($i);
-	}
-	
-	return $inspectors;
-};
-
 // Inspection, step 1 (PI / Room assessment)
 function getPI( $id = NULL ){
 	
@@ -347,18 +324,6 @@ function getPI( $id = NULL ){
 		//error
 		return new ActionError("No request parameter 'id' was provided");
 	}
-};
-
-function getAllPIs(){
-	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$pis = array();
-
-	$dao = new MockDAO();
-	for( $i = 0; $i < 10; $i++ ){
-		$pis[] = $dao->getPiById($i);
-	}
-	
-	return $pis;
 };
 
 function getAllRooms(){
