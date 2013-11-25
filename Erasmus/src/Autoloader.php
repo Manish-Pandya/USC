@@ -25,7 +25,7 @@ class Autoloader {
 	 */
 	public static function init(  ){
 		if( self::$loader == NULL )
-			$loader = new self();
+			self::$loader = new self();
 		
 		return self::$loader;
 	}
