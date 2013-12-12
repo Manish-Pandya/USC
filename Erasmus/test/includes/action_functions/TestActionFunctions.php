@@ -171,6 +171,43 @@ class TestActionFunctions extends UnitTestCase {
 	//TODO: saveDeficiencyRelation
 	//TODO: saveRecommendationRelation
 	
+	//getAllInspectors
+	public function test_getAllInspectors(){
+		$inspectors = getAllInspectors();
+	
+		foreach( $inspectors as $inspector ){
+			$this->assertTrue( $inspector instanceof Inspector );
+		}
+	}
+	
+	//getInspectorById
+	public function test_getInspectorById_noId(){
+		$inspector = getInspector();
+		$this->assertTrue( $inspector instanceof ActionError );
+	}
+	
+	public function test_getInspectorById_passId(){
+		$inspector = getInspector(5);
+		$this->assertTrue( $inspector instanceof Inspector );
+		$this->assertEqual( $inspector->getKeyId(), 5);
+	}
+	
+	public function test_getInspectorById_requestId(){
+		$_REQUEST['id'] = 4;
+		$inspector = getInspector();
+		$this->assertTrue( $inspector instanceof Inspector );
+		$this->assertEqual( $inspector->getKeyId(), 4);
+	}
+
+	//getAllPIs
+	public function test_getAllPIs(){
+		$pis = getAllPIs();
+	
+		foreach( $pis as $pi ){
+			$this->assertTrue( $pi instanceof PrincipalInvestigator );
+		}
+	}
+	
 	//getPI
 	public function test_getPI_noId(){
 		$pi = getPI();
@@ -216,6 +253,34 @@ class TestActionFunctions extends UnitTestCase {
 		$room = getRoomById();
 		$this->assertTrue( $room instanceof Room );
 		$this->assertEqual( $room->getKeyId(), 4);
+	}
+	
+	//getAllDepartments
+	public function test_getAllDepartments(){
+		$depts = getAllDepartments();
+	
+		foreach( $depts as $dept ){
+			$this->assertTrue( $dept instanceof Department );
+		}
+	}
+	
+	//getDepartmentById
+	public function test_getDepartmentById_noId(){
+		$dept = getDepartmentById();
+		$this->assertTrue( $dept instanceof ActionError );
+	}
+	
+	public function test_getDepartmentById_passId(){
+		$dept = getDepartmentById(5);
+		$this->assertTrue( $dept instanceof Department );
+		$this->assertEqual( $dept->getKeyId(), 5);
+	}
+	
+	public function test_getDepartmentById_requestId(){
+		$_REQUEST['id'] = 4;
+		$dept = getDepartmentById();
+		$this->assertTrue( $dept instanceof Department );
+		$this->assertEqual( $dept->getKeyId(), 4);
 	}
 	
 	//getAllBuildings
@@ -431,6 +496,44 @@ class TestActionFunctions extends UnitTestCase {
 			$this->assertTrue( $recommendation instanceof Recommendation );
 			//TODO: Check that response has ID 4
 		}	
+	}
+	
+	// getObservationsForResponse
+	public function test_getObservationsForResponse_noId(){
+		$observations = getObservationsForResponse();
+		$this->assertTrue( $observations instanceof ActionError );
+	}
+	
+	public function test_getObservationsForResponse_passId(){
+		$observations = getObservationsForResponse(4);
+	
+		//Expect array...
+		$this->assertTrue( is_array( $observations) );
+	
+		//...Of Observations
+		foreach( $observations as $observation ){
+			$this->assertTrue( $observation instanceof Observation );
+			//TODO: Check that response has ID 4
+		}
+	}
+	
+	// getObservationById
+	public function test_getObservationById_noId(){
+		$observation = getObservationById();
+		$this->assertTrue( $observation instanceof ActionError );
+	}
+	
+	public function test_getObservationById_passId(){
+		$observation = getObservationById(5);
+		$this->assertTrue( $observation instanceof Observation );
+		$this->assertEqual( $observation->getKeyId(), 5);
+	}
+	
+	public function test_getObservationById_requestId(){
+		$_REQUEST['id'] = 4;
+		$observation = getObservationById();
+		$this->assertTrue( $observation instanceof Observation );
+		$this->assertEqual( $observation->getKeyId(), 4);
 	}
 	
 	// getResponseById

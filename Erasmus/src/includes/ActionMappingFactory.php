@@ -59,6 +59,10 @@ class ActionMappingFactory {
 				"saveQuestionRelation"=>new ActionMapping("saveQuestionRelation", "", ""),
 				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
+
+				"getInspector"=>new ActionMapping("getInspector", "", ""),
+				"getAllInspectors"=>new ActionMapping("getAllInspectors", "", ""),
+				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
 				
 				// Inspection, step 1 (PI / Room assessment)
 				"getPI"=>new ActionMapping("getPI", "", ""),
@@ -66,6 +70,8 @@ class ActionMappingFactory {
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),
+				"getDepartmentById"=>new ActionMapping("getDepartmentById", "", ""),
+				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				
@@ -84,6 +90,8 @@ class ActionMappingFactory {
 				// Inspection, step 4 (Review, deficiency report)
 				"getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", ""),
 				"getRecommendationsForResponse"=>new ActionMapping("getRecommendationsForResponse", "", ""),
+				"getObservationsForResponse"=>new ActionMapping("getObservationsForResponse", "", ""),
+				"getObservationById"=>new ActionMapping("getObservationById", "", ""),
 				
 				// Inspection, step 5 (Details, Full Report)
 				"getResponsesForInspection"=>new ActionMapping("getResponsesForInspection", "", ""),

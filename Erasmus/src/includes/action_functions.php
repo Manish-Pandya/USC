@@ -27,7 +27,7 @@ function getValueFromRequest( $valueName, $paramValue = NULL ){
 		return $paramValue;
 	}
 	else if( array_key_exists($valueName, $_REQUEST)){
-		return $_REQUEST[ $valueName ];
+		return (int) $_REQUEST[ $valueName ];
 	}
 	else{
 		return NULL;
@@ -125,10 +125,8 @@ function saveUser(){
 };
 
 function getAllRoles(){
-	return array(
-		'Administrator',
-		'AppUser',
-	);
+	$dao = new MockDAO();
+	return $dao->getAllRoles();
 };
 
 // Checklist Hub
@@ -311,6 +309,31 @@ function saveQuestionRelation(){ };
 function saveDeficiencyRelation(){ };
 function saveRecommendationRelation(){ };
 
+function getInspector( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getInspectorById($id);
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getAllInspectors(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$inspectors = array();
+
+	$dao = new MockDAO();
+	for( $i = 0; $i < 10; $i++ ){
+		$inspectors[] = $dao->getInspectorById($i);
+	}
+	
+	return $inspectors;
+};
+
 // Inspection, step 1 (PI / Room assessment)
 function getPI( $id = NULL ){
 	
@@ -324,6 +347,18 @@ function getPI( $id = NULL ){
 		//error
 		return new ActionError("No request parameter 'id' was provided");
 	}
+};
+
+function getAllPIs(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$pis = array();
+
+	$dao = new MockDAO();
+	for( $i = 0; $i < 10; $i++ ){
+		$pis[] = $dao->getPiById($i);
+	}
+	
+	return $pis;
 };
 
 function getAllRooms(){
@@ -345,6 +380,31 @@ function getRoomById( $id = NULL ){
 	if( $id !== NULL ){
 		$dao = new MockDAO();
 		return $dao->getRoomById($id);
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getAllDepartments(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$allDepartments = array();
+
+	$dao = new MockDAO();
+	for( $i = 1; $i < 11; $i++ ){
+		$dept = $dao->getDepartmentById($i);
+		$allDepartments[] = $dept;
+	}
+
+	return $allDepartments;
+};
+
+function getDepartmentById( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getDepartmentById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
@@ -551,6 +611,8 @@ function getDeficiencySelectionsForResponse( $responseId = NULL){
 	}
 };
 
+//TODO: Observations?
+
 function getRecommendationById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
@@ -588,6 +650,44 @@ function getRecommendationsForResponse( $responseId = NULL ){
 	}
 };
 
+function getObservationById( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = new MockDAO();
+		return $dao->getObservationById($id);
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getObservationsForResponse( $responseId = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	//get Observations for Response
+
+	$responseId = getValueFromRequest('responseId', $responseId);
+
+	if( $responseId !== NULL ){
+		$LOG->debug("Generating Observations for response #$responseId");
+		$observations = array();
+
+		for( $i = 0; $i < 2; $i++ ){
+			$observation = getObservationById($i);
+			$observations[] = $observation;
+		}
+
+		return $observations;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 //TODO: remove HACK specifying inspection ID 
 function getResponseById( $id = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -602,7 +702,8 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($id) );
 		$response->setQuestion( getQuestionById( "$id$id") );
 		$response->setRecommendations( getRecommendationsForResponse($id) );
-	
+		$response->setObservations( getObservationsForResponse($id) );
+		
 		return $response;
 	}
 	else{
@@ -633,7 +734,7 @@ function getResponsesForInspection( $inspectionId = NULL){
 	}
 	else{
 		//error
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'inspectionId' was provided");
 	}
 };
 ?>

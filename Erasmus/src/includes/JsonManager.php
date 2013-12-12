@@ -69,15 +69,20 @@ class JsonManager {
 	 * @throws Exception
 	 * @return Ambigous <object, NULL>|NULL
 	 */
-	public static function decodeInputStream( $stream='php://input'){
+	public static function decodeInputStream( $stream='php://input' ){
 		$LOG = Logger::getLogger( __CLASS__ );
+		
+		if( empty( $stream ) ){
+			$LOG->error("No stream specified; cannot decode JSON");
+			return NULL;
+		}
 		
 		//read JSON from input stream
 		$input = file_get_contents( $stream );
 		
 		$LOG->trace( 'Data read from input stream: ' . $input );
 		
-		//TODO: verify that $input is actual data that can be converted
+		//Only attempt to convert if data is read from the stream
 		if( !empty( $input) ){
 			
 			//decode JSON to object
@@ -93,8 +98,8 @@ class JsonManager {
 			}
 		}
 		else{
-			//TODO: No data read from input stream. Throw exception?
-			$LOG->warn( 'No data read from input stream.' );
+			//No data read from input stream.
+			$LOG->error( "Nothing to JSON-decode; no data read from input stream: $stream" );
 			return NULL;
 		}
 	}

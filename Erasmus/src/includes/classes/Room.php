@@ -51,6 +51,12 @@ class Room extends GenericCrud {
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
 	
+	public function getHazards(){ return $this->hazards; }
+	public function setHazards($hazards){ $this->hazards = $hazards; }
+
+	public function getPrincipalInvestigators(){ return $this->principalInvestigators; }
+	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+	
 	public function getSafetyContactInformation(){ return $this->safetyContactInformation; }
 	public function setSafetyContactInformation($contactInformation){ $this->safetyContactInformation = $contactInformation; }
 	
