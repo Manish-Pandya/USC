@@ -71,10 +71,17 @@ class MockDAO{
 		return $checklist;
 	}
 	
-	public function getHazardById( $keyid ){
+	//FIXME: Remove $name
+	public function getHazardById( $keyid, $name = NULL ){
 		$hazard = $this->initGenericCrudObject(new Hazard());
 		$hazard->setKeyId($keyid);
-		$hazard->setName("Dangerous thing #$keyid");
+		
+		if( $name === NULL ){			
+			$hazard->setName("Dangerous thing #$keyid");
+		}
+		else{
+			$hazard->setName( $name );
+		}
 		
 		// Conditionally build subhazard(s)
 		$randomChance = 6;
@@ -209,10 +216,17 @@ class MockDAO{
 		$room->setName("Room $keyid");
 		$room->setSafetyContactInformation('Call 911');
 		
+		//FIXME: Remove DEMO names
+		$demoHazardNames = array(
+			"Biological Materials",
+			"General Laboratory Safety",
+			"Radiation Safety"
+		);
+		
 		// Hazards
 		$hazards = array();
 		for($i = 0; $i < 3; $i++){
-			$hazard = $this->getHazardById( $this->getRandomKey() );
+			$hazard = $this->getHazardById( $this->getRandomKey(), $demoHazardNames[$i] );
 			$hazards[] = $hazard;
 		}
 		
