@@ -19,8 +19,6 @@ $actionDispatcher = new ActionDispatcher($sessionDataSource);
 // Attempt to dispatch to the requested action
 $actionResult = $actionDispatcher->dispatch($actionName);
 
-//TODO: Check for error? and display different HTTP response code?
-
 //TODO: option to encode JSON or not?
 
 // JSON-Encode result
