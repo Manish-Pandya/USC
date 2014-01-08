@@ -188,10 +188,17 @@ function saveQuestion(){
 function getAllHazards(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$hazards = array();
+		
+	//FIXME: Remove DEMO names
+	$demoHazardNames = array(
+		"Biological Materials",
+		"General Laboratory Safety",
+		"Radiation Safety"
+	);
 	
 	//TODO: Query for Hazards
 	for( $i = 0; $i < 10; $i++ ){
-		$hazards[] = getHazardById($i);
+		$hazards[] = getHazardById($i, $demoHazardNames[$i]);
 	}
 	
 	return $hazards;
