@@ -204,14 +204,15 @@ function getAllHazards(){
 	return $hazards;
 };
 
-function getHazardById( $id = NULL ){
+//FIXME: Remove $name
+function getHazardById( $id = NULL, $name = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
 		$dao = new MockDAO();
-		$hazard = $dao->getHazardById($id);
+		$hazard = $dao->getHazardById($id, $name);
 		
 		return $hazard;
 	}
