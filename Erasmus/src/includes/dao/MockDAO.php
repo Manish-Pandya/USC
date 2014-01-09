@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/statichazards.php';
+
 //TODO: Remove this class when real DAO functionality is completed
 class MockDAO{
 	
@@ -69,6 +71,10 @@ class MockDAO{
 		$this->LOG->info("Defined Checklist: $checklist");
 		
 		return $checklist;
+	}
+	
+	public function getAllHazards(){
+		return getStaticHazards();
 	}
 	
 	//FIXME: Remove $name
