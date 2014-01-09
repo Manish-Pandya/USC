@@ -172,7 +172,7 @@ function getStaticHazards(){
 	unset($h);
 	unset($ph);
 
-	//TODO: Remove dupes?
+	// Remove dupes (only top-level hazards will remain; others are listed as sub-hazards)
 	foreach($hazards as $key=>$hazard){
 		if( $hazard->getParentHazardId() !== NULL ){
 			unset($hazards[$key]);
