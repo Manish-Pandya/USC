@@ -187,19 +187,8 @@ function saveQuestion(){
 // Hazards Hub
 function getAllHazards(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$hazards = array();
-		
-	//FIXME: Remove DEMO names
-	$demoHazardNames = array(
-		"Biological Materials",
-		"General Laboratory Safety",
-		"Radiation Safety"
-	);
-	
-	//TODO: Query for Hazards
-	for( $i = 0; $i < 10; $i++ ){
-		$hazards[] = getHazardById($i, $demoHazardNames[$i]);
-	}
+	$dao = new MockDAO();
+	$hazards = $dao->getAllHazards();
 	
 	return $hazards;
 };
