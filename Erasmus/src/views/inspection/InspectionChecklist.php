@@ -11,7 +11,7 @@ require_once '../top_view.php';
           <li ng-repeat="checklist in checklists" ><a ng-class="{active:checklist.currentlyOpen}" ng-click="change(checklist.key_id,checklist)" href="#{{checklist.key_id}}"><span style="display:inline-block; width:75%; margin-right:10%;">{{checklist.label}}</span><span ng-class="checklist.countClass" style="width: 15%;float:right; text-align:right;">{{checklist.answeredQuestions}}/{{checklist.questions.length}}</span></a></li>
         </ul>
     </div><!--/span-->
-<div class="test">
+<div class="tst">
 <div id="sp-page" class="whitebg">
 	<div style="position:fixed">
 	</div>
@@ -73,7 +73,7 @@ require_once '../top_view.php';
 										<input type="checkbox" value="true" ng-model="deficiency.checked" ng-change="questionAnswered(checklist, question.userResponse, question)" />
 										<span class="metro-checkbox">{{deficiency.text}}</span>
 									</label>
-									<ul ng-switch on="deficiency.checked">
+									<ul style="margin:10px" ng-switch on="deficiency.checked">
 										<li ng-switch-when="true">
 											<label class="checkbox inline">
 												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-change="questionAnswered(checklist, question.userResponse, question)" />

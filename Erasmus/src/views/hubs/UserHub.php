@@ -30,12 +30,12 @@ require_once '../top_view.php';
 <table class="userList table table-striped table-hover" ng-class="{'hide-inactive-rows': !showInactive}">
 <thead>
 	<tr>
-		<th>Edit User</th><th>Activate/Deactivate User</th><th>Name</th><th>LDAP ID</th><th>Email</th><th>Role</th>
+		<th>Edit User</th><th><a ng-click="order = 'IsActive'; reverse=!reverse">Activate/Deactivate User</a></th><th><a ng-click="order = 'Name'; reverse=!reverse">Name</a></th><th><a ng-click="order = 'Username'; reverse=!reverse">LDAP ID</a></th><th><a ng-click="order = 'Email'; reverse=!reverse">Email</a></th><th>Role</th>
 	</tr>
 </thead>
 
 <tbody>
-	<tr id="{{user.id}}" ng-repeat="user in users" ng-class="{edit: user.edit, notedit: user.notEdit, updated: user.updated, inactive: !user.IsActive}">
+	<tr id="{{user.id}}" ng-repeat="user in users | orderBy:order:reverse" ng-class="{edit: user.edit, notedit: user.notEdit, updated: user.updated, inactive: !user.IsActive}">
 		<td ng-hide="user.edit"><a class="edit btn btn-large btn-primary" ng-click="editUser(user)">Edit</a></td><td ng-show="user.edit"><a class="edit btn btn-large btn-info" ng-click="saveUser(userCopy, user)">Save</a></td>
 		<td ng-hide="user.edit">
 			<a class="btn btn-danger btn-large DeactivateeRow" ng-click="handleUserActive(user)" ng-show="user.IsActive">Deactivate</a>
@@ -48,7 +48,29 @@ require_once '../top_view.php';
 		<td ng-hide="user.edit">{{user.Name}}</td><td ng-show="user.edit"><input ng-model="userCopy.Name"/></td>
 		<td ng-hide="user.edit">{{user.Username}}</td><td ng-show="user.edit"><input ng-model="userCopy.Username"/></td>
 		<td ng-hide="user.edit">{{user.Email}}</td><td ng-show="user.edit"><input ng-model="userCopy.Email"/></td>
-		<td ng-hide="user.edit">{{user.Roles}}Administrator</td><td ng-show="user.edit"><input ng-init="Administrator" ng-model="userCopy.Roles"/></td>
+		<td ng-hide="user.edit">
+			<ul>
+				<li ng-repeat="role in user.Roles">{{role}}</li>
+			</ul>
+		</td>
+		<td ng-show="user.edit">
+			<ul>
+				<li ng-repeat="role in userCopy.Roles">{{role}}<i class="icon-minus" ng-click="removeRole($index)"></i></li>
+				<li class="add-role">
+				<span ng-hide="userCopy.Roles.adding" ng-click="addRole()" >	
+					Add Role<i class="icon-plus"></i>
+				</span>
+				<span ng-show="userCopy.Roles.adding">
+					<select style="width:121px;" ng-model="newRole">
+						<option value="">Select Role</option>
+						<option ng-repeat="role in roles">{{role}}</option>
+					</select>
+					<i style="width:10px;" ng-click="confirmAdd(newRole)" class="icon-checkmark"></i>
+				</span>
+				</li>
+			</ul>
+			
+		</td>
 	</tr>
 </tbody>
 </table>

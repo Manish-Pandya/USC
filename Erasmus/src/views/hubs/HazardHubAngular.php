@@ -64,7 +64,7 @@
                 </li>
             </ol>
 
-            <pre>{{SubHazards | json}}</pre>
+           <!-- <pre>{{SubHazards | json}}</pre> -->
 
 
         </div>

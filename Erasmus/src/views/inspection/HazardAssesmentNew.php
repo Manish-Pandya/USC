@@ -6,7 +6,7 @@ require_once '../top_view.php';
 
 <div class="navbar">
 	<ul class="nav pageMenu" style="background: #e67e1d;">
-		<li class="span4">
+		<li class="span12">
 			<img src="../../img/hazard-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Hazard Assessment</h2>	
 		</li>
@@ -25,9 +25,17 @@ require_once '../top_view.php';
 	 	<script type="text/ng-template" id="hazards-modal.html">
 
 	 		<div class="modal-header">
-	 			<h2>{{subhazard.label}}</h2>
+	 			<h2>{{subhazard.Name}}</h2>
 	 		</div>
-	 		<div class="modal-body">	 		
+	 		<div class="modal-body">
+	 		<!--find the right spot for this 
+	 			<li ng-repeat="room in subhazard.Rooms"><label class="checkbox inline" style="display:block;">
+	    			<label class="checkbox inline">
+						<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard, room)" />
+						<span class="metro-checkbox">{{room.Name}}</span>
+					</label>
+				</li> 	
+				-->	
 		 		<span data-ng-include="'modal-hazards.html'"></span>
 	 		</span>
 			</div>
@@ -37,39 +45,41 @@ require_once '../top_view.php';
 	    <script type="text/ng-template" id="rooms-modal.html">
 
 	    	<div class="modal-header">
-	    		<h2>{{subhazard.label}}</h2>
+	    		<h2>{{subhazard.Name}}</h2>
 	    	</div>
 	    	<div class="modal-body">
 	    	<ul style="list-style:none;">
-	    		<li ng-repeat="room in subhazard.rooms"><label class="checkbox inline" style="display:block;">
+
+	    		<li ng-repeat="room in subhazard.Rooms"><label class="checkbox inline" style="display:block;">
 	    			<label class="checkbox inline">
-						<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard)" />
-						<span class="metro-checkbox">Room {{room.room}}</span>
+						<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard, rooms)" />
+						<span class="metro-checkbox">{{room.Name}}</span>
 					</label>
 				</li>
+
 			</ul>
 	    	</div>
 	    </script>
 
-<!--revealSubhazards-->
+	<!--revealSubhazards-->
 	    <script type="text/ng-template" id="modal-hazards.html">
 
 			<tabset vertical="true" type="{{navType}}">
-		 			 <tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.children" active="subhazard.active" disabled="subhazard.disabled">	
+		 			 <tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.SubHazards" active="subhazard.IsActive" disabled="subhazard.disabled">	
 				     	<tab-heading>
 					     <h4>
 					     <ng-switch on="subhazard.isPresent">
 					     	<i ng-switch-when="true" class="icon-checkmark" style="color: #333;background: white;margin-top: 3px;width: 18px;"></i>
 					     </ng-switch>
-					     	{{subhazard.label}}
+					     	{{subhazard.Name}}
 						</h4>
-						<ng-switch on="subhazard.active">
+						<ng-switch on="subhazard.IsActive">
 							<span ng-switch-when="true">
 							<p style="margin-top:7px">Rooms:</p>
-							<li class="" ng-repeat="room in subhazard.rooms" style="margin-top:8px;">
+							<li class="" ng-repeat="room in subhazard.Rooms" style="margin-top:8px;">
 								<label stop-event='click' class="checkbox inline" style="display:block;">
 									<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard, room)"/>
-									<span class="metro-checkbox">{{room.room}}</span>
+									<span class="metro-checkbox">{{room.Name}}</span>
 								</label>
 							</li>
 							<div style="clear:both"></div>
@@ -77,21 +87,21 @@ require_once '../top_view.php';
 							</ng-switch>
 						</tab-heading>
 				     	<tabset vertical="true">
-				     		<tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.children" active="subhazard.active" disabled="subhazard.disabled">
+				     		<tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.SubHazards" active="subhazard.IsActive" disabled="subhazard.disabled">
 						     <tab-heading>
 							     <h4>
 									 <ng-switch on="subhazard.isPresent">
 								     	<i ng-switch-when="true" class="icon-checkmark" style="color: #333;background: white;margin-top: 3px;width: 18px;"></i>
 								     </ng-switch></i>
-								     {{subhazard.label}}
+								     {{subhazard.Name}}
 								</h4>
-								<ng-switch on="subhazard.active">
+								<ng-switch on="subhazard.IsActive">
 									<span ng-switch-when="true">
 									<p style="margin-top:7px">Rooms:</p>
-									<li class="" ng-repeat="room in subhazard.rooms" style="margin-top:8px;">
+									<li class="" ng-repeat="room in subhazard.Rooms" style="margin-top:8px;">
 										<label stop-event='click' class="checkbox inline" style="display:block;">
-											<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard)" />
-											<span class="metro-checkbox">{{room.room}}</span>
+											<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard, room)" />
+											<span class="metro-checkbox">{{room.Name}}</span>
 										</label>
 									</li>
 									<div style="clear:both"></div>
@@ -99,28 +109,28 @@ require_once '../top_view.php';
 									</ng-switch>
 								</tab-heading>
 								<tabset vertical="true">
-				     		<tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.children" active="subhazard.active" disabled="subhazard.disabled">
+				     		<tab select="toggleSubhazardState(subhazard)" ng-repeat="subhazard in subhazard.SubHazards" active="subhazard.IsActive" disabled="subhazard.disabled">
 						     			<tab-heading>
 							     <h4>
 							     	<ng-switch on="subhazard.isPresent">
 								     	<i ng-switch-when="true" class="icon-checkmark" style="color: #333;background: white;margin-top: 3px;width: 18px;"></i>
 								     </ng-switch></i>
-								     {{subhazard.label}}
+								     {{subhazard.Name}}
 								</h4>
-								<ng-switch on="subhazard.active">
+								<ng-switch on="subhazard.IsActive">
 									<span ng-switch-when="true">
 									<p style="margin-top:7px">Rooms:</p>
-									<li class="" ng-repeat="room in subhazard.rooms" style="margin-top:8px;">
+									<li class="" ng-repeat="room in subhazard.Rooms" style="margin-top:8px;">
 										<label stop-event='click' class="checkbox inline" style="display:block;">
-											<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard)" />
-											<span class="metro-checkbox">{{room.room}}</span>
+											<input type="checkbox" ng-model="room.presentInThisRoom" ng-change="handleRooms(subhazard, room)" />
+											<span class="metro-checkbox">{{room.Name}}</span>
 										</label>
 									</li>
 									<div style="clear:both"></div>
 									</span>
 									</ng-switch>
 								</tab-heading>
-								<li ng-repeat="subhazard in subhazard.children">{{subhazard.label}}{{subhazard.isLeaf}}</li>
+								<li ng-repeat="subhazard in subhazard.SubHazards">{{subhazard.Name}}</li>
 				     		</tab>
 				     	</tabset>
 				     		</tab>
@@ -134,7 +144,7 @@ require_once '../top_view.php';
 				<li ng-repeat="bottomHazard in currentChildren"><label class="checkbox inline" style="">
 					<label class="checkbox inline" style="">
 						<input type="checkbox" ng-model="bottomHazard.containsHotChildren" ng-change="subhazardChecked(bottomHazard, $event)" />
-						<span id= class="metro-checkbox smaller">{{bottomHazard.label}}</span>
+						<span id= class="metro-checkbox smaller">{{bottomHazard.Name}}</span>
 					</label>
 				</li>
 			</ul>
@@ -143,11 +153,11 @@ require_once '../top_view.php';
 	    <script type="text/ng-template" id="sub-hazards.html">
 	    <li>
 	 		<ul class="subHazards">
-				<li data-ng-repeat="subhazard in subhazard.children  | filter: { isPresent: 'true' }">
+				<li data-ng-repeat="subhazard in subhazard.SubHazards  | filter: { isPresent: 'true' }">
 							<h4>
 								<label class="checkbox inline">
 									<input type="checkbox" ng-model="subhazard.isPresent" ng-change="handleHazardRelationship(hazard)"	/>
-									<span class="metro-checkbox">{{subhazard.label}}</span>
+									<span class="metro-checkbox">{{subhazard.Name}}</span>
 								</label>
 								<ng-switch on="subhazard.isLeaf">
 									<span ng-switch-when="false">
@@ -159,20 +169,18 @@ require_once '../top_view.php';
 						<ng-switch on="subhazard.isPresent">
 							<span ng-switch-when="true">
 								<p style="float:left; margin-top:7px; margin-right:5px">Rooms:</p>
-									<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.rooms   | filter: { presentInThisRoom: 'true' }" style="float:left; margin-top:8px;">{{room.room}}</li>
+									<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.Rooms   | filter: { presentInThisRoom: 'true' }" style="float:left; margin-top:8px;">{{room.Name}}</li>
 									<div style="clear:both"></div>
-								<ng-switch on="subhazard.containsHotChildren">
+								<ng-switch on="subhazard.isPresent">
 									<span ng-switch-when="true"><span data-ng-include="'sub-hazards.html'"></span></span>
 								</ng-switch>
 							</span>
 						</ng-switch>
 						<div style="clear:both"></div>
-
 					</ul>
 					
 <!--					<ng-switch on="subhazard.containsHotChildren">
-					
-							
+											
 						<span ng-switch-when="true">							
 							<span data-ng-include="'sub-hazards.html'"></span>
 						</span>
@@ -200,43 +208,53 @@ require_once '../top_view.php';
 	    <script type="text/ng-template" id="leaf-level-hazard.html">
 	    	<label class="checkbox inline">
 				<input type="checkbox" ng-model="subhazard.isPresent" ng-change="handleHazardRelationship(subhazard)" />
-				<span class="metro-checkbox">{{subhazard.label}}</span>
+				<span class="metro-checkbox">{{subhazard.Name}}</span>
 			</label>
 			<p style="float:left; margin-top:7px; margin-right:5px">Rooms:</p>
 	    	<ul>
-				<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.rooms" style="float:left; margin-top:8px;">{{room.room}}</li>
+				<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.Rooms" style="float:left; margin-top:8px;">{{room.room}}</li>
 	    	</ul>
 	    </script>
 
 	    <div data-ng-controller="hazardAssessmentController">
+	 <!--
+	    <pre>
+	    	{{hazards | json}}
+	    </pre>
+	-->
 	    <form>
 			<ul class="allHazardList">
-				<!--top level hazards -->
 				<li class="hazardList" data-ng-repeat="hazard in hazards">
-					<h1 class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.label}}</h1>
+					<h1 class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.Name}}</h1>
 					<hr>
 					<ul>
-						<li ng-repeat="subhazard in hazard.children">
-							<ul ng-switch on="subhazard.isLeaf">
-								<li ng-switch-when="false">						
+						<li ng-repeat="subhazard in hazard.SubHazards">
+							<!--<ul ng-switch on="subhazard.containsHotChildren">
+								<li ng-switch-when="true">	-->					
 									<ul class="topSub">
 										<h4>
-											<label class="checkbox inline">
-												<input type="checkbox" ng-model="subhazard.isPresent" ng-change="setRooms(subhazard)"	/>
-												<span class="metro-checkbox"><h4>{{subhazard.label}}</h4></span>
-											</label>
 											<ng-switch on="subhazard.isLeaf">
 												<span ng-switch-when="false">
+													<label class="checkbox inline">
+														<input type="checkbox" ng-model="subhazard.isPresent" ng-change="openModal(subhazard)"	/>
+														<span class="metro-checkbox"><h4>{{subhazard.Name}}	</h4></span>
+													</label>
 													<i class="icon-plus-4 modal-trigger-plus" ng-click="openModal(subhazard)"></i>
+												</span>
+												<span ng-switch-when="true">
+													<label class="checkbox inline">
+														<input type="checkbox" ng-model="subhazard.isPresent" ng-change="setRooms(subhazard)"	/>
+														<span class="metro-checkbox"><h4>{{subhazard.Name}}	</h4></span>
+													</label>
 												</span>
 											</ng-switch>
 										</h4>
 										<ng-switch on="subhazard.isPresent">
 											<span ng-switch-when="true">
 												<p style="float:left; margin-top:7px; margin-right:5px">Rooms:</p>
-													<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.rooms   | filter: { presentInThisRoom: 'true' }" style="float:left; margin-top:8px;">{{room.room}}</li>
+													<li class="roomRepeat" ng-class="{last: $last}" ng-repeat="room in subhazard.Rooms   | filter: { presentInThisRoom: 'true' }" style="float:left; margin-top:8px;">{{room.Name}}</li>
 													<div style="clear:both"></div>
-												<ng-switch on="subhazard.containsHotChildren">
+												<ng-switch on="subhazard.isPresent">
 													<span ng-switch-when="true"><span data-ng-include="'sub-hazards.html'"></span></span>
 												</ng-switch>
 											</span>
@@ -244,13 +262,13 @@ require_once '../top_view.php';
 									</ul>
 								</li>
 
-								<li ng-switch-when="true">
+							<!--	<li ng-switch-when="false">
 									<label class="checkbox inline">
 										<input type="checkbox" ng-model="subhazard.isPresent" ng-change="handleHazardRelationship(subhazard)" />
-										<span class="metro-checkbox">{{subhazard.label}}</span>
+										<span class="metro-checkbox">{{subhazard.Name}}falsotue</span>
 									</label>
 								</li>
-
+-->
 							</ul>
 
 						</li>
@@ -266,7 +284,7 @@ require_once '../top_view.php';
 
 			<div class="span12">
 					<!--<pre><strong>selected with helper function:</strong> {{selectedHazards() | json}}</pre>]-->
-					<h2 data-ng-repeat="hazard in checked_hazards">{{hazard.label}}</h2>
+					<h2 data-ng-repeat="hazard in checked_hazards">{{hazard.Name}}</h2>
 			</div>
 		</div>
 
