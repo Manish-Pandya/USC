@@ -1,10 +1,18 @@
 //convenience method to parse the data for rooms and hazards into 
 var parseRoomsAndHazards = function (rooms, hazards){
-
   function camelCase(input) { 
     return input.toLowerCase().replace(/ (.)/g, function(match, group1) {
         return group1.toUpperCase();
     });
+  }
+
+   getLength = function(obj){
+    if(obj !== null){
+      if(obj.length > 0){
+        return true
+      }
+    }
+    return false;
   }
 
   var hotParentkey_ids = [];
@@ -14,25 +22,27 @@ var parseRoomsAndHazards = function (rooms, hazards){
   inspectionHazards = {};
 
   function roomContainsHazard(array, obj) {
+    //console.log(array);
       presentHazards = 0;
       for (hazardCount=0;hazardCount<array.length;hazardCount++) {
-          if (array[hazardCount].key_id === obj.key_id) {
+          if (array[hazardCount].Name === obj.Name) {
             presentHazards++;
           }   
       }
       if(presentHazards > 0){
         return true;
       }else{
+        //console.log('falses');
         return false;
       }
   };
 
   setParentkey_ids = function(parent){
-    if (parent.hasOwnProperty('children') && parent.children.length > 0){
-      for(var i = 0; parent.children.length > i; i++){
-        parent.children[i].parentkey_id = parent.key_id;
-        if (parent.children[i].hasOwnProperty('children') && parent.children[i].children.length > 0){
-          setParentkey_ids(parent.children[i]);
+    if (getLength(parent.SubHazards)){
+      for(var i = 0; parent.SubHazards.length > i; i++){
+        parent.SubHazards[i].parentkey_id = parent.KeyId;
+        if (getLength(parent.SubHazards)){
+          setParentkey_ids(parent.SubHazards[i]);
         }
       }
     }
@@ -41,48 +51,51 @@ var parseRoomsAndHazards = function (rooms, hazards){
   iterator = 0;
 
   checkHazardAndChildren = function(hazard){
+    
     //create a unique DOM ID for each hazard for styling
-    hazard.cssId = camelCase(hazard.label);
+    hazard.cssId = camelCase(hazard.Name);
    
-    hazard.rooms = [];
+    hazard.Rooms = [];
     hazard.isPresent = false;
 
     //loop through rooms.  see if each contains this hazard, set properties accordingly
     for(roomCount=0;roomCount<rooms.length;roomCount++){
-        hazard.rooms[roomCount] = {};
-          if(roomContainsHazard(rooms[roomCount].hazards, hazard)){
+        hazard.Rooms[roomCount] = {};
+          if(roomContainsHazard(rooms[roomCount].Hazards, hazard)){
+            //console.log('here');
             hazard.isPresent = true;
             hotParentkey_ids.push(hazard.parent_id);
-            hazard.rooms[roomCount].presentInThisRoom = true;
+            hazard.Rooms[roomCount].presentInThisRoom = true;
         }else{
-          hazard.rooms[roomCount].presentInThisRoom = false;
+         // console.log('here');
+          hazard.Rooms[roomCount].presentInThisRoom = false;
         }
-        hazard.rooms[roomCount].room = rooms[roomCount].room;
-        hazard.rooms[roomCount].key_id = rooms[roomCount].key_id;
+        hazard.Rooms[roomCount].Name = rooms[roomCount].Name;
+        hazard.Rooms[roomCount].KeyId = rooms[roomCount].KeyId;
 
     }
 
-    if (hazard.hasOwnProperty('children') && hazard.children.length > 0){
+    if (getLength(hazard.SubHazards)){
       hazard.isLeaf = false;
-      for(var i = 0; hazard.children.length > i; i++){
+      for(var i = 0; hazard.SubHazards.length > i; i++){
           parentHazard = hazard;
-          checkHazardAndChildren(hazard.children[i]);
+          checkHazardAndChildren(hazard.SubHazards[i]);
       }
     }else{
       hazard.isLeaf = true;
     }
 
-    if(hotParentkey_ids.indexOf(hazard.key_id) > -1){
+    if(hotParentkey_ids.indexOf(hazard.KeyId) > -1){
      // console.log(hazard.key_id);
         hazard.containsHotChildren = true;
         hazard.isPresent = true;
         hotParentkey_ids.push(hazard.parent_id); 
 
-        for(childCount = 0;childCount<hazard.children.length; childCount++){
-          if(hazard.children[childCount].isPresent == true){
-              for(roomCount = 0; roomCount<hazard.children[childCount].rooms.length;roomCount++){
-                if( hazard.children[childCount].rooms[roomCount].presentInThisRoom == true ){
-                  hazard.rooms[roomCount].presentInThisRoom = true;
+        for(childCount = 0;childCount<hazard.SubHazards.length; childCount++){
+          if(hazard.SubHazards[childCount].isPresent == true){
+              for(roomCount = 0; roomCount<hazard.SubHazards[childCount].Rooms.length;roomCount++){
+                if( hazard.Children[childCount].Rooms[roomCount].presentInThisRoom == true ){
+                  hazard.Rooms[roomCount].presentInThisRoom = true;
               }
             }
           }
@@ -140,7 +153,9 @@ hazardAssesment.factory('testFactory', function($http,$q){
       });
 
     return $q.all([rooms, hazards]).then(function(responses) {
-        var data = parseRoomsAndHazards(responses[0].data,responses[1].data);
+        
+       // console.log(responses[0].data.PrincipalInvestigator.Rooms);
+        var data = parseRoomsAndHazards(responses[0].data.PrincipalInvestigator.Rooms,responses[1].data);
         onGetHazards(data);
     });
 
@@ -155,8 +170,6 @@ hazardAssesment.factory('testFactory', function($http,$q){
 
     return $http.post( url, data, headers, config)
       .success( function( data, headers ) {  
-          console.log(data);
-          console.log(headers);
       })
       .error(function(data, status, headers, config){
           alert('error');
@@ -180,6 +193,7 @@ hazardAssesment.directive('stopEvent', function () {
   return {
     restrict: 'A',
     link: function (scope, element, attr) {
+      //console.log(element);
      // console.log(scope);
         element.bind(attr.stopEvent, function (e) {
             e.stopPropagation();
@@ -205,8 +219,8 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
   //we do it this way so that we know we get data before we set the $scope object
   //
   function init(){
-	  testFactory.getRoomAndHazardData(onGetHazards,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&hazards=true','http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&rooms=true');
-    //console.dir($scope.data);
+	  testFactory.getRoomAndHazardData(onGetHazards,'/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK','/Erasmus/src/ajaxaction.php?action=getInspectionById&id=3366&callback=JSON_CALLBACK');
+    //console.log($scope.data);
   }
   //grab set user list data into the $scrope object
   function onGetHazards (data) {
@@ -253,8 +267,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
   $scope.handleHazardRelationship = function(hazard) {
     hazard.checked = true;
     $scope.curentSubhazard = hazard;
-    //console.log('relationship');
-   // console.log(hazard);
+
 
    // console.log(hazard.containsHotChildren);
     if(hazard.containsHotChildren != true){
@@ -264,7 +277,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
     }
   }
   $scope.setRooms = function(hazard){
-   // console.log('modal');
+
     $scope.opts       = {
         backdrop:      true,
         keyboard:      true,
@@ -279,21 +292,23 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
       
      // $dialog.dialog().open('hazards-modal.html');
       $scope.openDialog = function(hazard){
-        //console.log(hazard);
+      console.log(hazard);
       var d = $dialog.dialog($scope.opts);
 
-      if(hazard.isLeaf != true){
+      //if(hazard.isLeaf != true){
+        console.log('adsfasdfasdfadsfasdf');
         d.open().then(function(result){
             if(result){
            // console.log('dialog closed with result: ' + result);
           }
         }); 
       }
-    }
+   // } 
     $scope.openDialog(hazard);
   }
 
-  $scope.openModal = function(hazard){
+  $scope.openModal = function(hazard,room){
+    $scope.parentHazard = hazard;
     console.log('modal');
     $scope.opts       = {
         backdrop:      true,
@@ -312,39 +327,72 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
         //console.log(hazard);
       var d = $dialog.dialog($scope.opts);
 
-      if(hazard.isLeaf != true){
+    //  if(hazard.isLeaf != true){
         d.open().then(function(result){
             if(result){
-           // console.log('dialog closed with result: ' + result);
-          }
+            }
         }); 
       }
-    }
+   // }
     $scope.openDialog(hazard);
   }
 };
 
 controllers.DialogController = function($scope, $rootScope, dialog, hazard,testFactory) {
+  $scope.parentHazard = hazard;
+  //console.log($scope.parentHazard);
+
+$scope.walkHazardBranch = function(hazard, childHazard){
+
+  console.log(hazard.Name);
+  for(i=0;i<hazard.SubHazards.length;i++){
+   // console.log(i);
+    subhazard = hazard.SubHazards[i];
+    console.log(subhazard.Name+', IsActive: '+ subhazard.IsActive);
+
+    for(x=0;x<hazard.Rooms.length;x++){
+      var room = hazard.Rooms[x];
+      for(y=0;y<subhazard.Rooms.length;y++){
+        if(subhazard.Rooms[y].Name == room.Name){
+           // console.log('room match');
+            if(subhazard.Rooms[y].presentInThisRoom == true){
+              room.presentInThisRoom = subhazard.Rooms[y].presentInThisRoom;
+              hazard.isPresent = true;
+            }
+        }
+      }
+     }
+     if(subhazard.IsActive === true && subhazard.isLeaf !== true && childHazard.Name !== subhazard.Name){
+      //console.log(subhazard);
+        $scope.walkHazardBranch(subhazard);
+    }
+  }
+}
 
 $scope.handleRooms = function(hazard, room){
-    console.log('handling room');
-  //  console.log(hazard);
-   // console.log(room);
-    hazard.isPresent = false;
+    //console.log(hazard);
+    hazard.isPresent = true;
 
     if(room){
-
+      console.log('room is true');
       data={};
       data.room_key_id = room.key_id;
       data.hazard_key_id = hazard.key_id;
       data.presentInThisRoom = room.presentInThisRoom;
 
+     // console.log($scope.parentHazard);
+      //room.Hazards.push(hazard);
+
+      $scope.walkHazardBranch($scope.parentHazard,hazard);
+
       testFactory.saveRelationship('http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&update=true',data);
     }
 
-    for(i=0;i<hazard.rooms.length;i++){
-      if(hazard.rooms[i].presentInThisRoom == true){
-        hazard.isPresent = true
+    for(i=0;i<hazard.Rooms.length;i++){
+      if(hazard.Rooms[i].presentInThisRoom == true){
+        //console.log('adsf');
+        hazard.isPresent = true;
+       // console.log(hazard);
       }
     }
   }
@@ -356,6 +404,7 @@ $scope.handleRooms = function(hazard, room){
 
 
   $scope.stopPropagation = function(e) {
+    console.log(e);
       // to make sure it is a checkbox
       if (angular.element(e.currentTarget).prop('tagName') == 'INPUT') {
           e.stopPropagation();
@@ -366,7 +415,7 @@ $scope.handleRooms = function(hazard, room){
 
   $scope.checker = {};
   hazard.currentChildren = [];
-  console.log('in second controller');
+  //console.log('in second controller');
   $scope.subhazard = hazard;
 
   $scope.close = function(result){
@@ -374,35 +423,27 @@ $scope.handleRooms = function(hazard, room){
   };
 
   $scope.toggleSubhazardState = function(hazard) {
-    //console.log(room);
+    //console.log(room);   
+
     if(hazard.checked == false){
-      console.log('setting to true');
-      console.log(hazard.checked);
       hazard.checked = true;
-      console.log('now true');
-      console.log(hazard.checked);
     }else{
-      console.log('setting to false');
-      console.log(hazard.checked);
       hazard.checked = false;
-      console.log('now false');
-      console.log(hazard.checked);
     }
    
   };
 
   $scope.subhazardChecked = function(hazard,$event){
 
-    alert('checkHazardAndChildren');
 
     if(hazard.checked != true){
       hazard.checked = false;
     }else if(hazard.isLeaf == true){
       hazard.checked = true;
     }else{
-      console.log(hazard.children);
+      //console.log(hazard.children);
       hazard.checked = true;
-      console.log(hazard.currentChildren);
+      //console.log(hazard.currentChildren);
     }
    
   };

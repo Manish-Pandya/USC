@@ -11,9 +11,6 @@ hazardHub.factory('hazardHubFactory', function($http){
         $http.jsonp(url)
             .success( function(data) {  
                console.log(url);
-               //console.log('success');
-              // console.log(data);
-               //onSuccess is the method we have passed from the controller.  Binds data from service layer to angularjs $scope object
                onSuccess(data);
             })
             .error(function(data, status, headers, config){
@@ -317,24 +314,25 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     }
 
     $scope.update = function (event, ui) {
+       // console.log(ui);
 
         var root = event.target,
             item = ui.item,
             parent = item.parent(),
-            target = (parent[0] === root) ? $scope.SubHazards : parent.scope().child,
+            target = $scope.SubHazards,
             child = item.scope().child,
             index = item.index();
 
-            console.log('item');
-            console.log(item);
+           console.log('item');
+           console.log(item);
 
         //if the location we are moving to has no subhazards, set up an empty array for our moved hazard to live in
         target.SubHazards || (target.SubHazards = []);
         
         //loop through the new parent
         function walk(target, child) {
-            console.log('target');
-            console.log(target);
+            //console.log('target');
+            //console.log(target);
             var children = target.SubHazards,
                 i;
 
@@ -345,6 +343,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
                     if (children[i] === child) {
                         //if we find a match for the element, splice if FROM the scope to prevent duplicates
                         console.log('match found');
+                        console.log(children)
                         return children.splice(i, 1);
                     } else {
                         //recurse down and look again for duplicate, assuring we never duplicate an object we mean to move

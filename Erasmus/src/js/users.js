@@ -40,7 +40,7 @@ userList.factory('testFactory', function($http){
 });
 
 //called on page load, gets initial user data to list users
-function UserListController($scope, testFactory) {
+function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,$rootElement,$location) {
   $scope.users = [];
   
   init();
@@ -55,9 +55,14 @@ function UserListController($scope, testFactory) {
   //grab set user list data into the $scrope object
   function onGetUsers(data) {
 	  $scope.users = data;
-	  console.log($scope.users);
   }
 
+  $scope.roles=[
+    "Administrator",
+    "AppUser",
+    "Inspector",
+    "Principle Investigator"
+  ]
 
   $scope.editUser = function(user){
 
@@ -68,8 +73,8 @@ function UserListController($scope, testFactory) {
 	  	thisUser.updated = false;
 	});
 	
-	//set display properties to hilight user currently being edited.
-	user.notEdit = false;
+	   //set display properties to hilight user currently being edited.
+	  user.notEdit = false;
   	user.edit = true;
 
   	//make a copy of the edited user, save it in the scope.  this will allow us to cancel any edits 
@@ -81,16 +86,15 @@ function UserListController($scope, testFactory) {
   $scope.handleUserActive = function(user){
 
   	//set the IsActive state for the user in the view model
-	if(user.IsActive == false || !user.IsActive){
+	  if(user.IsActive == false || !user.IsActive){
   		user.IsActive = true;
   	}else{
   		user.IsActive = false;
   	}
 
-
   	//callback function to make sure that the user state matches the the state of the corresponding object on the server
   	var switchActiveState = function(data,user){
-	 	user = data;
+	 	 user = data;
   	}
 
   	//send the edit to the server, pass it to the callback
@@ -124,7 +128,8 @@ function UserListController($scope, testFactory) {
 	   }
 
 	   	user.edit = false;
-		user.updated = true;
+		  user.updated = true;
+		  $scope.userCopy.Roles.adding = false;
 	}
 
 	testFactory.saveUser('/Erasmus/src/ajaxaction.php?action=saveUser', $scope.userCopy, updateUserView);
@@ -139,9 +144,9 @@ function UserListController($scope, testFactory) {
   	//grab a list of the User objects properties, set them to empty strings.
   	for (var property in $scope.users[0]) {
 		if ($scope.users[0].hasOwnProperty(property)) {
-			console.log(property);
+			  console.log(property);
 		    newUser[property] = '';
-		}
+		  }
     }
 
     //make sure the new user is active and not in an edited state.
@@ -161,19 +166,55 @@ function UserListController($scope, testFactory) {
 
   	//set the user back to a state that indicates it's not currently being edited.
   	//since we haven't saved the user, we still have the original user preserved in $scope.users, and can access it
-	user.notEdit = false;
-	user.edit = false;
+  	 user.notEdit = false;
+  	 user.edit = false;
 
-	//reset the display properties for all the users
-	for(i=0;i<$scope.users.length;i++){
+  	//reset the display properties for all the users
+  	for(i=0;i<$scope.users.length;i++){
 
-		thisUser = $scope.users[i];
-		thisUser.notEdit = false;
-		thisUser.edit = false;
-		thisUser.updated = false;
-	}
+  		thisUser = $scope.users[i];
+  		thisUser.notEdit = false;
+  		thisUser.edit = false;
+  		thisUser.updated = false;
+  		$scope.userCopy.Roles.adding = false;
+  	}
   }
-  
+
+  //remove a role from a user
+  $scope.removeRole = function(index){
+    //find the role in the user's role by its index, remove it
+  	$scope.userCopy.Roles.splice(index,1);
+  }
+
+  $scope.addRole = function(){
+    //set the user's role state to adding, so that we display the html select of user roles
+    $scope.userCopy.Roles.adding = true;
+    console.log('asdfasdfasdfasdfasdfa');
+    $scope.filterRoles();
+  }
+
+  $scope.confirmAdd = function(role){
+    $scope.userCopy.Roles.adding = false;
+    //add the role to the user's roles
+    $scope.userCopy.Roles.push(role);
+  }
+
+  //filter the roles so that we can only add roles that user doesn't already have
+  $scope.filterRoles = function() {
+    console.log($scope.userCopy.Roles);
+     if($scope.userCopy){
+      for(i=$scope.roles.length;i>-1;i--){
+         item=$scope.roles[i];
+         console.log(item);
+         if( $scope.userCopy.Roles.indexOf(item) != -1){
+            console.log(i);
+            console.log( 'yes');
+            $scope.roles.splice(i,1);
+         }
+      }
+    }
+  };
+
 };
 
 //set controller
