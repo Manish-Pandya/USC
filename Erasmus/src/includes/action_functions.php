@@ -276,8 +276,12 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 function saveHazard(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Hazard');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
