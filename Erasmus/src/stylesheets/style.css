@@ -237,6 +237,10 @@ tr.inactive td {
   background: pink !important;
 }
 
+li.inactive{
+  background: rgba(255, 105, 180,.1) !important;
+}
+
 /* line 202, ../sass/style.scss */
 tr.notedit, tr.notedit td {
   background: none !important;
@@ -247,6 +251,7 @@ tr.notedit, tr.notedit td {
 *******************************************************/
 /* line 209, ../sass/style.scss */
 #hazardTree {
+  padding-top:60px;
   font-size: 25px;
   /*********** toggle hidden state of subhazards **********************/
 }
@@ -265,7 +270,6 @@ tr.notedit, tr.notedit td {
   white-space: wrap;
   margin-left: 18px;
   min-width: 18px;
-  background: white;
 }
 /* line 229, ../sass/style.scss */
 #hazardTree li:hover {
@@ -293,7 +297,7 @@ tr.notedit, tr.notedit td {
 /* line 256, ../sass/style.scss */
 #hazardTree h2 {
   display: inline;
-  font-size: 1.3vw;
+  font-size: 1vw;
 }
 /* line 261, ../sass/style.scss */
 #hazardTree .leftThings {
@@ -301,6 +305,9 @@ tr.notedit, tr.notedit td {
   padding-top: 6px;
   display: inline-block;
   max-width: 40%;
+}
+ #hazardTree li.small .leftThings {
+  max-width: 70%;
 }
 /* line 267, ../sass/style.scss */
 #hazardTree .leftThings a {
@@ -493,8 +500,20 @@ div.question, li.question {
 .hazardBtn i, .hazardBtn span {
   margin: 0 10px;
   font-size: 15px;
+  color:white !Important;
 }
-
+.hazardBtn i{
+  margin:5px !important;
+  font-size: 25px;
+}
+a.hazardBtn{
+  padding-left:3px;
+  padding-right:8px;
+  color:white !important;
+}
+li.small a.hazardBtn span{
+  display:none;
+}
 /* individual page menu bars*/
 /* line 435, ../sass/style.scss */
 .pageMenu {

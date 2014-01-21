@@ -1,6 +1,8 @@
 @CHARSET "ISO-8859-1";
 
 $orange: #e67e1d;
+$redBg:  #bd362f;
+$greenBg: #5bb75b;
 
 @mixin breakpoint($point) {
   @if $point == papa-bear {
@@ -139,13 +141,35 @@ div.rsmsCenterIconContainer{
 /*******************************************************
 *	USER HUB STYLES
 *******************************************************/
-.userList tr td{
-	width:1%;
-	transition: all .2s;
-}
-
-.userList tr {
+.userList {
+	tr {
 	border:none;	
+		td{
+			width:1%;
+			transition: all .2s;
+			ul{
+				list-style:none;
+				padding:0;
+				margin:0;
+			}
+			li{
+				i{
+					width:auto;
+					margin: 4px 0 0 5px;
+					cursor: pointer;
+				}
+				i.icon-minus{
+					color:$redBg;
+				}
+			}
+			li.add-role{
+				color:$greenBg;
+			}
+		}
+		td:last-child{
+			width:4%;
+		}
+	}
 }
 
 tr.edit{
@@ -154,9 +178,8 @@ tr.edit{
 	transition: border .2s;
 }
 
-tr.edit td{
-	
-	box-shadow:4px 5px 8px rgba(0, 0, 0, 0.5);
+tr.edit td{	
+	box-shadow:6px 5px 8px rgba(0, 0, 0, 0.5);
 	background:#fff !important;
 }
 
@@ -232,13 +255,14 @@ tr.notedit,tr.notedit td{
 
 	h2{
 		display:inline;
+		font-size: 1.3vw;
 	}
 
 	.leftThings{
 		height: 46px;
 		padding-top: 6px;
 		display: inline-block;
-		width: 53%;
+		max-width: 40%;
 
 		a{
 			margin: 0 5px;
@@ -251,6 +275,7 @@ tr.notedit,tr.notedit td{
 
 		a{
 			margin:0 5px;
+			font-size: 1vw;
 		}
 
 		

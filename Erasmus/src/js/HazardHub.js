@@ -1,7 +1,7 @@
-var hazardHub = angular.module('hazardHub', ['ui.bootstrap']);
-
+var hazardHub = angular.module('hazardHub', ['convenienceMethodModule']);
+/*
 hazardHub.factory('hazardHubFactory', function($http){
-    
+   
     //initialize a factory object
     var tempFactory = {};
     
@@ -14,15 +14,17 @@ hazardHub.factory('hazardHubFactory', function($http){
                onSuccess(data);
             })
             .error(function(data, status, headers, config){
-                alert('error');
+                //alert('error');
                 console.log(headers());
                 console.log(status);
                 console.log(config);
+                onFailSave(data);
             });
     };
+
     return tempFactory;
 });
-    
+    */
 hazardHub.directive('yaTree', function () {
 
     return {
@@ -31,8 +33,6 @@ hazardHub.directive('yaTree', function () {
         priority: 1000,
         terminal: true,
         compile: function (tElement, tAttrs, transclude) {
-
-            console.log(transclude);
 
             var repeatExpr, childExpr, rootExpr, childrenExpr;
 
@@ -47,6 +47,7 @@ hazardHub.directive('yaTree', function () {
                 var rootElement = element[0].parentNode,
                     cache = [];
 
+
                 // Reverse lookup object to avoid re-rendering elements
                 function lookup(child) {
                     var i = cache.length;
@@ -58,8 +59,7 @@ hazardHub.directive('yaTree', function () {
                 }
 
                 scope.$watch(rootExpr, function (root) {
-                    var currentCache = [];
-
+                                       var currentCache = [];
                     // Recurse the data structure
                     (function walk(SubHazards, parentNode, parentScope, depth) {
                         //console.log(children);
@@ -73,7 +73,7 @@ hazardHub.directive('yaTree', function () {
                             grandchildren;
 
                         // Iterate the children at the current level
-                        for (; i < n; ++i) {
+                        for (i=0; i < n; ++i) {
 
                             // We will compare the cached element to the element in 
                             // at the destination index. If it does not match, then 
@@ -192,6 +192,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
                     callback;
 
                 if (attr) {
+
                     callback = $parse(attr);
                     options[eventType.charAt(0).toLowerCase() + eventType.substr(1)] = function (event, ui) {
                         scope.$apply(function () {
@@ -223,8 +224,35 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
     };
 }]);  
 
+hazardHub.directive('buttongroup', function () {
+     return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+         // Observe the element's dimensions.
+         scope.$watch
+         (
+          function () {
+           return {
+             w:element.width(),
+           };
+          },
+          function (newValue, oldValue) {
+           if (newValue.w < 900 && newValue.w !== 0) {
+                element.addClass('small');
+           }else{
+                element.removeClass('small');
+           }
+          },
+          true
+         );
 
-hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFactory) {
+    }
+ }
+
+});
+
+
+hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMethods) {
 
     init();
   
@@ -232,13 +260,24 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      hazardHubFactory.getHazardData(onGetHazards,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&hazards=true');
+      convenienceMethods.getData('/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK', onGetHazards, onFailSave);
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
         $scope.SubHazards = data;
     }
 
+    //if this function is called, we have received a successful response from the server
+    function onSaveHazard( dto, hazard ){
+        convenienceMethods.setPropertiesFromDTO( dto, hazard );
+        console.log(hazard);
+        hazard.isBeingEdited = false;
+    }
+
+    function onFailSave(obj){
+        alert('There was a problem saving '+obj.Name);
+    }
+   
     $scope.SubHazards = {
         SubHazards: []
     }
@@ -266,6 +305,12 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
             title: '',
             SubHazards: []
         });
+
+        hazardDTO = {};
+
+        convenienceMethods.setPropertiesFromDTO(hazardDTO,hazard);
+
+
     };
 
     $scope.remove = function (child) {
@@ -290,21 +335,22 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
     
         hazard.isBeingEdited = true;
         $scope.hazardCopy = angular.copy(hazard);
-
+        console.log($scope.hazardCopy);
     }
 
     $scope.saveEditedHazard = function(hazard){
 
-        hazard.isBeingEdited = false;
-        hazard.Name = $scope.hazardCopy.Name;
+        copy = angular.copy($scope.hazardCopy);
+        copy.testProp = true;
+
+        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        convenienceMethods.updateObject( copy, hazard, onSaveHazard, onFailSave, url );
 
     }
 
     $scope.cancelHazardEdit = function(hazard, $index){
      
         if(hazard.isNew === true){
-            console.log(hazard);
-            console.log($scope.parentHazard);
             return $scope.parentHazard.SubHazards.splice( $scope.parentHazard.SubHazards.indexOf( hazard ), 1 );
         }
 
@@ -313,41 +359,98 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
 
     }
 
-    $scope.update = function (event, ui) {
-       // console.log(ui);
+    $scope.handleHazardActive = function(hazard){
+        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        if(hazard.IsActive === null)hazard.IsActive = false;
+        $scope.hazardDTO = {
+            key_id: hazard.KeyId,
+            IsActive: !hazard.IsActive,
+            Class: hazard.Class,
+            SubHazards: hazard.SubHazards,
+            Name: hazard.Name
+        }
+        convenienceMethods.updateObject( $scope.hazardDTO, hazard, onSaveHazard, onFailSave, url );
+    }
+
+    //called when a hazard drag event is begun
+    $scope.start = function(event, ui){
+
+        $scope.event = event;
+        $scope.ui = ui;
 
         var root = event.target,
             item = ui.item,
             parent = item.parent(),
-            target = $scope.SubHazards,
+            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
             child = item.scope().child,
             index = item.index();
 
-           console.log('item');
-           console.log(item);
+        $scope.hazardsCopy = angular.copy($scope.SubHazards);
+
+        $scope.previousParent  = target.child.KeyId;
+    }
+
+    //called when a Hazard drag has stopped
+    $scope.update = function (event, ui) {
+ 
+        $scope.event = event;
+        $scope.ui = ui;
+
+        var root = event.target,
+            item = ui.item,
+            parent = item.parent(),
+            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
+            child = item.scope().child,
+            index = item.index();
+
+        hazardDTO = {
+            Class:         'Hazard',
+            KeyId:         child.KeyId,
+            ParentHazardId:  target.child.KeyId,
+            index:         index,
+            name:          child.Name+': updated',
+            update:        true 
+        }
+
+        //REST calls
+        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        convenienceMethods.updateObject( hazardDTO, child, onMoveHazard, onFailMove, url, hazardDTO ) ;
+    };
+
+    //called when a hazard is moved and the server successfully udpates accordingly
+    onMoveHazard = function( hazardDTO, hazard ){
+      
+        convenienceMethods.setPropertiesFromDTO( hazardDTO, hazard );
+        
+        event = $scope.event;
+        ui    = $scope.ui;
+
+        var root = event.target,
+            item = ui.item,
+            parent = item.parent(),
+            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
+            child = item.scope().child,
+            index = item.index();
 
         //if the location we are moving to has no subhazards, set up an empty array for our moved hazard to live in
         target.SubHazards || (target.SubHazards = []);
         
         //loop through the new parent
         function walk(target, child) {
-            //console.log('target');
-            //console.log(target);
+         
             var children = target.SubHazards,
-                i;
+            i;
 
             if (children) {
-                console.log('here');
+                //console.log('here');
                 i = children.length;
                 while (i--) {
                     if (children[i] === child) {
                         //if we find a match for the element, splice if FROM the scope to prevent duplicates
-                        console.log('match found');
-                        console.log(children)
+                        //console.log('match found');   
                         return children.splice(i, 1);
                     } else {
                         //recurse down and look again for duplicate, assuring we never duplicate an object we mean to move
-                        console.log('rewalking');
                         walk(children[i], child);
                     }
                 }
@@ -355,9 +458,17 @@ hazardHub.controller('TreeController', function ($scope, $timeout, hazardHubFact
         }
 
         walk(target, child);
-
+        
         //add the child to the $scope, placing it in the subhazards array of the parent target $scope object
-        target.SubHazards.splice(index, 0, child);
-    };
+        target.child.SubHazards.splice(index, 0, child);
+    }
+
+    //called when a hazard is moved and the server sends an error response
+    onFailMove = function( hazard ){
+        
+        //set a flag property to indicate that we have tried to move this hazard.  This will call our watch expression to fire and reset the DOM tree of subhazards
+        hazard.update = hazardDTO.update;
+        alert('Something went wrong moving '+hazard.Name);
+    }
 
 });  

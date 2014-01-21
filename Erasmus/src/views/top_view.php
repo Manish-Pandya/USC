@@ -14,7 +14,7 @@
 <link type="text/css" rel="stylesheet" href="/Erasmus/src/stylesheets/style.css"/>
 <link type="text/css" rel="stylesheet" href="/Erasmus/src/css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="/Erasmus/src/css/ng-mobile-menu.css"/>
-  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
 
 <!-- included fonts 
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -37,6 +37,7 @@
 <script type="text/javascript" src="/Erasmus/src/js/lib/jquery.cookie.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="/Erasmus/src/js/lib/ng-mobile-menu.js"></script>
+<script type="text/javascript" src="/Erasmus/src/js/convenienceFunctions.js"></script>
 
 
 
@@ -68,10 +69,11 @@ $(document).ready(function(){
 		
 	})
 */
+/*
 	$(window).resize(function() {
 		console.log($(window).width());
     });
-
+*/
  })
 </script>
 <script>
