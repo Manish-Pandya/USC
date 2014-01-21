@@ -41,8 +41,11 @@ function activate(){
 	//Get the user
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to GenericCrud');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$decodedObject->setIsActive(TRUE);
@@ -56,8 +59,11 @@ function deactivate(){
 	//Get the user
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to GenericCrud');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$decodedObject->setIsActive(FALSE);
@@ -114,8 +120,11 @@ function convertInputJson(){
 function saveUser(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to User');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -174,8 +183,11 @@ function saveChecklist(){
 function saveQuestion(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Question');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -440,8 +452,11 @@ function getBuildingById( $id = NULL ){
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Inspection');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -505,8 +520,11 @@ function getDeficiencyById( $id = NULL ){
 function saveResponse(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Response');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -518,8 +536,11 @@ function saveResponse(){
 function saveDeficiencySelection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to DeficiencySelection');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -531,8 +552,11 @@ function saveDeficiencySelection(){
 function saveRootCause(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RootCause');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
@@ -544,8 +568,11 @@ function saveRootCause(){
 function saveCorrectiveAction(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	if( $decodedObject == NULL ){
+	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RootCause');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
 	}
 	else{
 		$dao = new MockDAO();
