@@ -22,6 +22,14 @@ class User extends GenericCrud{
 		"email"		=> "text", 
 	);
 	
+	/** Relationships */
+	protected static $ROLES_RELATIONSHIP = array(
+		"className"	=>	"Role",
+		"tableName"	=>	"erasmus_user_role",
+		"keyName"	=>	"user_id",
+		"foreignKeyName"	=>	"role_id"
+	); 
+	
 	// Access information
 	
 	/** Array of roles */
@@ -53,7 +61,13 @@ class User extends GenericCrud{
 	}
 	
 	// Accessors / Mutators
-	public function getRoles(){ return $this->roles; }
+	public function getRoles(){ 
+		if($this->roles == null) {
+			$userDAO = new GenericDAO($this);
+			$userDAO->getRelatedItemsById($this->key_id, DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP))
+		}
+
+	}
 	public function setRoles($roles){ $this->roles = $roles; }
 	
 	public function getUsername(){ return $this->username; }

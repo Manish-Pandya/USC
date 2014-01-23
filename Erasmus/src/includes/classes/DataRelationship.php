@@ -13,12 +13,27 @@ class DataRelationship {
 	public final $keyName;
 	public final $foreignKeyName;
 	
-	public function __construct($className, $tableName, $keyName, $foreignKeyName){
-		$this->className = $className;
-		$this->tableName = $tableName;
-		$this->keyName = $keyName;
-		$this->foreignKeyName = $foreignKeyName;
+	public function __construct(){
 	}
+	
+	public static function fromValues( $className, $tableName, $keyName, $foreignKeyName ) {
+		$instance = new self();
+		$instance->className = $className;
+		$instance->tableName = $tableName;
+		$instance->keyName = $keyName;
+		$instance->foreignKeyName = $foreignKeyName;
+		return $instance;
+	}
+	
+	public static function fromArray( array $relationship ) {
+		$instance = new self();
+		$instance->className = $relationship("className");
+		$instance->tableName = $relationship("tableName");
+		$instance->keyName = $relationship("keyName");
+		$instance->foreignKeyName = $relationship("foreignKeyName");
+		return $instance;
+	}	
+	
 	
 	public function getClassName(){
 		return $this->className;
