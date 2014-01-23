@@ -4,7 +4,7 @@ USE `usc_ehs_rsms`;
 --
 -- Host: localhost    Database: usc_ehs_rsms
 -- ------------------------------------------------------
--- Server version	5.5.25
+-- Server version	5.5.25 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
