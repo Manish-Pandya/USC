@@ -145,6 +145,11 @@ class JsonManager {
 			return NULL;
 		}
 		
+		//FIXME: Remember listed fields:
+		//	It will be important to know what fields were given in the JSON in many cases.
+		//	Since instantiating an object will set all non-JSON'd fields to default (mostly NULL),
+		//	it may be impossible to know if a value was omitted or should actually be NULL.
+		
 		// assembe embedded entities
 		// For each value in the array...
 		foreach( $decodedJsonArray as $key=>$value){
