@@ -64,9 +64,9 @@ class User extends GenericCrud{
 	public function getRoles(){ 
 		if($this->roles == null) {
 			$userDAO = new GenericDAO($this);
-			$userDAO->getRelatedItemsById($this->key_id, DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP))
+			$this->roles = $userDAO->getRelatedItemsById($this->key_id, DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
 		}
-
+		return $this->roles;
 	}
 	public function setRoles($roles){ $this->roles = $roles; }
 	
