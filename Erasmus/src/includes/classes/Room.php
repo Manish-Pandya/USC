@@ -16,7 +16,7 @@ class Room extends GenericCrud {
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"active"	=> "bolean",
+		"active"	=> "boolean",
 		"name"		=> "text",
 	);
 	
