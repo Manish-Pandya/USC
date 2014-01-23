@@ -38,8 +38,6 @@ class Role extends GenericCrud{
 	/** name of this Role */
 	private $name;
 	
-	/** Email address of this User */
-	private $email;
 	
 	// Constructor(s)
 	public function __construct(){

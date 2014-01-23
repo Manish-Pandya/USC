@@ -10,6 +10,7 @@
  * @author Matt
  * @author Mitch
  */
+
 class GenericDAO {
 	
 	/** Logger */
