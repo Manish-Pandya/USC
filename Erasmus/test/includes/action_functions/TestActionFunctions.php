@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
 
 require_once(dirname(__FILE__) . '/../../../src/Autoloader.php');
-Logger::configure( dirname(__FILE__) . "/../../../etc/log4php-config.php");
+Logger::configure( dirname(__FILE__) . "/../../../src/includes/conf/log4php-config.php");
 
 //Include action functions to test
 require_once(dirname(__FILE__) . '/../../../src/includes/action_functions.php');
