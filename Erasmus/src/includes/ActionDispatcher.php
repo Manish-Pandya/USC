@@ -147,12 +147,16 @@ class ActionDispatcher {
 	 * 
 	 * @see ActionMapping
 	 */
-	public function dispatchError( ActionResult &$result, ActionMapping $actionMapping = NULL){
+	public function dispatchError( ActionResult &$result, ActionMapping $actionMapping = NULL, $errorCode = NULL){
 		$error_page = $this->defaultErrorPage;
 		$error_code = $this->defaultErrorCode;
 		
 		// Dispatch to error page
-		if( $actionMapping != NULL ){
+		if( $errorCode != null ){
+			//Error code was specified
+			$error_code = $errorCode;
+		}
+		else if( $actionMapping != NULL ){
 			$error_page = $actionMapping->error_page;
 			$error_code = $actionMapping->error_code;
 		}

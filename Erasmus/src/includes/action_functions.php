@@ -34,6 +34,10 @@ function getValueFromRequest( $valueName, $paramValue = NULL ){
 	}
 }
 
+function getDao(){
+	return new MockDAO();
+}
+
 function loginAction(){ };
 function logoutAction(){ };
 
@@ -49,7 +53,7 @@ function activate(){
 	}
 	else{
 		$decodedObject->setIsActive(TRUE);
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -67,7 +71,7 @@ function deactivate(){
 	}
 	else{
 		$decodedObject->setIsActive(FALSE);
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -92,7 +96,7 @@ function getUserById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getUserById($id);
 	}
 	else{
@@ -127,14 +131,14 @@ function saveUser(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save( $decodedObject );
 		return $decodedObject;
 	}
 };
 
 function getAllRoles(){
-	$dao = new MockDAO();
+	$dao = getDao();
 	return $dao->getAllRoles();
 };
 
@@ -144,7 +148,7 @@ function getChecklistById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getChecklistById($id);
 	}
 	else{
@@ -157,7 +161,7 @@ function getAllQuestions(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$questions = array();
 	
-	$dao = new MockDAO();
+	$dao = getDao();
 	
 	for( $i = 0; $i < 10; $i++ ){
 		$question = $dao->getQuestionById($i);
@@ -174,7 +178,7 @@ function saveChecklist(){
 		return new ActionError('Error converting input stream to Checklist');
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -190,7 +194,7 @@ function saveQuestion(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -199,7 +203,7 @@ function saveQuestion(){
 // Hazards Hub
 function getAllHazards(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$dao = new MockDAO();
+	$dao = getDao();
 	$hazards = $dao->getAllHazards();
 	
 	return $hazards;
@@ -212,7 +216,7 @@ function getHazardById( $id = NULL, $name = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		$hazard = $dao->getHazardById($id, $name);
 		
 		return $hazard;
@@ -239,7 +243,7 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 	else{
 		$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
 		
-		$dao = new MockDAO();
+		$dao = getDao();
 		
 		// get Hazard by ID
 		$hazard = getHazardById( $hazardId );
@@ -296,7 +300,7 @@ function saveHazard(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -309,7 +313,7 @@ function getQuestionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getQuestionById($id);
 	}
 	else{
@@ -326,7 +330,7 @@ function getInspector( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getInspectorById($id);
 	}
 	else{
@@ -339,7 +343,7 @@ function getAllInspectors(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$inspectors = array();
 
-	$dao = new MockDAO();
+	$dao = getDao();
 	for( $i = 0; $i < 10; $i++ ){
 		$inspectors[] = $dao->getInspectorById($i);
 	}
@@ -353,7 +357,7 @@ function getPI( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getPiById($id);
 	}
 	else{
@@ -366,7 +370,7 @@ function getAllPIs(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$pis = array();
 
-	$dao = new MockDAO();
+	$dao = getDao();
 	for( $i = 0; $i < 10; $i++ ){
 		$pis[] = $dao->getPiById($i);
 	}
@@ -378,7 +382,7 @@ function getAllRooms(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$allRooms = array();
 	
-	$dao = new MockDAO();
+	$dao = getDao();
 	for( $i = 100; $i < 110; $i++ ){
 		$room = $dao->getRoomById($i);
 		$allRooms[] = $room;
@@ -391,7 +395,7 @@ function getRoomById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getRoomById($id);
 	}
 	else{
@@ -403,7 +407,7 @@ function getAllDepartments(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$allDepartments = array();
 
-	$dao = new MockDAO();
+	$dao = getDao();
 	for( $i = 1; $i < 11; $i++ ){
 		$dept = $dao->getDepartmentById($i);
 		$allDepartments[] = $dept;
@@ -416,7 +420,7 @@ function getDepartmentById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getDepartmentById($id);
 	}
 	else{
@@ -428,7 +432,7 @@ function getAllBuildings( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$allBuildings = array();
 	
-	$dao = new MockDAO();
+	$dao = getDao();
 	for( $i = 1; $i < 11; $i++ ){
 		$building = $dao->getBuildingById($i);
 		$allBuildings[] = $building;
@@ -441,7 +445,7 @@ function getBuildingById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getBuildingById($id);
 	}
 	else{
@@ -459,7 +463,7 @@ function saveInspection(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -473,7 +477,7 @@ function getHazardsInRoom( $roomId = NULL ){
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
 		
-		$dao = new MockDAO();
+		$dao = getDao();
 		
 		//get Room
 		$room = $dao->getRoomById($roomId);
@@ -505,7 +509,7 @@ function getDeficiencyById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		$keyid = $id;
 	
 		// query for Inspection with the specified ID
@@ -527,7 +531,7 @@ function saveResponse(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -543,7 +547,7 @@ function saveDeficiencySelection(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -559,7 +563,7 @@ function saveRootCause(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -575,7 +579,7 @@ function saveCorrectiveAction(){
 		return $decodedObject;
 	}
 	else{
-		$dao = new MockDAO();
+		$dao = getDao();
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -587,7 +591,7 @@ function getInspectionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		
 		//get inspection
 		$inspection = $dao->getInspectionById($id);
@@ -609,7 +613,7 @@ function getDeficiencySelectionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getDeficiencySelectionById($id);
 	}
 	else{
@@ -647,7 +651,7 @@ function getRecommendationById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getRecommendationById($id);
 	}
 	else{
@@ -684,7 +688,7 @@ function getObservationById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		return $dao->getObservationById($id);
 	}
 	else{
@@ -723,7 +727,7 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = new MockDAO();
+		$dao = getDao();
 		$response = $dao->getResponseById($id);
 		
 		$response->setInspectionId( $inspectionId );
