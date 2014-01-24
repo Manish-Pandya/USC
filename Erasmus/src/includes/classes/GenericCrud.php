@@ -93,7 +93,9 @@ abstract class GenericCrud {
 			$setterName = "set$fname";
 			
 			//Pass field value to the mutator
-			$this->$setterName( $record[$field] );
+			// NOTE: DB returns $record as an instance of stdClass,
+			//  so we acces $field with -> instead of as an array
+			$this->$setterName( $record->$field );
 		}
 	}
 	
