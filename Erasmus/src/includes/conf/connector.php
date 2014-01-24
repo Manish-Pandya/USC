@@ -5,9 +5,15 @@
 require_once 'MDB2.php';
 	$dbString = getDBConnection();
 	$mdb2 =& MDB2::connect($dbString);
+	
 	if (PEAR::isError($mdb2)) {
-   		die("DATABASE CONNECTION ERROR");
+		//TODO: Log error
+   		die("DATABASE CONNECTION ERROR: $mdb2");
 	}
+	else{
+		//TODO: Log success
+	}
+	
 //	$mdb2->setFetchMode(DB_FETCHMODE_OBJECT);
 	$mdb2->setFetchMode(MDB2_FETCHMODE_OBJECT);
 	
