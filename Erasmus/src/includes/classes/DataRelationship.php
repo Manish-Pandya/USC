@@ -8,10 +8,10 @@
  */
 class DataRelationship {
 
-	public final $className;
-	public final $tableName;
-	public final $keyName;
-	public final $foreignKeyName;
+	public $className;
+	public $tableName;
+	public $keyName;
+	public $foreignKeyName;
 	
 	public function __construct(){
 	}
@@ -27,10 +27,10 @@ class DataRelationship {
 	
 	public static function fromArray( array $relationship ) {
 		$instance = new self();
-		$instance->className = $relationship("className");
-		$instance->tableName = $relationship("tableName");
-		$instance->keyName = $relationship("keyName");
-		$instance->foreignKeyName = $relationship("foreignKeyName");
+		$instance->className = $relationship["className"];
+		$instance->tableName = $relationship["tableName"];
+		$instance->keyName = $relationship["keyName"];
+		$instance->foreignKeyName = $relationship["foreignKeyName"];
 		return $instance;
 	}	
 	
@@ -48,7 +48,7 @@ class DataRelationship {
 	}
 	
 	public function getForeignKeyName(){
-		$this->foreignKeyName;
+		return $this->foreignKeyName;
 	}
 	
 }
