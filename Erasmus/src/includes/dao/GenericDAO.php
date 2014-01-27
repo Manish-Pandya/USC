@@ -85,6 +85,7 @@ class GenericDAO {
 		// Build query
 		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
 		if( $sortColumn != NULL ){
+			//TODO: Ascending/Descending!
 			//Sort is specified; add ORDER BY clause
 			$query_string .= ' ORDER BY ' . $sortColumn;
 		}
