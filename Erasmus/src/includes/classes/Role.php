@@ -16,8 +16,11 @@ class Role extends GenericCrud{
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		//users are a relationship
-		"name"		=> "text",
+		"name"				=> "text",
+		"key_id"			=> "int",
+		"dateCreated"		=> "timestamp",
+		"dateLastModified"	=> "timestamp",
+		"isActive"			=> "boolean"
 	);
 	
 	/** Relationships */
@@ -55,11 +58,11 @@ class Role extends GenericCrud{
 	
 	// Accessors / Mutators
 	public function getUsers(){ 
-		if($this->roles == null) {
+		if($this->users == null) {
 			$roleDAO = new GenericDAO($this);
-			$this->roles = $roleDAO->getRelatedItemsById($this->key_id, DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
+			$this->users = $roleDAO->getRelatedItemsById($this->getKeyId(), DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
 		}
-		return $this->roles;
+		return $this->users;
 	}
 	public function setUsers($users){ $this->users = $users; }
 	
