@@ -36,6 +36,10 @@ abstract class GenericCrud {
 	
 	// Accessors / Mutators
 	
+	//FIXME: Remove these alias functions and rename "key_id" to "keyid"
+	public function getKey_Id(){ return $this->getKeyId(); }
+	public function setKey_Id($keyid){ $this->setKeyId($keyid); }
+	
 	public function getKeyId(){
 		return $this->key_id;
 	}
@@ -93,9 +97,14 @@ abstract class GenericCrud {
 			$setterName = "set$fname";
 			
 			//Pass field value to the mutator
+			
+			// NOTE: DB call instantiates stdClass fields as all lower case,
+			//  so we must access them as lower case
+			$lowerField = strtolower($fname);
+			
 			// NOTE: DB returns $record as an instance of stdClass,
 			//  so we acces $field with -> instead of as an array
-			$this->$setterName( $record->$field );
+			$this->$setterName( $record->$lowerField );
 		}
 	}
 	
