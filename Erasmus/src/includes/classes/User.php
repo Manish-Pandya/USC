@@ -20,6 +20,12 @@ class User extends GenericCrud{
 		"username"	=> "text",
 		"name"		=> "text",
 		"email"		=> "text", 
+			
+		//GenericCrud
+		"key_id"			=> "int",
+		"dateCreated"		=> "timestamp",
+		"dateLastModified"	=> "timestamp",
+		"isActive"			=> "boolean"
 	);
 	
 	/** Relationships */
@@ -64,7 +70,7 @@ class User extends GenericCrud{
 	public function getRoles(){ 
 		if($this->roles == null) {
 			$userDAO = new GenericDAO($this);
-			$this->roles = $userDAO->getRelatedItemsById($this->key_id, DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
+			$this->roles = $userDAO->getRelatedItemsById($this->getKeyId(), DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
 		}
 		return $this->roles;
 	}

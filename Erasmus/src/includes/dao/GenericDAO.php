@@ -10,6 +10,7 @@
  * @author Matt
  * @author Mitch
  */
+
 class GenericDAO {
 	
 	/** Logger */
@@ -34,7 +35,16 @@ class GenericDAO {
 		$this->modelObject = $model_object;
 		$this->modelClassName = get_class( $model_object );
 		
-		$this->logprefix = "[$this->modelClassName]";
+		$this->logprefix = "[$this->modelClassName" . "DAO]";
+	}
+	
+	public function handleError($pearResult){
+		$message = $pearResult->getMessage();
+		$info = $pearResult->getDebugInfo();
+		
+		$this->LOG->error("$message: $info");
+		
+		die("----PEAR Error----\nMessage: $message\nDebugInfo: $info");
 	}
 	
 	/**
@@ -52,7 +62,7 @@ class GenericDAO {
 		//Query the table by key_id
 		$result =& $mdb2->query('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ' . $id);
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Get the first row of query results (should be only one row)
@@ -66,7 +76,7 @@ class GenericDAO {
 		//Iterate through the columns and make this object match the values from the database
 		$object->populateFromDbRecord($record);
 	
-		return $this->modelObject;
+		return $object;
 	}
 	
 	/**
@@ -84,6 +94,7 @@ class GenericDAO {
 		// Build query
 		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
 		if( $sortColumn != NULL ){
+			//TODO: Ascending/Descending!
 			//Sort is specified; add ORDER BY clause
 			$query_string .= ' ORDER BY ' . $sortColumn;
 		}
@@ -91,7 +102,7 @@ class GenericDAO {
 		//Query the table by key_id
 		$result =& $mdb2->query( $query_string );
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Iterate the rows and push to result list
@@ -171,7 +182,7 @@ class GenericDAO {
 			);
 			
 			if (PEAR::isError($affectedRow)) {
-				die($affectedRow->getDebugInfo());
+				$this->handleError($affectedRow);
 			}
 		}
 		// Otherwise, issue an INSERT
@@ -186,14 +197,14 @@ class GenericDAO {
 			);
 	
 			if (PEAR::isError($affectedRow)) {
-				die($affectedRow->getDebugInfo());
+				$this->handleError($affectedRow);
 			}
 			
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
 			$id = $mdb2->getOne( "SELECT LAST_INSERT_ID() FROM " . $table );
 			
 			if (PEAR::isError($id)) {
-				die($id->getMessage());
+				$this->handleError($id);
 			}
 			
 			$object->setKeyId( $id );
@@ -214,7 +225,7 @@ class GenericDAO {
 	 * @return Array:
 	 */
 	function getRelatedItemsById($id, DataRelationship $relationship){
-		$this->LOG->debug("$this->logprefix Retrieving related items for entity with id=$id");
+		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		
 		// Get the db connection
 		global $mdb2;
@@ -232,14 +243,14 @@ class GenericDAO {
 		//Query the table by date range
 		$result =& $mdb2->query("SELECT " . $foreignKeyName . " FROM " . $tableName . " WHERE " . $keyName . " = " . $id);
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Iterate the rows
 		while ($record = $result->fetchRow()){
 			//Create a new instance and sync it for each row
 			$item = new $className();
-			$itemDao = new DAO( $item );
+			$itemDao = new GenericDAO( $item );
 			$item = $itemDao->getById( $record->$foreignKeyName );
 	
 			// Add the results to an array
@@ -280,13 +291,13 @@ class GenericDAO {
 		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DB_AUTOQUERY_INSERT, null, $types);
 		
 		if (PEAR::isError($affectedRow)) {
-			die($affectedRow->getMessage());
+			$this->handleError($affectedRow);
 		}
 		
 		// since this is a new record, get the new key_id issued by the database and add it to this object.
 		$id = $mdb2->getOne( "SELECT LAST_INSERT_ID()");
 		if (PEAR::isError($id)) {
-			die($id->getMessage());
+			$this->handleError($id);
 		}
 		
 		return $id;
@@ -319,7 +330,8 @@ class GenericDAO {
 		$result =& $mdb2->query('DELETE FROM ' . $tableName . ' WHERE ' . $keyName . ' = ' . $key_id . ' AND ' . $foreignKeyName . ' = ' . $foreignKey_id);
 		
 		if (PEAR::isError($result)) {
-			die($result->getDebugInfo());
+			$this->handleError($affectedRow);
+			//FIXME: Does this actually get returned after die()?
 			return false;
 		} else {
 			$returnFlag = true;
