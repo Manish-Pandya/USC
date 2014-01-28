@@ -39,8 +39,12 @@ class GenericDAO {
 	}
 	
 	public function handleError($pearResult){
-		//TODO: Log further information
-		die($pearResult->getMessage());
+		$message = $pearResult->getMessage();
+		$info = $pearResult->getDebugInfo();
+		
+		$this->LOG->error("$message: $info");
+		
+		die("----PEAR Error----\nMessage: $message\nDebugInfo: $info");
 	}
 	
 	/**
@@ -178,7 +182,7 @@ class GenericDAO {
 			);
 			
 			if (PEAR::isError($affectedRow)) {
-				die($affectedRow->getDebugInfo());
+				$this->handleError($affectedRow);
 			}
 		}
 		// Otherwise, issue an INSERT
@@ -193,14 +197,14 @@ class GenericDAO {
 			);
 	
 			if (PEAR::isError($affectedRow)) {
-				die($affectedRow->getDebugInfo());
+				$this->handleError($affectedRow);
 			}
 			
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
 			$id = $mdb2->getOne( "SELECT LAST_INSERT_ID() FROM " . $table );
 			
 			if (PEAR::isError($id)) {
-				die($id->getMessage());
+				$this->handleError($id);
 			}
 			
 			$object->setKeyId( $id );
@@ -287,13 +291,13 @@ class GenericDAO {
 		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DB_AUTOQUERY_INSERT, null, $types);
 		
 		if (PEAR::isError($affectedRow)) {
-			die($affectedRow->getMessage());
+			$this->handleError($affectedRow);
 		}
 		
 		// since this is a new record, get the new key_id issued by the database and add it to this object.
 		$id = $mdb2->getOne( "SELECT LAST_INSERT_ID()");
 		if (PEAR::isError($id)) {
-			die($id->getMessage());
+			$this->handleError($id);
 		}
 		
 		return $id;
@@ -326,7 +330,8 @@ class GenericDAO {
 		$result =& $mdb2->query('DELETE FROM ' . $tableName . ' WHERE ' . $keyName . ' = ' . $key_id . ' AND ' . $foreignKeyName . ' = ' . $foreignKey_id);
 		
 		if (PEAR::isError($result)) {
-			die($result->getDebugInfo());
+			$this->handleError($affectedRow);
+			//FIXME: Does this actually get returned after die()?
 			return false;
 		} else {
 			$returnFlag = true;
