@@ -22,7 +22,7 @@ class User extends GenericCrud{
 		"email"		=> "text", 
 			
 		//GenericCrud
-		"key_id"			=> "int",
+		"key_id"			=> "integer",
 		"dateCreated"		=> "timestamp",
 		"dateLastModified"	=> "timestamp",
 		"isActive"			=> "boolean"

@@ -17,7 +17,9 @@ class Role extends GenericCrud{
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"				=> "text",
-		"key_id"			=> "int",
+		
+		//GenericCrud
+		"key_id"			=> "integer",
 		"dateCreated"		=> "timestamp",
 		"dateLastModified"	=> "timestamp",
 		"isActive"			=> "boolean"
