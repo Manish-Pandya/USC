@@ -38,6 +38,17 @@ class GenericDAO {
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 	}
 	
+	/**
+	 * @return boolean True if the associated table exists
+	 */
+	public function doesTableExist(){
+		$tableName = $this->modelObject->getTableName();
+		$result = mysql_query("SHOW TABLES LIKE '$tableName'");
+		$tableExists = mysql_num_rows($result) > 0;
+		return $tableExists;
+	}
+	
+	//TODO: Move to ErrorHandler?
 	public function handleError($pearResult){
 		$message = $pearResult->getMessage();
 		$info = $pearResult->getDebugInfo();
@@ -171,12 +182,12 @@ class GenericDAO {
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ( $object->hasPrimaryKeyValue() ) {
-			$this->LOG->debug("$this->logprefix Updating existing entity with keyid $id");
+			$this->LOG->debug("$this->logprefix Updating existing entity with keyid " . $object->getKeyId());
 			
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
-				DB_AUTOQUERY_UPDATE,
+				DATABASE_AUTOQUERY_UPDATE,
 				'key_id = ' . $mdb2->quote($object->getKeyId(), 'integer'),
 				$dataTypesArray
 			);
@@ -191,7 +202,7 @@ class GenericDAO {
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
-				DB_AUTOQUERY_INSERT,
+				DATABASE_AUTOQUERY_INSERT,
 				null,
 				$dataTypesArray
 			);
@@ -288,7 +299,7 @@ class GenericDAO {
 		
 		$types = array("integer", "integer");
 		
-		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DB_AUTOQUERY_INSERT, null, $types);
+		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DATABASE_AUTOQUERY_INSERT, null, $types);
 		
 		if (PEAR::isError($affectedRow)) {
 			$this->handleError($affectedRow);
