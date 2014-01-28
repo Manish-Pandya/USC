@@ -35,7 +35,12 @@ class GenericDAO {
 		$this->modelObject = $model_object;
 		$this->modelClassName = get_class( $model_object );
 		
-		$this->logprefix = "[$this->modelClassName]";
+		$this->logprefix = "[$this->modelClassName" . "DAO]";
+	}
+	
+	public function handleError($pearResult){
+		//TODO: Log further information
+		die($pearResult->getMessage());
 	}
 	
 	/**
@@ -53,7 +58,7 @@ class GenericDAO {
 		//Query the table by key_id
 		$result =& $mdb2->query('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ' . $id);
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Get the first row of query results (should be only one row)
@@ -67,7 +72,7 @@ class GenericDAO {
 		//Iterate through the columns and make this object match the values from the database
 		$object->populateFromDbRecord($record);
 	
-		return $this->modelObject;
+		return $object;
 	}
 	
 	/**
@@ -93,7 +98,7 @@ class GenericDAO {
 		//Query the table by key_id
 		$result =& $mdb2->query( $query_string );
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Iterate the rows and push to result list
@@ -216,7 +221,7 @@ class GenericDAO {
 	 * @return Array:
 	 */
 	function getRelatedItemsById($id, DataRelationship $relationship){
-		$this->LOG->debug("$this->logprefix Retrieving related items for entity with id=$id");
+		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		
 		// Get the db connection
 		global $mdb2;
@@ -234,14 +239,14 @@ class GenericDAO {
 		//Query the table by date range
 		$result =& $mdb2->query("SELECT " . $foreignKeyName . " FROM " . $tableName . " WHERE " . $keyName . " = " . $id);
 		if (PEAR::isError($result)) {
-			die($result->getMessage());
+			$this->handleError($result);
 		}
 	
 		//Iterate the rows
 		while ($record = $result->fetchRow()){
 			//Create a new instance and sync it for each row
 			$item = new $className();
-			$itemDao = new DAO( $item );
+			$itemDao = new GenericDAO( $item );
 			$item = $itemDao->getById( $record->$foreignKeyName );
 	
 			// Add the results to an array
