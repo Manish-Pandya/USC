@@ -17,4 +17,12 @@ require_once 'MDB2.php';
 //	$mdb2->setFetchMode(DB_FETCHMODE_OBJECT);
 	$mdb2->setFetchMode(MDB2_FETCHMODE_OBJECT);
 	
+	//Load extended module to allow for autoquery-insert
+	$mdb2->loadModule('Extended');
+
+	/** Define variable to hold the autoquery-insert mode. This is helpful if database modules are changed */
+	define('DATABASE_AUTOQUERY_INSERT', MDB2_AUTOQUERY_INSERT);
+	
+	/** Define variable to hold the autoquery-update mode. This is helpful if database modules are changed */
+	define('DATABASE_AUTOQUERY_UPDATE', MDB2_AUTOQUERY_UPDATE);
 ?>
