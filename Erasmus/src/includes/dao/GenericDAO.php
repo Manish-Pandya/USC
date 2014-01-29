@@ -79,14 +79,19 @@ class GenericDAO {
 		//Get the first row of query results (should be only one row)
 		$record = $result->fetchRow();
 		
-		//TODO: ensure there is a record!
+		//Ensure there is a record
+		if( $record !== NULL ){
+			//Build an object to return
+			$object = new $this->modelClassName();
+			
+			//Iterate through the columns and make this object match the values from the database
+			$object->populateFromDbRecord($record);
+		}
+		else{
+			//No Record; return NULL
+			$object = NULL;
+		}
 		
-		//Build an object to return
-		$object = new $this->modelClassName();
-		
-		//Iterate through the columns and make this object match the values from the database
-		$object->populateFromDbRecord($record);
-	
 		return $object;
 	}
 	
@@ -95,7 +100,7 @@ class GenericDAO {
 	 *
 	 * @return Array of entities
 	 */
-	function getAll( $sortColumn = NULL ){
+	function getAll( $sortColumn = NULL, $sortDescending = FALSE ){
 		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 		
 		// Get the db connection
@@ -105,9 +110,16 @@ class GenericDAO {
 		// Build query
 		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
 		if( $sortColumn != NULL ){
-			//TODO: Ascending/Descending!
+			//Default to ascending, which requires no keyword
+			$sortDirection = '';
+			
+			//Check for Descending sort
+			if ( $sortDescending ){
+				$sortDirection = 'DESC';
+			}
+			
 			//Sort is specified; add ORDER BY clause
-			$query_string .= ' ORDER BY ' . $sortColumn;
+			$query_string .= " ORDER BY $sortColumn $sortDirection";
 		}
 		
 		//Query the table by key_id
@@ -136,8 +148,8 @@ class GenericDAO {
 	 * @param unknown $sortColumn
 	 * @return Array:
 	 */
-	function getAllSorted( $sortColumn ){
-		return $this->getAll( $sortColumn );
+	function getAllSorted( $sortColumn, $sortDescending = FALSE ){
+		return $this->getAll( $sortColumn, $sortDescending );
 	}
 	
 	/**

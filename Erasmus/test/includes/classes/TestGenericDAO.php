@@ -22,12 +22,65 @@ class TestGenericDAO extends UnitTestCase {
 		$this->assertNotEqual($updatedGenericCrud->getDateLastModified(), $oldGenericCrud->getDateLastModified(), "$classname Date Last Modified was not automatically changed");
 	}
 	
+	public function test_getAllSortedAscending(){
+		$userDao = new GenericDAO( new User() );
+		
+		//Get all sorted by keyid
+		$all = $userDao->getAllSorted('key_id');
+		
+		if( count($all) > 1 ){
+			//Check sort
+			$previousKey = $all[0]->getKeyId();
+			for( $i = 1; $i < count($all); $i++ ){
+				$currentKey = $all[$i];
+				
+				//Check that current key is greater than the previous
+				$this->assertTrue( ($currentKey > $previousKey), 'Keys are not properly sorted');
+				
+				$previousKey = $currentKey;
+			}
+		}
+		else{
+			$this->fail( 'Cannot test_getAllSortedAscending - not enough data to check');
+		}
+	}
+	
+	public function test_getAllSortedDescending(){
+		$userDao = new GenericDAO( new User() );
+		
+		//Get all sorted by keyid
+		$all = $userDao->getAllSorted('key_id', TRUE);
+		
+		if( count($all) > 1 ){
+			//Check sort
+			$previousKey = $all[0]->getKeyId();
+			for( $i = 1; $i < count($all); $i++ ){
+				$currentKey = $all[$i];
+		
+				//Check that current key is less than the previous
+				$this->assertTrue( ($currentKey < $previousKey), 'Keys are not properly sorted');
+		
+				$previousKey = $currentKey;
+			}
+		}
+		else{
+			$this->fail( 'Cannot test getAllSortedDescending - not enough data to check');
+		}
+	}
+	
+	public function test_failGetById(){
+		$userDao = new GenericDAO(new User());
+		//get by a keyid that is not used
+		$retrieved = $userDao->getById( -1 );
+		$this->assertNull($retrieved, 'Non-Null returned for key_id that does not exist');
+	}
+	
 	public function test_userCrud(){
 		$userDao = new GenericDAO(new User());
 		
 		//Create
 		$newUser = new User();
-		$newUser->setEmail('savetest@mitch.com');
+		$newUser->setEmail('savetest@simpletest.com');
 		$newUser->setName('Save Test');
 		$newUser->setUsername('savetest');
 		
@@ -138,10 +191,10 @@ class TestGenericDAO extends UnitTestCase {
 			}
 			
 			$all = $dao->getAll();
-			if( !empty($all) ){
-				//Check that the first returned item is of the correct type
-				//TODO: Should we check all?
-				$this->assertIsA($all[0], $classname);
+			foreach( $all as $entity ){
+				//Check that the returned items are of the correct type
+				$this->assertIsA($entity, $classname, "Entity returned from $classname DAO was not returned as a $classname - "
+					 . get_class($entity) . ' Returned.');
 			}
 		}
 	}
