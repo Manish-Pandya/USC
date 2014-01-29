@@ -62,7 +62,7 @@ class Role extends GenericCrud{
 	public function getUsers(){ 
 		if($this->users == null) {
 			$roleDAO = new GenericDAO($this);
-			$this->users = $roleDAO->getRelatedItemsById($this->getKeyId(), DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
+			$this->users = $roleDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
 		}
 		return $this->users;
 	}

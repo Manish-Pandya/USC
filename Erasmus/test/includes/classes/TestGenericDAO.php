@@ -10,7 +10,7 @@ class TestGenericDAO extends UnitTestCase {
 		$classname = get_class($genericCrud);
 		
 		//Assert that auto-set fields are set
-		$this->assertNotNull( $genericCrud->getKeyId(), "$classname KeyId was not automatically set");
+		$this->assertNotNull( $genericCrud->getKey_Id(), "$classname KeyId was not automatically set");
 		$this->assertNotNull( $genericCrud->getDateCreated(), "$classname Date Created was not automatically set");
 		$this->assertNotNull( $genericCrud->getIsActive(), "$classname IsActive was not automatically set");
 	}
@@ -30,9 +30,9 @@ class TestGenericDAO extends UnitTestCase {
 		
 		if( count($all) > 1 ){
 			//Check sort
-			$previousKey = $all[0]->getKeyId();
+			$previousKey = $all[0]->getKey_Id();
 			for( $i = 1; $i < count($all); $i++ ){
-				$currentKey = $all[$i]->getKeyId();
+				$currentKey = $all[$i]->getKey_Id();
 				
 				//Check that current key is greater than the previous
 				$this->assertTrue( ($currentKey > $previousKey), 'Keys are not properly sorted');
@@ -53,9 +53,9 @@ class TestGenericDAO extends UnitTestCase {
 		
 		if( count($all) > 1 ){
 			//Check sort
-			$previousKey = $all[0]->getKeyId();
+			$previousKey = $all[0]->getKey_Id();
 			for( $i = 1; $i < count($all); $i++ ){
-				$currentKey = $all[$i]->getKeyId();
+				$currentKey = $all[$i]->getKey_Id();
 		
 				//Check that current key is less than the previous
 				$this->assertTrue( ($currentKey < $previousKey), 'Keys are not properly sorted');
@@ -95,7 +95,7 @@ class TestGenericDAO extends UnitTestCase {
 		$this->assertAutomaticFields_new( $savedUser );
 		
 		//Retrieve
-		$retrievedUser = $userDao->getById( $savedUser->getKeyId());
+		$retrievedUser = $userDao->getById( $savedUser->getKey_Id());
 		$this->assertEqual($savedUser, $retrievedUser, "Retrieved User is not equal to saved User");
 		
 		//Update
@@ -132,7 +132,7 @@ class TestGenericDAO extends UnitTestCase {
 		$this->assertAutomaticFields_new( $savedRole );
 		
 		//Retrieve
-		$retrievedRole = $roleDao->getById( $savedRole->getKeyId());
+		$retrievedRole = $roleDao->getById( $savedRole->getKey_Id());
 		$this->assertEqual($savedRole, $retrievedRole, "Retrieved Role is not equal to saved Role");
 		
 		//Update

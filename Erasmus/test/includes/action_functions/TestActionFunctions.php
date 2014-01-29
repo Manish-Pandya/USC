@@ -57,14 +57,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getUserById_passId(){
 		$user = getUserById(1);
 		$this->assertTrue( $user instanceof User );
-		$this->assertEqual( $user->getKeyId(), 1);
+		$this->assertEqual( $user->getKey_Id(), 1);
 	}
 	
 	public function test_getUserById_requestId(){
 		$_REQUEST['id'] = 1;
 		$user = getUserById();
 		$this->assertTrue( $user instanceof User );
-		$this->assertEqual( $user->getKeyId(), 1);
+		$this->assertEqual( $user->getKey_Id(), 1);
 	}
 	
 	// saveUser
@@ -87,14 +87,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getChecklistById_passId(){
 		$checklist = getChecklistById(5);
 		$this->assertTrue( $checklist instanceof Checklist );
-		$this->assertEqual( $checklist->getKeyId(), 5);
+		$this->assertEqual( $checklist->getKey_Id(), 5);
 	}
 	
 	public function test_getChecklistById_requestId(){
 		$_REQUEST['id'] = 4;
 		$checklist = getChecklistById();
 		$this->assertTrue( $checklist instanceof Checklist );
-		$this->assertEqual( $checklist->getKeyId(), 4);
+		$this->assertEqual( $checklist->getKey_Id(), 4);
 	}
 	
 	//getAllQuestions
@@ -127,14 +127,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getHazardById_passId(){
 		$hazard = getHazardById(5);
 		$this->assertTrue( $hazard instanceof Hazard );
-		$this->assertEqual( $hazard->getKeyId(), 5);
+		$this->assertEqual( $hazard->getKey_Id(), 5);
 	}
 	
 	public function test_getHazardById_requestId(){
 		$_REQUEST['id'] = 4;
 		$hazard = getHazardById();
 		$this->assertTrue( $hazard instanceof Hazard );
-		$this->assertEqual( $hazard->getKeyId(), 4);
+		$this->assertEqual( $hazard->getKey_Id(), 4);
 	}
 	
 	//TODO: moveHazardToParent
@@ -157,14 +157,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getQuestionById_passId(){
 		$question = getQuestionById(5);
 		$this->assertTrue( $question instanceof Question );
-		$this->assertEqual( $question->getKeyId(), 5);
+		$this->assertEqual( $question->getKey_Id(), 5);
 	}
 	
 	public function test_getQuestionById_requestId(){
 		$_REQUEST['id'] = 4;
 		$question = getQuestionById();
 		$this->assertTrue( $question instanceof Question );
-		$this->assertEqual( $question->getKeyId(), 4);
+		$this->assertEqual( $question->getKey_Id(), 4);
 	}
 	
 	//TODO: saveQuestionRelation
@@ -189,14 +189,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getInspectorById_passId(){
 		$inspector = getInspector(5);
 		$this->assertTrue( $inspector instanceof Inspector );
-		$this->assertEqual( $inspector->getKeyId(), 5);
+		$this->assertEqual( $inspector->getKey_Id(), 5);
 	}
 	
 	public function test_getInspectorById_requestId(){
 		$_REQUEST['id'] = 4;
 		$inspector = getInspector();
 		$this->assertTrue( $inspector instanceof Inspector );
-		$this->assertEqual( $inspector->getKeyId(), 4);
+		$this->assertEqual( $inspector->getKey_Id(), 4);
 	}
 
 	//getAllPIs
@@ -217,14 +217,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getPI_passId(){
 		$pi = getPI(5);
 		$this->assertTrue( $pi instanceof PrincipalInvestigator );
-		$this->assertEqual( $pi->getKeyId(), 5);
+		$this->assertEqual( $pi->getKey_Id(), 5);
 	}
 	
 	public function test_getPI_requestId(){
 		$_REQUEST['id'] = 4;
 		$pi = getPI();
 		$this->assertTrue( $pi instanceof PrincipalInvestigator );
-		$this->assertEqual( $pi->getKeyId(), 4);
+		$this->assertEqual( $pi->getKey_Id(), 4);
 	}
 	
 	//getAllRooms
@@ -245,14 +245,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getRoomById_passId(){
 		$room = getRoomById(5);
 		$this->assertTrue( $room instanceof Room );
-		$this->assertEqual( $room->getKeyId(), 5);
+		$this->assertEqual( $room->getKey_Id(), 5);
 	}
 	
 	public function test_getRoomById_requestId(){
 		$_REQUEST['id'] = 4;
 		$room = getRoomById();
 		$this->assertTrue( $room instanceof Room );
-		$this->assertEqual( $room->getKeyId(), 4);
+		$this->assertEqual( $room->getKey_Id(), 4);
 	}
 	
 	//getAllDepartments
@@ -273,14 +273,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getDepartmentById_passId(){
 		$dept = getDepartmentById(5);
 		$this->assertTrue( $dept instanceof Department );
-		$this->assertEqual( $dept->getKeyId(), 5);
+		$this->assertEqual( $dept->getKey_Id(), 5);
 	}
 	
 	public function test_getDepartmentById_requestId(){
 		$_REQUEST['id'] = 4;
 		$dept = getDepartmentById();
 		$this->assertTrue( $dept instanceof Department );
-		$this->assertEqual( $dept->getKeyId(), 4);
+		$this->assertEqual( $dept->getKey_Id(), 4);
 	}
 	
 	//getAllBuildings
@@ -301,14 +301,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getBuildingById_passId(){
 		$building = getBuildingById(5);
 		$this->assertTrue( $building instanceof Building );
-		$this->assertEqual( $building->getKeyId(), 5);
+		$this->assertEqual( $building->getKey_Id(), 5);
 	}
 	
 	public function test_getBuildingById_requestId(){
 		$_REQUEST['id'] = 4;
 		$building = getBuildingById();
 		$this->assertTrue( $building instanceof Building );
-		$this->assertEqual( $building->getKeyId(), 4);
+		$this->assertEqual( $building->getKey_Id(), 4);
 	}
 	
 	//TODO: saveInspection
@@ -338,7 +338,7 @@ class TestActionFunctions extends UnitTestCase {
 			$rooms = $hazard->getRooms();
 			$isInRoom4 = FALSE;
 			foreach($rooms as $room){
-				$isInRoom4 = $room->getKeyId() === 4;
+				$isInRoom4 = $room->getKey_Id() === 4;
 				if( $isInRoom4 ){
 					break;
 				}
@@ -360,14 +360,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getDeficiencyById_passId(){
 		$deficiency = getDeficiencyById(5);
 		$this->assertTrue( $deficiency instanceof Deficiency );
-		$this->assertEqual( $deficiency->getKeyId(), 5);
+		$this->assertEqual( $deficiency->getKey_Id(), 5);
 	}
 	
 	public function test_getDeficiencyById_requestId(){
 		$_REQUEST['id'] = 4;
 		$deficiency = getDeficiencyById();
 		$this->assertTrue( $deficiency instanceof Deficiency );
-		$this->assertEqual( $deficiency->getKeyId(), 4);
+		$this->assertEqual( $deficiency->getKey_Id(), 4);
 	}
 	
 	//TODO: saveResponse
@@ -384,14 +384,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getInspectionById_passId(){
 		$inspection = getInspectionById(5);
 		$this->assertTrue( $inspection instanceof Inspection );
-		$this->assertEqual( $inspection->getKeyId(), 5);
+		$this->assertEqual( $inspection->getKey_Id(), 5);
 	}
 	
 	public function test_getInspectionById_requestId(){
 		$_REQUEST['id'] = 4;
 		$inspection = getInspectionById();
 		$this->assertTrue( $inspection instanceof Inspection );
-		$this->assertEqual( $inspection->getKeyId(), 4);
+		$this->assertEqual( $inspection->getKey_Id(), 4);
 	}
 	
 	//getDeficiencySelectionById
@@ -403,14 +403,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getDeficiencySelectionById_passId(){
 		$deficiencySelection = getDeficiencySelectionById(5);
 		$this->assertTrue( $deficiencySelection instanceof DeficiencySelection );
-		$this->assertEqual( $deficiencySelection->getKeyId(), 5);
+		$this->assertEqual( $deficiencySelection->getKey_Id(), 5);
 	}
 	
 	public function test_getDeficiencySelectionById_requestId(){
 		$_REQUEST['id'] = 4;
 		$deficiencySelection = getDeficiencySelectionById();
 		$this->assertTrue( $deficiencySelection instanceof DeficiencySelection );
-		$this->assertEqual( $deficiencySelection->getKeyId(), 4);
+		$this->assertEqual( $deficiencySelection->getKey_Id(), 4);
 	}
 	
 	// getDeficiencySelectionsForResponse
@@ -455,14 +455,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getRecommendationById_passId(){
 		$recommendation = getRecommendationById(5);
 		$this->assertTrue( $recommendation instanceof Recommendation );
-		$this->assertEqual( $recommendation->getKeyId(), 5);
+		$this->assertEqual( $recommendation->getKey_Id(), 5);
 	}
 	
 	public function test_getRecommendationById_requestId(){
 		$_REQUEST['id'] = 4;
 		$recommendation = getRecommendationById();
 		$this->assertTrue( $recommendation instanceof Recommendation );
-		$this->assertEqual( $recommendation->getKeyId(), 4);
+		$this->assertEqual( $recommendation->getKey_Id(), 4);
 	}
 	
 	// getRecommendationsForResponse
@@ -526,14 +526,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getObservationById_passId(){
 		$observation = getObservationById(5);
 		$this->assertTrue( $observation instanceof Observation );
-		$this->assertEqual( $observation->getKeyId(), 5);
+		$this->assertEqual( $observation->getKey_Id(), 5);
 	}
 	
 	public function test_getObservationById_requestId(){
 		$_REQUEST['id'] = 4;
 		$observation = getObservationById();
 		$this->assertTrue( $observation instanceof Observation );
-		$this->assertEqual( $observation->getKeyId(), 4);
+		$this->assertEqual( $observation->getKey_Id(), 4);
 	}
 	
 	// getResponseById
@@ -545,14 +545,14 @@ class TestActionFunctions extends UnitTestCase {
 	public function test_getResponseById_passId(){
 		$response = getResponseById(5);
 		$this->assertTrue( $response instanceof Response );
-		$this->assertEqual( $response->getKeyId(), 5);
+		$this->assertEqual( $response->getKey_Id(), 5);
 	}
 	
 	public function test_getResponseById_requestId(){
 		$_REQUEST['id'] = 4;
 		$response = getResponseById();
 		$this->assertTrue( $response instanceof Response );
-		$this->assertEqual( $response->getKeyId(), 4);
+		$this->assertEqual( $response->getKey_Id(), 4);
 	}
 	
 	

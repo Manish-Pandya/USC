@@ -194,13 +194,13 @@ class GenericDAO {
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ( $object->hasPrimaryKeyValue() ) {
-			$this->LOG->debug("$this->logprefix Updating existing entity with keyid " . $object->getKeyId());
+			$this->LOG->debug("$this->logprefix Updating existing entity with keyid " . $object->getKey_Id());
 			
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
 				DATABASE_AUTOQUERY_UPDATE,
-				'key_id = ' . $mdb2->quote($object->getKeyId(), 'integer'),
+				'key_id = ' . $mdb2->quote($object->getKey_Id(), 'integer'),
 				$dataTypesArray
 			);
 			
@@ -230,10 +230,10 @@ class GenericDAO {
 				$this->handleError($id);
 			}
 			
-			$object->setKeyId( $id );
+			$object->setKey_Id( $id );
 		}
 
-		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKeyId());
+		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 	
 		// return the updated object
 		return $object;

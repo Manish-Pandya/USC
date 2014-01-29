@@ -31,20 +31,16 @@ abstract class GenericCrud {
 	private $isActive;
 	
 	public function __toString(){
-		return '[' .get_class($this) . " key_id=" . $this->getKeyId() . "]";
+		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . "]";
 	}
 	
 	// Accessors / Mutators
 	
-	//FIXME: Remove these alias functions and rename "key_id" to "keyid"
-	public function getKey_Id(){ return $this->getKeyId(); }
-	public function setKey_Id($keyid){ $this->setKeyId($keyid); }
-	
-	public function getKeyId(){
+	public function getKey_Id(){
 		return $this->key_id;
 	}
 	
-	public function setKeyId($keyid){
+	public function setKey_Id($keyid){
 		$this->key_id = $keyid;
 	}
 	
@@ -75,7 +71,7 @@ abstract class GenericCrud {
 	
 	/** Returns TRUE if $this has a value for its primary key */
 	public function hasPrimaryKeyValue(){
-		return $this->getKeyId() != null;
+		return $this->getKey_Id() != null;
 	}
 	
 	/**
