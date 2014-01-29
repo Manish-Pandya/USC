@@ -55,16 +55,16 @@ class TestActionFunctions extends UnitTestCase {
 	}
 	
 	public function test_getUserById_passId(){
-		$user = getUserById(5);
+		$user = getUserById(1);
 		$this->assertTrue( $user instanceof User );
-		$this->assertEqual( $user->getKeyId(), 5);
+		$this->assertEqual( $user->getKeyId(), 1);
 	}
 	
 	public function test_getUserById_requestId(){
-		$_REQUEST['id'] = 4;
+		$_REQUEST['id'] = 1;
 		$user = getUserById();
 		$this->assertTrue( $user instanceof User );
-		$this->assertEqual( $user->getKeyId(), 4);
+		$this->assertEqual( $user->getKeyId(), 1);
 	}
 	
 	// saveUser
