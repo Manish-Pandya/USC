@@ -32,7 +32,7 @@ class TestGenericDAO extends UnitTestCase {
 			//Check sort
 			$previousKey = $all[0]->getKeyId();
 			for( $i = 1; $i < count($all); $i++ ){
-				$currentKey = $all[$i];
+				$currentKey = $all[$i]->getKeyId();
 				
 				//Check that current key is greater than the previous
 				$this->assertTrue( ($currentKey > $previousKey), 'Keys are not properly sorted');
@@ -55,7 +55,7 @@ class TestGenericDAO extends UnitTestCase {
 			//Check sort
 			$previousKey = $all[0]->getKeyId();
 			for( $i = 1; $i < count($all); $i++ ){
-				$currentKey = $all[$i];
+				$currentKey = $all[$i]->getKeyId();
 		
 				//Check that current key is less than the previous
 				$this->assertTrue( ($currentKey < $previousKey), 'Keys are not properly sorted');
@@ -183,7 +183,7 @@ class TestGenericDAO extends UnitTestCase {
 			
 			$tableExists = $dao->doesTableExist();
 			
-			$this->assertTrue($tableExists, "$classname Table does not exist");
+			$this->assertTrue($tableExists, "Table for $classname does not exist");
 			
 			// Skip data test if no table exists
 			if( !$tableExists ){
