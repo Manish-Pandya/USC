@@ -6,8 +6,6 @@
  */
 class PrincipalInvestigator extends GenericCrud {
 	
-	//FIXME: Shouls PrincipalInvestigator just be a role?
-	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "principal_investigator";
 	
