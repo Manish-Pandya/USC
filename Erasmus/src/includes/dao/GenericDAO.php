@@ -13,6 +13,12 @@
 
 class GenericDAO {
 	
+	public static $AUTO_SET_FIELDS = array(
+		'getDateCreated',
+		'getDateLastModified',
+		'getIsActive'
+	);
+	
 	/** Logger */
 	protected $LOG;
 	
@@ -184,8 +190,13 @@ class GenericDAO {
 		foreach ($object->getColumnData() as $columnName => $type){
 			$getter = "get$columnName";
 			$getter[3] = strtoupper($getter[3]);
-			$dataClause[$columnName] = $object->$getter();
+
+			// Skip fields (by getter name) that are set by the DB
+			if( in_array($getter, GenericDAO::$AUTO_SET_FIELDS) ){
+				continue;
+			}
 			
+			$dataClause[$columnName] = $object->$getter();
 			$dataTypesArray[] = $type;
 		}
 		
@@ -234,6 +245,10 @@ class GenericDAO {
 		}
 
 		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+				
+		// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
+		$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
+		$object = $this->getById( $object->getKey_Id() );
 	
 		// return the updated object
 		return $object;
@@ -354,8 +369,6 @@ class GenericDAO {
 		
 		if (PEAR::isError($result)) {
 			$this->handleError($affectedRow);
-			//FIXME: Does this actually get returned after die()?
-			return false;
 		} else {
 			$returnFlag = true;
 		}
