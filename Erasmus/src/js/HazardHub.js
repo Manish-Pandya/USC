@@ -260,7 +260,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      convenienceMethods.getData('/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK', onGetHazards, onFailSave);
+      convenienceMethods.getData('../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK', onGetHazards, onFailSave);
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
@@ -268,9 +268,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     //if this function is called, we have received a successful response from the server
-    function onSaveHazard( dto, hazard ){
+    function onSaveHazard( dto, hazard, test ){
         convenienceMethods.setPropertiesFromDTO( dto, hazard );
-        console.log(hazard);
+        console.log(test);
         hazard.isBeingEdited = false;
     }
 
@@ -343,7 +343,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         copy = angular.copy($scope.hazardCopy);
         copy.testProp = true;
 
-        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( copy, hazard, onSaveHazard, onFailSave, url );
 
     }
@@ -360,7 +360,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.handleHazardActive = function(hazard){
-        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        var url = '../../ajaxaction.php?action=saveHazard';
         if(hazard.IsActive === null)hazard.IsActive = false;
         $scope.hazardDTO = {
             key_id: hazard.KeyId,
@@ -413,7 +413,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         }
 
         //REST calls
-        var url = '/Erasmus/src/ajaxaction.php?action=saveHazard';
+        var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( hazardDTO, child, onMoveHazard, onFailMove, url, hazardDTO ) ;
     };
 

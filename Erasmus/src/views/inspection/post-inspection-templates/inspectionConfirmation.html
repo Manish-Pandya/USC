@@ -1,0 +1,34 @@
+<h2>Who should the system notify?</h2>
+<div class="loading" ng-show='!doneLoading' >
+  <img class="" src="../../../img/loading.gif"/>
+ Building List
+</div>
+<!--
+<pre>
+{{PrincipalInvestigator | json}}
+</pre>
+-->
+<span  ng-show='doneLoading'>
+<form>
+  <fieldset>
+     <label class="checkbox">
+        <input type="checkbox" ng-model="PrincipalInvestigator.include" ng-click="handleContactList(PrincipalInvestigator)"><span class="metro-checkbox">{{PrincipalInvestigator.Name}}</span>
+     </label>
+     <label class="checkbox">
+        <input type="checkbox" ng-model="PrincipalInvestigator.include" ng-click="handleContactList(PrincipalInvestigator)"><span class="metro-checkbox">{{PrincipalInvestigator.Name}}</span>
+     </label>
+    <label class="checkbox">
+        <input type="checkbox" ng-model="PrincipalInvestigator.include"><span class="metro-checkbox">John Smith</span>
+     </label>
+
+     <label ng-repeat="contact in Contacts" class="checkbox">
+        <input type="checkbox" ng-model="contact.include" ng-click="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
+     </label>
+     <br>
+  <label>Inspection Comments</label>
+  <textarea ng-model="Inspection.Notes" style="width:800px;" rows="15"></textarea><br>
+  <a ng-click="sendEmail()" class="btn btn-large btn-success"><i class="icon-email"></i>Notify Now</a>
+     <a ng-click="setRoute('/standardView')" class="btn btn-large btn-warning"><i class="icon-clock"></i>Notify Later</a>
+  </fieldset>
+</form>
+</span>

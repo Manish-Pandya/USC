@@ -217,9 +217,8 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
-  //
   function init(){
-	  testFactory.getRoomAndHazardData(onGetHazards,'/Erasmus/src/ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK','/Erasmus/src/ajaxaction.php?action=getInspectionById&id=3366&callback=JSON_CALLBACK');
+	  testFactory.getRoomAndHazardData(onGetHazards,'../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK','../../ajaxaction.php?action=getInspectionById&id=3366&callback=JSON_CALLBACK');
     //console.log($scope.data);
   }
   //grab set user list data into the $scrope object
@@ -249,7 +248,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $dialog, $f
    * 
    */
   function saveHazardRoomRelationship(data){
-	  testFactory.saveRelationship(onSaveHazardRoomRelationship,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK',data);
+	  testFactory.saveRelationship(onSaveHazardRoomRelationship,'../../ajaxaction.php?callback=JSON_CALLBACK',data);
   }
 
   function onSaveHazardRoomRelationship(data){
@@ -385,7 +384,7 @@ $scope.handleRooms = function(hazard, room){
 
       $scope.walkHazardBranch($scope.parentHazard,hazard);
 
-      testFactory.saveRelationship('http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&update=true',data);
+      testFactory.saveRelationship('../../ajaxaction.php?callback=JSON_CALLBACK&update=true',data);
     }
 
     for(i=0;i<hazard.Rooms.length;i++){

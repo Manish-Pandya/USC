@@ -1,0 +1,145 @@
+	<div class="loading" ng-show='!doneLoading' >
+	  <img class="" src="../../../img/loading.gif"/>
+	 Getting Inspection Information...
+	</div>
+	<!--<pre>{{Inspection | json}}</pre>-->
+	<span  ng-show='doneLoading'>
+	<div class="inspectionInfo">
+		<div class="row">
+			<h3>Principal Investigator:</h3> <p>{{Inspection.PrincipalInvestigator.User.Name}}</p>
+		</div>
+		<div class="row">
+			<h3>Inspection Date:</h3> <p/>{{Inspection.DateCreated}}</p>
+		</div>
+		<div class="row">
+			<h3>Department:</h3><p><span ng-repeat="department in Inspection.PrincipalInvestigator.Departments">{{department.Name}}<span ng-show="!$last">, </span></span></p>
+		</div>
+		<div class="row">
+			<h3>Response Date:</h3><p></p>
+		</div>
+		<div class="row">
+			<h3>Laboratory Building:</h3><p>Benson</p>
+			<div class="pull-right">
+				<h3>Lab Safety Contact:</h3>
+				<p>
+					<span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">John Smith
+						<span ng-repeat="contact in room.SafetyContactInformation"><!--{{room.SafetyContactInformation}}<span ng-show="!$last">, </span>--></span>
+					</span>
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
+			<div class="pull-right">
+				<h3>EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.Name}}<span ng-show="!$last">, </span></span></p>
+			</div>
+		</div>
+</div>
+<table class="table table-bordered table-striped table-responsive">
+<th style="width:10%">AUDIT CRITERIA</th><th style="width:10%">DEFICIENCY DESCRIPTION</th><th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th><th style="width:14%">CORRECTIVE ACTION STATUS</th>
+	<tr><td colspan="5" id="biologicalMaterialsHeader" class="reviewHeader">BIOLOGICAL SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'BIOLOGICAL SAFETY'}">
+		<td>{{response.Question.Text}}</td>
+		<td>
+			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		</td>
+		<td>{{response.complianceDescription}}</td>
+		<td>{{response.complianceReference}}</td>
+		<td>
+			<span ng-show="!response.CorrectiveAction.beingEdited">
+				<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>
+				{{response.CorrectiveAction.Description}}<br><br>
+				{{response.CorrectiveAction.Date}}<br><br>	
+
+				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
+			</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">
+				<select ng-model="CorrectiveActionCopy.Status">
+					<option value="notStarted">None</option>
+					<option value="incomplete">Pending</option>
+					<option value="complete">Complete</option>
+				</select><br>
+				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+				<input ng-model="CorrectiveActionCopy.Date"><br><br>
+				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
+				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
+			</span>
+		</td>
+	</tr>
+	<tr><td colspan="5" id="chemicalSafetyHeader" class="reviewHeader">CHEMICAL SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'CHEMICAL SAFETY'}">
+		<td>{{response.Question.Text}}</td>
+		<td>
+			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		</td>
+		<td>{{response.complianceDescription}}</td>
+		<td>{{response.complianceReference}}</td>
+		<td>
+			<span ng-show="!response.CorrectiveAction.beingEdited">
+				<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>
+				{{response.CorrectiveAction.Description}}
+				<br>
+				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
+			</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">
+				<select ng-model="CorrectiveActionCopy.Status">
+					<option value="notStarted">None</option>
+					<option value="incomplete">Pending</option>
+					<option value="complete">Complete</option>
+				</select><br>
+				
+				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+				<input ng-model="CorrectiveActionCopy.Date"><br><br>
+				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
+				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
+			</span>
+		</td>
+	</tr>
+
+	<tr><td colspan="5" id="radiationSafetyHeader" class="reviewHeader">RADIATION SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'RADIATION SAFETY'}">
+		<td>{{response.Question.Text}}</td>
+		<td>
+			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		</td>
+		<td>{{response.complianceDescription}}</td>
+		<td>{{response.complianceReference}}</td>
+		<td>
+			<span ng-show="!response.CorrectiveAction.beingEdited">
+				<span class="{{response.CorrectiveAction.Status}} icon-checkmark status"></span><br>
+				{{response.CorrectiveAction.Description}}<br><br>
+				{{response.CorrectiveAction.Date}}<br><br>
+				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
+			</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">
+				<select ng-model="CorrectiveActionCopy.Status">
+					<option value="notStarted">None</option>
+					<option value="incomplete">Pending</option>
+					<option value="complete">Complete</option>
+				</select><br>
+				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+				<input ng-model="CorrectiveActionCopy.Date"><br><br>
+				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
+				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
+			</span>
+		</td>
+	</tr>
+</table>
+<table class="table table-bordered table-striped table-responsive">
+	<tr><th colspan="2" style="background:#355f91;color:white">EH&S RECOMMENDATIONS</th></tr>
+	<tr><td>AUDIT CRITERIA</td><td>EH&S RECOMMENDATION</td></tr>
+	<tr><td>{{criteria}}</td><td>{{recommendation}}</td></tr>
+</table>
+
+<table class="table table-bordered table-striped table-responsive" style="width:70%; margin:35px auto;">
+	<tr><td style="background: #c5d8f1; width:50%">Corrective Action Plan Submitted By:</td><td>Joe Jones</td></tr>
+</table>
+
+<table class="table table-bordered table-striped table-responsive" style="width:100%; margin:35px auto;">
+	<tr><th># ITEMS INSPECTED</th><th># COMPLIANT ITEMS</th><th># DEFICIENCY ITEMS</th><th>COMPLIANCE SCORE</th></tr>
+	<tr style="background: #c5d8f1;"><td>97</td><td>88</td><td>9</td><td>91%</td></tr>
+</table>
+<h3 style="text-align:center">(Compliance scores can be used to assess overall safety and compliance progress and can be used as a performance improvement metric. Scores are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.)</h3>
+
+</span>

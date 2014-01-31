@@ -29,7 +29,14 @@ require_once 'top_view.php';
 
 <div class="row-fluid">
 
-	<div class="span6 offset3 rsmsCenterIconContainer" style=" ">
+	<div class="span2 rsmsCenterIconContainer offset3" style=" ">
+		<a href="hubs/BuildingHub.php" class="span12" style="background: #49afcd;">
+			<img class="" src="../img/building-hub-large-icon.png" />
+			<p>Building Hub</p>
+		</a>
+	</div>
+
+	<div class="span2 rsmsCenterIconContainer" style=" ">
 		<a href="inspection/NewInspection.php" class="span12" style="background: #d00;">
 			<img class="" src="../img/new-inspection-icon.png" />
 			<p>New Inspection</p>

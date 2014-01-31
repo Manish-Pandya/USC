@@ -47,7 +47,6 @@ inspectionChecklist.factory('testFactory', function($http){
 
 //called on page load, gets initial user data to list users
 function ChecklistController($scope,  $location, $anchorScroll, testFactory) {
-  $scope.users = [];
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
@@ -55,12 +54,12 @@ function ChecklistController($scope,  $location, $anchorScroll, testFactory) {
   //
   function init(){
     console.log('init called');
-    testFactory.getChecklists(onGetChecklists,'http://erasmus.graysail.com/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&checklists=true');
+    testFactory.getChecklists(onGetChecklists,'../../views/api/hazardAssApi.php?callback=JSON_CALLBACK&checklists=true');
   };
   
   //grab set user list data into the $scrope object
   function onGetChecklists(data) {
-    $scope.checklists = data;
+    $scope.checklists = data.Checklists;
   }
 
    $scope.imgNumber = "1";
@@ -139,11 +138,7 @@ function ChecklistController($scope,  $location, $anchorScroll, testFactory) {
       }
     })   
   }, true);
-  /*
-   * USER SAVE METHODS
-   * used for creating and updating users
-   * 
-   */
+
 
 };
 

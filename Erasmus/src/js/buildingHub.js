@@ -16,7 +16,6 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
   };
   //grab set user list data into the $scrope object
   function onGetBuildings(data) {
-    console.log(data);
 	  $scope.buildings = data;
   }
   function onFailGet(){
@@ -29,6 +28,92 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
     });
     building.showChildren = true;
   }
+
+  $scope.createBuilding = function(){
+    //add a new building to the system
+  }
+
+  $scope.editBuilding = function(building){
+
+  }
+
+  $scope.deactivateBuilding = function(building){
+
+  }
+
+  $scope.addRoomToBuilding = function(building){
+
+    $scope.roomDTO = {
+      name: '',
+      KeyId: null,
+      PIs:[],
+      isNew: true,
+      Class: "Room"
+    };
+
+    building.rooms.unshift($scope.roomDTO);
+  }
+
+  $scope.saveRoom = function( building ){
+    var url = '../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK';
+    convenienceMethods.updateObject(  $scope.roomDTO, building, onAddRoom, onFailAddRoom, url  );
+  }
+
+  onAddRoom = function( objDTO, building ){
+    //console.log(building);
+    //console.log(objDTO);
+    room = angular.copy($scope.roomDTO);
+    room.isNew = false;
+    building.rooms.shift();
+    building.rooms.unshift(room);
+  }
+
+  onFailAddRoom = function(obj){
+    alert('There was a problem when saving '+obj);
+  }
+
+  $scope.removeRoomFromBuilding = function(room, building){
+    //remove a room from a building?
+  }
+
+  $scope.addPItoRoom = function(room){
+
+    $scope.piDTO = {
+      KeyId: null,
+      Hazards: [],
+      isNew: true,
+      Class: "PI"
+    };
+
+    room.PIs.unshift($scope.piDTO);
+  }
+
+  $scope.saveNewPI = function( room, customSelected ){
+    console.log(customSelected);
+   $scope.piDTO.Name = customSelected.Name;
+    var url = '../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK';
+    convenienceMethods.updateObject(  $scope.piDTO, room, onAddPI, onFailAddPI, url  );
+  }
+
+  onAddPI = function( objDTO, room ){
+    console.log($scope.piDTO);
+    PI = angular.copy($scope.piDTO);
+    PI.isNew = false;
+    room.PIs.shift();
+    room.PIs.unshift(PI);
+  }
+
+  onFailAddPI = function(obj){
+    alert('There was a problem when saving '+obj);
+  }
+
+  $scope.removePIfromRoom = function(pi, room){
+
+  }
+
+  $scope.PIs = [{"Name":"John Investigator 1","flag":"5/5c/Flag_of_Alabama.svg/45px-Flag_of_Alabama.svg.png"},{"Name":"John Investigator2","flag":"e/e6/Flag_of_Alaska.svg/43px-Flag_of_Alaska.svg.png"},{"Name":"John Investigator3","flag":"9/9d/Flag_of_Arizona.svg/45px-Flag_of_Arizona.svg.png"}];
+
+
 
 };
 
