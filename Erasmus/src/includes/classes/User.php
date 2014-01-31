@@ -22,7 +22,7 @@ class User extends GenericCrud{
 		"email"		=> "text", 
 			
 		//GenericCrud
-		"key_id"			=> "int",
+		"key_id"			=> "integer",
 		"dateCreated"		=> "timestamp",
 		"dateLastModified"	=> "timestamp",
 		"isActive"			=> "boolean"
@@ -68,9 +68,9 @@ class User extends GenericCrud{
 	
 	// Accessors / Mutators
 	public function getRoles(){ 
-		if($this->roles == null) {
+		if($this->roles === NULL && $this->hasPrimaryKeyValue()) {
 			$userDAO = new GenericDAO($this);
-			$this->roles = $userDAO->getRelatedItemsById($this->getKeyId(), DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
+			$this->roles = $userDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
 		}
 		return $this->roles;
 	}

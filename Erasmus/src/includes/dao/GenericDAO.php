@@ -13,6 +13,12 @@
 
 class GenericDAO {
 	
+	public static $AUTO_SET_FIELDS = array(
+		'getDateCreated',
+		'getDateLastModified',
+		'getIsActive'
+	);
+	
 	/** Logger */
 	protected $LOG;
 	
@@ -38,6 +44,17 @@ class GenericDAO {
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 	}
 	
+	/**
+	 * @return boolean True if the associated table exists
+	 */
+	public function doesTableExist(){
+		$tableName = $this->modelObject->getTableName();
+		$result = mysql_query("SHOW TABLES LIKE '$tableName'");
+		$tableExists = mysql_num_rows($result) > 0;
+		return $tableExists;
+	}
+	
+	//TODO: Move to ErrorHandler?
 	public function handleError($pearResult){
 		$message = $pearResult->getMessage();
 		$info = $pearResult->getDebugInfo();
@@ -68,14 +85,19 @@ class GenericDAO {
 		//Get the first row of query results (should be only one row)
 		$record = $result->fetchRow();
 		
-		//TODO: ensure there is a record!
+		//Ensure there is a record
+		if( $record !== NULL ){
+			//Build an object to return
+			$object = new $this->modelClassName();
+			
+			//Iterate through the columns and make this object match the values from the database
+			$object->populateFromDbRecord($record);
+		}
+		else{
+			//No Record; return NULL
+			$object = NULL;
+		}
 		
-		//Build an object to return
-		$object = new $this->modelClassName();
-		
-		//Iterate through the columns and make this object match the values from the database
-		$object->populateFromDbRecord($record);
-	
 		return $object;
 	}
 	
@@ -84,7 +106,7 @@ class GenericDAO {
 	 *
 	 * @return Array of entities
 	 */
-	function getAll( $sortColumn = NULL ){
+	function getAll( $sortColumn = NULL, $sortDescending = FALSE ){
 		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 		
 		// Get the db connection
@@ -94,9 +116,16 @@ class GenericDAO {
 		// Build query
 		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
 		if( $sortColumn != NULL ){
-			//TODO: Ascending/Descending!
+			//Default to ascending, which requires no keyword
+			$sortDirection = '';
+			
+			//Check for Descending sort
+			if ( $sortDescending ){
+				$sortDirection = 'DESC';
+			}
+			
 			//Sort is specified; add ORDER BY clause
-			$query_string .= ' ORDER BY ' . $sortColumn;
+			$query_string .= " ORDER BY $sortColumn $sortDirection";
 		}
 		
 		//Query the table by key_id
@@ -125,8 +154,8 @@ class GenericDAO {
 	 * @param unknown $sortColumn
 	 * @return Array:
 	 */
-	function getAllSorted( $sortColumn ){
-		return $this->getAll( $sortColumn );
+	function getAllSorted( $sortColumn, $sortDescending = FALSE ){
+		return $this->getAll( $sortColumn, $sortDescending );
 	}
 	
 	/**
@@ -161,8 +190,13 @@ class GenericDAO {
 		foreach ($object->getColumnData() as $columnName => $type){
 			$getter = "get$columnName";
 			$getter[3] = strtoupper($getter[3]);
-			$dataClause[$columnName] = $object->$getter();
+
+			// Skip fields (by getter name) that are set by the DB
+			if( in_array($getter, GenericDAO::$AUTO_SET_FIELDS) ){
+				continue;
+			}
 			
+			$dataClause[$columnName] = $object->$getter();
 			$dataTypesArray[] = $type;
 		}
 		
@@ -171,13 +205,13 @@ class GenericDAO {
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ( $object->hasPrimaryKeyValue() ) {
-			$this->LOG->debug("$this->logprefix Updating existing entity with keyid $id");
+			$this->LOG->debug("$this->logprefix Updating existing entity with keyid " . $object->getKey_Id());
 			
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
-				DB_AUTOQUERY_UPDATE,
-				'key_id = ' . $mdb2->quote($object->getKeyId(), 'integer'),
+				DATABASE_AUTOQUERY_UPDATE,
+				'key_id = ' . $mdb2->quote($object->getKey_Id(), 'integer'),
 				$dataTypesArray
 			);
 			
@@ -191,7 +225,7 @@ class GenericDAO {
 			$affectedRow = $mdb2->autoExecute(
 				$table,
 				$dataClause,
-				DB_AUTOQUERY_INSERT,
+				DATABASE_AUTOQUERY_INSERT,
 				null,
 				$dataTypesArray
 			);
@@ -207,10 +241,14 @@ class GenericDAO {
 				$this->handleError($id);
 			}
 			
-			$object->setKeyId( $id );
+			$object->setKey_Id( $id );
 		}
 
-		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKeyId());
+		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+				
+		// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
+		$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
+		$object = $this->getById( $object->getKey_Id() );
 	
 		// return the updated object
 		return $object;
@@ -288,7 +326,7 @@ class GenericDAO {
 		
 		$types = array("integer", "integer");
 		
-		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DB_AUTOQUERY_INSERT, null, $types);
+		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DATABASE_AUTOQUERY_INSERT, null, $types);
 		
 		if (PEAR::isError($affectedRow)) {
 			$this->handleError($affectedRow);
@@ -331,8 +369,6 @@ class GenericDAO {
 		
 		if (PEAR::isError($result)) {
 			$this->handleError($affectedRow);
-			//FIXME: Does this actually get returned after die()?
-			return false;
 		} else {
 			$returnFlag = true;
 		}

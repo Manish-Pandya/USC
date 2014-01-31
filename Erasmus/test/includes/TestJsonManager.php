@@ -9,12 +9,12 @@ Mock::generate('User');
 class TestJsonManager extends UnitTestCase {
 	
 	function test_decode(){
-		$json = '{"Class":"User","Keyid":1234,"Active":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","IsActive":true}';
+		$json = '{"Class":"User","Key_Id":1234,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","IsActive":true}';
 		
 		$expectedObject = new User();
 		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
-		$expectedObject->setKeyId(1234);
+		$expectedObject->setKey_Id(1234);
 		$expectedObject->setName("name");
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
@@ -59,7 +59,7 @@ class TestJsonManager extends UnitTestCase {
 		//Expect all getter methods to be called once
 		$object->expectOnce('getIsActive');
 		$object->expectOnce('getEmail');
-		$object->expectOnce('getKeyid');
+		$object->expectOnce('getKey_Id');
 		$object->expectOnce('getName');
 		$object->expectOnce('getRoles');
 		$object->expectOnce('getUsername');
@@ -69,7 +69,7 @@ class TestJsonManager extends UnitTestCase {
 		$object->expectNever('getColumnData');
 		$object->expectNever('setIsActive');
 		$object->expectNever('setEmail');
-		$object->expectNever('setKeyId');
+		$object->expectNever('setKey_Id');
 		$object->expectNever('setName');
 		$object->expectNever('setRoles');
 		$object->expectNever('setUsername');
@@ -81,12 +81,12 @@ class TestJsonManager extends UnitTestCase {
 		$expectedObject = new User();
 		$expectedObject->setIsActive(TRUE);
 		$expectedObject->setEmail('email@host.com');
-		$expectedObject->setKeyId(1234);
+		$expectedObject->setKey_Id(1234);
 		$expectedObject->setName("name");
 		$expectedObject->setRoles(array('role1', 'role2'));
 		$expectedObject->setUsername("username");
 		
-		$json = '{"Class":"User","IsActive":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","KeyId":1234}';
+		$json = '{"Class":"User","IsActive":true,"Roles":["role1","role2"],"Username":"username","Name":"name","Email":"email@host.com","Key_Id":1234}';
 		$object = new User();
 		$object = JsonManager::jsonToObject($json, $object);
 		
@@ -100,7 +100,7 @@ class TestJsonManager extends UnitTestCase {
 			'Username' => 'username',
 			'Name' => 'name',
 			'Email' => 'email@host.com',
-			'KeyId' => 1234,
+			'Key_Id' => 1234,
 			'DateCreated' => NULL,
 			'DateLastModified' => NULL,
 			'IsActive' => true,
@@ -109,7 +109,7 @@ class TestJsonManager extends UnitTestCase {
 		$user = new User();
 		$user->setIsActive(TRUE);
 		$user->setEmail('email@host.com');
-		$user->setKeyId(1234);
+		$user->setKey_Id(1234);
 		$user->setName('name');
 		$user->setRoles(array('role1', 'role2'));
 		$user->setUsername('username');

@@ -80,6 +80,9 @@ class DtoManager {
 				// Call the setter for the field with the request value
 				$LOG->trace("Calling $setterName() on object of class " . get_class($baseObject));
 				$baseObject->$setterName( $fieldValue );
+
+				//TODO: Remember that this field was set?
+				//DtoManager::rememberSetFieldName($baseObject, $fieldName);
 			}
 			else{
 				//Generated function cannot be called on the given object.
@@ -192,7 +195,23 @@ class DtoManager {
 		return $prefixName;
 	}
 	
+	//FIXME: Would we really need this functionality?
+	private static function rememberSetFieldName($object, $fieldName){
+		//Get array of field names
+		if( isset( $object->SET_FIELDS ) ){
+			$setFields = $object->SET_FIELDS;
+		}
+		else{
+			//Create if none exists
+			$setFields = array();
+		}
 	
+		//Add this field name to array
+		$setFields[] = $fieldName;
+	
+		//Set array onto object
+		$object->SET_FIELDS = $setFields;
+	}
 }
 
 ?>

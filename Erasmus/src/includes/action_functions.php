@@ -34,8 +34,14 @@ function getValueFromRequest( $valueName, $paramValue = NULL ){
 	}
 }
 
-function getDao(){
-	return new MockDAO();
+function getDao( $modelObject = NULL ){
+	//FIXME: Remove MockDAO
+	if( $modelObject === NULL ){
+		return new MockDAO();
+	}
+	else{
+		return new GenericDAO( $modelObject );		
+	}
 }
 
 function loginAction(){ };
@@ -80,12 +86,9 @@ function deactivate(){
 // Users Hub
 function getAllUsers(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$allUsers = array();
 	
-	//TODO: Query for Users
-	for( $i = 0; $i < 10; $i++ ){
-		$allUsers[] = getUserById($i);
-	}
+	$userDao = getDao( new User() );
+	$allUsers = $userDao->getAll();
 	
 	return $allUsers;
 };
@@ -96,8 +99,8 @@ function getUserById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getUserById($id);
+		$dao = getDao(new User());
+		return $dao->getById($id);
 	}
 	else{
 		//error

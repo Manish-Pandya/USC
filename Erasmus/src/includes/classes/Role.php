@@ -17,7 +17,9 @@ class Role extends GenericCrud{
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"				=> "text",
-		"key_id"			=> "int",
+		
+		//GenericCrud
+		"key_id"			=> "integer",
 		"dateCreated"		=> "timestamp",
 		"dateLastModified"	=> "timestamp",
 		"isActive"			=> "boolean"
@@ -60,7 +62,7 @@ class Role extends GenericCrud{
 	public function getUsers(){ 
 		if($this->users == null) {
 			$roleDAO = new GenericDAO($this);
-			$this->users = $roleDAO->getRelatedItemsById($this->getKeyId(), DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
+			$this->users = $roleDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$USERS_RELATIONSHIP));
 		}
 		return $this->users;
 	}

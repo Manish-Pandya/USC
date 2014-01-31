@@ -18,9 +18,9 @@ class MockDAO{
 	public function save( GenericCrud &$obj ){
 		$this->LOG->info("TODO: SAVE $obj");
 		
-		if( $obj->getKeyId() === NULL ){
+		if( $obj->getKey_Id() === NULL ){
 			//Assign random key for now
-			$obj->setKeyId( mt_rand(0, $this->getRandomKey() ) );
+			$obj->setKey_Id( mt_rand(0, $this->getRandomKey() ) );
 			$obj->setDateCreated( time() );
 		}
 		
@@ -49,7 +49,7 @@ class MockDAO{
 		$user->setEmail("user$keyid@host.com");
 		$user->setName("User #$keyid");
 		$user->setUsername("user$keyid");
-		$user->setKeyId($keyid);
+		$user->setKey_Id($keyid);
 		$user->setRoles( $this->getAllRoles() );
 		
 		$this->LOG->info("Defined User: $user");
@@ -59,7 +59,7 @@ class MockDAO{
 	
 	public function getChecklistById( $keyid ){
 		$checklist = $this->initGenericCrudObject(new Checklist());
-		$checklist->setKeyId($keyid);
+		$checklist->setKey_Id($keyid);
 		
 		//add some questions
 		$questions = array();
@@ -80,7 +80,7 @@ class MockDAO{
 	//FIXME: Remove $name
 	public function getHazardById( $keyid, $name = NULL ){
 		$hazard = $this->initGenericCrudObject(new Hazard());
-		$hazard->setKeyId($keyid);
+		$hazard->setKey_Id($keyid);
 		
 		if( $name === NULL ){			
 			$hazard->setName("Dangerous thing #$keyid");
@@ -102,7 +102,7 @@ class MockDAO{
 				$subhazard = getHazardById( $this->getRandomKey()  );
 				
 				//associate hazards
-				$subhazard->setParentHazardId($hazard->getKeyId());
+				$subhazard->setParentHazardId($hazard->getKey_Id());
 				$subhazards[] = $subhazard;
 			}
 			
@@ -118,7 +118,7 @@ class MockDAO{
 	
 	public function getQuestionById($keyid){
 		$question = $this->initGenericCrudObject(new Question());
-		$question->setKeyId($keyid);
+		$question->setKey_Id($keyid);
 		$question->setOrderIndex($keyid);
 		$question->setText("Is this question $keyid?");
 		$question->setStandardsAndGuidelines("Guidelines for question $keyid");
@@ -158,7 +158,7 @@ class MockDAO{
 	
 	public function getPiById($keyid){
 		$pi = $this->initGenericCrudObject(new PrincipalInvestigator());
-		$pi->setKeyId($keyid);
+		$pi->setKey_Id($keyid);
 		$pi->setUser( $this->getUserById( $keyid ) );
 		
 		// depts
@@ -188,7 +188,7 @@ class MockDAO{
 	
 	public function getInspectorById($keyid){
 		$inspector = $this->initGenericCrudObject( new Inspector() );
-		$inspector->setKeyId($keyid);
+		$inspector->setKey_Id($keyid);
 		$inspector->setEmail("inspector$keyid@host.com");
 		$inspector->setName("Inspector #$keyid");
 		$inspector->setUsername("inspector$keyid");
@@ -208,7 +208,7 @@ class MockDAO{
 	
 	public function getDepartmentById($keyid){
 		$dept = $this->initGenericCrudObject(new Department());
-		$dept->setKeyId($keyid);
+		$dept->setKey_Id($keyid);
 		$dept->setName("Department $keyid");
 		
 		//TODO: PIs
@@ -218,7 +218,7 @@ class MockDAO{
 	
 	public function getRoomById($keyid){
 		$room = $this->initGenericCrudObject(new Room());
-		$room->setKeyId($keyid);
+		$room->setKey_Id($keyid);
 		$room->setName("Room $keyid");
 		$room->setSafetyContactInformation('Call 911');
 		
@@ -245,7 +245,7 @@ class MockDAO{
 	
 	public function getBuildingById($keyid){
 		$building = $this->initGenericCrudObject(new Building());
-		$building->setKeyId($keyid);
+		$building->setKey_Id($keyid);
 		$building->setName("Building $keyid");
 		
 		//rooms
@@ -264,7 +264,7 @@ class MockDAO{
 	
 	public function getDeficiencyById($keyid){
 		$deficiency = $this->initGenericCrudObject(new Deficiency());
-		$deficiency->setKeyId($keyid);
+		$deficiency->setKey_Id($keyid);
 		$deficiency->setText("Deficiency #$keyid");
 		
 		$this->LOG->info("Defined Deficiency: $deficiency");
@@ -274,7 +274,7 @@ class MockDAO{
 	
 	public function getInspectionById($keyid){
 		$inspection = $this->initGenericCrudObject(new Inspection());
-		$inspection->setKeyId($keyid);
+		$inspection->setKey_Id($keyid);
 		
 		// Inspector(s)
 		$inspection->setInspectors( array(getUserById( $this->getRandomKey() )) );
@@ -301,7 +301,7 @@ class MockDAO{
 	
 	public function getDeficiencySelectionById($keyid){
 		$selection = $this->initGenericCrudObject(new DeficiencySelection());
-		$selection->setKeyId($keyid);
+		$selection->setKey_Id($keyid);
 		
 		$this->LOG->info("Defined DeficiencySelection: $selection");
 		
@@ -310,7 +310,7 @@ class MockDAO{
 	
 	public function getRecommendationById($keyid){
 		$recommendation = $this->initGenericCrudObject(new Recommendation());
-		$recommendation->setKeyId($keyid);
+		$recommendation->setKey_Id($keyid);
 		$recommendation->setText("Recommendation #$keyid");
 		
 		$this->LOG->info("Defined Recommendation: $recommendation");
@@ -320,7 +320,7 @@ class MockDAO{
 	
 	public function getResponseById($keyid){
 		$response = $this->initGenericCrudObject(new Response());
-		$response->setKeyId($keyid);
+		$response->setKey_Id($keyid);
 		
 		$randomAnswerKey = array_rand(Response::$POSSIBLE_ANSWERS);
 		$response->setAnswer( Response::$POSSIBLE_ANSWERS[ $randomAnswerKey ] );
@@ -332,7 +332,7 @@ class MockDAO{
 	
 	public function getObservationById($keyid){
 		$observation = $this->initGenericCrudObject(new Observation());
-		$observation->setKeyId($keyid);
+		$observation->setKey_Id($keyid);
 		$observation->setText("Observation #$keyid");
 		
 		$this->LOG->info("Defined Observation: $observation");
