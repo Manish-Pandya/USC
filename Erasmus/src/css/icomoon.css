@@ -25,7 +25,7 @@
 	font-weight: normal;
 	height: 16px;
 	line-height: 16px;
-	width: 100px;
+	//width: 100px;
 	speak: none;
 	background-image: none;
 	background-position: inherit;
@@ -42,12 +42,7 @@
 .icon-newspaper:before {
 	content: "\0024";
 }
-.icon-pencil:before {
-	content: "\0025";
-}
-.icon-pencil-2:before {
-	content: "\0026";
-}
+
 .icon-droplet:before {
 	content: "\0027";
 }
@@ -488,6 +483,12 @@
 }
 .icon-cancel-3:before {
 	content: "\e03b";
+}
+.icon-pencil:before {
+	//content: "\0025";
+}
+.icon-pencil-2:before {
+	//content: "\0026";
 }
 .icon-checkmark:before {
 	content: "\e03c";

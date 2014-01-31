@@ -31,8 +31,9 @@
 .bg-color-darken {
    background-color: #1c1c1c !important;
 }
-
-
+.bg-color-grayLight{
+   background-color: #ddd !important;
+}
 
 .metro {
    overflow: hidden;

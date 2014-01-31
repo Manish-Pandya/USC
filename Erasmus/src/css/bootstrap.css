@@ -1941,7 +1941,12 @@ table {
 
 .table-bordered th,
 .table-bordered td {
-  border-left: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+}
+.table-bordered td {
+  border: 1px solid #dddddd;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 
 .table-bordered caption + thead tr:first-child th,
