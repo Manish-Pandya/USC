@@ -170,6 +170,15 @@ class MockDAO{
 		
 		$pi->setDepartments( $depts );
 		
+		// Personnel
+		$personnel = array();
+		for($i = 0; $i < 3; $i++ ){
+			$user = $this->getUserById( $this->getRandomKey() );
+			$personnel[] = $user;
+		}
+		
+		$pi->setLabPersonnel( $personnel );
+		
 		// rooms
 		$rooms = array();
 		for($i = 0; $i < 2; $i++ ){

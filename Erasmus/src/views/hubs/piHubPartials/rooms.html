@@ -1,0 +1,19 @@
+<table class="roomList table table-striped table-hover list" id="rooms">
+<thead>
+	<tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
+	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" class="btn btn-info btn-large">Add Room</a><a href="#roomModal" data-toggle="modal" class="btn btn-primary btn-large">Create Room</a></tr>
+	<tr>
+		<th>Remove Room</th><th>Campus</th><th>Building</th><th>Room Number</th><th>Show Hazards</th>
+	</tr>
+</thead>
+<tbody>
+	<tr ng-repeat="room in PI.Rooms">
+		<td><a class="btn btn-danger btn-large removeRow" href="#">Remove</a></td>
+		<td width="25%">{{room.Capmus}}</td>
+		<td width="25%">{{room.Building}}</td>
+		<td width="25%">{{room.Name}}</td>
+		<td><a class="edit btn btn-large btn-primary"  href="UserHub.php">Show Hazards</a></td>
+	</tr>
+</tbody>
+</table>
+	
