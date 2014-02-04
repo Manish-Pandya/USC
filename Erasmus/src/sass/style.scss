@@ -1,38 +1,31 @@
 @CHARSET "ISO-8859-1";
-
-$orange: #e67e1d;
-$redBg:  #bd362f;
-$greenBg: #5bb75b;
-
-@mixin breakpoint($point) {
-  @if $point == papa-bear {
-    @media (max-width: 1600px) { @content; }
-  }
-  @else if $point == tablet-horizontal {
-    @media (max-width: 1200px) { @content; }
-  }
-  @else if $point == baby-bear {
-    @media (max-width: 650px)  { @content; }
-  }
-}
-
 /**
  * A "deeper" indented text effect with the :before and :after pseudo-elements.
  */
-html{height: 100%;
-background: #aaa;}
-body{min-height:100%;}
-
-body {
-    margin: 0;
-    background: #003b3b;
-    background: #01102b;
-    background: #004754;
-    background: #ddd;
-    font-family: 'Open Sans', sans-serif;
+/* line 22, ../sass/style.scss */
+html {
+  height: 100%;
+  background: #fff;
 }
-.whitebg{
-	background:#fff;
+
+/* line 24, ../sass/style.scss */
+body {
+  min-height: 100%;
+}
+
+/* line 26, ../sass/style.scss */
+body {
+  margin: 0;
+  background: #003b3b;
+  background: #01102b;
+  background: #004754;
+  background: #ddd;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* line 34, ../sass/style.scss */
+.whitebg,.whiteBg {
+  background: #fff;
 }
 
 /******************************************************************************
@@ -40,785 +33,1204 @@ body {
 * Typography Overrides
 *
 *******************************************************************************/
-h1,h2,h3,h4,h5,p,a{
-	font-family: 'Open Sans', sans-serif;
+/* line 43, ../sass/style.scss */
+h1, h2, h3, h4, h5, p, a {
+  font-family: 'Open Sans', sans-serif;
 }
 
-@font-face {
-	font-family: 'icomoon';
-	src:url('../fonts/icomoon.eot');
-	src:url('../fonts/icomoon.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/icomoon.svg#icomoon') format('svg'),
-		url('../fonts/icomoon.woff') format('woff'),
-		url('../fonts/icomoon.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+/* line 58, ../sass/style.scss */
+.iconGlyph {
+  font-family: "icomoon";
 }
 
-.iconGlyph{
-	font-family:"icomoon";
+/* line 62, ../sass/style.scss */
+a {
+  	    /**
+      * Apply transitions to all hover states, etc
+      **/
+  -webkit-transition: all .1s ease-in-out;
+  -moz-transition: all .1s ease-in-out;
+  -o-transition: all .1s ease-in-out;
+  transition: all .1s ease-in-out;
 }
 
-a{
-	    /**
-    * Apply transitions to all hover states, etc
-    **/	
-	-webkit-transition: all .1s ease-in-out;
-    -moz-transition: all .1s ease-in-out;
-    -o-transition: all .1s ease-in-out;
-     transition: all .1s ease-in-out;
-}
-.siteTitle{
-	color: #cb5a47 !important;
-	font-size:2em !important;
-	line-height:.9em;
-	font-weight:bold ;
-}
-.header{
-	padding-bottom:50px;
-	border-bottom: dashed 2px #bfccd3;
+/* line 71, ../sass/style.scss */
+.siteTitle {
+  color: #cb5a47 !important;
+  font-size: 2em !important;
+  line-height: .9em;
+  font-weight: bold;
 }
 
-
+/* line 77, ../sass/style.scss */
+.header {
+  padding-bottom: 50px;
+  border-bottom: dashed 2px #bfccd3;
+}
 
 /**************************************************************
 *************	Utility CLASSES
 **************************************************************/
-.text-shadow{ text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43); }
-.center { float: none; margin-left: auto; margin-right: auto; }
-.blue-border{ border-left: 3px solid #49afcd; }
-tr.blue-border{ border:4px solid #49afcd}
-.shadow { box-shadow:0 0 10px rgba(0,0,0,.7); margin-left:5px; }
-td.shadow{box-shadow: 4px 4px 5px rgba(0,0,0,.3), 6px -2px 4px rgba(0,0,0,.3);}
-.current{background: white; padding:75px 10px 10px 10px;}
-.shadow .jqtree-toggler{
-	left: -1.3em !important;
+/* line 87, ../sass/style.scss */
+.text-shadow {
+  text-shadow: 3px 3px 2px rgba(150, 150, 150, 0.43);
 }
+
+/* line 88, ../sass/style.scss */
+.center {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* line 89, ../sass/style.scss */
+.blue-border {
+  border-left: 3px solid #49afcd;
+}
+
+/* line 90, ../sass/style.scss */
+tr.blue-border {
+  border: 4px solid #49afcd;
+}
+
+/* line 91, ../sass/style.scss */
+.shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  margin-left: 5px;
+}
+
+/* line 92, ../sass/style.scss */
+td.shadow {
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.3), 6px -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* line 93, ../sass/style.scss */
+.current {
+  background: white;
+  padding: 75px 10px 10px 10px;
+}
+
+/* line 94, ../sass/style.scss */
+.shadow .jqtree-toggler {
+  left: -1.3em !important;
+}
+
 /*************************************************************
 RSMS Center specific styles
 *************************************************************/
-
-div.rsmsCenterIconContainer{
-
-	a{
-		padding-top:5px;
-		position:relative; 
-		margin:500 auto !important; 
-	}
-
-	a:hover{
-		-webkit-transform: scale(1.06);
-		-moz-transform:    scale(1.06);
-		-o-transform:      scale(1.06);
-		-ms-transform:     scale(1.06);
-		text-decoration:none !Important;
-
-		@include breakpoint(tablet-horizontal) {
-			-webkit-transform: scale(1.03);
-			-moz-transform:    scale(1.03);
-			-o-transform:      scale(1.03);
-			-ms-transform:     scale(1.03);
-		}
-	}
-	a p{
-	color: white;
-	line-height: normal;
-	text-decoration: none !important;
-	padding: 5px;
-	font-size: 2.3em;
-	}
-
-	a img{
-		@include breakpoint(tablet-horizontal) {
-			float:right;
-			height:45px;
-			padding-right:5px;
-		    max-width:277px; 
-		}
-	}
+/* line 103, ../sass/style.scss */
+div.rsmsCenterIconContainer a {
+  padding-top: 5px;
+  position: relative;
+  margin: 500 auto !important;
 }
-
+/* line 109, ../sass/style.scss */
+div.rsmsCenterIconContainer a:hover {
+  -webkit-transform: scale(1.06);
+  -moz-transform: scale(1.06);
+  -o-transform: scale(1.06);
+  -ms-transform: scale(1.06);
+  text-decoration: none !Important;
+}
+@media (max-width: 1200px) {
+  /* line 109, ../sass/style.scss */
+  div.rsmsCenterIconContainer a:hover {
+    -webkit-transform: scale(1.03);
+    -moz-transform: scale(1.03);
+    -o-transform: scale(1.03);
+    -ms-transform: scale(1.03);
+  }
+}
+/* line 123, ../sass/style.scss */
+div.rsmsCenterIconContainer a p {
+  color: white;
+  line-height: normal;
+  text-decoration: none !important;
+  padding: 5px;
+  font-size: 2.3em;
+}
+@media (max-width: 772px) {
+  /* line 131, ../sass/style.scss */
+  div.rsmsCenterIconContainer a img {
+    float: right;
+    height: 45px;
+    padding-right: 5px;
+    max-width: 277px;
+  }
+}
+@media (min-width: 1201px) {
+  div.rsmsCenterIconContainer a{
+   
+  }
+  div.rsmsCenterIconContainer a img{
+    width:100% !important;
+  }
+}
 /*******************************************************
 *	USER HUB STYLES
 *******************************************************/
-.userList {
-	tr {
-	border:none;	
-		td{
-			width:1%;
-			transition: all .2s;
-			ul{
-				list-style:none;
-				padding:0;
-				margin:0;
-			}
-			li{
-				i{
-					width:auto;
-					margin: 4px 0 0 5px;
-					cursor: pointer;
-				}
-				i.icon-minus{
-					color:$redBg;
-				}
-			}
-			li.add-role{
-				color:$greenBg;
-			}
-		}
-		td:last-child{
-			width:4%;
-		}
-	}
+/* line 145, ../sass/style.scss */
+.userList tr {
+  border: none;
+}
+/* line 147, ../sass/style.scss */
+.userList tr td {
+  width: 1%;
+  transition: all .3s;
+
+}
+/* line 150, ../sass/style.scss */
+.userList tr td ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* line 156, ../sass/style.scss */
+.userList tr td li i {
+  width: auto;
+  margin: 4px 0 0 5px;
+  cursor: pointer;
+}
+/* line 161, ../sass/style.scss */
+.userList tr td li i.icon-minus {
+  color: #bd362f;
+}
+/* line 165, ../sass/style.scss */
+.userList tr td li.add-role {
+  color: #5bb75b;
+}
+/* line 169, ../sass/style.scss */
+.userList tr td:last-child {
+  width: 4%;
 }
 
-tr.edit{
-	border:#999 solid 3px;
-	zoom:1.1;
-	transition: border .2s;
+/* line 175, ../sass/style.scss */
+tr.edit {
+  border: #999 solid 3px;
+  zoom: 1.1;
+  transition: border .2s;
 }
 
-tr.edit td{	
-	box-shadow:6px 5px 8px rgba(0, 0, 0, 0.5);
-	background:#fff !important;
+/* line 181, ../sass/style.scss */
+tr.edit td {
+  box-shadow: 6px 5px 8px rgba(0, 0, 0, 0.5);
+  background: #fff !important;
 }
 
-
-tr.notedit:hover,tr.notedit td:hover{
-	background:#f7f7f7 !important;
+/* line 187, ../sass/style.scss */
+tr.notedit:hover, tr.notedit td:hover {
+  background: #f7f7f7 !important;
 }
 
-tr.updated{
-	border:3px solid #51a351;
+/* line 191, ../sass/style.scss */
+tr.updated {
+  border: 3px solid #51a351;
 }
 
-.hide-inactive-rows tr.inactive{
-	display:none;
+/* line 195, ../sass/style.scss */
+.hide-inactive-rows tr.inactive {
+  display: none;
 }
 
-tr.inactive td{
-	background: pink !important;
+/* line 199, ../sass/style.scss */
+tr.inactive td {
+  background: pink !important;
 }
-tr.notedit,tr.notedit td{
-	background:none !important;
+
+li.inactive{
+  background: rgba(255, 105, 180,.1) !important;
+}
+
+/* line 202, ../sass/style.scss */
+tr.notedit, tr.notedit td {
+  background: none !important;
 }
 
 /*******************************************************
 *	HAZARD HUB STYLES
 *******************************************************/
-#hazardTree{
-	font-size:25px;
-
-	a i{
-		margin: 3px 12px 0 -2px;
-		width: 1em;
-	}
-
-	li {
-		display: block;
-		min-height: 25px;
-		padding:20px;
-		margin:20px;
-		border:3px solid #a7a7a7;
-		white-space: wrap;
-		margin-left: 18px;
-		min-width: 18px;
-		background:white;
-	}
-
-	li:hover {
-		border-color:#49afcd;	}
-
-
-	.toggle{
-		width: auto;
-		font-size: 30px;
-		color: #333;
-		margin: -10px 3px 0 0;
-		min-width: 0;
-		height: auto;
-		border: 0 none transparent;
-	    background:transparent;
-	}
-
-	textarea:focus, input:focus, button:focus{
-    	outline: 0;
-	}
-
-	li{
-		transition: height .3s linear,
-					line-height .3s linear,
-					padding .3s linear,
-					margin .3s linear,
-					border .1s linear ;
-	}
-
-	h2{
-		display:inline;
-		font-size: 1.3vw;
-	}
-
-	.leftThings{
-		height: 46px;
-		padding-top: 6px;
-		display: inline-block;
-		max-width: 40%;
-
-		a{
-			margin: 0 5px;
-		}
-	}
-
-	.hazarNodeButtons{
-		display: inline-block;
-		float:right;
-
-		a{
-			margin:0 5px;
-			font-size: 1vw;
-		}
-
-		
-	}
-
-	/*********** toggle hidden state of subhazards **********************/
-	[ng-cloak] {
-	    display: none;
-	}
-	* {
-	    box-sizing: border-box
-	}
-	.minimized > ol > li {
-	   overflow:hidden;
-	   position:relative;
-	   border:none;
-	   height:0;
-	   line-height:0;
-	   background:none;
-	   margin:0 20px;
-	   padding:0 20px;
-	   width:0;
-	   div{
-	   	display: none;
-	   }
-	}
-
-	.minimized > ol > li button a{
-		display:none;
-	}
-
-	.minimized > ol {
-	    border: 0 none transparent;
-	    height:0;
-	}
-
-	button {
-	    cursor: pointer
-	}
-
+/* line 209, ../sass/style.scss */
+#hazardTree {
+  padding-top:60px;
+  font-size: 25px;
+  /*********** toggle hidden state of subhazards **********************/
+}
+/* line 212, ../sass/style.scss */
+#hazardTree a i{
+  text-align: center;
+  margin: 3px 12px 0 -2px;
+  width: 1em;
 }
 
+/* line 217, ../sass/style.scss */
+#hazardTree li {
+  display: block;
+  min-height: 25px;
+  padding: 20px;
+  margin: 20px;
+  border: 3px solid #a7a7a7;
+  white-space: wrap;
+  margin-left: 18px;
+  min-width: 18px;
+}
+/* line 229, ../sass/style.scss */
+#hazardTree li:hover {
+  border-color: #49afcd;
+}
+/* line 233, ../sass/style.scss */
+#hazardTree .toggle {
+  width: auto;
+  font-size: 30px;
+  color: #333;
+  margin: -10px 3px 0 0;
+  min-width: 0;
+  height: auto;
+  border: 0 none transparent;
+  background: transparent;
+}
+/* line 244, ../sass/style.scss */
+#hazardTree textarea:focus, #hazardTree input:focus, #hazardTree button:focus {
+  outline: 0;
+}
+/* line 248, ../sass/style.scss */
+#hazardTree li {
+  transition: height 0.3s linear, line-height 0.3s linear, padding 0.3s linear, margin 0.3s linear, border 0.1s linear;
+}
+/* line 256, ../sass/style.scss */
+#hazardTree h2 {
+  display: inline;
+  font-size: 1vw;
+}
+/* line 261, ../sass/style.scss */
+#hazardTree .leftThings {
+  height: 46px;
+  padding-top: 6px;
+  display: inline-block;
+  max-width: 40%;
+}
+ #hazardTree li.small .leftThings {
+  max-width: 70%;
+}
+/* line 267, ../sass/style.scss */
+#hazardTree .leftThings a {
+  margin: 0 5px;
+}
+/* line 272, ../sass/style.scss */
+#hazardTree .hazarNodeButtons {
+  display: inline-block;
+  float: right;
+}
+/* line 276, ../sass/style.scss */
+#hazardTree .hazarNodeButtons a {
+  margin: 0 5px;
+  font-size: 1vw;
+}
+/* line 285, ../sass/style.scss */
+#hazardTree [ng-cloak] {
+  display: none;
+}
+/* line 288, ../sass/style.scss */
+#hazardTree * {
+  box-sizing: border-box;
+}
+/* line 291, ../sass/style.scss */
+#hazardTree .minimized > ol > li {
+  overflow: hidden;
+  position: relative;
+  border: none;
+  height: 0;
+  line-height: 0;
+  background: none;
+  margin: 0 20px;
+  padding: 0 20px;
+  width: 0;
+}
+/* line 301, ../sass/style.scss */
+#hazardTree .minimized > ol > li div {
+  display: none;
+}
+/* line 306, ../sass/style.scss */
+#hazardTree .minimized > ol > li button a {
+  display: none;
+}
+/* line 310, ../sass/style.scss */
+#hazardTree .minimized > ol {
+  border: 0 none transparent;
+  height: 0;
+}
+/* line 315, ../sass/style.scss */
+#hazardTree button {
+  cursor: pointer;
+}
 
+/*****************************************************************
+*******           BUILDING HUB               ***************************
+******************************************************************/
+#buildingHub ul{
+  list-style: none;
+}
+
+div#buildings{
+  padding:10px;
+  margin:10px;
+}
+
+div#buildings div.building{
+  margin:10px;
+  padding:20px;
+  border: 3px solid #999;
+  background:#e7e7e7;
+}
+
+div.selected h3, div.selected h4{
+  margin:10px 0;
+  font-weight:bold;
+}
+
+div#buildings div.selected{
+  border: 3px solid #49afcd;
+  background:#fff;
+}
+div#buildings div.selected h2{
+  color:#49afcd;
+  font-weight: bold;
+}
+@media all and (min-width: 1200px){
+  #buildingHub .hazards, #buildingHub .contacts{
+    width:45%;
+  }
+}
+@media all and (max-width: 1199px){
+  #buildingHub .hazards, #buildingHub .contacts{
+    width:100%;
+  }
+}
+div#buildings div.building .PI{
+  padding: 21px 0 0px;
+  border-top: 1px solid #d7d7d7;
+  width: 100%;
+  margin: 20px 0;
+}
+div#buildings ul.row{
+  margin-left:0 !important;
+}
+div#buildings li.row{
+  margin-left:0;
+}
+div.building ul.well{
+  margin-left:0;
+}
+div.building .room{
+  margin-top:10px;
+}
+a.btn i{
+  text-align: center;
+  margin: 2px 0 0 0;
+  color: white;
+  margin: 4px 15px 5px 0 !important;
+  font-size: 25px;
+}
+#buildingHub a.btn-mini i{
+  margin:1px 6px 3px 0px !important;
+  font-size: 15px !important;
+}
+#buildingHub a.btn-mini{
+  margin:5px;
+}
+#buildingHub a.btn{
+  color:white;
+}
+.building .buttons{
+  float:right;
+  margin-top: -8px;
+}
 /*******************************************************
 *	Checklist Hub Styles
 *******************************************************/
-#parentChecklistsContainer, #addChecklist{
-	margin:30px 0;
-}
-a#addChecklistToHazard{
-	margin-top: -9px;
-}
-ul.questionList, ul#parentHazards, ul.listWithChecks{
-	list-style:none;
-
-	li{
-		padding: 10px;
-		border-bottom:1px solid #ddd;
-	}
+/* line 325, ../sass/style.scss */
+#parentChecklistsContainer, #addChecklist {
+  margin: 30px 0;
 }
 
-ul.questionList li a{
-	margin: 10px;
-}
-ul#parentHazards li a{
-	margin-left:8px;
-}
-ul.listWithChecks li{
-	background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
-	padding-left:32px;
-
-	.error{
-		background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
-	}
+/* line 328, ../sass/style.scss */
+a#addChecklistToHazard {
+  margin-top: -9px;
 }
 
-label.deficiencyRoomList{
-	background: #fff;
+/* line 331, ../sass/style.scss */
+ul.questionList, ul#parentHazards, ul.listWithChecks {
+  list-style: none;
 }
-div.deficiencyRoomList{
-	margin:10px;
-	padding:10px;
+/* line 334, ../sass/style.scss */
+ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 }
+
+/* line 340, ../sass/style.scss */
+ul.questionList li a {
+  margin: 10px;
+}
+
+/* line 343, ../sass/style.scss */
+ul#parentHazards li a {
+  margin-left: 8px;
+}
+
+/* line 346, ../sass/style.scss */
+ul.listWithChecks li {
+  background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
+  padding-left: 32px;
+}
+/* line 350, ../sass/style.scss */
+ul.listWithChecks li .error {
+  background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
+}
+
+/* line 355, ../sass/style.scss */
+label.deficiencyRoomList {
+  background: #fff;
+}
+
+/* line 358, ../sass/style.scss */
+div.deficiencyRoomList {
+  margin: 10px;
+  padding: 10px;
+}
+
+/* line 362, ../sass/style.scss */
 .resolvedDeficiencies {
-	margin: 0 10px 10px 10px;
-	padding: 10px;
+  margin: 0 10px 10px 10px;
+  padding: 10px;
 }
+
 /* Common css rules for metro-ui-light & metro-ui-dark */
-
-
 /* Body & Footer & headers
 -------------------------------------------------- */
-
+/* line 372, ../sass/style.scss */
 body {
-   padding-top: 14px;
-   //padding-bottom: 88px;
-   position: relative;
-   font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
-   font-weight: 300;
-   font-size: 11px;
+  padding-top: 14px;
+  position: relative;
+  font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+  font-weight: 300;
+  font-size: 11px;
 }
 
-
+/* line 382, ../sass/style.scss */
 .clearfix:after {
-   content: ".";
-   display: block;
-   clear: both;
-   visibility: hidden;
-   line-height: 0;
-   height: 0;
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
 }
+
+/* line 390, ../sass/style.scss */
 .clearfix {
-   display: inline-block;
-   zoom: 1;
+  display: inline-block;
+  zoom: 1;
 }
+
+/* line 394, ../sass/style.scss */
 html[xmlns] .clearfix {
-   display: block;
+  display: block;
 }
+
+/* line 397, ../sass/style.scss */
 * html .clearfix {
-   height: 1%;
+  height: 1%;
 }
+
 /********************ROOM SELECTION & HAZARD ASSESMENT*************/
-.rooms, .hazards{
-	label{
-		margin:20px 0;
-	}
+/* line 402, ../sass/style.scss */
+.rooms label, .hazards label {
+  margin: 20px 0;
 }
-.hazards{
-	width:100%;
+
+/* line 406, ../sass/style.scss */
+.hazards {
+  width: 100%;
 }
-.hazard{
-	background: #f7f7f7;
-	border-bottom: #d7d7d7 solid 3px;
-	margin: 10px 0;
-	width: 98%;
-	padding: 10px 1%;
+
+/* line 409, ../sass/style.scss */
+.hazard {
+  background: #f7f7f7;
+  border-bottom: #d7d7d7 solid 3px;
+  margin: 10px 0;
+  width: 98%;
+  padding: 10px 1%;
 }
 
 /********************CHECKLIST STYLES *****************************/
-.checklist{
-	padding: 0px 1% 15px;
-	margin: 25px 0 25px;
-	background: #f0f0f0;
+/* line 418, ../sass/style.scss */
+.checklist {
+  padding: 0px 1% 15px;
+  margin: 25px 0 25px;
+  background: #f0f0f0;
 }
-div.question, li.question{
-	border-bottom:1px solid #d7d7d7;
-	padding:10px 2%;
-	margin:10px 0;
-	width: 93%;
-	background:#f7f7f7;
+
+/* line 423, ../sass/style.scss */
+div.question, li.question {
+  border-bottom: 1px solid #d7d7d7;
+  padding: 10px 2%;
+  margin: 10px 0;
+  width: 93%;
+  background: #f7f7f7;
 }
-.hazardBtn i, .hazardBtn span{
-	margin:0 10px;
-	font-size:15px;	
+
+/* line 430, ../sass/style.scss */
+.hazardBtn i, .hazardBtn span {
+  margin: 0 10px;
+  font-size: 15px;
+  color:white !Important;
+}
+.hazardBtn i{
+  margin:5px !important;
+  font-size: 25px;
+}
+a.hazardBtn{
+  padding-left:3px;
+  padding-right:8px;
+  color:white !important;
+}
+li.small a.hazardBtn span{
+  display:none;
 }
 /* individual page menu bars*/
-.pageMenu{
-min-height: 55px !important;
-color: white !important;
-padding: 2px 0 2px 0;
-width: 100%;
-	a{
-		color:white;
-		margin-left:13px;
-	}
-
-	a img{
-		margin: 0 13px 0 5px;
-	}
+/* line 435, ../sass/style.scss */
+.pageMenu {
+  min-height: 55px !important;
+  color: white !important;
+  padding: 2px 0 2px 0;
+  width: 100%;
+}
+/* line 440, ../sass/style.scss */
+.pageMenu a {
+  color: white;
+  margin-left: 13px;
+}
+/* line 445, ../sass/style.scss */
+.pageMenu a img {
+  margin: 0 13px 0 5px;
 }
 
-.questionControls{
-	margin:10px 0 5px;
-	display:block;
+/* line 450, ../sass/style.scss */
+.questionControls {
+  margin: 10px 0 5px;
+  display: block;
 }
-.deficiencies, .recommendations{
-	padding:15px 0;
+
+/* line 454, ../sass/style.scss */
+.deficiencies, .recommendations {
+  padding: 15px 0;
 }
+
 /*rotate hide/reveal text for sidenav on checklist*/
+/* line 458, ../sass/style.scss */
 .rotate {
-	-webkit-transform-origin: bottom left;   
-
-    -moz-transform-origin: bottom left; 
-    
-    -o-transform-origin: bottom left; 
-
-    -ms-transform-origin: bottom left; 
-
-    transform-origin: bottom left;  
-	/* Safari & Chrome */
-	-webkit-transform: rotate(-90deg);
-	
-	/* Firefox */
-	-moz-transform: rotate(-90deg);
-	
-	/* IE */
-	-ms-transform: rotate(-90deg);
-	
-	/* Opera */
-	-o-transform: rotate(-90deg);
-	
-	/* Internet Explorer */
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform-origin: bottom left;
+  -moz-transform-origin: bottom left;
+  -o-transform-origin: bottom left;
+  -ms-transform-origin: bottom left;
+  transform-origin: bottom left;
+  /* Safari & Chrome */
+  -webkit-transform: rotate(-90deg);
+  /* Firefox */
+  -moz-transform: rotate(-90deg);
+  /* IE */
+  -ms-transform: rotate(-90deg);
+  /* Opera */
+  -o-transform: rotate(-90deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+/*****************************************************************
+*****            POST INSPECTION PROCESS                **********
+*****************************************************************/
+.postInspectionNav{
+  list-style: none;
+  width:100%;
+  margin-left: 0;
+  height: 70px;
+}
+.postInspectionNav li{
+  float:left;
+  margin-right:10px;
+}
+.inspectionInfo{
+  margin-bottom:20px;
+}
+.inspectionInfo .row h3{
+  display:inline-block;
+  width:220px;
+  margin-bottom:10px;
+  font-weight: bold;
+}
+.inspectionInfo .row{
+  margin-left:0;
+}
+.inspectionInfo p{
+  display:inline;
+  font-size:18px;
+  width:20px;
+}
+.inspectionInfo .pull-right{
+  width:360px;
 }
 
+td.reviewHeader{
+  font-weight: bold;
+  font-size: 25px;
+  color: white;
+  padding-left: 50px;
+  height: 38px;
+  background-position: 5px 7px;
+  background-repeat: no-repeat;
+}
+#biologicalMaterialsHeader{
+  background-image: url(../img/biohazard-white-con.png);
+  background-color: #d00;
+}
+#chemicalSafetyHeader{
+  background: url(../img/chemical-safety-large-icon.png) 11px 14px no-repeat;
+  background-color: #F3F306;
+  color:black;
+}
+#radiationSafetyHeader{
+  background-image: url(../img/radiation-large-icon.png);
+  background-color: #e67e1d;
+  background-size: 40px 40px;
+}
+.status{
+  font-size: 25px;
+  margin-bottom:15px;
+}
+.status:after{
+  margin-left:15px;
+  font-family: 'Open Sans', sans-serif !important;
+}
+.incomplete{
+  color:#e67e1d;
+}
+.incomplete:before{
+  content: "\e13a";
+}
+.incomplete:after{
+  content:"Pending";
+}
+.complete{
+  color:#090;
+}
+.complete:after{
+  content:"Complete";
+}
+.complete:before{
+  content: "\e03c";
+}
+.notStarted{
+  color:#900;
+}
+.notStarted:before{
+  content: "\e03a";
+}
+.notStarted:after{
+  content:"None";
+}
+.detail{
+  margin-bottom:55px;
+  h2{
+    border-bottom:1px solid #ddd;
+    padding:10px 0;
+    margin:0 10px;
+  }
+}
+.checklistDetailsQuestion{
+  &:hover{
+    background:#f7f7f7;
+  }
+  padding:30px 0 25px;
+  margin:0 10px;
+  border-bottom:1px solid #ddd;
+  h3{
+    font-size:20px;
+  }
+  i{
+    text-align: center;
+    font-size:25px;
+    font-weight: bold;
+    font-style: normal;
+  }
+
+}
+.Yes{
+  color:#090;
+}
+.No{
+  color:#c00;
+}
 /****************************************************************
 *****           HAZARD ASSESSMENT   ****************************
 *****************************************************************/
-.hazardRooms{
-	margin-top:-20px;
-	p {
-		margin-bottom:-25px;
-	}
+/* line 487, ../sass/style.scss */
+.hazardRooms {
+  margin-top: -20px;
+}
+/* line 489, ../sass/style.scss */
+.hazardRooms p {
+  margin-bottom: -25px;
 }
 
-.jqtree_common .input-append{
-	margin-bottom:-35px;
+/* line 494, ../sass/style.scss */
+.jqtree_common .input-append {
+  margin-bottom: -35px;
 }
-.hazardList, .hazardList ul{
-	list-style: none !Important;
+
+/* line 497, ../sass/style.scss */
+.hazardList, .hazardList ul {
+  list-style: none !Important;
 }
+
 @media (max-width: 1365px) {
+  /* line 501, ../sass/style.scss */
   .hazardList {
-		width:100%;
-		margin-bottom:40px;
-	}
+    width: 100%;
+    margin-bottom: 40px;
+  }
+}
+@media (min-width: 1366px) {
+  /* line 508, ../sass/style.scss */
+  .hazardList {
+    width: 30%;
+    margin: 0 3% 0 0;
+    float: left;
+  }
+}
+/* line 515, ../sass/style.scss */
+.hazardListHeader {
+  background-size: 45px 45px !important;
+  background-position: left 50%;
+  background-repeat: no-repeat !important;
+  padding-left: 60px;
+  margin-bottom: 10px;
+  font-size: 30px;
 }
 
-@media (min-width: 1366px){
-	.hazardList {
-		width:30%;
-		margin: 0 3% 0 0;
-		float:left;
-	}
+/* line 523, ../sass/style.scss */
+#biologicalMaterials {
+  background: url(../img/biohazard-largeicon.png);
 }
 
-.hazardListHeader{
-	background-size: 45px 45px !important;
-	background-position: left 50%;
-	background-repeat: no-repeat !important;
-	padding-left:60px;
-	margin-bottom: 10px;
-	font-size: 30px;
+/* line 527, ../sass/style.scss */
+#generalLaboratorySafety {
+  background: url(../img/chemical-safety-large-icon.png);
 }
-#biologicalMaterials{
-	background:url(../img/biohazard-largeicon.png);
 
+/* line 530, ../sass/style.scss */
+#radiationSafety {
+  background: url(../img/radiation-large-icon.png);
 }
-#generalLaboratorySafety{
-	background: url(../img/chemical-safety-large-icon.png);
-}
-#radiationSafety{
-	background: url(../img/radiation-large-icon.png);
-}
+
 /*****************************************************************
 *******           PI HUB               ***************************
 ******************************************************************/
-#piButtons a{
-	margin:20px 10px;
-}
-.list thead a{
-	margin:10px;
+/* line 536, ../sass/style.scss */
+#piButtons a {
+  margin: 20px 10px;
 }
 
-.list h2{
-	margin-top: 30px;
-	margin-bottom: -4px;
+/* line 539, ../sass/style.scss */
+.list thead a {
+  margin: 10px;
 }
 
-#departmentList, #specialHazardList{
-	list-style:none;
+/* line 543, ../sass/style.scss */
+.list h2 {
+  margin-top: 30px;
+  margin-bottom: -4px;
 }
 
-#departmentList li, #specialHazardList li{
-	font-size: 20px;
-	line-height: 34px;
+/* line 548, ../sass/style.scss */
+#departmentList, #specialHazardList {
+  list-style: none;
 }
 
-textarea, input{
-	border-color:#333 !important;
+/* line 552, ../sass/style.scss */
+#departmentList li, #specialHazardList li {
+  font-size: 20px;
+  line-height: 34px;
 }
 
-.hazard-assessment-modal{
-	height:400px;
-	overflow: hidden !important;
-	left: 0;
-   margin: 0;
-   border: 0;
+/* line 557, ../sass/style.scss */
+textarea, input {
+  border-color: #333 !important;
+}
+
+/* line 561, ../sass/style.scss */
+.hazard-assessment-modal {
+  height: 400px;
+  overflow: hidden !important;
+  left: 0;
+  margin: 0;
+  border: 0;
   -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-          border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
-          box-shadow: none;
-  margin-left:70px;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  margin-left: 70px;
   width: auto;
+}
 
+/* line 577, ../sass/style.scss */
+.hazard-assessment-modal .modal-body {
+  overflow: hidden;
+  padding-right: 0;
 }
-.hazard-assessment-modal .modal-body{
-	overflow: hidden;
-	padding-right:0;
+
+/* line 581, ../sass/style.scss */
+.hazard-assessment-modal .tabbable .nav-stacked {
+  border-left: 1px solid #ccc;
+  float: left;
+  overflow-x: hidden;
+  height: 315px;
 }
-.hazard-assessment-modal .tabbable .nav-stacked{
-	
-	border-left:1px solid #ccc;
-	float:left;
-	overflow-x: hidden;
-	height: 315px;
+
+/* line 588, ../sass/style.scss */
+.hazard-assessment-modal .tabbable .nav-stacked > li {
+  padding-right: 15px;
+  margin-left: 10px;
+  width: 450px;
 }
-.hazard-assessment-modal .tabbable .nav-stacked>li{
-	padding-right:15px;
-	margin-left:10px;
-	width:450px;
+
+@media (max-width: 1200px) {
+  /* line 594, ../sass/style.scss */
+  .hazard-assessment-modal .tabbable .nav-stacked > li {
+    padding-right: 15px;
+    margin-left: 10px;
+    width: 250px;
+  }
 }
-@media (max-width: 1200px){
-	.hazard-assessment-modal .tabbable .nav-stacked>li{
-	padding-right:15px;
-	margin-left:10px;
-	width:250px;
+/* line 600, ../sass/style.scss */
+.hazard-assessment-modal .tab-content {
+  height: 330px;
+  overflow: hidden !important;
 }
+
+/* line 604, ../sass/style.scss */
+.hazard-assessment-modal .modal-header, .hazard-assessment-modal li.active a {
+  background: #e67e1d !important;
+  color: white !important;
 }
-.hazard-assessment-modal .tab-content{
-	height: 330px;
-	overflow: hidden !important;
+
+/* line 608, ../sass/style.scss */
+.hazard-assessment-modal li a {
+  color: #666;
+  cursor: pointer;
 }
-.hazard-assessment-modal .modal-header, .hazard-assessment-modal li.active a{
-	background: $orange !important;
-	color: white !important;
+
+/* line 612, ../sass/style.scss */
+.hazard-assessment-modal li a:hover {
+  text-decoration: none !important;
 }
-.hazard-assessment-modal li a{
-	color:#666;
-	cursor: pointer;
+
+/* line 615, ../sass/style.scss */
+li.active a {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-color: #e67e1d !important;
 }
-.hazard-assessment-modal li a:hover{
-	text-decoration: none !important;
-}
-li.active a{
-	box-shadow: 0 0 10px rgba(0,0,0,.3);
-	border-color: $orange !important;
-}
+
+/* line 619, ../sass/style.scss */
 .nav-tabs.nav-stacked > li > a {
-	border: none;
+  border: none;
 }
-
 
 /***************************************************************
 ********* I
 ***************************************************************/
-
 /* Let's get this party started */
+/* line 629, ../sass/style.scss */
 ::-webkit-scrollbar {
-    width: 12px;
+  width: 12px;
 }
- 
+
 /* Track */
+/* line 634, ../sass/style.scss */
 ::-webkit-scrollbar-track {
-    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    border: 1px solid #ccc;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  border: 1px solid #ccc;
 }
- 
+
 /* Handle */
+/* line 642, ../sass/style.scss */
 ::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    background: rgba(0,0,0,0.3); 
-    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  background: rgba(0, 0, 0, 0.3);
 }
+
+/* line 648, ../sass/style.scss */
 ::-webkit-scrollbar-thumb:window-inactive {
-	background: rgba(0,0,0,0.2); 
+  background: rgba(0, 0, 0, 0.2);
 }
 
-
-.checklist:before { 
-  display: block; 
-  content: " "; 
-  margin-top: -265px; 
-  height: 285px; 
-  visibility: hidden; 
-}
-.checklist ul{
-	list-style: none !important;
-}
-#sp-nav ul li a{
-	line-height: normal;
-	color: black;
-	margin: 0;
-	border-bottom: 1px solid #c0c0c0;
-	font-size: 17px;
-	padding: 24px 10px 37px 30px;
-	text-shadow: none;
-	box-shadow: none !important;
+/* line 653, ../sass/style.scss */
+.checklist:before {
+  display: block;
+  content: " ";
+  margin-top: -265px;
+  height: 285px;
+  visibility: hidden;
 }
 
-#sp-nav ul{
-	padding:0;
+/* line 660, ../sass/style.scss */
+.checklist ul {
+  list-style: none !important;
 }
 
-#sp-nav ul li a.active{
-	background: white;
-	color:black;
+/* line 663, ../sass/style.scss */
+#sp-nav ul li a {
+  line-height: normal;
+  color: black;
+  margin: 0;
+  border-bottom: 1px solid #c0c0c0;
+  font-size: 17px;
+  padding: 24px 10px 37px 30px;
+  text-shadow: none;
+  box-shadow: none !important;
 }
 
-.accordion-toggle h2{
-	color:black;
-	text-decoration: none !important;
-}
-.accordion-toggle:hover{
-	text-decoration: none !important;
-}
-.questionAnswerInputs{
-	float:right;
-}
-.dropInputs{
-	clear: both;
-	margin-top: 39px;
-	float: none;
-}
-.menuIcon{
-	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-	color: #333 !important;
-	background: #d5d5d5;
-	padding: 25px 5px 25px 5px !important;
-	top: 91px;
-	display: block;
-	position: fixed;
-	font-size: 45px;
-	margin: -15px 0 -9px 98%;
-	float: left;
-	z-index: 500;
-	border-radius: 0 3px 3px 0;
-	transition: margin-left .2s;
- 	-webkit-transition: margin-left .2s;
-}
-.menuIcon:hover{
-	padding: 24px 5px 25px 4px !important;
-	border: 1px solid #ccc;
-	text-decoration: none;
-}
-.menuIcon:hover:active{
-	color:green !importantt;
-}
-.pushLeft{
-	transition: margin-left .2s;
-  	-webkit-transition: margin-left .2s;
-	margin-left:20% !important;
-}
-span.red{
-	color: #f00;
-}
-span.green{
-	color: #090;
+/* line 674, ../sass/style.scss */
+#sp-nav ul {
+  padding: 0;
 }
 
-.hazardList>ul{
-	margin:0;
+/* line 678, ../sass/style.scss */
+#sp-nav ul li a.active {
+  background: white;
+  color: black;
 }
-.hazardList>ul li>ul{
-	margin-left:0;
+
+/* line 683, ../sass/style.scss */
+.accordion-toggle h2 {
+  color: black;
+  text-decoration: none !important;
 }
-.topSub h1,.topSub h2,.topSub h3,.topSub h4, .topSub h5, .topSub h6{
-	color:black;
+
+/* line 687, ../sass/style.scss */
+.accordion-toggle:hover {
+  text-decoration: none !important;
 }
-.topSub{
-	padding:5px 0;
-	//background: rgba(50,50,50,.03);
-	padding:5px;
-	//border-bottom:1px solid #ccc;
+
+/* line 690, ../sass/style.scss */
+.questionAnswerInputs {
+  float: right;
 }
-.topSub:hover{
-	background: #eee
+
+/* line 693, ../sass/style.scss */
+.dropInputs {
+  clear: both;
+  margin-top: 39px;
+  float: none;
 }
-.subHazards{
-	margin:-9px 0 11px 39px !important;
+
+/* line 698, ../sass/style.scss */
+.menuIcon {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  color: #333 !important;
+  background: #d5d5d5;
+  padding: 25px 5px 25px 5px !important;
+  top: 91px;
+  display: block;
+  position: fixed;
+  font-size: 45px;
+  margin: -15px 0 -9px 98%;
+  float: left;
+  z-index: 500;
+  border-radius: 0 3px 3px 0;
+  transition: margin-left .2s;
+  -webkit-transition: margin-left .2s;
 }
-.subHazards>li, .subHazards>p, .topSub>p, .topSub>li, .roomRepeat{
-	font-size: 15px;
-	margin:15px 0;
+
+/* line 714, ../sass/style.scss */
+.menuIcon:hover {
+  padding: 24px 5px 25px 4px !important;
+  border: 1px solid #ccc;
+  text-decoration: none;
 }
+
+/* line 719, ../sass/style.scss */
+.menuIcon:hover:active {
+  color: green !important t;
+}
+
+/* line 722, ../sass/style.scss */
+.pushLeft {
+  transition: margin-left .2s;
+  -webkit-transition: margin-left .2s;
+  margin-left: 20% !important;
+}
+
+/* line 727, ../sass/style.scss */
+span.red {
+  color: #f00;
+}
+
+/* line 730, ../sass/style.scss */
+span.green {
+  color: #090;
+}
+
+/* line 734, ../sass/style.scss */
+.hazardList > ul {
+  margin: 0;
+}
+
+/* line 737, ../sass/style.scss */
+.hazardList > ul li > ul {
+  margin-left: 0;
+}
+
+/* line 740, ../sass/style.scss */
+.topSub h1, .topSub h2, .topSub h3, .topSub h4, .topSub h5, .topSub h6 {
+  color: black;
+}
+
+/* line 743, ../sass/style.scss */
+.topSub {
+  padding: 5px 0;
+  padding: 5px;
+}
+
+/* line 749, ../sass/style.scss */
+.topSub:hover {
+  background: #eeeeee;
+}
+
+/* line 752, ../sass/style.scss */
+.subHazards {
+  margin: -9px 0 11px 39px !important;
+}
+
+/* line 755, ../sass/style.scss */
+.subHazards > li, .subHazards > p, .topSub > p, .topSub > li, .roomRepeat {
+  font-size: 15px;
+  margin: 15px 0;
+}
+
 /****overrides for small room number checkboxes in hazard assessment***************/
+/* line 760, ../sass/style.scss */
 label.checkbox input[type=checkbox] ~ span.smaller::after {
-	font-family: 'IcoMoon';
-	content: "\2003";
-	font-size: 16px !important;
-	position: absolute;
-	top: 7px !important;
-	left: 7px !important;
-	width: 15px !important;
-	height: 15px;
-	z-index: 1000;
+  font-family: 'IcoMoon';
+  content: "\2003";
+  font-size: 16px !important;
+  position: absolute;
+  top: 7px !important;
+  left: 7px !important;
+  width: 15px !important;
+  height: 15px;
+  z-index: 1000;
 }
 
-.roomRepeat{
-	margin:3px;
+/* line 772, ../sass/style.scss */
+.roomRepeat {
+  margin: 3px;
 }
-.roomRepeat:after{
-	content: ", ";
-}
-.last:after{
-	content: "" !important;
-}
-.modal-trigger-plus{
 
-	color:#090;
-	font-size: 25px;
-	margin-top:6px;
+/* line 775, ../sass/style.scss */
+.roomRepeat:after {
+  content: ", ";
 }
-.subHazards>li h4, .topSub>li h4{
-	white-space: nowrap;
-}
-#footer ul{
-	list-style: none;
-	margin:15px 0;
 
+/* line 778, ../sass/style.scss */
+.last:after {
+  content: "" !important;
 }
-#footer li{
-	float:left;
-	width:25%;
-}
-#footer li a{
-	font-size: 1vw;
-}
-#footer li a span{
-	margin-left:10px;
-}
-#footer li a img{
-	max-width:20%;
-}
-@media (max-width: 800px){
-	#footer li a span{
-	margin-left:10px;
-	display: block;
-	}
-}
-.clipboard{	background: url(../img/clipboard.png);}
-.phone{	background: url(../img/phone.png);padding-left: 140px !important;}
-.speechBubble{background: url(../img/speechBubble.png);padding-left: 190px !important}
-.checkmarkFooter{background: url(../img/checkmarkFooter.png);padding-left: 140px !important;}
 
-.accordion:first-child{
-	padding:10px;
+/* line 781, ../sass/style.scss */
+.modal-trigger-plus {
+  color: #090;
+  font-size: 25px;
+  margin-top: 6px;
 }
-.test{
-	width:100px;
+
+/* line 787, ../sass/style.scss */
+.subHazards > li h4, .topSub > li h4 {
+  white-space: nowrap;
+}
+
+/* line 790, ../sass/style.scss */
+#footer ul {
+  list-style: none;
+  margin: 15px 0;
+}
+
+/* line 795, ../sass/style.scss */
+#footer li {
+  float: left;
+  width: 25%;
+}
+
+/* line 799, ../sass/style.scss */
+#footer li a {
+  font-size: 1vw;
+}
+
+/* line 802, ../sass/style.scss */
+#footer li a span {
+  margin-left: 10px;
+}
+
+/* line 805, ../sass/style.scss */
+#footer li a img {
+  max-width: 20%;
+}
+
+@media (max-width: 800px) {
+  /* line 809, ../sass/style.scss */
+  #footer li a span {
+    margin-left: 10px;
+    display: block;
+  }
+}
+/* line 814, ../sass/style.scss */
+.clipboard {
+  background: url(../img/clipboard.png);
+}
+
+/* line 815, ../sass/style.scss */
+.phone {
+  background: url(../img/phone.png);
+  padding-left: 140px !important;
+}
+
+/* line 816, ../sass/style.scss */
+.speechBubble {
+  background: url(../img/speechBubble.png);
+  padding-left: 190px !important;
+}
+
+/* line 817, ../sass/style.scss */
+.checkmarkFooter {
+  background: url(../img/checkmarkFooter.png);
+  padding-left: 140px !important;
+}
+
+/* line 819, ../sass/style.scss */
+.accordion:first-child {
+  padding: 10px;
+}
+
+/* line 822, ../sass/style.scss */
+.test {
+  width: 100px;
+}
+.loading img{
+  width:50px;
+}
+.loading{
+  font-size:20px;
+  font-weight: bold;
 }
