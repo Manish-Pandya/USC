@@ -14,12 +14,11 @@ require_once '../top_view.php';
 </div>
 
 <div class="container-fluid whitebg" style="padding-top:80px; padding-bottom:30px;">
-	<ul class="postInspectionNav">
+	<ul class="postInspectionNav row">
 		<li><a ng-click="setRoute('confirmation')" class="btn btn-large btn-success">Finalize Inspection</a></li>
 		<li><a ng-click="setRoute('review')" class="btn btn-large btn-info">Inspection Review</a></li>
 		<li><a ng-click="setRoute('details')" class="btn btn-large btn-primary">Inspection Details</a></li>
 	</ul>
-
 	<ng-view></ng-view>
 </div>
 

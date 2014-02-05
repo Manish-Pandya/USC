@@ -233,13 +233,15 @@ function inspectionDetailsController($scope,  $location, $anchorScroll, testFact
     var answers = ['Yes','No','N/A'];
     for(i=0;i<$scope.checklists.length;i++){
       var checklist = $scope.checklists[i];
-      for(x=0;x<checklist.questions.length;x++){
-        var question = checklist.questions[x];
-        question.response = answers[Math.floor(Math.random()*answers.length)];
-        if(question.response == 'No'){
-          question.deficiency = question.deficiencies[Math.floor(Math.random()*question.deficiencies.length)].text;
-          question.rootCause = question.deficiencyRootCauses[Math.floor(Math.random()*question.deficiencyRootCauses.length)];
-          console.log(question);
+      for(x=0;x<checklist.Questions.length;x++){
+        var question = checklist.Questions[x];
+        question.Response = answers[Math.floor(Math.random()*answers.length)];
+        if(question.Response == 'No'){
+         // question.Deficiency = question.Deficiencies[Math.floor(Math.random()*question.Deficiencies.length)].text;
+          angular.forEach(question.Deficiencies, function(Deficiency, key){
+            console.log(question.DeficiencyRootCauses);
+            Deficiency.RootCause = question.DeficiencyRootCauses[Math.floor(Math.random()*question.DeficiencyRootCauses.length)];
+          });
         }
       }
     }

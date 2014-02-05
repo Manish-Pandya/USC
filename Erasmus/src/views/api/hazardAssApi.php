@@ -195,57 +195,59 @@ SubHazards: [
 <?php if (isset($_GET['checklists'])){?>
 	({ "Checklists" : [ { "key_id" : 200,
         "label" : "STANDARD MICROBIOLOGICAL PRACTICES",
-        "questions" : [ { "deficiencies" : [ { "text" : "Lab supervisor is not controlling access to the laboratory" } ],
-              "deficiencyRootCauses" : [  ],
+        "Questions" : [ { "Deficiencies" : [ { "Text" : "Lab supervisor is not controlling access to the laboratory" } ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 300,
-              "notes" : [ { "key_id" : 224,
-                    "text" : "Test note"
+              "Observations" : [ { "key_id" : 224,
+                    "Text" : "Test note"
                   },
                   { "key_id" : 229,
-                    "text" : "Test note"
+                    "Text" : "Test note"
                   }
                 ],
               "orderIndex" : 1,
-              "recommendations" : [ { "key_id" : 224,
-                    "text" : "Test recommendation"
+              "Recommendations" : [ { "key_id" : 224,
+                    "Text" : "Test recommendation"
                   },
                   { "key_id" : 2454,
-                    "text" : "Test recommendation"
+                    "Text" : "Test recommendation"
                   }
                 ],
-              "standardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "text" : "Lab supervisor enforces policies that control access to the laboratory"
+              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
+              "Text" : "Lab supervisor enforces policies that control access to the laboratory"
             },
-            { "deficiencies" : [ { "text" : "Lab personnel are not washing their hands after working with samples" },
-                  { "text" : "Lab personnel are not washing their hands before leaving the lab" }
+            { "Deficiencies" : [ { "Text" : "Lab personnel are not washing their hands after working with samples" },
+                  { "Text" : "Lab personnel are not washing their hands before leaving the lab" }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 301,
               "orderIndex" : 2,
-              "recommendations" : [ { "text" : "Test Recommendation" } ],
-              "standardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "text" : "Persons wash their hands after working with hazardous materials and before leaving the lab"
+              "Recommendations" : [ { "Text" : "Test Recommendation" } ],
+              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
+              "Text" : "Persons wash their hands after working with hazardous materials and before leaving the lab"
             },
-            { "deficiencies" : [ { "text" : "Lab personnel are eating in lab areas" },
-                  { "text" : "Lab personnel are drinking in lab areas" },
-                  { "text" : "Lab personnel are storing food for human consumption in lab areas" }
+            { "Deficiencies" : [ { "Text" : "Lab personnel are eating in lab areas" },
+                  { "Text" : "Lab personnel are drinking in lab areas" },
+                  { "Text" : "Lab personnel are storing food for human consumption in lab areas" }
                 ],
-              "deficiencyRootCauses" : [ { "text" : "Test Root Cause" } ],
+              "DeficiencyRootCauses" : [ { "Text" : "Test Root Cause" } ],
               "isMandatory" : true,
               "key_id" : 302,
-              "notes" : [ { "key_id" : 224,
-                    "text" : "Test note"
+              "Observations" : [ { "key_id" : 224,
+                    "Text" : "Test note"
                   },
                   { "key_id" : 229,
-                    "text" : "Test note"
+                    "Text" : "Test note"
                   }
                 ],
               "orderIndex" : 3,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "text" : "Eating, drinking, and storing food for consumption are not permitted in lab areas"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
+              "Text" : "Eating, drinking, and storing food for consumption are not permitted in lab areas"
             }
           ],
         "rooms" : [ "101",
@@ -255,27 +257,28 @@ SubHazards: [
       },
       { "key_id" : 201,
         "label" : "SHIPPING BIOLOGICAL MATERIALS",
-        "questions" : [ { "deficiencies" : [ { "key_id" : 222,
-                    "text" : "Personnel shipping biological samples have not completed biological shipping training"
+        "Questions" : [ { "Deficiencies" : [ { "key_id" : 222,
+                    "Text" : "Personnel shipping biological samples have not completed biological shipping training"
                   },
                   { "key_id" : 223,
-                    "text" : "Personnel shipping biological samples are overdue for completing biological shipping training"
+                    "Text" : "Personnel shipping biological samples are overdue for completing biological shipping training"
                   }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 310,
-              "notes" : [ { "key_id" : 224,
-                    "text" : "Test note"
+              "Observations" : [ { "key_id" : 224,
+                    "Text" : "Test note"
                   },
                   { "key_id" : 229,
-                    "text" : "Test note"
+                    "Text" : "Test note"
                   }
                 ],
               "orderIndex" : 1,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "International Air Transport Association (IATA) & DOT",
-              "text" : "Personnel shipping biological samples have completed biological shipping training in the past two years"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "International Air Transport Association (IATA) & DOT",
+              "Text" : "Personnel shipping biological samples have completed biological shipping training in the past two years"
             } ],
         "rooms" : [ "101",
             "102"
@@ -283,26 +286,28 @@ SubHazards: [
       },
       { "key_id" : 202,
         "label" : "BLOODBORNE PATHOGENS (e.g. research involving human blood, body fluids, unfixed tissue)",
-        "questions" : [ { "deficiencies" : [ { "text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "deficiencyRootCauses" : [  ],
+        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 320,
               "orderIndex" : 1,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
             },
-            { "deficiencies" : [ { "text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
+            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
+                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
+                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 321,
               "orderIndex" : 2,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan has been reviewed and updated at least annually"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
             }
           ],
         "rooms" : [ "101",
@@ -312,26 +317,28 @@ SubHazards: [
       },
       { "key_id" : 203,
         "label" : "Test Checklist 1",
-        "questions" : [ { "deficiencies" : [ { "text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "deficiencyRootCauses" : [  ],
+        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 320,
               "orderIndex" : 1,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
             },
-            { "deficiencies" : [ { "text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
+            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
+                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
+                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 321,
               "orderIndex" : 2,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan has been reviewed and updated at least annually"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
             }
           ],
         "rooms" : [ "101",
@@ -341,26 +348,28 @@ SubHazards: [
       },
       { "key_id" : 204,
         "label" : "Test Checklist 2",
-        "questions" : [ { "deficiencies" : [ { "text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "deficiencyRootCauses" : [  ],
+        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 320,
               "orderIndex" : 1,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
             },
-            { "deficiencies" : [ { "text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
+            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
+                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
+                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 321,
               "orderIndex" : 2,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan has been reviewed and updated at least annually"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
             }
           ],
         "rooms" : [ "101",
@@ -370,26 +379,27 @@ SubHazards: [
       },
       { "key_id" : 205,
         "label" : "Test Checklist 3",
-        "questions" : [ { "deficiencies" : [ { "text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "deficiencyRootCauses" : [  ],
+        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
               "isMandatory" : true,
               "key_id" : 320,
               "orderIndex" : 1,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
             },
-            { "deficiencies" : [ { "text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
+            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
+                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
+                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
                 ],
-              "deficiencyRootCauses" : [  ],
+              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
+
               "isMandatory" : true,
               "key_id" : 321,
               "orderIndex" : 2,
-              "recommendations" : [  ],
-              "standardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "text" : "Exposure Control Plan has been reviewed and updated at least annually"
+              "Recommendations" : [  ],
+              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
+              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
             }
           ],
         "rooms" : [ "101",

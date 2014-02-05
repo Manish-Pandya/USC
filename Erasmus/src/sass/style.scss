@@ -1,7 +1,13 @@
 @CHARSET "ISO-8859-1";
-/**
- * A "deeper" indented text effect with the :before and :after pseudo-elements.
- */
+
+/*****************variables***********/
+$orange:                      #e67e1d;
+$blue:                        #49afcd;
+$slightlyDarkerBlue:          #2f96b4;
+$purple:                      #781096;
+
+
+
 /* line 22, ../sass/style.scss */
 html {
   height: 100%;
@@ -651,8 +657,8 @@ li.small a.hazardBtn span{
 .postInspectionNav{
   list-style: none;
   width:100%;
-  margin-left: 0;
   height: 70px;
+  margin-top:16px;
 }
 .postInspectionNav li{
   float:left;
@@ -740,6 +746,7 @@ td.reviewHeader{
 .detail{
   margin-bottom:55px;
   h2{
+    font-weight: bold;
     border-bottom:1px solid #ddd;
     padding:10px 0;
     margin:0 10px;
@@ -749,11 +756,12 @@ td.reviewHeader{
   &:hover{
     background:#f7f7f7;
   }
-  padding:30px 0 25px;
+  padding:30px 10px 25px;
   margin:0 10px;
   border-bottom:1px solid #ddd;
   h3{
     font-size:20px;
+    font-weight: bold;
   }
   i{
     text-align: center;
@@ -761,7 +769,79 @@ td.reviewHeader{
     font-weight: bold;
     font-style: normal;
   }
+  ul{
+    margin: 15px;
+    list-style: none;
+    li{
+      margin-bottom: 10px;
+      font-size:19px;
+      h5{
+        font-weight: bold;
+        font-size:19px;
+      }
+      p.rootCause{
+        margin-left:5px;
+        font-size:15px; 
+      }
+    }
+  }
+  ul.recommendations{
+    li{
+      color: $slightlyDarkerBlue;
+    }
+  }
+  ul.deficiencies{
+    li{
+      color: $orange;
+    }
+  }
+  ul.observations{
+    li{
+      color: $purple;
+    }
+  }
 
+}
+ul.key{
+  margin-top: -70px;
+  float: right;
+  list-style: none; 
+  &:after{
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+  }
+  li{
+      font-size:20px;
+      font-weight:bold;
+      float:left;
+      padding:5px;
+      margin-top:10px;
+    span{
+      height:30px;
+      width:30px;
+      display:inline-block;
+      margin-top:5px;
+    }
+    h2{
+      margin-top:-10px;
+    }
+  }
+  li.observations{
+    color:$purple;
+    span{background:$purple;}
+  }
+  li.recommendations{
+    color:$slightlyDarkerBlue;
+    span{background:$slightlyDarkerBlue;}
+  }
+  li.deficiencies{
+    color:$orange;
+    span{background:$orange;}
+  }
 }
 .Yes{
   color:#090;
@@ -769,6 +849,7 @@ td.reviewHeader{
 .No{
   color:#c00;
 }
+
 /****************************************************************
 *****           HAZARD ASSESSMENT   ****************************
 *****************************************************************/
