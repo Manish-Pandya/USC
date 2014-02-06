@@ -8,12 +8,11 @@
 </thead>
 <tbody>
 	<tr ng-repeat="room in PI.Rooms">
-		<td><a class="btn btn-danger btn-large removeRow" href="#">Remove</a></td>
+		<td><a class="btn btn-danger btn-large removeRow" href="#"><i class="icon-remove"></i>Remove</a></td>
 		<td width="25%">{{room.Capmus}}</td>
 		<td width="25%">{{room.Building}}</td>
 		<td width="25%">{{room.Name}}</td>
-		<td><a class="edit btn btn-large btn-primary"  href="UserHub.php">Show Hazards</a></td>
+		<td><a class="edit btn btn-large btn-warning" target="_blank" href="HazardHubAssessment.php"><i class="icon-lab"></i>Show Hazards</a></td>
 	</tr>
 </tbody>
 </table>
-	

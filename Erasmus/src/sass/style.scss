@@ -4,9 +4,19 @@
 $orange:                      #e67e1d;
 $blue:                        #49afcd;
 $slightlyDarkerBlue:          #2f96b4;
+$blue:                        #49afcd;
 $purple:                      #781096;
+$green:                       #51a351;
 
 
+.blueBg{
+  background: $blue;
+  border-color: $blue;
+}
+.greenBg{
+  background:  $green;
+   border-color: $green;
+}
 
 /* line 22, ../sass/style.scss */
 html {
@@ -262,7 +272,7 @@ tr.notedit, tr.notedit td {
   /*********** toggle hidden state of subhazards **********************/
 }
 /* line 212, ../sass/style.scss */
-#hazardTree a i{
+a i{
   text-align: center;
   margin: 3px 12px 0 -2px;
   width: 1em;

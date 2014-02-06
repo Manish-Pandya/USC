@@ -8,6 +8,12 @@ piHub.config(function($routeProvider){
 				controller: piHubRoomController
 			}
 		)
+		.when('/personnel', 
+			{
+				templateUrl: '../piHubPartials/personnel.html', 
+				controller: piHubPersonnelController
+			}
+		)
 		//.when('', {template: '', controller: })
 		.otherwise(
 			{
@@ -26,17 +32,24 @@ piHubMainController = function($scope, $location, convenienceMethods){
 	init();
 
 	function init(){
-		//alert('main');
-       	
         if($location.search().hasOwnProperty('pi')){
-        	 console.log($location.search().pi);
-        	 //getPI
-        	 var url = '../../../ajaxaction.php?action=getPI&id='+$location.search().pi+'&callback=JSON_CALLBACK';
-        	 convenienceMethods.getData( url, onGetPI, onFailGetPI );
+        	 //getPI if there is a "pi" index in the GET
+        	 getPi($location.search().pi);
+        }else{
+        	$scope.noPiSet = true;
         }
 
-
+        //always get a list of all PIs so that a user can change the PI in scope
+        var url = '../../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+       	convenienceMethods.getData( url, onGetAllPIs, onFailGetAllPIs );
         	
+	}
+
+	function getPi(PIKeyID){
+		$scope.PI = false;
+		var url = '../../../ajaxaction.php?action=getPI&id='+PIKeyID+'&callback=JSON_CALLBACK';
+		convenienceMethods.getData( url, onGetPI, onFailGetPI );
+		$scope.noPiSet = false;
 	}
 
 	function onGetPI(data){
@@ -49,16 +62,40 @@ piHubMainController = function($scope, $location, convenienceMethods){
 		alert('The system couldn\'t find the Principal Investigator');
 	}
 
+	function onGetAllPIs(data){
+		$scope.PIs = data;
+		$scope.doneLoadingAll = data.doneLoading;
+	} 
+
+	function onFailGetAllPIs(){
+		alert('Something went wrong getting the list of all Principal Investigators');
+	}
+
+	//callback function called when a PI is selected in the typeahead
+	$scope.onSelectPi = function($item, $model, $label){
+		getPi($item.Key_Id);
+	}
+/*
+	$scope.PIs = function(brandName){
+       return $http.post('/brands/getbrandsviewmodel', { query : brandName})
+                     .then(function(response){
+                        return limitToFilter(response.data, 15);
+                      });
+    };
+*/
 }
 
 piHubRoomController = function($scope, $location, convenienceMethods){
 	
 	init();
-
 	function init(){
 		
-        //console.log($location.search());
 	}
+}
 
+piHubPersonnelController = function($scope, $location, convenienceMethods){
+	init();
+	function init(){
 
+	}
 }

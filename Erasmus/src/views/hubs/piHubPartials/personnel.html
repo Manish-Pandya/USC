@@ -1,0 +1,22 @@
+<table class="roomList table table-striped table-hover list" id="rooms">
+<thead>
+	<tr><td colspan="8"><h2 class="alert greenBg" style="">{{PI.User.Name}}'s Lab Personnel</h2></td></tr>
+	<!--<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" class="btn btn-info btn-large">Add Room</a><a href="#roomModal" data-toggle="modal" class="btn btn-primary btn-large">Create Room</a></tr>
+	<tr>-->
+		<th>Remove User</th><th>Name</th><th>Username</th><th>Email</th><th>Edit</th>
+	</tr>
+</thead>
+<tbody>
+	<tr ng-repeat="user in PI.LabPersonnel">
+		<td><a class="btn btn-danger btn-large" href="#"><i class="icon-remove"></i>Remove</a></td>
+
+		<td ng-show="user.edit"><a class="btn btn-large btn-danger" ng-click="cancelEdits(user)">Cancel</a></td>
+		<td ng-hide="user.edit">{{user.Name}}</td><td ng-show="user.edit"><input ng-model="userCopy.Name"/></td>
+		<td ng-hide="user.edit">{{user.Username}}</td><td ng-show="user.edit"><input ng-model="userCopy.Username"/></td>
+		<td ng-hide="user.edit">{{user.Email}}</td><td ng-show="user.edit"><input ng-model="userCopy.Email"/></td>
+		<td><a class="edit btn btn-large btn-warning" target="_blank" href="userHub.php?{{user.KeyId}}"><i class="icon-lab"></i>Edit User</a></td>
+	</tr>
+</tbody>
+<!--
+<pre>{{PI.LabPersonnel|json}}</pre>
+-->

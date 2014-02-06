@@ -1,7 +1,7 @@
 <?php
 require_once '../top_view.php';
 ?>
-<script type="text/javascript" src="../../../js/piHub.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/piHub.js"></script>
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
@@ -11,45 +11,41 @@ require_once '../top_view.php';
 	</li>
 	<div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
 </ul>
-<span ng-show="!doneLoading">
-
-</span>
-<span ng-hide="!doneLoading">
-</div>
 <div class="whitebg" style="padding:70px 70px;">
-<!--
-<pre>
-{{PI|json}}
-</pre>
--->
-	<h1 ng-hide="!PI">Principle Investigator:  {{PI.User.Name}}</h1>
-	<div class="btn-group" id="piButtons">
-		<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary">Edit PI</a>
-		<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info">Manage Rooms</a>
-		<a ng-click="setRoute('labUsers')" href="#safetyContacts"  class="btn btn-large btn-success">Manage Lab Users</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
-		<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success">Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
-	</div>
-	<ng-view></ng-view>
-
-	<div id="editPiForm">
-		<form class="form form-horizontal">
-		
-			<div class="control-group">
-		       <label class="control-label" for="name">Name</label>
-		       <div class="controls">
-		         <input type="text" id="name" placeholder="Davit Mrelashvili">
-		       </div>
-		     </div>
-		     
+	<div id="editPiForm" class="">
+		<form class="form">
 		     <div class="control-group">
-		       <label class="control-label" for="name">Name</label>
+		       <label class="control-label" for="name"><h3 style="font-weight:bold">Select A Principal Investigator</h3></label>
 		       <div class="controls">
-		         <input type="text" id="name" placeholder="Davit Mrelashvili">
-		       </div>
+		       <span ng-show="!doneLoadingAll">
+		         <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+		       	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		       </span>
+		       <span ng-hide="!doneLoadingAll">
+		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Add a PI" typeahead="pi as (pi.User.Name+' '+pi.User.Username) for pi in PIs | filter:$viewValue">
+		       </span>
+		      </div>
 		     </div>
-		     
 		</form>
 	</div>
+	<span ng-hide="!PI">
+		<div class="btn-group" id="piButtons">
+			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary">Edit PI</a>
+			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info">Manage Rooms</a>
+			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success">Manage Lab Users</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
+			<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success">Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
+		</div>
+	</span>
+	<h1 ng-hide="!PI">Principle Investigator:  {{PI.User.Name}}</h1>
+	<div class="loading" ng-show='!PI' >
+		<span ng-hide="noPiSet">
+		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		  Getting Selected Principal Investigator...
+		</span>
+	</div>
+	<span ng-hide="!PI">
+		<ng-view></ng-view>
+	</span>
 
 <!--
 <table class="userList table table-striped table-hover list" id="safetyContacts">
@@ -151,7 +147,7 @@ require_once '../top_view.php';
 <!-- end edit user modal dialogue -->
 
 
-<!-- begin add new user modal dialogue -->
+<!-- begin add new user modal dialogue 
 <div class="modal hide fade" id="addUser">
 	<div class="modal-header">
 		<h3>Add a New Safety Contact</h3>
@@ -194,8 +190,8 @@ require_once '../top_view.php';
     <a href="#" class="btn btn-primary btn-large">Create</a>
   </div>
 </div>
-
-<!-- SPECIAL HAZARDS -->
+-->
+<!-- SPECIAL HAZARDS 
 <table class="roomList table table-striped table-hover list" id="rooms">
 <thead>
 	<tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">Davit Mrelashvili's Rooms</h2></td></tr>
@@ -234,10 +230,10 @@ require_once '../top_view.php';
 		<td><a class="edit btn btn-large btn-primary"  href="UserHub.php">Show Hazards</a></td>
 	</tr>
 </tbody>
-</table>
-<!-- end add new user modal dialogue -->
-
-<!-- begin add room modal dialogue -->
+</table>-->
+<!-- end add new user modal dialogue 
+-->
+<!-- begin add room modal dialogue 
 <div class="modal hide fade" id="roomModal">
 	<div class="modal-header">
 		<h3>Add a Room</h3>
@@ -269,7 +265,7 @@ require_once '../top_view.php';
 </div>
 </span>
 
-</td>
+</td>-->
 </span>
 <script>
 /*
