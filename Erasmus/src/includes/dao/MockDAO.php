@@ -74,7 +74,7 @@ class MockDAO{
 	}
 	
 	public function getAllHazards(){
-		return getStaticHazards();
+		return getStaticHazardsAsTree();
 	}
 	
 	//FIXME: Remove $name

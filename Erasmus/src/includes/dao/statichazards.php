@@ -7,7 +7,7 @@ function addHazardToParent($h, $hazards){
 	$ph->setSubHazards($subs);
 }
 
-function getStaticHazards(){
+function getStaticHazardsAsTree(){
 	$hazards = array();
 
 	//Define all hazards & IDs; assign their indexes as their ids
