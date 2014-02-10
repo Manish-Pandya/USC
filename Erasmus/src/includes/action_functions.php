@@ -27,7 +27,7 @@ function getValueFromRequest( $valueName, $paramValue = NULL ){
 		return $paramValue;
 	}
 	else if( array_key_exists($valueName, $_REQUEST)){
-		return (int) $_REQUEST[ $valueName ];
+		return $_REQUEST[ $valueName ];
 	}
 	else{
 		return NULL;
@@ -528,7 +528,7 @@ function getHazardRoomMappings($hazard, $searchRoomids){
 		
 	//Check if this hazard is in a room we want
 	foreach ( $hazardRooms as $room ){
-		if( array_key_exists($room->getKey_Id(), $roomIds) ){
+		if( array_key_exists($room->getKey_Id(), $searchRoomids) ){
 			//Add key to relevant array
 			$relevantRooms[] = $room->getKey_Id();
 		}
