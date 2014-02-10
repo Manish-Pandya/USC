@@ -204,7 +204,16 @@ function saveQuestion(){
 };
 
 // Hazards Hub
+function getAllHazardsAsTree() {
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$dao = getDao();
+	$hazards = $dao->getAllHazards();
+	
+	return $hazards;
+}
+
 function getAllHazards(){
+	//FIXME: This function should return a FLAT COLLECTION of ALL HAZARDS; not a Tree
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$dao = getDao();
 	$hazards = $dao->getAllHazards();
@@ -473,6 +482,77 @@ function saveInspection(){
 };
 
 // Inspection, step 2 (Hazard Assessment)
+
+/**
+ * Builds an associative array mapping Hazard IDs to the rooms
+ * that contain them. The listed rooms are limited by the Room IDs
+ * given as a CSV parameter
+ *  
+ * @param string $roomIds
+ * @return Associative array: [Hazard KeyId] => array( stdClass(key_id, hazard_name, roomIds)
+ */
+function getHazardRoomMappingsAsTree( $roomIds = NULL ){
+	//TODO: Logging
+	$roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
+	
+	if( $roomIdsCsv !== NULL ){
+		//Split CSV
+		$roomIds = explode(',', $roomIdsCsv);
+		
+		//Prepare array-map for hazard rooms
+		$hazardToRoomsMap = array();
+		
+		//Get all hazards
+		$allHazards = getAllHazardsAsTree();
+		
+		foreach( $allHazards as $hazard ){
+			$hazardNodeDto = getHazardRoomMappings($hazard, $roomIds);
+			
+			$hazardToRoomsMap[$hazardNodeDto->getKey_Id()] = $hazardNodeDto;
+		}
+		
+		return $hazardToRoomsMap;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'roomIds' was provided");
+	}
+}
+
+//UTILITY FUNCTION FOR getHazardRoomMappingsAsTree
+function getHazardRoomMappings($hazard, $searchRoomids){
+	$relevantRooms = array();
+		
+	//Get the hazard's rooms
+	$hazardRooms = $hazard->getRooms();
+		
+	//Check if this hazard is in a room we want
+	foreach ( $hazardRooms as $room ){
+		if( array_key_exists($room->getKey_Id(), $roomIds) ){
+			//Add key to relevant array
+			$relevantRooms[] = $room->getKey_Id();
+		}
+	}
+
+	//Build nodes for sub-hazards
+	$subHazardNodeDtos = array();
+	foreach( $hazard->getSubHazards() as $subHazard ){
+		$node = getHazardRoomMappings($subHazard, $searchRoomids);
+		$subHazardNodeDtos[$node->getKey_Id()] = $node;
+	}
+	
+	//Build the node for this hazard
+	$hazardDto = new HazardTreeNodeDto(
+		$hazard->getKey_Id(),
+		$hazard->getName(),
+		$relevantRooms,
+		$subHazardNodeDtos
+	);
+		
+	//Return this node
+	return $hazardDto;
+}
+
 function getHazardsInRoom( $roomId = NULL ){
 	
 	$roomId = getValueFromRequest('roomId', $roomId);
@@ -587,6 +667,24 @@ function saveCorrectiveAction(){
 		return $decodedObject;
 	}
 };
+
+function getChecklistsForInspection( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		//TODO: get inspection
+		$inspection = getInspectionById($id);
+		
+		//TODO: get Responses
+		$responses = $inspection->getResponses();
+		
+	}
+	else{
+		//error
+		return new ActionError('No request parameter "id" was provided');
+	}
+}
 
 function getInspectionById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );

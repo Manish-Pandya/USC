@@ -76,6 +76,7 @@ class ActionMappingFactory {
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				
 				// Inspection, step 2 (Hazard Assessment)
+				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
 				"getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", ""),
 				"saveHazardRelation"=>new ActionMapping("saveHazardRelation", "", ""),
 				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
