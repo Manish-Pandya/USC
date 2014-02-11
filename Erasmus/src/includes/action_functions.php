@@ -489,7 +489,7 @@ function saveInspection(){
  * given as a CSV parameter
  *  
  * @param string $roomIds
- * @return Associative array: [Hazard KeyId] => array( stdClass(key_id, hazard_name, roomIds)
+ * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
  */
 function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
