@@ -492,12 +492,16 @@ function saveInspection(){
  * @return Associative array: [Hazard KeyId] => array( stdClass(key_id, hazard_name, roomIds)
  */
 function getHazardRoomMappingsAsTree( $roomIds = NULL ){
-	//TODO: Logging
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
 	
 	if( $roomIdsCsv !== NULL ){
+		$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
+		
 		//Split CSV
 		$roomIds = explode(',', $roomIdsCsv);
+		
+		$LOG->debug('Identified ' . count($roomIds) . ' Rooms');
 		
 		//Prepare array-map for hazard rooms
 		$hazardToRoomsMap = array();
@@ -521,6 +525,8 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 
 //UTILITY FUNCTION FOR getHazardRoomMappingsAsTree
 function getHazardRoomMappings($hazard, $searchRoomids){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$LOG->trace("Getting room mappings for $hazard");
 	$relevantRooms = array();
 		
 	//Get the hazard's rooms
@@ -529,6 +535,8 @@ function getHazardRoomMappings($hazard, $searchRoomids){
 	//Check if this hazard is in a room we want
 	foreach ( $hazardRooms as $room ){
 		if( array_key_exists($room->getKey_Id(), $searchRoomids) ){
+			$LOG->debug("$hazard is in $room");
+			
 			//Add key to relevant array
 			$relevantRooms[] = $room->getKey_Id();
 		}
@@ -536,6 +544,7 @@ function getHazardRoomMappings($hazard, $searchRoomids){
 
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
+	$LOG->trace("Getting mappings for sub-hazards");
 	foreach( $hazard->getSubHazards() as $subHazard ){
 		$node = getHazardRoomMappings($subHazard, $searchRoomids);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
