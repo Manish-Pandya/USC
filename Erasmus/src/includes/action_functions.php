@@ -406,9 +406,32 @@ function getAllRooms(){
 function getRoomById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$LOG->trace('getting room');
+	
 	if( $id !== NULL ){
 		$dao = getDao();
 		return $dao->getRoomById($id);
+	}
+	else{
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+//Get a room dto duple
+function getRoomDtoByRoomId( $id = NULL ){
+	$id = getValueFromRequest('id', $id);
+
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$LOG->trace('getting room');
+
+	if( $id !== NULL ){
+		$dao = getDao();
+		$room = $dao->getRoomById($id);
+
+		$roomDto = new RoomDto($room->getKey_Id(), $room->getName());
+
+		return $roomDto;
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
@@ -499,7 +522,14 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
 		
 		//Split CSV
-		$roomIds = explode(',', $roomIdsCsv);
+		//$roomIds = explode(',', $roomIdsCsv);
+		$roomIds = $roomIdsCsv;
+		
+		$rooms = array();
+		foreach($roomIds as $key=>$id){
+			$rooms[$key] = getRoomDtoByRoomId($id);
+			$room = $rooms[$key];
+		}
 		
 		$LOG->debug('Identified ' . count($roomIds) . ' Rooms');
 		
@@ -510,7 +540,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		$allHazards = getAllHazardsAsTree();
 		
 		foreach( $allHazards as $hazard ){
-			$hazardNodeDto = getHazardRoomMappings($hazard, $roomIds);
+			$hazardNodeDto = getHazardRoomMappings($hazard, $rooms, $roomIds);
 			
 			$hazardToRoomsMap[$hazardNodeDto->getKey_Id()] = $hazardNodeDto;
 		}
@@ -524,29 +554,32 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 }
 
 //UTILITY FUNCTION FOR getHazardRoomMappingsAsTree
-function getHazardRoomMappings($hazard, $searchRoomids){
+function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
+
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace("Getting room mappings for $hazard");
 	$relevantRooms = array();
 		
+	$hazard->setRooms($rooms);
+	
 	//Get the hazard's rooms
 	$hazardRooms = $hazard->getRooms();
-		
 	//Check if this hazard is in a room we want
-	foreach ( $hazardRooms as $room ){
-		if( array_key_exists($room->getKey_Id(), $searchRoomids) ){
+	foreach ( $hazardRooms as $key=>$room ){
+		//echo 'ROOM OBJECT IN THIS HAZARD: '.$room->getName().'<br>/n';
+		if( in_array($room->getKey_Id(), $searchRoomIds) ){
 			$LOG->debug("$hazard is in $room");
 			
 			//Add key to relevant array
-			$relevantRooms[] = $room->getKey_Id();
-		}
+			$relevantRooms[] = $room;
+		}		
 	}
-
+	
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
 	$LOG->trace("Getting mappings for sub-hazards");
 	foreach( $hazard->getSubHazards() as $subHazard ){
-		$node = getHazardRoomMappings($subHazard, $searchRoomids);
+		$node = getHazardRoomMappings($subHazard,$rooms, $searchRoomids);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
 	}
 	
