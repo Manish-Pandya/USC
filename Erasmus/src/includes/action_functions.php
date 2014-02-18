@@ -555,18 +555,19 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 
 //UTILITY FUNCTION FOR getHazardRoomMappingsAsTree
 function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
-
+	$searchRoomIds = $searchRoomIds;
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace("Getting room mappings for $hazard");
 	$relevantRooms = array();
-		
-	$hazard->setRooms($rooms);
+	
+	//temprorarily force hazards to have a collection of roomDTOs
+	//$hazard->setRooms($rooms);
 	
 	//Get the hazard's rooms
 	$hazardRooms = $hazard->getRooms();
+	
 	//Check if this hazard is in a room we want
 	foreach ( $hazardRooms as $key=>$room ){
-		//echo 'ROOM OBJECT IN THIS HAZARD: '.$room->getName().'<br>/n';
 		if( in_array($room->getKey_Id(), $searchRoomIds) ){
 			$LOG->debug("$hazard is in $room");
 			
@@ -575,11 +576,12 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
 		}		
 	}
 	
+	
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
 	$LOG->trace("Getting mappings for sub-hazards");
 	foreach( $hazard->getSubHazards() as $subHazard ){
-		$node = getHazardRoomMappings($subHazard,$rooms, $searchRoomids);
+		$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
 	}
 	
@@ -624,7 +626,10 @@ function getHazardsInRoom( $roomId = NULL ){
 };
 
 function saveHazardRelation(){ };
-function saveRoomRelation(){ };
+function saveRoomRelation($hazardId, $roomId){
+	//temporarily return true so server returns 200 code
+	return true;
+};
 
 // Inspection, step 3 (Checklist)
 //function getQuestions(){ };	//DUPLICATE FUNCTION
