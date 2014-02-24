@@ -419,7 +419,7 @@ function getRoomById( $id = NULL ){
 }
 
 //Get a room dto duple
-function getRoomDtoByRoomId( $id = NULL ){
+function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 	$id = getValueFromRequest('id', $id);
 
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -429,7 +429,7 @@ function getRoomDtoByRoomId( $id = NULL ){
 		$dao = getDao();
 		$room = $dao->getRoomById($id);
 
-		$roomDto = new RoomDto($room->getKey_Id(), $room->getName());
+		$roomDto = new RoomDto($room->getKey_Id(), $room->getName(), $containsHazard, $isAllowed);
 
 		return $roomDto;
 	}
@@ -527,8 +527,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		
 		$rooms = array();
 		foreach($roomIds as $key=>$id){
-			$rooms[$key] = getRoomDtoByRoomId($id);
-			$room = $rooms[$key];
+			$rooms[] = getRoomDtoByRoomId($id);
 		}
 		
 		$LOG->debug('Identified ' . count($roomIds) . ' Rooms');
@@ -559,21 +558,19 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace("Getting room mappings for $hazard");
 	$relevantRooms = array();
-	
-	//temprorarily force hazards to have a collection of roomDTOs
-	//$hazard->setRooms($rooms);
-	
-	//Get the hazard's rooms
+		
 	$hazardRooms = $hazard->getRooms();
-	
 	//Check if this hazard is in a room we want
-	foreach ( $hazardRooms as $key=>$room ){
-		if( in_array($room->getKey_Id(), $searchRoomIds) ){
+	foreach ( $rooms as $key=>$room ){
+		if( in_array($room, $hazardRooms) ){
 			$LOG->debug("$hazard is in $room");
-			
-			//Add key to relevant array
-			$relevantRooms[] = $room;
-		}		
+			$room->setContainsHazard(true);			
+		}else{
+			$LOG->debug("$hazard is NOT in $room");
+			$room->setContainsHazard(false);
+		}	
+		//Add room to relevant array
+		$relevantRooms[] = $room;
 	}
 	
 	
@@ -590,11 +587,13 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
 		$hazard->getKey_Id(),
 		$hazard->getName(),
 		$relevantRooms,
-		$subHazardNodeDtos
+		$subHazardNodeDtos,
+		$hazard->getParentHazardId()
 	);
 		
 	//Return this node
 	return $hazardDto;
+
 }
 
 function getHazardsInRoom( $roomId = NULL ){

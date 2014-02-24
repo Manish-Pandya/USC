@@ -228,7 +228,7 @@ class MockDAO{
 	public function getRoomById($keyid){
 		$room = $this->initGenericCrudObject(new Room());
 		$room->setKey_Id($keyid);
-		$room->setName("Room $keyid");
+		$room->setName("$keyid");
 		$room->setSafetyContactInformation('Call 911');
 		
 		//FIXME: Remove DEMO names
@@ -250,6 +250,14 @@ class MockDAO{
 		$this->LOG->info("Defined Room: $room");
 		
 		return $room;
+	}
+	
+	public function getRoomDtoById($keyid){
+		$room = $this->initGenericCrudObject(new RoomDto());
+		$room->setKey_Id($keyid);
+		$room->setName("$keyid");
+		
+		return $roomDto;
 	}
 	
 	public function getBuildingById($keyid){
