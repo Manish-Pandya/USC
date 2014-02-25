@@ -31,7 +31,7 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 -->
 <!-- included javascript libraries 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
-<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
+<script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
   
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 <!--
@@ -99,7 +99,7 @@ $(document).ready(function(){
 <body>
 <!-- main navigation -->
 <div class="container-fluid " id="wrapper" >
-
+<!--
 <div class="navbar" id="nav">
   <div class="navbar-inner">
     <a class=" siteTitle brand" href="<?php echo WEB_ROOT?>views/RSMScenter.php">Research Safety Management System</a>
@@ -111,8 +111,4 @@ $(document).ready(function(){
     </ul>
   </div>
 </div>
-<!-- 
-	<div class="header">
-		<h1 class="siteTitle text-shadow center" title="Research Safety Management System">Research Safety Management System</h1>
-	</div>	
 -->
