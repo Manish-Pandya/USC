@@ -1175,7 +1175,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .radio.inline + .radio.inline,
-.checkbox.inline + .checkbox.inline {
+.checkbox.inline:not(.disallowed) + .checkbox.inline:not(.disallowed) {
   margin-left: 10px;
 }
 
@@ -3176,7 +3176,7 @@ button.close {
 
 .btn-mini {
   padding: 1px 6px;
-  font-size: 10.5px;
+  font-size: 10.5px !important;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
           border-radius: 3px;
