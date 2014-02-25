@@ -337,6 +337,7 @@ a i{
   padding-top: 6px;
   display: inline-block;
   max-width: 40%;
+  min-width:350px;
 }
  #hazardTree li.small .leftThings {
   max-width: 70%;
@@ -648,7 +649,13 @@ html[xmlns] .clearfix {
 #editPiForm{
   margin:10px 0 40px;
   h3{
-    height:37px;
+    white-space:nowrap;
+    height:47px;
+    div{
+      a{
+        white-space:normal;
+      }
+    }
   }
 }
 /* line 409, ../sass/style.scss */
@@ -664,18 +671,25 @@ img.smallLoading{
   width: 17px;
 }
 .subHazardModal, .roomsModal{
-  min-width: 350px;
+  margin-top:-5px;
   border: 1px solid #ddd;
   position: absolute;
   background: white;
   z-index: 50000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  top: 5px;
+  h3{
+    i{
+      position: absolute;
+      right:7px;
+    }
+  }
   ul{
-    max-height:300px;
-    overflow:auto;
+    margin: 3px 0;
+    max-height: 300px;
+    overflow: auto;
     overflow-x: hidden;
-    padding: 10px;
+    padding: 10px 1px;
+    width: 100%;
     li{
       width:100%;
       label{
@@ -689,6 +703,9 @@ img.smallLoading{
       }
     }
   }
+}
+.subHazardModal{
+  min-width: 350px;
 }
 .greyedOut{
   color:#bbb !important;
@@ -1066,12 +1083,12 @@ ul.key{
 }
 
 /* line 523, ../sass/style.scss */
-#biologicalMaterials {
+#biologicalMaterials, #biologicalSafety {
   background: url(../img/biohazard-largeicon.png);
 }
 
 /* line 527, ../sass/style.scss */
-#generalLaboratorySafety {
+#generalLaboratorySafety, #chemicalSafety {
   background: url(../img/chemical-safety-large-icon.png);
 }
 

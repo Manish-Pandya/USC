@@ -25,43 +25,45 @@ require_once '../top_view.php';
 				<span class="metro-checkbox">{{child.HazardName}}</span>
 			</label>
 			<span ng-show="child.Children.length">
-				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child)"></i>
+				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 			</span>
 			<span ng-show="child.IsPresent">
-				<i class="icon-enter" ng-click="showRooms($event, child)"></i>
+				<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
 			</span>
-		</h4>		
-		<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
-			<h3 class="orangeBg">{{child.HazardName}}<i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
-			<ul>
-				<li ng-repeat="(key, child) in child.Children">
-					<label class="checkbox inline">
-						<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-						<span class="metro-checkbox">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
-					</label>
-				</li>
-			</ul>
-		</div>	
 
-		<div class="roomsModal" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
-			<h3 class="orangeBg">{{child.HazardName}}<i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
-			<ul>
-				<li ng-repeat="(key, room) in child.PossibleRooms" >
-					<label class="checkbox inline" ng-show="room.IsAllowed">
-						<input ng-show="room.IsAllowed" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-						<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-					</label>
+			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
+				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+				<ul>
+					<li ng-repeat="(key, child) in child.Children">
+						<label class="checkbox inline">
+							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+							<span class="metro-checkbox">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
+						</label>
+					</li>
+				</ul>
+			</div>	
 
-					<label class="checkbox inline disallowed" ng-hide="room.IsAllowed">
-						<input  type="checkbox"  ng-model="room.ContainsHazard"  disabled>						
-						<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-					</label>
+			<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
+				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+				<ul>
+					<li ng-repeat="(key, room) in child.PossibleRooms" >
+						<label class="checkbox inline" ng-show="room.IsAllowed">
+							<input ng-show="room.IsAllowed" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
+							<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+						</label>
 
-				</li>			
-			</ul>
-		</div>
+						<label class="checkbox inline disallowed" ng-hide="room.IsAllowed">
+							<input  type="checkbox"  ng-model="room.ContainsHazard"  disabled>						
+							<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+						</label>
+					</li>			
+				</ul>
+			</div>
 
+			</h4>		
+		
 		<ul ng-hide="!child.showRooms" class="subRooms">
+			<li>Rooms:</li>
 			<li ng-repeat="(key, room) in child.PossibleRooms | filter: {ContainsHazard: true}" class="">
 				{{room.RoomName}}
 			</li>
@@ -83,21 +85,21 @@ require_once '../top_view.php';
 		       	<img class="" style="height:23px; margin:-73px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span12" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select PI" typeahead="pi as (pi.User.Name+' '+pi.User.Username) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span12" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!PI">Manage Data for Selected PI: <a href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">{{PI.User.Name}}</a></h3>
+		      	<h3 ng-hide="!PI"><a href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">Manage Data for Selected PI</a></h3>
 		     </div>
 
 			<div class="span8">
 		       <div class="controls">
 		       <h3 class="span6">Building(s):</h3>
-		       <h3 class="span6">Laboratory Rooms:
-		       <div class="control-group roomSelectContainer" ng-hide="!buildings.length">
-		       		<a class="btn btn-info btn-mini" ng-click="selectRooms = !selectRooms" data-toggle="dropdown" href="#">Select Rooms to Inspect</a>
+		       <h3 class="span6">
+		       Laboratory Rooms:
+		       	<div class="control-group roomSelectContainer" ng-hide="!buildings.length">
+		       		<a style="white-space:normal;" class="btn btn-info btn-mini" ng-click="selectRooms = !selectRooms" data-toggle="dropdown" href="#">Select Rooms to Inspect</a>
 			    </div>
-
-			     </h3>
+		       </h3>
 
 	       		<span ng-show="!buildings.length">
 				       	<p style="display: inline-block; margin-top:5px;">
@@ -185,37 +187,40 @@ require_once '../top_view.php';
 									</span>
 								</label>
 								<span ng-show="child.Children.length && child.IsPresent">
-									<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child)"></i>
+									<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 								</span>
 								<span ng-show="child.IsPresent">
-									<i class="icon-enter" ng-click="showRooms($event, child)"></i>
+									<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
 								</span>
-							</h4>		
-							<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
-								<h3 class="orangeBg">{{child.HazardName}}<i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
-								<ul>
-									<li ng-repeat="(key, child) in child.Children">
-										<label class="checkbox inline">
-											<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-											<span class="metro-checkbox">{{child.HazardName}}</span>
-										</label>
-									</li>
-								</ul>
-							</div>	
 
-							<div class="roomsModal" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
-								<h3 class="orangeBg">{{child.HazardName}}<i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
-								<ul>
-									<li ng-repeat="(key, room) in child.PossibleRooms">
-										<label class="checkbox inline">
-											<input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-											<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-										</label>
-									</li>
-								</ul>
-							</div>
+								<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
+									<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+									<ul>
+										<li ng-repeat="(key, child) in child.Children">
+											<label class="checkbox inline">
+												<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+												<span class="metro-checkbox">{{child.HazardName}}</span>
+											</label>
+										</li>
+									</ul>
+								</div>	
+
+								<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
+									<h3 class="orangeBg"><span>{{child.HazardName}}</span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+									<ul>
+										<li ng-repeat="(key, room) in child.PossibleRooms">
+											<label class="checkbox inline">
+												<input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
+												<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+											</label>
+										</li>
+									</ul>
+								</div>
+							</h4>		
+							
 
 							<ul ng-hide="!child.showRooms" class="subRooms">
+								<li>Rooms:</li>
 								<li ng-repeat="(key, room) in child.PossibleRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
 									{{room.RoomName}}
 								</li>

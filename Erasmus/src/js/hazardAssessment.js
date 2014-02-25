@@ -1,5 +1,30 @@
 var hazardAssesment = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodModule']);
 
+hazardAssesment.directive('popUp', function() {
+   return {
+    restrict: 'C',
+     link: function (scope, element, attrs) {
+      //console.log(element.context.firstElementChild);
+      scope.$watch(element, function(newValue) {
+         //console.log(element.find('span:first-child').width());
+         num = element.context.firstElementChild.innerText.length;
+         newWidth = (num * 13)+20;
+
+         if(element.hasClass('roomsModal')){
+           element.context.style.width = newWidth+'px';
+           element.context.style.marginLeft = num*11 +'px';
+           //console.log(element.context.style);
+         }
+
+         if(element.hasClass('subHazardModal')){
+            element.context.style.marginLeft = (num*11)-20 +'px';
+         }
+         
+        }, true);
+    }
+  };
+});
+
 controllers = {};
 
 controllers.footerController = function($scope, $timeout, $dialog, $filter,convenienceMethods){
@@ -20,7 +45,6 @@ controllers.footerController = function($scope, $timeout, $dialog, $filter,conve
   $scope.getLaboratoryContacts = function(){
 
     $scope.selectedFooter = 'contacts';
-    console.log( $scope.selectedFooter)
     if(!$scope.PI){
       $scope.doneLoading = false;
       var url = '../../ajaxaction.php?action=getPI&id=12&callback=JSON_CALLBACK';
@@ -31,7 +55,6 @@ controllers.footerController = function($scope, $timeout, $dialog, $filter,conve
   onGetLabContacts = function(data){
     $scope.contacts = data.LabPersonnel;
     $scope.doneLoading = data.doneLoading;
-    console.log(data);
   }
 
   onFailGetLabContacts = function(){
@@ -57,6 +80,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     if($location.search().hasOwnProperty('pi')){
        //getPI if there is a "pi" index in the GET
        getPi($location.search().pi);
+       $scope.needNewHazards = true;
     }else{
       $scope.noPiSet = true;
     }
@@ -83,7 +107,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     $scope.PI = data;
     $scope.doneLoading = data.doneLoading;
     $scope.selectBuildings();
-    $scope.customSelected = '';
+    $scope.customSelected = $scope.PI.User.Name;
   }
 
   function onFailGetPI(){
@@ -113,7 +137,6 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
-    console.log($item);
     $scope.needNewHazards = true;
     if($item.hasOwnProperty('KeyId')){
       getPi($item.KeyId);
@@ -232,7 +255,6 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
     selectedRooms = 0;
     angular.forEach(building.Rooms, function(thisRoom, key){
-      console.log(thisRoom);
       if(thisRoom.IsSelected){
         building.IsChecked = true;
         selectedRooms ++;
@@ -262,7 +284,6 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
       hazard.cssId = camelCase(hazard.HazardName);
     });
 	  $scope.hazards = data;
-    console.log($scope.hazards);
     $scope.hazardsLoading = false;
     $scope.needNewHazards = false;
   }
@@ -272,20 +293,23 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   }
 
-  $scope.showSubHazards = function(event, hazard){
+  $scope.showSubHazards = function(event, hazard, element){
     event.stopPropagation();
     $scope.selectedHazard = hazard;
-    calculateClickPosition(event,hazard);
+    //calculateClickPosition(event,hazard, element);
     hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
   }
-  $scope.showRooms = function(event, hazard){
+  $scope.showRooms = function(event, hazard, element){
     event.stopPropagation();
     $scope.selectedHazard = hazard;
-    calculateClickPosition(event,hazard);
+   // calculateClickPosition(event,hazard,element);
     hazard.showRoomsModal = !hazard.showRoomsModal;
   }
   //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
-  function calculateClickPosition(event, hazard){
+  function calculateClickPosition(event, hazard, element){
+
+    console.log(element);
+
     var x = event.clientX;
     var y = event.clientY+$window.scrollY;
 
@@ -311,10 +335,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   function walkShowRooms(searchHazards,hazard){
-    console.log(hazard.HazardName);
-    console.log(searchHazards);
     if(searchHazards.indexOf(hazard.Key_Id) > -1){
-      console.log(hazard.HazardName+' '+hazard.Key_Id);
       hazard.showRooms = false;
       angular.forEach(hazard.Children, function(child, key){
         walkShowRooms($scope.searchIds,child);
@@ -496,13 +517,11 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     if(!room.ContainsHazard){
       $scope.addHazardtoRoom(hazard, room, parent);
      }else{
-
       $scope.removeHazardFromRoom(hazard, room, parent);      
     }
   }
 
   $scope.handleHazardChecked = function(hazard, parent){
-    console.log(hazard);
     $scope.selectedHazard = angular.copy(hazard);
     hazard.IsDirty = true;
     angular.forEach(hazard.PossibleRooms, function(room, key){
