@@ -301,20 +301,29 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //set a boolean flag to determine if rooms are shown beneath a hazard
   function getShowRooms(hazard){
    hazard.showRooms = false;
-    if(!hazard.PossibleRooms.every(roomDoesNotContainHazard) && !hazard.PossibleRooms.every(roomContainsHazard) && hazard.Children.every(childNotPresent)){
+    if(!hazard.PossibleRooms.every(roomDoesNotContainHazard) && !hazard.PossibleRooms.every(roomContainsHazard)){
       hazard.showRooms = true;
       angular.forEach($scope.hazards, function(scopeHazard, key){
-        walkShowRooms(hazard.ParentIds,scopeHazard);
+        $scope.searchIds = hazard.ParentIds;
+        walkShowRooms($scope.searchIds,scopeHazard);
       });
     }
   }
 
   function walkShowRooms(searchHazards,hazard){
+    console.log(hazard.HazardName);
     console.log(searchHazards);
     if(searchHazards.indexOf(hazard.Key_Id) > -1){
+      console.log(hazard.HazardName+' '+hazard.Key_Id);
       hazard.showRooms = false;
       angular.forEach(hazard.Children, function(child, key){
-        walkShowRooms(child.ParentIds,child);
+        walkShowRooms($scope.searchIds,child);
+      });
+    }else{
+      angular.forEach(hazard.Children, function(child, key){
+        if(child.IsPresent){
+          hazard.showRooms = false;
+        }
       });
     }
   }
