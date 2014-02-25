@@ -553,7 +553,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 }
 
 //UTILITY FUNCTION FOR getHazardRoomMappingsAsTree
-function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
+function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = null){
 	$searchRoomIds = $searchRoomIds;
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace("Getting room mappings for $hazard");
@@ -573,12 +573,23 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
 		$relevantRooms[] = $room;
 	}
 	
+	if(empty($parentIds)){
+		$parentIds = array();
+	}
+	
+	if(!in_array($hazard->getKey_Id(), $parentIds)){
+		array_push($parentIds, $hazard->getKey_Id());
+	}
+	
+	$parentIdsForChild = $parentIds;
+	array_pop($parentIdsForChild);
 	
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
 	$LOG->trace("Getting mappings for sub-hazards");
 	foreach( $hazard->getSubHazards() as $subHazard ){
-		$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds);
+				
+		$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
 	}
 	
@@ -588,9 +599,9 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds){
 		$hazard->getName(),
 		$relevantRooms,
 		$subHazardNodeDtos,
-		$hazard->getParentHazardId()
+		$parentIdsForChild
 	);
-		
+	
 	//Return this node
 	return $hazardDto;
 
