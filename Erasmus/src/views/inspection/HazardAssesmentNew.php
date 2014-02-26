@@ -4,7 +4,7 @@ require_once '../top_view.php';
 <script src="../../js/hazardAssessment.js"></script>
 
 <div class="navbar">
-	<ul class="nav pageMenu row-fluid" style="background: #e67e1d;">
+	<ul class="nav pageMenu row-fluid orangeBg">
 		<li class="span12">			
 			<h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
 				<img src="../../img/hazard-icon.png"  style="height:50px" />
@@ -85,10 +85,10 @@ require_once '../top_view.php';
 		       	<img class="" style="height:23px; margin:-73px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span12" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!PI"><a href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">Manage Data for Selected PI</a></h3>
+		      	<h3 ng-hide="!PI"><a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">Manage Data for Selected PI</a></h3>
 		     </div>
 
 			<div class="span8">
@@ -179,7 +179,7 @@ require_once '../top_view.php';
 							</a>
 						</li>
 						<li ng-repeat="(key, child) in hazard.Children" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
-							<h4 style="display:inline-block;" class="hazardLi">
+							<h4 class="hazardLi">
 								<label class="checkbox inline">
 									<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
 									<span class="metro-checkbox">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>

@@ -12,7 +12,7 @@ function getStaticHazardsAsTree(){
 
 	//Define all hazards & IDs; assign their indexes as their ids
 
-	$h = new Hazard(); $h->setName("Biological Materials"); $h->setKey_Id(1); $h->setSubHazards( array() ); $hazards[1] = $h;
+	$h = new Hazard(); $h->setName("Biological Hazards"); $h->setKey_Id(1); $h->setSubHazards( array() ); $hazards[1] = $h;
 
 	$h = new Hazard(); $h->setName("Biosafety Levels"); $h->setKey_Id(55555); $h->setParentHazardId(1); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 
@@ -153,7 +153,7 @@ function getStaticHazardsAsTree(){
 	$h = new Hazard(); $h->setName("Cell line"); $h->setKey_Id(107); $h->setParentHazardId(103); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 	$h = new Hazard(); $h->setName("Other tissue"); $h->setKey_Id(108); $h->setParentHazardId(103); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 
-	$h = new Hazard(); $h->setName("General Laboratory Safety"); $h->setKey_Id(16); $h->setSubHazards( array() ); $hazards[16] = $h;
+	$h = new Hazard(); $h->setName("Chemical Hazards"); $h->setKey_Id(16); $h->setSubHazards( array() ); $hazards[16] = $h;
 
 	$h = new Hazard(); $h->setName("DEA Controlled Substances"); $h->setKey_Id(19); $h->setParentHazardId(16); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 	$h = new Hazard(); $h->setName("Particularly Hazardous Substances "); $h->setKey_Id(17); $h->setParentHazardId(16); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
@@ -163,7 +163,7 @@ function getStaticHazardsAsTree(){
 	$h = new Hazard(); $h->setName("Special Use Chemical Hazards"); $h->setKey_Id(22); $h->setParentHazardId(16); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 	$h = new Hazard(); $h->setName("Other Laboratory Hazards"); $h->setKey_Id(23); $h->setParentHazardId(16); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 
-	$h = new Hazard(); $h->setName("Radiation Safety"); $h->setKey_Id(1017); $h->setSubHazards( array() ); $hazards[1017] = $h;
+	$h = new Hazard(); $h->setName("Radiation Hazards"); $h->setKey_Id(1017); $h->setSubHazards( array() ); $hazards[1017] = $h;
 
 	$h = new Hazard(); $h->setName("Radioisotopes"); $h->setKey_Id(19); $h->setParentHazardId(1017); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);
 	$h = new Hazard(); $h->setName("X-Ray Machines"); $h->setKey_Id(17); $h->setParentHazardId(1017); $h->setSubHazards( array() ); $hazards[$h->getKey_Id()] = $h; addHazardToParent($h, $hazards);

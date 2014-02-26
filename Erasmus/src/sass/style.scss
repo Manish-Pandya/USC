@@ -1,7 +1,8 @@
 @CHARSET "ISO-8859-1";
 
 /*****************variables***********/
-$orange:                      #e67e1d;
+//$orange:                      #e67e1d;
+$orange:                      #c00;
 $blue:                        #49afcd;
 $slightlyDarkerBlue:          #2f96b4;
 $blue:                        #49afcd;
@@ -1023,22 +1024,21 @@ ul.key{
 }
 .hazardLi{
   clear:both;
-}
-/* line 497, ../sass/style.scss */
-.hazardList, .hazardList ul {
-  list-style: none !Important;
-  li{
-    h4{
+  h4{
       label{
         white-space:nowrap;
         span.metro-checkbox{
+          margin-right:0 !Important;
           width:100%;
           display: inline !Important;
         }
       }
     }
-    
-  }
+}
+/* line 497, ../sass/style.scss */
+.hazardList, .hazardList ul {
+  list-style: none !Important;
+
   i{
     margin:5px 2px 0;
     font-size:17px;
@@ -1060,6 +1060,19 @@ ul.key{
       width:50px;
     }
   }
+  .hazardLi{
+  clear:both;
+  h4{
+      label{
+        white-space:nowrap;
+        span.metro-checkbox{
+          margin-right:0 !Important;
+          width:100%;
+          display: inline !Important;
+        }
+      }
+    }
+}
 }
 @media (min-width: 1206px) {
   /* line 508, ../sass/style.scss */
@@ -1071,6 +1084,16 @@ ul.key{
       width:50px;
     }
   }
+  .hazardLi{
+  clear:both;
+  h4{
+      label{
+        span.metro-checkbox{
+          font-size:.85vw;
+        }
+      }
+    }
+}
 }
 /* line 515, ../sass/style.scss */
 .hazardListHeader {
@@ -1079,21 +1102,21 @@ ul.key{
   background-repeat: no-repeat !important;
   padding-left: 60px;
   margin-bottom: 10px;
-  font-size: 30px;
+  font-size: 1.5vw;
 }
 
 /* line 523, ../sass/style.scss */
-#biologicalMaterials, #biologicalSafety {
+#biologicalMaterials, #biologicalSafety, #biologicalHazards {
   background: url(../img/biohazard-largeicon.png);
 }
 
 /* line 527, ../sass/style.scss */
-#generalLaboratorySafety, #chemicalSafety {
+#generalLaboratorySafety, #chemicalSafety, #chemicalHazards {
   background: url(../img/chemical-safety-large-icon.png);
 }
 
 /* line 530, ../sass/style.scss */
-#radiationSafety {
+#radiationSafety, #radiationHazards {
   background: url(../img/radiation-large-icon.png);
 }
 .pseudoSelect{
@@ -1579,4 +1602,9 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 }
 .hide{
   display: none !important;
+}
+.btn{
+  -webkit-border-radius: 2px !important;
+   -moz-border-radius:2px !important;
+   border-radius: 2px !important;
 }
