@@ -166,6 +166,7 @@ VALUES
 ;
 
 -- Create Hazards
+
 INSERT INTO hazard (
 	date_created,
 	last_modified_user_id,
@@ -175,8 +176,8 @@ INSERT INTO hazard (
 )
 VALUES
 	(null,1, null, 'Biological Materials', 0),
-	(null,1, 1, 'Recombinant DNA', 1),
-	(null,1, 2, 'Viral Vectors', 1),
+	(null,1, 1, 'Recombinant DNA', 0),
+	(null,1, 2, 'Viral Vectors', 0),
 	(null,1, 3, 'Adeno-associated Virus (AAV)', 0),
 	(null,1, 3, 'Adenovirus', 0),
 	(null,1, 3, 'Baculovirus', 0),
@@ -294,6 +295,16 @@ VALUES
 	(null, 1, 1, 'Biosafety Level 2 - Plants (BL2-P)', 0),
 	(null, 1, 1, 'Biosafety Level 3 - Plants (BL3-P)', 0)
 ;
+INSERT INTO hazard (
+	date_created,
+	last_modified_user_id,
+	parent_hazard_id,
+	name,
+	requires_serial_number,
+	key_id
+)
+VALUES (null,1,null,'ROOT',0,10000);
+UPDATE hazard SET parent_hazard_id=10000 WHERE key_id = 1;
 
 -- Create Equipment
 INSERT INTO hazard_room (
