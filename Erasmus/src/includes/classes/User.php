@@ -28,7 +28,7 @@ class User extends GenericCrud{
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer"
-							);
+	);
 	
 	/** Relationships */
 	protected static $ROLES_RELATIONSHIP = array(
