@@ -58,9 +58,6 @@ class User extends GenericCrud{
 	/** Array of roles */
 	private $roles;
 	
-	/** Array of inspections (if this user is an investigator */
-	private $roles;
-	
 	/** Optional Related PI record (if this user is a PI) */
 	private $principalInvestigator;
 	
