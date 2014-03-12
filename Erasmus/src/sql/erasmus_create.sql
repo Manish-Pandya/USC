@@ -15,8 +15,8 @@
 --
 
 -- Create database if we need to
-CREATE DATABASE IF NOT EXISTS erasmus;
-USE erasmus;
+CREATE DATABASE IF NOT EXISTS usc_ehs_rsms;
+USE usc_ehs_rsms;
 
 -- Define erasmus_user for holding base User entities
 DROP TABLE IF EXISTS erasmus_user;
@@ -225,8 +225,7 @@ CREATE TABLE response (
 	-- response_recommendation => *recommendations
 	-- response_observation => *observations?
 	PRIMARY KEY (key_id),
-	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-	CONSTRAINT fk_response_answer FOREIGN KEY (answer_id) REFERENCES response_answer (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+	CONSTRAINT fk_response_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table to map Response entities to Recommendation entiteis
