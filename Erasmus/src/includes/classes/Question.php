@@ -16,6 +16,7 @@ class Question extends GenericCrud {
 		"order_index"				=> "integer",
 		"standards_and_guidelines"	=> "text",
 		"is_mandatory"				=> "boolean",
+		// checklist is a relationship
 		"checklist_id"				=>	"integer",
 		"root_cause"				=>	"text",
 		//deficiencies is a relationship
@@ -29,6 +30,28 @@ class Question extends GenericCrud {
 		"last_modified_user_id"			=> "integer"
 	);
 	
+	/** Relationships */
+	protected static $DEFICIENCIES_RELATIONSHIP = array(
+			"className"	=>	"Deficiency",
+			"tableName"	=>	"deficiency",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"question_id"
+	);
+	
+	protected static $RECOMMENDATIONS_RELATIONSHIP = array(
+			"className"	=>	"Recommendation",
+			"tableName"	=>	"recommendation",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"question_id"
+	);
+	
+	protected static $OBSERVATIONS_RELATIONSHIP = array(
+			"className"	=>	"Observation",
+			"tableName"	=>	"observation",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"question_id"
+	);
+	
 	/** Question text */
 	private $text;
 	
@@ -37,20 +60,19 @@ class Question extends GenericCrud {
 	private $checklist_id;
 	
 	/** Question ordering descriptor; index of this question */
-	private $orderIndex;
+	private $order_index;
 	
 	/** String that describes (or excerpts) the Standards and Guidelines to which this Question pertains */
-	private $standardsAndGuidelines;
+	private $standards_and_guidelines;
+	
+	/** String that describes the root cause of the deficiency */
+	private $root_cause;
 	
 	/** Boolean that determines whether this Question may be skipped (FALSE) or must be answered (TRUE) */
-	private $isMandatory;
+	private $is_mandatory;
 	
 	/** Array of pre-defined Deficiency entities that may be selected for this Question */
 	private $deficiencies;
-	
-	/** Array of pre-defined DeficiencyRootCause entities that may be selected
-	 * 	as a cause for this Question being answered Deficiently */
-	private $deficiencyRootCauses;
 	
 	/** Array of Recommendation entities that may be selected for this Question */
 	private $recommendations;
@@ -74,28 +96,58 @@ class Question extends GenericCrud {
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
 	
-	public function getChecklist(){ return $this->checklist; }
-	public function setChecklist($checklist){ $this->checklist = $checklist; }
+	public function getChecklist(){
+		if($this->checklist == null) {
+			$checklistDAO = new GenericDAO("Checklist");
+			$this->checklist = $checklistDAO->getById($this->checklist_id);
+		}
+		return $this->checklist; 
+	}
+	public function setChecklist($checklist){
+		$this->checklist = $checklist; 
+		$this->checklist_id = $checklist->getKey_id();
+	}
 	
-	public function getOrderIndex(){ return $this->orderIndex; }
-	public function setOrderIndex($orderIndex){ $this->orderIndex = $orderIndex; }
+	public function getChecklist_id() { return $this->checklist_id; }
+	public function setChecklist_id($checklist_id) { $this->checklist_id = $checklist_id; }
 	
-	public function getStandardsAndGuidelines(){ return $this->standardsAndGuidelines; }
-	public function setStandardsAndGuidelines($standardsAndGuidelines){ $this->standardsAndGuidelines = $standardsAndGuidelines; }
+	public function getOrder_index(){ return $this->order_index; }
+	public function setOrder_index($order_index){ $this->order_index = $order_index; }
 	
-	public function getIsMandatory(){ return $this->isMandatory; }
-	public function setIsMandatory($isMandatory){ $this->isMandatory = $isMandatory; }
+	public function getStandards_and_guidelines(){ return $this->standards_and_guidelines; }
+	public function setStandardsA_and_guidelines($standards_and_guidelines){ $this->standards_and_guidelines = $standards_and_guidelines; }
 	
-	public function getDeficiencies(){ return $this->deficiencies; }
+	public function getRoot_cause(){ return $this->root_cause; }
+	public function setRoot_cause($root_cause){ $this->root_cause = $root_cause; }
+	
+	public function getIs_mandatory(){ return $this->is_mandatory; }
+	public function setIs_mandatory($is_mandatory){ $this->is_mandatory = $is_mandatory; }
+	
+	public function getDeficiencies(){
+		if($this->deficiencies === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::DEFICIENCIES_RELATIONSHIP));
+		}
+		return $this->deficiencies;
+	}
 	public function setDeficiencies($deficiencies){ $this->deficiencies = $deficiencies; }
 	
-	public function getDeficiencyRootCauses(){ return $this->deficiencyRootCauses; }
-	public function setDeficiencyRootCauses($deficiencyRootCauses){ $this->deficiencyRootCauses = $deficiencyRootCauses; }
-	
-	public function getRecommendations(){ return $this->recommendations; }
+	public function getRecommendations(){
+		if($this->recommendations === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
+		}
+		return $this->recommendations;
+	}
 	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
 	
-	public function getObservations(){ return $this->observations; }
+	public function getObservations(){
+		if($this->observations === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
+		}
+		return $this->observations;
+	}
 	public function setObservations($observations){ $this->observations = $observations; }
 }
 ?>
