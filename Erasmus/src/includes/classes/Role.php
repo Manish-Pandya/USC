@@ -12,7 +12,7 @@ class Role extends GenericCrud{
 	
 	// CRUD Meta-Data
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "erasmus_role";
+	protected static $TABLE_NAME = "role";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -20,15 +20,16 @@ class Role extends GenericCrud{
 		
 		//GenericCrud
 		"key_id"			=> "integer",
-		"dateCreated"		=> "timestamp",
-		"dateLastModified"	=> "timestamp",
-		"isActive"			=> "boolean"
-	);
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer"
+													);
 	
 	/** Relationships */
 	protected static $USERS_RELATIONSHIP = array(
 		"className"	=>	"User",
-		"tableName"	=>	"erasmus_user_role",
+		"tableName"	=>	"user_role",
 		"keyName"	=>	"role_id",
 		"foreignKeyName"	=>	"user_id"
 	); 

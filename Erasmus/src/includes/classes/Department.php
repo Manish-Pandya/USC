@@ -14,7 +14,21 @@ class Department extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"		=> "text",
 		//principal investigators is a relationship
+
+		//GenericCrud
+		"key_id"			=> "integer",
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer"
 	);
+	
+	protected static $PIS_RELATIONSHIP = array(
+		"className"	=>	"PrincipalInvestigator",
+		"tableName"	=>	"principal_investigator_department",
+		"keyName"	=>	"principal_investigator_id",
+		"foreignKeyName"	=>	"department_id"
+	); 
 	
 	/** Name of the department */
 	private $name;
@@ -38,7 +52,13 @@ class Department extends GenericCrud {
 	public function getName(){ return $this->name; }
 	public function setName( $name ){ $this->name = $name; }
 	
-	public function getPrincipalInvestigators(){ return $this->principalInvestigators; }
-	public function setPrincipalInvestigators( $principalInvestigators ){ $this->principalInvestigators = $principalInvestigators; }
-}
+	public function getPrincipalInvestigators(){
+		if($this->principalInvestigators == null) {
+			$thisDAO = new GenericDAO($this);
+			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$PIS_RELATIONSHIP));
+		}
+		return $this->users;
+	}
+	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+	}
 ?>

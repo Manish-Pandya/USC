@@ -3,7 +3,7 @@
  *
  *
  *
- * @author Mitch Martin, GraySail LLC
+ * @author Hoke Currie, GraySail LLC
  */
 class Question extends GenericCrud {
 	
@@ -16,9 +16,17 @@ class Question extends GenericCrud {
 		"order_index"				=> "integer",
 		"standards_and_guidelines"	=> "text",
 		"is_mandatory"				=> "boolean",
+		"checklist_id"				=>	"integer",
+		"root_cause"				=>	"text",
 		//deficiencies is a relationship
-		//deficiency_root_causes is a relationship
 		//recommendations is a relationship
+
+		//GenericCrud
+		"key_id"			=> "integer",
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer"
 	);
 	
 	/** Question text */
@@ -26,6 +34,7 @@ class Question extends GenericCrud {
 	
 	/** Checklist to which this Question belongs */
 	private $checklist;
+	private $checklist_id;
 	
 	/** Question ordering descriptor; index of this question */
 	private $orderIndex;

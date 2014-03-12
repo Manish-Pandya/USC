@@ -25,12 +25,12 @@ CREATE TABLE erasmus_user (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	-- user_role => *roles
 	username varchar(48) NOT NULL,
 	name varchar(90) NOT NULL,
 	email varchar(90) NOT NULL,
+	supervisor_id int(11),
 	--  TODO: **password_hash
 	PRIMARY KEY (key_id),
 	UNIQUE (username),
@@ -50,6 +50,10 @@ CREATE TABLE user_role (
 DROP TABLE IF EXISTS ROLE;
 CREATE TABLE ROLE (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
+	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	last_modified_user_id int(11) NOT NULL,
 	name varchar(24),
 	PRIMARY KEY (key_id),
 	UNIQUE (name)
@@ -63,7 +67,6 @@ CREATE TABLE building (
 	name varchar(90),
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	PRIMARY KEY (key_id),
 	UNIQUE (name)
@@ -76,7 +79,6 @@ CREATE TABLE room (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	name varchar(90),
 	-- map building rooms from this key
@@ -99,14 +101,13 @@ CREATE TABLE principal_investigator_room (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table structure defining Hazard entities
+-- Table structure defining haz entities
 DROP TABLE IF EXISTS hazard;
 CREATE TABLE hazard (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	name varchar(256),
 	-- nullable, for top-level hazards
@@ -151,7 +152,6 @@ CREATE TABLE checklist (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	-- hazard_checklist => *hazards
 	-- question.checklist_id => *questions
@@ -165,12 +165,12 @@ CREATE TABLE question (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	checklist_id int(11),
 	text varchar(1024),
 	order_index int(11),
 	standards_and_guidelines varchar(1024),
+	root_cause varchar(1024),
 	is_mandatory boolean DEFAULT 0,
 	-- deficiency.question_id => *deficiencies
 	-- deficiency_root_cause.question_id => *deficiency_root_causes
@@ -187,7 +187,6 @@ CREATE TABLE deficiency (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
 	text varchar(1024),
@@ -210,15 +209,6 @@ CREATE TABLE deficiency_root_cause (
 	CONSTRAINT fk_deficiency_root_cause_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Define table for Answer values
--- 	'Yes' / 'No' / 'NotApplicable' / 'NoResponse'
-DROP TABLE IF EXISTS response_answer;
-CREATE TABLE response_answer (
-	key_id int(11) NOT NULL AUTO_INCREMENT,
-	text varchar(16) NOT NULL,
-	PRIMARY KEY (key_id),
-	UNIQUE (text)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table for Response entities
 DROP TABLE IF EXISTS response;
@@ -227,10 +217,10 @@ CREATE TABLE response (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
+	inspection_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
-	answer_id int(11),
+	answer varchar(16),
 	-- deficiency_selection.response_id => *deficiency_selections
 	-- response_recommendation => *recommendations
 	-- response_observation => *observations?
@@ -264,16 +254,14 @@ CREATE TABLE deficiency_selection (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	response_id int(11),
-	room_id int(11),
 	deficiency_id int(11),
 	-- deficiency_selection_root_cause => *deficiency_root_causes
 	-- deficiency_selection_corrective_action => *corrective_actions
 	PRIMARY KEY (key_id),
 	CONSTRAINT fk_deficiency_selection_response FOREIGN KEY (response_id) REFERENCES response (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-	CONSTRAINT fk_deficiency_selection_room FOREIGN KEY (room_id) REFERENCES room (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+	
 	CONSTRAINT fk_deficiency_selection_deficiency FOREIGN KEY (deficiency_id) REFERENCES deficiency (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -284,7 +272,6 @@ CREATE TABLE corrective_action (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	deficiency_selection_id int(11) NOT NULL,
 	text varchar(1024),
@@ -298,6 +285,15 @@ CREATE TABLE deficiency_selection_root_cause (
 	key_id int(11) NOT NULL AUTO_INCREMENT,
 	deficiency_selection_id int(11) NOT NULL,
 	deficiency_root_cause_id int(11) NOT NULL,
+	PRIMARY KEY (key_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Define table to map DeficiencySelection entities with their associated Room entities
+DROP TABLE IF EXISTS deficiency_selection_room;
+CREATE TABLE deficiency_selection_room (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	deficiency_selection_id int(11) NOT NULL,
+	room_id int(11) NOT NULL,
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -317,7 +313,6 @@ CREATE TABLE department (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	name varchar(90),
 	-- principal_investigator_department => *principalInvestigators
@@ -349,7 +344,6 @@ CREATE TABLE inspector (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	user_id int(11) NOT NULL,
 	-- 'inspection_inspector => *inspections
@@ -364,12 +358,37 @@ CREATE TABLE observation (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
 	text varchar(1024),
 	PRIMARY KEY (key_id),
 	CONSTRAINT fk_observation_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Define table for Supplemental Observation entities
+DROP TABLE IF EXISTS supplemental_observation;
+CREATE TABLE supplemental_observation (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
+	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	last_modified_user_id int(11) NOT NULL,
+	response_id int(11) NOT NULL,
+	text varchar(1024),
+	PRIMARY KEY (key_id)	
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Define table for Supplemental Recommendation entities
+DROP TABLE IF EXISTS supplemental_recommendation;
+CREATE TABLE supplemental_recommendation (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	is_active boolean NOT NULL DEFAULT 1,
+	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	last_modified_user_id int(11) NOT NULL,
+	response_id int(11) NOT NULL,
+	text varchar(1024),
+	PRIMARY KEY (key_id)	
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table for PrincipalInvestigator entities
@@ -379,7 +398,6 @@ CREATE TABLE principal_investigator (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	user_id int(11),
 	-- principal_investigator_department => *departments
@@ -406,7 +424,6 @@ CREATE TABLE inspection (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	principal_investigator_id int(11) NOT NULL,
 	-- 'inspection_inspector => *inspectors
@@ -426,6 +443,15 @@ CREATE TABLE inspection_response (
 	PRIMARY KEY (key_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Define table to map Inspection entities with their associated Room entities
+DROP TABLE IF EXISTS inspection_room;
+CREATE TABLE inspection_room (
+	key_id int(11) NOT NULL AUTO_INCREMENT,
+	inspection_id int(11) NOT NULL,
+	room_id int(11) NOT NULL,
+	PRIMARY KEY (key_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Define table for Recommendation entities
 DROP TABLE IF EXISTS recommendation;
 CREATE TABLE recommendation (
@@ -433,7 +459,6 @@ CREATE TABLE recommendation (
 	is_active boolean NOT NULL DEFAULT 1,
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	created_user_id int(11) NOT NULL,
 	last_modified_user_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
 	text varchar(1024),

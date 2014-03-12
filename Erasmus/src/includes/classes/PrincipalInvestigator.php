@@ -16,9 +16,46 @@ class PrincipalInvestigator extends GenericCrud {
 		//departments is a relationship
 		//rooms is a relationship
 		//lab_personnel is a relationship
+
+		//GenericCrud
+		"key_id"			=> "integer",
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer"
 	);
 	
-	/** Base User object that this PI represents */
+	/** Relationships */
+	protected static $INSPECTIONS_RELATIONSHIP = array(
+		"className"	=>	"Inspection",
+		"tableName"	=>	"inspection",
+		"keyName"	=>	"key_id",
+		"foreignKeyName"	=>	"principal_investigator_id"
+	); 
+	
+	protected static $ROOMS_RELATIONSHIP = array(
+		"className"	=>	"Room",
+		"tableName"	=>	"principal_investigator_room",
+		"keyName"	=>	"room_id",
+		"foreignKeyName"	=>	"principal_investigator_id"
+	); 
+	
+	protected static $LABPERSONNEL_RELATIONSHIP = array(
+		"className"	=>	"User",
+		"tableName"	=>	"erasmus_user",
+		"keyName"	=>	"key_id",
+		"foreignKeyName"	=>	"supervisor_id"
+	); 
+	
+	protected static $DEPARTMENTS_RELATIONSHIP = array(
+		"className"	=>	"Department",
+		"tableName"	=>	"principal_investigator_department",
+		"keyName"	=>	"department_id",
+		"foreignKeyName"	=>	"principal_investigator_id"
+	); 
+	
+/** Base User object that this PI represents */
+	private $user_id;
 	private $user;
 	
 	/** Array of Departments to which this PI belongs */
@@ -29,6 +66,9 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** Array of LabPersonnel entities */
 	private $labPersonnel;
+	
+	/** Array of Inspection entities */
+	private $inspections;
 	
 	public function __construct(){
 		
@@ -43,17 +83,55 @@ class PrincipalInvestigator extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function getUser(){ return $this->user; }
-	public function setUser($user){ $this->user = $user; }
+	public function getUser(){
+		if($this->user == null) {
+			$userDAO = new GenericDAO("User");
+			$this->user = $userDAO->getById($this->user_id);
+		}
+	}
+	public function setUser($user){
+		$this->user = $user; 
+		$this->user_id = $user->getKey_id();
+	}
 	
-	public function getDepartments(){ return $this->departments; }
+	public function getUser_id(){ return $this->user_id; }
+	public function setUser_id($id){ $this->user_id = $id; }
+	
+	public function getDepartments(){ 
+		if($this->departments === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->departments = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$DEPARTMENTS_RELATIONSHIP));
+		}
+		return $this->departments;
+	}
 	public function setDepartments($departments){ $this->departments = $departments; }
 	
-	public function getRooms(){ return $this->rooms; }
+	public function getRooms(){
+		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+		}
+		return $this->inspections;
+	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
-	public function getLabPersonnel(){ return $this->labPersonnel; }
+	public function getLabPersonnel(){
+		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
+		}
+		return $this->inspections;
+	}
 	public function setLabPersonnel($labPersonnel){ $this->labPersonnel = $labPersonnel; }
 	
+	public function getInspections(){
+		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTIONS_RELATIONSHIP));
+		}
+		return $this->inspections;
+	}
+	public function setInspections($inspections){ $this->inspections = $inspections; }
+		
 }
 ?>

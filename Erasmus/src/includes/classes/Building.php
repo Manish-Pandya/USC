@@ -12,8 +12,24 @@ class Building extends GenericCrud {
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		//rooms is a relationship
+		"name"				=> "text",
+		
+		//GenericCrud
+		"key_id"			=> "integer",
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer"
+													);
+
+	/** Relationships */
+	protected static $ROOMS_RELATIONSHIP = array(
+			"className"	=>	"Room",
+			"tableName"	=>	"room",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"building_id"
 	);
+	
 	
 	/** Name of Building */
 	private $name;
@@ -37,7 +53,13 @@ class Building extends GenericCrud {
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
 	
-	public function getRooms(){ return $this->rooms; }
+	public function getRooms(){ 
+		if($this->rooms == null) {
+			$buildingDAO = new GenericDAO($this);
+			$this->users = $buildingDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+		}
+		return $this->users;
+	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
 }

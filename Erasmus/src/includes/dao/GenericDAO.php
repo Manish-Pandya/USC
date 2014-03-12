@@ -14,9 +14,10 @@
 class GenericDAO {
 	
 	public static $AUTO_SET_FIELDS = array(
-		'getDateCreated',
-		'getDateLastModified',
-		'getIsActive'
+		'getDate_created',
+		'getDate_last_modified',
+		'getIs_active',
+		'getLast_modified_user_id'
 	);
 	
 	/** Logger */
@@ -375,5 +376,6 @@ class GenericDAO {
 	
 		return $returnFlag;
 	}
+	
 }
 ?>

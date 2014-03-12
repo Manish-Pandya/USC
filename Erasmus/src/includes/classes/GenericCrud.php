@@ -22,13 +22,16 @@ abstract class GenericCrud {
 	private $key_id;
 	
 	// creation date
-	private $dateCreated;
+	private $date_created;
 	
 	// last update date
-	private $dateLastModified;
+	private $date_last_modified;
 	
 	// Active
-	private $isActive;
+	private $is_active;
+	
+	// User who created/last updated
+	private $last_modified_user_id;
 	
 	public function __toString(){
 		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . "]";
@@ -36,42 +39,49 @@ abstract class GenericCrud {
 	
 	// Accessors / Mutators
 	
-	public function getKey_Id(){
+	public function getKey_id(){
 		return $this->key_id;
 	}
 	
-	public function setKey_Id($keyid){
+	public function setKey_id($keyid){
 		$this->key_id = $keyid;
 	}
 	
-	public function getDateCreated(){
+	public function getDate_created(){
 		return $this->dateCreated;
 	}
 	
-	public function setDateCreated($dateCreated){
-		$this->dateCreated = $dateCreated;
+	public function setDate_created($dateCreated){
+		$this->date_created = $dateCreated;
 	}
 	
-	public function getDateLastModified(){
-		return $this->dateLastModified;
+	public function getDate_last_modified(){
+		return $this->date_last_modified;
 	}
 	
-	public function setDateLastModified($dateLastModified){
-		$this->dateLastModified = $dateLastModified;
+	public function getLast_modified_user_id(){
+		return $this->last_modified_user_id;
 	}
 	
-	public function getIsActive(){
-		return $this->isActive;
+	public function setDate_last_modified($dateLastModified){
+		$this->date_last_modified = $dateLastModified;
 	}
 	
-	public function setIsActive($isActive){
-		$this->isActive = $isActive; }
+	public function getIs_active(){
+		return $this->is_active;
+	}
 	
-	// CRUD Utilities
+	public function setIs_active($isActive){
+		$this->is_active = $isActive; }
+	
+	public function setLast_modified_user_id($id){
+		$this->last_modified_user_id = $id; }
+	
+		// CRUD Utilities
 	
 	/** Returns TRUE if $this has a value for its primary key */
 	public function hasPrimaryKeyValue(){
-		return $this->getKey_Id() != null;
+		return $this->getKey_id() != null;
 	}
 	
 	/**

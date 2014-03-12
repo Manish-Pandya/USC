@@ -5,15 +5,15 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Recommendation extends GenericCrud {
+class SupplementalObservation extends GenericCrud {
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "recommendation";
+	protected static $TABLE_NAME = "supplemental_observation";
 	
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"text"		=> "text",
-		"question_id"	=>	"integer",
+		"response_id"	=>	"integer",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -23,11 +23,11 @@ class Recommendation extends GenericCrud {
 		"last_modified_user_id"			=> "integer"
 	);
 	
-	/** Reference to the Question entity to which this Recommendation applies */
-	private $question;
-	private $question_id;
+	/** Reference to the Response entity to which this SupplementalObservation applies */
+	private $response;
+	private $response_id;
 	
-	/** String containing the text describing this Recommendation */
+	/** String containing the text describing this SupplementalObservation */
 	private $text;
 	
 	public function __construct(){
@@ -43,20 +43,20 @@ class Recommendation extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function getQuestion(){ 
-		if($this->question == null) {
-			$questionDAO = new GenericDAO("Question");
-			$this->question = $questionDAO->getById($this->question_id);
+	public function getResponse(){ 
+		if($this->response == null) {
+			$responseDAO = new GenericDAO("Response");
+			$this->response = $responseDAO->getById($this->response_id);
 		}
-		return $this->question; 
+		return $this->response; 
 	}
-	public function setQuestion($question){
-		$this->question = $question; 
-		$this->question_id = $question->getKey_id();
+	public function setResponse($response){
+		$this->response = $response; 
+		$this->response_id = $response->getKey_id();
 	}
 	
-	public function getQuestion_id(){ return $this->question_id; }
-	public function setQuestion_id($question_id){ $this->question_id = $question_id; }
+	public function getResponse_id(){ return $this->response_id; }
+	public function setResponse_id($response_id){ $this->response_id = $response_id; }
 	
 		
 	public function getText(){ return $this->text; }
