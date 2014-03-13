@@ -42,6 +42,10 @@ class Deficiency extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
+	public function getEagerAccessors() {
+		return array();
+	}
+	
 	public function getQuestion(){ 
 		if($this->question == null) {
 			$questionDAO = new GenericDAO("Question");

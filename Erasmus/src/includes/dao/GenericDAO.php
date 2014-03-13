@@ -74,32 +74,22 @@ class GenericDAO {
 	function getById($id){
 		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
 		
-		// Get the db connection
-		global $mdb2;
-	
-		//Query the table by key_id
-		$result =& $mdb2->query('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ' . $id);
-		if (PEAR::isError($result)) {
-			$this->handleError($result);
-		}
-	
-		//Get the first row of query results (should be only one row)
-		$record = $result->fetchRow();
-		
-		//Ensure there is a record
-		if( $record !== NULL ){
-			//Build an object to return
-			$object = new $this->modelClassName();
+			// Get the db connection
+			global $db;
 			
-			//Iterate through the columns and make this object match the values from the database
-			$object->populateFromDbRecord($record);
-		}
-		else{
-			//No Record; return NULL
-			$object = NULL;
-		}
-		
-		return $object;
+			//Prepare to query the table by key_id
+			$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
+			$stmt->bindParam(1,$id,PDO::PARAM_INT);
+			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
+			if ($stmt->execute()) {
+				$result = $stmt->fetch();
+			// ... otherwise, die and echo the db error
+			} else {
+				$error = $stmt->errorInfo();
+				die($error[2]);
+			}
+
+			return $result;
 	}
 	
 	/**
@@ -108,45 +98,27 @@ class GenericDAO {
 	 * @return Array of entities
 	 */
 	function getAll( $sortColumn = NULL, $sortDescending = FALSE ){
+
 		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 		
 		// Get the db connection
-		global $mdb2;
-		$resultList = array();
-	
-		// Build query
-		$query_string = 'SELECT * FROM ' . $this->modelObject->getTableName();
-		if( $sortColumn != NULL ){
-			//Default to ascending, which requires no keyword
-			$sortDirection = '';
+		global $db;
+		$className = get_class($this);
+		
+		//Prepare to query all from the table
+		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($sortColumn == NULL ? '' : " ORDER BY $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
 			
-			//Check for Descending sort
-			if ( $sortDescending ){
-				$sortDirection = 'DESC';
-			}
-			
-			//Sort is specified; add ORDER BY clause
-			$query_string .= " ORDER BY $sortColumn $sortDirection";
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
 		}
 		
-		//Query the table by key_id
-		$result =& $mdb2->query( $query_string );
-		if (PEAR::isError($result)) {
-			$this->handleError($result);
-		}
-	
-		//Iterate the rows and push to result list
-		while ($record = $result->fetchRow()){
-	
-			//Create a new instance and sync it for each row
-			$item = new $this->modelClassName();
-			$item->populateFromDbRecord( $record );
-	
-			// Add the results to an array
-			array_push($resultList, $item);
-		}
-	
-		return $resultList;
+		return $result;
+		
 	}
 	
 	/**
@@ -267,7 +239,7 @@ class GenericDAO {
 		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		
 		// Get the db connection
-		global $mdb2;
+		global $db;
 	
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -276,21 +248,30 @@ class GenericDAO {
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
 	
-		// initialize the return array
-		$resultList = array();
-	
-		//Query the table by date range
-		$result =& $mdb2->query("SELECT " . $foreignKeyName . " FROM " . $tableName . " WHERE " . $keyName . " = " . $id);
-		if (PEAR::isError($result)) {
-			$this->handleError($result);
+		//Query the related table using the foreign key
+		$queryString = "SELECT " . $keyName . " FROM " . $tableName . " WHERE " . $foreignKeyName . " = ?" ;
+		$this->LOG->debug($queryString . " [? == $id] ...");
+		$stmt = $db->prepare($queryString);
+		$stmt->bindParam(1,$id,PDO::PARAM_INT);
+
+		// Query the db and return an array of key_ids for matching records
+		if ($stmt->execute() ) {
+			$keys = $stmt->fetchAll();
+			$this->LOG->debug( "... returned " . count($keys) . " related records.");
+		// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
 		}
-	
+		
+		$resultList = array();
+		
 		//Iterate the rows
-		while ($record = $result->fetchRow()){
+		foreach ($keys as $record){
 			//Create a new instance and sync it for each row
 			$item = new $className();
 			$itemDao = new GenericDAO( $item );
-			$item = $itemDao->getById( $record->$foreignKeyName );
+			$item = $itemDao->getById( $record[$keyName] );
 	
 			// Add the results to an array
 			array_push($resultList, $item);
@@ -376,6 +357,59 @@ class GenericDAO {
 	
 		return $returnFlag;
 	}
+
+	function bindColumns($stmt) {
+		$index = 0;
+		foreach ($this->columns as $col){
+			if ($this->types[$index] == "integer") {$type = PDO::PARAM_INT;}
+			if ($this->types[$index] == "text") {$type = PDO::PARAM_STR;}
+			if ($this->types[$index] == "float") {$type = PDO::PARAM_INT;}
+			if ($this->types[$index] == "boolean") {$type = PDO::PARAM_BOOL;}
+			if ($this->types[$index] == "datetime") {$type = PDO::PARAM_STR;}
+			if ($this->types[$index] == "timestamp") {$type = PDO::PARAM_INT;}
+			$stmt->bindParam(":" . $col,$this->$col,$type);
+			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
+			$index = $index + 1;
+		}
+		return $stmt;
+	}
+	
+	function createInsertStatement ($db){
+			
+		$sql = "INSERT INTO " . $this->table . " ( ";
+		foreach ($this->columns as $col){
+			$sql .= $col . ",";
+		}
+		$sql = rtrim($sql,",");
+		$sql .= ") VALUES ( ";
+		foreach ($this->columns as $col){
+			$sql .= ":" . $col . ",";
+		}
+		$sql = rtrim($sql,",");
+		$sql .= ")";
+			
+		$stmt = $db->prepare($sql);
+		//var_export($stmt->queryString);
+		return $stmt;
+			
+	}
+	
+	function createUpdateStatement ($db){
+			
+		$sql = "UPDATE " . $this->table . " SET ";
+		foreach ($this->columns as $col){
+			if ($col != "key_id"){
+				$sql .= $col . " = :" . $col . " ,";
+			}
+		}
+		$sql = rtrim($sql,",");
+		$sql .= " WHERE key_id = :key_id";
+		$stmt = $db->prepare($sql);
+		//var_export($stmt->queryString);
+		return $stmt;
+			
+	}
+	
 	
 }
 ?>

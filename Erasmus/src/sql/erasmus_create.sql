@@ -153,9 +153,7 @@ CREATE TABLE checklist (
 	date_created TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	date_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	last_modified_user_id int(11) NOT NULL,
-	-- hazard_checklist => *hazards
-	-- question.checklist_id => *questions
-	PRIMARY KEY (key_id)
+	hazard_id int(11),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Define table for Question entities

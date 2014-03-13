@@ -7,7 +7,16 @@ function isProductionServer() {
 }
 
 function getDBConnection() {
-	return 'mysql://erasmus:eR@m#682d@localhost/usc_ehs_rsms';
+	return 'mysql:host=localhost;dbname=usc_ehs_rsms';
 }
+
+function getDBUsername() {
+	return 'erasmus';
+}
+
+function getDBPassword() {
+	return 'eR@m#682d';
+}
+
 
 ?>

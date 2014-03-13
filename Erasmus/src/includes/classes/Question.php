@@ -93,6 +93,10 @@ class Question extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
+	public function getEagerAccessors() {
+		return array("getDeficiencies","getObservations","getRecommendations");
+	}
+	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
 	

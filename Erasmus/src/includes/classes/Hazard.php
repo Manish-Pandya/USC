@@ -79,6 +79,10 @@ class Hazard extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
+	public function getEagerAccessors() {
+		return array("getSubHazards","getChecklist");
+	}
+	
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
 	

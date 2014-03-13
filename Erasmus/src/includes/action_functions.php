@@ -210,6 +210,7 @@ function getAllHazardsAsTree() {
 	$root = $dao->getById(10000);
 	
 	$junk = $root->getSubHazards();
+	$LOG->debug("Here is the array of subHazards: $junk");
 	
 	return $root;
 }

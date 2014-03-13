@@ -1,6 +1,6 @@
 <?php
 	
-// Wired to use either PEAR DB (deprecated) or PEAR MDB2 (proper choice for php5, but not available in production env) 
+/*// Wired to use either PEAR DB (deprecated) or PEAR MDB2 (proper choice for php5, but not available in production env) 
 //require_once 'DB.php';
 require_once 'MDB2.php';
 	$dbString = getDBConnection();
@@ -21,8 +21,13 @@ require_once 'MDB2.php';
 	$mdb2->loadModule('Extended');
 
 	/** Define variable to hold the autoquery-insert mode. This is helpful if database modules are changed */
-	define('DATABASE_AUTOQUERY_INSERT', MDB2_AUTOQUERY_INSERT);
+	//define('DATABASE_AUTOQUERY_INSERT', MDB2_AUTOQUERY_INSERT);
 	
 	/** Define variable to hold the autoquery-update mode. This is helpful if database modules are changed */
-	define('DATABASE_AUTOQUERY_UPDATE', MDB2_AUTOQUERY_UPDATE);
-?>
+	//define('DATABASE_AUTOQUERY_UPDATE', MDB2_AUTOQUERY_UPDATE);
+
+
+
+$db = new PDO(getDBConnection(),getDBUsername(),getDBPAssword());
+
+	?>

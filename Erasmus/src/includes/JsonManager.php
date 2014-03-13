@@ -232,13 +232,20 @@ class JsonManager {
 			//Make sure function starts with 'get' and not listed in JSON_IGNORE_FUNCTION_NAMES
 			//TODO: Add class-specific names to ignore?
 			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
-				$LOG->trace("Calling $classname#$func()");
-				//Call function to get value
-				$value = $object->$func();
-		
+				
+				if( in_array($func,$object->getEagerAccessors())){
+					$LOG->trace("Calling $classname#$func()");
+					//Call function to get value
+					$value = $object->$func();
+				} else {
+					$LOG->trace("Skipping (lazy loading) $classname#$func()");
+					//Call function to get value
+					$value = null;
+				}
+
 				//use function name to infer the associated key
 				$key = str_replace('get', '', $func);
-		
+	
 				//Associate key with value
 				$objectVars[$key] = $value;
 			}

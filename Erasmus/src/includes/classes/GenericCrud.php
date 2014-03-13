@@ -19,19 +19,19 @@ abstract class GenericCrud {
 	// Member fields
 	
 	// Primary key
-	private $key_id;
+	protected $key_id;
 	
 	// creation date
-	private $date_created;
+	protected $date_created;
 	
 	// last update date
-	private $date_last_modified;
+	protected $date_last_modified;
 	
 	// Active
-	private $is_active;
+	protected $is_active;
 	
 	// User who created/last updated
-	private $last_modified_user_id;
+	protected $last_modified_user_id;
 	
 	public function __toString(){
 		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . "]";
@@ -48,7 +48,7 @@ abstract class GenericCrud {
 	}
 	
 	public function getDate_created(){
-		return $this->dateCreated;
+		return $this->date_created;
 	}
 	
 	public function setDate_created($dateCreated){

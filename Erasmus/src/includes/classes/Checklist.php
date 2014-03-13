@@ -56,6 +56,10 @@ class Checklist extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
+	public function getEagerAccessors() {
+		return array("getQuestions");
+	}
+	
 	public function getHazard(){
 		if($this->hazard == null) {
 			$hazardDAO = new GenericDAO("Hazard");
