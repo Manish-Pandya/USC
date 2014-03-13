@@ -206,17 +206,19 @@ function saveQuestion(){
 // Hazards Hub
 function getAllHazardsAsTree() {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$dao = getDao();
-	$hazards = $dao->getAllHazards();
+	$dao = getDao(new Hazard());
+	$root = $dao->getById(10000);
 	
-	return $hazards;
+	$junk = $root->getSubHazards();
+	
+	return $root;
 }
 
 function getAllHazards(){
 	//FIXME: This function should return a FLAT COLLECTION of ALL HAZARDS; not a Tree
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$dao = getDao();
-	$hazards = $dao->getAllHazards();
+	$dao = getDao(new Hazard());
+	$hazards = $dao->getAll();
 	
 	return $hazards;
 };
@@ -228,8 +230,8 @@ function getHazardById( $id = NULL, $name = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		$hazard = $dao->getHazardById($id, $name);
+		$dao = getDao(new Hazard());
+		$hazard = $dao->getById($id);
 		
 		return $hazard;
 	}
@@ -255,45 +257,16 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 	else{
 		$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
 		
-		$dao = getDao();
+		$dao = getDao(new Hazard());
 		
 		// get Hazard by ID
 		$hazard = getHazardById( $hazardId );
 		$LOG->trace("Loaded Hazard to move: $hazard");
 		
-		// get Parent Hazard by ID
-		$newParent = getHazardById( $parentHazardId );
-		$LOG->trace("Loaded New Parent Hazard: $newParent");
-		
-		// get old Parent Hazard by ID
-		$oldParent = getHazardById( $hazard->getParentHazardId() );
-		$LOG->trace("Loaded Old Parent Hazard: $oldParent");
-		
-		//Get children of parent
-		$children = $newParent->getSubHazards();
-		
-		//Add hazard to children
-		$children[] = $hazard;
-		
-		$newParent->setSubHazards($children);
-		
+		$hazard->setParent_hazard_id=$parentHazardId;		
 		// Save
+
 		$dao->save($hazard);
-		$dao->save($newParent);
-		
-		// Remove $hazard from old parent's children
-		if( $oldParent !== NULL && !($oldParent instanceof ActionError) ){
-			$LOG->debug("Removing Hazard #$hazardId from old parent Hazard #$parentHazardId");
-			$siblings = $oldParent->getSubHazards();
-			foreach( $siblings as $key => $sibling ){
-				if( $sibling === $hazard ){
-					unset( $siblings[ $key ] );
-				}
-			}
-			
-			$oldParent->setSubHazards($siblings);
-			$dao->save($oldParent);
-		}
 		
 		//TODO: What do we return?
 		$LOG->info("Moved Hazard #$hazardId to new parent Hazard #$parentHazardId");
@@ -312,7 +285,7 @@ function saveHazard(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new Hazard());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
