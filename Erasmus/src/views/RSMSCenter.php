@@ -5,7 +5,7 @@ require_once 'top_view.php';
 <div class="row-fluid">
 
 	<div class="span2 rsmsCenterIconContainer offset3" style=" margin-bottom:30px;">
-		<a href="hubs/HazardHub.php" class="span12" style="background: #e67e1d;">
+		<a href="hubs/HazardHubAngular.php" class="span12" style="background: #e67e1d;">
 			<img class="" src="../img/hazard-icon.png" />
 			<p>Hazard Hub</p>
 		</a>
@@ -37,7 +37,7 @@ require_once 'top_view.php';
 	</div>
 
 	<div class="span2 rsmsCenterIconContainer" style=" ">
-		<a href="inspection/NewInspection.php" class="span12" style="background: #d00;">
+		<a href="inspection/HazardAssesmentNew.php" class="span12" style="background: #d00;">
 			<img class="" src="../img/new-inspection-icon.png" />
 			<p>New Inspection</p>
 		</a>

@@ -178,7 +178,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
 
     'use strict';
 
-    var eventTypes = 'Create Start Sort Change BeforeStop Stop Update Receive Remove Over Out Activate Deactivate'.split(' ');
+    var eventTypes = 'Create Begin Sort Change BeforeStop Stop Update Receive Remove Over Out Activate Deactivate'.split(' ');
 
     return {
         restrict: 'A',
@@ -217,7 +217,6 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
                 //if ( ... ) return false;
                return true;
                 };
-
             element.nestedSortable(options);
 
         }
@@ -232,11 +231,13 @@ hazardHub.directive('buttongroup', function () {
          scope.$watch
          (
           function () {
+            console.log('here');
            return {
              w:element.width(),
            };
           },
           function (newValue, oldValue) {
+            console.log(newValue);
            if (newValue.w < 900 && newValue.w !== 0) {
                 element.addClass('small');
            }else{
@@ -260,7 +261,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      convenienceMethods.getData('../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK', onGetHazards, onFailSave);
+      convenienceMethods.getData('../../ajaxaction.php?action=getAllHazardsAsTree&callback=JSON_CALLBACK', onGetHazards, onFailSave);
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
@@ -269,6 +270,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
     //if this function is called, we have received a successful response from the server
     function onSaveHazard( dto, hazard, test ){
+        console.log(dto);
+        console.log(hazard);
+        //temporarily use our hazard copy client side to bandaid server side bug that causes subhazards to be returned as indexed instead of associative
+        dto = angular.copy($scope.hazardCopy);
         convenienceMethods.setPropertiesFromDTO( dto, hazard );
         console.log(test);
         hazard.isBeingEdited = false;
@@ -339,9 +344,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.saveEditedHazard = function(hazard){
-
+        console.log(hazard);
         copy = angular.copy($scope.hazardCopy);
         copy.testProp = true;
+        console.log(copy);
 
         var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( copy, hazard, onSaveHazard, onFailSave, url );
@@ -374,7 +380,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
     //called when a hazard drag event is begun
     $scope.start = function(event, ui){
-
+        console.log('start');
         $scope.event = event;
         $scope.ui = ui;
 
@@ -392,7 +398,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
     //called when a Hazard drag has stopped
     $scope.update = function (event, ui) {
- 
         $scope.event = event;
         $scope.ui = ui;
 
