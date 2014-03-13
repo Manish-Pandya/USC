@@ -11,6 +11,12 @@ define('URL_PATH', 'http://localhost');
 define('ADMIN_MAIL', 'hoke@graysail.com');
 define('LOGIN_PAGE', 'login.php');
 
+if(isProduction()){
+	define('WEB_ROOT', '/rsms/');
+}else{
+	define('WEB_ROOT', '/Erasmus/src/');
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Set up Logging
@@ -84,6 +90,16 @@ function login($username,$password) {
 function logout() {
 	session_destroy();
 	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// 	BOOLEAN TO FLAG APPLICATION AS DEV OR PRODUCTION
+//
+////////////////////////////////////////////////////////////////////////////////
+
+function isProduction(){
+	return false;
 }
 
 //////////////////////////////////////////////////
