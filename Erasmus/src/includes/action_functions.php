@@ -208,7 +208,6 @@ function getAllHazardsAsTree() {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$dao = getDao(new Hazard());
 	$root = $dao->getById(10000);
-	
 	$junk = $root->getSubHazards();
 	
 	return $root;
@@ -263,7 +262,7 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 		$hazard = getHazardById( $hazardId );
 		$LOG->trace("Loaded Hazard to move: $hazard");
 		
-		$hazard->setParent_hazard_id=$parentHazardId;		
+		$hazard->setParent_hazard_id($parentHazardId);		
 		// Save
 
 		$dao->save($hazard);

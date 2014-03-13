@@ -11,6 +11,12 @@ define('URL_PATH', 'http://localhost');
 define('ADMIN_MAIL', 'hoke@graysail.com');
 define('LOGIN_PAGE', 'login.php');
 
+if(isProduction()){
+define('WEB_ROOT', '/rsms/');
+}else{
+define('WEB_ROOT', '/Erasmus/src/');
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Set up Logging
@@ -50,7 +56,7 @@ ErrorHandler::init();
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// 	USER AUTHENTICATION AND AUTHORIZATION
+// USER AUTHENTICATION AND AUTHORIZATION
 //
 ////////////////////////////////////////////////////////////////////////////////
 
