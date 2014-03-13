@@ -1,3 +1,3 @@
 <?php
-echo 'Erasmus Index Placeholder';
+header( 'Location: login.php' ) ;
 ?>
