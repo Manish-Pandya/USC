@@ -50,6 +50,7 @@ class ActionMappingFactory {
 				
 				// Hazards Hub
 				"getAllHazards"=>new ActionMapping("getAllHazards", "", ""),
+				"getAllHazardsAsTree"=>new ActionMapping("getAllHazardsAsTree", "", ""),
 				"getHazardById"=>new ActionMapping("getHazardById", "", ""),
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
