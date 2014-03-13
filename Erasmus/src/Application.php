@@ -12,9 +12,9 @@ define('ADMIN_MAIL', 'hoke@graysail.com');
 define('LOGIN_PAGE', 'login.php');
 
 if(isProduction()){
-	define('WEB_ROOT', '/rsms/');
+define('WEB_ROOT', '/rsms/');
 }else{
-	define('WEB_ROOT', '/Erasmus/src/');
+define('WEB_ROOT', '/Erasmus/src/');
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,50 +56,50 @@ ErrorHandler::init();
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// 	USER AUTHENTICATION AND AUTHORIZATION
+// USER AUTHENTICATION AND AUTHORIZATION
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 //Check session for Admin flag
 function isAdminUser(){
-	return isset($_SESSION['USSER']) && $_SESSION['ADMIN'] == 'Y';
+return isset($_SESSION['USSER']) && $_SESSION['ADMIN'] == 'Y';
 }
 
 function securityCheck(){
-	if (!isset($_SESSION["USER"])){
-		//Forward to login page
-		header("location:" . LOGIN_PAGE);
-	}
-	else {
-		return true;
-	}
+if (!isset($_SESSION["USER"])){
+//Forward to login page
+header("location:" . LOGIN_PAGE);
+}
+else {
+return true;
+}
 }
 
 function login($username,$password) {
-	//TODO: actually authenticate user
-	$user = new User();
-	$user->setUsername($username);
-	
-	$_SESSION['USER'] = $user;
-	$_SESSION["ADMIN"] = "Y";
-	
-	// return true to indicate success
-	return true;
+//TODO: actually authenticate user
+$user = new User();
+$user->setUsername($username);
+
+$_SESSION['USER'] = $user;
+$_SESSION["ADMIN"] = "Y";
+
+// return true to indicate success
+return true;
 }
 
 function logout() {
-	session_destroy();
-	return true;
+session_destroy();
+return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// 	BOOLEAN TO FLAG APPLICATION AS DEV OR PRODUCTION
+// BOOLEAN TO FLAG APPLICATION AS DEV OR PRODUCTION
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 function isProduction(){
-	return false;
+return false;
 }
 
 //////////////////////////////////////////////////
