@@ -261,11 +261,20 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
-      convenienceMethods.getData('../../ajaxaction.php?action=getAllHazardsAsTree&callback=JSON_CALLBACK', onGetHazards, onFailSave);
+        $scope.doneLoading = false;
+        convenienceMethods.getData('../../ajaxaction.php?action=getAllHazardsAsTree&callback=JSON_CALLBACK', onGetHazards, onFailGet);
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
-        $scope.SubHazards = data;
+        $scope.SubHazards = data.SubHazards;
+         $scope.doneLoading = true;
+    }
+
+    function onFailGet(){
+        $scope.doneLoading = "failed";
+        if(confirm('There was a problem when loading the Hazard Tree.  Try Again?')){
+            window.location.reload();  
+        }
     }
 
     //if this function is called, we have received a successful response from the server

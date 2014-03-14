@@ -15,14 +15,12 @@
 <div class="whitebg" >
 
 	<div ng-app="hazardHub" ng-cloak>
-    
+   
     <div ng-controller="TreeController">
-        {{window_width}}
-        <!--<pre>{{SubHazards | json}}</pre>
-        <div>
-            <button ng-click="addChild(data)">+ New</button>
-        </div>-->
-
+     <div ng-hide="doneLoading" class="container loading" style="margin-left:70px; margin-top:15px;">
+      <img class="" src="../../img/loading.gif"/>
+      Building Hazard List...
+    </div>
         <div class="live">
             <ol id="hazardTree" 
                 ui-nested-sortable="{
