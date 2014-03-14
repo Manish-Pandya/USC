@@ -10,7 +10,8 @@ class JsonManager {
 	/** Names of functions JsonManager should ignore when converting to JSON */
 	public static $JSON_IGNORE_FUNCTION_NAMES = array(
 		'getTableName',
-		'getColumnData'
+		'getColumnData',
+		'getEntityMaps'	
 	);
 	
 	/**
@@ -229,11 +230,23 @@ class JsonManager {
 		
 		//get all functions named get*
 		foreach( $functions as $func ){
+			
+			$skip = false;
 			//Make sure function starts with 'get' and not listed in JSON_IGNORE_FUNCTION_NAMES
 			//TODO: Add class-specific names to ignore?
 			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
 				
-				if( in_array($func,$object->getEagerAccessors())){
+				// check for entity loading preferences for this object
+				$entityMaps = $object->getEntityMaps();
+				if(!empty($entityMaps)) {
+					foreach($entityMaps as $em){
+						if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
+							$skip = true;
+						}
+					}
+				}
+				
+				if(!$skip){
 					$LOG->trace("Calling $classname#$func()");
 					//Call function to get value
 					$value = $object->$func();

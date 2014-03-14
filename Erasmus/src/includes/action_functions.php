@@ -207,11 +207,17 @@ function saveQuestion(){
 function getAllHazardsAsTree() {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$dao = getDao(new Hazard());
+	// get the Root of the hazard tree
 	$root = $dao->getById(10000);
+
+	// Define which subentities to load
+	$entityMaps = array();
+	$entityMaps[] = new EntityMap("eager","getSubhazards");
+	$entityMaps[] = new EntityMap("lazy","getChecklist");
+	$entityMaps[] = new EntityMap("lazy","getRooms");
+	$root->setEntityMaps($entityMaps);
 	
-	$junk = $root->getSubHazards();
-	$LOG->debug("Here is the array of subHazards: $junk");
-	
+	// Return the object
 	return $root;
 }
 

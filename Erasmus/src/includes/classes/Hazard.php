@@ -67,7 +67,14 @@ class Hazard extends GenericCrud {
 	//TODO: Room relationship should/may contain information about Equipment, etc
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getSubhazards");
+		$entityMaps[] = new EntityMap("lazy","getChecklist");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$this->setEntityMaps($entityMaps);
+		
 	}
 	
 	// Required for GenericCrud
@@ -77,10 +84,6 @@ class Hazard extends GenericCrud {
 	
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
-	}
-	
-	public function getEagerAccessors() {
-		return array("getSubHazards","getChecklist");
 	}
 	
 	public function getName(){ return $this->name; }

@@ -33,6 +33,9 @@ abstract class GenericCrud {
 	// User who created/last updated
 	protected $last_modified_user_id;
 	
+	// Array of EntityMap objects that describe which properties are entities and how to load them.
+	protected $entityMaps;
+	
 	public function __toString(){
 		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . "]";
 	}
@@ -76,6 +79,14 @@ abstract class GenericCrud {
 	
 	public function setLast_modified_user_id($id){
 		$this->last_modified_user_id = $id; }
+	
+	public function getEntityMaps(){
+		return $this->entity_maps;
+	}
+	
+	public function setEntityMaps($entity_maps){
+		$this->entity_maps = $entity_maps;
+	}
 	
 		// CRUD Utilities
 	
