@@ -154,68 +154,34 @@ class GenericDAO {
 		}
 		//else use $object as-is!
 		
-		// Get the db connection
-		global $mdb2;
-	
-		// Initiate an array that contains the values to be saved
-		$dataClause = array();
-		$dataTypesArray = array();
-		foreach ($object->getColumnData() as $columnName => $type){
-			$getter = "get$columnName";
-			$getter[3] = strtoupper($getter[3]);
 
-			// Skip fields (by getter name) that are set by the DB
-			if( in_array($getter, GenericDAO::$AUTO_SET_FIELDS) ){
-				continue;
-			}
-			
-			$dataClause[$columnName] = $object->$getter();
-			$dataTypesArray[] = $type;
-		}
 		
-		$table = $object->getTableName();
-	
-		// Check to see if this item has a key_id
-		//  If it does, we assume it's an existing record and issue an UPDATE
-		if ( $object->hasPrimaryKeyValue() ) {
-			$this->LOG->debug("$this->logprefix Updating existing entity with keyid " . $object->getKey_Id());
-			
-			$affectedRow = $mdb2->autoExecute(
-				$table,
-				$dataClause,
-				DATABASE_AUTOQUERY_UPDATE,
-				'key_id = ' . $mdb2->quote($object->getKey_Id(), 'integer'),
-				$dataTypesArray
-			);
-			
-			if (PEAR::isError($affectedRow)) {
-				$this->handleError($affectedRow);
+			// Get the db connection
+			global $db;
+			//print_r($db);
+
+			// Check to see if this item has a key_id
+			//  If it does, we assume it's an existing record and issue an UPDATE
+			if ($object->key_id != null) {
+				
+			    $_SESSION["DEBUG"] = "Calling db update...";
+
+				$stmt = $this->createUpdateStatement($db);
+				$stmt = $this->bindColumns($stmt);
+				$stmt->execute();
+			// Otherwise, issue an INSERT
+			} else {
+		    	$_SESSION["DEBUG"] = "Calling db insert...";
+				 //echo  "Calling db insert...";
+
+				$stmt = $this->createInsertStatement($db);
+			   	$stmt = $this->bindColumns($stmt);
+				$stmt->execute();
+				// since this is a new record, get the new key_id issued by the database and add it to this object.
+				$object->key_id = $db->lastInsertId();
 			}
-		}
-		// Otherwise, issue an INSERT
-		else {
-			$this->LOG->debug("$this->logprefix Inserting new entity");
-			$affectedRow = $mdb2->autoExecute(
-				$table,
-				$dataClause,
-				DATABASE_AUTOQUERY_INSERT,
-				null,
-				$dataTypesArray
-			);
-	
-			if (PEAR::isError($affectedRow)) {
-				$this->handleError($affectedRow);
-			}
-			
-			// since this is a new record, get the new key_id issued by the database and add it to this object.
-			$id = $mdb2->getOne( "SELECT LAST_INSERT_ID() FROM " . $table );
-			
-			if (PEAR::isError($id)) {
-				$this->handleError($id);
-			}
-			
-			$object->setKey_Id( $id );
-		}
+
+		
 
 		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 				
@@ -358,32 +324,32 @@ class GenericDAO {
 		return $returnFlag;
 	}
 
-	function bindColumns($stmt) {
-		$index = 0;
-		foreach ($this->columns as $col){
-			if ($this->types[$index] == "integer") {$type = PDO::PARAM_INT;}
-			if ($this->types[$index] == "text") {$type = PDO::PARAM_STR;}
-			if ($this->types[$index] == "float") {$type = PDO::PARAM_INT;}
-			if ($this->types[$index] == "boolean") {$type = PDO::PARAM_BOOL;}
-			if ($this->types[$index] == "datetime") {$type = PDO::PARAM_STR;}
-			if ($this->types[$index] == "timestamp") {$type = PDO::PARAM_INT;}
-			$stmt->bindParam(":" . $col,$this->$col,$type);
+	function bindColumns($stmt,$object) {
+		foreach ($object->getColumnData as $col){
+			if ($col[1] == "integer") {$type = PDO::PARAM_INT;}
+			if ($col[1] == "text") {$type = PDO::PARAM_STR;}
+			if ($col[1] == "float") {$type = PDO::PARAM_INT;}
+			if ($col[1] == "boolean") {$type = PDO::PARAM_BOOL;}
+			if ($col[1] == "datetime") {$type = PDO::PARAM_STR;}
+			if ($col[1] == "timestamp") {$type = PDO::PARAM_INT;}
+			$stmt->bindParam(":" . $col[0],$object->$col[0],$type);
 			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
-			$index = $index + 1;
 		}
 		return $stmt;
 	}
 	
-	function createInsertStatement ($db){
+	function createInsertStatement ($db,$object){
 			
-		$sql = "INSERT INTO " . $this->table . " ( ";
-		foreach ($this->columns as $col){
-			$sql .= $col . ",";
+		$sql = "INSERT INTO " . $this->modelObject->getTableName() . " ( ";
+		
+		
+		foreach ($object->getColumnData as $col){
+			$sql .= $col[0] . ",";
 		}
 		$sql = rtrim($sql,",");
 		$sql .= ") VALUES ( ";
-		foreach ($this->columns as $col){
-			$sql .= ":" . $col . ",";
+		foreach ($object->getColumnData as $col){
+			$sql .= ":" . $col[0] . ",";
 		}
 		$sql = rtrim($sql,",");
 		$sql .= ")";
@@ -394,12 +360,12 @@ class GenericDAO {
 			
 	}
 	
-	function createUpdateStatement ($db){
+	function createUpdateStatement ($db,$object){
 			
-		$sql = "UPDATE " . $this->table . " SET ";
-		foreach ($this->columns as $col){
-			if ($col != "key_id"){
-				$sql .= $col . " = :" . $col . " ,";
+		$sql = "UPDATE " . $this->modelObject->getTableName() . " SET ";
+		foreach ($object->getColumnData as $col){
+			if ($col[0] != "key_id"){
+				$sql .= $col[0] . " = :" . $col[0] . " ,";
 			}
 		}
 		$sql = rtrim($sql,",");
