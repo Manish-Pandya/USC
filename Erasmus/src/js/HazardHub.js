@@ -354,6 +354,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
     $scope.saveEditedHazard = function(hazard){
         copy = angular.copy($scope.hazardCopy);
+        if(!copy.Class){
+            copy.Class = "Hazard";
+        }
         copy.testProp = true;
 
         var url = '../../ajaxaction.php?action=saveHazard';
