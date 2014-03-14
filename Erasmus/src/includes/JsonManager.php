@@ -237,11 +237,13 @@ class JsonManager {
 			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
 				
 				// check for entity loading preferences for this object
-				$entityMaps = $object->getEntityMaps();
-				if(!empty($entityMaps)) {
-					foreach($entityMaps as $em){
-						if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
-							$skip = true;
+				if (method_exists($object,"getEntityMaps")) {
+					$entityMaps = $object->getEntityMaps();
+					if(!empty($entityMaps)) {
+						foreach($entityMaps as $em){
+							if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
+								$skip = true;
+							}
 						}
 					}
 				}

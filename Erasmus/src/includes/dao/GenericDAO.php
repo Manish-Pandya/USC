@@ -325,14 +325,21 @@ class GenericDAO {
 	}
 
 	function bindColumns($stmt,$object) {
-		foreach ($object->getColumnData as $col){
-			if ($col[1] == "integer") {$type = PDO::PARAM_INT;}
-			if ($col[1] == "text") {$type = PDO::PARAM_STR;}
-			if ($col[1] == "float") {$type = PDO::PARAM_INT;}
-			if ($col[1] == "boolean") {$type = PDO::PARAM_BOOL;}
-			if ($col[1] == "datetime") {$type = PDO::PARAM_STR;}
-			if ($col[1] == "timestamp") {$type = PDO::PARAM_INT;}
-			$stmt->bindParam(":" . $col[0],$object->$col[0],$type);
+		foreach ($object->getColumnData() as $key=>$value){
+			if ($value == "integer") {$type = PDO::PARAM_INT;}
+			if ($value == "text") {$type = PDO::PARAM_STR;}
+			if ($value == "float") {$type = PDO::PARAM_INT;}
+			if ($value == "boolean") {$type = PDO::PARAM_BOOL;}
+			if ($value == "datetime") {$type = PDO::PARAM_STR;}
+			if ($value == "timestamp") {$type = PDO::PARAM_INT;}
+			
+			// build the implied getter
+			$key2 = $key;
+			$key2[0] = strtoupper($key2[0]);
+			$getter = "get" . $key2;
+			
+			// build the binding statement.
+			$stmt->bindParam(":" . $key,$object->$getter(),$type);
 			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
 		}
 		return $stmt;
@@ -343,13 +350,13 @@ class GenericDAO {
 		$sql = "INSERT INTO " . $this->modelObject->getTableName() . " ( ";
 		
 		
-		foreach ($object->getColumnData as $col){
-			$sql .= $col[0] . ",";
+		foreach ($object->getColumnData() as $key=>$value){
+			$sql .= $key . ",";
 		}
 		$sql = rtrim($sql,",");
 		$sql .= ") VALUES ( ";
-		foreach ($object->getColumnData as $col){
-			$sql .= ":" . $col[0] . ",";
+		foreach ($object->getColumnData() as $key=>$value){
+			$sql .= ":" . $key . ",";
 		}
 		$sql = rtrim($sql,",");
 		$sql .= ")";
@@ -363,9 +370,9 @@ class GenericDAO {
 	function createUpdateStatement ($db,$object){
 			
 		$sql = "UPDATE " . $this->modelObject->getTableName() . " SET ";
-		foreach ($object->getColumnData as $col){
-			if ($col[0] != "key_id"){
-				$sql .= $col[0] . " = :" . $col[0] . " ,";
+		foreach ($object->getColumnData() as $key=>$value){
+			if ($key != "key_id"){
+				$sql .= $key . " = :" . $key . " ,";
 			}
 		}
 		$sql = rtrim($sql,",");
