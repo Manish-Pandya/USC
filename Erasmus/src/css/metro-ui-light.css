@@ -265,12 +265,14 @@ input[type=reset], input[type=file]::-ms-browse {
    border-color: rgba(0, 0, 0, 0.2);
    color: #000;
 }
+/*
 button[type=submit], input[type=submit]{
    background-clip: border-box;
    background-color: rgb(70, 23, 180);
    border-color: transparent;
    color: #FFF;
 }
+
 button:hover, input[type=button]:hover, input[type=reset]:hover,
 input[type=file]::-ms-browse:hover {
    background-color: rgba(205, 205, 205, 0.82);
@@ -290,6 +292,7 @@ input[type=submit]:hover:active, input[type=file]::-ms-browse:hover:active {
    border-color: transparent;
    color: #FFF;
 }
+*/
 button:disabled, button[type=submit]:disabled,
 input[type=button]:disabled, input[type=reset]:disabled,
 input[type=submit]:disabled, input[type=file]:disabled::-ms-browse,
@@ -1077,8 +1080,8 @@ input.btn, button.btn, a.btn {
 
 
 .btn-warning {
-   background-color: #faa732;
-   border-color: #faa732;
+   background-color: #e67e1d;
+   border-color: #e67e1d;
    background-image: none;
    background-repeat: no-repeat;
    filter: none;
@@ -1200,6 +1203,7 @@ input.btn, button.btn, a.btn {
    -webkit-border-radius: 0;
    -moz-border-radius: 0;
    border-radius: 0;
+   z-index:100000;
 }
 
 

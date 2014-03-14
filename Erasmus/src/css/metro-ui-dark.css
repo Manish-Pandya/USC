@@ -1101,15 +1101,12 @@ input.btn, button.btn, a.btn {
    border-color: #080808;
 }
 
-
-
-
-
 .dropdown-menu {
    border: 2px solid #bababa;
    -webkit-border-radius: 0;
    -moz-border-radius: 0;
    border-radius: 0;
+   z-index:100000;
 }
 
 

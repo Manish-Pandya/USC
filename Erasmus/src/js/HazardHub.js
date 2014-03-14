@@ -353,10 +353,8 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.saveEditedHazard = function(hazard){
-        console.log(hazard);
         copy = angular.copy($scope.hazardCopy);
         copy.testProp = true;
-        console.log(copy);
 
         var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( copy, hazard, onSaveHazard, onFailSave, url );

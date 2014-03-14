@@ -485,10 +485,10 @@
 	content: "\e03b";
 }
 .icon-pencil:before {
-	//content: "\0025";
+	content: "\0025";
 }
 .icon-pencil-2:before {
-	//content: "\0026";
+	content: "\0026";
 }
 .icon-checkmark:before {
 	content: "\e03c";
