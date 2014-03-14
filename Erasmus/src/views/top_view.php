@@ -40,6 +40,7 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-1.10.0.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/tree.jquery.js"></script>
@@ -49,7 +50,8 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-mobile-menu.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/convenienceFunctions.js"></script>
-
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-quick-date.js"></script>
+<!--<script type="text/javascript" src="<?php echo WEB_ROOT?>js/wrapperApp.js"></script>-->
 
 
 <!-- user activation placeholder jQuery script for changing view state of row in users table -->
@@ -97,8 +99,8 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-<!-- main navigation -->
-<div class="container-fluid " id="wrapper" >
+<!-- main navigation  ng-app ng-controller="wrapperAppController" -->
+<div class="container-fluid " id="wrapper">
 <!--
 <div class="navbar" id="nav">
   <div class="navbar-inner">
