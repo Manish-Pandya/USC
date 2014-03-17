@@ -135,7 +135,7 @@ class Question extends GenericCrud {
 	public function getDeficiencies(){
 		if($this->deficiencies === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::DEFICIENCIES_RELATIONSHIP));
+			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
 		}
 		return $this->deficiencies;
 	}
