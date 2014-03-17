@@ -152,7 +152,7 @@ function getChecklistById( $id = NULL ){
 	
 	if( $id !== NULL ){
 		$dao = getDao(new Checklist());
-		return $dao->getChecklistById($id);
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -164,12 +164,9 @@ function getAllQuestions(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$questions = array();
 	
-	$dao = getDao();
+	$dao = getDao(new Question());
 	
-	for( $i = 0; $i < 10; $i++ ){
-		$question = $dao->getQuestionById($i);
-		$questions[] = $question;
-	}
+		$questions = $dao->getAll();
 	
 	return $questions;
 };
@@ -197,7 +194,7 @@ function saveQuestion(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new Question());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -305,8 +302,8 @@ function getQuestionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getQuestionById($id);
+		$dao = getDao(new Question());
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -789,8 +786,8 @@ function getRecommendationById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getRecommendationById($id);
+		$dao = getDao(new Recommendation());
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -826,8 +823,8 @@ function getObservationById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getObservationById($id);
+		$dao = getDao(new Observation());
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -865,14 +862,9 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
+		$dao = getDao(new Response());
+		return 
 		$response = $dao->getResponseById($id);
-		
-		$response->setInspectionId( $inspectionId );
-		$response->setDeficiencySelections( getDeficiencySelectionsForResponse($id) );
-		$response->setQuestion( getQuestionById( "$id$id") );
-		$response->setRecommendations( getRecommendationsForResponse($id) );
-		$response->setObservations( getObservationsForResponse($id) );
 		
 		return $response;
 	}
