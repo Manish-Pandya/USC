@@ -160,6 +160,21 @@ function getChecklistById( $id = NULL ){
 	}
 };
 
+function getChecklistByHazardId( $id = NULL ){
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = getDao(new Hazard());
+		$hazard = $dao->getById($id);
+		return $hazard->getChecklist();
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 function getAllQuestions(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$questions = array();

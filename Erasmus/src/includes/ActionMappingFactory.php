@@ -44,6 +44,7 @@ class ActionMappingFactory {
 				
 				// Checklist Hub
 				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
+				"getChecklistByHazardId"=>new ActionMapping("getChecklistByHazardId", "", ""),
 				"getAllQuestions"=>new ActionMapping("getAllQuestions", "", ""),
 				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
