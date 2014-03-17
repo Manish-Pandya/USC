@@ -45,6 +45,12 @@ class Checklist extends GenericCrud {
 	
 	public function __construct(){
 	
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getHazard");
+		$entityMaps[] = new EntityMap("eager","getQuestions");
+		$this->setEntityMaps($entityMaps);
+		
 	}
 	
 	// Required for GenericCrud
@@ -54,10 +60,6 @@ class Checklist extends GenericCrud {
 	
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
-	}
-	
-	public function getEagerAccessors() {
-		return array("getQuestions");
 	}
 	
 	public function getHazard(){

@@ -81,7 +81,16 @@ class Question extends GenericCrud {
 	private $observations;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getChecklist");
+		$entityMaps[] = new EntityMap("eager","getDeficiencies");
+		$entityMaps[] = new EntityMap("eager","getRecommendations");
+		$entityMaps[] = new EntityMap("eager","getObservations");
+		$this->setEntityMaps($entityMaps);
+		
+		
 	}
 	
 	// Required for GenericCrud
@@ -91,10 +100,6 @@ class Question extends GenericCrud {
 	
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
-	}
-	
-	public function getEagerAccessors() {
-		return array("getDeficiencies","getObservations","getRecommendations");
 	}
 	
 	public function getText(){ return $this->text; }

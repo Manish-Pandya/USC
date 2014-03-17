@@ -151,7 +151,7 @@ function getChecklistById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
+		$dao = getDao(new Checklist());
 		return $dao->getChecklistById($id);
 	}
 	else{
@@ -181,7 +181,7 @@ function saveChecklist(){
 		return new ActionError('Error converting input stream to Checklist');
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new Checklist());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}

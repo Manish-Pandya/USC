@@ -338,6 +338,8 @@ class GenericDAO {
 			$key2[0] = strtoupper($key2[0]);
 			$getter = "get" . $key2;
 			
+			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
+
 			// build the binding statement.
 			$stmt->bindParam(":" . $key,$object->$getter(),$type);
 			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
@@ -361,6 +363,8 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= ")";
 			
+		$this->LOG->debug("Preparing insert statement [$sql]");
+		
 		$stmt = $db->prepare($sql);
 		//var_export($stmt->queryString);
 		return $stmt;
@@ -377,6 +381,7 @@ class GenericDAO {
 		}
 		$sql = rtrim($sql,",");
 		$sql .= " WHERE key_id = :key_id";
+		$this->LOG->debug("Preparing update statement [$sql]");
 		$stmt = $db->prepare($sql);
 		//var_export($stmt->queryString);
 		return $stmt;

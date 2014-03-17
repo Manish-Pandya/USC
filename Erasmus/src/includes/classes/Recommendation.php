@@ -31,7 +31,12 @@ class Recommendation extends GenericCrud {
 	private $text;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getQuestion");
+		$this->setEntityMaps($entityMaps);
+				
 	}
 	
 	// Required for GenericCrud
@@ -43,13 +48,10 @@ class Recommendation extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function getEagerAccessors() {
-		return array();
-	}
-	
+
 	public function getQuestion(){ 
 		if($this->question == null) {
-			$questionDAO = new GenericDAO("Question");
+			$questionDAO = new GenericDAO(new Question());
 			$this->question = $questionDAO->getById($this->question_id);
 		}
 		return $this->question; 
