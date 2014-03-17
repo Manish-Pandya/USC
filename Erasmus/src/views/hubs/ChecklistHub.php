@@ -2,6 +2,7 @@
 require_once '../top_view.php';
 ?>
 
+
 <div class="navbar">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li class="span3">
@@ -10,7 +11,8 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
-<div class="container-fluid whitebg">
+<div class="container-fluid whitebg" ng-app='checklistHub' ng-controller="ChecklistHubController">
+	<pre>{{checklist|json}}</pre>
 	<h1 id="currentChecklist">Currently Editing:<br>BLOODBORNE PATHOGENS (e.g. research involving human blood, body fluids, unfixed tissue) OSHA Bloodborne Pathogens (29 CFR 1910.1030)</h1>
 	
 	<form class="form" style="margin-top:10px;">
@@ -38,24 +40,7 @@ require_once '../top_view.php';
   <div style="clear:both;"></div>
 
 
-<script>
-$(document.body).on("click", '.remove', function(){
-	 $(this).parent().hide();
-});
-
-$(document.body).on("click", "#showHideQuestions", function(e){
-	e.preventDefault();
-	$('.error').toggle();
-	 $(this).text(function(i, text){
-         return text === "Hide Disabled Questions" ? "Show Disabled Questions" : "Hide Disabled Questions";
-     })
-	
-});
-
- $('#addChecklistToHazard').click(function(){
-	 $('#parentHazards').append('<li>' + $('#toAdd').val() + '<a class="remove  btn btn-danger">Remove</a></li>');
- })
-</script>
+<script src="../../js/checklistHub.js"></script>
 <?php 
 require_once '../bottom_view.php';
 
