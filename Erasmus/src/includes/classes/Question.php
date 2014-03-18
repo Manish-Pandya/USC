@@ -114,7 +114,7 @@ class Question extends GenericCrud {
 	}
 	public function setChecklist($checklist){
 		$this->checklist = $checklist; 
-		$this->checklist_id = $checklist->getKey_id();
+		if (!empty($checklist)) $this->checklist_id = $checklist->getKey_id();
 	}
 	
 	public function getChecklist_id() { return $this->checklist_id; }
