@@ -61,6 +61,7 @@ class ActionMappingFactory {
 				"saveQuestionRelation"=>new ActionMapping("saveQuestionRelation", "", ""),
 				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
+				"saveDeficiency"=>new ActionMapping("saveDeficiency", "", ""),
 
 				"getInspector"=>new ActionMapping("getInspector", "", ""),
 				"getAllInspectors"=>new ActionMapping("getAllInspectors", "", ""),

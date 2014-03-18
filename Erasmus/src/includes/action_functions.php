@@ -215,6 +215,22 @@ function saveQuestion(){
 	}
 };
 
+function saveDeficiency(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Deficiency');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Deficiency());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
 // Hazards Hub
 function getAllHazardsAsTree() {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
