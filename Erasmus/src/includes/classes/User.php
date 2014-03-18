@@ -82,6 +82,14 @@ class User extends GenericCrud{
 	// Constructor(s)
 	public function __construct(){
 		
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getInspector");
+		$entityMaps[] = new EntityMap("lazy","getSupervisor");
+		$entityMaps[] = new EntityMap("eager","getRoles");
+		$this->setEntityMaps($entityMaps);
+		
 	}
 	
 	// Required for GenericCrud
@@ -136,7 +144,7 @@ class User extends GenericCrud{
 	}
 	public function setSupervisor($supervisor) {
 		$this->supervisor = $supervisor;
-		$this->supervisor_id = $supervisor->getKey_id(); 
+		if(!empty($supervisor)) $this->supervisor_id = $supervisor->getKey_id(); 
 	}
 	
 	public function getUsername(){ return $this->username; }

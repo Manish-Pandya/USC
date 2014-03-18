@@ -66,7 +66,15 @@ class Inspection extends GenericCrud {
 	private $dateClosed;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getInspectors");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getResponses");
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$this->setEntityMaps($entityMaps);
+		
 	}
 	
 	// Required for GenericCrud

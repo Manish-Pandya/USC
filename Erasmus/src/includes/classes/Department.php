@@ -37,7 +37,12 @@ class Department extends GenericCrud {
 	private $principalInvestigators;
 	
 	public function __construct(){
-	
+			
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+		$this->setEntityMaps($entityMaps);
+		
 	}
 	
 	// Required for GenericCrud

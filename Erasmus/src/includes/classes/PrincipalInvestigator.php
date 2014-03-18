@@ -72,6 +72,14 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	public function __construct(){
 		
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getDeparments");
+		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$this->setEntityMaps($entityMaps);
+
 	}
 	
 	// Required for GenericCrud
@@ -91,7 +99,7 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function setUser($user){
 		$this->user = $user; 
-		$this->user_id = $user->getKey_id();
+		if(!empty($user)) $this->user_id = $user->getKey_id();
 	}
 	
 	public function getUser_id(){ return $this->user_id; }

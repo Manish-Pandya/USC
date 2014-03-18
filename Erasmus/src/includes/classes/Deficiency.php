@@ -35,8 +35,7 @@ class Deficiency extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getQuestion");
 		$this->setEntityMaps($entityMaps);
-		
-		
+	
 	}
 	
 	// Required for GenericCrud
@@ -52,7 +51,7 @@ class Deficiency extends GenericCrud {
 	public function getQuestion(){ 
 		if($this->question == null) {
 			$questionDAO = new GenericDAO(new Question());
-			$this->question = $questionDAO->getById($this->question_id);
+			if(!empty($question)) $this->question = $questionDAO->getById($this->question_id);
 		}
 		return $this->question; 
 	}
