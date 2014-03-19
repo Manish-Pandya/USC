@@ -22,7 +22,7 @@ require_once '../top_view.php';
 		<h4 style="display:inline-block;" class="hazardLi">
 			<label class="checkbox inline">
 				<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-				<span class="metro-checkbox">{{child.HazardName}}</span>
+				<span class="metro-checkbox targetHaz">{{child.HazardName}}</span>
 			</label>
 			<span ng-show="child.Children.length">
 				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
@@ -31,7 +31,7 @@ require_once '../top_view.php';
 				<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
 			</span>
 
-			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
+			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;"> 
 				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 				<ul>
 					<li ng-repeat="(key, child) in child.Children">
@@ -43,7 +43,7 @@ require_once '../top_view.php';
 				</ul>
 			</div>	
 
-			<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
+			<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
 				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
 				<ul>
 					<li ng-repeat="(key, room) in child.PossibleRooms" >
@@ -85,7 +85,7 @@ require_once '../top_view.php';
 		       	<img class="" style="height:23px; margin:-73px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		      	<h3 ng-hide="!PI"><a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">Manage Data for Selected PI</a></h3>
@@ -169,7 +169,7 @@ require_once '../top_view.php';
 					
 					<ul>
 						<li>
-							<a style="margin-bottom:15px;" class="btn btn-mini btn-info"ng-click="hazard.hideUnselected = !hazard.hideUnselected">
+							<a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
 								<span ng-show="!hazard.hideUnselected">
 									<i style="margin-right:8px !important;" class="icon-collapse"></i>View Only Hazards Present
 								</span>
@@ -182,7 +182,7 @@ require_once '../top_view.php';
 							<h4 class="hazardLi">
 								<label class="checkbox inline">
 									<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-									<span class="metro-checkbox">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+									<span class="metro-checkbox targetHaz">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 									<!--<pre>{{child | json}}</pre>-->
 									</span>
 								</label>
@@ -205,7 +205,7 @@ require_once '../top_view.php';
 									</ul>
 								</div>	
 
-								<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
+								<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
 									<h3 class="orangeBg"><span>{{child.HazardName}}</span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
 									<ul>
 										<li ng-repeat="(key, room) in child.PossibleRooms">
