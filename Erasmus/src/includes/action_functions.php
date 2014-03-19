@@ -707,10 +707,10 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 		$room = $dao->getById($roomId);
 		// if add is true, add this hazard to this room
 		if ($add){
-			$dao->addRelatedItem($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
+			$dao->addRelatedItems($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
 		// if add is false, remove this hazard from this room
 		} else {
-			$dao->removeRelatedItem($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
+			$dao->removeRelatedItems($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
 		}
 		
 	} else {
