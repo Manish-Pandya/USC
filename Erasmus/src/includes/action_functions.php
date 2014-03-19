@@ -579,7 +579,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		$allHazards = getAllHazardsAsTree();
 		
 		$rooms = array();
-		$roomDao = new Dao(new Room());
+		$roomDao = getDao(new Room());
 		
 		// Create an array of Room Objects
 		foreach($roomIds as $roomId) {
