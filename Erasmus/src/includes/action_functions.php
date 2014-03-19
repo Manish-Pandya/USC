@@ -693,7 +693,32 @@ function getHazardsInRoom( $roomId = NULL ){
 	}
 };
 
-function saveHazardRelation(){ };
+function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$roomId = getValueFromRequest('roomId', $roomId);
+	$hazardId = getValueFromRequest('hazardId', $hazardId);
+	$addId = getValueFromRequest('add', $add);
+	
+	if( $roomId !== NULL && hazardId !== NULL && $add !== null ){
+
+		// Get this room
+		$dao = getDao(new Room());
+		$room = $dao->getById($roomId);
+		// if add is true, add this hazard to this room
+		if ($add){
+			$dao->addRelatedItem($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
+		// if add is false, remove this hazard from this room
+		} else {
+			$dao->removeRelatedItem($hazardId,$roomId,Room::HAZARDS_RELATIONSHIP);
+		}
+		
+	} else {
+		//error
+		return new ActionError("Missing proper parameters (should be roomId int, hazardId int, add boolean)");
+	}
+	
+};
 function saveRoomRelation($hazardId, $roomId){
 	//temporarily return true so server returns 200 code
 	return true;
@@ -707,11 +732,11 @@ function getDeficiencyById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
+		$dao = getDao(new Deficiency());
 		$keyid = $id;
 	
 		// query for Inspection with the specified ID
-		return $dao->getDeficiencyById($id);
+		return $dao->getById($id);
 	}
 	else{
 		//error

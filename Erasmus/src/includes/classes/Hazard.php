@@ -35,7 +35,7 @@ class Hazard extends GenericCrud {
 			"foreignKeyName"	=>	"hazard_id"
 	);
 	
-	protected static $HAZARDS_RELATIONSHIP = array(
+	public static $HAZARDS_RELATIONSHIP = array(
 			"className"	=>	"Hazard",
 			"tableName"	=>	"hazard",
 			"keyName"	=>	"key_id",

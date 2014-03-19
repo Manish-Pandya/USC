@@ -255,10 +255,10 @@ class GenericDAO {
 	 * @return unknown
 	 */
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
-		$this->LOG->debug("$this->logprefix Inserting new related item for entity with id=$id");
+		$this->LOG->debug("$this->logprefix Inserting new related item for entity with id=$foreignKey_id");
 		
 		// Get the db connection
-		global $mdb2;
+		global $db;
 		
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -267,63 +267,59 @@ class GenericDAO {
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
 		
-		// Initiate an array that contains the values to be saved
-		$dataClause = array();
-		$dataClause[$keyName] = $key_id;
-		$dataClause[$foreignKeyName] = $foreignKey_id;
+		$sql = "INSERT INTO  $tableName ($foreignKeyName, $keyName) VALUES (:foreignKey_id, :key_id) ";
 		
-		$types = array("integer", "integer");
+		$this->LOG->debug("Preparing insert statement [$sql]");
 		
-		$affectedRow = $mdb2->autoExecute($tableName, $dataClause, DATABASE_AUTOQUERY_INSERT, null, $types);
+		$stmt = $db->prepare($sql);
+		// Bind the params.
+		$stmt->bindParam(":foreignKey_id",$foreignKey_id,PDO::PARAM_INT);
+		$stmt->bindParam(":key_id",$key_id,PDO::PARAM_INT);
 		
-		if (PEAR::isError($affectedRow)) {
-			$this->handleError($affectedRow);
-		}
-		
-		// since this is a new record, get the new key_id issued by the database and add it to this object.
-		$id = $mdb2->getOne( "SELECT LAST_INSERT_ID()");
-		if (PEAR::isError($id)) {
-			$this->handleError($id);
-		}
-		
-		return $id;
-	}
-	
-	/**
-	 * Delete a related item with the given values described by the given DataRelationship
-	 * 
-	 * @param unknown $key_id
-	 * @param unknown $foreignKey_id
-	 * @param DataRelationship $relationship
-	 * @return boolean
-	 */
-	function removeRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
-		$this->LOG->debug("$this->logprefix Deleting related item (foreign key = $foreignKey_id) for entity with id=$id");
-		
-		// Get the db connection
-		global $mdb2;
-	
-		//print_r($relationship);
-		// get the relationship parameters needed to build the query
-		$className		= $relationship->getClassName();
-		$tableName		= $relationship->getTableName();
-		$keyName		= $relationship->getKeyName();
-		$foreignKeyName	= $relationship->getForeignKeyName();
-	
-		$returnFlag = false;
-	
-		//Remove
-		$result =& $mdb2->query('DELETE FROM ' . $tableName . ' WHERE ' . $keyName . ' = ' . $key_id . ' AND ' . $foreignKeyName . ' = ' . $foreignKey_id);
-		
-		if (PEAR::isError($result)) {
-			$this->handleError($affectedRow);
+		// Insert the record and return true
+		if ($stmt->execute() ) {
+			$this->LOG->debug( "Inserted new related item with key_id [$key_id]");
+			return true;
+		// ... otherwise, die and echo the db error
 		} else {
-			$returnFlag = true;
+			$error = $stmt->errorInfo();
+			die($error[2]);
 		}
-	
-		return $returnFlag;
 	}
-
+	
+	function removeRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
+		$this->LOG->debug("$this->logprefix Removing related item for entity with id=$foreignKey_id");
+		
+		// Get the db connection
+		global $db;
+		
+		//print_r($relationship);
+		// get the relationship parameters needed to build the query
+		$className		= $relationship->getClassName();
+		$tableName		= $relationship->getTableName();
+		$keyName		= $relationship->getKeyName();
+		$foreignKeyName	= $relationship->getForeignKeyName();
+		
+		$sql = "DELETE FROM $tableName WHERE $foreignKeyName =  :foreignKey_id AND $keyName = :key_id";
+	
+		$this->LOG->debug("Preparing delete statement [$sql]");
+		
+		$stmt = $db->prepare($sql);
+		// Bind the params.
+		$stmt->bindParam(":foreignKey_id",$foreignKey_id,PDO::PARAM_INT);
+		$stmt->bindParam(":key_id",$key_id,PDO::PARAM_INT);
+		
+		// Delete the record and return true
+		if ($stmt->execute() ) {
+			$this->LOG->debug( "Remove related item with key_id [$key_id]");
+			return true;
+		// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+	}
+	
 	function bindColumns($stmt,$object) {
 		foreach ($object->getColumnData() as $key=>$value){
 			if ($value == "integer") {$type = PDO::PARAM_INT;}
