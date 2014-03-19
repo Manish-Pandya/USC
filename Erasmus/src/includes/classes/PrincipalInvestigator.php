@@ -96,6 +96,7 @@ class PrincipalInvestigator extends GenericCrud {
 			$userDAO = new GenericDAO(new User());
 			$this->user = $userDAO->getById($this->user_id);
 		}
+		return $this->user;
 	}
 	public function setUser($user){
 		$this->user = $user; 
@@ -118,7 +119,7 @@ class PrincipalInvestigator extends GenericCrud {
 			$thisDAO = new GenericDAO($this);
 			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
-		return $this->inspections;
+		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
@@ -127,7 +128,7 @@ class PrincipalInvestigator extends GenericCrud {
 			$thisDAO = new GenericDAO($this);
 			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
 		}
-		return $this->inspections;
+		return $this->labPersonnel;
 	}
 	public function setLabPersonnel($labPersonnel){ $this->labPersonnel = $labPersonnel; }
 	

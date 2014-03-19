@@ -33,10 +33,12 @@ class JsonManager {
 	 * or an array of such information that can be easily JSON-encoded. 
 	 */
 	public static function buildJsonableValue($value){
+		$LOG = Logger::getLogger( __CLASS__ );
 		$jsonable = $value;
 		
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
+			//$LOG->trace( 'Building a JsonableValue for simple ' . $input );
 			//Simply convert the object
 			$jsonable = JsonManager::objectToBasicArray($value);
 		}
@@ -252,6 +254,7 @@ class JsonManager {
 					$LOG->trace("Calling $classname#$func()");
 					//Call function to get value
 					$value = $object->$func();
+					//$LOG->trace("#func() returns [$value]");
 				} else {
 					$LOG->trace("Skipping (lazy loading) $classname#$func()");
 					//Call function to get value
