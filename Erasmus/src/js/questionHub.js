@@ -27,11 +27,15 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	}
 
 	$scope.addDeficiency = function(question){
+
+		console.log(question);
+
 		question.IsDirty = true;
 
 		$scope.newDef = {
 			Class:  'Deficiency',
-			//Question: question,
+			Question: question,
+			Is_active: true,
 			Question_id: question.Key_id,
 			Text: question.newDeficiency
 		}
@@ -51,12 +55,11 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		alert("There was a problem when attempting to add the deficiency.");
 	}
 
-	$scope.addObservation = function(obs){
+	$scope.addObservation = function(question){
 		question.IsDirty = true;
 
 		$scope.newObs = {
 			Class:  'Observation',
-			Question: question,
 			Is_active: true,
 			Question_id: question.Key_id,
 			Text: question.newObservation
@@ -64,7 +67,7 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
         
         console.log($scope.newObs);
 
-        var url = '../../ajaxaction.php?action=saveDeficiency';
+        var url = '../../ajaxaction.php?action=saveObservation';
         convenienceMethods.updateObject( $scope.newObs, question, onAddObs, onFailAddPbs, url );
 	}
 
@@ -81,16 +84,13 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 
 		$scope.newRec = {
 			Class:  'Recommendation',
-			Question: question,
 			Is_active: true,
 			Question_id: question.Key_id,
 			Text: question.newRecommendation
 		}
-        
-        console.log($scope.newRecommendation);
-
-        var url = '../../ajaxaction.php?action=saveDeficiency';
-        convenienceMethods.updateObject( $scope.newRecommendation, question, onAddDef, onFailAddDef, url );
+ 
+        var url = '../../ajaxaction.php?action=saveRecommendation';
+        convenienceMethods.updateObject( $scope.newRec, question, onAddDef, onFailAddDef, url );
 	}
 
 	function onAddDef(rec, question){
