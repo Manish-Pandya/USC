@@ -14,6 +14,7 @@ class Deficiency extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//question is a relationship
 		"text"		=> "text",
+		"question_id" => "integer",
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
