@@ -571,9 +571,8 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	if( $roomIdsCsv !== NULL ){
 		$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
 		
-		$hazards = getAllHazardsAsTree();
 		
-		$LOG->debug('Identified ' . count($roomIds) . ' Rooms');
+		$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
 	
 		//Get all hazards
 		$allHazards = getAllHazardsAsTree();
@@ -582,12 +581,12 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		$roomDao = getDao(new Room());
 		
 		// Create an array of Room Objects
-		foreach($roomIds as $roomId) {
-			array_push($roomDao->getById($roomId),$rooms);
+		foreach($roomIdsCsv as $roomId) {
+			array_push($rooms,$roomDao->getById($roomId));
 		}
 		
 		// filter by room
-		filterHazards($roomIds,$allHazards,$rooms);
+		filterHazards($roomIdsCsv,$allHazards,$rooms);
 		
 		return $allHazards;
 	}
@@ -599,7 +598,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 
 function filterHazards ($roomIds,&$hazard, $rooms){
 	foreach ($hazard->getSubhazards() as $subhazard){
-		filterHazards($roomIds,$subhazard);
+		filterHazards($roomIds,$subhazard, $rooms);
 		$subhazard->filterRooms($roomIds);
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getSubhazards");
