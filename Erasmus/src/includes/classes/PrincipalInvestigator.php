@@ -76,7 +76,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
 		$entityMaps[] = new EntityMap("eager","getRooms");
 		$entityMaps[] = new EntityMap("eager","getDepartments");
-		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$this->setEntityMaps($entityMaps);
 
