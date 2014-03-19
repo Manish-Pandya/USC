@@ -1,33 +1,21 @@
 <?php
 require_once '../top_view.php';
 ?>
-
+<script src="../../js/questionHub.js"></script>
 <div class="navbar">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li class="span3">
 			<img src="../../img/question-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Question Hub</h2>	
 		</li>
-		<!-- 
-		<li class="divider-vertical"></li>
-		<li style="margin-top:2px;">
-			<a class="addQuestion btn btn-large"  href="ChecklistHub.php" ><img src='../../img/add-checklist-icon.png' >Back to Checklist</a>
-		</li>
-		<li class="divider-vertical"></li>
-		<li style="margin-top:2px;">
-			<a class="addQuestion btn btn-large" data-toggle="modal"  href="#editQuestion" ><img src='../../img/add-question-icon.png' >Edit Question</a>
-		</li>
-		 -->
 	</ul>
 </div>
-<div class="container-fluid whitebg">
-	<h1 id="currentQuestion">Current Question:<br><span id="questionText">Exposure Control Plan has been reviewed and updated at least annually</span></h1>
+<div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController">
+{{question}}
+	<h1 id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span></h1>
 	<h3 style="margin-top:30px;">Deficiencies for this question:</h3>
 	<ul class="deficiencyList listWithChecks sortable" id="sortable">
-		<li>Exposure Control Plan has not been reviewed and updated at least annually<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
-		<li>Updates do not reflect new or modified tasks and procedures which affect occupational exposure<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
-		<li>Updates do not reflect new or revised employee positions with occupational exposure<div><a class="btn btn-danger deactivateRow">Deactivate</a></div></li>
-		<li>Somebody did something very dangerous and stupid that is likely to cause a rift in the time-space continuum, allowing evil aliens to aggaghaghahhgagh...........END TRANSMISSION<div><a class="btn btn-danger deactivateRow">Deactivate</a></div></li>
+		<li ng-repeat="def in question.Deficiencies">Exposure Control Plan has not been reviewed and updated at least annually<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
 	</ul>
 	
 	<form class="form" style="margin-top:10px;">
@@ -35,24 +23,37 @@ require_once '../top_view.php';
 	    <div class="control-group">
 		    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
 		    <div class="controls">
-		      <textarea rows="10" id="newDeficiency" cols="500" style="width:50%"></textarea>
+		      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency" cols="500" style="width:50%"></textarea>
 		 </div>
-		 <a class="btn btn-large btn-success addDeficiency">Add</a>
+		 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)">Add</a>
 	</form>
 	
 	<h3 style="margin-top:30px;">Recommendations for this question:</h3>
 	<ul class="recommendationList listWithChecks sortable" id="sortable">
-		<li>Review Exposure Control Plan<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
-		<li>Swing the crowbar, Gordon<div><a class="btn btn-danger deactivateRow">Deactivate</a></div></li>
+		<li ng-repeat="rec in question.Recommendations">{{rec.Text}}<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
 	</ul>
 		
 	<form class="form" style="margin-top:10px;">
 	    <div class="control-group">
 		    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
 		    <div class="controls">
-		      <textarea rows="10" id="newRecommendation" cols="500" style="width:50%"></textarea>
+		      <textarea rows="5" id="newRecommendation" cols="500" style="width:50%"></textarea>
 		 </div>
-		 <a class="btn btn-large btn-success addRecommendation">Add</a>
+		 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)">Add</a>
+	</form>
+
+	<h3 style="margin-top:30px;">Notes for this question:</h3>
+	<ul class="recommendationList listWithChecks sortable" id="sortable">
+		<li ng-repeat="obs in question.Observations">{{obs.Text}}<div class="checklistRow"><a class="btn  btn-danger deactivateRow">Deactivate</a></div></li>
+	</ul>
+		
+	<form class="form" style="margin-top:10px;">
+	    <div class="control-group">
+		    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
+		    <div class="controls">
+		      <textarea rows="5" id="newRecommendation" cols="500" style="width:50%"></textarea>
+		 </div>
+		 <a class="btn btn-large btn-success" ng-click="addObservation(question)">Add</a>
 	</form>
 	
 	</div>
@@ -86,19 +87,6 @@ require_once '../top_view.php';
   </form>
 </div>
 <!-- end add new question modal dialogue -->
-
-<script>
- $('.addDeficiency').click(function(){
-	 $('.deficiencyList').append('<li>' + $('#newDeficiency').val() + '<div><a class="btn btn-danger deactivateRow">Deactivate</a></div></li>');
- })
- 
- $('.addRecommendation').click(function(){
-	 $('.recommendationList').append('<li>' + $('#newRecommendation').val() + '<div><a class="btn btn-danger deactivateRow">Deactivate</a></div></li>');
- })
-$('#confirmNewQuestionText').click(function(){
-	$('#questionText').text($('#newQuestionText').val())
-})
- </script>
 
 <?php 
 require_once '../bottom_view.php';
