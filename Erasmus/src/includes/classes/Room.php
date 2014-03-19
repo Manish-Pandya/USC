@@ -36,7 +36,7 @@ class Room extends GenericCrud {
 			"foreignKeyName"	=>	"room_id"
 	);
 	
-	protected static $HAZARDS_RELATIONSHIP = array(
+	public static $HAZARDS_RELATIONSHIP = array(
 			"className"	=>	"Hazard",
 			"tableName"	=>	"hazard_room",
 			"keyName"	=>	"hazard_id",
