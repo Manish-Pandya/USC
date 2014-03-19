@@ -231,6 +231,70 @@ function saveDeficiency(){
 	}
 };
 
+function saveObservation(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Observation');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Observation());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
+function saveRecommendation(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Recommendation');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Recommendation());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
+function saveSupplementalObservation(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to SupplementalObservation');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new SupplementalObservation());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
+function saveSupplementalRecommendation(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to SupplementalRecommendation');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new SupplementalRecommendation());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
 // Hazards Hub
 function getAllHazardsAsTree() {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -350,8 +414,8 @@ function getInspector( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getInspectorById($id);
+		$dao = getDao(new Inspector());
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -361,14 +425,10 @@ function getInspector( $id = NULL ){
 
 function getAllInspectors(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$inspectors = array();
 
-	$dao = getDao();
-	for( $i = 0; $i < 10; $i++ ){
-		$inspectors[] = $dao->getInspectorById($i);
-	}
-	
-	return $inspectors;
+	$dao = getDao(new Inspector());
+
+	return $dao->getAll();
 };
 
 // Inspection, step 1 (PI / Room assessment)
@@ -377,8 +437,8 @@ function getPI( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getPiById($id);
+		$dao = getDao(new PrincipalInvestigator());
+		return $dao->getById($id);
 	}
 	else{
 		//error
@@ -448,23 +508,18 @@ function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = nul
 
 function getAllDepartments(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$allDepartments = array();
 
-	$dao = getDao();
-	for( $i = 1; $i < 11; $i++ ){
-		$dept = $dao->getDepartmentById($i);
-		$allDepartments[] = $dept;
-	}
+	$dao = getDao(new Department());
 
-	return $allDepartments;
+	return $dao->getAll();
 };
 
 function getDepartmentById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getDepartmentById($id);
+		$dao = getDao(new Department());
+		return $dao->getById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
@@ -473,15 +528,10 @@ function getDepartmentById( $id = NULL ){
 
 function getAllBuildings( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$allBuildings = array();
 	
-	$dao = getDao();
-	for( $i = 1; $i < 11; $i++ ){
-		$building = $dao->getBuildingById($i);
-		$allBuildings[] = $building;
-	}
+	$dao = getDao(new Building());
 	
-	return $allBuildings;
+	return $dao->getAll();
 }
 
 function getBuildingById( $id = NULL ){
@@ -871,12 +921,16 @@ function getObservationsForResponse( $responseId = NULL ){
 
 	if( $responseId !== NULL ){
 		$LOG->debug("Generating Observations for response #$responseId");
-		$observations = array();
 
-		for( $i = 0; $i < 2; $i++ ){
-			$observation = getObservationById($i);
-			$observations[] = $observation;
+		$response = getResponseById($id);
+		if (!empty($response)) {
+			return $response->getObservations;
+		} else {
+			
+		//error
+		return new ActionError("No response with id $id was found");
 		}
+		
 
 		return $observations;
 	}
@@ -895,7 +949,7 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 	if( $id !== NULL ){
 		$dao = getDao(new Response());
 		return 
-		$response = $dao->getResponseById($id);
+		$response = $dao->getById($id);
 		
 		return $response;
 	}

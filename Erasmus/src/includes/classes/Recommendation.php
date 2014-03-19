@@ -58,7 +58,6 @@ class Recommendation extends GenericCrud {
 	}
 	public function setQuestion($question){
 		$this->question = $question; 
-		if (!empty($question)) $this->question_id = $question->getKey_id();
 	}
 	
 	public function getQuestion_id(){ return $this->question_id; }

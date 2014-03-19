@@ -53,7 +53,6 @@ class CorrectiveAction extends GenericCrud {
 	}
 	public function setDeficiencySelection($selection){
 		$this->deficiencySelection = $selection;
-		$this->deficiency_selection_id = $selection->getKey_id();
 	}
 	
 	public function getDeficiency_selection_id(){ return $this->deficiency_selection_id; }

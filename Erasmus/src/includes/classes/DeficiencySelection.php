@@ -90,7 +90,6 @@ class DeficiencySelection extends GenericCrud {
 	}
 	public function setResponse($response){
 		$this->response = $response; 
-		$this->response_id = $response->getKey_id();
 	}
 	
 	public function getResponse_id() { return $this->response_id;	}
@@ -114,7 +113,6 @@ class DeficiencySelection extends GenericCrud {
 	}
 	public function setDeficiency($deficiency){
 		$this->deficiency = $deficiency; 
-		$this->deficiency = $deficiency->getKey_id();
 	}
 
 	public function getDeficiency_id() { return $this->deficiency_id;	}

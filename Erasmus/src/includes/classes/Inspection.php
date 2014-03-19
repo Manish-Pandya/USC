@@ -104,7 +104,6 @@ class Inspection extends GenericCrud {
 	}
 	public function setPrincipalInvestigator($principalInvestigator){
 		$this->principalInvestigator = $principalInvestigator; 
-		$this->principal_investigator_id = $principalInvestigator->getKey_id();
 	}
 	
 	public function getPrincipal_investigator_id(){ return $this->principal_investigator_id; }

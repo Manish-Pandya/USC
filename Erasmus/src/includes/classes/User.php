@@ -144,7 +144,6 @@ class User extends GenericCrud{
 	}
 	public function setSupervisor($supervisor) {
 		$this->supervisor = $supervisor;
-		if(!empty($supervisor)) $this->supervisor_id = $supervisor->getKey_id(); 
 	}
 	
 	public function getUsername(){ return $this->username; }

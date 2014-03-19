@@ -52,7 +52,6 @@ class SupplementalRecommendation extends GenericCrud {
 	}
 	public function setResponse($response){
 		$this->response = $response; 
-		$this->response_id = $response->getKey_id();
 	}
 	
 	public function getResponse_id(){ return $this->response_id; }

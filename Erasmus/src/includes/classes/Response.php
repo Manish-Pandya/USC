@@ -95,7 +95,6 @@ class Response extends GenericCrud {
 	}
 	public function setQuestion($question){
 		$this->question = $question; 
-		$this->question_id = $question->getKey_id();
 	}
 	
 	public function getQuestion_id(){ return $this->question_id; }
@@ -110,7 +109,6 @@ class Response extends GenericCrud {
 	}
 	public function setInspection($inspection){
 		$this->inspection = $inspection;
-		$this->inspection_id = $inspection->getKey_id();
 	}
 	
 	public function getInspection_id(){ return $this->inspection_id; }

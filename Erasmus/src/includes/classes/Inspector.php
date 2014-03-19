@@ -64,7 +64,6 @@ class Inspector extends GenericCrud {
 	
 	public function setUser($user){
 		$this->user = $user; 
-		$this->user_id = $user->getKey_id();
 	}
 	
 	public function getUser_id(){ return $this->user_id; }

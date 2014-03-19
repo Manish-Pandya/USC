@@ -94,7 +94,6 @@ class Room extends GenericCrud {
 	}
 	public function setBuilding($building){ 
 		$this->building = $building; 
-		$this->building_id = $building->getKey_id();
 	}
 	
 	public function getHazards(){

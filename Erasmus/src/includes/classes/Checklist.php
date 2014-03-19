@@ -71,7 +71,6 @@ class Checklist extends GenericCrud {
 	}
 	public function setHazard($hazard){
 		$this->hazard = $hazard; 
-		if (!empty($hazard)) $this->hazard_id = $hazard->getKey_id();
 	}
 
 	public function getHazard_id(){ return $this->hazard_id; }
