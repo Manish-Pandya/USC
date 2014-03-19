@@ -15,6 +15,8 @@ class Deficiency extends GenericCrud {
 		//question is a relationship
 		"text"		=> "text",
 		"question_id" => "integer",
+		"description" => "text",
+		"reference" => "text",
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
@@ -65,5 +67,13 @@ class Deficiency extends GenericCrud {
 	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
+	
+	public function getDescription(){ return $this->description; }
+	public function setDescription($description){ $this->description = $description; }
+	
+	public function getReference(){ return $this->reference; }
+	public function setReference($reference){ $this->reference = $reference; }
+	
+	
 }
 ?>

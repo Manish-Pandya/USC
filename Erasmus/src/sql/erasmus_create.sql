@@ -188,6 +188,8 @@ CREATE TABLE deficiency (
 	last_modified_user_id int(11) NOT NULL,
 	question_id int(11) NOT NULL,
 	text varchar(1024),
+	description varchar(2048),
+	reference varchar(2048),
 	PRIMARY KEY (key_id),
 	CONSTRAINT fk_deficiency_question FOREIGN KEY (question_id) REFERENCES question (key_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
