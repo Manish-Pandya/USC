@@ -128,14 +128,16 @@ class Hazard extends GenericCrud {
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
 	
-	public function filterRooms($room_ids){
-		$filteredRooms = array();
-		foreach ($this->getRooms() as $room){
-			if (in_array($room->getKey_id(),$room_ids)){
-				array_push($filterRooms,$room);
+	public function filterRooms(){
+		foreach ($this->inspectionRooms as &$room){
+			foreach ($this->getRooms() as $hazroom){
+				if ($room->getKey_id() == $hazroom->getKey_id()){
+					$room->setContainsHazard(true);
+				} else {
+					$room->setContainsHazard(false);
+				}
 			}
 		}
-		$this->setRooms($filteredRooms);
 	}
 }
 	

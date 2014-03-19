@@ -58,6 +58,9 @@ class Room extends GenericCrud {
 	/** String containing emergency contact information */
 	private $safety_contact_information;
 	
+	/** String containing emergency contact information */
+	private $containsHazard;
+	
 	public function __construct(){
 		
 		// Define which subentities to load
@@ -116,6 +119,10 @@ class Room extends GenericCrud {
 	
 	public function getSafety_contact_information(){ return $this->safety_contact_information; }
 	public function setSafety_contact_information($contactInformation){ $this->safety_contact_information = $contactInformation; }
+
+	public function getContainsHazard(){ return $this->containsHazard; }
+	public function setContainsHazard($containsHazard){ $this->containsHazard = $containsHazard; }
+	
 	
 }
 ?>

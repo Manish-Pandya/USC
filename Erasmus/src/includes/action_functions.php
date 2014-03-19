@@ -586,7 +586,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		}
 		
 		// filter by room
-		filterHazards($roomIdsCsv,$allHazards,$rooms);
+		filterHazards($allHazards,$rooms);
 		
 		return $allHazards;
 	}
@@ -596,17 +596,17 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	}
 }
 
-function filterHazards ($roomIds,&$hazard, $rooms){
+function filterHazards (&$hazard, $rooms){
 	foreach ($hazard->getSubhazards() as $subhazard){
-		filterHazards($roomIds,$subhazard, $rooms);
-		$subhazard->filterRooms($roomIds);
+		filterHazards($subhazard, $rooms);
+		$subhazard->setInspectionRooms($rooms);
+		$subhazard->filterRooms();
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getSubhazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
-		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$subhazard->setEntityMaps($entityMaps);
-		$subhazard->setInspectionRooms($rooms);
 	}
 }
 
