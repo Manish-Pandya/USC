@@ -6,6 +6,9 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		if($location.search().question){
 			getQuestionById($location.search().question);
 		}
+		$scope.newDeficiency = {};
+		$scope.newDeficiency.reference;
+		$scope.newDeficiency.description;
 	}
 
 
@@ -37,7 +40,9 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 			Question: question,
 			Is_active: true,
 			Question_id: question.Key_id,
-			Text: question.newDeficiency
+			Text: question.newDeficiency.text,
+			Reference :question.newDeficiency.reference,
+			Description: question.newDeficiency.description
 		}
         
         console.log($scope.newDef);
@@ -90,28 +95,37 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		}
  
         var url = '../../ajaxaction.php?action=saveRecommendation';
-        convenienceMethods.updateObject( $scope.newRec, question, onAddDef, onFailAddDef, url );
+        convenienceMethods.updateObject( $scope.newRec, question, onAddRec, onFailAddRec, url );
 	}
 
-	function onAddDef(rec, question){
+	function onAddRec(rec, question){
 		question.Recommendations.push(rec);
 		question.IsDirty = false;
 	}
 
-	function onFailAddDef(){
+	function onFailAddRec(){
 		alert("There was a problem when attempting to add the recommendation.");
 	}
 
 
-	$scope.handleQuestionActive = function(question){
- 		question.IsDirty = true;
-        $scope.questionCopy = angular.copy(question);
-        $scope.questionCopy.Is_active = !$scope.questionCopy.Is_active;
-        if($scope.questionCopy.Is_active === null)question.Is_active = false;
+	$scope.handleObjActive = function(obj){
+ 		obj.IsDirty = true;
+        $scope.objCopy = angular.copy(obj);
+        $scope.objCopy.Is_active = !$scope.objCopy.Is_active;
+        if($scope.objCopy.Is_active === null)question.Is_active = false;
 
-        var url = '../../ajaxaction.php?action=saveQuestion';
-        convenienceMethods.updateObject( $scope.questionCopy, question, onSaveQuestion, onFailSaveQuestion, url );
+        var url = '../../ajaxaction.php?action=save'+obj.Class;
+        convenienceMethods.updateObject( $scope.objCopy, obj, onSetActive, onFailSetActive, url );
 	}
+	function onSetActive(dto, obj){
+
+		//temporarily use our question copy client side to bandaid server side bug that causes subquestions to be returned as indexed instead of associative
+        dto = angular.copy($scope.objCopy);
+        convenienceMethods.setPropertiesFromDTO( dto, obj );
+        obj.IsDirty = false;
+        obj.Invalid = false;
+	}
+	function onFailSetActive(){}
 
 	function onSaveQuestion(dto, question){
 	     //temporarily use our question copy client side to bandaid server side bug that causes subquestions to be returned as indexed instead of associative
@@ -123,7 +137,16 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	}
 
 	function onFailSaveQuestion(){
+		alert('There was a problem when the system tried to save the question.');
+	}
 
+	$scope.editQuestion= function(){
+		$scope.question.beingEdited = !$scope.question.beingEdited;
+		$scope.questionCopy = angular.copy($scope.question);
+	}
+	$scope.saveEditedQuestion = function(question){
+		var url = '../../ajaxaction.php?action=saveQuestion';
+        convenienceMethods.updateObject( $scope.questionCopy, question, onSaveQuestion, onFailSaveQuestion, url );
 	}
 }
 
