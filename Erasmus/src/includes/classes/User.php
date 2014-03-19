@@ -34,8 +34,8 @@ class User extends GenericCrud{
 	protected static $ROLES_RELATIONSHIP = array(
 		"className"	=>	"Role",
 		"tableName"	=>	"user_role",
-		"keyName"	=>	"user_id",
-		"foreignKeyName"	=>	"role_id"
+		"keyName"	=>	"role_id",
+		"foreignKeyName"	=>	"user_id"
 	); 
 
 	protected static $PI_RELATIONSHIP = array(
@@ -137,7 +137,7 @@ class User extends GenericCrud{
 	
 	public function getSupervisor() {
 		if($this->supervisor === NULL && $this->hasPrimaryKeyValue()) {
-			$superDAO = new GenericDAO("Supervisor");
+			$superDAO = new GenericDAO(new Supervisor());
 			$this->supervisor = $superDAO->getById($this->supervisor_id);
 		}
 		return $this->supervisor;

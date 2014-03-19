@@ -93,7 +93,7 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	public function getUser(){
 		if($this->user == null) {
-			$userDAO = new GenericDAO("User");
+			$userDAO = new GenericDAO(new User());
 			$this->user = $userDAO->getById($this->user_id);
 		}
 	}

@@ -30,8 +30,8 @@ class Role extends GenericCrud{
 	protected static $USERS_RELATIONSHIP = array(
 		"className"	=>	"User",
 		"tableName"	=>	"user_role",
-		"keyName"	=>	"role_id",
-		"foreignKeyName"	=>	"user_id"
+		"keyName"	=>	"user_id",
+		"foreignKeyName"	=>	"role_id"
 	); 
 	
 	// Access information
