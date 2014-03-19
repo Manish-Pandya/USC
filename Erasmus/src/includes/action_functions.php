@@ -717,6 +717,7 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 		//error
 		return new ActionError("Missing proper parameters (should be roomId int, hazardId int, add boolean)");
 	}
+	return true;
 	
 };
 function saveRoomRelation($hazardId, $roomId){
