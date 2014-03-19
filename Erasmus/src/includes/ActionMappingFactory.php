@@ -62,7 +62,9 @@ class ActionMappingFactory {
 				"saveDeficiencyRelation"=>new ActionMapping("saveDeficiencyRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
 				"saveDeficiency"=>new ActionMapping("saveDeficiency", "", ""),
-
+				"saveRecommendation"=>new ActionMapping("saveRecommendation", "", ""),
+				"saveObservation"=>new ActionMapping("saveObservation", "", ""),
+				
 				"getInspector"=>new ActionMapping("getInspector", "", ""),
 				"getAllInspectors"=>new ActionMapping("getAllInspectors", "", ""),
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
@@ -91,6 +93,8 @@ class ActionMappingFactory {
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
 				"saveRootCause"=>new ActionMapping("saveRootCause", "", ""),
 				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
+				"saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", ""),
+				"saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", ""),
 				
 				// Inspection, step 4 (Review, deficiency report)
 				"getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", ""),
