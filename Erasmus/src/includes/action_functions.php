@@ -698,7 +698,7 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	
 	$roomId = getValueFromRequest('roomId', $roomId);
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
-	$addId = getValueFromRequest('add', $add);
+	$add = getValueFromRequest('add', $add);
 	
 	if( $roomId !== NULL && hazardId !== NULL && $add !== null ){
 
