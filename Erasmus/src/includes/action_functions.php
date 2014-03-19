@@ -448,27 +448,18 @@ function getPI( $id = NULL ){
 
 function getAllPIs(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$pis = array();
 
-	$dao = getDao();
-	for( $i = 0; $i < 10; $i++ ){
-		$pis[] = $dao->getPiById($i);
-	}
+	$dao = getDao(new PrincipalInvestigator());
 	
-	return $pis;
+	return $dao->getAll();
 };
 
 function getAllRooms(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	$allRooms = array();
 	
-	$dao = getDao();
-	for( $i = 100; $i < 110; $i++ ){
-		$room = $dao->getRoomById($i);
-		$allRooms[] = $room;
-	}
+	$dao = getDao(new Room());
 	
-	return $allRooms;
+	return $dao->getAll();
 };
 
 function getRoomById( $id = NULL ){
@@ -478,8 +469,8 @@ function getRoomById( $id = NULL ){
 	$LOG->trace('getting room');
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getRoomById($id);
+		$dao = getDao(new Room());
+		return $dao->getById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
@@ -538,8 +529,8 @@ function getBuildingById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
-		return $dao->getBuildingById($id);
+		$dao = getDao(new Building());
+		return $dao->getById($id);
 	}
 	else{
 		return new ActionError("No request parameter 'id' was provided");
@@ -556,7 +547,7 @@ function saveInspection(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new Inspection());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
