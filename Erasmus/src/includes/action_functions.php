@@ -570,34 +570,34 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	if( $roomIdsCsv !== NULL ){
 		$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
 		
-		//Split CSV
-		//$roomIds = explode(',', $roomIdsCsv);
-		$roomIds = $roomIdsCsv;
-		
-		$rooms = array();
-		foreach($roomIds as $key=>$id){
-			$rooms[] = getRoomDtoByRoomId($id);
-		}
+		$hazards = getAllHazardsAsTree();
 		
 		$LOG->debug('Identified ' . count($roomIds) . ' Rooms');
-		
-		//Prepare array-map for hazard rooms
-		$hazardToRoomsMap = array();
-		
+	
 		//Get all hazards
 		$allHazards = getAllHazardsAsTree();
 		
-		foreach( $allHazards as $hazard ){
-			$hazardNodeDto = getHazardRoomMappings($hazard, $rooms, $roomIds);
-			
-			$hazardToRoomsMap[$hazardNodeDto->getKey_Id()] = $hazardNodeDto;
-		}
+		// filter by room
+		filterHazards($roomIds,$allHazards);
 		
-		return $hazardToRoomsMap;
+		return $allHazards;
 	}
 	else{
 		//error
 		return new ActionError("No request parameter 'roomIds' was provided");
+	}
+}
+
+function filterHazards ($roomIds,&$hazard){
+	foreach ($hazard->getSubhazards() as $subhazard){
+		filterHazards($roomIds,$subhazard);
+		$subhazard->filterRooms($roomIds);
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getSubhazards");
+		$entityMaps[] = new EntityMap("lazy","getChecklist");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$subhazard->setEntityMaps($entityMaps);
+		
 	}
 }
 
