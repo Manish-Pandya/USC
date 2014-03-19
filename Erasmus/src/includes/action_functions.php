@@ -307,6 +307,7 @@ function getAllHazardsAsTree() {
 	$entityMaps[] = new EntityMap("eager","getSubhazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
 	$entityMaps[] = new EntityMap("lazy","getRooms");
+	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 	$root->setEntityMaps($entityMaps);
 	
 	// Return the object
@@ -577,8 +578,16 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		//Get all hazards
 		$allHazards = getAllHazardsAsTree();
 		
+		$rooms = array();
+		$roomDao = new Dao(new Room());
+		
+		// Create an array of Room Objects
+		foreach($roomIds as $roomId) {
+			array_push($roomDao->getById($roomId),$rooms);
+		}
+		
 		// filter by room
-		filterHazards($roomIds,$allHazards);
+		filterHazards($roomIds,$allHazards,$rooms);
 		
 		return $allHazards;
 	}
@@ -588,7 +597,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	}
 }
 
-function filterHazards ($roomIds,&$hazard){
+function filterHazards ($roomIds,&$hazard, $rooms){
 	foreach ($hazard->getSubhazards() as $subhazard){
 		filterHazards($roomIds,$subhazard);
 		$subhazard->filterRooms($roomIds);
@@ -596,8 +605,9 @@ function filterHazards ($roomIds,&$hazard){
 		$entityMaps[] = new EntityMap("eager","getSubhazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$subhazard->setEntityMaps($entityMaps);
-		
+		$subhazard->setInspectionRooms($rooms);
 	}
 }
 

@@ -64,6 +64,9 @@ class Hazard extends GenericCrud {
 	/** Array of Room entities in which this Hazard is contained */
 	private $rooms;
 	
+	/** Array of Room entities relevant to a particular inspection */
+	private $inspectionRooms;
+	
 	//TODO: Room relationship should/may contain information about Equipment, etc
 	
 	public function __construct(){
@@ -73,6 +76,7 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getSubhazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -91,6 +95,9 @@ class Hazard extends GenericCrud {
 	
 	public function getParent_hazard_id(){ return $this->parent_hazard_id; }
 	public function setParent_hazard_id($parent_hazard_id){ $this->parent_hazard_id = $parent_hazard_id; }
+	
+	public function getInspectionRooms() { return $this->inspectionRooms; }
+	public function setInspectionRooms($inspectionRooms){ $this->inspectionRooms = $inspectionRooms; }
 	
 	public function getSubHazards(){ 
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
