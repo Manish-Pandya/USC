@@ -67,6 +67,11 @@ class Hazard extends GenericCrud {
 	/** Array of Room entities relevant to a particular inspection */
 	private $inspectionRooms;
 	
+	/** Array of Room entities relevant to a particular inspection */
+	private $isPresent;
+	
+	
+	
 	//TODO: Room relationship should/may contain information about Equipment, etc
 	
 	public function __construct(){
@@ -127,12 +132,17 @@ class Hazard extends GenericCrud {
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
+	public function getIsPresent() {return $this->isPresent;}
+	
 	
 	public function filterRooms(){
+		$this->isPresent = false;
 		foreach ($this->inspectionRooms as &$room){
 			foreach ($this->getRooms() as $hazroom){
 				if ($room->getKey_id() == $hazroom->getKey_id()){
 					$room->setContainsHazard(true);
+					// if one or more rooms has this hazard, set isPresent to true
+					$this->isPresent = true;
 				} else {
 					$room->setContainsHazard(false);
 				}
