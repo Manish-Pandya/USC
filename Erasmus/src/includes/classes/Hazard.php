@@ -66,9 +66,12 @@ class Hazard extends GenericCrud {
 	
 	/** Array of Room entities relevant to a particular inspection */
 	private $inspectionRooms;
-	
+
 	/** Array of Room entities relevant to a particular inspection */
 	private $isPresent;
+	
+	/** Array of the parent ids of this hazard */
+	private $parentIds;
 	
 	
 	
@@ -134,7 +137,10 @@ class Hazard extends GenericCrud {
 	
 	public function getIsPresent() {return $this->isPresent;}
 	
+	public function getParentIds() {return $this->parentIds;}
 	
+	public function setParentIds($parentIds){ $this->parentIds = $parentIds; }
+		
 	public function filterRooms(){
 		$this->isPresent = false;
 		foreach ($this->inspectionRooms as &$room){
