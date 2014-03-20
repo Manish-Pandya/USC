@@ -607,7 +607,7 @@ function filterHazards (&$hazard, $rooms){
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$subhazard->setEntityMaps($entityMaps);
-		$subhazard->setParentIds(push_array($hazard->getParentIds(),$hazard->getKey_id()));
+		$subhazard->setParentIds(array_push($hazard->getParentIds(),$hazard->getKey_id()));
 	}
 }
 
