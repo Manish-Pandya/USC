@@ -598,6 +598,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 
 function filterHazards (&$hazard, $rooms){
 	foreach ($hazard->getSubhazards() as $subhazard){
+		if (empty($hazard->getParentIds())) {$hazard->setParentIds(array());
 		$subhazard->setParentIds(array_push($hazard->getParentIds(),$hazard->getKey_id()));
 		filterHazards($subhazard, $rooms);
 		$subhazard->setInspectionRooms($rooms);
