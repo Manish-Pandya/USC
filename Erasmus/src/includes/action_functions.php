@@ -566,11 +566,13 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			foreach ($oldRooms as $oldRoom) {
 				$dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 			}
-			// add the default rooms for this PI
-			foreach ($pi->getRooms() as $newRoom) {
-				$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
-			}
 		}
+		// add the default rooms for this PI
+		foreach ($pi->getRooms() as $newRoom) {
+			$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+		}
+
+		$junk = $inspection->getRooms;
 		
 		// Remove previous inspectors and add the submitted inspectors.
 		$oldInspectors = $inspection->getInspectors();
@@ -579,11 +581,13 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			foreach ($oldInspectors as $oldInsp) {
 				$dao->removeRelatedItems($oldInsp->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 			}
-			// add the submitted Inspectors
-			foreach ($inspectorIds() as $insp) {
-				$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
-			}
 		}
+		// add the submitted Inspectors
+		foreach ($inspectorIds() as $insp) {
+			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+		}
+
+		$junk = $inspection->getInspectors;
 		
 	} else {
 		//error
