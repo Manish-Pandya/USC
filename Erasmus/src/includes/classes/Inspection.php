@@ -97,7 +97,7 @@ class Inspection extends GenericCrud {
 	
 	public function getPrincipalInvestigator(){
 		if($this->principalInvestigator == null) {
-			$piDAO = new GenericDAO("PrincipalInvestigator");
+			$piDAO = new GenericDAO(new PrincipalInvestigator());
 			$this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
 		}
 		return $this->principalInvestigator;
