@@ -60,10 +60,10 @@ class Inspection extends GenericCrud {
 	private $responses;
 	
 	/** Date and time this Inspection began */
-	private $dateStarted;
+	private $date_started;
 	
 	/** Date and time this Inspection was completed */
-	private $dateClosed;
+	private $date_closed;
 	
 	public function __construct(){
 
@@ -126,10 +126,10 @@ class Inspection extends GenericCrud {
 	}
 	public function setResponses($responses){ $this->responses = $responses; }
 	
-	public function getDateStarted(){ return $this->dateStarted; }
-	public function setDateStarted($dateStarted){ $this->dateStarted = $dateStarted; }
+	public function getDate_started(){ return $this->dateStarted; }
+	public function setDate_started($dateStarted){ $this->dateStarted = $dateStarted; }
 	
-	public function getDateClosed(){ return $this->dateClosed; }
-	public function setDateClosed($dateClosed){ $this->dateClosed = $dateClosed; }
+	public function getDate_closed(){ return $this->date_closed; }
+	public function setDate_closed($date_closed){ $this->date_closed = $date_closed; }
 }
 ?>
