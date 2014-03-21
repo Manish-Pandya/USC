@@ -557,7 +557,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 
 		// Save (or update) the inspection
 		$inspection = $dao->save($inspection);
-		$pi = $dao->getPrincipalInvestigator();
+		$pi = $inspection->getPrincipalInvestigator();
 		 
 		// Remove previous rooms and add the default rooms for this PI.
 		$oldRooms = $inspection->getRooms();
