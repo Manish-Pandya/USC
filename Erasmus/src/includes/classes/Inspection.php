@@ -126,8 +126,8 @@ class Inspection extends GenericCrud {
 	}
 	public function setResponses($responses){ $this->responses = $responses; }
 	
-	public function getDate_started(){ return $this->dateStarted; }
-	public function setDate_started($dateStarted){ $this->dateStarted = $dateStarted; }
+	public function getDate_started(){ return $this->date_started; }
+	public function setDate_started($date_started){ $this->date_started = $date_started; }
 	
 	public function getDate_closed(){ return $this->date_closed; }
 	public function setDate_closed($date_closed){ $this->date_closed = $date_closed; }
