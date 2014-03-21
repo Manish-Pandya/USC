@@ -87,19 +87,15 @@ class Inspection extends GenericCrud {
 	}
 	
 	public function getInspectors(){ 
-		if($this->inspectors === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTORS_RELATIONSHIP));
-		}
+		$thisDAO = new GenericDAO($this);
+		$this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTORS_RELATIONSHIP));
 		return $this->inspectors;
 	}
 	public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
 	
 	public function getPrincipalInvestigator(){
-		if($this->principalInvestigator == null) {
-			$piDAO = new GenericDAO(new PrincipalInvestigator());
-			$this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
-		}
+		$piDAO = new GenericDAO(new PrincipalInvestigator());
+		$this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
 		return $this->principalInvestigator;
 	}
 	public function setPrincipalInvestigator($principalInvestigator){
@@ -110,18 +106,13 @@ class Inspection extends GenericCrud {
 	public function setPrincipal_investigator_id($principal_investigator_id){ $this->principal_investigator_id = $principal_investigator_id; }
 	
 	public function getResponses(){ 
-		if($this->responses === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
-		}
-		return $this->responses;
+		$thisDAO = new GenericDAO($this);
+		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
 	}
 	
 	public function getRooms(){ 
-		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
-		}
+		$thisDAO = new GenericDAO($this);
+		$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
 		return $this->rooms;
 	}
 	public function setResponses($responses){ $this->responses = $responses; }

@@ -572,8 +572,6 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 		}
 
-		$junk = $inspection->getRooms;
-		
 		// Remove previous inspectors and add the submitted inspectors.
 		$oldInspectors = $inspection->getInspectors();
 		if (!empty($oldInspectors)) {
@@ -587,12 +585,19 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
-		$junk = $inspection->getInspectors;
-		
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be inspectionId (nullable int), piId int, inspectorIds (one or more ints))");
 	}
+
+	$entityMaps = array();
+	$entityMaps[] = new EntityMap("eager","getInspectors");
+	$entityMaps[] = new EntityMap("eager","getRooms");
+	$entityMaps[] = new EntityMap("lazy","getResponses");
+	$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+	$inspection->setEntityMaps($entityMaps);
+	
+	
 	return $inspection;
 	
 };
