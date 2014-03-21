@@ -583,7 +583,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			}
 		}
 		// add the submitted Inspectors
-		foreach ($inspectorIds() as $insp) {
+		foreach ($inspectorIds as $insp) {
 			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
