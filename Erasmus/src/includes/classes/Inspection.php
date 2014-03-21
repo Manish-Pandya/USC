@@ -116,7 +116,6 @@ class Inspection extends GenericCrud {
 		}
 		return $this->responses;
 	}
-	public function setResponses($responses){ $this->responses = $responses; }
 	
 	public function getRooms(){ 
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
