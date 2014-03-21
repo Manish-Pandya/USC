@@ -73,6 +73,7 @@ class ActionMappingFactory {
 				"getPI"=>new ActionMapping("getPI", "", ""),
 				"getAllRooms"=>new ActionMapping("getAllRooms", "", ""),
 				"initiateInspection"=>new ActionMapping("initiateInspection", "", ""),
+				"saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", ""),
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				
 				"getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", ""),

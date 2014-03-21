@@ -593,6 +593,34 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	
 };
 
+function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$roomId = getValueFromRequest('roomId', $roomId);
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$add = getValueFromRequest('add', $add);
+	
+	if( $roomId !== NULL && $inspectionId !== NULL && $add !== null ){
+
+		// Get this inspection
+		$dao = getDao(new Inspection());
+		$inspection = $dao->getById($inspectionId);
+		// if add is true, add this room to this inspection
+		if ($add){
+			$dao->addRelatedItems($roomId,$inspectionId,DataRelationShip::fromArray(Room::$ROOMS_RELATIONSHIP));
+		// if add is false, remove this room from this inspection
+		} else {
+			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationShip::fromArray(Room::$ROOMS_RELATIONSHIP));
+		}
+		
+	} else {
+		//error
+		return new ActionError("Missing proper parameters (should be roomId int, inspectionId int, add boolean)");
+	}
+	return true;
+	
+};
+
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
@@ -788,6 +816,7 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	return true;
 	
 };
+
 function saveRoomRelation($hazardId, $roomId){
 	//temporarily return true so server returns 200 code
 	return true;
