@@ -72,6 +72,7 @@ class ActionMappingFactory {
 				// Inspection, step 1 (PI / Room assessment)
 				"getPI"=>new ActionMapping("getPI", "", ""),
 				"getAllRooms"=>new ActionMapping("getAllRooms", "", ""),
+				"initiateInspection"=>new ActionMapping("initiateInspection", "", ""),
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				
 				"getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", ""),

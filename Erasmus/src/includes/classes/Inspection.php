@@ -28,21 +28,21 @@ class Inspection extends GenericCrud {
 	);
 	
 	/** Relationships */
-	protected static $ROOMS_RELATIONSHIP = array(
+	public static $ROOMS_RELATIONSHIP = array(
 			"className"	=>	"Room",
 			"tableName"	=>	"inspection_room",
 			"keyName"	=>	"room_id",
 			"foreignKeyName"	=>	"inspection_id"
 	);
 	
-	protected static $RESPONSE_RELATIONSHIP = array(
+	public static $RESPONSE_RELATIONSHIP = array(
 			"className"	=>	"Response",
 			"tableName"	=>	"inspection_response",
 			"keyName"	=>	"response_id",
 			"foreignKeyName"	=>	"inspection_id"
 	);
 	
-	protected static $INSPECTORS_RELATIONSHIP = array(
+	public static $INSPECTORS_RELATIONSHIP = array(
 			"className"	=>	"Inspector",
 			"tableName"	=>	"inspection_inspector",
 			"keyName"	=>	"inspector_id",

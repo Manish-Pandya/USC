@@ -538,6 +538,61 @@ function getBuildingById( $id = NULL ){
 	}
 }
 
+function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$piId = getValueFromRequest('piId', $piId);
+	$inspectorIds = getValueFromRequest('inspectorIds', $inspectorIds);
+	
+	if( $piId !== NULL && $inspectorIds !== null ){
+
+		// Get this room
+		$inspection = new Inspection();
+		$dao = getDao($inspection);
+		
+		// Set inspection's keyId and PI.
+		$inspection->setKey_id($inspectionId);
+		$inspection->setPrincipal_investigator_id($piId);
+
+		// Save (or update) the inspection
+		$inspection = $dao->save($inspection);
+		$pi = $dao->getPrincipalInvestigator();
+		 
+		// Remove previous rooms and add the default rooms for this PI.
+		$oldRooms = $inspection->getRooms();
+		if (!empty($oldRooms)) {
+			// removeo the old rooms
+			foreach ($oldRooms as $oldRoom) {
+				$dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+			}
+			// add the default rooms for this PI
+			foreach ($pi->getRooms() as $newRoom) {
+				$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+			}
+		}
+		
+		// Remove previous inspectors and add the submitted inspectors.
+		$oldInspectors = $inspection->getInspectors();
+		if (!empty($oldInspectors)) {
+			// remove the old inspectors
+			foreach ($oldInspectors as $oldInsp) {
+				$dao->removeRelatedItems($oldInsp->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			}
+			// add the submitted Inspectors
+			foreach ($inspectorIds() as $insp) {
+				$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			}
+		}
+		
+	} else {
+		//error
+		return new ActionError("Missing proper parameters (should be inspectionId (nullable int), piId int, inspectorIds (one or more ints))");
+	}
+	return $inspection;
+	
+};
+
 function saveInspection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
@@ -548,9 +603,21 @@ function saveInspection(){
 		return $decodedObject;
 	}
 	else{
+		$roomIds = $decodedObject->getRooms();
+		if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
+		
+		$inspectorIds = $decodedObject->getInspectors();
+		if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
+		
 		$dao = getDao(new Inspection());
-		$dao->save($decodedObject);
-		return $decodedObject;
+
+		// Save the Inspection
+		$inspection = $dao->save($decodedObject);
+		
+		// Check this inspection's current persisted rooms and see if they're different
+		// check to see if rooms have been submitted, if not don't worry about it.
+		
+		return $inspection;
 	}
 };
 
@@ -834,14 +901,11 @@ function getInspectionById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
-		$dao = getDao();
+		$dao = getDao(new Inspection());
 		
 		//get inspection
-		$inspection = $dao->getInspectionById($id);
+		$inspection = $dao->getById($id);
 		
-		// get responses
-		$inspection->setResponses( getResponsesForInspection($id) );
-	
 		return $inspection;
 	}
 	else{
