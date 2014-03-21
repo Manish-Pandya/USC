@@ -139,7 +139,13 @@ class Hazard extends GenericCrud {
 	
 	public function getParentIds() {return $this->parentIds;}
 	
-	public function setParentIds($parentIds){ $this->parentIds = $parentIds; }
+	public function setParentIds($parentIds){
+		if (empty($parentIds)){
+			$parentIds = array();
+			$parentIds = $this->findParents($this,$parentIds);		
+		} 
+		$this->parentIds = $parentIds;
+	}
 		
 	public function filterRooms(){
 		$this->isPresent = false;
@@ -154,6 +160,16 @@ class Hazard extends GenericCrud {
 				}
 			}
 		}
+	}
+
+	private function findParents($hazard,&$parentIds) {
+		if (!empty($hazard) && $hazard->getParent_hazard_id() != null){
+			$thisDao = new GenericDAO($this);
+			$hazard_id = $hazard->getParent_hazard_id();
+			array_push($parentIds,$hazard_id);
+			$this->findParents($thisDao->getById($hazard_id),$parentIds);
+		} 
+		return $parentIds;
 	}
 }
 	
