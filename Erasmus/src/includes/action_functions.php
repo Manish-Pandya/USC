@@ -924,40 +924,28 @@ function getChecklistsForInspection( $id = NULL ){
 		//iterate the rooms and find the hazards present
 		foreach ($rooms as $room){
 			$hazardlist = getHazardsInRoom($room->getKey_id());
-			// for each hazard present in an inspection room, get its parent hazard list
+			// get each hazard present in the room
 			foreach ($hazardlist as $hazard){
-				$hazard->setParentIds();
-				array_push($masterHazards,$hazard->getParentIds());
-			}
-		}
-
-
-		if(!empty($masterHazards)) {
-			// de-dupe the master list of hazard and parent hazard ids
-			$masterHazards = array_unique($masterHazards);
-
-			$hazDao = getDao(new Hazard());
-			$checklists = array();
-		
-			// for each Hazard id in the master list, find any associated checklist and add it to our list
-			foreach ($masterHazards as $hazardId){
-					$hazard = $hazDao->getById($hazardId);
+				// Check to see if we've already examined this hazard (in an earlier room)
+				if (!in_array($hazard->getKey_id(),$masterHazards)){
+					// if this is new hazard, add its keyid to the master array...
+					$masterHazards[] = $hazard->getKey_id();
+					// ... and get its checklist, if there is one
 					$checklist = $hazard->getChecklist();
+					// if this hazard had a checklist, add it to the checklists array
 					if (!empty($checklist)){
 						$checklists[] = $checklist;
 					}
+				}
 			}
-				
-		} else {
-			// no hazards are present, hence no checklists, return false
-			return false;
 		}
-		
+
+
 		if (!empty($checklists)){
 			// return the list of checklist objects
 			return $checklists;
 		} else {
-			// hazards were present, but none of them have checklists, return false
+			// no applicable checklists, return false
 			return false;
 		}
 		
