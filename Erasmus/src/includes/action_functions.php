@@ -777,19 +777,14 @@ function getHazardsInRoom( $roomId = NULL ){
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
 		
-		$dao = getDao();
+		$dao = getDao(new Room());
 		
 		//get Room
-		$room = $dao->getRoomById($roomId);
+		$room = $dao->getById($roomId);
 		
 		//get hazards
-		$hazards = getAllHazards();
+		$hazards = $room->getHazards;
 		
-		// Set room in each hazard
-		foreach( $hazards as &$hazard){
-			$hazard->setRooms( array($room) );
-		}
-	
 		return $hazards;
 	}
 	else{
@@ -918,13 +913,53 @@ function saveCorrectiveAction(){
 function getChecklistsForInspection( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
-	
 	if( $id !== NULL ){
-		//TODO: get inspection
-		$inspection = getInspectionById($id);
+		$dao = getDao(new Inspection());
 		
-		//TODO: get Responses
-		$responses = $inspection->getResponses();
+		//get inspection
+		$inspection = $dao->getById($id);
+		// get the rooms for the inspection
+		$rooms = $inspection->getRooms();
+		$masterHazards = array();
+		//iterate the rooms and find the hazards present
+		foreach ($rooms as $room){
+			$hazardlist = getHazardsInRoom($room->getKey_id());
+			// for each hazard present in an inspection room, get its parent hazard list
+			foreach ($hazardlist as $hazard){
+				$hazard->setParentIds();
+				array_push($masterHazards,$hazard->getParentIds());
+			}
+		}
+
+
+		if(!empty($masterHazards)) {
+			// de-dupe the master list of hazard and parent hazard ids
+			$masterHazards = array_unique($masterHazards);
+
+			$hazDao = getDao(new Hazard());
+			$checklists = array();
+		
+			// for each Hazard id in the master list, find any associated checklist and add it to our list
+			foreach ($masterHazards as $hazardId){
+					$hazard = $hazDao->getById($hazardId);
+					$checklist = $hazard->getChecklist();
+					if (!empty($checklist)){
+						$checklists[] = $checklist;
+					}
+			}
+				
+		} else {
+			// no hazards are present, hence no checklists, return false
+			return false;
+		}
+		
+		if (!empty($checklists)){
+			// return the list of checklist objects
+			return $checklists;
+		} else {
+			// hazards were present, but none of them have checklists, return false
+			return false;
+		}
 		
 	}
 	else{
