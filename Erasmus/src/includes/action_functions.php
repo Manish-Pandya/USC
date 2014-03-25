@@ -427,9 +427,8 @@ function saveRecommendationRelation(){
 		
 		if( $responseId !== NULL && $recommendationId !== NULL && $add !== null ){
 		
-			// Get this inspection
+			// Get a DAO
 			$dao = getDao(new Response());
-			$inspection = $dao->getById($responseId);
 			// if add is true, add this recommendation to this response
 			if ($add){
 				$dao->addRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
@@ -466,11 +465,10 @@ function saveObservationRelation(){
 		$observationId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
 	
-		if( $responseId !== NULL && $recommendationId !== NULL && $add !== null ){
+		if( $responseId !== NULL && $observationId !== NULL && $add !== null ){
 	
-			// Get this inspection
+			// Get a DAO
 			$dao = getDao(new Response());
-			$inspection = $dao->getById($responseId);
 			// if add is true, add this observation to this response
 			if ($add){
 				$dao->addRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
