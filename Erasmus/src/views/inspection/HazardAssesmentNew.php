@@ -14,7 +14,7 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
-<div data-ng-app="hazardAssesment">
+<div data-ng-app="hazardAssesment" data-ng-controller="hazardAssessmentController">
 <div class="container-fluid whitebg" style="padding-bottom:130px;" >
 	<div class="" >
 	<!-- recursive subhazard template -->
@@ -22,9 +22,9 @@ require_once '../top_view.php';
 		<h4 style="display:inline-block;" class="hazardLi">
 			<label class="checkbox inline">
 				<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-				<span class="metro-checkbox targetHaz">{{child.HazardName}}</span>
+				<span class="metro-checkbox targetHaz">{{child.Name}}</span>
 			</label>
-			<span ng-show="child.Children.length">
+			<span ng-show="child.SubHazards.length">
 				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 			</span>
 			<span ng-show="child.IsPresent">
@@ -32,29 +32,29 @@ require_once '../top_view.php';
 			</span>
 
 			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;"> 
-				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+				<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 				<ul>
-					<li ng-repeat="(key, child) in child.Children">
+					<li ng-repeat="(key, child) in child.SubHazards">
 						<label class="checkbox inline">
 							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-							<span class="metro-checkbox">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
+							<span class="metro-checkbox">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
 						</label>
 					</li>
 				</ul>
 			</div>	
 
 			<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-				<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+				<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
 				<ul>
-					<li ng-repeat="(key, room) in child.PossibleRooms" >
+					<li ng-repeat="(key, room) in child.InspectionRooms" >
 						<label class="checkbox inline" ng-show="room.IsAllowed">
 							<input ng-show="room.IsAllowed" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-							<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+							<span class="metro-checkbox">{{room.Name}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
 						</label>
 
 						<label class="checkbox inline disallowed" ng-hide="room.IsAllowed">
 							<input  type="checkbox"  ng-model="room.ContainsHazard"  disabled>						
-							<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+							<span class="metro-checkbox">{{room.Name}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
 						</label>
 					</li>			
 				</ul>
@@ -64,17 +64,17 @@ require_once '../top_view.php';
 		
 		<ul ng-hide="!child.showRooms" class="subRooms">
 			<li>Rooms:</li>
-			<li ng-repeat="(key, room) in child.PossibleRooms | filter: {ContainsHazard: true}" class="">
-				{{room.RoomName}}
+			<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
+				{{room.Name}}
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="child in child.Children" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
+			<li ng-repeat="child in child.SubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
 		</ul>
     </script>
 
-	    <div data-ng-controller="hazardAssessmentController">
+	    <div>
 	    <div id="editPiForm" class="row-fluid">
 		<form class="form">
 		     <div class="control-group span4">
@@ -85,12 +85,11 @@ require_once '../top_view.php';
 		       	<img class="" style="height:23px; margin:-73px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="customSelected" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="PI.User.Name" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!PI"><a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_Id}}" target="_blank">Manage Data for Selected PI</a></h3>
+		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.User.Key_id}}" target="_blank">Manage Data for Selected PI</a></h3>
 		     </div>
-
 			<div class="span8">
 		       <div class="controls">
 		       <h3 class="span6">Building(s):</h3>
@@ -115,7 +114,7 @@ require_once '../top_view.php';
 			       			</div>
 			       			<div class="roomsForBuidling span6">
 				       			<ul>
-				       				<li ng-class="{greyedOut: !room.IsSelected}" ng-repeat="(key, room) in building.Rooms">{{room.RoomName}}</li>
+				       				<li ng-class="{greyedOut: !room.IsSelected}" ng-repeat="(key, room) in building.Rooms">{{room.Name}}</li>
 				       			</ul>
 			       			</div>
 			       			</li>
@@ -132,7 +131,7 @@ require_once '../top_view.php';
 							       	 	<li ng-repeat="(key, room) in building.Rooms" style="width:100%">
 								       	 	<label class="checkbox inline">
 												<input ng-model='room.IsSelected' type="checkbox" ng-change="selectRoom(room,building)"/>
-												<span class="metro-checkbox smaller">{{room.RoomName}}</span>
+												<span class="metro-checkbox smaller">{{room.Name}}</span>
 											</label>
 										</li>
 									</ul>
@@ -164,7 +163,7 @@ require_once '../top_view.php';
 				<li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">
 					<h1 class="hazardListHeader" id="{{hazard.cssId}}" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
 					<span ng-hide="hazard.hidden">
-				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.HazardName}}</h1>
+				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.Name}}</h1>
 					<hr>
 					
 					<ul>
@@ -178,15 +177,15 @@ require_once '../top_view.php';
 								</span>
 							</a>
 						</li>
-						<li ng-repeat="(key, child) in hazard.Children" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
+						<li ng-repeat="(key, child) in hazard.SubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
 							<h4 class="hazardLi">
 								<label class="checkbox inline">
 									<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-									<span class="metro-checkbox targetHaz">{{child.HazardName}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+									<span class="metro-checkbox targetHaz">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 									<!--<pre>{{child | json}}</pre>-->
 									</span>
 								</label>
-								<span ng-show="child.Children.length && child.IsPresent">
+								<span ng-show="child.SubHazards.length && child.IsPresent">
 									<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 								</span>
 								<span ng-show="child.IsPresent">
@@ -194,24 +193,24 @@ require_once '../top_view.php';
 								</span>
 
 								<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
-									<h3 class="orangeBg"><span>{{child.HazardName}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+									<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 									<ul>
-										<li ng-repeat="(key, child) in child.Children">
+										<li ng-repeat="(key, child) in child.SubHazards">
 											<label class="checkbox inline">
 												<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-												<span class="metro-checkbox">{{child.HazardName}}</span>
+												<span class="metro-checkbox">{{child.Name}}</span>
 											</label>
 										</li>
 									</ul>
 								</div>	
 
 								<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-									<h3 class="orangeBg"><span>{{child.HazardName}}</span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+									<h3 class="orangeBg"><span>{{child.Name}}</span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
 									<ul>
-										<li ng-repeat="(key, room) in child.PossibleRooms">
+										<li ng-repeat="(key, room) in child.InspectionRooms">
 											<label class="checkbox inline">
 												<input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-												<span class="metro-checkbox">{{room.RoomName}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+												<span class="metro-checkbox">{{room.Name}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
 											</label>
 										</li>
 									</ul>
@@ -221,12 +220,12 @@ require_once '../top_view.php';
 
 							<ul ng-hide="!child.showRooms" class="subRooms">
 								<li>Rooms:</li>
-								<li ng-repeat="(key, room) in child.PossibleRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
-									{{room.RoomName}}
+								<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
+									{{room.Name}}
 								</li>
 							</ul>
 							<ul>
-								<li ng-repeat="child in child.Children" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
+								<li ng-repeat="child in child.SubHazards" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
 									<span data-ng-include="'sub-hazard.html'"></span>				
 								</li>
 							</ul>
@@ -275,7 +274,7 @@ require_once '../top_view.php';
 		<li><a ng-click="getArchivedReports()"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a href="../hubs/userhub.php"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
 		<li><a><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
-		<li><a href="InspectionChecklist.php"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
+		<li><a href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
 	</ul>
 </div>
 </span>
