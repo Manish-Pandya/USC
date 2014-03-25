@@ -153,9 +153,9 @@ class Hazard extends GenericCrud {
 		$this->isPresent = false;
 		foreach ($this->inspectionRooms as &$room){
 			$LOG->debug("Checking inspection room with key_id " . $room->getKey_id());
+			$room->setContainsHazard(false);
 			foreach ($this->getRooms() as $hazroom){
 				$LOG->debug("Hazard is found in room " . $hazroom->getKey_id() . " ...");
-				$room->setContainsHazard(false);
 				if ($room->getKey_id() == $hazroom->getKey_id()){
 					$LOG->debug(".. which matches this room's key_id, ContainsHazard set to true");
 					$room->setContainsHazard(true);
