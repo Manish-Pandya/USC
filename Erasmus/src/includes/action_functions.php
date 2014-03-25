@@ -777,19 +777,14 @@ function getHazardsInRoom( $roomId = NULL ){
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
 		
-		$dao = getDao();
+		$dao = getDao(new Room());
 		
 		//get Room
-		$room = $dao->getRoomById($roomId);
+		$room = $dao->getById($roomId);
 		
 		//get hazards
-		$hazards = getAllHazards();
+		$hazards = $room->getHazards;
 		
-		// Set room in each hazard
-		foreach( $hazards as &$hazard){
-			$hazard->setRooms( array($room) );
-		}
-	
 		return $hazards;
 	}
 	else{
@@ -918,13 +913,41 @@ function saveCorrectiveAction(){
 function getChecklistsForInspection( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
-	
 	if( $id !== NULL ){
-		//TODO: get inspection
-		$inspection = getInspectionById($id);
+		$dao = getDao(new Inspection());
 		
-		//TODO: get Responses
-		$responses = $inspection->getResponses();
+		//get inspection
+		$inspection = $dao->getById($id);
+		// get the rooms for the inspection
+		$rooms = $inspection->getRooms();
+		$masterHazards = array();
+		//iterate the rooms and find the hazards present
+		foreach ($rooms as $room){
+			$hazardlist = getHazardsInRoom($room->getKey_id());
+			// get each hazard present in the room
+			foreach ($hazardlist as $hazard){
+				// Check to see if we've already examined this hazard (in an earlier room)
+				if (!in_array($hazard->getKey_id(),$masterHazards)){
+					// if this is new hazard, add its keyid to the master array...
+					$masterHazards[] = $hazard->getKey_id();
+					// ... and get its checklist, if there is one
+					$checklist = $hazard->getChecklist();
+					// if this hazard had a checklist, add it to the checklists array
+					if (!empty($checklist)){
+						$checklists[] = $checklist;
+					}
+				}
+			}
+		}
+
+
+		if (!empty($checklists)){
+			// return the list of checklist objects
+			return $checklists;
+		} else {
+			// no applicable checklists, return false
+			return false;
+		}
 		
 	}
 	else{
