@@ -50,6 +50,20 @@ class Response extends GenericCrud {
 			"keyName"	=>	"observation_id",
 			"foreignKeyName"	=>	"response_id"
 	);
+
+	protected static $SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP = array(
+			"className"	=>	"SupplementalRecommendation",
+			"tableName"	=>	"supplemental_recommendation",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"response_id"
+	);
+	
+	protected static $SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP = array(
+			"className"	=>	"SupplementalObservation",
+			"tableName"	=>	"supplemental_observation",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"response_id"
+	);
 	
 	// Required for GenericCrud
 	public function getTableName(){
@@ -60,7 +74,20 @@ class Response extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 	
-	public function __construct(){}
+	public function __construct(){
+		
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getQuestion");
+		$entityMaps[] = new EntityMap("lazy","getInspection");
+		$entityMaps[] = new EntityMap("eager","getDeficiencySelections");
+		$entityMaps[] = new EntityMap("eager","getRecommendations");
+		$entityMaps[] = new EntityMap("eager","getObservations");
+		$entityMaps[] = new EntityMap("eager","getSupplementalRecommendations");
+		$entityMaps[] = new EntityMap("eager","getSupplementalObservations");
+		$this->setEntityMaps($entityMaps);
+		
+	}
 	
 	/** Reference to Question entity to which this Response applies */
 	private $question;
@@ -82,7 +109,12 @@ class Response extends GenericCrud {
 	/** Array of Recommendation entities selected as part of the associated Question */
 	private $recommendations;
 	
-
+	/** Array of Recommendation entities selected as part of the associated Question */
+	private $observations;
+	
+	private $supplementalObservations;
+	
+	private $supplementalRecommendations;
 	
 	
 	
@@ -118,7 +150,7 @@ class Response extends GenericCrud {
 	public function setAnswer($answer){ $this->answer = $answer; }
 	
 	public function getQuestion_text(){ return $this->question_text; }
-	public function setQuestion($question_text){ $this->question_text = $question_text; }
+	public function setQuestion_text($question_text){ $this->question_text = $question_text; }
 		
 	public function getDeficiencySelections(){ 
 		if($this->deficiencySelections === NULL && $this->hasPrimaryKeyValue()) {
@@ -145,6 +177,21 @@ class Response extends GenericCrud {
 		}
 		return $this->observations;
 	}
+
 	public function setObservations($observations){ $this->observations = $observations; }
+	
+	public function getSupplementalRecommendations(){ 
+			$thisDAO = new GenericDAO($this);
+			$this->supplementalRecommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
+		return $this->supplementalRecommendations;
+	}
+	public function setSupplementalRecommendations($supplementalRecommendations){ $this->supplementalRecommendations = $supplementalRecommendations; }
+	
+	public function getSupplementalObservations(){ 
+		$thisDAO = new GenericDAO($this);
+		$this->supplementalObservations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
+		return $this->observations;
+	}
+	public function setSupplementalObservations($supplementalObservations){ $this->supplementalObservations = $supplementalObservations; }
 }
 ?>
