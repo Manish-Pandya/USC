@@ -857,7 +857,7 @@ function saveResponse(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new Response());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -873,7 +873,7 @@ function saveDeficiencySelection(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new DeficiencySelection());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -899,13 +899,13 @@ function saveCorrectiveAction(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ){
-		return new ActionError('Error converting input stream to RootCause');
+		return new ActionError('Error converting input stream to CorrectiveAction');
 	}
 	else if( $decodedObject instanceof ActionError){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao(new CorrectiveAction());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
