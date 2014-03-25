@@ -432,10 +432,10 @@ function saveRecommendationRelation(){
 			$inspection = $dao->getById($responseId);
 			// if add is true, add this recommendation to this response
 			if ($add){
-				$dao->addRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Room::$RECOMMENDATIONS_RELATIONSHIP));
+				$dao->addRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 				// if add is false, remove this recommendation from this response
 			} else {
-				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Room::$RECOMMENDATIONS_RELATIONSHIP));
+				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 			}
 		
 		} else {
@@ -473,10 +473,10 @@ function saveObservationRelation(){
 			$inspection = $dao->getById($responseId);
 			// if add is true, add this observation to this response
 			if ($add){
-				$dao->addRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Room::$OBSERVATIONS_RELATIONSHIP));
+				$dao->addRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 				// if add is false, remove this observation from this response
 			} else {
-				$dao->removeRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Room::$OBSERVATIONS_RELATIONSHIP));
+				$dao->removeRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 			}
 	
 		} else {
