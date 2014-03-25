@@ -40,7 +40,7 @@ class Response extends GenericCrud {
 	protected static $RECOMMENDATIONS_RELATIONSHIP = array(
 			"className"	=>	"Recommendation",
 			"tableName"	=>	"response_recommendation",
-			"keyName"	=>	"room_id",
+			"keyName"	=>	"recommendation_id",
 			"foreignKeyName"	=>	"response_id"
 	);
 	
