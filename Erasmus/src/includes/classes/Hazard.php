@@ -105,7 +105,13 @@ class Hazard extends GenericCrud {
 	public function setParent_hazard_id($parent_hazard_id){ $this->parent_hazard_id = $parent_hazard_id; }
 	
 	public function getInspectionRooms() { return $this->inspectionRooms; }
-	public function setInspectionRooms($inspectionRooms){ $this->inspectionRooms = $inspectionRooms; }
+	public function setInspectionRooms($inspectionRooms){
+		$this->inspectionRooms = array();
+		$roomDao = new GenericDAO(new Room());
+		foreach ($inspectionRooms as $rm){
+			$this->inspectionRooms[] = $roomDao->getById($rm->getKey_id());
+		}
+	}
 	
 	public function getSubHazards(){ 
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
@@ -151,9 +157,8 @@ class Hazard extends GenericCrud {
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for hazard: " . $this->getName() . ", key_id " . $this->getKey_id());
 		$this->isPresent = false;
-		foreach ($this->inspectionRooms as &$room){
+		foreach ( $this->inspectionRooms as $room){
 			$LOG->debug("Checking inspection room with key_id " . $room->getKey_id());
-			$room->setContainsHazard(false);
 			foreach ($this->getRooms() as $hazroom){
 				$LOG->debug("Hazard is found in room " . $hazroom->getKey_id() . " ...");
 				if ($room->getKey_id() == $hazroom->getKey_id()){
@@ -162,7 +167,7 @@ class Hazard extends GenericCrud {
 					// if one or more rooms has this hazard, set isPresent to true
 					$this->isPresent = true;
 				} else {
-					$LOG->debug(".. which doesn't match this room's key_id, ContainsHazard set to false");
+					//if (!$room->getContainsHazard()) {$room->setContainsHazard(false);}
 				}
 			}
 		}

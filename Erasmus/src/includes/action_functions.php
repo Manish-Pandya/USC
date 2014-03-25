@@ -702,9 +702,9 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 
 function filterHazards (&$hazard, $rooms){
 	foreach ($hazard->getSubhazards() as $subhazard){
-		filterHazards($subhazard, $rooms);
 		$subhazard->setInspectionRooms($rooms);
 		$subhazard->filterRooms();
+		filterHazards($subhazard, $rooms);
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getSubhazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
