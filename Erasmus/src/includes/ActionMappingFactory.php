@@ -97,6 +97,7 @@ class ActionMappingFactory {
 				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
 				"saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", ""),
 				"saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", ""),
+				"getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", ""),
 				
 				// Inspection, step 4 (Review, deficiency report)
 				"getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", ""),

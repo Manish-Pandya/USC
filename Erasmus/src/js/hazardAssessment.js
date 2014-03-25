@@ -40,7 +40,7 @@ controllers.footerController = function($scope, $timeout, $dialog, $filter,conve
 //called on page load, gets initial user data to list users
 controllers.hazardAssessmentController = function ($scope, $timeout, $location, $dialog, $filter, convenienceMethods,$window,$element) {
  
-  function camelCase(input) { 
+  function camelCase(input) {
     return input.toLowerCase().replace(/ (.)/g, function(match, group1) {
       return group1.toUpperCase();
     });
@@ -52,7 +52,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //we do it this way so that we know we get data before we set the $scope object
   function init(){
 
-    if($location.search().hasOwnProperty('pi')){
+    if($location.search().hasOwnProperty('inspection')){
        //getPI if there is a "pi" index in the GET
        getPi($location.search().pi);
        $scope.needNewHazards = true;
@@ -70,6 +70,25 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   }
 
+  function setInspection(PIKeyID,inspectorIds,inspectionId){
+    if(!inspectionId) inspectionId = '';
+    console.log(inspectorIds);
+    $scope.PI = false;
+    var url = '../../ajaxaction.php?action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
+    convenienceMethods.updateObject( PIKeyID, inspectorIds, onSetInspection, onFailSetInspection, url );
+    $scope.noPiSet = false;
+  }
+
+  function onSetInspection(inspection){
+    console.log(inspection);
+    $scope.inspection = inspection;
+    $scope.PI = inspection.PrincipalInvestigator;
+    $scope.selectBuildings();
+  }
+
+  function onFailSetInspection(){
+  }
+
   function getPi(PIKeyID){
     $scope.PI = false;
     var url = '../../ajaxaction.php?action=getPI&id='+PIKeyID+'&callback=JSON_CALLBACK';
@@ -79,9 +98,9 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   function onGetPI(data){
     $scope.PI = data;
-    $scope.doneLoading = data.doneLoading;
-    $scope.selectBuildings();
     $scope.customSelected = $scope.PI.User.Name;
+    $scope.doneLoading = data.doneLoading;
+  
   }
 
   function onFailGetPI(){
@@ -111,76 +130,32 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
+
+    inspectors=[4];
+
     $scope.needNewHazards = true;
-    if($item.hasOwnProperty('Key_id')){
-      getPi($item.Key_id);
-    }else{
-      getPi($item.Key_id);
-    }
+    setInspection($item.Key_id,inspectors);
   }
 
   $scope.selectedBuildings = [];
   $scope.selectBuildings = function($item, $model, $label){
-
-    //to do, get building, maintain list of buildings so that we can maintain a list of rooms to request
-    $scope.selectedBuildings.push($item);
-    $scope.selectedBuildings.updated = true;
+   
     //replace with a request to get rooms by building
-    $scope.buildings = [
-                                {
-                                  "Name": "Building 1", 
-                                  "Key_Id":123,
-                                  "IsChecked": true, 
-                                  "Rooms":[
-                                        {
-                                        Class: "RoomDto",
-                                        Key_Id: "101",
-                                        RoomName: "101",
-                                        IsSelected: true
-                                        },
-                                        {
-                                        Class: "RoomDto",
-                                        Key_Id: "202",
-                                        RoomName: "202",
-                                        IsSelected: true
-                                        },
-                                        {
-                                        Class: "RoomDto",
-                                        Key_Id: "303",
-                                        RoomName: "303",
-                                        IsSelected: true
-                                        }
-                                    ]
-                                },
-                                {
-                                  "Name": "Building 34", 
-                                  "Key_Id":1333,
-                                  "IsChecked": true, 
-                                  "Rooms":[
-                                    {
-                                    Class: "RoomDto",
-                                    Key_Id: "102",
-                                    RoomName: "102",
-                                    IsSelected: true
-                                    },
-                                    {
-                                    Class: "RoomDto",
-                                    Key_Id: "2012",
-                                    RoomName: "22222 (BatCave)",
-                                    IsSelected: true
-                                    },
-                                    {
-                                    Class: "RoomDto",
-                                    Key_Id: "33433",
-                                    RoomName: "30333333",
-                                    IsSelected: true
-                                    }
-                                  ]
-                                }
-                              ];
-                  
-    //$scope.roomsByBuildings = [101,202,303];
-  
+    $scope.buildings = [];
+    var bldgCount = 0;
+    angular.forEach($scope.inspection.Rooms, function(room, key){    
+      room.IsSelected = true;
+      if(!convenienceMethods.arrayContainsObject($scope.buildings, room.Building)){
+        $scope.buildings.push(room.Building);
+        bldgCount++;
+      }
+      var iterator = bldgCount-1;
+      var building = $scope.buildings[iterator];
+      building.IsChecked = true;
+      if(!building.Rooms) building.Rooms = [];
+      building.Rooms.push(room);
+    });
+   $scope.getHazards();
   }
 
   $scope.removeBuilding = function(building){
@@ -188,18 +163,19 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     $scope.selectedBuildings.splice($scope.buildings.indexOf(building),1);
   }
 
- 
+ /*
   //watch the buildings objects in scope so that we can build a collection of rooms to request
   $scope.$watch('buildings',function(buildings, oldBuildings){
+    /*
      //our collection of rooms, kept up to date by this watch expression for when we need to request the hazard tree from the server
-    $scope.roomsToRequest = [];
     angular.forEach(buildings, function(building, key){
         angular.forEach(building.Rooms, function(room, key){
          // console.log(room);
-          if(room.IsSelected){
+          if(room.IsSelected && $scope.roomsToRequest.indexOf(room.Key_id == -1)){
             $scope.roomsToRequest.push(room.Key_Id);
           }
         });
+
     });
 
     //if we have a PI set in scope, but haven't yet loaded any hazards, we request new hazards
@@ -209,7 +185,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     //console.log($scope.roomsToRequest);
   },true);
 
-
+*/
   function onGetRoomsByBuilding(data){
     //replace
     //$scope.roomsToSelect = data;
@@ -222,9 +198,10 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   $scope.selectRoom = function(room,building){
     if($scope.roomsToRequest.indexOf(room) === -1){
-       $scope.roomsToRequest.push(room);
+       $scope.roomsToRequest.push(room.Key_id);saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL)
+
     }else{
-       $scope.roomsToRequest.splice($scope.roomsToRequest.indexOf(room), 1);
+       $scope.roomsToRequest.splice($scope.roomsToRequest.indexOf(room.Key_id), 1);
     }
 
     selectedRooms = 0;
@@ -244,8 +221,14 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //get our hazards
   $scope.getHazards = function( rooms ){
     if(!rooms){
-      rooms = $scope.roomsToRequest;
+      rooms = []
+      angular.forEach($scope.buildings, function(building, key){
+        angular.forEach(building.Rooms, function(room, key){
+          rooms.push(room.Key_id);
+        });
+      });
     }
+    console.log(rooms);
     $scope.selectRooms = false;
     $scope.hazardsLoading = true;
     var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
@@ -254,17 +237,23 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   //grab set user list data into the $scrope object
   function onGetHazards (data) {
-    angular.forEach(data, function(hazard, key){
-      hazard.cssId = camelCase(hazard.HazardName);
+    if(!data.InspectionRooms)data.InspectionRooms = [];
+    $scope.hazards = data.SubHazards;
+  //  console.log(data);
+    angular.forEach($scope.hazards, function(hazard, key){
+     // console.log(hazard);
+      hazard.cssId = camelCase(hazard.Name);
     });
-	  $scope.hazards = data;
     $scope.hazardsLoading = false;
     $scope.needNewHazards = false;
+    angular.forEach($scope.hazards, function(hazard, key){
+      getShowRooms(hazard);
+    });
   }
 
 
   function onFailGetHazards(){
-
+    alert("There was a problem when the system tried to get the hazards.");
   }
 
   $scope.showSubHazards = function(event, hazard, element){
@@ -274,14 +263,16 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
   }
   $scope.showRooms = function(event, hazard, element){
+    console.log(hazard);
+    $scope.walkhazard(hazard);
     event.stopPropagation();
+
     $scope.selectedHazard = hazard;
     calculateClickPosition(event,hazard,element);
     hazard.showRoomsModal = !hazard.showRoomsModal;
   }
   //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
   function calculateClickPosition(event, hazard, element){
-    console.log(event);
     var x = event.clientX;
     var y = event.clientY+$window.scrollY;
     var w = $(event.target).parent().parent().find('label').width();
@@ -289,7 +280,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     hazard.calculatedOffset = {};
     hazard.calculatedOffset.x = x+10;
     hazard.calculatedOffset.y = y-5;
-    console.log(w);
+
     hazard.calculatedOffset.w = w + 70;
   }
 
@@ -298,9 +289,33 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   //set a boolean flag to determine if rooms are shown beneath a hazard
+
+  function getShowRooms(hazard){
+    console.log(hazard);
+    hazard.showRooms = false;
+    //
+      angular.forEach(hazard.InspectionRooms, function(room, key){
+        if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
+          hazard.showRooms = true;
+        }else{
+          hazard.showRooms = false;
+        }
+      });
+      if(hazard.SubHazards.length){
+        angular.forEach(hazard.SubHazards, function(child, key){
+          console.log(child.Name+": ");
+          console.log(child);
+          getShowRooms(child);
+        });
+      }
+   // }
+
+  }
+
+  /*
   function getShowRooms(hazard){
    hazard.showRooms = false;
-    if(!hazard.PossibleRooms.every(roomDoesNotContainHazard) && !hazard.PossibleRooms.every(roomContainsHazard)){
+    if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
       hazard.showRooms = true;
       angular.forEach($scope.hazards, function(scopeHazard, key){
         $scope.searchIds = hazard.ParentIds;
@@ -310,19 +325,31 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   function walkShowRooms(searchHazards,hazard){
-    if(searchHazards.indexOf(hazard.Key_Id) > -1){
+
+    console.log(hazard);
+
+    angular.forEach(hazard.SubHazards, function(value, key){
+      if(){
+      }
+    });
+
+
+
+    if(searchHazards.indexOf(hazard.Key_id) > -1){
       hazard.showRooms = false;
-      angular.forEach(hazard.Children, function(child, key){
-        walkShowRooms($scope.searchIds,child);
+      angular.forEach(hazard.SubHazards, function(child, key){
+        console.log(child);
+        walkShowRooms(hazard.ParentIds,child);
       });
     }else{
-      angular.forEach(hazard.Children, function(child, key){
+      angular.forEach(hazard.SubHazards, function(child, key){
         if(child.IsPresent){
           hazard.showRooms = false;
         }
       });
     }
   }
+  */
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
   function roomDoesNotContainHazard(element, index, array){
@@ -346,8 +373,8 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //watch hazards and set appropriate properties
   $scope.$watch('hazards', function(value, oldValue) {
     angular.forEach($scope.hazards, function(hazard, key){
-      if(!hazard.IsDirty){
-       // console.log(hazard);
+     // console.log(hazard);
+      if(hazard.IsDirty || hazard.showRoomsModal || hazard.showSubHazardsModal){
         //if a hazard has been selected, make sure we only show ITS rooms or hazards, closing all the other modals
         if($scope.selectedHazards){
            if(hazard.Key_Id !== $scope.selectedHazards.Key_Id){
@@ -356,10 +383,10 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
           }
         }
 
-        if(hazard.Children.length){
-          var releventRooms = hazard.RoomDtos;
-          angular.forEach(hazard.Children, function(child, key){
-              angular.forEach(child.PossibleRooms, function(room, key){
+        if(hazard.SubHazards.length){
+          var releventRooms = hazard.InspectionRooms;
+          angular.forEach(hazard.SubHazards, function(child, key){
+              angular.forEach(child.InspectionRooms, function(room, key){
               room.IsAllowed = true;
             });
             if(child.IsDirty){
@@ -372,12 +399,13 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     });
   },true);
 
+ 
   //recursively step through a hazard and its children
   $scope.walkhazard = function(hazard){
 
-    if(hazard.Children.length){
+    if(hazard.SubHazards.length){
 
-      var children = hazard.Children;
+      var children = hazard.SubHazards;
 
       angular.forEach(children, function(child, key){
         
@@ -395,26 +423,27 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
         }
 
         //if all rooms are deselected for a hazard, that hazard is not present
-        if(child.PossibleRooms.every(roomDoesNotContainHazard) ){
+        if(child.InspectionRooms.every(roomDoesNotContainHazard) ){
             child.IsPresent = false;
         }
 
         //check each of the rooms for each of the child, only rooms that contain the parent hazard are allowed to be checked for the child
-        angular.forEach(child.PossibleRooms, function(room, key){
+        angular.forEach(child.InspectionRooms, function(room, key){
 
           //get the array index of the room so that we can use it to check the hazard's parent's rooms quickly
-          var index = child.PossibleRooms.indexOf(room);
-          if(hazard.PossibleRooms[index].ContainsHazard){
+          var index = child.InspectionRooms.indexOf(room);
+          if(hazard.InspectionRooms[index].ContainsHazard){
+            console.log(room);
             room.IsAllowed = true;
           }else{
-            room.IsAllowed = false;
+           // room.IsAllowed = false;
             room.ContainsHazard = false;
           }
 
         });
 
         //rooms are finished processing, we can set hazard to clean
-        if(hazard.PossibleRooms.every(isNotDirty)){
+        if(hazard.InspectionRooms.every(isNotDirty)){
             hazard.IsDirty = false;
         }
 
@@ -446,7 +475,15 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     parent.IsDirty = true;  
 
     room.waitingForServer = true;
-    var url = "var url = '../../../../ajaxaction.php?action=saveRoomRelation&callback=JSON_CALLBACK';";
+
+    roomDto = {
+      roomId: room.Key_id,
+      hazardId: hazard.Key_id,
+      add: true
+    }
+
+     var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add=1hazar&callback=JSON_CALLBACK";
+
     convenienceMethods.updateObject(hazard.KeyId, room.KeyId, onAddHazardToRoom, onFailAddHazardToRoom, url, 'test', hazard, room);
   }
 
@@ -465,17 +502,23 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   $scope.removeHazardFromRoom = function(hazard, room){
-    room.ContainsHazard = !room.ContainsHazard;
     room.waitingForServer = true;
-    var url = "var url = '../../../../ajaxaction.php?action=saveRoomRelation&callback=JSON_CALLBACK';";
-    convenienceMethods.updateObject(hazard.KeyId, room.KeyId, onRemoveHazardFromRoom, onFailRemoveHazardFromRoom, url, 'test', hazard, room);
+
+    roomDto = {
+      roomId: room.Key_id,
+      hazardId: hazard.Key_id,
+      add: false
+    }
+
+    var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add=0&callback=JSON_CALLBACK";
+    convenienceMethods.updateObject(hazard.KeyId, room.KeyId, onAddHazardToRoom, onFailAddHazardToRoom, url, 'test', hazard, room);
   }
 
 
   function onRemoveHazardFromRoom(data, obj, haz, room){
 
     room.waitingForServer = false;
-    if(haz.PossibleRooms.every(roomDoesNotContainHazard)){
+    if(haz.InspectionRooms.every(roomDoesNotContainHazard)){
         haz.IsPresent = false;
         haz.IsDirty = false;
     }
@@ -499,7 +542,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   $scope.handleHazardChecked = function(hazard, parent){
     $scope.selectedHazard = angular.copy(hazard);
     hazard.IsDirty = true;
-    angular.forEach(hazard.PossibleRooms, function(room, key){
+    angular.forEach(hazard.InspectionRooms, function(room, key){
       convenienceMethods.setIsDirty(room);
       if(hazard.IsPresent && room.IsAllowed){
         $scope.addHazardtoRoom(hazard, room, parent);
@@ -515,8 +558,10 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     angular.forEach(building.Rooms, function(room, key){
       if(building.IsChecked){
           room.IsSelected = true;
+
       }else{
           room.IsSelected = false;
+
       }
     });
   }
