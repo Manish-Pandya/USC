@@ -711,7 +711,7 @@ function filterHazards (&$hazard, $rooms){
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$subhazard->setEntityMaps($entityMaps);
-		$subhazard->setParentIds();
+		$subhazard->setParentIds(array());
 	}
 }
 
@@ -723,6 +723,7 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 	$relevantRooms = array();
 		
 	$hazardRooms = $hazard->getRooms();
+
 	//Check if this hazard is in a room we want
 	foreach ( $rooms as $key=>$room ){
 		if( in_array($room, $hazardRooms) ){
@@ -783,7 +784,7 @@ function getHazardsInRoom( $roomId = NULL ){
 		$room = $dao->getById($roomId);
 		
 		//get hazards
-		$hazards = $room->getHazards;
+		$hazards = $room->getHazards();
 		
 		return $hazards;
 	}

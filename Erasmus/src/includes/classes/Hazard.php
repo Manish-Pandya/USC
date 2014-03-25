@@ -148,15 +148,21 @@ class Hazard extends GenericCrud {
 	}
 		
 	public function filterRooms(){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->debug("Filtering rooms for hazard: " . $this->getName() . ", key_id " . $this->getKey_id());
 		$this->isPresent = false;
 		foreach ($this->inspectionRooms as &$room){
+			$LOG->debug("Checking inspection room with key_id " . $room->getKey_id());
 			foreach ($this->getRooms() as $hazroom){
+				$LOG->debug("Hazard is found in room " . $hazroom->getKey_id() . " ...");
 				if ($room->getKey_id() == $hazroom->getKey_id()){
+					$LOG->debug(".. which matches this room's key_id, ContainsHazard set to true");
 					$room->setContainsHazard(true);
 					// if one or more rooms has this hazard, set isPresent to true
 					$this->isPresent = true;
 				} else {
 					$room->setContainsHazard(false);
+					$LOG->debug(".. which doesn't match this room's key_id, ContainsHazard set to false");
 				}
 			}
 		}
