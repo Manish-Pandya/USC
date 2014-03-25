@@ -30,21 +30,21 @@ class Response extends GenericCrud {
 	);
 	
 	/** Relationships */
-	protected static $DEFICIENCIES_RELATIONSHIP = array(
+	public static $DEFICIENCIES_RELATIONSHIP = array(
 			"className"	=>	"DeficiencySelection",
 			"tableName"	=>	"deficiency_selection",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"response_id"
 	);
 	
-	protected static $RECOMMENDATIONS_RELATIONSHIP = array(
+	public static $RECOMMENDATIONS_RELATIONSHIP = array(
 			"className"	=>	"Recommendation",
 			"tableName"	=>	"response_recommendation",
 			"keyName"	=>	"recommendation_id",
 			"foreignKeyName"	=>	"response_id"
 	);
 	
-	protected static $OBSERVATIONS_RELATIONSHIP = array(
+	public static $OBSERVATIONS_RELATIONSHIP = array(
 			"className"	=>	"Observation",
 			"tableName"	=>	"response_observation",
 			"keyName"	=>	"observation_id",

@@ -407,9 +407,87 @@ function getQuestionById( $id = NULL ){
 	}
 };
 
-function saveQuestionRelation(){ };
-function saveDeficiencyRelation(){ };
-function saveRecommendationRelation(){ };
+function saveRecommendationRelation(){
+	
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+
+		$responseId = $decodedObject->getMaster_id();
+		$recommendationId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+		
+		if( $responseId !== NULL && $recommendationId !== NULL && $add !== null ){
+		
+			// Get this inspection
+			$dao = getDao(new Response());
+			$inspection = $dao->getById($responseId);
+			// if add is true, add this recommendation to this response
+			if ($add){
+				$dao->addRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Room::$RECOMMENDATIONS_RELATIONSHIP));
+				// if add is false, remove this recommendation from this response
+			} else {
+				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Room::$RECOMMENDATIONS_RELATIONSHIP));
+			}
+		
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+		
+	}
+	return true;
+	
+};
+	
+function saveObservationRelation(){
+
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+	
+		$responseId = $decodedObject->getMaster_id();
+		$observationId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+	
+		if( $responseId !== NULL && $recommendationId !== NULL && $add !== null ){
+	
+			// Get this inspection
+			$dao = getDao(new Response());
+			$inspection = $dao->getById($responseId);
+			// if add is true, add this observation to this response
+			if ($add){
+				$dao->addRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Room::$OBSERVATIONS_RELATIONSHIP));
+				// if add is false, remove this observation from this response
+			} else {
+				$dao->removeRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Room::$OBSERVATIONS_RELATIONSHIP));
+			}
+	
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+	
+	}
+	return true;
+	
+};
 
 function getInspector( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
