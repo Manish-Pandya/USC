@@ -175,7 +175,7 @@ class Question extends GenericCrud {
 	public function getResponses(){
 		$thisDAO = new GenericDAO($this);
 		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
-		return filterResponsesByInspection($this->responses);
+		return $this->filterResponsesByInspection($this->responses);
 	}
 	public function setResponses($responses){ $this->responses = $responses; }
 
