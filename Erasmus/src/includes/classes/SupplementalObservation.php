@@ -45,7 +45,7 @@ class SupplementalObservation extends GenericCrud {
 	
 	public function getResponse(){ 
 		if($this->response == null) {
-			$responseDAO = new GenericDAO("Response");
+			$responseDAO = new GenericDAO(new Response());
 			$this->response = $responseDAO->getById($this->response_id);
 		}
 		return $this->response; 
