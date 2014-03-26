@@ -108,7 +108,7 @@ class Inspection extends GenericCrud {
 		$thisDAO = new GenericDAO($this);
 		$this->checklists = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CHECKLISTS_RELATIONSHIP));
 		foreach ($this->checklists as &$checklist){
-			$checklist->setInspectionId($this->key_id());
+			$checklist->setInspectionId($this->key_id);
 		}
 		return $this->checklists;
 	}
