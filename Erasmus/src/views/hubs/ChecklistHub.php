@@ -12,8 +12,7 @@ require_once '../top_view.php';
 	</ul>
 </div>
 <div class="container-fluid whitebg" ng-app='checklistHub' ng-controller="ChecklistHubController">
-	<pre>{{checklist|json}}</pre>
-	<h1 id="currentChecklist">Currently Editing:<br>BLOODBORNE PATHOGENS (e.g. research involving human blood, body fluids, unfixed tissue) OSHA Bloodborne Pathogens (29 CFR 1910.1030)</h1>
+	<h1 id="currentChecklist">Currently Editing:<br>{{checklist.Name}}</h1>
 	
 	<form class="form" style="margin-top:10px;">
 	
@@ -27,13 +26,8 @@ require_once '../top_view.php';
     <hr>
     <h3>This Checklist's Questions:</h3>
     <div id="showHideQuestions" class="btn btn-primary btn-large" style="margin:10px 0">Hide Disabled Questions</div>
-    <ul class="questionList sortable" id="sortable">
-   		<li><h4>Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>
-   		<li><h4>Exposure Control Plan has been reviewed and updated at least annually</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>
-   		<li><h4>Hepatitis B vaccine has been made available at no cost to all personnel who have occupational exposure</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>
-    	<li><h4>Post-exposure evaluation & follow-up is available at no cost to personnel who have an exposure incident</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>    
-   		<li><h4>Biohazard warning labels are affixed to all appliances or containers used to store or transport samples</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>  
-    	<li><h4>All personnel with occupational exposure have completed annual bloodborne pathogens training</h4><div class="checklistButtons"><a href="QuestionHub.php" class="btn btn-large">Edit</a><a class="btn btn-large btn-danger deactivateRow">Deactivate</a></div></li>
+    <ul class="questionList sortable" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
+   		<li ng-repeat="question in checklist.Questions" ng-class="{inactive: question.Is_active == false}"><h3><img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{question.Text}}</h3><div class="checklistButtons"><a href="QuestionHub.php#?id={{question.Key_id}}" class="btn btn-large btn-primary hazardBtn"><i class="icon-pencil"></i>Edit</a><a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  question.Is_active == false, 'icon-remove' :  question.Is_active == true}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>
     </ul>
     <div style="clear:both;"></div>
   </div>

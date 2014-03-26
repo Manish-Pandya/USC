@@ -35,7 +35,7 @@
                   ui-nested-sortable-begin="start($event, $ui)"
             >  
      
-                <li ya-tree="child in SubHazards at ol" ng-class="{minimized:child.minimized, inactive:child.IsActive}" ng-init="child.minimized=true" item="{{child}}" buttonGroup>
+                <li ya-tree="child in SubHazards at ol" ng-class="{minimized:child.minimized, inactive: child.Is_active == false}" ng-init="child.minimized=true" item="{{child}}" buttonGroup>
                     <div>
                        <div class="leftThings">
                                 <button class="toggle" ng-click="toggleMinimized(child)">
@@ -48,14 +48,14 @@
                                  </button>
                                
                                 <span ng-hide="child.isBeingEdited">
-                                    <h2>{{child.Name}}</h2>
+                                    <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
                                 </span>
 
                                 <span ng-show="child.isBeingEdited">
-                                    <input ng-model="hazardCopy.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i><span>Save</span></a><a class="btn btn-danger" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel"></i><span>Cancel</span></a>
+                                    <img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/><input ng-class="{invalid: child.Invalid == true}" ng-model="child.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i><span>Save</span></a><a class="btn btn-danger" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel"></i><span>Cancel</span></a>
                                 </span>
                         </div>
-                        <div class="hazarNodeButtons" ><a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': !child.IsActive == true, 'btn-success' :  child.IsActive == true}" ng-click="handleHazardActive(child)" ><i ng-class="{ 'icon-check-alt' :  child.IsActive == true, 'icon-remove' :  !child.IsActive == true}" ></i><span ng-show="!child.IsActive == true">Disable</span><span ng-show="child.IsActive == true">Activate</span></a><a class="btn btn-large btn-primary hazardBtn" node-id="'+node.id+'" ng-click="editHazard(child)" ><i class="icon-pencil"></i><span>Edit</span></a><a href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'"><i class="icon-plus-2"></i><span>Add Child</span></a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php?id={{child.key_id}}"><i class="icon-checkmark" style="width:1em;"></i><span>Checklist</span></a></div>
+                        <div class="hazarNodeButtons" ><a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': child.Is_active == true, 'btn-success' :  child.Is_active == false}" ng-click="handleHazardActive(child)" ><i ng-class="{ 'icon-check-alt' :  child.Is_active == false, 'icon-remove' :  child.Is_active == true}" ></i><span ng-show="child.Is_active == true">Disable</span><span ng-show="child.Is_active == false">Activate</span></a><a class="btn btn-large btn-primary hazardBtn" node-id="'+node.id+'" ng-click="editHazard(child)" ><i class="icon-pencil"></i><span>Edit</span></a><a href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'"><i class="icon-plus-2"></i><span>Add Child</span></a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php#?id={{child.Key_id}}"><i class="icon-checkmark" style="width:1em;"></i><span>Checklist</span></a></div>
                         <!--<button ng-click="addChild(child)">+</button>
                         
                         <button ng-click="remove(child)">x</button>-->

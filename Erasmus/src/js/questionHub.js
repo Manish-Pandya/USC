@@ -2,9 +2,9 @@ var questionHub = angular.module('questionHub', ['convenienceMethodModule']);
 
 function QuestionHubController($scope, $rootElement, $location, convenienceMethods) {
 	
-	function init(){		
-		if($location.search().question){
-			getQuestionById($location.search().question);
+	function init(){
+		if($location.search().id){
+			getQuestionById($location.search().id);
 		}
 		$scope.newDeficiency = {};
 		$scope.newDeficiency.reference;

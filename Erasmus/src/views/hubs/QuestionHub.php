@@ -13,7 +13,7 @@ require_once '../top_view.php';
 <div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController">
 <pre>{{question|json}}</pre>
 	<h1 ng-show="!question.beingEdited" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a class="btn btn-primary bt-large" ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
-	<input ng-show="question.beingEdited" type="text" class="span9" ng-model="questionCopy.Text"/><a ng-click="saveEditedQuestion(question)" class="btn btn-success btn-small"><i class="icon-checkmark"></i>Save</a><a class="btn btn-danger btn-small" ng-click="cancelEdit()"><i class="icon-cancel"></i>Cacnel</a>
+	<input ng-show="question.beingEdited" type="text" class="span9" ng-model="questionCopy.Text"/><a ng-click="saveEditedQuestion(question)" class="btn btn-success btn-small"><i class="icon-checkmark"></i>Save</a><a class="btn btn-danger btn-small" ng-click="cancelEdit()"><i class="icon-cancel"></i>Cancel</a>
 	<h3 style="margin-top:30px;">Deficiencies for this question:</h3>
 	<ul class="deficiencyList listWithChecks sortable" id="sortable">
 		<li ng-repeat="def in question.Deficiencies">{{def.Text}}<div class="checklistRow"><a class="btn  btn-danger deactivateRow" ng-click="handleObjActive(def,question)">Deactivate</a></div></li>

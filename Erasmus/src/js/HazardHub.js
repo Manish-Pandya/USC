@@ -231,13 +231,11 @@ hazardHub.directive('buttongroup', function () {
          scope.$watch
          (
           function () {
-            console.log('here');
            return {
              w:element.width(),
            };
           },
           function (newValue, oldValue) {
-            console.log(newValue);
            if (newValue.w < 900 && newValue.w !== 0) {
                 element.addClass('small');
            }else{
@@ -246,7 +244,6 @@ hazardHub.directive('buttongroup', function () {
           },
           true
          );
-
     }
  }
 
@@ -266,8 +263,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
+        console.log(data.SubHazards);
         $scope.SubHazards = data.SubHazards;
-         $scope.doneLoading = true;
+        $scope.doneLoading = true;
     }
 
     function onFailGet(){
@@ -277,54 +275,11 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         }
     }
 
-    //if this function is called, we have received a successful response from the server
-    function onSaveHazard( dto, hazard, test ){
-        console.log(dto);
-        console.log(hazard);
-        //temporarily use our hazard copy client side to bandaid server side bug that causes subhazards to be returned as indexed instead of associative
-        dto = angular.copy($scope.hazardCopy);
-        convenienceMethods.setPropertiesFromDTO( dto, hazard );
-        console.log(test);
-        hazard.isBeingEdited = false;
-    }
-
-    function onFailSave(obj){
-        alert('There was a problem saving '+obj.Name);
-    }
-   
     $scope.SubHazards = {
         SubHazards: []
     }
     $scope.toggleMinimized = function (child) {
         child.minimized = !child.minimized;
-    };
-
-    $scope.addChild = function (child) {
-
-        $scope.parentHazard = {};
-
-        if(!child.hasOwnProperty('SubHazards')){
-            child.SubHazards = [];
-        }
-
-        child.minimized = false;
-
-        $scope.hazardCopy = {};
-
-        $scope.parentHazard = child;
-
-        child.SubHazards.unshift({
-            isNew: true,
-            isBeingEdited: true,
-            title: '',
-            SubHazards: []
-        });
-
-        hazardDTO = {};
-
-        convenienceMethods.setPropertiesFromDTO(hazardDTO,hazard);
-
-
     };
 
     $scope.remove = function (child) {
@@ -346,23 +301,67 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.editHazard = function(hazard){
-    
         hazard.isBeingEdited = true;
         $scope.hazardCopy = angular.copy(hazard);
-        console.log($scope.hazardCopy);
     }
+
+    $scope.addChild = function (child) {
+
+        $scope.parentHazard = {};
+
+        if(!child.hasOwnProperty('SubHazards')){
+            child.SubHazards = [];
+        }
+
+        child.minimized = false;
+
+        $scope.hazardCopy = {};
+
+        $scope.parentHazard = child.Key_id;
+
+        child.SubHazards.unshift({
+            isNew: true,
+            isBeingEdited: true,
+            Name: '',
+            Parent_hazard_id: child.Key_id,
+            SubHazards: [],
+            Class: 'Hazard',
+            Is_active: true
+        });
+
+        $scope.hazardCopy = angular.copy(child.SubHazards[child.SubHazards.length - 1]);
+        console.log( $scope.hazardCopy );
+    };
 
     $scope.saveEditedHazard = function(hazard){
-        copy = angular.copy($scope.hazardCopy);
-        if(!copy.Class){
-            copy.Class = "Hazard";
+        $scope.hazardCopy.Name = hazard.Name;
+        console.log($scope.hazardCopy);
+        if(!$scope.hazardCopy.Class){
+            $scope.hazardCopy.Class = "Hazard";
         }
-        copy.testProp = true;
-
-        var url = '../../ajaxaction.php?action=saveHazard';
-        convenienceMethods.updateObject( copy, hazard, onSaveHazard, onFailSave, url );
-
+        if(!hazard.Name || hazard.Name.trim() == ''){
+            hazard.Invalid = true;
+        }else{
+            hazard.IsDirty = true;
+            var url = '../../ajaxaction.php?action=saveHazard';
+            convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
+        }
     }
+      //if this function is called, we have received a successful response from the server
+    function onSaveHazard( dto, hazard, test ){
+
+        //temporarily use our hazard copy client side to bandaid server side bug that causes subhazards to be returned as indexed instead of associative
+        dto = angular.copy($scope.hazardCopy);
+        convenienceMethods.setPropertiesFromDTO( dto, hazard );
+        hazard.isBeingEdited = false;
+        hazard.IsDirty = false;
+        hazard.Invalid = false;
+    }
+
+    function onFailSave(obj){
+        alert('There was a problem saving '+obj.Name);
+    }
+   
 
     $scope.cancelHazardEdit = function(hazard, $index){
      
@@ -376,21 +375,17 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.handleHazardActive = function(hazard){
+        hazard.IsDirty = true;
+        $scope.hazardCopy = angular.copy(hazard);
+        $scope.hazardCopy.Is_active = !$scope.hazardCopy.Is_active;
+        if($scope.hazardCopy.Is_active === null)hazard.Is_active = false;
+
         var url = '../../ajaxaction.php?action=saveHazard';
-        if(hazard.IsActive === null)hazard.IsActive = false;
-        $scope.hazardDTO = {
-            key_id: hazard.KeyId,
-            IsActive: !hazard.IsActive,
-            Class: hazard.Class,
-            SubHazards: hazard.SubHazards,
-            Name: hazard.Name
-        }
-        convenienceMethods.updateObject( $scope.hazardDTO, hazard, onSaveHazard, onFailSave, url );
+        convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
     }
 
     //called when a hazard drag event is begun
     $scope.start = function(event, ui){
-        console.log('start');
         $scope.event = event;
         $scope.ui = ui;
 
@@ -418,16 +413,22 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
             child = item.scope().child,
             index = item.index();
 
+            console.log(target);
+
         hazardDTO = {
             Class:         'Hazard',
-            KeyId:         child.KeyId,
-            ParentHazardId:  target.child.KeyId,
+            Key_id:         child.Key_id,
+            Parent_hazard_id:  target.child.Key_id,
             index:         index,
-            name:          child.Name+': updated',
+            Name:          child.Name,
+            Is_active:     child.Is_active,
             update:        true 
         }
 
+        console.log(hazardDTO);
+
         //REST calls
+        hazard.IsDirty;
         var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( hazardDTO, child, onMoveHazard, onFailMove, url, hazardDTO ) ;
     };
@@ -436,7 +437,8 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     onMoveHazard = function( hazardDTO, hazard ){
       
         convenienceMethods.setPropertiesFromDTO( hazardDTO, hazard );
-        
+        hazard.IsDirty = false;
+
         event = $scope.event;
         ui    = $scope.ui;
 
@@ -480,7 +482,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
     //called when a hazard is moved and the server sends an error response
     onFailMove = function( hazard ){
-        
+        hazard.IsDirty = false;
         //set a flag property to indicate that we have tried to move this hazard.  This will call our watch expression to fire and reset the DOM tree of subhazards
         hazard.update = hazardDTO.update;
         alert('Something went wrong moving '+hazard.Name);
