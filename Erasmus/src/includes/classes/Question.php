@@ -52,6 +52,13 @@ class Question extends GenericCrud {
 			"foreignKeyName"	=>	"question_id"
 	);
 	
+	private static $RESPONSES_RELATIONSHIP = array(
+			"className"	=>	"Observation",
+			"tableName"	=>	"observation",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"question_id"
+	);
+	
 	/** Question text */
 	private $text;
 	
@@ -80,6 +87,12 @@ class Question extends GenericCrud {
 	/** Array of Observation entities that may be selected for this Question */
 	private $observations;
 	
+	/** Array of Response entities encompassing answers made to this Question during Inspections */
+	private $responses;
+	
+	/** Non-persisted value used to filter Responses for a particular inspection */
+	private $inspectionId;
+	
 	public function __construct(){
 
 		// Define which subentities to load
@@ -88,6 +101,7 @@ class Question extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getDeficiencies");
 		$entityMaps[] = new EntityMap("eager","getRecommendations");
 		$entityMaps[] = new EntityMap("eager","getObservations");
+		$entityMaps[] = new EntityMap("lazy","getResponses");
 		$this->setEntityMaps($entityMaps);
 		
 		
@@ -157,5 +171,27 @@ class Question extends GenericCrud {
 		return $this->observations;
 	}
 	public function setObservations($observations){ $this->observations = $observations; }
+
+	public function getResponses(){
+		$thisDAO = new GenericDAO($this);
+		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
+		return filterResponsesByInspection($this->responses);
+	}
+	public function setResponses($responses){ $this->responses = $responses; }
+
+	public function getInspectionId(){ return $this->inspectionId; }
+	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
+
+	private function filterResponsesByInspection($responses){
+		if(!empty($this->inspectionId)) {
+			foreach ($responses as $responseKey => $response){
+				if ($response->getInspection_id() == $this->inspectionId) {
+					unset($responses[$responseKey]);
+				}
+			}
+		}
+		return $responses;
+	}
+	
 }
 ?>

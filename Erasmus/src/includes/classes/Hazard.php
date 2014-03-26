@@ -73,8 +73,6 @@ class Hazard extends GenericCrud {
 	/** Array of the parent ids of this hazard */
 	private $parentIds;
 	
-	
-	
 	//TODO: Room relationship should/may contain information about Equipment, etc
 	
 	public function __construct(){

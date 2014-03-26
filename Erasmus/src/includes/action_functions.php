@@ -661,6 +661,23 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
+		// Remove previous checklists (if any) and recalculate the required checklist.
+		$oldChecklists = $inspection->getChecklists();
+		if (!empty($oldChecklists)) {
+			// remove the old checklists
+			foreach ($oldChecklists as $oldChecklist) {
+				$dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			}
+		}
+				
+		// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+		$checklists = getChecklistsForInspection($inspection->getKey_id());
+		// add the checklists to this inspection
+		foreach ($checklists as &$checklist){
+			$dao->addRelatedItems($checklist,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			$checklist->setInspectionId($inspection->getKey_id());
+		}
+		
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be inspectionId (nullable int), piId int, inspectorIds (one or more ints))");
@@ -671,7 +688,9 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	$entityMaps[] = new EntityMap("eager","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getResponses");
 	$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+	$entityMaps[] = new EntityMap("eager","getChecklists");
 	$inspection->setEntityMaps($entityMaps);
+	$inspection->setChecklists($checklists);
 	
 	
 	return $inspection;

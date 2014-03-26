@@ -43,6 +43,9 @@ class Checklist extends GenericCrud {
 	/** Array of Question entities that comprise this Checklist */
 	private $questions;
 	
+	/** Non-persisted value used to filter Responses for a particular inspection */
+	private $inspectionId;
+	
 	public function __construct(){
 	
 		// Define which subentities to load
@@ -80,12 +83,32 @@ class Checklist extends GenericCrud {
 	public function setName($name){ $this->name = $name; }
 
 	public function getQuestions(){
-		if($this->questions === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$QUESTIONS_RELATIONSHIP));
-		}
-		return $this->questions;
+		$thisDAO = new GenericDAO($this);
+		$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$QUESTIONS_RELATIONSHIP));
+		return filterQuestionsForInspection($this->questions);
 	}
 	public function setQuestions($questions){ $this->questions = $questions; }
+
+	public function getInspectionId(){ return $this->inspectionId; }
+	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
+	
+	private function filterQuestionsForInspection($questions){
+		if(!empty($this->inspectionId)) {
+			// Define which subentities to load
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy","getChecklist");
+			$entityMaps[] = new EntityMap("eager","getDeficiencies");
+			$entityMaps[] = new EntityMap("eager","getRecommendations");
+			$entityMaps[] = new EntityMap("eager","getObservations");
+			$entityMaps[] = new EntityMap("eager","getResponses");
+			
+			foreach ($questions as $question){
+				$question->setInspectionId($this->inspectionId);
+				$question->setEntityMaps($entityMaps);
+			}
+		}
+		return $questions;
+	}
+	
 }
 ?>

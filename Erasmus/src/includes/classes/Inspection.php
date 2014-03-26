@@ -49,6 +49,13 @@ class Inspection extends GenericCrud {
 			"foreignKeyName"	=>	"inspection_id"
 	);
 	
+	public static $CHECKLISTS_RELATIONSHIP = array(
+			"className"	=>	"Checklist",
+			"tableName"	=>	"inspection_checklist",
+			"keyName"	=>	"checklist_id",
+			"foreignKeyName"	=>	"inspection_id"
+	);
+	
 	/** Array of Inspector entities that took part in this Inspection */
 	private $inspectors;
 	
@@ -73,6 +80,7 @@ class Inspection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getRooms");
 		$entityMaps[] = new EntityMap("eager","getResponses");
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getChecklists");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -92,6 +100,16 @@ class Inspection extends GenericCrud {
 		return $this->inspectors;
 	}
 	public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
+	
+	public function getChecklists(){ 
+		$thisDAO = new GenericDAO($this);
+		$this->checklists = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CHECKLISTS_RELATIONSHIP));
+		foreach ($this->checklists as &$checklist){
+			$checklist->setInspectionId($this->key_id());
+		}
+		return $this->checklists;
+	}
+	public function setChecklists($checklists){ $this->checklists = $checklists; }
 	
 	public function getPrincipalInvestigator(){
 		$piDAO = new GenericDAO(new PrincipalInvestigator());
