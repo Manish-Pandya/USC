@@ -628,7 +628,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		$dao = getDao($inspection);
 		
 		// Set inspection's keyId and PI.
-		$inspection->setKey_id($inspectionId);
+		if (!empty($inspectionId)){$inspection->setKey_id($inspectionId);}
 		$inspection->setPrincipal_investigator_id($piId);
 
 		// Save (or update) the inspection
