@@ -90,6 +90,7 @@ class ActionMappingFactory {
 				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
 				
 				// Inspection, step 3 (Checklist)
+				"resetChecklists"=>new ActionMapping("resetChecklists","",""),
 				"getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", ""),
 				"saveResponse"=>new ActionMapping("saveResponse", "", ""),
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),

@@ -661,22 +661,6 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
-		// Remove previous checklists (if any) and recalculate the required checklist.
-		$oldChecklists = $inspection->getChecklists();
-		if (!empty($oldChecklists)) {
-			// remove the old checklists
-			foreach ($oldChecklists as $oldChecklist) {
-				$dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-			}
-		}
-				
-		// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-		$checklists = getChecklistsForInspection($inspection->getKey_id());
-		// add the checklists to this inspection
-		foreach ($checklists as &$checklist){
-			$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-			$checklist->setInspectionId($inspection->getKey_id());
-		}
 		
 	} else {
 		//error
@@ -688,14 +672,12 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	$entityMaps[] = new EntityMap("eager","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getResponses");
 	$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
-	$entityMaps[] = new EntityMap("eager","getChecklists");
+	$entityMaps[] = new EntityMap("lazy","getChecklists");
 	$inspection->setEntityMaps($entityMaps);
-	$inspection->setChecklists($checklists);
-	
 	
 	return $inspection;
+	};
 	
-};
 
 function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -1062,6 +1044,62 @@ function getInspectionById( $id = NULL ){
 		
 		//get inspection
 		$inspection = $dao->getById($id);
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getInspectors");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getResponses");
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("eager","getChecklists");
+		$inspection->setEntityMaps($entityMaps);
+		// pre-init the checklists so that they load their questions and responses
+		$checklists = $inspection->getChecklists();
+		$inspection->setChecklists($checklists);
+		return $inspection;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function resetChecklists( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = getDao(new Inspection());
+
+		//get inspection
+		$inspection = $dao->getById($id);
+
+		// Remove previous checklists (if any) and recalculate the required checklist.
+		$oldChecklists = $inspection->getChecklists();
+		if (!empty($oldChecklists)) {
+			// remove the old checklists
+			foreach ($oldChecklists as $oldChecklist) {
+				$dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			}
+		}
+
+		// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+		$checklists = getChecklistsForInspection($inspection->getKey_id());
+		// add the checklists to this inspection
+		foreach ($checklists as &$checklist){
+			$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			$checklist->setInspectionId($inspection->getKey_id());
+		}
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getInspectors");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getResponses");
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("eager","getChecklists");
+		$inspection->setEntityMaps($entityMaps);
+		$inspection->setChecklists($checklists);
+		return $inspection;
 		
 		return $inspection;
 	}
@@ -1070,6 +1108,7 @@ function getInspectionById( $id = NULL ){
 		return new ActionError("No request parameter 'id' was provided");
 	}
 }
+
 
 function getDeficiencySelectionById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
