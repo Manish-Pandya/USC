@@ -93,7 +93,12 @@ class Checklist extends GenericCrud {
 	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
 	
 	private function filterQuestionsForInspection($questions){
+
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->debug("about to init ".  count($questions) . " Question objects with inspection filter info.");
+		
 		if(!empty($this->inspectionId)) {
+			$LOG->debug("Inspection Id " . $this->inspectionId . " found.");
 			// Define which subentities to load
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("lazy","getChecklist");

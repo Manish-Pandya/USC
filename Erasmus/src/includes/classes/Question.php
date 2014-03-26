@@ -183,9 +183,12 @@ class Question extends GenericCrud {
 	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
 
 	private function filterResponsesByInspection($responses){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->debug("about to filter ".  count($responses) . " responses");
 		if(!empty($this->inspectionId)) {
+			$LOG->debug("Inspection Id " . $this->inspectionId . " found.");
 			foreach ($responses as $responseKey => $response){
-				if ($response->getInspection_id() == $this->inspectionId) {
+				if ($response->getInspection_id() != $this->inspectionId) {
 					unset($responses[$responseKey]);
 				}
 			}
