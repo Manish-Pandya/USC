@@ -99,7 +99,6 @@ require_once '../top_view.php';
 		       		<a style="white-space:normal;" class="btn btn-info btn-mini" ng-click="selectRooms = !selectRooms" data-toggle="dropdown" href="#">Select Rooms to Inspect</a>
 			    </div>
 		       </h3>
-
 	       		<span ng-show="!buildings.length">
 				       	<p style="display: inline-block; margin-top:5px;">
 				       	<img class="" style="height:23px; margin:-4px 0 0 0px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>

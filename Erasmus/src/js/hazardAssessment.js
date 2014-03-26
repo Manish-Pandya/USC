@@ -291,65 +291,22 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //set a boolean flag to determine if rooms are shown beneath a hazard
 
   function getShowRooms(hazard){
-    console.log(hazard);
     hazard.showRooms = false;
-    //
       angular.forEach(hazard.InspectionRooms, function(room, key){
         if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
           hazard.showRooms = true;
         }else{
+          console.log(hazard.Name);
           hazard.showRooms = false;
         }
       });
       if(hazard.SubHazards.length){
         angular.forEach(hazard.SubHazards, function(child, key){
-          console.log(child.Name+": ");
-          console.log(child);
           getShowRooms(child);
         });
       }
-   // }
 
   }
-
-  /*
-  function getShowRooms(hazard){
-   hazard.showRooms = false;
-    if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
-      hazard.showRooms = true;
-      angular.forEach($scope.hazards, function(scopeHazard, key){
-        $scope.searchIds = hazard.ParentIds;
-        walkShowRooms($scope.searchIds,scopeHazard);
-      });
-    }
-  }
-
-  function walkShowRooms(searchHazards,hazard){
-
-    console.log(hazard);
-
-    angular.forEach(hazard.SubHazards, function(value, key){
-      if(){
-      }
-    });
-
-
-
-    if(searchHazards.indexOf(hazard.Key_id) > -1){
-      hazard.showRooms = false;
-      angular.forEach(hazard.SubHazards, function(child, key){
-        console.log(child);
-        walkShowRooms(hazard.ParentIds,child);
-      });
-    }else{
-      angular.forEach(hazard.SubHazards, function(child, key){
-        if(child.IsPresent){
-          hazard.showRooms = false;
-        }
-      });
-    }
-  }
-  */
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
   function roomDoesNotContainHazard(element, index, array){
@@ -470,6 +427,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
 
   $scope.addHazardtoRoom = function( hazard, room, parent ){
+    console.log(parent);
     hazard.IsDirty = true;
     room.IsDirty = true;    
     parent.IsDirty = true;  
@@ -482,17 +440,22 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
       add: true
     }
 
-     var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add=1hazar&callback=JSON_CALLBACK";
-
-    convenienceMethods.updateObject(hazard.KeyId, room.KeyId, onAddHazardToRoom, onFailAddHazardToRoom, url, 'test', hazard, room);
+    var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add=1hazar&callback=JSON_CALLBACK";
+    convenienceMethods.updateObject(hazard.KeyId, room.KeyId, onAddHazardToRoom, onFailAddHazardToRoom, url, 'test', hazard, room, parent);
+    if(parent){
+      var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+parent.Key_id+"&add=1hazar&callback=JSON_CALLBACK";
+      convenienceMethods.updateObject(parent.KeyId, room.KeyId, onAddHazardToRoom, onFailAddHazardToRoom, url, 'test', hazard, room, parent);
+    }
   }
 
 
-  function onAddHazardToRoom(data, obj, haz, room){
+  function onAddHazardToRoom(data, obj, haz, room, parent){
     haz.IsDirty = false;
     room.IsDirty = false;    
-    //parent.IsDirty = true; 
     room.ContainsHazard = true;
+    angular.forEach(parent.InspectionRooms, function(parentRoom, key){
+      if(parentRoom.Key_id == room.Key_id) parentRoom.ContainsHazard = true;
+    });
     room.waitingForServer = false;
     $scope.walkhazard(haz);
   }
@@ -540,6 +503,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   $scope.handleHazardChecked = function(hazard, parent){
+    parent.IsPresent = hazard.IsPresent
     $scope.selectedHazard = angular.copy(hazard);
     hazard.IsDirty = true;
     angular.forEach(hazard.InspectionRooms, function(room, key){
