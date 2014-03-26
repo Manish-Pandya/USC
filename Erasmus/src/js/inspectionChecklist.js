@@ -282,7 +282,8 @@ function ChecklistController($scope,  $location, $anchorScroll, testFactory, con
     console.log(question);
     obsDto.checked = true;
     question.Observations.push(obsDto);
-    $scope.handleNotesAndRecommendations(question,obsDto);
+    //make second api call to create relationship between new observation or recommendation and response, but only if the obs or rec is not supplemental
+    if(obsDto.Class.indexOf("Supplemental") > -1)$scope.handleNotesAndRecommendations(question,obsDto);
   }
 
   function onFailSaveObs(){

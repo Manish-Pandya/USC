@@ -47,12 +47,12 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*   @param (Object failParam) Object to be passed to failure function
 		*
 		**/
-		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, haz, room,parent){
-
+		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, haz, room, parent){
+		
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
-                onSave(returnedObj, obj, haz, room, parent);
+            onSave(returnedObj, obj, haz, room, parent);
           })
           .error(function(data, status, headers, config, hazard){
           	 console.log(failParam);
@@ -77,10 +77,6 @@ angular.module('convenienceMethodModule', ['ngRoute'])
                onSuccess(data);
             })
             .error(function(data, status, headers, config){
-            	console.log(status);
-            	console.log(headers());
-            	console.log(config);
-            	console.log(data);
                 onFail(data);
             })
     	},
@@ -129,7 +125,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		arrayContainsObject: function(array, obj) {
 	      presentObjects = 0;
 	      for (i=0;i<array.length;i++) {
-	          if (array[i].KeyId === obj.KeyId) {
+	          if (array[i].Key_id === obj.Key_id) {
 	            presentObjects++;
 	          }   
 	      }

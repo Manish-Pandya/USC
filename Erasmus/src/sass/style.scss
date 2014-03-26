@@ -5,7 +5,7 @@
 $orange:                      #c00;
 $blue:                        #49afcd;
 $slightlyDarkerBlue:          #2f96b4;
-$blue:                        #49afcd;
+$darkBlue:                        #24748c;
 $purple:                      #781096;
 $green:                       #51a351;
 $grey:                        #ccc;
@@ -330,7 +330,7 @@ a i{
 /* line 256, ../sass/style.scss */
 #hazardTree h2 {
   display: inline;
-  font-size: 1vw;
+  font-size: .9vw;
 }
 /* line 261, ../sass/style.scss */
 #hazardTree .leftThings {
@@ -357,6 +357,25 @@ a i{
   margin: 0 5px;
   font-size: 1vw;
 }
+
+/* line 430, ../sass/style.scss */
+.hazardBtn i, .hazardBtn span {
+  margin: 0 10px;
+  font-size: 15px;
+  color:white !Important;
+}
+.hazardBtn i{
+  margin:5px !important;
+  font-size: 25px;
+}
+a.hazardBtn{
+  padding-left:3px;
+  padding-right:8px;
+  color:white !important;
+}
+li.small a.hazardBtn span{
+  display:none;
+}
 /* line 285, ../sass/style.scss */
 #hazardTree [ng-cloak] {
   display: none;
@@ -372,7 +391,7 @@ a i{
   border: none;
   height: 0;
   line-height: 0;
-  background: none;
+  background: none !important;
   margin: 0 20px;
   padding: 0 20px;
   width: 0;
@@ -462,6 +481,15 @@ a.btn i{
   margin: 4px 15px 5px 0 !important;
   font-size: 25px;
 }
+a.hazardBtn i{
+  margin: 4px 10px 2px 0px !important;
+}
+.small a.hazardBtn i{
+  margin: 7px 13px 2px 5px !important;
+  &.icon-checkmark{
+    margin:7px 2px 2px 5px !important;
+  }
+}
 a.btn-mini i{
   margin:1px 1px 3px 0 !important;
   font-size: 15px !important;
@@ -491,6 +519,7 @@ a#addChecklistToHazard {
 
 /* line 331, ../sass/style.scss */
 ul.questionList, ul#parentHazards, ul.listWithChecks {
+  margin-left:0;
   list-style: none;
 }
 /* line 334, ../sass/style.scss */
@@ -679,6 +708,7 @@ img.smallLoading{
   z-index: 50000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   h3{
+    font-weight: normal;
     i{
       position: absolute;
       right:7px;
@@ -741,24 +771,6 @@ div.question, li.question {
   background: #f7f7f7;
 }
 
-/* line 430, ../sass/style.scss */
-.hazardBtn i, .hazardBtn span {
-  margin: 0 10px;
-  font-size: 15px;
-  color:white !Important;
-}
-.hazardBtn i{
-  margin:5px !important;
-  font-size: 25px;
-}
-a.hazardBtn{
-  padding-left:3px;
-  padding-right:8px;
-  color:white !important;
-}
-li.small a.hazardBtn span{
-  display:none;
-}
 /* individual page menu bars*/
 /* line 435, ../sass/style.scss */
 .pageMenu {
@@ -823,11 +835,21 @@ li.small a.hazardBtn span{
 .inspectionInfo{
   margin-bottom:20px;
 }
-.inspectionInfo .row h3{
-  display:inline-block;
-  width:220px;
-  margin-bottom:10px;
-  font-weight: bold;
+.inspectionInfo {
+  .row{
+    h3{
+      display:inline-block;
+      margin-bottom:10px;
+      font-weight: bold;
+    } 
+    p{
+      color:$darkBlue;
+      margin-left:2px;
+    }
+  }
+}
+.correctiveAction{
+  position:absolute;
 }
 .inspectionInfo .row{
   margin-left:0;
@@ -840,64 +862,122 @@ li.small a.hazardBtn span{
 .inspectionInfo .pull-right{
   width:360px;
 }
+.inspectionReportTable{
+  th{
+    text-align: center;
+    font-weight: bold;
+    font-size:1.8em;
+  }
+  td{
+  }
+}
 
 td.reviewHeader{
   font-weight: bold;
   font-size: 25px;
   color: white;
-  padding-left: 50px;
+  padding-left: 15px;
   height: 38px;
   background-position: 5px 7px;
   background-repeat: no-repeat;
 }
+.inspectionHeader div{
+  margin-top:20px;
+  margin-bottom: 50px;
+  text-align: center;
+  h1{
+    border-style: solid;
+    border-color: #49afcd;
+    border-width: 8px 0;
+    margin-top: 12px;
+    font-size: 36px;
+    font-style: italic;
+    font-weight: bold;
+  }
+  h3{
+    color:$blue;
+    font-size:12px;
+    font-weight:bold;
+  }
+  img{
+    &:not(.usclogo){
+      width: 54px;
+      margin: 0 2px 0;
+    }
+    &.usclogo{
+      float:left;
+    }
+    &.rsc-logo{
+      float:none !important;
+      width:225px;
+    }   
+  }
+}
+#biologicalMaterialsHeader,#chemicalSafetyHeader,#radiationSafetyHeader,#generalSafetyHeader{
+  vertical-align: middle;
+  text-align: left;
+  img{
+      width:38px;
+      margin: 0 5px 8px 0;
+  }
+}
 #biologicalMaterialsHeader{
-  background-image: url(../img/biohazard-white-con.png);
+ // background-image: url(../img/biohazard-white-con.png);
   background-color: #d00;
 }
 #chemicalSafetyHeader{
-  background: url(../img/chemical-safety-large-icon.png) 11px 14px no-repeat;
+  //background: url(../img/chemical-safety-large-icon.png) 4px 10px no-repeat;
   background-color: #F3F306;
-  color:black;
+  color: black;
+  background-size: 38px;
 }
 #radiationSafetyHeader{
-  background-image: url(../img/radiation-large-icon.png);
-  background-color: #e67e1d;
+  //background-image: url(../img/radiation-large-icon.png);
+  background-color: #6600cc;
   background-size: 40px 40px;
+  img{
+    margin: 4px 5px 8px 0 !important;
+  }
 }
-.status{
-  font-size: 25px;
-  margin-bottom:15px;
+#generalSafetyHeader{
+  background-color: #006600;
 }
-.status:after{
+.Pending{
+  font-size: 14px;
+}
+.Pending:after{
   margin-left:15px;
   font-family: 'Open Sans', sans-serif !important;
 }
-.incomplete{
-  color:#e67e1d;
+.Incomplete{
+  color:#e67e1d !important;
 }
-.incomplete:before{
+.Pending{
+  color: #e67e1d !important;
+}
+.Pending:before{
   content: "\e13a";
 }
-.incomplete:after{
-  content:"Pending";
+.Pending:after{
+  //content:"Pending";
 }
-.complete{
-  color:#090;
+.Complete{
+  color:#090 !important;
 }
-.complete:after{
-  content:"Complete";
+.Complete:after{
+ // content:"Complete";
 }
-.complete:before{
+.Complete:before{
   content: "\e03c";
 }
-.notStarted{
-  color:#900;
+.Incomplete{
+  color:#900 !important;
 }
-.notStarted:before{
+.Incomplete:before{
   content: "\e03a";
 }
-.notStarted:after{
-  content:"None";
+.Incomplete:after{
+ // content:"Incomplete";
 }
 .detail{
   margin-bottom:55px;
@@ -1094,6 +1174,11 @@ ul.key{
       }
     }
 }
+}
+.allHazardList{
+  hr{
+    border-top:1px solid #999 !important;
+  }
 }
 /* line 515, ../sass/style.scss */
 .hazardListHeader {
@@ -1607,4 +1692,38 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   -webkit-border-radius: 2px !important;
    -moz-border-radius:2px !important;
    border-radius: 2px !important;
+}
+
+//datepickter styles
+.quickdate{display:inline-block;position:relative;font-size:12px !Important;}
+.quickdate-button div,.quickdate-action-link div{display:inline}
+.quickdate-popup{z-index:10;background-color:#fff;border:solid 1px #000;text-align:center;width:250px;display:none;position:absolute;padding:5px;box-shadow:0 0 10px rgba(0,0,0,.7);}
+.quickdate-popup.open{display:block;}
+.quickdate-close{position:absolute;top:5px;right:5px;color:#333;}
+.quickdate-close:hover,.quickdate-close:visited{color:#333}
+.quickdate-calendar-header{display:block;padding:2px 0;margin-bottom:5px;text-align:center}
+.quickdate-month{display:inline-block}
+a.quickdate-prev-month{float:left}
+a.quickdate-next-month{float:right}
+.quickdate-text-inputs{text-align:left;margin-bottom:5px}
+.quickdate-input-wrapper{width:48%;display:inline-block}
+input.quickdate-date-input,input.quickdate-time-input{width:200px;margin:0;height:auto;padding:2px 3px}
+table.quickdate-calendar{border-collapse:collapse;border-spacing:0;width:100%;margin-top:5px;}
+table.quickdate-calendar th,table.quickdate-calendar td{padding:5px}
+table.quickdate-calendar td:hover{cursor:pointer}
+.quickdate-popup-footer{text-align:right;display:block}
+.quickdate-error{border:1px solid #dd3b30 !important}
+.quickdate-error:focus{outline-color:#dd3b30 !important}
+.is-today{
+  background: $blue !important;
+  color:white !important;
+}
+.disabled-date{
+  cursor: text !important;
+  color: #666 !Important;
+  background: #b9b9b9 !important;
+}
+
+.invalid{
+  border-color: red;
 }
