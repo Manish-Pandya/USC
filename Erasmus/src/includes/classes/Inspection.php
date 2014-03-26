@@ -66,6 +66,9 @@ class Inspection extends GenericCrud {
 	/** Array of Response entities */
 	private $responses;
 	
+	/** Array of Checklist entities */
+	private $checklists;
+	
 	/** Date and time this Inspection began */
 	private $date_started;
 	
