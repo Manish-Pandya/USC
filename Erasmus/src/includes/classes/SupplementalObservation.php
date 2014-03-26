@@ -31,9 +31,14 @@ class SupplementalObservation extends GenericCrud {
 	private $text;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getResponse");
+		$this->setEntityMaps($entityMaps);
+				
 	}
-	
+		
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;

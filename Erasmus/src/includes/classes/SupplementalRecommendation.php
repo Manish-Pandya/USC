@@ -31,9 +31,14 @@ class SupplementalRecommendation extends GenericCrud {
 	private $text;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getResponse");
+		$this->setEntityMaps($entityMaps);
+				
 	}
-	
+		
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
@@ -44,10 +49,8 @@ class SupplementalRecommendation extends GenericCrud {
 	}
 	
 	public function getResponse(){ 
-		if($this->response == null) {
-			$responseDAO = new GenericDAO(New Response());
-			$this->response = $responseDAO->getById($this->response_id);
-		}
+		$responseDAO = new GenericDAO(New Response());
+		$this->response = $responseDAO->getById($this->response_id);
 		return $this->response; 
 	}
 	public function setResponse($response){
