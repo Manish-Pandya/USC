@@ -53,8 +53,8 @@ class Question extends GenericCrud {
 	);
 	
 	private static $RESPONSES_RELATIONSHIP = array(
-			"className"	=>	"Observation",
-			"tableName"	=>	"observation",
+			"className"	=>	"Response",
+			"tableName"	=>	"response",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"question_id"
 	);
