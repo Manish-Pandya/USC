@@ -658,7 +658,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		}
 		// add the submitted Inspectors
 		foreach ($inspectorIds as $insp) {
-			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			$dao->addRelatedItems($insp->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
 		// Remove previous checklists (if any) and recalculate the required checklist.
@@ -674,7 +674,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		$checklists = getChecklistsForInspection($inspection->getKey_id());
 		// add the checklists to this inspection
 		foreach ($checklists as &$checklist){
-			$dao->addRelatedItems($checklist,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
 			$checklist->setInspectionId($inspection->getKey_id());
 		}
 		
