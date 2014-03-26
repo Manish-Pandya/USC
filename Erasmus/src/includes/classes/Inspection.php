@@ -37,8 +37,8 @@ class Inspection extends GenericCrud {
 	
 	public static $RESPONSES_RELATIONSHIP = array(
 			"className"	=>	"Response",
-			"tableName"	=>	"inspection_response",
-			"keyName"	=>	"response_id",
+			"tableName"	=>	"response",
+			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"inspection_id"
 	);
 	
