@@ -192,7 +192,14 @@ class Question extends GenericCrud {
 					unset($responses[$responseKey]);
 				}
 			}
+
+			if (!empty($responses)){
+				return $responses[0];
+			} else {
+				return null;
+			}
 		}
+		
 		return $responses;
 	}
 	
