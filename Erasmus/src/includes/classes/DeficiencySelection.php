@@ -30,7 +30,7 @@ class DeficiencySelection extends GenericCrud {
 	);
 	
 		/** Relationships */
-	protected static $ROOMS_RELATIONSHIP = array(
+	public static $ROOMS_RELATIONSHIP = array(
 			"className"	=>	"Room",
 			"tableName"	=>	"deficiency_selection_room",
 			"keyName"	=>	"room_id",
@@ -68,10 +68,19 @@ class DeficiencySelection extends GenericCrud {
 	/** Array of CorrectiveAction entities describing this Deficiency's resolution */
 	private $correctiveActions;
 	
+	private $roomIds;
+	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getDeficiencyRootCauses");
+		$entityMaps[] = new EntityMap("eager","getCorrectiveActions");
+		$this->setEntityMaps($entityMaps);
+		
 	}
-	
+		
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
@@ -135,5 +144,8 @@ class DeficiencySelection extends GenericCrud {
 		return $this->correctiveActions;
 	}
 	public function setCorrectiveActions($correctiveActions){ $this->correctiveActions = $correctiveActions; }
+	
+	public function getRoomIds() {return $this->roomIds;}
+	public function setRoomIds($roomIds){ $this->roomIds = $roomIds;}
 }
 ?>

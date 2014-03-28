@@ -93,6 +93,30 @@ class GenericDAO {
 	}
 	
 	/**
+	 * Deletes the entity with the given ID
+	 *
+	 * @param unknown $id
+	 * @return GenericCrud
+	 */
+	function deleteById($id){
+		$this->LOG->debug("$this->logprefix Deleting entity with key_id $id");
+		
+			// Get the db connection
+			global $db;
+			
+			//Prepare to delete from the table by key_id
+			$stmt = $db->prepare('DELETE FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
+			$stmt->bindParam(1,$id,PDO::PARAM_INT);
+			if ($stmt->execute()) {
+			// ... otherwise, die and echo the db error
+			} else {
+				$error = $stmt->errorInfo();
+				die($error[2]);
+			}
+			return $true;
+	}
+	
+	/**
 	 * Retrieves a list of all entities of this type.
 	 *
 	 * @return Array of entities

@@ -950,9 +950,32 @@ function saveDeficiencySelection(){
 		return $decodedObject;
 	}
 	else{
+		// check to see if the roomIds array is populated
+		$roomIds = $decodedObject->getRoomIds();
+		
+		// start by saving or updating the object.
 		$dao = getDao(new DeficiencySelection());
-		$dao->save($decodedObject);
-		return $decodedObject;
+		$ds = $dao->save($decodedObject);
+		
+		// remove the old rooms. if any
+		foreach ($ds->getRooms() as $room){
+			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationShip::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+		}
+		
+		// if roomIds were provided then save them
+		if (!empty($roomIds)){
+			foreach ($roomIds() as $id){
+				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationShip::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+			}
+				
+		// else if no roomIds were provided, then just delete this DeficiencySelection
+		} else {
+			$dao->deleteById($ds->getKey_id());
+			return true;
+		}
+
+		return $ds;
+	
 	}
 };
 
