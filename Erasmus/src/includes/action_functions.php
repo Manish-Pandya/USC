@@ -964,7 +964,7 @@ function saveDeficiencySelection(){
 		
 		// if roomIds were provided then save them
 		if (!empty($roomIds)){
-			foreach ($roomIds() as $id){
+			foreach ($roomIds as $id){
 				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationShip::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 			}
 				
