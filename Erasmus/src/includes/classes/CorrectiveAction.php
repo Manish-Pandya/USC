@@ -32,9 +32,15 @@ class CorrectiveAction extends GenericCrud {
 	private $text;
 	
 	public function __construct(){
-	
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
+		$this->setEntityMaps($entityMaps);
+		
 	}
-	
+		
+		
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
@@ -46,7 +52,7 @@ class CorrectiveAction extends GenericCrud {
 	
 	public function getDeficiencySelection(){ 
 		if($this->deficiencySelection == null) {
-			$deficiencySelectionDAO = new GenericDAO("DeficiencySelection");
+			$deficiencySelectionDAO = new GenericDAO(new DeficiencySelection());
 			$this->deficiencySelection = $deficiencySelectionDAO->getById($this->deficiency_selection_id);
 		}
 		return $this->deficiencySelection; 

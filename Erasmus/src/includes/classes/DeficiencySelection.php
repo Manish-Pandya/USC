@@ -37,13 +37,6 @@ class DeficiencySelection extends GenericCrud {
 			"foreignKeyName"	=>	"deficiency_selection_id"
 	);
 	
-	protected static $CAUSES_RELATIONSHIP = array(
-			"className"	=>	"DeficiencyRootCause",
-			"tableName"	=>	"deficiency_selection_root_cause",
-			"keyName"	=>	"deficiency_root_cause_id",
-			"foreignKeyName"	=>	"deficiency_selection_id"
-	);
-	
 	protected static $CORRECTIVE_ACTIONS_RELATIONSHIP = array(
 			"className"	=>	"CorrectiveAction",
 			"tableName"	=>	"corrective_action",
@@ -62,9 +55,6 @@ class DeficiencySelection extends GenericCrud {
 	/** Array of Room entities in which the associated Deficiency applies */
 	private $rooms;
 	
-	/** Array of DeficiencyRootCause entities that were selected with the associated Deficiency */
-	private $deficiencyRootCauses;
-	
 	/** Array of CorrectiveAction entities describing this Deficiency's resolution */
 	private $correctiveActions;
 	
@@ -75,8 +65,9 @@ class DeficiencySelection extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getRooms");
-		$entityMaps[] = new EntityMap("eager","getDeficiencyRootCauses");
 		$entityMaps[] = new EntityMap("eager","getCorrectiveActions");
+		$entityMaps[] = new EntityMap("lazy","getResponse");
+		$entityMaps[] = new EntityMap("lazy","getDeficiency");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -92,7 +83,7 @@ class DeficiencySelection extends GenericCrud {
 	
 	public function getResponse(){
 		if($this->response == null) {
-			$responseDAO = new GenericDAO("Response");
+			$responseDAO = new GenericDAO(new Response());
 			$this->response = $responseDAO->getById($this->response_id);
 		}
 		return $this->inspection;
@@ -126,15 +117,6 @@ class DeficiencySelection extends GenericCrud {
 
 	public function getDeficiency_id() { return $this->deficiency_id;	}
 	public function setDeficiency_id($deficiency_id) {$this->deficiency_id = $deficiency_id;}
-	
-	public function getDeficiencyRootCauses(){ 
-		if($this->deficiencyRootCauses === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->deficiencyRootCauses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CAUSES_RELATIONSHIP));
-		}
-		return $this->deficiencyRootCauses;
-	}
-	public function setDeficiencyRootCauses($deficiencyRootCauses){ $this->deficiencyRootCauses = $deficiencyRootCauses; }
 	
 	public function getCorrectiveActions(){ 
 		if($this->correctiveActions === NULL && $this->hasPrimaryKeyValue()) {
