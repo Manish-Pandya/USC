@@ -114,7 +114,7 @@ class Hazard extends GenericCrud {
 	public function getSubHazards(){ 
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$HAZARDS_RELATIONSHIP));
+			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP));
 		}
 		return $this->subHazards;
 	}
@@ -123,7 +123,7 @@ class Hazard extends GenericCrud {
 	public function getChecklist(){ 
 		if($this->checklist === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$checklistArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CHECKLIST_RELATIONSHIP));
+			$checklistArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CHECKLIST_RELATIONSHIP));
 			if (isset($checklistArray[0])) {$this->checklist = $checklistArray[0];}
 		}
 		return $this->checklist;
@@ -133,7 +133,7 @@ class Hazard extends GenericCrud {
 	public function getRooms(){ 
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
 		return $this->rooms;
 	}

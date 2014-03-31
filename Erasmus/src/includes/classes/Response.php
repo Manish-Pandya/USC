@@ -155,7 +155,7 @@ class Response extends GenericCrud {
 	public function getDeficiencySelections(){ 
 		if($this->deficiencySelections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->deficiencySelections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
+			$this->deficiencySelections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
 		}
 		return $this->deficiencySelections;
 	}
@@ -164,7 +164,7 @@ class Response extends GenericCrud {
 	public function getRecommendations(){ 
 		if($this->recommendations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
+			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
 		}
 		return $this->recommendations;
 	}
@@ -173,7 +173,7 @@ class Response extends GenericCrud {
 	public function getObservations(){ 
 		if($this->observations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
+			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
 		}
 		return $this->observations;
 	}
@@ -182,14 +182,14 @@ class Response extends GenericCrud {
 	
 	public function getSupplementalRecommendations(){ 
 			$thisDAO = new GenericDAO($this);
-			$this->supplementalRecommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
+			$this->supplementalRecommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
 		return $this->supplementalRecommendations;
 	}
 	public function setSupplementalRecommendations($supplementalRecommendations){ $this->supplementalRecommendations = $supplementalRecommendations; }
 	
 	public function getSupplementalObservations(){ 
 		$thisDAO = new GenericDAO($this);
-		$this->supplementalObservations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
+		$this->supplementalObservations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
 		return $this->observations;
 	}
 	public function setSupplementalObservations($supplementalObservations){ $this->supplementalObservations = $supplementalObservations; }

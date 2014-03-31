@@ -72,7 +72,7 @@ class Inspector extends GenericCrud {
 	public function getInspections(){
 		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTIONS_RELATIONSHIP));
+			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTIONS_RELATIONSHIP));
 		}
 		return $this->inspections;
 	}

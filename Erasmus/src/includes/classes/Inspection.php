@@ -99,14 +99,14 @@ class Inspection extends GenericCrud {
 	
 	public function getInspectors(){ 
 		$thisDAO = new GenericDAO($this);
-		$this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTORS_RELATIONSHIP));
+		$this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTORS_RELATIONSHIP));
 		return $this->inspectors;
 	}
 	public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
 	
 	public function getChecklists(){ 
 		$thisDAO = new GenericDAO($this);
-		$this->checklists = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CHECKLISTS_RELATIONSHIP));
+		$this->checklists = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CHECKLISTS_RELATIONSHIP));
 		foreach ($this->checklists as &$checklist){
 			$checklist->setInspectionId($this->key_id);
 		}
@@ -128,13 +128,13 @@ class Inspection extends GenericCrud {
 	
 	public function getResponses(){ 
 		$thisDAO = new GenericDAO($this);
-		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
+		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
 		return $this->responses;
 	}
 	
 	public function getRooms(){ 
 		$thisDAO = new GenericDAO($this);
-		$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+		$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		return $this->rooms;
 	}
 	public function setResponses($responses){ $this->responses = $responses; }

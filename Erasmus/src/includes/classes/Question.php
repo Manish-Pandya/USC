@@ -148,7 +148,7 @@ class Question extends GenericCrud {
 	public function getDeficiencies(){
 		if($this->deficiencies === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
+			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
 		}
 		return $this->deficiencies;
 	}
@@ -157,7 +157,7 @@ class Question extends GenericCrud {
 	public function getRecommendations(){
 		if($this->recommendations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
+			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
 		}
 		return $this->recommendations;
 	}
@@ -166,7 +166,7 @@ class Question extends GenericCrud {
 	public function getObservations(){
 		if($this->observations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
+			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
 		}
 		return $this->observations;
 	}
@@ -174,7 +174,7 @@ class Question extends GenericCrud {
 
 	public function getResponses(){
 		$thisDAO = new GenericDAO($this);
-		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$RESPONSES_RELATIONSHIP));
+		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
 		return $this->filterResponsesByInspection($this->responses);
 	}
 	public function setResponses($responses){ $this->responses = $responses; }

@@ -84,7 +84,7 @@ class Checklist extends GenericCrud {
 
 	public function getQuestions(){
 		$thisDAO = new GenericDAO($this);
-		$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$QUESTIONS_RELATIONSHIP));
+		$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP));
 		return $this->filterQuestionsForInspection($this->questions);
 	}
 	public function setQuestions($questions){ $this->questions = $questions; }

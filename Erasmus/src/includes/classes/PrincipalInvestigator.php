@@ -108,7 +108,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getDepartments(){ 
 		if($this->departments === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->departments = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$DEPARTMENTS_RELATIONSHIP));
+			$this->departments = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEPARTMENTS_RELATIONSHIP));
 		}
 		return $this->departments;
 	}
@@ -117,7 +117,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getRooms(){
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
 		return $this->rooms;
 	}
@@ -126,7 +126,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getLabPersonnel(){
 		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
+			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
 		}
 		return $this->labPersonnel;
 	}
@@ -135,7 +135,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getInspections(){
 		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTIONS_RELATIONSHIP));
+			$this->inspections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTIONS_RELATIONSHIP));
 		}
 		return $this->inspections;
 	}

@@ -98,7 +98,7 @@ class DeficiencySelection extends GenericCrud {
 	public function getRooms(){ 
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROOMS_RELATIONSHIP));
+			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
 		return $this->rooms;
 	}
@@ -121,7 +121,7 @@ class DeficiencySelection extends GenericCrud {
 	public function getCorrectiveActions(){ 
 		if($this->correctiveActions === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->correctiveActions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$CORRECTIVE_ACTIONS_RELATIONSHIP));
+			$this->correctiveActions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CORRECTIVE_ACTIONS_RELATIONSHIP));
 		}
 		return $this->correctiveActions;
 	}

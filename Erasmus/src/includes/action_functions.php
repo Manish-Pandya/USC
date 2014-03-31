@@ -431,10 +431,10 @@ function saveRecommendationRelation(){
 			$dao = getDao(new Response());
 			// if add is true, add this recommendation to this response
 			if ($add){
-				$dao->addRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
+				$dao->addRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 				// if add is false, remove this recommendation from this response
 			} else {
-				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationShip::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
+				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 			}
 		
 		} else {
@@ -471,10 +471,10 @@ function saveObservationRelation(){
 			$dao = getDao(new Response());
 			// if add is true, add this observation to this response
 			if ($add){
-				$dao->addRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
+				$dao->addRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 				// if add is false, remove this observation from this response
 			} else {
-				$dao->removeRelatedItems($observationId,$responseId,DataRelationShip::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
+				$dao->removeRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 			}
 	
 		} else {
@@ -640,12 +640,12 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		if (!empty($oldRooms)) {
 			// removeo the old rooms
 			foreach ($oldRooms as $oldRoom) {
-				$dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+				$dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 			}
 		}
 		// add the default rooms for this PI
 		foreach ($pi->getRooms() as $newRoom) {
-			$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+			$dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 		}
 
 		// Remove previous inspectors and add the submitted inspectors.
@@ -653,12 +653,12 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		if (!empty($oldInspectors)) {
 			// remove the old inspectors
 			foreach ($oldInspectors as $oldInsp) {
-				$dao->removeRelatedItems($oldInsp->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+				$dao->removeRelatedItems($oldInsp->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 			}
 		}
 		// add the submitted Inspectors
 		foreach ($inspectorIds as $insp) {
-			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
 		
@@ -693,10 +693,10 @@ function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NU
 		$inspection = $dao->getById($inspectionId);
 		// if add is true, add this room to this inspection
 		if ($add){
-			$dao->addRelatedItems($roomId,$inspectionId,DataRelationShip::fromArray(Room::$ROOMS_RELATIONSHIP));
+			$dao->addRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
 		// if add is false, remove this room from this inspection
 		} else {
-			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationShip::fromArray(Room::$ROOMS_RELATIONSHIP));
+			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
 		}
 		
 	} else {
@@ -885,10 +885,10 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 		$room = $dao->getById($roomId);
 		// if add is true, add this hazard to this room
 		if ($add){
-			$dao->addRelatedItems($hazardId,$roomId,DataRelationShip::fromArray(Room::$HAZARDS_RELATIONSHIP));
+			$dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		// if add is false, remove this hazard from this room
 		} else {
-			$dao->removeRelatedItems($hazardId,$roomId,DataRelationShip::fromArray(Room::$HAZARDS_RELATIONSHIP));
+			$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		}
 		
 	} else {
@@ -959,13 +959,13 @@ function saveDeficiencySelection(){
 		
 		// remove the old rooms. if any
 		foreach ($ds->getRooms() as $room){
-			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationShip::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 		}
 		
 		// if roomIds were provided then save them
 		if (!empty($roomIds)){
 			foreach ($roomIds as $id){
-				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationShip::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 			}
 				
 		// else if no roomIds were provided, then just delete this DeficiencySelection
@@ -1102,7 +1102,7 @@ function resetChecklists( $id = NULL ){
 		if (!empty($oldChecklists)) {
 			// remove the old checklists
 			foreach ($oldChecklists as $oldChecklist) {
-				$dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+				$dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
 			}
 		}
 
@@ -1110,7 +1110,7 @@ function resetChecklists( $id = NULL ){
 		$checklists = getChecklistsForInspection($inspection->getKey_id());
 		// add the checklists to this inspection
 		foreach ($checklists as &$checklist){
-			$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationShip::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+			$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
 			$checklist->setInspectionId($inspection->getKey_id());
 		}
 

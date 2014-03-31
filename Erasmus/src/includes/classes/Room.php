@@ -102,7 +102,7 @@ class Room extends GenericCrud {
 	public function getHazards(){
 		if($this->hazards == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$HAZARDS_RELATIONSHIP));
+			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP));
 		}
 		return $this->hazards;
 	}
@@ -111,7 +111,7 @@ class Room extends GenericCrud {
 	public function getPrincipalInvestigators(){
 		if($this->principalInvestigators == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationShip::fromArray(self::$PIS_RELATIONSHIP));
+			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
 		}
 		return $this->principalInvestigators;
 	}

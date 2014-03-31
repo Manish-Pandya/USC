@@ -105,7 +105,7 @@ class User extends GenericCrud{
 	public function getRoles(){ 
 		if($this->roles === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->roles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$ROLES_RELATIONSHIP));
+			$this->roles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROLES_RELATIONSHIP));
 		}
 		return $this->roles;
 	}
@@ -114,7 +114,7 @@ class User extends GenericCrud{
 	public function getPrincipalInvestigator(){ 
 		if($this->principalInvestigator === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$piArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$PI_RELATIONSHIP));
+			$piArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PI_RELATIONSHIP));
 			if (isset($piArray[0])) {$this->principalInvestigator = $piArray[0];}
 		}
 		return $this->principalInvestigator;
@@ -125,7 +125,7 @@ class User extends GenericCrud{
 	public function getInspector(){ 
 		if($this->inspector === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$inspectorArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationShip::fromArray(self::$INSPECTOR_RELATIONSHIP));
+			$inspectorArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTOR_RELATIONSHIP));
 			if (isset($inspectorArray[0])) {$this->inspector = $inspectorArray[0];}
 		}
 		return $this->inspector;
