@@ -6,7 +6,7 @@ if (!function_exists('http_response_code')) {
 	 * @param string $code
 	 * @return Ambigous <string, number>
 	 */
-	function set_http_response_code($code) {
+	function http_response_code($code) {
 
 		if ($code !== NULL) {
 			switch ($code) {
