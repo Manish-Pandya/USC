@@ -1,145 +1,262 @@
+	
 	<div class="loading" ng-show='!doneLoading' >
-	  <img class="" src="../../../img/loading.gif"/>
+	  <img class="" src="../../img/loading.gif"/>
 	 Getting Inspection Information...
 	</div>
 	<!--<pre>{{Inspection | json}}</pre>-->
 	<span  ng-show='doneLoading'>
+	<div class="inspectionHeader row-fluid">
+		<div class="span4">
+			<img src='../../img/usclogo.jpg' class="usclogo"/>
+		</div>
+		<div class="span4">
+			<h1>LABORATORY SAFETY<br>INSPECTION REPORT</h1>
+		</div>
+		<div class="span4">
+			<img src="../../img/rsc-logo.png" class="usclogo rsc-logo"/>
+		<!--
+			<h3>Environmental Health & Safety</h3>
+			<img src="../../img/biohazard-largeicon.png"/>
+			<img src="../../img/chemical-safety-large-icon.png"/>
+			<img src="../../img/radiation-large-icon.png"/>
+			<h3>Research Safety & Compliance</h3>
+			-->
+		</div>
+	</div>
 	<div class="inspectionInfo">
 		<div class="row">
+		<span class="span6">
 			<h3>Principal Investigator:</h3> <p>{{Inspection.PrincipalInvestigator.User.Name}}</p>
+		</span>
+		<span class="span3 pull-right">
+			<h3>Inspection Date:</h3> <p>{{Inspection.DateCreated}}</p>
+		</span>
 		</div>
+
 		<div class="row">
-			<h3>Inspection Date:</h3> <p/>{{Inspection.DateCreated}}</p>
+			<span class="span6">
+				<h3>Department:</h3><p><span ng-repeat="department in Inspection.PrincipalInvestigator.Departments">{{department.Name}}<span ng-show="!$last">, </span></span></p>
+			</span>
+
+			<span class="span3 pull-right">
+				<h3>Response Date:</h3><p style="color:#f00">OPEN</p>
+			</span>
+
 		</div>
+
 		<div class="row">
-			<h3>Department:</h3><p><span ng-repeat="department in Inspection.PrincipalInvestigator.Departments">{{department.Name}}<span ng-show="!$last">, </span></span></p>
-		</div>
-		<div class="row">
-			<h3>Response Date:</h3><p></p>
-		</div>
-		<div class="row">
-			<h3>Laboratory Building:</h3><p>Benson</p>
-			<div class="pull-right">
+			<span class="span6">
+				<h3>Laboratory Building:</h3><p>Benson</p>
+			</span>
+			<span class="span3 pull-right">
 				<h3>Lab Safety Contact:</h3>
-				<p>
-					<span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">John Smith
+				<p class="pull-right" style="width:154px;">
+					<span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">John Smith<br>
 						<span ng-repeat="contact in room.SafetyContactInformation"><!--{{room.SafetyContactInformation}}<span ng-show="!$last">, </span>--></span>
 					</span>
 				</p>
-			</div>
+			</span>
 		</div>
 
 		<div class="row">
-			<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
-			<div class="pull-right">
-				<h3>EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.Name}}<span ng-show="!$last">, </span></span></p>
-			</div>
+			<span class="span6">
+				<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
+			</span>
+			<span class="span3 pull-right">
+				<h3 style="width:177px;">EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.Name}}<span ng-show="!$last">, </span></span></p>
+			</span>
 		</div>
+	</div>
+<table class="table table-bordered table-striped table-responsive inspectionReportTable">
+<th style="width:10%">AUDIT CRITERIA</th><th style="width:10%">DEFICIENCY DESCRIPTION</th><th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th><th style="width:14%">CORRECTIVE ACTION STATUS<br><a ng-show="User.Roles[0] == 'Administrator'" class="btn btn-mini btn-info" ng-click="showMenu = !showMenu"><i class="icon-thumbs-up"></i>Accept All</a>
+<div ng-show="showMenu" class="correctiveAction">
+	
 </div>
-<table class="table table-bordered table-striped table-responsive">
-<th style="width:10%">AUDIT CRITERIA</th><th style="width:10%">DEFICIENCY DESCRIPTION</th><th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th><th style="width:14%">CORRECTIVE ACTION STATUS</th>
-	<tr><td colspan="5" id="biologicalMaterialsHeader" class="reviewHeader">BIOLOGICAL SAFETY</td></tr>
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'BIOLOGICAL SAFETY'}">
-		<td>{{response.Question.Text}}</td>
-		<td>
-			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
-		</td>
-		<td>{{response.complianceDescription}}</td>
-		<td>{{response.complianceReference}}</td>
-		<td>
-			<span ng-show="!response.CorrectiveAction.beingEdited">
-				<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>
-				{{response.CorrectiveAction.Description}}<br><br>
-				{{response.CorrectiveAction.Date}}<br><br>	
 
-				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
-			</span>
-			<span ng-show="response.CorrectiveAction.beingEdited">
-				<select ng-model="CorrectiveActionCopy.Status">
-					<option value="notStarted">None</option>
-					<option value="incomplete">Pending</option>
-					<option value="complete">Complete</option>
-				</select><br>
-				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
-				<input ng-model="CorrectiveActionCopy.Date"><br><br>
-				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
-				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
-			</span>
+</th>
+	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY</td></tr>
+	<tr ng-repeat="def in bioHazards.Responses">
+		<td valign="top">{{def.questionText}}</td>
+		<td valign="top">
+			{{def.Deficiency.Text}}
 		</td>
-	</tr>
-	<tr><td colspan="5" id="chemicalSafetyHeader" class="reviewHeader">CHEMICAL SAFETY</td></tr>
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'CHEMICAL SAFETY'}">
-		<td>{{response.Question.Text}}</td>
-		<td>
-			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		<td valign="top">
+			{{def.Deficiency.ComplianceDescription}}
 		</td>
-		<td>{{response.complianceDescription}}</td>
-		<td>{{response.complianceReference}}</td>
-		<td>
-			<span ng-show="!response.CorrectiveAction.beingEdited">
-				<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>
-				{{response.CorrectiveAction.Description}}
+		<td valign="top">
+			{{def.Deficiency.ComplianceReference}}</span>
+		</td>
+		<td valign="top">
+			<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
+				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
 				<br>
-				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
-			</span>
-			<span ng-show="response.CorrectiveAction.beingEdited">
-				<select ng-model="CorrectiveActionCopy.Status">
-					<option value="notStarted">None</option>
-					<option value="incomplete">Pending</option>
-					<option value="complete">Complete</option>
-				</select><br>
+				<label>Corrective Action Status:</label>
+				<select class="{{def.CorrectiveActionCopy.Status}} status"
+				  ng-model="def.CorrectiveActionCopy.Status"
+				  ng-options="option for option in options">
+				</select>
+			<!--</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">-->
 				
-				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
-				<input ng-model="CorrectiveActionCopy.Date"><br><br>
-				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
-				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
-			</span>
+				<span ng-switch on="def.CorrectiveActionCopy.Status">
+					<span ng-switch-when="Incomplete"></span>
+					<span ng-switch-default>
+						<label ng-show="def.CorrectiveActionCopy.Status == 'Pending'">Describe Planned Corrective Action:</label>
+						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'">Describe Completed Corrective Action:</label>
+						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea>
+						<label ng-show="def.CorrectiveActionCopy.Status == 'Pending'">Anticipated Completion Date:</label>
+						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'">Corrective Action Completion Date:</label>
+						 <p class="input-group">
+			             <datepicker2 ng-model='def.CorrectiveActionCopy.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			            </p>
+			            <p class="input-group">					
+							<a class="btn btn-primary" ng-click="saveCorrectiveAction(def.CorrectiveActionCopy,def.CorrectiveActionCopy[0])"><i class="icon-checkmark"></i>Save Corrective Action</a>
+						</p>
+						<p class="input-group">
+			            	<a ng-show="response.CorrectiveActionCopy.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
+			            </p>
+					</span>					</span>
+					
+				</span>
+				<!--<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>-->
+			<!--</span>-->
 		</td>
 	</tr>
-
-	<tr><td colspan="5" id="radiationSafetyHeader" class="reviewHeader">RADIATION SAFETY</td></tr>
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'RADIATION SAFETY'}">
-		<td>{{response.Question.Text}}</td>
-		<td>
+	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'CHEMICAL SAFETY'}">
+		<td valign="top">{{response.Question.Text}}</td>
+		<td valign="top">
 			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
 		</td>
-		<td>{{response.complianceDescription}}</td>
-		<td>{{response.complianceReference}}</td>
-		<td>
-			<span ng-show="!response.CorrectiveAction.beingEdited">
-				<span class="{{response.CorrectiveAction.Status}} icon-checkmark status"></span><br>
-				{{response.CorrectiveAction.Description}}<br><br>
-				{{response.CorrectiveAction.Date}}<br><br>
-				<a class="btn btn-info" ng-click="editCorrectiveAction(response.CorrectiveAction)">Edit</a>
-			</span>
-			<span ng-show="response.CorrectiveAction.beingEdited">
-				<select ng-model="CorrectiveActionCopy.Status">
-					<option value="notStarted">None</option>
-					<option value="incomplete">Pending</option>
-					<option value="complete">Complete</option>
-				</select><br>
-				<textarea style="width:100%" rows=15 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
-				<input ng-model="CorrectiveActionCopy.Date"><br><br>
-				<a class="btn btn-success" ng-click="saveCorrectiveAction(response.CorrectiveAction)">Save</a>
-				<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>
-			</span>
+		<td valign="top">{{response.complianceDescription}}</td>
+		<td valign="top">{{response.complianceReference}}</td>
+		<td valign="top">
+			<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
+				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
+				<br>
+				<label>Corrective Action Status:</label>
+				<select class="{{response.CorrectiveActionCopy.Status}} status"
+				  ng-init="response.CorrectiveActionCopy.Status = 'Incomplete'"
+				  ng-model="response.CorrectiveActionCopy.Status"
+				  ng-options="option for option in options">
+				</select>
+			<!--</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">-->
+				
+				<span ng-switch on="response.CorrectiveActionCopy.Status">
+					<span ng-switch-when="Incomplete"></span>
+					<span ng-switch-default>
+						<label ng-show="response.CorrectiveActionCopy.Status == 'Pending'">Planned Completion Date:</label>
+						<label ng-show="response.CorrectiveActionCopy.Status == 'Complete'">Completion Date:</label>
+						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+						<label>Corrective Action Date:</label>
+						 <p class="input-group">
+			             <datepicker2 ng-model='response.CorrectiveActionCopy.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			            </p>						
+			            <a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
+			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
+					</span>
+				
+				</span>
+				<!--<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>-->
+			<!--</span>-->
+		</td>
+	</tr>
+
+	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/radiation-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'GENERAL SAFETY'}">
+		<td valign="top">{{response.Question.Text}}</td>
+		<td valign="top">
+			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		</td>
+		<td valign="top">{{response.complianceDescription}}</td>
+		<td valign="top">{{response.complianceReference}}</td>
+		<td valign="top">
+		<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
+				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
+				<br>
+				<select class="{{response.CorrectiveAction.Status}} status"
+				  ng-init="response.CorrectiveAction.Status = 'Incomplete'"
+				  ng-model="response.CorrectiveAction.Status"
+				  ng-options="option for option in options">
+				</select>
+			<!--</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">-->
+				
+				<span ng-switch on="response.CorrectiveAction.Status">
+					<span ng-switch-when="Incomplete"></span>
+					<span ng-switch-default>
+						<label>Describe Corrective Action:</label>
+						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+						<label ng-show="response.CorrectiveAction.Status == 'Pending'">Planned Completion Date:</label>
+						<label ng-show="response.CorrectiveAction.Status == 'Complete'">Completion Date:</label>
+						 <p class="input-group">
+			             <datepicker2 ng-model='response.CorrectiveAction.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			            </p>						
+						<a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
+			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
+					</span>					
+				</span>
+					
+				</span>
+				<!--<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>-->
+			<!--</span>-->
+		</td>
+	</tr>
+	<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
+	<tr ng-repeat="response in responses | filter:{ParentHazard:'RADIATION SAFETY'}">
+		<td valign="top">{{response.Question.Text}}</td>
+		<td valign="top">
+			<span ng-repeat="deficiency in response.Question.Deficiencies">{{deficiency.Text}}</span>
+		</td>
+		<td valign="top">{{response.complianceDescription}}</td>
+		<td valign="top">{{response.complianceReference}}</td>
+		<td valign="top">
+		<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
+				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
+				<br>
+				<select class="{{response.CorrectiveAction.Status}} status"
+				  ng-init="response.CorrectiveAction.Status = 'Incomplete'"
+				  ng-model="response.CorrectiveAction.Status"
+				  ng-options="option for option in options">
+				</select>
+			<!--</span>
+			<span ng-show="response.CorrectiveAction.beingEdited">-->
+				
+				<span ng-switch on="response.CorrectiveAction.Status">
+					<span ng-switch-when="Incomplete"></span>
+					<span ng-switch-default>
+						<label>Describe Corrective Action:</label>
+						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
+						<label ng-show="response.CorrectiveAction.Status == 'Pending'">Planned Completion Date:</label>
+						<label ng-show="response.CorrectiveAction.Status == 'Complete'">Completion Date:</label>
+						 <p class="input-group">
+			             <datepicker2 ng-model='response.CorrectiveAction.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			            </p>						
+						<a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
+			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
+					</span>					
+				</span>
+					
+				</span>
+				<!--<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>-->
+			<!--</span>-->
 		</td>
 	</tr>
 </table>
-<table class="table table-bordered table-striped table-responsive">
-	<tr><th colspan="2" style="background:#355f91;color:white">EH&S RECOMMENDATIONS</th></tr>
-	<tr><td>AUDIT CRITERIA</td><td>EH&S RECOMMENDATION</td></tr>
-	<tr><td>{{criteria}}</td><td>{{recommendation}}</td></tr>
+<table class="table table-bordered table-striped table-responsive inspectionReportTable">
+	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
+	<tr><td style="font-size:1.5em; text-align:center" valign="top">{{criteria}}</td><td valign="top">{{recommendation}}</td></tr>
 </table>
 
-<table class="table table-bordered table-striped table-responsive" style="width:70%; margin:35px auto;">
-	<tr><td style="background: #c5d8f1; width:50%">Corrective Action Plan Submitted By:</td><td>Joe Jones</td></tr>
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
+	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">Joe Jones</td></tr>
 </table>
 
-<table class="table table-bordered table-striped table-responsive" style="width:100%; margin:35px auto;">
-	<tr><th># ITEMS INSPECTED</th><th># COMPLIANT ITEMS</th><th># DEFICIENCY ITEMS</th><th>COMPLIANCE SCORE</th></tr>
-	<tr style="background: #c5d8f1;"><td>97</td><td>88</td><td>9</td><td>91%</td></tr>
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">
+	<tr><th align="center"># ITEMS INSPECTED</th><th align="center"># COMPLIANT ITEMS</th><th align="center"># DEFICIENCY ITEMS</th><th align="center">COMPLIANCE SCORE</th></tr>
+	<tr style="background: #c5d8f1;"><td style="text-align:center" valign="top" align="center">97</td><td style="text-align:center" valign="top" align="center">88</td><td  style="text-align:center" valign="top" align="center">9</td><td  style="text-align:center" valign="top" align="center">91%</td></tr>
 </table>
-<h3 style="text-align:center">(Compliance scores can be used to assess overall safety and compliance progress and can be used as a performance improvement metric. Scores are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.)</h3>
+<h3 style="text-align:center; font-weight:bold; font-size:13px;">Compliance scores can be used to assess overall safety and compliance progress and can be used as a performance improvement metric.<br>Scores are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.</h3>
 
 </span>

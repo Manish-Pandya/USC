@@ -48,7 +48,6 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, haz, room, parent){
-		
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
@@ -118,22 +117,26 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		/**
 		*
     	*	Boolean returns true if an array contains an object
-    	*	@param (Array, array)  array to search for object
-    	*	@param (Object obj)    object to find in array 
+    	*	@param (Array, obj)  array to search for object
+    	*	@param (Object obj)  object to find in array
+		*	@param (Array, props)	OPTIONAL THIRD PARAMETER -- an array of properties to evaluate if we are not using key ids -- index one should be the property searched in the array, index two the property of the object seached for in the array
+		*		(ie [Key_id, Reponse_id] will evaluate the objects Response_id property against the Key_id proptery of each object in the array)
+		*
+    	*	@param (Bool, returnIdx)	OPTIONAL FOURTH PARAM Setting to true will cause this method to return the index of the object in an array instead of a boolean true, if the array contains the object
     	*
 		**/
-		arrayContainsObject: function(array, obj) {
-	      presentObjects = 0;
+		arrayContainsObject: function(array, obj, props, returnIdx) {
+		  console.log(array);
+		  console.log(obj);
+	      if(!props) {var props = ["Key_id","Key_id"];}	     	
 	      for (i=0;i<array.length;i++) {
-	          if (array[i].Key_id === obj.Key_id) {
-	            presentObjects++;
-	          }   
+			if (array[i][props[0]] === obj[props[1]]) {
+				console.log('true');
+				if(returnIdx) return i;
+				return true;
+			}   
 	      }
-	      if(presentObjects > 0){
-	        return true;
-	      }else{
-	        return false;
-	      }
+	      return false;
 	  	},
 		/**
 		*
