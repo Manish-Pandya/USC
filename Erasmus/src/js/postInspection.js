@@ -240,9 +240,11 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
                 Deficiency_selection_id: def.Key_id,
                 Status: "Incomplete"
               }
-              def.CorrectiveActionCopy =  def.CorrectiveActions[0];
-             }
-             checklist.Responses.push(def);
+            }
+            def.CorrectiveActionCopy =  angular.copy(def.CorrectiveActions[0]);
+            console.log(def.CorrectiveActionCopy);
+
+            checklist.Responses.push(def);
           });
         }
       });
@@ -354,12 +356,15 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
     console.log($scope.CorrectiveActionCopy);
   }
 
-  $scope.saveCorrectiveAction = function(CorrectiveActionCopy,CorrectiveAction){
-    console.log(CorrectiveActionCopy);
+  $scope.saveCorrectiveAction = function(CorrectiveActionCopy,CorrectiveAction,accept){
+    console.log(CorrectiveAction);
     $scope.CorrectiveActionCopy = angular.copy(CorrectiveActionCopy);
-
-    var url = "../../ajaxaction.php?action=saveCorrectiveAction&callback=JSON_CALLBACK";
-    convenienceMethods.updateObject(CorrectiveActionCopy, $scope.CorrectiveActionCopy, onSaveCorrectiveAction, onSaveFailCorrectiveAction, url, $scope.CorrectiveActionCopy);
+    CorrectiveActionCopy.IsDirty = true;
+    console.log(CorrectiveActionCopy);
+    
+    if(accept)CorrectiveActionCopy.Status = "Accepted"
+    var url = "../../ajaxaction.php?action=saveCorrectiveAction";
+    convenienceMethods.updateObject( CorrectiveActionCopy, CorrectiveActionCopy, onSaveCorrectiveAction, onSaveFailCorrectiveAction, url, $scope.CorrectiveActionCopy, CorrectiveAction, CorrectiveAction);
 
 
     /*
@@ -372,13 +377,15 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
     */
   }
 
-  function onSaveCorrectiveAction(data){
-    console.log(data);
+  function onSaveCorrectiveAction(returned, old){
+    old.IsDirty = false;
+    console.log(old);
   }
 
   function onSaveFailCorrectiveAction(data){
     alert("Something went wrong when the system tried to save the Corrective Action");
     data = angular.copy($scope.CorrectiveActionCopy);
+    data.IsDirty = false;
   }
 
   $scope.cancelEdit = function(action){
@@ -386,8 +393,8 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
   }
 
   $scope.afterInspection = function(d){
-    console.log( Date.parse(d));
-    console.log(Date.parse($scope.Inspection.DateCreated));
+    //console.log( Date.parse(d));
+    //console.log(Date.parse($scope.Inspection.DateCreated));
     if(Date.parse(d)>Date.parse($scope.Inspection.DateCreated)){
       return true;
     }

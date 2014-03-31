@@ -1,5 +1,5 @@
 <div class="loading" ng-show='!doneLoading' >
-	  <img class="" src="../../../img/loading.gif"/>
+	  <img class="" src="../../img/loading.gif"/>
 	 Getting Inspection Information...
 	</div>
 	<!--<pre>{{Inspection | json}}</pre>-->
@@ -13,6 +13,7 @@
 		<li class="observations">Observations <!--<span></span>--></li>
 	</ul>
 	<div ng-repeat="checklist in checklists" class="row detail">
+		<!--<pre>{{checklist|json}}</pre>-->
 		<h2>{{checklist.label}}</h2>
 		<div class="row-fluid {{question.Response}} checklistDetailsQuestion" ng-repeat="question in checklist.Questions" ng-class="">
 		<div class="span12">
