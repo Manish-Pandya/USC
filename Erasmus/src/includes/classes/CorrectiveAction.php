@@ -67,5 +67,9 @@ class CorrectiveAction extends GenericCrud {
 	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
+	
+	public function getStatus(){ return $this->status; }
+	public function setStatus($status){ $this->status = $status; }
+	
 }
 ?>
