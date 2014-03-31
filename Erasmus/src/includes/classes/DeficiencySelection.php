@@ -67,7 +67,7 @@ class DeficiencySelection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getRooms");
 		$entityMaps[] = new EntityMap("eager","getCorrectiveActions");
 		$entityMaps[] = new EntityMap("lazy","getResponse");
-		$entityMaps[] = new EntityMap("lazy","getDeficiency");
+		$entityMaps[] = new EntityMap("eager","getDeficiency");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -106,7 +106,7 @@ class DeficiencySelection extends GenericCrud {
 	
 	public function getDeficiency(){
 		if($this->deficiency == null) {
-			$deficiencyDAO = new GenericDAO("Deficiency");
+			$deficiencyDAO = new GenericDAO(new Deficiency());
 			$this->deficiency = $deficiencyDAO->getById($this->deficiency_id);
 		}
 		return $this->deficiency; 
