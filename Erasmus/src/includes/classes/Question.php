@@ -194,7 +194,7 @@ class Question extends GenericCrud {
 			}
 
 			if (!empty($responses)){
-				return $responses[0];
+				return array_shift($responses);
 			} else {
 				return null;
 			}
