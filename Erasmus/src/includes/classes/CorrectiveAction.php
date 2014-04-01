@@ -72,5 +72,8 @@ class CorrectiveAction extends GenericCrud {
 	public function getStatus(){ return $this->status; }
 	public function setStatus($status){ $this->status = $status; }
 	
+	public function getCompletion_date(){ return $this->completion_date; }
+	public function setCompletion_date($completion_dates){ $this->completion_date = $completion_date; }
+
 }
 ?>
