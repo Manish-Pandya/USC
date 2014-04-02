@@ -227,6 +227,9 @@ class GenericDAO {
 	 */
 	function getRelatedItemsById($id, DataRelationship $relationship){
 		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
+		// make sure there's an id
+		if (empty($id)) { return array();}
+		
 		
 		// Get the db connection
 		global $db;
