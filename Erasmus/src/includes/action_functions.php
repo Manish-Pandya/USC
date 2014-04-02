@@ -171,7 +171,7 @@ function getChecklistByHazardId( $id = NULL ){
 		if (!empty($checklist)) {
 				return $checklist;
 		} else {
-			return false;
+			return true;
 		}
 	}
 	else{
