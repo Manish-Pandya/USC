@@ -161,13 +161,18 @@ function getChecklistById( $id = NULL ){
 };
 
 function getChecklistByHazardId( $id = NULL ){
-	
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id !== NULL ){
 		$dao = getDao(new Hazard());
 		$hazard = $dao->getById($id);
-		return $hazard->getChecklist();
+		$checklist = $hazard->getChecklist();
+		if (!empty($checklist)) {
+				return $checklist;
+		} else {
+			return false;
+		}
 	}
 	else{
 		//error
