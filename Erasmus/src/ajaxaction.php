@@ -37,7 +37,9 @@ if( array_key_exists('callback', $_GET) ){
 header('content-type: application/javascript');
 
 // Set the HTTP status code. ActionResult defaults this to 200
-set_http_response_code( $actionResult->statusCode );
+//set_http_response_code( $actionResult->statusCode );
+http_response_code( $actionResult->statusCode );
+//http_response_code(404);
 
 // Output JSON (with possible callback)
 echo $output;
