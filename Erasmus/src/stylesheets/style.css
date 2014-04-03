@@ -2128,6 +2128,7 @@ table.quickdate-calendar {
   border-spacing: 0;
   width: 100%;
   margin-top: 5px;
+  margin-left: -3px;
 }
 
 /* line 1712, ../sass/style.scss */

@@ -1708,7 +1708,7 @@ a.quickdate-next-month{float:right}
 .quickdate-text-inputs{text-align:left;margin-bottom:5px}
 .quickdate-input-wrapper{width:48%;display:inline-block}
 input.quickdate-date-input,input.quickdate-time-input{width:200px;margin:0;height:auto;padding:2px 3px}
-table.quickdate-calendar{border-collapse:collapse;border-spacing:0;width:100%;margin-top:5px;}
+table.quickdate-calendar{border-collapse:collapse;border-spacing:0;width:100%;margin-top:5px;margin-left:-3px;}
 table.quickdate-calendar th,table.quickdate-calendar td{padding:5px}
 table.quickdate-calendar td:hover{cursor:pointer}
 .quickdate-popup-footer{text-align:right;display:block}
