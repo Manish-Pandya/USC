@@ -1,7 +1,7 @@
 var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule']);
 
 //called on page load, gets initial user data to list users
-function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods) {
+function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window) {
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
@@ -285,20 +285,33 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     alert("There was a problem saving the new recommendation");
   }
 
+  $scope.selectRoom = function(response, deficiency, room){
+    console.log(room);
+    room.IsDirty = true;
+    $scope.deficiencySelected(response, deficiency);
+  }
+
   $scope.deficiencySelected = function(response, deficiency, rooms){
+    response.IsDirty = true;
     console.log(response);
-    if(!rooms){
-      var rooms = $scope.inspection.Rooms;
+    if(!deficiency.rooms){
+      var rooms = angular.copy($scope.inspection.Rooms);
     }
 
     var RoomIds = [];
-
+    var atLeastOneChecked = false;
     angular.forEach(rooms, function(room, key){
-      RoomIds.push(room.Key_id);
+      if(deficiency.rooms){
+        if(room.checked == true){
+          RoomIds.push(room.Key_id);
+          atLeastOneChecked = true;
+        }
+      }else{
+        RoomIds.push(room.Key_id);
+      } 
     });
 
-
-
+    if(!deficiency.rooms)deficiency.rooms = angular.copy(rooms);
 
     defDto = {
       Class: "DeficiencySelection",
@@ -307,14 +320,43 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       Response_id: response.Key_id,
       Key_id:      null
     }
-
+    console.log(defDto);
     var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-    convenienceMethods.updateObject( defDto, response, onSaveDefSelect, onFailSaveDefSelect, url, null, deficiency);
+    convenienceMethods.updateObject( defDto, response, onSaveDefSelect, onFailSaveDefSelect, url, null, deficiency,response);
 
   }
 
-  function onSaveDefSelect(def){
+  $scope.showRooms = function(event, deficiency, element){
+    if(!deficiency.rooms)deficiency.rooms = angular.copy($scope.inspection.Rooms);
+    event.stopPropagation();
+
+    calculateClickPosition(event,deficiency,element);
+    deficiency.showRoomsModal = !deficiency.showRoomsModal;
+  }
+  //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
+  function calculateClickPosition(event, deficiency, element){
+    console.log(event);
+    var x = event.clientX;
+    var y = event.clientY+$window.scrollY;
+
+    deficiency.calculatedOffset = {};
+    deficiency.calculatedOffset.x = x+-80;
+    deficiency.calculatedOffset.y = y-185;
+  } 
+
+
+
+  function onSaveDefSelect(def,deficiency,deficiency2){
+    console.log(deficiency2)
     console.log(def);
+    var atLeastOneChecked = false;
+    if(deficiency2.rooms.length){
+      angular.forEach(deficiency2.rooms, function(room, key){
+        room.IsDirty = false;
+        if(room.checked)atLeastOneChecked = true;
+      });
+    }
+    deficiency2.IsDirty = false;
   }
 
   function onFailSaveDefSelect(){}

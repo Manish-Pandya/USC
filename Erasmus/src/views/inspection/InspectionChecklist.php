@@ -75,6 +75,21 @@ require_once '../top_view.php';
 										<input type="checkbox" value="true" ng-model="deficiency.checked" ng-change="deficiencySelected(question.Responses, deficiency)" />
 										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{deficiency.Text}}</span>
 									</label>
+									<span ng-show="deficiency.checked">
+											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
+									</span>
+
+									<div class="roomsModal popUp" ng-show="deficiency.rooms" ng-if="deficiency.showRoomsModal" style="width:200px;left:{{deficiency.calculatedOffset.x}}px;top:{{deficiency.calculatedOffset.y}}px;">
+										<ul>
+											<li ng-repeat="room in deficiency.rooms">
+												<label class="checkbox inline">
+													<input type="checkbox" ng-change="selectRoom(question.Responses, deficiency, room)" ng-model="room.checked"/>
+													<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="" src="../../img/loading.gif"/></span>
+												</label>
+											</li>
+										</ul>
+									</div>
+
 									<ul style="margin:10px" ng-switch on="deficiency.checked">
 										<li ng-switch-when="true">
 											<label class="checkbox inline">
