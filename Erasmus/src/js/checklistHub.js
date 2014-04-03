@@ -1,4 +1,4 @@
-var checklistHub = angular.module('checklistHub', ['convenienceMethodModule']);
+var checklistHub = angular.module('checklistHub', ['convenienceMethodModule','ui.bootstrap']);
 
 function ChecklistHubController($scope, $rootElement, $location, convenienceMethods) {
 	
@@ -8,22 +8,73 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 		}
 	}
 
-
 	init();
+
+	$scope.onSelectHazard = function(hazard,m,label){
+		getChecklistById(hazard.Key_id);
+	}
 
 	function getChecklistById(id){
 		$scope.doneLoading = false;
+
+		var url = '../../ajaxaction.php?action=getHazardById&id='+id+'&callback=JSON_CALLBACK';
+		convenienceMethods.getData( url, onGetHazard, onFailGetHazard );
+
 		var url = '../../ajaxaction.php?action=getChecklistByHazardId&id='+id+'&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetChecklist, onFailGetChecklist );
+
+		var url = '../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK';
+		convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
 	}
 
 	function onGetChecklist(data){
-		$scope.checklist = data;
+
+		console.log(data);
+		if(!data.Name){
+			$scope.noChecklist = true;
+			$scope.edit = true;
+		}else{
+			$scope.checklist = data;
+		}
 		$scope.doneLoading = true;
 	}
 
 	function onFailGetChecklist(){
+		console.log('here');
+	}
+	function onGetHazard(data){
+		$scope.hazard = data;
+		if($scope.checklist)$scope.doneLoading = true;
+	}
+	function onFailGetHazard(){
 
+	}
+
+	function onGetHazards(data){
+		console.log(data);
+		$scope.hazards = data;
+	}
+
+	function onFailGetHazards(){
+		alert('There was a problem getting the list of hazards.');
+	}
+
+	$scope.saveChecklist = function(dto, checklist){
+		$scope.checklistCopy.IsDirty = true;
+
+		var url = '../../ajaxaction.php?action=saveChecklist';		
+		convenienceMethods.updateObject( $scope.checklistCopy, checklist, onSaveChecklist, onFailSaveChecklist, url );
+	}
+
+	function onSaveChecklist(dto, checklist){
+	 	checklist.Name = $scope.checklistCopy.Name;
+        $scope.checklistCopy = false;
+        $scope.edit = false;
+        checklist.IsDirty = false;
+	}
+
+	function onFailSaveChecklist(){
+		alert("There was a problem saving the checklist.");
 	}
 
 	$scope.handleQuestionActive = function(question){
@@ -48,6 +99,23 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 	function onFailSaveQuestion(){
 
 	}
+
+  $scope.$watch(
+        "hazard",
+        function( newValue, oldValue ) {
+        	if($scope.hazard){
+	        	if($scope.checklist){
+	        		$scope.checklistCopy = angular.copy($scope.checklist)
+	        	}else{
+	        		$scope.checklistCopy = {
+	        			Name: $scope.checklist.Name,
+	        			Hazard_id: $scope.hazard.Key_id,
+	        			Class: "Checklist"
+	        		}
+	        	}
+        	}
+        }
+    );
 }
 
 checklistHub.controller('ChecklistHubController',ChecklistHubController);
