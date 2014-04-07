@@ -1,0 +1,16 @@
+ <h2 style="padding:15px 10px;" class="greyBg">{{PI.User.Name}}'s Departments</h2>
+ <div class="control-group">
+   <label class="control-label" for="name"><h3 style="font-weight:bold">Add a Department</h3></label>
+   <div class="controls">
+   <span ng-show="!doneLoadingDepartments">
+     <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting Departments..." disabled="disabled">
+   	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="../../../img/loading.gif"/>
+   </span>
+   <span ng-hide="!doneLoadingDepartments">
+   	<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="selectedDepartment" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init=""><img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../../img/loading.gif"/>
+   </span>
+  </div>
+ </div>
+<ul class="listStyleNone">
+	<li ng-repeat="department in PI.Departments"><h3 style="display:inline; margin-right:10px;">{{department.Name}}</h3><a ng-click="removeDepartment(department)" class="btn btn-mini btn-danger"><i class="icon-minus"></i>Remove</a><img ng-show="department.IsDirty" class="smallLoading" src="../../../img/loading.gif"/></li>
+</ul>

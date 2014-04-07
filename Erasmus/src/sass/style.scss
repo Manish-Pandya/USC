@@ -29,7 +29,11 @@ $grey:                        #ccc;
   background-color:$orange;
   border-color:$orange;
   color: white;
- 
+}
+.purpleBg{
+  background-color:$purple;
+  border-color:$purple;
+  color: white;
 }
  h1, h2, h3, h4, h5{
   &.orangeBg{padding:10px;}
@@ -1728,4 +1732,11 @@ table.quickdate-calendar td:hover{cursor:pointer}
 
 .invalid{
   border-color: red;
+}
+
+.modal-body{
+  ul{
+    list-style-type: none;
+    margin-left:0;
+  }
 }

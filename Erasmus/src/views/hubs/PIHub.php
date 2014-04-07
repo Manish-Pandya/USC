@@ -30,10 +30,12 @@ require_once '../top_view.php';
 	</div>
 	<span ng-hide="!PI">
 		<div class="btn-group" id="piButtons">
-			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary">Edit PI</a>
-			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info">Manage Rooms</a>
-			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success">Manage Lab Users</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
-			<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success">Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Hazards</a>--><a href="#departments" id="editPI" class="btn btn-large ">Manage Departments</a>
+			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;
+"><i class="icon-pencil"></i>Edit PI</a>
+			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>Manage Rooms</a>
+			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Users</a>
+			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>
+		<!--	<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success"><i class="icon-phone"></i>Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Haz-->
 		</div>
 	</span>
 	<h1 ng-hide="!PI">Principle Investigator:  {{PI.User.Name}}</h1>
@@ -46,6 +48,9 @@ require_once '../top_view.php';
 	<span ng-hide="!PI">
 		<ng-view></ng-view>
 	</span>
+
+
+
 
 <!--
 <table class="userList table table-striped table-hover list" id="safetyContacts">
