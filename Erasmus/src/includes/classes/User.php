@@ -20,7 +20,9 @@ class User extends GenericCrud{
 		"username"	=> "text",
 		"name"		=> "text",
 		"email"		=> "text", 
+		"phone"      => "text",
 		"supervisor_id"		=> "integer",
+		"emergency_phone" => "text",
 							
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -88,6 +90,7 @@ class User extends GenericCrud{
 		$entityMaps[] = new EntityMap("lazy","getInspector");
 		$entityMaps[] = new EntityMap("lazy","getSupervisor");
 		$entityMaps[] = new EntityMap("eager","getRoles");
+		$entityMaps[] = new EntityMap("eager","getEmergency_phone");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -137,7 +140,7 @@ class User extends GenericCrud{
 	
 	public function getSupervisor() {
 		if($this->supervisor === NULL && $this->hasPrimaryKeyValue()) {
-			$superDAO = new GenericDAO(new Supervisor());
+			$superDAO = new GenericDAO(new PrincipalInvestigator());
 			$this->supervisor = $superDAO->getById($this->supervisor_id);
 		}
 		return $this->supervisor;
@@ -154,5 +157,11 @@ class User extends GenericCrud{
 	
 	public function getEmail(){ return $this->email; }
 	public function setEmail($email){ $this->email = $email; }
+	
+	public function getPhone(){ return $this->phone; }
+	public function setPhone($phone){ $this->phone = $phone; }
+	
+	public function getEmergency_phone(){ return $this->emergency_phone; }
+	public function setEmergency_phone($Emergency_phone){ $this->emergency_phone = $Emergency_phone; }
 }
 ?>
