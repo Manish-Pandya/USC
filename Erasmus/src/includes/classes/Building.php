@@ -62,9 +62,9 @@ class Building extends GenericCrud {
 	public function getRooms(){ 
 		if($this->rooms == null) {
 			$buildingDAO = new GenericDAO($this);
-			$this->users = $buildingDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+			$this->rooms = $buildingDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
-		return $this->users;
+		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 	
