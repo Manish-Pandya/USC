@@ -48,6 +48,7 @@ class ActionMappingFactory {
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
 				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
 				"savePIDepartmentRelation"=>new ActionMapping("savePIDepartmentRelation", "", ""),
+				"savePI"=>new ActionMapping("savePI", "", ""),
 				
 				// Checklist Hub
 				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
