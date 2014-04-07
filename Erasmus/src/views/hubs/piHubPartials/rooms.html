@@ -1,18 +1,55 @@
 <table class="roomList table table-striped table-hover list" id="rooms">
 <thead>
 	<tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
-	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" class="btn btn-info btn-large">Add Room</a><a href="#roomModal" data-toggle="modal" class="btn btn-primary btn-large">Create Room</a></tr>
+	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large">Add Room</a><a href="#roomModal" ng-click="modalify(PI,true)" class="btn btn-primary btn-large">Create Room</a></tr>
 	<tr>
-		<th>Remove Room</th><th>Campus</th><th>Building</th><th>Room Number</th><th>Room Hazards</th>
+		<th>Remove Room</th><!--<th>Campus</th>--><th>Building</th><th>Room Number</th><th>Room Hazards</th>
 	</tr>
 </thead>
 <tbody>
 	<tr ng-repeat="room in PI.Rooms">
-		<td><a class="btn btn-danger btn-large removeRow" href="#"><i class="icon-remove"></i>Remove</a></td>
-		<td width="25%">{{room.Capmus}}</td>
-		<td width="25%">{{room.Building}}</td>
+		<td><a class="btn btn-danger btn-large removeRow" ng-click="removeRoom(room)" href="#"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../../img/loading.gif"/></td>
+		<!--<td width="25%">{{room.Capmus}}</td>-->
+		<td width="25%">{{room.Building.Name}}</td>
 		<td width="25%">{{room.Name}}</td>
 		<td><a class="edit btn btn-large btn-warning" target="_blank" href="HazardHubAssessment.php"><i class="icon-lab"></i>Show Hazards</a></td>
 	</tr>
 </tbody>
 </table>
+
+<script type="text/ng-template" id="roomHandlerModal.html">
+	<div class="modal-header" style="padding:0;">
+        <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg">Add a Room to {{PI.User.Name}}</h2>
+        <h2 ng-show="addRoom" style="padding:5px;" class="purpleBg">Create a New Room</h2>
+    </div>
+    <div class="modal-body">
+    	<div class="control-group">
+         <label class="control-label" for="inputEmail">Select Building</label>
+         <div class="controls">
+            <input style="" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue">
+         </div>
+	    </div>
+
+	   <h3 ng-show="chosenBuilding">Rooms in {{chosenBuilding.Name}}:</h3>
+	   <ul ng-show="!addRoom">
+	   		<li ng-repeat="room in chosenBuilding.Rooms">
+	   			<label class="checkbox inline">
+					<input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
+					<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="../../../img/loading.gif"/></span>
+				</label>
+	   		</li>
+	   </ul>
+
+	   <ul ng-show="addRoom">
+	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Add a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../../img/loading.gif"/>
+	   		<li ng-repeat="room in chosenBuilding.Rooms">
+	   			{{room.Name}}
+	   		</li>
+	   </ul>
+
+
+    </div>
+    <div class="modal-footer">
+    	<a class="btn btn-large" ng-class="{btn-info: !addRoom, btn-primary: addRoom}" ng-click="close()">Close</a>
+    </div>
+</script>
