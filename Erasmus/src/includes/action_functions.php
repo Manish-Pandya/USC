@@ -396,6 +396,40 @@ function saveHazard(){
 		return $decodedObject;
 	}
 };
+
+function saveRoom(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Hazard');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Room());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
+function saveBuilding(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Hazard');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Building());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
 //function saveChecklist(){ };	//DUPLICATE FUNCTION
 
 // Question Hub

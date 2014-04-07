@@ -77,7 +77,6 @@ class ActionMappingFactory {
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
 				
 				// Inspection, step 1 (PI / Room assessment)
-				"getPI"=>new ActionMapping("getPI", "", ""),
 				"getAllRooms"=>new ActionMapping("getAllRooms", "", ""),
 				"initiateInspection"=>new ActionMapping("initiateInspection", "", ""),
 				"saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", ""),
@@ -89,6 +88,8 @@ class ActionMappingFactory {
 				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
+				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
+				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
 				
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
