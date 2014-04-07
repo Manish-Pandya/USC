@@ -1,46 +1,8 @@
-var userList = angular.module('userList', ['ui.bootstrap']);
-
-userList.factory('testFactory', function($http){
-	
-	//initialize a factory object
-	var tempFactory = {};
-	
-	//simple 'getter' to grab data from service layer
-	tempFactory.getUsers = function(onSuccess, url){
-		console.log(onSuccess);
-	
-	//user jsonp method of the angularjs $http object to request data from service layer
-	$http.jsonp(url)
-		.success( function(data) {	
-		   //onSuccess is the method we have passed from the controller.  Binds data from service layer to angularjs $scope object
-	       onSuccess(data);
-	    })
-	    .error(function(data, status, headers, config){
-            alert('error');
-            console.log(headers());
-            console.log(status);
-            console.log(config);
-        });
-        
-	};
-	tempFactory.saveUser = function(url, user, onSuccess){
-		$http.post(url, user)
-		.success(function(data, status, headers, config) {
-		    onSuccess(data);
-		})
-		.error(function(data, status, headers, config) {
-			console.log(headers());
-            console.log(status);
-            console.log(config);
-		});
-
-	}
-	
-	return tempFactory;
-});
+var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule']);
 
 //called on page load, gets initial user data to list users
-function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,$rootElement,$location) {
+var UserListController = function($scope, $modal, $routeParams, $browser, $sniffer, $rootElement, $location, convenienceMethods) {
+ //console.log($modal);
   $scope.users = [];
   
   init();
@@ -49,20 +11,77 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
   //we do it this way so that we know we get data before we set the $scope object
   //
   function init(){
-	  testFactory.getUsers(onGetUsers,'/Erasmus/src/ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK');
-	  console.log('init called');
-  };
-  //grab set user list data into the $scrope object
-  function onGetUsers(data) {
-	  $scope.users = data;
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
+	  convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGet);
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGet);
   }
 
-  $scope.roles=[
-    "Administrator",
-    "AppUser",
-    "Inspector",
-    "Principle Investigator"
-  ]
+  function onGetDepartments(data){
+    $scope.departments = data;
+  }
+
+  function onGetRoles(data){
+    $scope.roles = data;
+  }
+
+  function onFailGetRoles(){
+
+  }
+
+  //grab set user list data into the $scrope object
+  function onGetUsers(data) {
+    $scope.users = data;
+	  //$scope.users = data;
+
+   // 
+
+  }
+  function onFailGet(){
+    alert('Something went wrong when we tried to build the list of users.');
+  }
+
+  function onGetPis(data){
+     angular.forEach(data, function(pi, key){
+      pi.Buildings = [];
+      angular.forEach(pi.Rooms, function(room, key){
+        if(!convenienceMethods.arrayContainsObject(pi.Buildings, room.Building))pi.Buildings.push(room.Building);
+      });
+    });
+
+    $scope.pis = data;
+
+    $scope.Admins = [];
+    $scope.SafetyInspectors = [];
+    $scope.RadiationInspectors = [];
+    $scope.LabContacts = [];
+
+    //push users into correct arrays based on role
+    angular.forEach($scope.users, function(user, key){
+      angular.forEach(user.Roles, function(role, key){
+        //skip PIs, they are gotten through a different api call
+        var trimmedName = role.Name.replace(/\s/g, '');
+        if(role.Key_id != 4)$scope[trimmedName+'s'].push(user);
+        //for lab contacts, set the appropriate PI as their supervisor
+        if(role.Key_id == 5){
+          console.log('here');
+          angular.forEach($scope.pis, function(pi, key){
+            console.log(user);
+            console.log(pi);
+            if(user.Supervisor_id == pi.Key_id){
+              user.Supervisor = pi;
+            }
+          });
+        }
+      });
+    });
+
+    console.log($scope.labContacts);
+  }
+  function onFailGetPis(){
+
+  }
+
 
   $scope.editUser = function(user){
 
@@ -80,28 +99,37 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
   	//make a copy of the edited user, save it in the scope.  this will allow us to cancel any edits 
   	$scope.userCopy = angular.copy(user);
 
+
   }
 
   //click handler checks the user's IsActive property, udpates accordingly
   $scope.handleUserActive = function(user){
 
+    userDTO = angular.copy(user);
+
   	//set the IsActive state for the user in the view model
-	  if(user.IsActive == false || !user.IsActive){
-  		user.IsActive = true;
+	  if(userDTO.IsActive == false || !userDTO.IsActive){
+  		userDTO.IsActive = true;
   	}else{
-  		user.IsActive = false;
+  		userDTO.IsActive = false;
   	}
 
-  	//callback function to make sure that the user state matches the the state of the corresponding object on the server
-  	var switchActiveState = function(data,user){
-	 	 user = data;
-  	}
 
   	//send the edit to the server, pass it to the callback
-  	testFactory.saveUser('/Erasmus/src/ajaxaction.php?action=saveUser', user, switchActiveState);
+    convenienceMethods.updateObject( userDTO, user, onSaveUser, onFailSaveUser, '../../ajaxaction.php?action=saveUser'  );
+
+  	//testFactory.saveUser('../../ajaxaction.php?action=saveUser', user, switchActiveState);
 
   }
-  
+  onFailSaveUser = function(user){
+    alert('There was an error saving the user ' + user.Name);
+  }
+  onSaveUser = function( userDTO, user ){
+     userDTO.edit = false;
+     convenienceMethods.setPropertiesFromDTO( userDTO, user );
+     user.edit = false;
+     console.log(user);
+  }
   /*
    * USER SAVE METHODS
    * used for creating and updating users
@@ -109,33 +137,11 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
    */
   $scope.saveUser = function(copy, user){
 
-	//callback function.  recieves new user data and updates the edited user view model object with it
-	var updateUserView = function(data){
-		console.log(user);
-	  	console.log($scope.userCopy);
-	    $scope.userCopy = data;
-  
-	  	angular.forEach($scope.users, function(thisUser, key){
-		  	thisUser.notEdit = false;
-		});
-
-
-	  	//set each property of the edited user to the corresponding property of the user object on the server
-  	   for (var property in $scope.userCopy) {
-			if (data.hasOwnProperty(property)) {
-			    user[property] = $scope.userCopy[property];
-			}
-	   }
-
-	   	user.edit = false;
-		  user.updated = true;
-		  $scope.userCopy.Roles.adding = false;
-	}
-
-	testFactory.saveUser('/Erasmus/src/ajaxaction.php?action=saveUser', $scope.userCopy, updateUserView);
+  	//send the edit to the server, pass it to the callback
+    convenienceMethods.updateObject( copy, user, onSaveUser, onFailSaveUser, '../../ajaxaction.php?action=saveUser'  );
 
   }
-
+/*
   $scope.addUser = function(){
 
   	//new empty user object
@@ -160,7 +166,7 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
   	$scope.editUser(newUser);
 
   }
-
+*/
   //undo edits to a user
   $scope.cancelEdits = function(user){
 
@@ -189,7 +195,6 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
   $scope.addRole = function(){
     //set the user's role state to adding, so that we display the html select of user roles
     $scope.userCopy.Roles.adding = true;
-    console.log('asdfasdfasdfasdfasdfa');
     $scope.filterRoles();
   }
 
@@ -215,7 +220,127 @@ function UserListController($scope, testFactory, $routeParams,$browser,$sniffer,
     }
   };
 
+
+  $scope.addUser = function (user) {
+    console.log('here');
+    $scope.items = [];
+    if(user){
+      var userCopy = angular.copy(user);
+    }else{
+      var userCopy = {
+          Class: "User"
+       }
+    }
+
+    $scope.items.push(userCopy);
+    $scope.items.push(user);
+    $scope.items.push($scope.roles);
+    $scope.items.push($scope.pis);
+    $scope.items.push($scope.departments);
+
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: ModalInstanceCtrl,
+      resolve: {
+        items: function () {
+          return $scope.items;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (selectedItem) {
+      $scope.returnedByModal = selectedItem;
+      console.log($scope.returnedByModal);
+
+      convenienceMethods.setPropertiesFromDTO( $scope.returnedByModal[0], $scope.returnedByModal[1] );
+
+      if($scope.returnedByModal[0].Roles.length > 1){
+        //TODO
+        //update other copies of user that in scope for other roles tables
+      }
+
+    }, function () {
+
+      //$log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
 };
 
-//set controller
-userList.controller( 'UserListController', UserListController);
+// Please note that $modalInstance represents a modal window (instance) dependency.
+// It is not the same as the $modal service used above.
+
+var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMethods) {
+
+  $scope.items = items;
+  $scope.roles = items[2]
+  $scope.pis = items[3];
+  $scope.departments = items[4];
+
+  //set the type of user
+  if(items[0].Class == "PrincipleInvestigator"){
+    $scope.userType = items[2][3];
+    $scope.userCopy = angular.copy(items[0].user);
+    $scope.piCopy   = angular.copy(items[0]);
+  }else{
+    $scope.userCopy = items[0]
+    if(items[0].Supervisor){
+      console.log('here');
+      $scope.userType = items[2][4];
+    }
+  }
+  console.log(  $scope.userCopy  );
+
+  $scope.selected = {
+    item: $scope.items[0]
+  };
+
+
+  $scope.saveUser = function (userCopy, user) {
+    userCopy.IsDirty = true;
+    //$modalInstance.close($scope.items);
+
+    //save user
+    var url=""
+    convenienceMethods.updateObject( userCopy, user, onSaveUser, onFailSaveUser, '../../ajaxaction.php?action=saveUser' )
+  };
+
+  function onSaveUser(returnedData, oldData){
+    //if user is a PI, save that record
+    if(convenienceMethods.arrayContainsObject(returnedData.Roles, $scope.roles[3])){
+      //save pi
+    }else{
+      data = [];
+      data[0] = returnedData;
+      data[1] = oldData;
+    }
+
+    oldData.IsDirty = false;
+    //else cclose and send back user object and copy as param of close funciton
+    $modalInstance.close(data);
+
+  }
+
+  function onFailSaveUser(){
+
+  }
+
+  function onSavePI(returnedData, oldData){
+    //call set properties, 
+  }
+
+  function onFailSavePi(){
+
+  }
+
+  function setProperties(data){
+
+    //unset dirty flag
+
+    //close modal, passing back updated user/pi objects
+  }
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+};
