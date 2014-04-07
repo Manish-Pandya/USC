@@ -1048,10 +1048,10 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 
 }
 
-function getHazardsInRoom( $roomId = NULL ){
+function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
 	
 	$roomId = getValueFromRequest('roomId', $roomId);
-	
+		
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
 		
@@ -1063,6 +1063,19 @@ function getHazardsInRoom( $roomId = NULL ){
 		//get hazards
 		$hazards = $room->getHazards();
 		
+		// if subhazards is false, change all hazard subentities to lazy loading
+		if (!subHazards){
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy","getSubhazards");
+			$entityMaps[] = new EntityMap("lazy","getChecklist");
+			$entityMaps[] = new EntityMap("lazy","getRooms");
+			$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
+
+			foreach ($hazards as &$hazard){
+				$hazard->setEntityMaps($entityMaps);
+			}
+				
+		}
 		return $hazards;
 	}
 	else{
