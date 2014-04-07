@@ -729,7 +729,6 @@ function getAllBuildings( $id = NULL ){
 	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 	$entityMaps[] = new EntityMap("lazy","getHazards");
 	$entityMaps[] = new EntityMap("lazy","getBuilding");
-	$this->setEntityMaps($entityMaps);
 	
 	///iterate the buildings
 	foreach ($buildings as &$building){
