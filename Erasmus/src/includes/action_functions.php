@@ -515,7 +515,7 @@ function getAllInspectors(){
 };
 
 // Inspection, step 1 (PI / Room assessment)
-function getPI( $id = NULL ){
+function getPIById( $id = NULL ){
 	
 	$id = getValueFromRequest('id', $id);
 	
@@ -605,7 +605,31 @@ function getAllBuildings( $id = NULL ){
 	
 	$dao = getDao(new Building());
 	
-	return $dao->getAll();
+	// get all buildings
+	$buildings = $dao->getAll();
+	
+	// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
+	// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
+	$entityMaps = array();
+	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+	$entityMaps[] = new EntityMap("lazy","getHazards");
+	$entityMaps[] = new EntityMap("lazy","getBuilding");
+	$this->setEntityMaps($entityMaps);
+	
+	///iterate the buildings
+	foreach ($buildings as &$building){
+		// get this building's rooms
+		$rooms = $building->getRooms();
+		// iterate this building's rooms and make then lazy loading
+		foreach ($rooms as &$room){
+			$room->setEntityMaps($entityMaps);
+		}
+		// make sure this building is loaded with the lazy loading rooms
+		$building->setRooms($rooms);
+	}
+
+	return $buildings;
+	
 }
 
 function getBuildingById( $id = NULL ){

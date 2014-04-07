@@ -42,6 +42,13 @@ class ActionMappingFactory {
 				"saveUser"=>new ActionMapping("saveUser", "", "", array(), 201),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				
+				// PI Hub
+				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
+				"getPIById"=>new ActionMapping("getPIById", "", ""),
+				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
+				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
+				"savePIDepartmentRelation"=>new ActionMapping("savePIDepartmentRelation", "", ""),
+				
 				// Checklist Hub
 				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
 				"getChecklistByHazardId"=>new ActionMapping("getChecklistByHazardId", "", ""),
