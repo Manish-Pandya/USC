@@ -725,10 +725,14 @@ function getAllBuildings( $id = NULL ){
 	
 	// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
 	// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-	$entityMaps = array();
-	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-	$entityMaps[] = new EntityMap("lazy","getHazards");
-	$entityMaps[] = new EntityMap("lazy","getBuilding");
+	$roomMaps = array();
+	$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+	$roomMaps[] = new EntityMap("lazy","getHazards");
+	$roomMaps[] = new EntityMap("lazy","getBuilding");
+	
+	$bldgMaps = array();
+	$bldgMaps[] = new EntityMap("lazy","getRooms");
+	
 	
 	///iterate the buildings
 	foreach ($buildings as &$building){
@@ -736,10 +740,12 @@ function getAllBuildings( $id = NULL ){
 		$rooms = $building->getRooms();
 		// iterate this building's rooms and make then lazy loading
 		foreach ($rooms as &$room){
-			$room->setEntityMaps($entityMaps);
+			$room->setEntityMaps($roomMaps);
 		}
 		// make sure this building is loaded with the lazy loading rooms
 		$building->setRooms($rooms);
+		// ... and make sure that the rooms themselves are loaded eagerly
+		$building->setEntityMaps($bldgMaps);
 	}
 
 	return $buildings;
