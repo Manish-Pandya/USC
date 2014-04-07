@@ -134,15 +134,16 @@ function saveUser(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao();
+		$dao = getDao( new User() );
 		$dao->save( $decodedObject );
 		return $decodedObject;
 	}
 };
 
 function getAllRoles(){
-	$dao = getDao();
-	return $dao->getAllRoles();
+	$rolesDao = getDao( new Role() );
+	$allRoles = $rolesDao->getAll();
+	return $allRoles;
 };
 
 // Checklist Hub
