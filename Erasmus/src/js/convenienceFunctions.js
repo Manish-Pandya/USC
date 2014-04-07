@@ -10,10 +10,13 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 		setPropertiesFromDTO: function(dto,obj){
+			console.log(obj);
+	        console.log(dto);
 	        for (var key in dto) {
 	          if (dto.hasOwnProperty(key)) {
 	            obj[key] = dto[key];
 	          }
+
 	        }
 		},
 		/**  
@@ -47,11 +50,11 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*   @param (Object failParam) Object to be passed to failure function
 		*
 		**/
-		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, haz, room, parent){
+		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
-            onSave(returnedObj, obj, haz, room, parent);
+            onSave(returnedObj, obj, extra1, extra2, extra3);
           })
           .error(function(data, status, headers, config, hazard){
           	 console.log(failParam);
@@ -126,8 +129,6 @@ angular.module('convenienceMethodModule', ['ngRoute'])
     	*
 		**/
 		arrayContainsObject: function(array, obj, props, returnIdx) {
-		  console.log(array);
-		  console.log(obj);
 	      if(!props) {var props = ["Key_id","Key_id"];}	     	
 	      for (i=0;i<array.length;i++) {
 			if (array[i][props[0]] === obj[props[1]]) {
@@ -164,7 +165,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
     	*	@param (time, int)  Unix timestamp to convert
     	*
 		**/
-		getDate: function(time){
+		getUnixDate: function(time){
 			Date.prototype.getMonthFormatted = function() {
 			    var month = this.getMonth();
 			    return month < 10 ? '0' + month : month; // ('' + month) for string result
@@ -187,6 +188,54 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			var formattedTime = month + '/' + day + '/' + year;
 
 			return formattedTime;
+		},
+		/**
+		*
+    	*	Converts a MYSQL datetime to a Javascript date object
+    	*	@param (time, string)  MYSQL datetime to convert
+    	*
+		**/
+		getDate: function(time){
+			Date.prototype.getMonthFormatted = function() {
+			    var month = this.getMonth();
+			    return month < 10 ? '0' + month : month; // ('' + month) for string result
+			}
+
+			// Split timestamp into [ Y, M, D, h, m, s ]
+			var t = time.split(/[- :]/);
+
+			// Apply each element to the Date function
+			// create a new javascript Date object based on the timestamp
+			var date = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+			
+			// hours part from the timestamp
+			var hours = date.getHours();
+			// minutes part from the timestamp
+			var minutes = date.getMinutes();
+			// seconds part from the timestamp
+			var seconds = date.getSeconds();
+
+			var month = date.getMonth()+1;
+			var day = date.getDate();
+			var year = date.getFullYear();
+
+			// will display date in mm/dd/yy format
+			var formattedTime = month + '/' + day + '/' + year;
+
+			return formattedTime;
+		},
+		setMysqlTime: function(date){
+			var date;
+			date = new Date();
+			date = date.getUTCFullYear() + '-' +
+			    ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
+			    ('00' + date.getUTCDate()).slice(-2) + ' ' + 
+			    ('00' + date.getUTCHours()).slice(-2) + ':' + 
+			    ('00' + date.getUTCMinutes()).slice(-2) + ':' + 
+			    ('00' + date.getUTCSeconds()).slice(-2);
+			console.log(date);
+			return date;
 		},
 		setIsDirty: function(obj){
 			obj.IsDirty = !obj.IsDirty;
