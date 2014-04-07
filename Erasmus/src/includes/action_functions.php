@@ -560,6 +560,121 @@ function getRoomById( $id = NULL ){
 	}
 }
 
+function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+	
+		$PIId = $decodedObject->getMaster_id();
+		$roomId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+	
+		if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
+	
+			// Get a DAO
+			$dao = getDao(new PrincipalInvestigator());
+			// if add is true, add this room to this PI
+			if ($add){
+				$dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+			// if add is false, remove this room from this PI
+			} else {
+				$dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+			}
+	
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+	
+	}
+	return true;
+};
+
+function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+	
+		$PIId = $decodedObject->getMaster_id();
+		$contactId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+	
+		if( $PIId !== NULL && $contactId !== NULL && $add !== null ){
+	
+			// Get a DAO
+			$dao = getDao(new PrincipalInvestigator());
+			// if add is true, add this lab contact to this PI
+			if ($add){
+				$dao->addRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
+			// if add is false, remove this lab contact from this PI
+			} else {
+				$dao->removeRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
+			}
+	
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+	
+	}
+	return true;
+};
+	
+function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$decodedObject = convertInputJson();
+	
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+	
+		$PIId = $decodedObject->getMaster_id();
+		$deptId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+	
+		if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
+	
+			// Get a DAO
+			$dao = getDao(new PrincipalInvestigator());
+			// if add is true, add this department to this PI
+			if ($add){
+				$dao->addRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+			// if add is false, remove this department from this PI
+			} else {
+				$dao->removeRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+			}
+	
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+	
+	}
+	return true;
+};
+	
+
 //Get a room dto duple
 function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 	$id = getValueFromRequest('id', $id);

@@ -33,21 +33,21 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName"	=>	"principal_investigator_id"
 	); 
 	
-	protected static $ROOMS_RELATIONSHIP = array(
+	public static $ROOMS_RELATIONSHIP = array(
 		"className"	=>	"Room",
 		"tableName"	=>	"principal_investigator_room",
 		"keyName"	=>	"room_id",
 		"foreignKeyName"	=>	"principal_investigator_id"
 	); 
 	
-	protected static $LABPERSONNEL_RELATIONSHIP = array(
+	public static $LABPERSONNEL_RELATIONSHIP = array(
 		"className"	=>	"User",
 		"tableName"	=>	"erasmus_user",
 		"keyName"	=>	"key_id",
 		"foreignKeyName"	=>	"supervisor_id"
 	); 
 	
-	protected static $DEPARTMENTS_RELATIONSHIP = array(
+	public static $DEPARTMENTS_RELATIONSHIP = array(
 		"className"	=>	"Department",
 		"tableName"	=>	"principal_investigator_department",
 		"keyName"	=>	"department_id",
