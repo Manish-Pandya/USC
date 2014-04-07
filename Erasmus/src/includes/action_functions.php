@@ -731,7 +731,7 @@ function getAllBuildings( $id = NULL ){
 	$roomMaps[] = new EntityMap("lazy","getBuilding");
 	
 	$bldgMaps = array();
-	$bldgMaps[] = new EntityMap("lazy","getRooms");
+	$bldgMaps[] = new EntityMap("eager","getRooms");
 	
 	
 	///iterate the buildings
