@@ -48,17 +48,23 @@ require_once '../top_view.php';
 		<tr ng-repeat="pi in pis | orderBy:order:reverse">
 
 			<td>
+				
 				<a ng-hide="pi.edit" class="edit btn btn-large btn-primary" ng-click="addUser(pi)">Edit</a>
 				<a ng-show="pi.edit" class="edit btn btn-large btn-info" ng-click="saveUser(userCopy, pi)">Save</a>
 				<a ng-show="pi.edit" class="edit btn btn-large btn-danger" ng-click="cancelSave(userCopy, pi)">Cancel</a>
+
 			<!--</td>
 
 			<td ng-hide="user.edit">-->
+			
 				<a class="btn btn-danger btn-large DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active && !pi.edit">Deactivate</a>
 				<a class="btn btn-success btn-large DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="!pi.Is_active && !pi.edit">Activate</a>
+				
 			</td>
 
 			<td>
+				<img ng-show="pi.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:-25px; margin-top:15px;"/>
+
 				{{pi.User.Name}}
 			</td>
 
@@ -119,11 +125,14 @@ require_once '../top_view.php';
 			<!--</td>
 
 			<td ng-hide="user.edit">-->
+
 				<a class="btn btn-danger btn-large DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
 				<a class="btn btn-success btn-large DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
+				
 			</td>
 
 			<td>
+				<img ng-show="contact.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:-25px; margin-top:15px;"/>
 				{{contact.Name}}
 			</td>
 
@@ -155,14 +164,14 @@ require_once '../top_view.php';
 
 
     <script type="text/ng-template" id="myModalContent.html">
-        <div class="modal-header">
-            <h3>Im a modal!</h3>
-        
+        <div class="modal-header" style="padding:0;">
+            <h2 style="padding:5px" ng-show="userCopy.Name" class="blueBg">Editing {{userCopy.Name}}</h2>
+        	<h2 style="padding:5px" ng-hide="userCopy.Name" class="blueBg">Create a New User</h2>
         </div>
         <div class="modal-body">
         	<form class=" form">
-    	       	Name, , Department, Email, Lab Phone, Emergency Phone
-	        	<div class="control-group">
+
+        	<div class="control-group">
 		         <label class="control-label" for="inputEmail">Name</label>
 		         <div class="controls">
 		            <input type="text" id="inputEmail" ng-model="userCopy.Name" placeholder="Name">
@@ -175,17 +184,6 @@ require_once '../top_view.php';
 		            <input style="" type="text"  ng-model="userCopy.Supervisor.User.Name" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue">
 		         </div>
 			    </div>
-
-			    <div class="control-group" ng-show="userType.Name == 'Lab Contact'">
-		         <label class="control-label" for="inputEmail">Department(s)</label>
-		         <div class="controls">
-		            <input style="" type="text"  ng-model="userCopy.Supervisor.User.newDepartment" placeholder="Select Department" typeahead="dept as dept.Name for dept in departments | filter:$viewValue">
-		         </div>
-			    </div>
-
-			    <ul>
-			    	<li ng-repeat="department in userCopy.Supervisor.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(userCopy.Supervisor,department)"><i class="icon-cancel"></i></a>{{department.Name}}</li>
-			    </ul>
 
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Email</label>
@@ -209,19 +207,48 @@ require_once '../top_view.php';
 		         </div>
 			    </div>
 
-				<span ng-show="userType.Name == 'Lab Contact'">
-			    </span>
+
+			    <div class="well">
+				    <div  class="control-group">
+			         <label class="control-label" for="inputEmail">Roles(s)</label>
+			         <div class="controls">
+						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="">
+						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+				    </div>
+
+				    <ul>
+				    	<li ng-repeat="role in userCopy.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>			         </div>
+						</li>
+				    </ul>
+			    </div>
+
+			    <div class="well" ng-if="piCopy || userCopy.isPI">
+				    <div  class="control-group">
+			         <label class="control-label" for="inputEmail">Department(s)</label>
+			         <div class="controls">
+						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="selectedDepartment" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="">
+						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+				    </div>
+
+				    <ul>
+				    	<li ng-repeat="department in piCopy.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<img ng-show="department.IsDirty" class="smallLoading" src="../../img/loading.gif"/>			         </div>
+</li>
+				    </ul>
+			    </div>
+
+
+			    
         	</form>
            
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success hazardBtn" ng-click="saveUser(userCopy, items[1])"><i class="icon-checkmark"></i>Save</button><img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-            <button class="btn btn-danger hazardBtn" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</button>
+        	<img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+            <a ng-if="!pi && userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser(userCopy, items[1])"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="pi && userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser(userCopy, piCopy)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveNewUser(userCopy)"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>
-
-    <button class="btn btn-default" ng-click="addUser(user)">Open me!</button>
-    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
 
 </span>
 
