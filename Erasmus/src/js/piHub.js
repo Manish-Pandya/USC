@@ -45,6 +45,13 @@ piHubMainController = function($scope, $location, convenienceMethods, $modal){
         	$scope.noPiSet = true;
         }
 
+        if($location.search().hasOwnProperty('inspection')){
+        	console.log('turthisa;lsdkjf');
+        	$scope.inspectionId = $location.search().inspection;
+        }
+
+        console.log($location.search());
+
         //always get a list of all PIs so that a user can change the PI in scope
         var url = '../../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
        	convenienceMethods.getData( url, onGetAllPIs, onFailGetAllPIs );
@@ -129,6 +136,27 @@ piHubMainController = function($scope, $location, convenienceMethods, $modal){
 	      //$log.info('Modal dismissed at: ' + new Date());
 	    });
 
+	}
+	$scope.showHazards = function(room){
+		console.log(room);
+		
+	  	var modalInstance = $modal.open({
+	      templateUrl: 'roomHazardsModal.html',
+	      controller: hazardDisplayModalInstanceController,
+	      resolve: {
+	        room: function () {
+	          return room;
+	        },
+
+	      }
+	    });
+
+	    modalInstance.result.then(function (hazards) {
+	    	console.log(hazards);
+	    }, function () {
+
+	      //$log.info('Modal dismissed at: ' + new Date());
+	    });
 	}
 
   };
@@ -309,7 +337,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods){
 
 }
 
-piHubDepartmentsController = function($scope, $location, convenienceMethods){
+piHubDepartmentsController = function($scope, $location, convenienceMethods,$modal){
 	init();
 	function init(){
 		$scope.doneLoadingDepartments = false;
@@ -374,4 +402,28 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods){
 	function onFailRemoveDepartment(){
 
 	}
+
+
+  }
+  
+  hazardDisplayModalInstanceController = function( $scope, $modalInstance, room, convenienceMethods ){
+  	
+  	$scope.room = room;
+
+  	var url = '../../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
+    convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
+
+    function onGetHazards(data){
+    	console.log('here');
+    	$scope.hazards = data;
+    }
+
+    function onFailGetHazards(){
+    	$scope.hazards = false;
+    	$scope.noHazards = "No hazards have been selected for this room."
+   	}
+
+   	$scope.close = function(){
+   		$modalInstance.close($scope.hazards);
+   	}
 }

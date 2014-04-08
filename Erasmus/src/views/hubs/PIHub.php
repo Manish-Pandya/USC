@@ -35,6 +35,7 @@ require_once '../top_view.php';
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>Manage Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Users</a>
 			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>
+			<a class="btn btn-large btn-danger" href="../../inspection/HazardAssesmentNew.php#?inspection={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
 		<!--	<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success"><i class="icon-phone"></i>Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Haz-->
 		</div>
 	</span>
