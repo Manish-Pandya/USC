@@ -33,7 +33,7 @@ class User extends GenericCrud{
 	);
 	
 	/** Relationships */
-	protected static $ROLES_RELATIONSHIP = array(
+	public static $ROLES_RELATIONSHIP = array(
 		"className"	=>	"Role",
 		"tableName"	=>	"user_role",
 		"keyName"	=>	"role_id",
