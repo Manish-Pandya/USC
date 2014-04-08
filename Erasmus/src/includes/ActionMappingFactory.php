@@ -41,6 +41,7 @@ class ActionMappingFactory {
 				"getUserById"=>new ActionMapping("getUserById", "", ""),
 				"saveUser"=>new ActionMapping("saveUser", "", "", array(), 201),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
+				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
 				
 				// PI Hub
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),

@@ -725,6 +725,44 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 };
 	
 
+function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$decodedObject = convertInputJson();
+
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to RelationshipDto');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+
+		$userID = $decodedObject->getMaster_id();
+		$roleId = $decodedObject->getRelation_id();
+		$add = $decodedObject->getAdd();
+
+		if( $userID !== NULL && $roleId !== NULL && $add !== null ){
+
+			// Get a DAO
+			$dao = getDao(new User());
+			// if add is true, add this department to this PI
+			if ($add){
+				$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+				// if add is false, remove this department from this PI
+			} else {
+				$dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+			}
+
+		} else {
+			//error
+			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+		}
+
+	}
+	return true;
+};
+
 //Get a room dto duple
 function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 	$id = getValueFromRequest('id', $id);
