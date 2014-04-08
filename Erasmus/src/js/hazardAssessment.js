@@ -2,7 +2,7 @@ var hazardAssesment = angular.module('hazardAssesment', ['ui.bootstrap','conveni
 
 controllers = {};
 
-controllers.footerController = function($scope, $timeout, $dialog, $filter,convenienceMethods){
+controllers.footerController = function($scope, $timeout, $filter,convenienceMethods){
   
   init();
 
@@ -38,7 +38,7 @@ controllers.footerController = function($scope, $timeout, $dialog, $filter,conve
 
 }
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $timeout, $location, $dialog, $filter, convenienceMethods,$window,$element) {
+controllers.hazardAssessmentController = function ($scope, $timeout, $location, $filter, convenienceMethods,$window,$element) {
  
   function camelCase(input) {
     return input.toLowerCase().replace(/ (.)/g, function(match, group1) {
@@ -53,6 +53,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   function init(){
 
     if($location.search().hasOwnProperty('inspection')){
+       $scope.getAll = true;
        //getPI if there is a "pi" index in the GET
        getPi($location.search().pi);
        $scope.needNewHazards = true;
@@ -90,8 +91,9 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   }
 
   function getPi(PIKeyID){
+    console.log(PIKeyID);
     $scope.PI = false;
-    var url = '../../ajaxaction.php?action=getPI&id='+PIKeyID+'&callback=JSON_CALLBACK';
+    var url = '../../ajaxaction.php?action=getPIById&id='+PIKeyID+'&callback=JSON_CALLBACK';
     convenienceMethods.getData( url, onGetPI, onFailGetPI );
     $scope.noPiSet = false;
   }
@@ -100,7 +102,9 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     $scope.PI = data;
     $scope.customSelected = $scope.PI.User.Name;
     $scope.doneLoading = data.doneLoading;
-  
+
+    if($scope.getAll)$scope.onSelectPi($scope.PI);
+
   }
 
   function onFailGetPI(){
@@ -135,6 +139,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
     $scope.needNewHazards = true;
     setInspection($item.Key_id,inspectors);
+
   }
 
   $scope.selectedBuildings = [];
@@ -237,6 +242,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
   //grab set user list data into the $scrope object
   function onGetHazards (data) {
+    console.log(data);
     if(!data.InspectionRooms)data.InspectionRooms = [];
     $scope.hazards = data.SubHazards;
   //  console.log(data);
@@ -283,20 +289,21 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
 
     hazard.calculatedOffset.w = w + 70;
   }
-
+/*
   function modalHazards(){
     $dialog.dialog({}).open('hazards-modal.html');  
   }
-
+*/
   //set a boolean flag to determine if rooms are shown beneath a hazard
 
   function getShowRooms(hazard){
     hazard.showRooms = false;
       angular.forEach(hazard.InspectionRooms, function(room, key){
-        if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
+        if(hazard.IsPresent && !hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
+          console.log(hazard.Name);
           hazard.showRooms = true;
         }else{
-          console.log(hazard.Name);
+         // console.log(hazard.Name);
           hazard.showRooms = false;
         }
       });
