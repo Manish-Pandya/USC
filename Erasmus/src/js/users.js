@@ -253,10 +253,18 @@ var UserListController = function($scope, $modal, $routeParams, $browser, $sniff
       $scope.returnedByModal = selectedItem;
       console.log($scope.returnedByModal);
 
-      convenienceMethods.setPropertiesFromDTO( $scope.returnedByModal[0], $scope.returnedByModal[1] );
-      if($scope.returnedByModal[1].Supervisor_id){
-        angular.forEach($scope.pis, function(pi, key){
-          if(pi.Key_id == $scope.returnedByModal[1].Supervisor_id)$scope.returnedByModal[1].Supervisor = angular.copy(pi);
+      if($scope.returnedByModal[1]){
+        convenienceMethods.setPropertiesFromDTO( $scope.returnedByModal[0], $scope.returnedByModal[1] );
+        if($scope.returnedByModal[1].Supervisor_id){
+          angular.forEach($scope.pis, function(pi, key){
+            if(pi.Key_id == $scope.returnedByModal[1].Supervisor_id)$scope.returnedByModal[1].Supervisor = angular.copy(pi);
+          });
+        }
+      }else{
+        angular.forEach($scope.returnedByModal[0].Roles, function(role, key){
+          var trimmedName = role.Name.replace(/\s/g, '');
+          scopeRole = [trimmedName+'s'];
+          if(!arrayContainsObject(scopeRole, role)){scopeRole.push(role)}
         });
       }
 
@@ -409,9 +417,14 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
       convenienceMethods.updateObject( piDTO, $item, onAddDepartment, onFailAddDepartment, '../../ajaxaction.php?action=savePIDepartmentRelation', null, $model  );
  
     }else{
-      if(!$scope.userCopy.Supervisor)$scope.userCopy.Supervisor = {}
-      if(!$scope.userCopy.Supervisor.Departments)$scope.userCopy.Supervisor.Departments = [];
-      $scope.userCopy.Supervisor.Departments.push($item);
+        if(!$scope.userCopy.isPI){
+        $scope.userCopy.Supervisor = {}
+        if(!$scope.userCopy.Supervisor.Departments)$scope.userCopy.Supervisor.Departments = [];
+        $scope.userCopy.Supervisor.Departments.push($item);
+        console.log($scope.userCopy);
+      }else{
+        
+      }
     }
   }
 
@@ -453,9 +466,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
   $scope.onSelectRole = function($item, $model, $label,id){
       if($model)$model.IsDirty = true;
 
-
       if($scope.userCopy.Key_id){
-
 
       userDTO = {
           Class: "RelationshipDto",
@@ -465,16 +476,14 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
       }
 
       console.log( userDTO );
-      
       convenienceMethods.updateObject( userDTO, $item, onAddRole, onFailAddRole, '../../ajaxaction.php?action=saveUserRoleRelation', null, $model  );
-     }else{
 
+     }else{
         if($model)$model.IsDirty = false;
         $scope.userCopy.Key_id = id;
         if(!$scope.userCopy.Roles)$scope.userCopy.Roles = [];
         $scope.userCopy.Roles.push($item);
         if(convenienceMethods.arrayContainsObject($scope.userCopy.Roles,$scope.roles[3]))$scope.userCopy.isPI = true;
-
      }
   }
 
@@ -517,8 +526,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
   $scope.saveNewUser = function(userCopy){
     console.log(userCopy);
     userCopy.IsDirty = true;
-    //$modalInstance.close($scope.items);
-    //save user
+    
     console.log(userCopy);
 
     convenienceMethods.updateObject( userCopy, userCopy, onCreateUser, onFailCreateUser, '../../ajaxaction.php?action=saveUser' );
@@ -538,11 +546,15 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
 
       var piDTO = {
         Class: "PrincipalInvestigator",
-        User_id: returnedData.Key_id
+        User_id: data.Key_id,
+        Is_active: true
       }
 
       convenienceMethods.updateObject( piDTO, userCopy.Departments, onSaveNewPI,onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
     }
+
+    $scope.items[0] = $scope.userCopy;
+    $modalInstance.close($scope.items);
 
   }
 
@@ -552,6 +564,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
     $scope.piCopy = angular.copy(piDTO);
     console.log($scope.piCopy);
     angular.forEach(depts, function(department, key){
+      console.log(dept);
       $scope.onSelectDepartment( department, $scope.selectedDepartment );
     });
   }
