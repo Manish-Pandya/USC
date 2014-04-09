@@ -15,97 +15,65 @@ require_once '../top_view.php';
 	</div>
 	<div class="whiteBg" style="margin-top:-30px;">
 		<span ng-controller="buildingHubController">
+
+
 			<div id="buildings">
-				<div class="building"  ng-class="{'selected': building.showChildren}" ng-repeat="building in buildings" ng-click="reveal(building)">
-					<h2>{{building.Name}}
-						<div class="buttons">
-							<a class="btn btn-success btn-large" ng-click="addRoomToBuilding(building)"><i class="icon-plus-2"></i>  Add Room</a>
-							<a class="btn btn-danger btn-large" ng-click="addRoomToBuilding(building)"><i class="icon-remove"></i>  Deactivate Room</a>
-						</div> 
-					</h2>
-					<span ng-show="building.showChildren">
-					 
-
-						<ul>
-							<li ng-repeat="room in building.rooms" class="room">
-								<span ng-hide="room.isNew">
-								<h2 class="">Room {{room.Name}}</h2>
-									<ul class="well ">
-										<li class="row">
-											<h3><span ng-hide="!room.PIs.length">Principal Investigators in room {{room.Name}}:</span><a ng-click="addPItoRoom(room)" class="btn btn-success btn-mini"><i class="icon-plus-2"></i>Add PI</a></h3>
-											<ul>
-												<li ng-show="!room.PIs.length">This room has no PIs</li>
-												<li ng-repeat="PI in room.PIs" class="span12 PI ">
-
-													<span ng-hide="PI.isNew">
-														<h3>{{PI.Name}}<a class="btn btn-info btn-mini" href="PIHub.php?pi={{PI.KeyId}}"><i class="icon-null">&#xe164;</i>Edit in PI Hub</a></h3>
-													</span>
-
-													<span ng-show="PI.isNew" class="span12">
-														<input style="margin-top:9px;" type="text" ng-model="customSelected" placeholder="Add a PI" typeahead="PI as PI.Name for PI in PIs | filter:{Name:$viewValue}">
-														<a class="btn btn-mini btn-success" ng-click="saveNewPI(room,customSelected)">Add  <i class="icon-plus-2"></i></a>
-														<a class="btn btn-mini btn-danger" ng-click="cancel(piDTO)">Cancel  <i class="icon-cancel-2"></i></a>
-													</span>
-													   
-
-													<ul class="span6 contacts">
-														<li><span ng-hide="!PI.SafteyContacts.length"><h4>{{PI.Name}}'s Safety Contacts</h4></span><a ng-click="addSafetyContacttoPI(PI)" class="btn btn-mini btn-success"><i class="icon-plus-2"></i>Add Safety Contact</a></li>
-														<span ng-show="PI.Name">
-															<li ng-show="!PI.SafteyContacts.length"><h4>{{PI.Name}} has no safety contacts.</h4></li>
-														</span>
-														<li ng-repeat="contact in PI.SafteyContacts">
-															<ul>
-																<li>{{contact.Name}}</li>
-																<li>{{contact.Phone}}</li>
-															</ul>
-														</li>
-													</ul>
-													<ul class="span5 hazards" >
-														<span ng-show="PI.Name">
-															<li ng-show="!PI.Hazards.length"><h4>{{PI.Name}} has no hazards in this room.</h4></li>
-														</span>
-														<span ng-hide="!PI.Hazards.length">
-															<li><h4>{{PI.Name}}'s Hazards in room {{room.Name}}:</h4></li>
-															<li ng-repeat="hazard in PI.Hazards"><h5>{{hazard.Name}}</h5></li>
-														</span>
-													</ul>
-													
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</span>
-								<span ng-show="room.isNew">
-									<ul class="well ">
-										<li class="row">
-											<input ng-model="room.Name"/>
-											<a class="btn btn-success btn-mini" ng-click="saveRoom(building)"><i class="icon-checkmark"></i>  Save Room</a>
-											<!--
-											<h3>Principal Investigators in room {{room.Name}}:</h3>
-											<ul>
-												<input ng-model="room.Name"/>
-												<li ng-repeat="PI in room.PIs" class="span12 PI "><h3>{{PI.Name}}<a class="btn btn-info btn-mini" href="PIHub.php?pi={{PI.KeyId}}"><i class="icon-asdfadsf">&#xe164;</i>Edit in PI Hub</a></h3>
-													<ul class="span6 contacts">
-														<li><h4>{{PI.Name}}'s Safety Contacts</h4></li>
-														<li ng-repeat="contact in PI.SafteyContacts">{{contact.Name}}</li>
-														<li ng-repeat="contact in PI.SafteyContacts">{{contact.Phone}}</li>
-													</ul>
-													<ul class="span5 hazards">
-														<li><h4>{{PI.Name}}'s Hazards in room {{room.Name}}:</h4></li>
-														<li ng-repeat="hazard in room.Hazards"><h5>{{hazard.Name}}</h5></li>
-													</ul>
-												</li>
-											</ul>
-										-->
-										</li>
-									</ul>
-								</span>
-							</li>
-						</ul>
-					</span>
+				<div class="row" style="margin-left:0">
+					<input style="" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
+					<input ng-if="building" style="" type="text" typeahead-on-select='onSelectRoom($item, $model, $label)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="rooms as room.Name for room in building.Rooms | filter:$viewValue2">
 				</div>
-			</div>
+				<a class="btn btn-mini btn btn-info" ng-click="showCreateBuilding()">Create or Edit Building<i class="icon-pencil"></i></a>
+				<div id="buildingAdmin" ng-hide="!showAdmin">
+					<input ng-model="newBuilding.Name" type="text">
+					<a class="btn btn-mini btn-success" style="margin:-8px -5px 0 0;" ng-click="createBuilding()"><i class="icon-checkmark"></i>Create Building</a>
+					<a class="btn btn-mini btn-primary" ng-click="createBuilding(true)" style="margin:-8px 0 0 5px;"><i class="icon-checkmark"></i>Update Building</a><br>
 
-		</span>
-	</div>
+
+					<input ng-show="building" ng-model="newRoom" style="" placeholder="Create a new room" type="text">
+					
+					<input ng-if="!building" disabled="disabled"><br>
+					<textarea ng-model="safety_contact_information" row="5" cols="10">{{safety_contact_information}}</textarea><br>
+					<a ng-if="building" class="btn btn-mini btn-success" style="-3px 1px 15px 0" ng-click="createRoom()"><i class="icon-checkmark"></i>Save</a>
+					
+					<h3 ng-if="building">Rooms in {{building.Name}}</h3>
+					<p ng-if="!building.Rooms.length && building">{{building.Name}} doesn't have any rooms yet.</p>
+					<ul ng-if="building.Rooms.length">
+						<li ng-repeat="room in building.Rooms">{{room.Name}}</li>
+					</ul>
+				</div>
+
+				<div class="roomDisplay" ng-if="room">
+					<h2>EMERGENCY INFORMATION for {{building.Name}}, room {{room.Name}}</h2>
+					<ul>
+						<li ng-repeat="pi in room.PrincipalInvestigators">
+							<h3>Principal Investigator: {{pi.User.Name}}   {{pi.User.Emergency_phone}}</h3>
+							<ul>
+								<li ng-repeat="contact in pi.LabPersonnel">{{contact.Name}} <span ng-if="contact.hazardType">({{contact.hazardType}})</span> {{contact.Emergency_phone}}</li>
+							</ul>
+						</li>
+					</ul>
+
+					<h3 ng-show="bioHazards">Biological Hazards</h3>
+					<p ng-if="bioHazards && !bioHazards.length">There are no biohazards in the system for this room.</p>
+					<ul ng-show="bioHazards.length">
+						<li ng-repeat="hazard in bioHazards"style="color:#c00000;">{{hazard.Name}}</li>
+					</ul>
+
+					<h3 ng-show="chemicalHazards">Chemical Hazards</h3>
+					<p ng-if="chemicalHazards && !chemicalHazards.length">There are no chemical hazards in the system for this room.</p>
+					<ul ng-show="chemicalHazards.length">
+						<li ng-repeat="hazard in chemicalHazards" style="color:#7030a0;">{{hazard.Name}}</li>
+					</ul>
+
+					<h3 ng-show="radHazards.length">Radiation Hazards</h3>
+					<p ng-if="chemicalHazards && !chemicalHazards.length">There are no radiation hazards in the system for this room.</p>
+					<ul ng-show="radHazards.length">
+						<li ng-repeat="hazard in radHazards" style="color:#0070c0;">{{hazard.Name}}</li>
+					</ul>
+
+
+
+					<div class="well">{{room.Safety_contact_information}}</div>
+					
+	</div>		
 </span>

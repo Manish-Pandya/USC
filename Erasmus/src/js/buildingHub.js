@@ -11,15 +11,92 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
   //we do it this way so that we know we get data before we set the $scope object
   //
   function init(){
-	  convenienceMethods.getData('buildingMock.php?&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
-	  console.log('init called');
+    //get a building list
+	  convenienceMethods.getData('../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
   };
+
   //grab set user list data into the $scrope object
   function onGetBuildings(data) {
-	  $scope.buildings = data;
+    console.log(data);
+	  $scope.Buildings = data;
   }
   function onFailGet(){
     alert('Something went wrong when we tried to build the list of buildings.');
+  }
+
+  $scope.onSelectBuilding = function(building, $model, $label){
+    $scope.building = building;
+  }
+
+  $scope.onSelectRoom = function(room, $model, $label){
+    $scope.room = room;
+
+
+    var url = '../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
+    convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
+
+  }
+
+  function onGetHazards(data){
+
+    $scope.bioHazards = [];
+    $scope.chemicalHazards = [];
+    $scope.radHazards = []
+
+    angular.forEach(data, function(hazard, key){
+      console.log(hazard.ParentIds)
+      if(hazard.ParentIds.indexOf("1") > -1){
+        console.log(hazard)
+        $scope.bioHazards.push(hazard);
+      }
+    });
+  }
+
+  function onFailGetHazards(){
+
+  }
+
+  function getBuilding(id){
+    convenienceMethods.getData('../../ajaxaction.php?action=getBuildingById&id='+id+'&callback=JSON_CALLBACK',onGetBuilding,onFailGet);
+  }
+
+  function onGetBuilding(data){
+    console.log(data);
+  }
+
+  $scope.showCreateBuilding = function(){
+
+    $scope.showAdmin = !$scope.showAdmin;
+
+    if($scope.building)$scope.newBuilding = $scope.building;
+
+  }
+
+  $scope.createBuilding = function(update){
+
+    buildingDto = {
+      Class: "Building",
+      Name: $scope.newBuilding.Name,
+      Is_active: 1
+    }
+
+    if($scope.building){
+      building = $scope.building;
+    }
+
+    if(update)buildingDto.Key_id = $scope.building.Key_id;
+
+    var url = '../../ajaxaction.php?action=saveBuilding';
+    convenienceMethods.updateObject(  buildingDto, building, onSaveBuilding, onFailSaveBuilding, url  );
+  }
+
+  function onSaveBuilding(data){
+    $scope.building = {};
+    $scope.building = angular.copy(data);
+  }
+
+  function onFailSaveBuilding(){
+    alert("There was an error when the system tried to save the building.");
   }
 
   $scope.reveal = function(building){
@@ -29,34 +106,42 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
     building.showChildren = true;
   }
 
-  $scope.createBuilding = function(){
-    //add a new building to the system
-  }
-
-  $scope.editBuilding = function(building){
-
-  }
-
   $scope.deactivateBuilding = function(building){
 
   }
 
-  $scope.addRoomToBuilding = function(building){
+  $scope.createRoom = function(building){
 
-    $scope.roomDTO = {
-      name: '',
+
+    roomDTO = {
+      Name: $scope.newRoom,
       KeyId: null,
       PIs:[],
       isNew: true,
-      Class: "Room"
+      Class: "Room",
+      Building_id: $scope.building.Key_id,
+      Safety_contact_information : $scope.safety_contact_information
     };
 
-    building.rooms.unshift($scope.roomDTO);
+    var url = '../../ajaxaction.php?action=saveRoom';
+    convenienceMethods.updateObject(  roomDTO, $scope.building, onSaveRoom, onFailSaveRoom, url  );
+  }
+
+  function onSaveRoom(data){
+    $scope.building.Rooms.push(data);
+  }
+
+  function onFailSaveRoom(){
+    alert('Something went wrong when the system tried to save the room.')
   }
 
   $scope.saveRoom = function( building ){
     var url = '../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK';
     convenienceMethods.updateObject(  $scope.roomDTO, building, onAddRoom, onFailAddRoom, url  );
+
+
+
+
   }
 
   onAddRoom = function( objDTO, building ){
@@ -110,8 +195,6 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
   $scope.removePIfromRoom = function(pi, room){
 
   }
-
-  $scope.PIs = [{"Name":"John Investigator 1","flag":"5/5c/Flag_of_Alabama.svg/45px-Flag_of_Alabama.svg.png"},{"Name":"John Investigator2","flag":"e/e6/Flag_of_Alaska.svg/43px-Flag_of_Alaska.svg.png"},{"Name":"John Investigator3","flag":"9/9d/Flag_of_Arizona.svg/45px-Flag_of_Arizona.svg.png"}];
 
 
 
