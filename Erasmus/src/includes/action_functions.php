@@ -1089,6 +1089,11 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
 	
 	$roomId = getValueFromRequest('roomId', $roomId);
+	$subHazCheck = getValueFromRequest('subHazards', $subHazCheck);
+	
+	if ($subHazCheck == "false"){
+		$subHazards = false;
+	}
 		
 	if( $roomId !== NULL ){
 		$roomId = $roomId;
