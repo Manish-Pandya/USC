@@ -1111,7 +1111,8 @@ function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
 
 			foreach ($hazards as &$hazard){
 				$hazard->setEntityMaps($entityMaps);
-				$hazard->setParentIds();
+				$parentIds = array();
+				$hazard->setParentIds($parentIds);
 			}
 				
 		}
