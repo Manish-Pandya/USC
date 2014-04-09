@@ -1104,11 +1104,12 @@ function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
 		// if subhazards is false, change all hazard subentities to lazy loading
 		if (!subHazards){
 			$entityMaps = array();
-			$entityMaps[] = new EntityMap("lazy","getSubhazards");
+			$entityMaps[] = new EntityMap("lazy","getSubHazards");
 			$entityMaps[] = new EntityMap("lazy","getChecklist");
 			$entityMaps[] = new EntityMap("lazy","getRooms");
 			$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-
+			$entityMaps[] = new EntityMap("eager","getParentIds");
+				
 			foreach ($hazards as &$hazard){
 				$hazard->setEntityMaps($entityMaps);
 				$parentIds = array();

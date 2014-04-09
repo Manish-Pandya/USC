@@ -79,7 +79,7 @@ class Hazard extends GenericCrud {
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getSubhazards");
+		$entityMaps[] = new EntityMap("eager","getSubHazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
