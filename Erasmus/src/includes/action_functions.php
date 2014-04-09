@@ -1086,17 +1086,15 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 
 }
 
-function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
+function getHazardsInRoom( $roomId = NULL, $subHazards ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$roomId = getValueFromRequest('roomId', $roomId);
-	$subHazCheck = getValueFromRequest('subHazards', $subHazCheck);
+	$subHazards = getValueFromRequest('subHazards', $subHazards);
+	$LOG->debug("subHazards is $subHazards, roomId is $roomId");
 	
-	if ($subHazCheck == "false"){
-		$subHazards = false;
-	}
 		
 	if( $roomId !== NULL ){
-		$roomId = $roomId;
 		
 		$dao = getDao(new Room());
 		
@@ -1107,7 +1105,7 @@ function getHazardsInRoom( $roomId = NULL, $subHazards = true ){
 		$hazards = $room->getHazards();
 		
 		// if subhazards is false, change all hazard subentities to lazy loading
-		if (!subHazards){
+		if ($subHazards == "false"){
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("lazy","getSubHazards");
 			$entityMaps[] = new EntityMap("lazy","getChecklist");
