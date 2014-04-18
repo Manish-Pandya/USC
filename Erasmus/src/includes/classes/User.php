@@ -20,9 +20,11 @@ class User extends GenericCrud{
 		"username"	=> "text",
 		"name"		=> "text",
 		"email"		=> "text", 
-		"phone"      => "text",
+		"lab_phone"      => "text",
+		"office_phone"	=>  "text",
 		"supervisor_id"		=> "integer",
 		"emergency_phone" => "text",
+		"primary_department_id" => "integer",
 							
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -53,8 +55,7 @@ class User extends GenericCrud{
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"user_id"
 	);
-	
-	
+		
 	// Access information
 	
 	/** Array of roles */
@@ -80,6 +81,15 @@ class User extends GenericCrud{
 	
 	/** Email address of this User */
 	private $email;
+	
+	/** lab, emergency and office phone numbers of this user, if this user has any or all of them **/
+	private $lab_phone;
+	private $emergency_phone;
+	private $office_phone;
+	
+	/** this user's primary department.  Lab Contacts have a single department **/
+	private $primary_department_id;
+	private $primary_department;
 	
 	// Constructor(s)
 	public function __construct(){
@@ -157,11 +167,28 @@ class User extends GenericCrud{
 	
 	public function getEmail(){ return $this->email; }
 	public function setEmail($email){ $this->email = $email; }
-	
-	public function getPhone(){ return $this->phone; }
-	public function setPhone($phone){ $this->phone = $phone; }
-	
+		
 	public function getEmergency_phone(){ return $this->emergency_phone; }
 	public function setEmergency_phone($Emergency_phone){ $this->emergency_phone = $Emergency_phone; }
+
+	public function getLab_phone(){ return $this->lab_phone;}
+	public function setLab_phone($lab_phone){ $this->lab_phone = $lab_phone;}
+
+	public function getOffice_phone(){ return $this->office_phone; }
+	public function setOffice_phone($office_phone){ $this->office_phone = $office_phone;}
+	
+	public function getPrimary_department_id(){ return $this->primary_department_id;}
+	public function setPrimary_department_id($primary_department_id){ $this->primary_department_id = $primary_department_id; }
+	
+	public function getPrimary_department() {
+		if($this->primary_department === NULL && $this->hasPrimaryKeyValue()) {
+			$deptartmentDAO = new GenericDAO(new Department());
+			$this->primary_department = $deptartmentDAO->getById($this->primary_department_id);
+		}
+		return $this->primary_department;
+	}
+	public function setPrimary_department($primary_department) {
+		$this->supervisor = $primary_department;
+	}
 }
 ?>
