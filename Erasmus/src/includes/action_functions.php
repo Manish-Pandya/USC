@@ -1551,4 +1551,65 @@ function getResponsesForInspection( $inspectionId = NULL){
 		return new ActionError("No request parameter 'inspectionId' was provided");
 	}
 };
+
+function login2($username,$password) {
+	//Get responses for Inspection
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+
+	$username = getValueFromRequest('username', $username);
+	$password = getValueFromRequest('password', $password);
+	
+	
+	
+	$ldap = new LDAP();
+
+	// if successfully authenticates by LDAP:
+	if ($ldap->IsAuthenticated($username,$password)) {
+
+		// Make sure they're an Erasmus user by username lookup
+		$dao = getDao(new User());
+		
+		$user = $dao->getById(1);
+		
+		if ($user != null) {
+			// put the USER and ROLE into session
+			$_SESSION['USER'] = $user;
+			$_SESSION['ROLE'] = $user->getRole();
+			// return true to indicate success
+			return true;
+		} else {
+			// successful LDAP login, but not an authorized Erasmus user, return false
+			return false;
+		}
+	}
+
+	// otherwise, return false to indicate failure
+	return false;
+}
+
+function lookupUser($username = NULL) {
+	//Get responses for Inspection
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$username = getValueFromRequest('username', $username);
+
+	$ldap = new LDAP();
+	$user = new User();
+
+	$fieldsToFind = array("cn","sn","givenName","mail");
+
+	if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
+		$user->setName($ldapData["givenName"] . " " . $ldapData["sn"]);
+		$user->setEmail($ldapData["mail"]);
+		$user->setUsername($ldapData["cn"]);
+	} else {
+		return false;
+	}
+		
+	return $user;
+}
+
+
+
 ?>
