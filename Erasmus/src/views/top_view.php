@@ -1,13 +1,17 @@
-<?php 
-
-
+<?php
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 	require_once('../Application.php');
 }else{
 	require_once('../../Application.php');
 }
 
+echo '<script type="text/javascript">
+var isProductionServer;';
+if(!$_SERVER['HTTP_HOST'] == 'erasmus.graysail.com'){
+  echo 'isProductionServer = true;';
+}
 ?>
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,48 +58,13 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 <!--<script type="text/javascript" src="<?php echo WEB_ROOT?>js/wrapperApp.js"></script>-->
 
 
-<!-- user activation placeholder jQuery script for changing view state of row in users table -->
-
-<script type="text/javascript"> 
-
-$(document).ready(function(){  
-
-	$(document.body).on("click", ".activateRow", function(){
-	     $(this).text('Deactivate').addClass('deactivateRow btn-danger').removeClass('activateRow btn-success');
-	     $(this).parent().parent().removeClass('error');
-	 });
-	
-	$(document.body).on("click", ".deactivateRow", function(){
-	    $(this).text('Activate').removeClass('deactivateRow btn-danger').addClass('activateRow btn-success');
-	    $(this).parent().parent().addClass('error');
-	    console.log($(this).parent().parent());
- 	});
-/*
-	$(document.body).on("click", ".modalUl", function(){
-		console.log($(this).offset());
-		var topOffset = $(this).offset().top;
-		console.log(topOffset);
-		var child = $(this).find("ul.modalUl");
-		child.offset({ top: topOffset });
-		$(this).offset({ top: topOffset });
-		$(this).find('li:first-child').offset({ top: topOffset }).css( "position", "absolute" );
-		
-	})
-*/
-/*
-	$(window).resize(function() {
-		console.log($(window).width());
-    });
-*/
- })
-</script>
 <script>
-	$(function() {
-		$( ".sortable" ).sortable({
-			placeholder: "ui-state-highlight"
-		});
-		$( ".sortable" ).disableSelection();
-	});
+  $(function() {
+    $( ".sortable" ).sortable({
+      placeholder: "ui-state-highlight"
+    });
+    $( ".sortable" ).disableSelection();
+  });
 </script>
 </head>
 <body>
