@@ -36,7 +36,6 @@ require_once '../top_view.php';
     <h2 ng-show="noChecklist">No checklist has been created for the hazard {{hazard.Name}} yet.</h2>
     <form ng-show="edit">
     	<input ng-model="checklistCopy.Name" class="span6" placeholder="Enter a name for this checklist."/>
-      {{checklistCopy}}
     	<a class="btn btn-success btn-mini" ng-click="saveChecklist(checklistCopy, checklist)"><i class="icon-checkmark"></i>Save Checklist</a>
     	<a class="btn btn-danger btn-mini" ng-show="!noChecklist" ng-click="edit = false"><i class="icon-cancel"></i>Cancel</a>
     	<img ng-show="checklistCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>

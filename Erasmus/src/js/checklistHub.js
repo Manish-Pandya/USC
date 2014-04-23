@@ -71,6 +71,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 	function onSaveChecklist(dto, checklist){
 		if(!$scope.checklist)$scope.checklist = {};
 	 	$scope.checklist.Name = $scope.checklistCopy.Name;
+	 	$scope.checklist.Key_id = dto.Key_id;
         $scope.checklistCopy = false;
         $scope.edit = false;
         $scope.checklist.IsDirty = false;
