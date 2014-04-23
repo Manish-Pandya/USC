@@ -1,0 +1,63 @@
+<table class="userList table table-striped table-hover piTable">
+	<thead>
+		<tr class="greenBg">
+			<th colspan="7" class="greenBg">
+				<h1 class="greenBg">Lab Contacts</h1>
+			</th>
+		</tr>
+		<tr>
+			<th>Edit User</th>
+			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
+			<th>
+				<a ng-click="order = 'Name'; Name.reverse=!Name.reverse">Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
+				<input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
+			</th>
+			<th>
+				<a ng-click="order = 'Roles[0]'; Roles[0].reverse=!Roles[0].reverse">Position<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
+				<input class="span2" ng-model="selectedRole.Name" placeholder="Filter by Position"/>
+			</th>
+			<th>Office Phone</th>
+			<th>Email</th>
+			<th>Emergency Phone</th>
+			<!--<th>Roles</th>-->
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="contact in Admins | orderBy:order:reverse | filter:searchText | filter:selectedRole | filter:selectedDepartment">
+			<td style="width:12%;">
+				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
+				<a ng-show="contact.edit" class="edit btn btn btn-info" ng-click="saveUser(userCopy, contact)">Save</a>
+				<a ng-show="contact.edit" class="edit btn btn btn-danger" ng-click="cancelSave(userCopy, contact)">Cancel</a>
+			<!--</td>
+
+			<td ng-hide="user.edit">-->
+
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
+				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
+				
+			</td>
+
+			<td style="width:14%;">
+				<img ng-show="contact.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:-25px; margin-top:15px;"/>
+				{{contact.Name}}
+			</td>
+
+			<td style="width:14%;">
+			 	{{contact.Roles[0].Name}}
+			</td>
+
+			<td style="width:12%;">
+				{{contact.Lab_phone}}
+			</td>
+
+			<td style="width:12%;">
+				{{contact.Email}}
+			</td>
+
+			<td style="width:12%;">
+				{{contact.Emergency_phone}}
+			</td>
+
+		</tr>
+	</tbody>
+</table>
