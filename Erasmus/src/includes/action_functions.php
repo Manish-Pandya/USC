@@ -758,17 +758,14 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 		$add = $decodedObject->getAdd();
 
 		if( $userID !== NULL && $roleId !== NULL && $add !== null ){
-			
 			$user = getUserById($userID);
 			$roles = $user->getRoles();
 			$roleToAdd = getRoleById($roleId);
-				
-			if(in_array($roleToAdd, $roles)) $add = false;
-				
+								
 			// Get a DAO
 			$dao = getDao(new User());
 			// if add is true, add this department to this PI
-			if ($add){
+			if ($add && in_array($roleToAdd, $roles)){
 				$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 				// if add is false, remove this department from this PI
 			} else {
@@ -777,7 +774,7 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 			// Get a DAO
 			$dao = getDao(new User());
 			// if add is true, add this department to this PI
-			if ($add){
+			if ($add && in_array($roleToAdd, $roles)){
 				$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 				// if add is false, remove this department from this PI
 			} else {
