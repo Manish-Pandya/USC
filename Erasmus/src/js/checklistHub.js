@@ -6,6 +6,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 		if($location.search().id){
 			getChecklistById($location.search().id);
 		}
+		$scope.checklistCopy = {};
 	}
 
 	init();
@@ -35,6 +36,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 			$scope.edit = true;
 		}else{
 			$scope.checklist = data;
+			$scope.checklistCopy = angular.copy($scope.checklist);
 		}
 		$scope.doneLoading = true;
 	}
@@ -43,6 +45,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 		console.log('here');
 	}
 	function onGetHazard(data){
+		console.log(data);
 		$scope.hazard = data;
 		if($scope.checklist)$scope.doneLoading = true;
 	}
@@ -61,16 +64,16 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 
 	$scope.saveChecklist = function(dto, checklist){
 		$scope.checklistCopy.IsDirty = true;
-
 		var url = '../../ajaxaction.php?action=saveChecklist';		
 		convenienceMethods.updateObject( $scope.checklistCopy, checklist, onSaveChecklist, onFailSaveChecklist, url );
 	}
 
 	function onSaveChecklist(dto, checklist){
-	 	checklist.Name = $scope.checklistCopy.Name;
+		if(!$scope.checklist)$scope.checklist = {};
+	 	$scope.checklist.Name = $scope.checklistCopy.Name;
         $scope.checklistCopy = false;
         $scope.edit = false;
-        checklist.IsDirty = false;
+        $scope.checklist.IsDirty = false;
 	}
 
 	function onFailSaveChecklist(){
@@ -108,7 +111,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 	        		$scope.checklistCopy = angular.copy($scope.checklist)
 	        	}else{
 	        		$scope.checklistCopy = {
-	        			Name: $scope.checklist.Name,
+	        			Name: $scope.hazard.Name,
 	        			Hazard_id: $scope.hazard.Key_id,
 	        			Class: "Checklist"
 	        		}

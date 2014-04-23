@@ -4,18 +4,20 @@ require_once '../top_view.php';
 <script src="../../js/questionHub.js"></script>
 <div class="navbar">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-		<li class="span3">
+		<li class="">
 			<img src="../../img/question-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 85px;">Question Hub</h2>	
+			<h2  style="padding: 11px 0 5px 85px;">Question Hub
+				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+			</h2>	
 		</li>
 	</ul>
 </div>
 <div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController"><br>
-	<h3><span ng-show="noQuestion">Add a new question to</span> <span ng-show="question">Editing a question in </span>the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php?id={{checklist.Hazard_id}}">View Checklist</a></h3>
+	<h3><span ng-show="noQuestion">Add a new question to</span> <span ng-show="question">Editing a question in </span>the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></h3>
 	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
 	<form ng-if="question.beingEdited || noQuestion" class="form" style="margin-top:10px;">
 		<input type="text" class="span9" ng-model="questionCopy.Text" placeholder="Question text"/>
-		<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(question)" class="btn btn-success btn-mini"><i class="icon-checkmark"></i>Save</a>
+		<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(questionCopy)" class="btn btn-success btn-mini"><i class="icon-checkmark"></i>Save</a>
 		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger btn-mini" ng-click="cancelEdit()"><i class="icon-cancel"></i>Cancel</a>
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>

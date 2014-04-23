@@ -158,11 +158,10 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 
 	function onSaveQuestion(dto, question){
 	     //temporarily use our question copy client side to bandaid server side bug that causes subquestions to be returned as indexed instead of associative
-        convenienceMethods.setPropertiesFromDTO( $scope.questionCopy, $scope.question );
+        $scope.question = angular.copy($scope.questionCopy);
         $scope.question.isBeingEdited = false;
         $scope.question.IsDirty = false;
         $scope.questionCopy.IsDirty = false;
-        question.Invalid = false;
         $scope.noQuestion = false;
 	}
 
@@ -176,6 +175,7 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	}
 	$scope.saveEditedQuestion = function(question){
 		$scope.questionCopy.IsDirty = true;
+		$scope.questionCopy.Is_active = true;
 		var url = '../../ajaxaction.php?action=saveQuestion';
         convenienceMethods.updateObject( $scope.questionCopy, question, onSaveQuestion, onFailSaveQuestion, url );
 	}
