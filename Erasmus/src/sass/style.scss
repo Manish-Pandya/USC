@@ -5,7 +5,7 @@
 $orange:                      #c00;
 $blue:                        #49afcd;
 $slightlyDarkerBlue:          #2f96b4;
-$darkBlue:                        #24748c;
+$darkBlue:                    #24748c;
 $purple:                      #781096;
 $green:                       #51a351;
 $grey:                        #ccc;
@@ -17,9 +17,9 @@ $grey:                        #ccc;
   color:white;
 }
 .greenBg{
-  background-color:  $green;
-  border-color: $green;
-  color:white;
+  background-color:  $green !important;
+  border-color: $green !important;
+  color:white !important;
 }
 .greyBg{
   background-color:$grey;
@@ -203,21 +203,73 @@ div.rsmsCenterIconContainer a p {
     width:100% !important;
   }
 }
+
+/*******************************************************
+* Emergency Info HUB STYLES
+*******************************************************/
+
+#emergency-info{
+  .dropdown-menu{
+    li{
+      text-align: left;
+    }
+  }
+  > div{    
+    margin:inherit auto !important;
+
+     text-align:center;
+      ul.allHazardList{
+        li{
+                  text-align: left;
+
+        }
+      }
+     li.lefterizer{
+        span{
+          font-size: 15px;
+          font-weight:bold;
+          text-align: left;
+          li{
+            width: 400px;
+            padding-left: 8px;
+            font-weight: bold;
+          }
+      }
+    }
+  }
+  #biologicalMaterials{
+    color:red;
+    ul{
+      li{
+        color:red;
+      }
+    }
+  }
+}
+
 /*******************************************************
 *	USER HUB STYLES
 *******************************************************/
 /* line 145, ../sass/style.scss */
 .userList{
   background:white;
+  th{
+    h1{
+      display: inline-block;
+    }
+  }
 }
 .userList tr {
   border: none;
+  th{
+    font-size:18px;
+  }
 }
 /* line 147, ../sass/style.scss */
 .userList tr td {
   width: 1%;
   transition: all .3s;
-
+  font-size:16px;
 }
 /* line 150, ../sass/style.scss */
 .userList tr td ul {
@@ -286,6 +338,17 @@ tr.notedit, tr.notedit td {
   background: none !important;
 }
 
+.modal-content{
+  .form-horizontal{
+    .control-label{
+      width:124px;
+    }
+    .controls{
+      margin-left:130px;
+    }
+  }
+  
+} 
 /*******************************************************
 *	HAZARD HUB STYLES
 *******************************************************/
@@ -787,6 +850,9 @@ div.question, li.question {
   color: white !important;
   padding: 2px 0 2px 0;
   width: 100%;
+  li:first-child{
+    width:100%;
+  }
 }
 /* line 440, ../sass/style.scss */
 .pageMenu a {

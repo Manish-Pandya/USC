@@ -1465,7 +1465,7 @@ FlipView control.
       border: 0;
    }
    .modal-body {
-      max-height: 300px;
+      max-height:600px;
    }
    .modal-footer {
       background-color: transparent;
@@ -1478,7 +1478,7 @@ FlipView control.
               box-shadow: none;
    }
 .modal.message.fade.in {
-   top: 20%;
+   top: 10%;
 }
 
 .modal.warning {
