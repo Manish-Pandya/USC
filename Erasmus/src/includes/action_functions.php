@@ -764,10 +764,13 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 				
 			// Get a DAO
 			$dao = getDao(new User());
-			// if add is true, add this department to this PI
-			if ($add && !in_array($roleToAdd, $roles)){
-				$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
-				// if add is false, remove this department from this PI
+			// if add is true, add this role to this PI
+			if ($add){
+				if(!in_array($roleToAdd, $roles)){
+					// only add the role if the user doesn't already have it
+					$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));	
+				}
+				// if add is false, remove this role from this PI
 			} else {
 				$dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 			}
