@@ -18,6 +18,7 @@ class Inspection extends GenericCrud {
 		//rooms are a relationship
 		"date_started"	=> "timestamp",
 		"date_closed"	=> "timestamp",
+		"notification_date"	=> "timestamp",
 				
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -74,6 +75,9 @@ class Inspection extends GenericCrud {
 	
 	/** Date and time this Inspection was completed */
 	private $date_closed;
+	
+	/** Date and time the inspection was finalized and the report provided to lab personnel */
+	private $notification_date;
 	
 	public function __construct(){
 
@@ -144,5 +148,8 @@ class Inspection extends GenericCrud {
 	
 	public function getDate_closed(){ return $this->date_closed; }
 	public function setDate_closed($date_closed){ $this->date_closed = $date_closed; }
+	
+	public function getNotification_date() { return $this->notification_date;}
+	public function setNotification_date($notification_date) {$this->notification_date = $notification_date;}
 }
 ?>

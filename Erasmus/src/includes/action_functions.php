@@ -1668,6 +1668,8 @@ function sendInspectionEmail(){
 		// Send the email
 		mail(implode($recipientEmails,","),"EHS Laboratory Safety Inspection Notice",$text . $footerText,"Cc: ". implode($inspectorEmails,","));
 
+		$inspection->setNotificationDate(date("Y-m-d H:i:s"));
+		$dao->save($inspection);
 		return $true;
 	}
 	
