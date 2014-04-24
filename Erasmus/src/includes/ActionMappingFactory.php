@@ -120,6 +120,7 @@ class ActionMappingFactory {
 				
 				// Inspection, step 5 (Details, Full Report)
 				"getResponsesForInspection"=>new ActionMapping("getResponsesForInspection", "", ""),
+				"sendInspectionEmail"=>new ActionMapping("sendInspectionEmail", "", ""),
 				
 				"getInspectionById"=>new ActionMapping("getInspectionById", "", ""),
 				"getResponseById"=>new ActionMapping("getResponseById", "", ""),

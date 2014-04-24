@@ -1628,6 +1628,53 @@ function lookupUser($username = NULL) {
 	return $user;
 }
 
+function sendInspectionEmail(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to EmailDto');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		// Get this inspection
+		$dao = getDao(new Inspection());
+		$inspection = $dao->getById($decodedObject->getEntity_id());
+		
+		// Init an array of recipient Email addresses and another of inspector email addresses
+		$recipientEmails = array();
+		$inspectorEmails = array();
+		
+		// We'll need a user Dao to get Users and find their email addresses
+		$userDao = getDao(new User());
+		
+		// Iterate the recipients list and add their email addresses to our array
+		foreach ($decodedObject->getRecipient_ids() as $id){
+			$user = $userDao->getById($id);
+			$recipientEmails[] = $user->getEmail();
+		}
+		
+		// Iterate the inspectors and add their email addresses to our array
+		foreach ($inspection->getInspectors() as $inspector){
+			$user = $inspector->getUser();
+			$inspectorEmails[] = $user->getEmail();
+		}
+		
+		$footerText = "\n\n Access the results of this inspection, and document any 
+				corrective actions taken, by logging into the RSMS portal located
+				at http://radon.qa.sc.edu/rsms with your university is and password.";
+		// Send the email
+		mail(implode($recipientEmails,","),"EHS Laboratory Safety Inspection Notice",$text . $footerText,"Cc: ". implode($inspectorEmails,","));
+
+		return $true;
+	}
+	
+
+
+
+
+}
 
 ?>
