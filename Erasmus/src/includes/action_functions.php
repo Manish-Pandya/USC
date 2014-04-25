@@ -625,6 +625,22 @@ function savePI(){
 	}
 };
 
+function saveInspector(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Observation');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Inspection());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+};
+
 function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
