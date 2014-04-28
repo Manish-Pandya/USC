@@ -263,9 +263,19 @@ class JsonManager {
 
 				//use function name to infer the associated key
 				$key = str_replace('get', '', $func);
+				if ($key == "Is_active") {
+					if ($value == 0) {
+						$value = false;
+					} elseif ($value == 1){
+						$value = true;
+					} else {
+						$value = null;
+					}
+				}
 	
 				//Associate key with value
 				$objectVars[$key] = $value;
+				
 			}
 		}
 		
