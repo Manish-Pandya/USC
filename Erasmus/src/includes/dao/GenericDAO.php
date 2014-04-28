@@ -215,15 +215,14 @@ class GenericDAO {
 			$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
 			$object = $this->getById( $object->getKey_Id() );
 		
-			// return the updated object
-			return $object;
-		
 		// Otherwise, the statement failed to execute, so return false.	
 		} else {
-			return false;
+			$object = false;
 		}
 		
-
+		// return the updated object
+		return $object;
+		
 	}
 	
 	/**
