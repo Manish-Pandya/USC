@@ -733,14 +733,21 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		$PIId = $decodedObject->getMaster_id();
 		$deptId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-	
+		
+		$pi = getPIById($PIId);
+		$departments = $pi->getDepartments();
+		$departmentToAdd = getDepartmentById($deptId);
+		
 		if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
 	
 			// Get a DAO
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this department to this PI
 			if ($add){
-				$dao->addRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+				if(!in_array($departmentToAdd, $departments)){
+					// only add the department if the pi doesn't already have it
+					$dao->addRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+				}
 			// if add is false, remove this department from this PI
 			} else {
 				$dao->removeRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
