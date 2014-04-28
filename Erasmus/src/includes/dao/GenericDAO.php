@@ -192,7 +192,7 @@ class GenericDAO {
 
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
-			$stmt->execute();
+			$success = $stmt->execute();
 		// Otherwise, issue an INSERT
 		} else {
 	    	$_SESSION["DEBUG"] = "Calling db insert...";
@@ -200,7 +200,7 @@ class GenericDAO {
 
 			$stmt = $this->createInsertStatement($db,$object);
 		   	$stmt = $this->bindColumns($stmt,$object);
-			$stmt->execute();
+			$success = $stmt->execute();
 
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
 			$object->setKey_id($db->lastInsertId());
@@ -208,7 +208,7 @@ class GenericDAO {
 
 		// Look for db errors
 		// If no errors, update and return the object
-		if($stmt->errorCode() == 0) {
+		if($success) {
 			$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 					
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
