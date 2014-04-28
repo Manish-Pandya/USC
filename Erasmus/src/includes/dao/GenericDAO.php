@@ -180,41 +180,50 @@ class GenericDAO {
 		
 
 		
-			// Get the db connection
-			global $db;
-			//print_r($db);
+		// Get the db connection
+		global $db;
+		//print_r($db);
 
-			// Check to see if this item has a key_id
-			//  If it does, we assume it's an existing record and issue an UPDATE
-			if ($object->getKey_id() != null) {
-				
-			    $_SESSION["DEBUG"] = "Calling db update...";
+		// Check to see if this item has a key_id
+		//  If it does, we assume it's an existing record and issue an UPDATE
+		if ($object->getKey_id() != null) {
+			
+		    $_SESSION["DEBUG"] = "Calling db update...";
 
-				$stmt = $this->createUpdateStatement($db,$object);
-				$stmt = $this->bindColumns($stmt,$object);
-				$stmt->execute();
-			// Otherwise, issue an INSERT
-			} else {
-		    	$_SESSION["DEBUG"] = "Calling db insert...";
-				 //echo  "Calling db insert...";
+			$stmt = $this->createUpdateStatement($db,$object);
+			$stmt = $this->bindColumns($stmt,$object);
+			$stmt->execute();
+		// Otherwise, issue an INSERT
+		} else {
+	    	$_SESSION["DEBUG"] = "Calling db insert...";
+			 //echo  "Calling db insert...";
 
-				$stmt = $this->createInsertStatement($db,$object);
-			   	$stmt = $this->bindColumns($stmt,$object);
-				$stmt->execute();
-				// since this is a new record, get the new key_id issued by the database and add it to this object.
-				$object->setKey_id($db->lastInsertId());
-			}
+			$stmt = $this->createInsertStatement($db,$object);
+		   	$stmt = $this->bindColumns($stmt,$object);
+			$stmt->execute();
 
+			// since this is a new record, get the new key_id issued by the database and add it to this object.
+			$object->setKey_id($db->lastInsertId());
+		}
+
+		// Look for db errors
+		// If no errors, update and return the object
+		if($stmt->errorCode() == 0) {
+			$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+					
+			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
+			$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
+			$object = $this->getById( $object->getKey_Id() );
+		
+			// return the updated object
+			return $object;
+		
+		// Otherwise, the statement failed to execute, so return false.	
+		} else {
+			return false;
+		}
 		
 
-		$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
-				
-		// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
-		$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
-		$object = $this->getById( $object->getKey_Id() );
-	
-		// return the updated object
-		return $object;
 	}
 	
 	/**
