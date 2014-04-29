@@ -151,8 +151,9 @@ function saveUser(){
 	else{
 		$dao = getDao( new User() );
 		$dao->save( $decodedObject );
-		return $decodedObject;
+		if($decodedObject->getKey_id()>0)return $decodedObject;
 	}
+	return new ActionError('Could not save');
 };
 
 function getAllRoles(){

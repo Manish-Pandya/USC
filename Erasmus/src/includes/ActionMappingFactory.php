@@ -39,7 +39,7 @@ class ActionMappingFactory {
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
 				"getUserById"=>new ActionMapping("getUserById", "", ""),
-				"saveUser"=>new ActionMapping("saveUser", "", "", array(), 201),
+				"saveUser"=>new ActionMapping("saveUser", "", "", ""),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
