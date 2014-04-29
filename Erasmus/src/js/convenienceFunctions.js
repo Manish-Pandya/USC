@@ -10,8 +10,6 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 		setPropertiesFromDTO: function(dto,obj){
-			console.log(obj);
-	        console.log(dto);
 	        for (var key in dto) {
 	          if (dto.hasOwnProperty(key)) {
 	            obj[key] = dto[key];
@@ -51,9 +49,11 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
+		  console.log(objDTO);
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
+          	console.log(obj);
             onSave(returnedObj, obj, extra1, extra2, extra3);
           })
           .error(function(data, status, headers, config, hazard){
@@ -158,6 +158,22 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	          	 console.log(failParam);
 	             onFail( obj, failParam );
 	         });
+	  	},
+	  	/**
+		*
+    	*	returns an array of strings, each one the Name of one of the user's role objects
+    	*	@param (user, User)  user object
+    	*
+		**/
+	  	getUserTypes: function( user ){
+	  		if(user.Roles){
+	  			rolesArray = [];
+	  			for(i=0;user.Roles.length>i;i++){
+	  				rolesArray.push(user.Roles[i].Name);
+	  			}
+	  			return rolesArray;
+	  		}
+	  		return false
 	  	},
 	  	/**
 		*
