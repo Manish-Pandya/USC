@@ -592,6 +592,9 @@ a#addChecklistToHazard {
 ul.questionList, ul#parentHazards, ul.listWithChecks {
   margin-left:0;
   list-style: none;
+  h3,h4{
+    margin-bottom:5px;
+  }
 }
 /* line 334, ../sass/style.scss */
 ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
@@ -601,7 +604,6 @@ ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
 
 /* line 340, ../sass/style.scss */
 ul.questionList li a {
-  margin: 10px;
 }
 
 /* line 343, ../sass/style.scss */
@@ -611,12 +613,10 @@ ul#parentHazards li a {
 
 /* line 346, ../sass/style.scss */
 ul.listWithChecks li {
-  background: url(../img/checklist-small-icon.png) no-repeat 5px 50%;
   padding-left: 32px;
 }
 /* line 350, ../sass/style.scss */
 ul.listWithChecks li .error {
-  background: url(../img/checklist-small-icon-wrong.png) no-repeat 5px 50% #f2dede;
 }
 
 /* line 355, ../sass/style.scss */
@@ -1807,4 +1807,12 @@ table.quickdate-calendar td:hover{cursor:pointer}
     list-style-type: none;
     margin-left:0;
   }
+}
+
+
+.bold{
+  font-weight: bold;
+}
+.underline{
+  text-decoration: underline;
 }
