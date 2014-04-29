@@ -15,8 +15,6 @@ require_once '../top_view.php';
 </div>
 
 <span ng-app="userList" ng-controller="MainUserListController">
-
-
     <form class="form-horizontal" style="margin: 71px 0 -11px -38px;">
       <div class="control-group">
          <label class="control-label" for="route" style="font-weight:bold;">Select User Type:</label>
@@ -29,7 +27,11 @@ require_once '../top_view.php';
          </div>
       </div>
     </form>
-   productionserver: {{isProductionServer}}
+
+   <span class="loading" ng-if="!LabContacts || !pis || !Admins">
+		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		  Getting Users...
+    </span>
    <ng-view></ng-view>
 
     <script type="text/ng-template" id="myModalContent.html">

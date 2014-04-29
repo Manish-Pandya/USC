@@ -35,15 +35,15 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment">
+		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter:selectedPi " ng-if="contact.Is_active != showInactive">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
+				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0">Activate</a>
+				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 			</td>
 
 			<td style="width:14%;">
-				<img ng-show="contact.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:-25px; margin-top:15px;"/>
 				{{contact.Name}}
 			</td>
 
@@ -83,9 +83,11 @@
 		         <label class="control-label" for="inputEmail">Username</label>
 		         <div class="controls">
 		         	<div class="input-append">
-		             <input type="text" ng-if="isProductionServer" id="inputEmail" ng-model="userCopy.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
+		             <input type="text" ng-if="isProductionServer && !userCopy.Username" id="inputEmail" ng-model="userCopy.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
+			      	<img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
 			      </div>
-		            <input type="text" ng-if="!isProductionServer" id="inputEmail" disabled="disabled" ng-model="userCopy.Username" placeholder="Username">
+		            <input type="text" ng-if="!isProductionServer || userCopy.Username" id="inputEmail" disabled="disabled" ng-model="userCopy.Username" placeholder="Username">
+		         	<input type="hidden" ng-model="userCopy.Username"/>
 		         </div>
 			    </div>
 			    
@@ -161,7 +163,7 @@
         </div>
         <div class="modal-footer">
         	<img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-            <a ng-if="userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser(userCopy, user)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveNewUser(userCopy, user)"><i class="icon-checkmark"></i>Save</a>
             <a ng-if="!userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveNewUser(userCopy)"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>

@@ -32,17 +32,17 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="pi in pis | orderBy:order:reverse | filter:searchText | filter:buildingFilter() | filter:departmentFilter()">
+		<tr ng-repeat="pi in pis | orderBy:order:reverse | filter:searchText | filter:buildingFilter() " ng-if="pi.Is_active != showInactive">
 
 			<td style="width:14%;">
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="addPi(pi)"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active && !pi.edit">Deactivate</a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="!pi.Is_active && !pi.edit">Activate</a>
-				
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active">Deactivate</a>
+				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="!pi.Is_active">Activate</a>
+				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="pi.IsDirty"/>
+				<!-- ng-show="pi.IsDirty"-->
 			</td>
 
 			<td style="width:12%;">
-				<img ng-show="pi.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:-25px; margin-top:15px;"/>
 				{{pi.User.Name}}
 			</td>
 
@@ -53,7 +53,7 @@
 			</td>
 
 			<td style="width:12%;">
-				{{pi.User.Offce_phone}}
+				{{pi.User.Office_phone}}
 			</td>
 
 			<td style="width:12%;">
@@ -80,8 +80,8 @@
 
 <script type="text/ng-template" id="piModal.html">
         <div class="modal-header" style="padding:0;" class="">
-            <h2 style="padding:5px" ng-show="piCopy.Key_id" class="blueBg">Editing {{piCopy.Name}}</h2>
-        	<h2 style="padding:5px" ng-hide="piCopy.Key_id" class="blueBg">Create a New Lab Contact</h2>
+            <h2 style="padding:5px" ng-show="piCopy.Key_id" class="blueBg">Editing {{piCopy.User.Name}}</h2>
+        	<h2 style="padding:5px" ng-hide="piCopy.Key_id" class="blueBg">Create a New Principal Investigator</h2>
         </div>
         <div class="modal-body">
         	<form class="form-horizontal form">
@@ -91,24 +91,27 @@
 		         <div class="controls">
 		         	<div class="input-append">
 		             <input type="text" ng-if="isProductionServer && !piCopy.User.Username" id="inputEmail" ng-model="piCopy.userNameForQuery" placeholder="Username"><a ng-if="isProductionServer && !piCopy.User.Username" class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
+		             				      	<img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
+
 			      </div>
 		            <input type="text" ng-if="!isProductionServer || piCopy.User.Username" id="inputEmail" disabled="disabled" ng-model="piCopy.User.Username" placeholder="Name">
+		        	<input type="hidden" ng-model="piCopy.User.Username"/>
 		         </div>
 			    </div>
 			    
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Name</label>
 		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="isProductionServer && !piCopy.Username" disabled="disabled" placeholder="Name">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="!isProductionServer || piCopy.Username" placeholder="Name">
+		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled" placeholder="Name">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="!isProductionServer || piCopy.User.Username" placeholder="Name">
 		         </div>
 			    </div>
 
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Email</label>
 		         <div class="controls">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Email" ng-if="isProductionServer && !piCopy.Username" disabled="disabled" placeholder="Email">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Email" ng-if="!isProductionServer || piCopy.Username" placeholder="Email">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Email" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled" placeholder="Email">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Email" ng-if="!isProductionServer || piCopy.User.Username" placeholder="Email">
 		         </div>
 			    </div>
 
@@ -116,16 +119,16 @@
 		         <label class="control-label" for="inputEmail">Lab Phone</label>
 		         
 		         <div class="controls">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Lab_phone" placeholder="Lab Phone" ng-if="isProductionServer && !piCopy.Username" disabled="disabled">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Lab_phone" placeholder="Lab Phone" ng-if="!isProductionServer || piCopy.Username">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Lab_phone" placeholder="Lab Phone" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Lab_phone" placeholder="Lab Phone" ng-if="!isProductionServer || piCopy.User.Username">
 		         </div>
 			    </div>
 
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Office Phone</label>
 		         <div class="controls">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Office_phone" placeholder="Office Phone" ng-if="isProductionServer && !piCopy.Username" disabled="disabled">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Office_phone" placeholder="Office Phone" ng-if="!isProductionServer || piCopy.Username">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Office_phone" placeholder="Office Phone" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Office_phone" placeholder="Office Phone" ng-if="!isProductionServer || piCopy.User.Username">
 
 		         </div>
 			    </div>
@@ -133,8 +136,8 @@
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Emergency Phone</label>
 		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !piCopy.Username" disabled="disabled">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || piCopy.Username">
+		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || piCopy.User.Username">
 		         </div>
 			    </div>
 
@@ -142,8 +145,8 @@
 				    <div  class="control-group">
 			         <label class="control-label" for="inputEmail">Roles(s)</label>
 			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !piCopy.Username" disabled="disabled">
-						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || piCopy.Username">
+						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled">
+						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || piCopy.User.Username">
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				   		
 				    <ul style="margin-top:3px;">
@@ -157,8 +160,8 @@
 				    <div  class="control-group">
 			         <label class="control-label" for="inputEmail">Department</label>
 			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="piCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !piCopy.Username" disabled="disabled">
-						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="piCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || piCopy.Username">
+						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="piCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled">
+						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="piCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || piCopy.User.Username">
 					<ul>
 				    	<li ng-repeat="department in piCopy.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<img ng-show="department.IsDirty" class="smallLoading" src="../../img/loading.gif"/>			         </div>
 </li>
@@ -170,8 +173,8 @@
         </div>
         <div class="modal-footer">
         	<img ng-show="piCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-            <a ng-if="piCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser(piCopy)"><i class="icon-checkmark"></i>Save</a>
-            <a ng-if="!piCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveNewUser(piCopy)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="piCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="savePi()"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!piCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="savePi()"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>
