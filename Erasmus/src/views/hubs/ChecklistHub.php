@@ -47,10 +47,15 @@ require_once '../top_view.php';
       <div id="showHideQuestions" class="btn btn-primary btn-large" style="margin:10px 0">Hide Disabled Questions</div>
       <ul class="questionList sortable" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
      		<li ng-repeat="question in checklist.Questions" ng-class="{inactive: question.Is_active == false}">
-          <h3>
-            <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{question.Text}}
-            </h3><div class="checklistButtons">
-            <a href="QuestionHub.php#?id={{question.Key_id}}" class="btn btn-large btn-primary hazardBtn"><i class="icon-pencil"></i>Edit</a><a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>
+          <h2>
+              {{question.Text}}
+              <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary btn-mini DeactivateeRow"><i class="icon-pencil"></i></a>
+              <a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
+              <a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"><i class="icon-remove"></i></a>
+              <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->
+              <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+            </h2>
+          </li>
       </ul>
       <div style="clear:both;"></div>
     </span>

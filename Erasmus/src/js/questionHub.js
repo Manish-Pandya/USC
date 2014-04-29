@@ -7,8 +7,12 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 			getQuestionById($location.search().id);
 
 		}else if($location.search().checklist_id){
+		    getChecklist($location.search().checklist_id);
 			$scope.noQuestion = true;
-			getChecklist($location.search().checklist_id);
+			$scope.questionCopy = {
+				Class: "Question",
+				Checklist_id: $location.search().checklist_id
+			};
 		}
 		$scope.newDeficiency = {};
 		$scope.newDeficiency.reference;
@@ -22,7 +26,6 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		$scope.doneLoading = false;
 		var url = '../../ajaxaction.php?action=getQuestionById&id='+id+'&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetQuestion, onFailGetQuestion );
-
 	}
 
 	function onGetQuestion(data){
@@ -50,10 +53,25 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		alert("There was a problem gettting this question's checklist.");
 	}
 
+	$scope.editDef = function(def){
+		def.edit = !def.edit;
+		$scope.question.newDeficiency = angular.copy(def);
+		$scope.question.newDeficiency.IsDirty = false;
+	}
+
+	$scope.cancelEdit = function(obj){
+		obj.edit = !obj.edit;
+		obj.beingEdited = false;
+		if(obj.Class == "Question")$scope.questionCopy = {};
+		if(obj.Class == "Recommendation")$scope.question.newRecommendation = {};
+		if(obj.Class == "Deficiency")$scope.question.newDeficiency = {};
+		if(obj.Class == "Observation")$scope.question.newObservation = {};
+	}
+
 	$scope.addDeficiency = function(question){
 		$scope.savingDeficiency = true;
 		console.log(question);
-
+		console.log(newDeficiency);
 		question.IsDirty = true;
 
 		$scope.newDef = {
@@ -61,19 +79,35 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 			Question: question,
 			Is_active: true,
 			Question_id: question.Key_id,
-			Text: question.newDeficiency.text,
-			Reference :question.newDeficiency.reference,
-			Description: question.newDeficiency.description
+			Text: question.newDeficiency.Text,
+			Reference: question.newDeficiency.Reference,
+			Description: question.newDeficiency.Description
 		}
-        
+        if($scope.question.newDeficiency.Key_id){
+        	$scope.newDef.Key_id = $scope.question.newDeficiency.Key_id;
+        	var url = '../../ajaxaction.php?action=saveDeficiency';
+        	convenienceMethods.updateObject( $scope.newDef, question.newDeficiency, onUpdateDef, onFailAddDef, url );
+        }else{
+        	var url = '../../ajaxaction.php?action=saveDeficiency';
+        	convenienceMethods.updateObject( $scope.newDef, question, onAddDef, onFailAddDef, url );
+        }
         console.log($scope.newDef);
+	}
 
-        var url = '../../ajaxaction.php?action=saveDeficiency';
-        convenienceMethods.updateObject( $scope.newDef, question, onAddDef, onFailAddDef, url );
+	function onUpdateDef(data,def){
+		console.log(def);
+		console.log($scope.question.Deficiencies);
+		var idx = convenienceMethods.arrayContainsObject($scope.question.Deficiencies, def, null, true);
+		console.log(idx);
+		def.edit = false;
+		$scope.question.Deficiencies[idx] = angular.copy(def);
+		$scope.question.newDeficiency = {};
 	}
 
 	function onAddDef(def, question){
+		$scope.question.newDeficiency = {};
 		$scope.savingDeficiency = false;
+		if(!question.Deficiencies)question.Deficiencies = [];
 		question.Deficiencies.push(def);
 		question.IsDirty = false;
 	}
@@ -90,19 +124,49 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 			Class:  'Observation',
 			Is_active: true,
 			Question_id: question.Key_id,
-			Text: question.newObservation
+			Text: question.newObservation.Text
 		}
-        
+        if(question.newObservation.Key_id){
+        	$scope.newObs.Key_id = question.newObservation.Key_id;
+        	 var url = '../../ajaxaction.php?action=saveObservation';
+       	     convenienceMethods.updateObject( $scope.newObs, question, onUpdateObs, onFailAddPbs, url );
+        }else{	
+	        var url = '../../ajaxaction.php?action=saveObservation';
+	        convenienceMethods.updateObject( $scope.newObs, question, onAddObs, onFailAddPbs, url );
+        }
         console.log($scope.newObs);
 
-        var url = '../../ajaxaction.php?action=saveObservation';
-        convenienceMethods.updateObject( $scope.newObs, question, onAddObs, onFailAddPbs, url );
+	}
+
+	$scope.editObs = function(obs){
+		console.log(obs);
+		obs.edit = !obs.edit;
+		$scope.question.newObservation = angular.copy(obs);
+		$scope.question.newObservation.IsDirty = false;
+
 	}
 
 	function onAddObs(def, question){
-		$scope.savingObservation = false;
+		$scope.addObvs = false;
+		$scope.question.newObservation.IsDirty = false;
+		$scope.question.newObservation = {};
+		$scope.addObs = false;
+		if(!question.Observations)question.Observations = [];
 		question.Observations.push(def);
-		question.IsDirty = false;
+		def.IsDirty = false;
+	}
+
+	function onUpdateObs(obs, question){
+		$scope.savingObservation = false;
+		$scope.question.newObservation.IsDirty = false;
+		$scope.addObvs = false;
+		console.log(obs);
+		console.log($scope.question.Observations);
+		var idx = convenienceMethods.arrayContainsObject($scope.question.Observations, obs, null, true);
+		console.log(idx);
+		obs.edit = false;
+		$scope.question.Observations[idx] = angular.copy(obs);
+		$scope.question.newObservation = {};
 	}
 
 	function onFailAddPbs(){
@@ -116,17 +180,42 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 			Class:  'Recommendation',
 			Is_active: true,
 			Question_id: question.Key_id,
-			Text: question.newRecommendation
+			Text: question.newRecommendation.Text
 		}
- 
-        var url = '../../ajaxaction.php?action=saveRecommendation';
-        convenienceMethods.updateObject( $scope.newRec, question, onAddRec, onFailAddRec, url );
+
+		if(question.newRecommendation.Key_id){
+			$scope.newRec.Key_id = question.newRecommendation.Key_id
+			var url = '../../ajaxaction.php?action=saveRecommendation';
+			convenienceMethods.updateObject( $scope.newRec, question, onUpdateRec, onFailAddPbs, url );
+        }else{	
+	        var url = '../../ajaxaction.php?action=saveRecommendation';
+	        convenienceMethods.updateObject( $scope.newRec, question, onAddRec, onFailAddPbs, url );
+        }
+	}
+
+	$scope.editRec = function(rec){
+		rec.edit = !rec.edit;
+		$scope.question.newRecommendation = angular.copy(rec);
 	}
 
 	function onAddRec(rec, question){
+		$scope.addRec = false;
 		$scope.savingRecommendation = false;
+		if(!question.Recommendations)question.Recommendations = [];
 		question.Recommendations.push(rec);
 		question.IsDirty = false;
+		$scope.question.newRecommendation = false;
+	}
+
+	function onUpdateRec(rec, question){
+		$scope.addRec = false;
+		console.log(rec);
+		console.log($scope.question.Recommendations);
+		var idx = convenienceMethods.arrayContainsObject($scope.question.Recommendations, rec, null, true);
+		console.log(idx);
+		rec.edit = false;
+		$scope.question.Recommendations[idx] = angular.copy(rec);
+		$scope.question.newRecommendation = {};
 	}
 
 	function onFailAddRec(){
@@ -157,19 +246,22 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	}
 
 	function onSaveQuestion(dto, question){
+		console.log(dto);
 	     //temporarily use our question copy client side to bandaid server side bug that causes subquestions to be returned as indexed instead of associative
-        $scope.question = angular.copy($scope.questionCopy);
-        $scope.question.isBeingEdited = false;
+        $scope.question = angular.copy(dto);
         $scope.question.IsDirty = false;
         $scope.questionCopy.IsDirty = false;
         $scope.noQuestion = false;
+        $scope.question.beingEdited = false;
+        $scope.questionCopy = {};
+        $location.search('id='+dto.Key_id);
 	}
 
 	function onFailSaveQuestion(){
 		alert('There was a problem when the system tried to save the question.');
 	}
 
-	$scope.editQuestion= function(){
+	$scope.editQuestion = function(){
 		$scope.question.beingEdited = !$scope.question.beingEdited;
 		$scope.questionCopy = angular.copy($scope.question);
 	}
@@ -179,7 +271,7 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		var url = '../../ajaxaction.php?action=saveQuestion';
         convenienceMethods.updateObject( $scope.questionCopy, question, onSaveQuestion, onFailSaveQuestion, url );
 	}
-
+/*
 	$scope.$watch('checklist', function(oldValue, newValue){
      	if($scope.checklist){
      		$scope.questionCopy = {
@@ -189,6 +281,7 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
      		}
      	}
   	}, true);
+*/
 }
 
 questionHub.controller('QuestionHubController',QuestionHubController);

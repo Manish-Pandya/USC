@@ -13,68 +13,152 @@ require_once '../top_view.php';
 	</ul>
 </div>
 <div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController"><br>
-	<h3><span ng-show="noQuestion">Add a new question to</span> <span ng-show="question">Editing a question in </span>the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></h3>
+	<div class="loading" ng-if="!question && !noQuestion" >
+	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+	  Getting Checklist...
+	</div>
+	<h3><span ng-show="noQuestion"  >Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
 	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
 	<form ng-if="question.beingEdited || noQuestion" class="form" style="margin-top:10px;">
 		<input type="text" class="span9" ng-model="questionCopy.Text" placeholder="Question text"/>
 		<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(questionCopy)" class="btn btn-success btn-mini"><i class="icon-checkmark"></i>Save</a>
-		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger btn-mini" ng-click="cancelEdit()"><i class="icon-cancel"></i>Cancel</a>
+		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger btn-mini" ng-click="cancelEdit(question)"><i class="icon-cancel"></i>Cancel</a>
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
-
 	<span ng-hide="!question">
-	<h3 style="margin-top:30px;" ng-show="question.Deficiencies.length">Deficiencies for this question:</h3>
-	<h3 style="margin-top:30px;" ng-hide="question.Deficiencies.length">This question doesn't have any deficiencies yet.</h3>
-	<ul class="deficiencyList listWithChecks sortable" id="sortable">
-		<li ng-repeat="def in question.Deficiencies">{{def.Text}}<div class="checklistRow"><a class="btn btn-danger deactivateRow" ng-click="handleObjActive(def,question)">Deactivate</a></div></li>
-	</ul>
-	
-	<form class="form" style="margin-top:10px;">
-	
+	<h2 style="margin-top:30px;" class="bold">Deficiencies:<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addQuestion, 'btn-danger': addQuestion}" ng-click="addQuestion = !addQuestion"><i ng-class="{'icon-plus': !addQuestion, 'icon-cancel': addQuestion}"></i></a></h2>
+	<form class="form" ng-if="!question.Deficiencies.length || addQuestion"  style="margin-top:10px;">
 	    <div class="control-group">
 		    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
 		    <div class="controls">
 		      <label>DEFICIENCY DESCRIPTION</label>
-		      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.text" cols="500" style="width:50%"></textarea>
+		      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
 		      <label>COMPLIANCE REFERENCE</label>
-		 	  <input type="text" ng=model="question.newDeficiency.reference"/>
+		 	  <input type="text" ng-model="question.newDeficiency.Reference"/>
 		 	  <label>COMPLIANCE DESCRIPTION</label>
-		 	  <textarea rows="3" ng-model="question.newDeficiency.description" cols="500" style="width:50%"></textarea>
+		 	  <textarea rows="3" ng-model="question.newDeficiency.Description" cols="500" style="width:50%"></textarea>
+		 	</div>
 		 </div>
 		 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)">Add</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
-	
-	<h3 style="margin-top:30px;" ng-show="question.Recommendations.length">Recommendations for this question:</h3>
-	<h3 style="margin-top:30px;" ng-hide="question.Recommendations.length">This question doesn't have any recommendations yet.</h3>
-	<ul class="recommendationList listWithChecks sortable" id="sortable">
-		<li ng-repeat="rec in question.Recommendations">{{rec.Text}}<div class="checklistRow"><a class="btn  btn-danger deactivateRow" ng-click="handleObjActive(rec,question)">Deactivate</a></div></li>
+
+	<span ng-hide="!question">
+	<hr>
+	<ul class="deficiencyList questionList">
+		<li ng-repeat="def in question.Deficiencies">
+			<span ng-show="!def.edit">
+				<h3><span class="bold">{{def.Text}}</span>
+					<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(def,question)" ng-if="def.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(def,question)" ng-if="!def.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editDef(def,question)"><i class="icon-pencil"></i></a>
+					<img ng-show="def.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		     	</h3>
+		     	<h4><span class="bold">Compliance Reference:</span>  {{def.Reference}}</h4>
+		     	<h4><span class="bold">Compliance Description:</span>  {{def.Description}}</h4>
+	     	</span>
+	     	<span ng-show="def.edit">
+		     	<form class="form" style="margin-top:10px;">
+			    	<div class="control-group">
+				    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
+				    <div class="controls">
+				      <label>DEFICIENCY DESCRIPTION</label>
+				      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
+				      <label>COMPLIANCE REFERENCE</label>
+				 	  <input type="text" ng-model="question.newDeficiency.Reference"/>
+				 	  <label>COMPLIANCE DESCRIPTION</label>
+				 	  <textarea rows="3" ng-model="question.newDeficiency.Description" cols="500" style="width:50%"></textarea>
+				 	</div>
+				 </div>
+				 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
+				 <a class="btn btn-large btn-danger addDeficiency" ng-click="cancelEdit(def)"><i class="icon-cancel"></i>Cancel</a>
+				 <img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
+				</form>
+			</span>
+     	</li>
 	</ul>
-		
-	<form class="form" style="margin-top:10px;">
+
+	<h2 style="margin-top:50px;" class="bold">Recommendations<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec"><i ng-class="{'icon-plus': !addRec, 'icon-cancel': addRec}"></i></a></h2>
+	<hr>
+	<form class="form" style="margin-top:10px;" ng-if="addRec || !question.Recommendations.length">
 	    <div class="control-group">
 		    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
 		    <div class="controls">
-		      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation" cols="500" style="width:50%"></textarea>
+		      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
+		    </div>
 		 </div>
 		 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)">Add</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
-	<h3 style="margin-top:30px;" ng-show="question.Notes.length">Notes for this question:</h3>
-	<h3 style="margin-top:30px;" ng-hide="question.Notes.length">This question doesn't have any notes yet:</h3>
+	
 	<ul class="recommendationList listWithChecks sortable" id="sortable">
-		<li ng-repeat="obs in question.Observations">{{obs.Text}}<div class="checklistRow"><a class="btn  btn-danger deactivateRow" ng-click="handleObjActive(obs,question)">Deactivate</a></div></li>
+		<li ng-repeat="rec in question.Recommendations">
+			<span ng-show="rec.edit">
+				<form class="form" style="margin-top:10px;">
+				    <div class="control-group">
+					    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
+					    <div class="controls">
+					      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
+					    </div>
+					 </div>
+					 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save</a>
+					 <a class="btn btn-large btn-danger" ng-click="cancelEdit(rec)"><i class="icon-cancel"></i>Cancel</a>
+					 <img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
+				</form>
+			</span>	
+			
+			<span ng-show="!rec.edit">
+				<h3><span class="bold">{{rec.Text}}</span>
+					<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(rec,question)" ng-if="rec.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(rec,question)" ng-if="!rec.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editRec(rec,question)"><i class="icon-pencil"></i></a>
+					<img ng-show="rec.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		     	</h3>
+			</span>
+			
+		</li>
 	</ul>
-		
-	<form class="form" style="margin-top:10px;">
+
+	<h2 style="margin-top:50px;" class="bold">Notes<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs"><i ng-class="{'icon-plus': !addObvs, 'icon-cancel': addObvs}"></i></a></h2>
+	
+	<form class="form" style="margin-top:10px;" ng-if="addObvs || !question.Observations.length">
 	    <div class="control-group">
-		    <label class="control-label" for="email">Add a Note for this Question:</label>
+		    <label class="control-label" for="email">Add a Observation for this Question:</label>
 		    <div class="controls">
-		      <textarea rows="5" id="newRecommendation" ng-model="question.newObservation" cols="500" style="width:50%"></textarea>
+		      <textarea rows="5" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
+		    </div>
 		 </div>
 		 <a class="btn btn-large btn-success" ng-click="addObservation(question)">Add</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
+
+	
+	<ul class="obsommendationList listWithChecks sortable" id="sortable">
+		<li ng-repeat="obs in question.Observations">
+			<span ng-show="obs.edit">
+				<form class="form" style="margin-top:10px;">
+				    <div class="control-group">
+					    <label class="control-label" for="email">Add a Note for this Question:</label>
+					    <div class="controls">
+					      <textarea rows="5" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
+					    </div>
+					 </div>
+					 <a class="btn btn-large btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save</a>
+					 <a class="btn btn-large btn-danger" ng-click="cancelEdit(obs)"><i class="icon-cancel"></i>Cancel</a>
+					 <img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
+				</form>
+			</span>	
+			
+			<span ng-show="!obs.edit">
+				<h3><span class="bold">{{obs.Text}}</span>
+					<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(obs,question)" ng-if="obs.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(obs,question)" ng-if="!obs.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editObs(obs,question)"><i class="icon-pencil"></i></a>
+					<img ng-show="obs.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		     	</h3>
+			</span>
+			
+		</li>
+	</ul>
 	</span>
-	</div>
 </div>
 
 <!-- begin add new question modal dialogue -->
