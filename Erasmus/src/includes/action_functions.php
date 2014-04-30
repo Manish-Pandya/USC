@@ -353,7 +353,7 @@ function getHazardTreeNode( $id = NULL){
 	
 	// prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
 	$hazMaps = array();
-	$hazMaps[] = new EntityMap("lazy","getSubhazards");
+	$hazMaps[] = new EntityMap("lazy","getSubHazards");
 	$hazMaps[] = new EntityMap("eager","getChecklist");
 	$hazMaps[] = new EntityMap("lazy","getRooms");
 	$hazMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -364,7 +364,7 @@ function getHazardTreeNode( $id = NULL){
 	$chklstMaps[] = new EntityMap("lazy","getQuestions");
 	
 	// For each child hazard, init a lazy-loading checklist, if there is one
-	foreach ($hazard->getSubhazards() as $child){
+	foreach ($hazard->getSubHazards() as $child){
 		$checklist = $child->getChecklist();
 		// If there's a checklist, set its load map and push it back onto the hazard
 		if ($checklist != null) {
