@@ -345,8 +345,47 @@ function getAllHazards(){
 	return $hazards;
 };
 
+function getHazardTreeNode( $id = NULL){
+	
+	// get the node hazard
+	$hazard = getHazardById($id);
+	$hazards = array();
+	
+	// prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
+	$hazMaps = array();
+	$hazMaps[] = new EntityMap("lazy","getSubhazards");
+	$hazMaps[] = new EntityMap("eager","getChecklist");
+	$hazMaps[] = new EntityMap("lazy","getRooms");
+	$hazMaps[] = new EntityMap("lazy","getInspectionRooms");
+	
+	// prepare a load map for Checklist to load all lazy.
+	$chklstMaps = array();
+	$chklstMaps[] = new EntityMap("lazy","getHazard");
+	$chklstMaps[] = new EntityMap("lazy","getQuestions");
+	
+	// For each child hazard, init a lazy-loading checklist, if there is one
+	foreach ($hazard->getSubhazards() as $child){
+		$checklist = $child->getChecklist();
+		// If there's a checklist, set its load map and push it back onto the hazard
+		if ($checklist != null) {
+			$checklist->setEntityMaps($chklstMaps);
+			$child->setChecklist($checklist);
+		}
+
+		// set load map for this hazard
+		$child->setEntityMaps($hazMaps);
+		// push this hazard onto the hazards array
+		$hazards[] = $child;
+		
+	}
+	
+	// Return the child hazards
+	return $hazards;
+};
+
+
 //FIXME: Remove $name
-function getHazardById( $id = NULL, $name = NULL ){
+function getHazardById( $id = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
