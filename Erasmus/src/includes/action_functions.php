@@ -357,6 +357,8 @@ function getHazardTreeNode( $id = NULL){
 	$hazMaps[] = new EntityMap("eager","getChecklist");
 	$hazMaps[] = new EntityMap("lazy","getRooms");
 	$hazMaps[] = new EntityMap("lazy","getInspectionRooms");
+	$hazMaps[] = new EntityMap("eager","getHasChildren");
+	$hazMaps[] = new EntityMap("lazy","getParentIds");
 	
 	// prepare a load map for Checklist to load all lazy.
 	$chklstMaps = array();
@@ -1109,6 +1111,7 @@ function filterHazards (&$hazard, $rooms){
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
 		$subhazard->setEntityMaps($entityMaps);
 		$subhazard->setParentIds(array());
 	}
@@ -1196,6 +1199,7 @@ function getHazardsInRoom( $roomId = NULL, $subHazards ){
 			$entityMaps[] = new EntityMap("lazy","getRooms");
 			$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 			$entityMaps[] = new EntityMap("eager","getParentIds");
+			$entityMaps[] = new EntityMap("lazy","getHasChildren");
 				
 			foreach ($hazards as &$hazard){
 				$hazard->setEntityMaps($entityMaps);

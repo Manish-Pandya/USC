@@ -83,6 +83,8 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
+		$entityMaps[] = new EntityMap("lazy","getHasChildren");
+		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$this->setEntityMaps($entityMaps);
 		
 	}
@@ -179,6 +181,13 @@ class Hazard extends GenericCrud {
 			$this->findParents($thisDao->getById($hazard_id),$parentIds);
 		} 
 		return $parentIds;
+	}
+	
+	public function getHasChildren(){
+		if ($this->getSubHazards() != null) {
+			return true;
+		}
+		return false;
 	}
 }
 	
