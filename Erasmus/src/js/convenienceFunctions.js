@@ -72,12 +72,12 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 
-        getData: function( url, onSuccess, onFail, parentObject ){
+        getData: function( url, onSuccess, onFail, parentObject, adding ){
     	//use jsonp method of the angularjs $http object to request data from service layer
         	$http.jsonp(url)
             .success( function(data) {
                data.doneLoading = true;
-               onSuccess(data,parentObject);
+               onSuccess(data,parentObject, adding);
             })
             .error(function(data, status, headers, config){
                 onFail(data,parentObject);
