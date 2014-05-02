@@ -342,6 +342,18 @@ function getAllHazards(){
 	$dao = getDao(new Hazard());
 	$hazards = $dao->getAll();
 	
+	$entityMaps = array();
+	$entityMaps[] = new EntityMap("lazy","getSubHazards");
+	$entityMaps[] = new EntityMap("lazy","getChecklist");
+	$entityMaps[] = new EntityMap("lazy","getRooms");
+	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
+	$entityMaps[] = new EntityMap("lazy","getHasChildren");
+	$entityMaps[] = new EntityMap("lazy","getParentIds");
+	
+	foreach ($hazards as &$hazard){
+		$hazard->setEntityMaps($entityMaps);
+	}	
+	
 	return $hazards;
 };
 
