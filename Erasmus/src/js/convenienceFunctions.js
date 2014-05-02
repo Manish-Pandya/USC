@@ -68,18 +68,19 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*   @param (Function onSuccess)  AngularJS controller method to call if our server call returns a good code
 		*	@param (Function onFail)     AngularJS controller method to call if our server call returns a bad code
 		*   @param (String url)          The URL on the server to which we post
+		*   @param (Object parentObject) An optional parent object.   If this is passed, we are doing an asynch query to load child data for a parent object, for example asychronously loading a hazard's SubHazards
 		*
 		**/
 
-        getData: function( url, onSuccess, onFail ){
+        getData: function( url, onSuccess, onFail, parentObject ){
     	//use jsonp method of the angularjs $http object to request data from service layer
         	$http.jsonp(url)
             .success( function(data) {
                data.doneLoading = true;
-               onSuccess(data);
+               onSuccess(data,parentObject);
             })
             .error(function(data, status, headers, config){
-                onFail(data);
+                onFail(data,parentObject);
             })
     	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){
