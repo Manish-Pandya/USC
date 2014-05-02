@@ -46,7 +46,7 @@
                                   </span>
                                  </button>
                                 <span ng-hide="child.isBeingEdited">
-                                    <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.displayIndex}} | {{child.Name}}</h2>
+                                    <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
                                 </span>
 
                                 <span ng-show="child.isBeingEdited">
@@ -58,7 +58,7 @@
                     <div ng-if="child.loadingChildren">
                        <div class="container loading" style="margin-left:50px; margin-top:15px;">
                         <img class="" src="../../img/loading.gif"/>
-                         Loading Subhazards for {{child.Name}}....
+                         Loading Subhazards for {{child.Name}}...
                       </div>
 
                      
