@@ -461,8 +461,8 @@ a i {
   height: 46px;
   padding-top: 6px;
   display: inline-block;
-  max-width: 40%;
-  min-width: 350px;
+  max-width: 60%;
+  min-width: 450px;
 }
 
 /* line 414, ../sass/style.scss */
@@ -2260,4 +2260,10 @@ table.quickdate-calendar td:hover {
 /* line 1823, ../sass/style.scss */
 .underline {
   text-decoration: underline;
+}
+
+/* line 1826, ../sass/style.scss */
+.notTheOpenedOne {
+  max-height: none !Important;
+  overflow-y: hidden !important;
 }

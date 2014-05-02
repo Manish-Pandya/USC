@@ -63,7 +63,7 @@
 
                      
                     </div>
-                    <ol ng-class="{pregnant:child.children.length}" infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"></ol>
+                    <ol ng-class="{pregnant:child.children.length,notTheOpenedOne:child != openedHazard}" infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"></ol>
                 </li>
             </ol>
         </div>

@@ -408,8 +408,8 @@ a i{
   height: 46px;
   padding-top: 6px;
   display: inline-block;
-  max-width: 40%;
-  min-width:350px;
+  max-width: 60%;
+  min-width:450px;
 }
  #hazardTree li.small .leftThings {
   max-width: 70%;
@@ -1822,4 +1822,9 @@ table.quickdate-calendar td:hover{cursor:pointer}
 }
 .underline{
   text-decoration: underline;
+}
+.notTheOpenedOne{
+  max-height: none !Important;
+  overflow-y: hidden !important;
+
 }
