@@ -447,6 +447,13 @@ a.hazardBtn{
 li.small a.hazardBtn span{
   display:none;
 }
+li.minimized {
+  ol{
+    margin-top: 0 !important;
+    border:none !important; 
+  }
+  
+}
 /* line 285, ../sass/style.scss */
 #hazardTree [ng-cloak] {
   display: none;

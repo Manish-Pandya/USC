@@ -1,4 +1,4 @@
-var hazardHub = angular.module('hazardHub', ['convenienceMethodModule']);
+var hazardHub = angular.module('hazardHub', ['convenienceMethodModule','infinite-scroll']);
 /*
 hazardHub.factory('hazardHubFactory', function($http){
    
@@ -141,8 +141,9 @@ hazardHub.directive('yaTree', function () {
                             // the old cache at the end of the walk.
                             currentCache.push(cached);
 
-                            // If the child has children of its own, recurse 'em.             
-                            grandchildren = child[childrenExpr];
+                            // If the child has children of its own, recurse 'em.    
+                            if(child) grandchildren = child[childrenExpr];    
+                           
                            // console.log(childrenExpr);
                             if (grandchildren && grandchildren.length) {
                                 walk(grandchildren, cached.branch, childScope, depth + 1);
@@ -259,12 +260,13 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     //
     function init(){
         $scope.doneLoading = false;
-        convenienceMethods.getData('../../ajaxaction.php?action=getAllHazardsAsTree&callback=JSON_CALLBACK', onGetHazards, onFailGet);
+        //we pass 10000 as the id to this request because 10000 will always be the key_id of the root hazard
+        convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+10000+'&callback=JSON_CALLBACK', onGetHazards, onFailGet);
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
         console.log(data.SubHazards);
-        $scope.SubHazards = data.SubHazards;
+        $scope.SubHazards = data;
         $scope.doneLoading = true;
     }
 
@@ -275,13 +277,112 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         }
     }
 
+    $scope.toggleMinimized = function (child) {
+        $scope.openedHazard = child;
+        child.minimized = !child.minimized;
+        if(!child.SubHazards){
+            child.loadingChildren = true;
+            convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK', onGetSubhazards, onFailGetSubhazards, child);
+        }
+    };
+
+
+    //call back for asynch loading of a hazard's suhazards
+    function onGetSubhazards (data, hazard){
+        hazard.loadingChildren = false;
+        console.log(hazard);
+       
+        hazard.SubHazardsHolder = data;
+        hazard.SubHazardsHolder.sort(function(a,b) {return (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0);} );
+        hazard.numberOfPossibleSubs = hazard.SubHazardsHolder.length;
+
+        console.log( hazard.SubHazardsHolder );
+        $scope.openedHazard = hazard;  
+
+        var counter = Math.min(hazard.SubHazardsHolder.length-1, 15 );
+        buildSubsArray(hazard, 0, counter);
+
+
+    }
+
+    function onFailGetSubhazards(){
+        //child.loadingChildren = false;
+        $scope.doneLoading = "failed";
+        if(confirm('There was a problem when loading the Hazard Tree.  Try Again?')){
+            window.location.reload();  
+        }
+    }
+
+    $scope.setSubs = function(hazard,test){
+       // console.log(test);
+        if($scope.openedHazard && hazard.SubHazardsHolder){
+
+            if(!$scope.openedHazard.SubHazards)$scope.openedHazard.SubHazards = [];
+                
+            //get the number of subhazards loaded, get the number of possible subhazards
+            //if they are the same, do nothing because we have loaded all possible hazards
+            if(hazard.SubHazardsHolder.length > hazard.SubHazards.length){
+                if(test == 'addToBottom'){
+                    hazard.firstIndex += 5;
+                    var numberOfHazardsLeftToPush = hazard.SubHazardsHolder.length - (hazard.firstIndex+15);
+                    var start = hazard.numberOfPossibleSubs-(hazard.firstIndex+15);
+                   
+                    if(numberOfHazardsLeftToPush < 15){
+                        start = hazard.SubHazardsHolder.length-15;
+                    }else{
+                        start = hazard.firstIndex;
+                    }
+
+                    limit = start + 14;
+                    buildSubsArray(hazard, start, limit);
+                    
+                }
+/*
+                if(test == 'spliceOutBottom'){
+                     $scope.openedHazard.SubHazards.splice($scope.SubHazards.length,1);
+                     hazard.lastIndex--;
+                }
+  */ 
+             if(test == 'addToTop'){
+                    console.log('to top');
+
+                   if(hazard.firstIndex > 4){
+                      hazard.firstIndex -= 5;  
+                    }else{
+                      hazard.firstIndex = 0;
+                    }
+                    var numberOfHazardsLeftToPush = hazard.SubHazardsHolder.length - (hazard.firstIndex+15);
+                    var start = hazard.firstIndex;
+                   
+                    limit = start + Math.min(15,hazard.SubHazardsHolder.length);
+                    buildSubsArray(hazard, start, limit);
+
+                }
+
+                if(test == 'removeFromTop'){
+                    
+                }
+                
+            }
+        }
+    }
+
+    function buildSubsArray(hazard, start, limit){
+        //console.log('building');
+        hazard.firstIndex = start;
+        hazard.SubHazards = [];
+        for(start; start<=limit; start++){
+           // console.log(start);
+            hazard.SubHazardsHolder[start].displayIndex = start;
+            hazard.SubHazards.push(hazard.SubHazardsHolder[start]);
+        }
+        disabler.enable_scrolling();
+    }
+
     $scope.SubHazards = {
         SubHazards: []
     }
-    $scope.toggleMinimized = function (child) {
-        child.minimized = !child.minimized;
-    };
-
+  
     $scope.remove = function (child) {
         function walk(target) {
             var children = target.SubHazards,
@@ -318,6 +419,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         $scope.hazardCopy = {};
 
         $scope.parentHazard = child.Key_id;
+
+	 $scope.parentHazardForSplice = child;
+
+
 
         child.SubHazards.unshift({
             isNew: true,
@@ -364,9 +469,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
    
 
     $scope.cancelHazardEdit = function(hazard, $index){
-     
+    	 console.log(hazard);
+	 console.log($scope.parentHazardForSplice);
         if(hazard.isNew === true){
-            return $scope.parentHazard.SubHazards.splice( $scope.parentHazard.SubHazards.indexOf( hazard ), 1 );
+            return  $scope.parentHazardForSplice.SubHazards.splice( $scope.parentHazardForSplice.SubHazards.indexOf( hazard ), 1 );
         }
 
         hazard.isBeingEdited = false;

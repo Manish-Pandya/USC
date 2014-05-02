@@ -42,7 +42,7 @@ if(!$_SERVER['HTTP_HOST'] == 'erasmus.graysail.com'){
 <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
 -->
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
-
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
 <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
@@ -55,6 +55,8 @@ if(!$_SERVER['HTTP_HOST'] == 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-mobile-menu.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/convenienceFunctions.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-quick-date.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-infinite-scroll.min.js"></script>
+
 <!--<script type="text/javascript" src="<?php echo WEB_ROOT?>js/wrapperApp.js"></script>-->
 
 

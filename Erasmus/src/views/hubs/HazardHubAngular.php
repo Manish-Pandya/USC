@@ -4,13 +4,16 @@
 <script src="../../js/HazardHub.js"></script>
 <div class="navbar">
 <ul class="nav pageMenu" style="background: #e67e1d;">
-	<li class="span5">
-		<img src="../../img/hazard-icon.png" class="pull-left" style="height:50px" />
-		<h2  style="padding: 11px 0 5px 85px;">Hazard Hub</h2>	
+	<li class="">
+		<img src="../../img/user-icon.png" class="pull-left" style="height:50px" />
+		<h2  style="padding: 11px 0 5px 85px;">Hazard Hub
+			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+		</h2>	
 	</li>
 </ul>
 
-</div>
+</div><!-- ui-nested-sortable-stop="update($event, $ui)"
+                  ui-nested-sortable-begin="start($event, $ui)"-->
 
 <div class="whitebg" >
 
@@ -31,24 +34,19 @@
                     forcePlaceholderSize: true,
                     toleranceElement: '> div'
                   }" 
-                  ui-nested-sortable-stop="update($event, $ui)"
-                  ui-nested-sortable-begin="start($event, $ui)"
+                 
             >  
      
                 <li ya-tree="child in SubHazards at ol" ng-class="{minimized:child.minimized, inactive: child.Is_active == false}" ng-init="child.minimized=true" item="{{child}}" buttonGroup>
                     <div>
                        <div class="leftThings">
                                 <button class="toggle" ng-click="toggleMinimized(child)">
-                                <ng-switch on="child.SubHazards.length > 0">
-                                <span ng-switch-when="true" >
-                                    <ng-switch on="child.minimized">
-                                      <span ng-switch-when="false">&#x25BC;</span><span ng-switch-default>&#x25B6;</span>
-                                 </span>
-                                </ng-switch>
+                                  <span ng-if="child.HasChildren" >  
+                                        <span ng-if="!child.minimized">&#x25BC;</span><span ng-if="child.minimized">&#x25B6;</span>
+                                  </span>
                                  </button>
-                               
                                 <span ng-hide="child.isBeingEdited">
-                                    <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
+                                    <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.displayIndex}} | {{child.Name}}</h2>
                                 </span>
 
                                 <span ng-show="child.isBeingEdited">
@@ -56,16 +54,18 @@
                                 </span>
                         </div>
                         <div class="hazarNodeButtons" ><a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': child.Is_active == true, 'btn-success' :  child.Is_active == false}" ng-click="handleHazardActive(child)" ><i ng-class="{ 'icon-check-alt' :  child.Is_active == false, 'icon-remove' :  child.Is_active == true}" ></i><span ng-show="child.Is_active == true">Disable</span><span ng-show="child.Is_active == false">Activate</span></a><a class="btn btn-large btn-primary hazardBtn" node-id="'+node.id+'" ng-click="editHazard(child)" ><i class="icon-pencil"></i><span>Edit</span></a><a href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'"><i class="icon-plus-2"></i><span>Add Child</span></a><a class="btn btn-large btn-info hazardBtn" href="ChecklistHub.php#?id={{child.Key_id}}"><i class="icon-checkmark" style="width:1em;"></i><span>Checklist</span></a></div>
-                        <!--<button ng-click="addChild(child)">+</button>
-                        
-                        <button ng-click="remove(child)">x</button>-->
                     </div>
-                    <ol ng-class="{pregnant:child.children.length}"></ol>
+                    <div ng-if="child.loadingChildren">
+                       <div class="container loading" style="margin-left:50px; margin-top:15px;">
+                        <img class="" src="../../img/loading.gif"/>
+                         Loading Subhazards for {{child.Name}}....
+                      </div>
+
+                     
+                    </div>
+                    <ol ng-class="{pregnant:child.children.length}" infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"></ol>
                 </li>
             </ol>
-           <!-- <pre>{{SubHazards | json}}</pre> -->
-
-
         </div>
 <?php 
 require_once '../bottom_view.php';
