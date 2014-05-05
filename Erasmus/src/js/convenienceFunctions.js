@@ -238,8 +238,10 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			var year = date.getFullYear();
 
 			// will display date in mm/dd/yy format
-			var formattedTime = month + '/' + day + '/' + year;
-
+			var formattedTime = {};
+			formattedTime.formattedString = month + '/' + day + '/' + year;
+			formattedTime.year = year;
+			console.log(formattedTime);
 			return formattedTime;
 		},
 		setMysqlTime: function(date){

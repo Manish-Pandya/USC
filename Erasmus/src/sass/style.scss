@@ -822,13 +822,32 @@ img.smallLoading{
 .selectedFooter{
   z-index: 100000;
   background: white;
-  box-shadow: 0 10px 10px rgba(0,0,0,.5);
+  box-shadow:0 0px 16px rgba(0, 0, 0, 0.5);
   border: 1px solid#ddd;
   bottom: 100px;
   position: fixed;
   padding: 25px;
-  width: 25%;
+  width: auto;
   margin-bottom: 30px;
+  h2{
+    text-align: center;
+  }
+  table{
+    tr{
+      th{
+        background:#d16349;
+        color:#fff;
+      }
+      td{
+        background:#faf0ee
+      }
+    }
+    tr:nth-child(odd){
+      td{
+        background:#f5dfda;
+      }
+    }
+  }
 }
 
 
