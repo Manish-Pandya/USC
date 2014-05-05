@@ -1071,6 +1071,28 @@ function saveInspection(){
 	}
 };
 
+function saveNoteForInspection(){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to EntityText');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+		
+		$dao = getDao(new Inspection());
+		$inspection = $dao->getById($decodedObject->getEntity_id());
+		$inspection->setNote($decodedObject->getEntity_id());
+
+		// Save the Inspection with the note
+		$inspection = $dao->save($decodedObject);
+		
+		return true;
+	}
+};
+
 // Inspection, step 2 (Hazard Assessment)
 
 /**

@@ -19,7 +19,7 @@ class Inspection extends GenericCrud {
 		"date_started"	=> "timestamp",
 		"date_closed"	=> "timestamp",
 		"notification_date"	=> "timestamp",
-				
+		"note"			=> "text",	
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
@@ -75,6 +75,9 @@ class Inspection extends GenericCrud {
 	
 	/** Date and time this Inspection was completed */
 	private $date_closed;
+	
+	/** Notes about this inspection */
+	private $note;	
 	
 	/** Date and time the inspection was finalized and the report provided to lab personnel */
 	private $notification_date;
@@ -151,5 +154,9 @@ class Inspection extends GenericCrud {
 	
 	public function getNotification_date() { return $this->notification_date;}
 	public function setNotification_date($notification_date) {$this->notification_date = $notification_date;}
+	
+	public function getNote() { return $this->note;}
+	public function setNote($note) {$this->note = $note;}
+	
 }
 ?>
