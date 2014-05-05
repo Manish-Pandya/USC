@@ -1124,8 +1124,9 @@ function filterHazards (&$hazard, $rooms){
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$entityMaps[] = new EntityMap("eager","getHasChildren");
+		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$subhazard->setEntityMaps($entityMaps);
-		$subhazard->setParentIds(array());
+		//$subhazard->setParentIds(array());
 	}
 }
 
