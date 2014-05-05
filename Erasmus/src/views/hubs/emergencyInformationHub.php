@@ -22,11 +22,14 @@ require_once '../top_view.php';
 				
 				<form class="row form-inline" style="margin-left:0">
 					<label>Building</label>
-					<input style="" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
+					<input ng-if="Buildings" style="" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
+					<input ng-if="!Buildings" style="" type="text" disabled="disabled" placeholder="Getting buildings...">
+			       	<img ng-if="!Buildings" class="" style="height: 23px; margin: 3px 0 0 -60px; position: absolute;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 					<label>Room</label>
 					<input ng-if="building" style="" type="text" typeahead-on-select='onSelectRoom($item, $model, $label)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="rooms as room.Name for room in building.Rooms | filter:$viewValue2">
+					<input ng-if="!building" placeholder="Select a Building" disabled="disabled">
+
 				</form>
-				{{selectedRoom}}
 				<h2 ng-if="building">Select a room to display EMERGENCY INFORMATION for {{building.Name}}</h2>
 				<div class="roomDisplay" ng-if="room">
 					<h2>Room {{room.Name}}</h2>
@@ -58,13 +61,13 @@ margin-left: 10px;">{{contact.Name}}</span><span style="text-decoration:underlin
 			    <h2 ng-show="hazards" style=" margin-top:20px; text-decoration:underline">LABORATORY HAZARDS</h2>
 
 				<ul class="allHazardList" style="width:960px; margin:30px auto;">
-					<li class="hazardList" ng-if="hazard.IsPresent" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards" style="width:310px;">
+					<li class="hazardList" ng-if="hazard.IsPresent" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards" style="width:350px;">
 					<h1 class="hazardListHeader" id="{{hazard.cssId}}" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
 					<span ng-hide="hazard.hidden">
 				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.Name}}</h1>
 					<hr>
 					<ul ng-show="hazard.SubHazards.length">
-		    			<li ng-show="hazard.IsPresent" ng-repeat="hazard in hazard.SubHazards">
+		    			<li ng-show="hazard.IsPresent" ng-repeat="hazard in hazard.SubHazards" style="font-size: 19px; margin-bottom: 15px; line-height: normal;">
 		    				{{hazard.Name}} 
 		    				<ul ng-show="hazard.SubHazards.length">
 		    					<li ng-show="hazard.IsPresent" ng-repeat="hazard in hazard.SubHazards">({{hazard.Name}})</li>
