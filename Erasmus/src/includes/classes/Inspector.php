@@ -41,7 +41,7 @@ class Inspector extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getInspections");
-		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = new EntityMap("eager","getUser");
 		$this->setEntityMaps($entityMaps);
 				
 	}
@@ -57,9 +57,10 @@ class Inspector extends GenericCrud {
 	
 	public function getUser(){
 		if($this->user == null) {
-			$userDAO = new GenericDAO("User");
+			$userDAO = new GenericDAO(new User());
 			$this->user = $userDAO->getById($this->user_id);
 		}
+		return $this->user;
 	}
 	
 	public function setUser($user){
