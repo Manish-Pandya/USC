@@ -1443,6 +1443,26 @@ function getInspectionById( $id = NULL ){
 	}
 }
 
+function getInspectionsByPIId( $id = NULL ){
+	//Get responses for Inspection
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$piId = getValueFromRequest('piId', $piId);
+	
+	if( $piId !== NULL ){
+		
+		$pi = getPIById($piId);
+
+		$inspections = $pi->getInspections();
+	
+		return $inspections;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'inspectionId' was provided");
+	}
+}
+
 function resetChecklists( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
