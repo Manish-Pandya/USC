@@ -1124,9 +1124,8 @@ function filterHazards (&$hazard, $rooms){
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 		$entityMaps[] = new EntityMap("eager","getHasChildren");
-		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$subhazard->setEntityMaps($entityMaps);
-		//$subhazard->setParentIds(array());
+		$subhazard->setParentIds(array());
 	}
 }
 
@@ -1447,15 +1446,15 @@ function getInspectionById( $id = NULL ){
 function getInspectionsByPIId( $id = NULL ){
 	//Get responses for Inspection
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$piId = getValueFromRequest('piId', $piId);
-	
+
 	if( $piId !== NULL ){
-		
+
 		$pi = getPIById($piId);
 
 		$inspections = $pi->getInspections();
-	
+
 		return $inspections;
 	}
 	else{
