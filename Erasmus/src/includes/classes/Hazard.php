@@ -116,7 +116,7 @@ class Hazard extends GenericCrud {
 	public function getSubHazards(){ 
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP));
+			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),"name");
 		}
 		return $this->subHazards;
 	}

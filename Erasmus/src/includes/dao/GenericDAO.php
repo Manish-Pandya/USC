@@ -233,7 +233,7 @@ class GenericDAO {
 	 * @param DataRelationship $relationship
 	 * @return Array:
 	 */
-	function getRelatedItemsById($id, DataRelationship $relationship){
+	function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null){
 		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		// make sure there's an id
 		if (empty($id)) { return array();}
@@ -251,6 +251,7 @@ class GenericDAO {
 	
 		//Query the related table using the foreign key
 		$queryString = "SELECT " . $keyName . " FROM " . $tableName . " WHERE " . $foreignKeyName . " = ?" ;
+		if ($sortColumn != null){ $queryString .= " ORDER BY " . $sortColumn;}
 		$this->LOG->debug($queryString . " [? == $id] ...");
 		$stmt = $db->prepare($queryString);
 		$stmt->bindParam(1,$id,PDO::PARAM_INT);
