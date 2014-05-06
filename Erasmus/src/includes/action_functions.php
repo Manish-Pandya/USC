@@ -968,7 +968,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 		$inspection->setPrincipal_investigator_id($piId);
 
 		// Save (or update) the inspection
-		$inspection = $dao->save($inspection);
+		$dao->save($inspection);
 		$pi = $inspection->getPrincipalInvestigator();
 		 
 		// Remove previous rooms and add the default rooms for this PI.
@@ -1075,21 +1075,27 @@ function saveNoteForInspection(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ){
-		return new ActionError('Error converting input stream to EntityText');
+		return new ActionError('Error converting input stream to Inspection');
 	}
 	else if( $decodedObject instanceof ActionError){
 		return $decodedObject;
 	}
 	else{
+		$roomIds = $decodedObject->getRooms();
+		if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
+		
+		$inspectorIds = $decodedObject->getInspectors();
+		if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
 		
 		$dao = getDao(new Inspection());
-		$inspection = $dao->getById($decodedObject->getEntity_id());
-		$inspection->setNote($decodedObject->getEntity_id());
 
-		// Save the Inspection with the note
+		// Save the Inspection
 		$inspection = $dao->save($decodedObject);
 		
-		return true;
+		// Check this inspection's current persisted rooms and see if they're different
+		// check to see if rooms have been submitted, if not don't worry about it.
+		
+		return $inspection;
 	}
 };
 
