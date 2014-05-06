@@ -19,8 +19,10 @@ $actionDispatcher = new ActionDispatcher($sessionDataSource);
 $actionResult = $actionDispatcher->dispatch($actionName);
 
 //TODO: set $actionResult->actionFunctionResult to session? should action function do this?
-
+if ($actionResult->statusCode != 200){
+	header ("HTTP/1.1 " . $actionResult->statusCode . " Action Error");
+}
 // Send to the proper URL
-header("location: " . $actionResult->destinationPage);
+header("location: $actionResult->destinationPage");
 
 ?>

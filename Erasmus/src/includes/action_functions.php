@@ -484,6 +484,7 @@ function saveRoom(){
 };
 
 function removeResponse( $id = NULL ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	
 	$id = getValueFromRequest('id', $id);
 	
@@ -492,7 +493,13 @@ function removeResponse( $id = NULL ){
 		
 		// Get the response object
 		$response = $dao->getById($id);
-
+		
+		$LOG->debug(" Response is: $response");
+		if ($response == null) {
+			$LOG->debug(" Response was null");
+			return new ActionError("Bad Response id: $id");
+		}
+		
 		// Remove all its response data before deleting the response itself
 		foreach ($response->getDeficiencySelections() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
@@ -1494,6 +1501,8 @@ function getInspectionById( $id = NULL ){
 		
 		//get inspection
 		$inspection = $dao->getById($id);
+		
+		if (empty($inspection) ) {return new ActionError("No Response with id $id exists");}
 
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getInspectors");
@@ -1505,6 +1514,7 @@ function getInspectionById( $id = NULL ){
 		// pre-init the checklists so that they load their questions and responses
 		$checklists = $inspection->getChecklists();
 		$inspection->setChecklists($checklists);
+
 		return $inspection;
 	}
 	else{

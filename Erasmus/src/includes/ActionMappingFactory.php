@@ -107,7 +107,7 @@ class ActionMappingFactory {
 				"resetChecklists"=>new ActionMapping("resetChecklists","",""),
 				"getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", ""),
 				"saveResponse"=>new ActionMapping("saveResponse", "", ""),
-				"removeResponse"=>new ActionMapping("removeResponse", "", ""),
+				"removeResponse"=>new ActionMapping("removeResponse", "", "","","200","404"),
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
 				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
 				"saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", ""),

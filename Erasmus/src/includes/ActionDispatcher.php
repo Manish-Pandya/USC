@@ -15,7 +15,7 @@ class ActionDispatcher {
 	private $LOG;
 	
 	private $destinationPage;
-	private $action_result;
+	private $result;
 	
 	/**
 	 * Constructor
@@ -58,17 +58,17 @@ class ActionDispatcher {
 	 * @see ActionResult
 	 */
 	public function dispatch( $actionName ){
-		$result = new ActionResult();
+		$this->result = new ActionResult();
 		
 		if( $actionName == NULL ){
 			$this->LOG->error("Error in ActionDispatcher - no action name specified");
-			$this->dispatchError($result);
+			$this->dispatchError($this->result);
 		}
 		else{
-			$this->readActionConfigurationAndDispatch($actionName, $result);
+			$this->readActionConfigurationAndDispatch($actionName, $this->result);
 		}
 		
-		return $result;
+		return $this->result;
 	}
 	
 	/**
@@ -112,29 +112,29 @@ class ActionDispatcher {
 		$this->LOG->debug("Granting user access to $actionName: $allowStr" );
 		
 		if( $allowActionExecution ){
-			$result->actionFunctionResult = $this->doAction($actionMapping);
+			$this->result->actionFunctionResult = $this->doAction($actionMapping);
 				
 			//NULL indicates something was wrong
-			if( $result->actionFunctionResult === NULL || $result->actionFunctionResult instanceof ActionError ){
+			if( $this->result->actionFunctionResult === NULL || $this->result->actionFunctionResult instanceof ActionError ){
 				// Forward to the failure page
-				$this->dispatchError($result, $actionMapping);
+				$this->dispatchError($this->result, $actionMapping);
 			}
 			else{
 				// Forward to the success page
-				$this->dispatchSuccess($result, $actionMapping);
+				$this->dispatchSuccess($this->result, $actionMapping);
 			}
 		}
 		else{
 			//Access Denied!
 			
 			//Dispatch as error
-			$this->dispatchError($result, $actionMapping);
+			$this->dispatchError($this->result, $actionMapping);
 			
 			// Set value to error message
-			$result->actionFunctionResult = new ActionError('Access denied');
+			$this->result->actionFunctionResult = new ActionError('Access denied');
 			
 			// Override HTTP status code to not-authorized
-			$result->statusCode = 401;
+			$this->result->statusCode = 401;
 		}
 	}
 	
