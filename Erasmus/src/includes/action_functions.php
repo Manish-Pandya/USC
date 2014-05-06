@@ -483,6 +483,20 @@ function saveRoom(){
 	}
 };
 
+function removeResponse( $id = NULL ){
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = getDao(new Response());
+		return $dao->deleteById($id);
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 function saveBuilding(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
