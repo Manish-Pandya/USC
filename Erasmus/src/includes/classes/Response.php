@@ -51,14 +51,14 @@ class Response extends GenericCrud {
 			"foreignKeyName"	=>	"response_id"
 	);
 
-	protected static $SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP = array(
+	public static $SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP = array(
 			"className"	=>	"SupplementalRecommendation",
 			"tableName"	=>	"supplemental_recommendation",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"response_id"
 	);
 	
-	protected static $SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP = array(
+	public static $SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP = array(
 			"className"	=>	"SupplementalObservation",
 			"tableName"	=>	"supplemental_observation",
 			"keyName"	=>	"key_id",

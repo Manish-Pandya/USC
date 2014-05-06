@@ -489,7 +489,34 @@ function removeResponse( $id = NULL ){
 	
 	if( $id !== NULL ){
 		$dao = getDao(new Response());
-		return $dao->deleteById($id);
+		
+		// Get the response object
+		$response = $dao->getById($id);
+
+		// Remove all its response data before deleting the response itself
+		foreach ($response->getDeficiencySelections() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
+		}
+
+		foreach ($response->getRecommendations() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
+		}
+	
+		foreach ($response->getObservations() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
+		}
+	
+		foreach ($response->getSupplementalRecommendations() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
+		}
+	
+		foreach ($response->getSupplementalObservations() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
+		}
+		
+		$dao->deleteById($id);
+		
+		return true;
 	}
 	else{
 		//error
