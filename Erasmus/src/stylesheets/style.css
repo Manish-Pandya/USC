@@ -1007,14 +1007,15 @@ img.smallLoading {
 /********************CHECKLIST STYLES *****************************/
 /* line 418, ../sass/style.scss */
 /* line 856, ../sass/style.scss */
-.checklist {
-  padding: 0px 1% 15px;
-  margin: 25px 0 25px;
+.checklist.panel {
+  padding: 15px;
+  margin: 10px 10px 15px;
   background: #f0f0f0;
+  border-radius: 3px;
 }
 
 /* line 423, ../sass/style.scss */
-/* line 863, ../sass/style.scss */
+/* line 864, ../sass/style.scss */
 div.question, li.question {
   border-bottom: 1px solid #d7d7d7;
   padding: 10px 2%;
@@ -1025,47 +1026,47 @@ div.question, li.question {
 
 /* individual page menu bars*/
 /* line 435, ../sass/style.scss */
-/* line 873, ../sass/style.scss */
+/* line 874, ../sass/style.scss */
 .pageMenu {
   min-height: 55px !important;
   color: white !important;
   padding: 2px 0 2px 0;
   width: 100%;
 }
-/* line 878, ../sass/style.scss */
+/* line 879, ../sass/style.scss */
 .pageMenu li:first-child {
   width: 100%;
 }
 
 /* line 440, ../sass/style.scss */
-/* line 883, ../sass/style.scss */
+/* line 884, ../sass/style.scss */
 .pageMenu a {
   color: white;
   margin-left: 13px;
 }
 
 /* line 445, ../sass/style.scss */
-/* line 888, ../sass/style.scss */
+/* line 889, ../sass/style.scss */
 .pageMenu a img {
   margin: 0 13px 0 5px;
 }
 
 /* line 450, ../sass/style.scss */
-/* line 893, ../sass/style.scss */
+/* line 894, ../sass/style.scss */
 .questionControls {
   margin: 10px 0 5px;
   display: block;
 }
 
 /* line 454, ../sass/style.scss */
-/* line 899, ../sass/style.scss */
+/* line 900, ../sass/style.scss */
 .deficiencies, .recommendations {
   padding: 15px 0;
 }
 
 /*rotate hide/reveal text for sidenav on checklist*/
 /* line 458, ../sass/style.scss */
-/* line 905, ../sass/style.scss */
+/* line 906, ../sass/style.scss */
 .rotate {
   -webkit-transform-origin: bottom left;
   -moz-transform-origin: bottom left;
@@ -1087,7 +1088,7 @@ div.question, li.question {
 /*****************************************************************
 *****            POST INSPECTION PROCESS                **********
 *****************************************************************/
-/* line 925, ../sass/style.scss */
+/* line 926, ../sass/style.scss */
 .postInspectionNav {
   list-style: none;
   width: 100%;
@@ -1095,59 +1096,59 @@ div.question, li.question {
   margin-top: 16px;
 }
 
-/* line 931, ../sass/style.scss */
+/* line 932, ../sass/style.scss */
 .postInspectionNav li {
   float: left;
   margin-right: 10px;
 }
 
-/* line 935, ../sass/style.scss */
+/* line 936, ../sass/style.scss */
 .inspectionInfo {
   margin-bottom: 20px;
 }
 
-/* line 940, ../sass/style.scss */
+/* line 941, ../sass/style.scss */
 .inspectionInfo .row h3 {
   display: inline-block;
   margin-bottom: 10px;
   font-weight: bold;
 }
-/* line 945, ../sass/style.scss */
+/* line 946, ../sass/style.scss */
 .inspectionInfo .row p {
   color: #24748c;
   margin-left: 2px;
 }
 
-/* line 951, ../sass/style.scss */
+/* line 952, ../sass/style.scss */
 .correctiveAction {
   position: absolute;
 }
 
-/* line 954, ../sass/style.scss */
+/* line 955, ../sass/style.scss */
 .inspectionInfo .row {
   margin-left: 0;
 }
 
-/* line 957, ../sass/style.scss */
+/* line 958, ../sass/style.scss */
 .inspectionInfo p {
   display: inline;
   font-size: 18px;
   width: 20px;
 }
 
-/* line 962, ../sass/style.scss */
+/* line 963, ../sass/style.scss */
 .inspectionInfo .pull-right {
   width: 360px;
 }
 
-/* line 966, ../sass/style.scss */
+/* line 967, ../sass/style.scss */
 .inspectionReportTable th {
   text-align: center;
   font-weight: bold;
   font-size: 1.8em;
 }
 
-/* line 975, ../sass/style.scss */
+/* line 976, ../sass/style.scss */
 td.reviewHeader {
   font-weight: bold;
   font-size: 25px;
@@ -1158,13 +1159,13 @@ td.reviewHeader {
   background-repeat: no-repeat;
 }
 
-/* line 984, ../sass/style.scss */
+/* line 985, ../sass/style.scss */
 .inspectionHeader div {
   margin-top: 20px;
   margin-bottom: 50px;
   text-align: center;
 }
-/* line 988, ../sass/style.scss */
+/* line 989, ../sass/style.scss */
 .inspectionHeader div h1 {
   border-style: solid;
   border-color: #49afcd;
@@ -1174,116 +1175,116 @@ td.reviewHeader {
   font-style: italic;
   font-weight: bold;
 }
-/* line 997, ../sass/style.scss */
+/* line 998, ../sass/style.scss */
 .inspectionHeader div h3 {
   color: #49afcd;
   font-size: 12px;
   font-weight: bold;
 }
-/* line 1003, ../sass/style.scss */
+/* line 1004, ../sass/style.scss */
 .inspectionHeader div img:not(.usclogo) {
   width: 54px;
   margin: 0 2px 0;
 }
-/* line 1007, ../sass/style.scss */
+/* line 1008, ../sass/style.scss */
 .inspectionHeader div img.usclogo {
   float: left;
 }
-/* line 1010, ../sass/style.scss */
+/* line 1011, ../sass/style.scss */
 .inspectionHeader div img.rsc-logo {
   float: none !important;
   width: 225px;
 }
 
-/* line 1016, ../sass/style.scss */
+/* line 1017, ../sass/style.scss */
 #biologicalMaterialsHeader, #chemicalSafetyHeader, #radiationSafetyHeader, #generalSafetyHeader {
   vertical-align: middle;
   text-align: left;
 }
-/* line 1019, ../sass/style.scss */
+/* line 1020, ../sass/style.scss */
 #biologicalMaterialsHeader img, #chemicalSafetyHeader img, #radiationSafetyHeader img, #generalSafetyHeader img {
   width: 38px;
   margin: 0 5px 8px 0;
 }
 
-/* line 1024, ../sass/style.scss */
+/* line 1025, ../sass/style.scss */
 #biologicalMaterialsHeader {
   background-color: #d00;
 }
 
-/* line 1028, ../sass/style.scss */
+/* line 1029, ../sass/style.scss */
 #chemicalSafetyHeader {
   background-color: #F3F306;
   color: black;
   background-size: 38px;
 }
 
-/* line 1034, ../sass/style.scss */
+/* line 1035, ../sass/style.scss */
 #radiationSafetyHeader {
   background-color: #6600cc;
   background-size: 40px 40px;
 }
-/* line 1038, ../sass/style.scss */
+/* line 1039, ../sass/style.scss */
 #radiationSafetyHeader img {
   margin: 4px 5px 8px 0 !important;
 }
 
-/* line 1042, ../sass/style.scss */
+/* line 1043, ../sass/style.scss */
 #generalSafetyHeader {
   background-color: #006600;
 }
 
-/* line 1045, ../sass/style.scss */
+/* line 1046, ../sass/style.scss */
 .Pending {
   font-size: 14px;
 }
 
-/* line 1048, ../sass/style.scss */
+/* line 1049, ../sass/style.scss */
 .Pending:after {
   margin-left: 15px;
   font-family: 'Open Sans', sans-serif !important;
 }
 
-/* line 1052, ../sass/style.scss */
+/* line 1053, ../sass/style.scss */
 .Incomplete {
   color: #e67e1d !important;
 }
 
-/* line 1055, ../sass/style.scss */
+/* line 1056, ../sass/style.scss */
 .Pending {
   color: #e67e1d !important;
 }
 
-/* line 1058, ../sass/style.scss */
+/* line 1059, ../sass/style.scss */
 .Pending:before {
   content: "\e13a";
 }
 
-/* line 1064, ../sass/style.scss */
+/* line 1065, ../sass/style.scss */
 .Complete {
   color: #090 !important;
 }
 
-/* line 1070, ../sass/style.scss */
+/* line 1071, ../sass/style.scss */
 .Complete:before {
   content: "\e03c";
 }
 
-/* line 1073, ../sass/style.scss */
+/* line 1074, ../sass/style.scss */
 .Incomplete {
   color: #900 !important;
 }
 
-/* line 1076, ../sass/style.scss */
+/* line 1077, ../sass/style.scss */
 .Incomplete:before {
   content: "\e03a";
 }
 
-/* line 1082, ../sass/style.scss */
+/* line 1083, ../sass/style.scss */
 .detail {
   margin-bottom: 55px;
 }
-/* line 1084, ../sass/style.scss */
+/* line 1085, ../sass/style.scss */
 .detail h2 {
   font-weight: bold;
   border-bottom: 1px solid #ddd;
@@ -1291,68 +1292,68 @@ td.reviewHeader {
   margin: 0 10px;
 }
 
-/* line 1091, ../sass/style.scss */
+/* line 1092, ../sass/style.scss */
 .checklistDetailsQuestion {
   padding: 30px 10px 25px;
   margin: 0 10px;
   border-bottom: 1px solid #ddd;
 }
-/* line 1092, ../sass/style.scss */
+/* line 1093, ../sass/style.scss */
 .checklistDetailsQuestion:hover {
   background: #f7f7f7;
 }
-/* line 1098, ../sass/style.scss */
+/* line 1099, ../sass/style.scss */
 .checklistDetailsQuestion h3 {
   font-size: 20px;
   font-weight: bold;
 }
-/* line 1102, ../sass/style.scss */
+/* line 1103, ../sass/style.scss */
 .checklistDetailsQuestion i {
   text-align: center;
   font-size: 25px;
   font-weight: bold;
   font-style: normal;
 }
-/* line 1108, ../sass/style.scss */
+/* line 1109, ../sass/style.scss */
 .checklistDetailsQuestion ul {
   margin: 15px;
   list-style: none;
 }
-/* line 1111, ../sass/style.scss */
+/* line 1112, ../sass/style.scss */
 .checklistDetailsQuestion ul li {
   margin-bottom: 10px;
   font-size: 19px;
 }
-/* line 1114, ../sass/style.scss */
+/* line 1115, ../sass/style.scss */
 .checklistDetailsQuestion ul li h5 {
   font-weight: bold;
   font-size: 19px;
 }
-/* line 1118, ../sass/style.scss */
+/* line 1119, ../sass/style.scss */
 .checklistDetailsQuestion ul li p.rootCause {
   margin-left: 5px;
   font-size: 15px;
 }
-/* line 1125, ../sass/style.scss */
+/* line 1126, ../sass/style.scss */
 .checklistDetailsQuestion ul.recommendations li {
   color: #2f96b4;
 }
-/* line 1130, ../sass/style.scss */
+/* line 1131, ../sass/style.scss */
 .checklistDetailsQuestion ul.deficiencies li {
   color: #cc0000;
 }
-/* line 1135, ../sass/style.scss */
+/* line 1136, ../sass/style.scss */
 .checklistDetailsQuestion ul.observations li {
   color: #781096;
 }
 
-/* line 1141, ../sass/style.scss */
+/* line 1142, ../sass/style.scss */
 ul.key {
   margin-top: -70px;
   float: right;
   list-style: none;
 }
-/* line 1145, ../sass/style.scss */
+/* line 1146, ../sass/style.scss */
 ul.key:after {
   visibility: hidden;
   display: block;
@@ -1361,7 +1362,7 @@ ul.key:after {
   clear: both;
   height: 0;
 }
-/* line 1153, ../sass/style.scss */
+/* line 1154, ../sass/style.scss */
 ul.key li {
   font-size: 20px;
   font-weight: bold;
@@ -1369,48 +1370,48 @@ ul.key li {
   padding: 5px;
   margin-top: 10px;
 }
-/* line 1159, ../sass/style.scss */
+/* line 1160, ../sass/style.scss */
 ul.key li span {
   height: 30px;
   width: 30px;
   display: inline-block;
   margin-top: 5px;
 }
-/* line 1165, ../sass/style.scss */
+/* line 1166, ../sass/style.scss */
 ul.key li h2 {
   margin-top: -10px;
 }
-/* line 1169, ../sass/style.scss */
+/* line 1170, ../sass/style.scss */
 ul.key li.observations {
   color: #781096;
 }
-/* line 1171, ../sass/style.scss */
+/* line 1172, ../sass/style.scss */
 ul.key li.observations span {
   background: #781096;
 }
-/* line 1173, ../sass/style.scss */
+/* line 1174, ../sass/style.scss */
 ul.key li.recommendations {
   color: #2f96b4;
 }
-/* line 1175, ../sass/style.scss */
+/* line 1176, ../sass/style.scss */
 ul.key li.recommendations span {
   background: #2f96b4;
 }
-/* line 1177, ../sass/style.scss */
+/* line 1178, ../sass/style.scss */
 ul.key li.deficiencies {
   color: #cc0000;
 }
-/* line 1179, ../sass/style.scss */
+/* line 1180, ../sass/style.scss */
 ul.key li.deficiencies span {
   background: #cc0000;
 }
 
-/* line 1182, ../sass/style.scss */
+/* line 1183, ../sass/style.scss */
 .Yes {
   color: #090;
 }
 
-/* line 1185, ../sass/style.scss */
+/* line 1186, ../sass/style.scss */
 .No {
   color: #c00;
 }
@@ -1419,32 +1420,32 @@ ul.key li.deficiencies span {
 *****           HAZARD ASSESSMENT   ****************************
 *****************************************************************/
 /* line 487, ../sass/style.scss */
-/* line 1193, ../sass/style.scss */
+/* line 1194, ../sass/style.scss */
 .hazardRooms {
   margin-top: -20px;
 }
 
 /* line 489, ../sass/style.scss */
-/* line 1197, ../sass/style.scss */
+/* line 1198, ../sass/style.scss */
 .hazardRooms p {
   margin-bottom: -25px;
 }
 
 /* line 494, ../sass/style.scss */
-/* line 1202, ../sass/style.scss */
+/* line 1203, ../sass/style.scss */
 .jqtree_common .input-append {
   margin-bottom: -35px;
 }
 
-/* line 1205, ../sass/style.scss */
+/* line 1206, ../sass/style.scss */
 .hazardLi {
   clear: both;
 }
-/* line 1208, ../sass/style.scss */
+/* line 1209, ../sass/style.scss */
 .hazardLi h4 label {
   white-space: nowrap;
 }
-/* line 1210, ../sass/style.scss */
+/* line 1211, ../sass/style.scss */
 .hazardLi h4 label span.metro-checkbox {
   margin-right: 0 !Important;
   width: 100%;
@@ -1452,45 +1453,45 @@ ul.key li.deficiencies span {
 }
 
 /* line 497, ../sass/style.scss */
-/* line 1219, ../sass/style.scss */
+/* line 1220, ../sass/style.scss */
 .hazardList, .hazardList ul {
   list-style: none !Important;
 }
-/* line 1222, ../sass/style.scss */
+/* line 1223, ../sass/style.scss */
 .hazardList i, .hazardList ul i {
   margin: 5px 2px 0;
   font-size: 17px;
 }
-/* line 1225, ../sass/style.scss */
+/* line 1226, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
   color: #51a351;
 }
-/* line 1228, ../sass/style.scss */
+/* line 1229, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
   color: #49afcd;
 }
 
 @media (max-width: 1365px) {
   /* line 501, ../sass/style.scss */
-  /* line 1236, ../sass/style.scss */
+  /* line 1237, ../sass/style.scss */
   .hazardList {
     width: 100%;
     margin-bottom: 40px;
   }
-  /* line 1239, ../sass/style.scss */
+  /* line 1240, ../sass/style.scss */
   .hazardList.narrow {
     width: 50px;
   }
 
-  /* line 1243, ../sass/style.scss */
+  /* line 1244, ../sass/style.scss */
   .hazardLi {
     clear: both;
   }
-  /* line 1246, ../sass/style.scss */
+  /* line 1247, ../sass/style.scss */
   .hazardLi h4 label {
     white-space: nowrap;
   }
-  /* line 1248, ../sass/style.scss */
+  /* line 1249, ../sass/style.scss */
   .hazardLi h4 label span.metro-checkbox {
     margin-right: 0 !Important;
     width: 100%;
@@ -1499,33 +1500,33 @@ ul.key li.deficiencies span {
 }
 @media (min-width: 1206px) {
   /* line 508, ../sass/style.scss */
-  /* line 1259, ../sass/style.scss */
+  /* line 1260, ../sass/style.scss */
   .hazardList {
     width: 30%;
     margin: 0 3% 0 0;
     float: left;
   }
-  /* line 1263, ../sass/style.scss */
+  /* line 1264, ../sass/style.scss */
   .hazardList.narrow {
     width: 50px;
   }
 
-  /* line 1267, ../sass/style.scss */
+  /* line 1268, ../sass/style.scss */
   .hazardLi {
     clear: both;
   }
-  /* line 1271, ../sass/style.scss */
+  /* line 1272, ../sass/style.scss */
   .hazardLi h4 label span.metro-checkbox {
     font-size: .85vw;
   }
 }
-/* line 1279, ../sass/style.scss */
+/* line 1280, ../sass/style.scss */
 .allHazardList hr {
   border-top: 1px solid #999 !important;
 }
 
 /* line 515, ../sass/style.scss */
-/* line 1284, ../sass/style.scss */
+/* line 1285, ../sass/style.scss */
 .hazardListHeader {
   background-size: 45px 45px !important;
   background-position: left 50%;
@@ -1536,24 +1537,24 @@ ul.key li.deficiencies span {
 }
 
 /* line 523, ../sass/style.scss */
-/* line 1294, ../sass/style.scss */
+/* line 1295, ../sass/style.scss */
 #biologicalMaterials, #biologicalSafety, #biologicalHazards {
   background: url(../img/biohazard-largeicon.png);
 }
 
 /* line 527, ../sass/style.scss */
-/* line 1299, ../sass/style.scss */
+/* line 1300, ../sass/style.scss */
 #generalLaboratorySafety, #chemicalSafety, #chemicalHazards {
   background: url(../img/chemical-safety-large-icon.png);
 }
 
 /* line 530, ../sass/style.scss */
-/* line 1304, ../sass/style.scss */
+/* line 1305, ../sass/style.scss */
 #radiationSafety, #radiationHazards {
   background: url(../img/radiation-large-icon.png);
 }
 
-/* line 1307, ../sass/style.scss */
+/* line 1308, ../sass/style.scss */
 .pseudoSelect {
   border-color: #ccc;
   padding-top: 3px;
@@ -1563,7 +1564,7 @@ ul.key li.deficiencies span {
   text-align: left;
   width: 220px;
 }
-/* line 1308, ../sass/style.scss */
+/* line 1309, ../sass/style.scss */
 .pseudoSelect:hover {
   background: white;
   border-color: #ccc;
@@ -1575,7 +1576,7 @@ ul.key li.deficiencies span {
   width: 220px;
   color: black;
 }
-/* line 1326, ../sass/style.scss */
+/* line 1327, ../sass/style.scss */
 .pseudoSelect i {
   margin-top: -113px !important;
   font-size: 44px !important;
@@ -1583,14 +1584,14 @@ ul.key li.deficiencies span {
   color: black !important;
 }
 
-/* line 1333, ../sass/style.scss */
+/* line 1334, ../sass/style.scss */
 .roomSelect {
   margin-left: 50%;
   margin-top: -3px;
   z-index: 10000000000;
 }
 
-/* line 1338, ../sass/style.scss */
+/* line 1339, ../sass/style.scss */
 .selectRooms {
   border: none;
   z-index: 100;
@@ -1605,27 +1606,27 @@ ul.key li.deficiencies span {
   position: absolute;
   list-style: none;
 }
-/* line 1351, ../sass/style.scss */
+/* line 1352, ../sass/style.scss */
 .selectRooms li {
   padding: 5px;
   border: none;
 }
-/* line 1354, ../sass/style.scss */
+/* line 1355, ../sass/style.scss */
 .selectRooms li h4 {
   font-weight: bold;
 }
-/* line 1358, ../sass/style.scss */
+/* line 1359, ../sass/style.scss */
 .selectRooms ul {
   list-style: none;
   margin-left: 10px !important;
 }
-/* line 1361, ../sass/style.scss */
+/* line 1362, ../sass/style.scss */
 .selectRooms ul li {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-/* line 1365, ../sass/style.scss */
+/* line 1366, ../sass/style.scss */
 .selectRooms ul li:after {
   margin-top: -19px;
   margin-left: 0;
@@ -1633,7 +1634,7 @@ ul.key li.deficiencies span {
   margin-left: -4px;
 }
 
-/* line 1375, ../sass/style.scss */
+/* line 1376, ../sass/style.scss */
 .roomSelectContainer {
   display: inline;
 }
@@ -1642,45 +1643,45 @@ ul.key li.deficiencies span {
 *******           PI HUB               ***************************
 ******************************************************************/
 /* line 536, ../sass/style.scss */
-/* line 1383, ../sass/style.scss */
+/* line 1384, ../sass/style.scss */
 #piButtons a {
   margin: 20px 10px;
 }
 
 /* line 539, ../sass/style.scss */
-/* line 1388, ../sass/style.scss */
+/* line 1389, ../sass/style.scss */
 .list thead a {
   margin: 10px;
 }
 
 /* line 543, ../sass/style.scss */
-/* line 1393, ../sass/style.scss */
+/* line 1394, ../sass/style.scss */
 .list h2 {
   margin-top: 30px;
   margin-bottom: -4px;
 }
 
 /* line 548, ../sass/style.scss */
-/* line 1399, ../sass/style.scss */
+/* line 1400, ../sass/style.scss */
 #departmentList, #specialHazardList {
   list-style: none;
 }
 
 /* line 552, ../sass/style.scss */
-/* line 1404, ../sass/style.scss */
+/* line 1405, ../sass/style.scss */
 #departmentList li, #specialHazardList li {
   font-size: 20px;
   line-height: 34px;
 }
 
 /* line 557, ../sass/style.scss */
-/* line 1410, ../sass/style.scss */
+/* line 1411, ../sass/style.scss */
 textarea, input {
   border-color: #999;
 }
 
 /* line 561, ../sass/style.scss */
-/* line 1415, ../sass/style.scss */
+/* line 1416, ../sass/style.scss */
 .hazard-assessment-modal {
   height: 400px;
   overflow: hidden !important;
@@ -1698,14 +1699,14 @@ textarea, input {
 }
 
 /* line 577, ../sass/style.scss */
-/* line 1432, ../sass/style.scss */
+/* line 1433, ../sass/style.scss */
 .hazard-assessment-modal .modal-body {
   overflow: hidden;
   padding-right: 0;
 }
 
 /* line 581, ../sass/style.scss */
-/* line 1438, ../sass/style.scss */
+/* line 1439, ../sass/style.scss */
 .hazard-assessment-modal .tabbable .nav-stacked {
   border-left: 1px solid #ccc;
   float: left;
@@ -1714,7 +1715,7 @@ textarea, input {
 }
 
 /* line 588, ../sass/style.scss */
-/* line 1446, ../sass/style.scss */
+/* line 1447, ../sass/style.scss */
 .hazard-assessment-modal .tabbable .nav-stacked > li {
   padding-right: 15px;
   margin-left: 10px;
@@ -1723,7 +1724,7 @@ textarea, input {
 
 @media (max-width: 1200px) {
   /* line 594, ../sass/style.scss */
-  /* line 1454, ../sass/style.scss */
+  /* line 1455, ../sass/style.scss */
   .hazard-assessment-modal .tabbable .nav-stacked > li {
     padding-right: 15px;
     margin-left: 10px;
@@ -1731,41 +1732,41 @@ textarea, input {
   }
 }
 /* line 600, ../sass/style.scss */
-/* line 1461, ../sass/style.scss */
+/* line 1462, ../sass/style.scss */
 .hazard-assessment-modal .tab-content {
   height: 330px;
   overflow: hidden !important;
 }
 
 /* line 604, ../sass/style.scss */
-/* line 1467, ../sass/style.scss */
+/* line 1468, ../sass/style.scss */
 .hazard-assessment-modal .modal-header, .hazard-assessment-modal li.active a {
   background: #e67e1d !important;
   color: white !important;
 }
 
 /* line 608, ../sass/style.scss */
-/* line 1473, ../sass/style.scss */
+/* line 1474, ../sass/style.scss */
 .hazard-assessment-modal li a {
   color: #666;
   cursor: pointer;
 }
 
 /* line 612, ../sass/style.scss */
-/* line 1479, ../sass/style.scss */
+/* line 1480, ../sass/style.scss */
 .hazard-assessment-modal li a:hover {
   text-decoration: none !important;
 }
 
 /* line 615, ../sass/style.scss */
-/* line 1484, ../sass/style.scss */
+/* line 1485, ../sass/style.scss */
 li.active a {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-color: #e67e1d !important;
 }
 
 /* line 619, ../sass/style.scss */
-/* line 1490, ../sass/style.scss */
+/* line 1491, ../sass/style.scss */
 .nav-tabs.nav-stacked > li > a {
   border: none;
 }
@@ -1775,14 +1776,14 @@ li.active a {
 ***************************************************************/
 /* Let's get this party started */
 /* line 629, ../sass/style.scss */
-/* line 1499, ../sass/style.scss */
+/* line 1500, ../sass/style.scss */
 ::-webkit-scrollbar {
   width: 12px;
 }
 
 /* Track */
 /* line 634, ../sass/style.scss */
-/* line 1505, ../sass/style.scss */
+/* line 1506, ../sass/style.scss */
 ::-webkit-scrollbar-track {
   -webkit-border-radius: 0px;
   border-radius: 0px;
@@ -1791,7 +1792,7 @@ li.active a {
 
 /* Handle */
 /* line 642, ../sass/style.scss */
-/* line 1513, ../sass/style.scss */
+/* line 1514, ../sass/style.scss */
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 0px;
   border-radius: 0px;
@@ -1799,13 +1800,12 @@ li.active a {
 }
 
 /* line 648, ../sass/style.scss */
-/* line 1520, ../sass/style.scss */
+/* line 1521, ../sass/style.scss */
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* line 653, ../sass/style.scss */
-/* line 1525, ../sass/style.scss */
+/* line 653, ../sass/style.scss 
 .checklist:before {
   display: block;
   content: " ";
@@ -1813,15 +1813,15 @@ li.active a {
   height: 285px;
   visibility: hidden;
 }
-
+*/
 /* line 660, ../sass/style.scss */
-/* line 1534, ../sass/style.scss */
+/* line 1535, ../sass/style.scss */
 .checklist ul {
   list-style: none !important;
 }
 
 /* line 663, ../sass/style.scss */
-/* line 1539, ../sass/style.scss */
+/* line 1540, ../sass/style.scss */
 #sp-nav ul li a {
   line-height: normal;
   color: black;
@@ -1834,39 +1834,39 @@ li.active a {
 }
 
 /* line 674, ../sass/style.scss */
-/* line 1551, ../sass/style.scss */
+/* line 1552, ../sass/style.scss */
 #sp-nav ul {
   padding: 0;
 }
 
 /* line 678, ../sass/style.scss */
-/* line 1556, ../sass/style.scss */
+/* line 1557, ../sass/style.scss */
 #sp-nav ul li a.active {
   background: white;
   color: black;
 }
 
 /* line 683, ../sass/style.scss */
-/* line 1562, ../sass/style.scss */
+/* line 1563, ../sass/style.scss */
 .accordion-toggle h2 {
   color: black;
   text-decoration: none !important;
 }
 
 /* line 687, ../sass/style.scss */
-/* line 1568, ../sass/style.scss */
+/* line 1569, ../sass/style.scss */
 .accordion-toggle:hover {
   text-decoration: none !important;
 }
 
 /* line 690, ../sass/style.scss */
-/* line 1573, ../sass/style.scss */
+/* line 1574, ../sass/style.scss */
 .questionAnswerInputs {
   float: right;
 }
 
 /* line 693, ../sass/style.scss */
-/* line 1578, ../sass/style.scss */
+/* line 1579, ../sass/style.scss */
 .dropInputs {
   clear: both;
   margin-top: 39px;
@@ -1874,7 +1874,7 @@ li.active a {
 }
 
 /* line 698, ../sass/style.scss */
-/* line 1585, ../sass/style.scss */
+/* line 1586, ../sass/style.scss */
 .menuIcon {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   color: #333 !important;
@@ -1893,7 +1893,7 @@ li.active a {
 }
 
 /* line 714, ../sass/style.scss */
-/* line 1603, ../sass/style.scss */
+/* line 1604, ../sass/style.scss */
 .menuIcon:hover {
   padding: 24px 5px 25px 4px !important;
   border: 1px solid #ccc;
@@ -1901,13 +1901,13 @@ li.active a {
 }
 
 /* line 719, ../sass/style.scss */
-/* line 1610, ../sass/style.scss */
+/* line 1611, ../sass/style.scss */
 .menuIcon:hover:active {
   color: green !important t;
 }
 
 /* line 722, ../sass/style.scss */
-/* line 1615, ../sass/style.scss */
+/* line 1616, ../sass/style.scss */
 .pushLeft {
   transition: margin-left .2s;
   -webkit-transition: margin-left .2s;
@@ -1915,55 +1915,55 @@ li.active a {
 }
 
 /* line 727, ../sass/style.scss */
-/* line 1622, ../sass/style.scss */
+/* line 1623, ../sass/style.scss */
 span.red {
   color: #f00;
 }
 
 /* line 730, ../sass/style.scss */
-/* line 1627, ../sass/style.scss */
+/* line 1628, ../sass/style.scss */
 span.green {
   color: #090;
 }
 
 /* line 734, ../sass/style.scss */
-/* line 1632, ../sass/style.scss */
+/* line 1633, ../sass/style.scss */
 .hazardList > ul {
   margin: 0;
 }
-/* line 1634, ../sass/style.scss */
+/* line 1635, ../sass/style.scss */
 .hazardList > ul li {
   margin: 5px 0;
 }
 
 /* line 737, ../sass/style.scss */
 /* line 740, ../sass/style.scss */
-/* line 1644, ../sass/style.scss */
+/* line 1645, ../sass/style.scss */
 .topSub h1, .topSub h2, .topSub h3, .topSub h4, .topSub h5, .topSub h6 {
   color: black;
 }
 
 /* line 743, ../sass/style.scss */
-/* line 1649, ../sass/style.scss */
+/* line 1650, ../sass/style.scss */
 .topSub {
   padding: 5px 0;
   padding: 5px;
 }
 
 /* line 749, ../sass/style.scss */
-/* line 1655, ../sass/style.scss */
+/* line 1656, ../sass/style.scss */
 .topSub:hover {
   background: #eeeeee;
 }
 
 /* line 752, ../sass/style.scss */
-/* line 1660, ../sass/style.scss */
+/* line 1661, ../sass/style.scss */
 .subHazards {
   margin: -9px 0 11px 39px !important;
 }
 
 /* line 755, ../sass/style.scss */
-/* line 1665, ../sass/style.scss */
+/* line 1666, ../sass/style.scss */
 .subHazards > li, .subHazards > p, .topSub > p, .topSub > li, .roomRepeat {
   font-size: 15px;
   margin: 15px 0;
@@ -1971,7 +1971,7 @@ span.green {
 
 /****overrides for small room number checkboxes in hazard assessment***************/
 /* line 760, ../sass/style.scss */
-/* line 1672, ../sass/style.scss */
+/* line 1673, ../sass/style.scss */
 label.checkbox input[type=checkbox] ~ span.smaller::after {
   padding: 0 0 15px 2px;
   font-family: 'IcoMoon';
@@ -1986,25 +1986,25 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 }
 
 /* line 772, ../sass/style.scss */
-/* line 1686, ../sass/style.scss */
+/* line 1687, ../sass/style.scss */
 .roomRepeat {
   margin: 3px;
 }
 
 /* line 775, ../sass/style.scss */
-/* line 1691, ../sass/style.scss */
+/* line 1692, ../sass/style.scss */
 .roomRepeat:after {
   content: ", ";
 }
 
 /* line 778, ../sass/style.scss */
-/* line 1696, ../sass/style.scss */
+/* line 1697, ../sass/style.scss */
 .last:after {
   content: "" !important;
 }
 
 /* line 781, ../sass/style.scss */
-/* line 1701, ../sass/style.scss */
+/* line 1702, ../sass/style.scss */
 .modal-trigger-plus {
   color: #090;
   font-size: 25px;
@@ -2012,131 +2012,131 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 }
 
 /* line 787, ../sass/style.scss */
-/* line 1708, ../sass/style.scss */
+/* line 1709, ../sass/style.scss */
 .subHazards > li h4, .topSub > li h4 {
   white-space: nowrap;
 }
 
 /* line 790, ../sass/style.scss */
-/* line 1713, ../sass/style.scss */
+/* line 1714, ../sass/style.scss */
 #footer ul {
   list-style: none;
   margin: 15px 0;
 }
 
 /* line 795, ../sass/style.scss */
-/* line 1719, ../sass/style.scss */
+/* line 1720, ../sass/style.scss */
 #footer li {
   float: left;
   width: 25%;
 }
 
 /* line 799, ../sass/style.scss */
-/* line 1725, ../sass/style.scss */
+/* line 1726, ../sass/style.scss */
 #footer li a {
   font-size: 1vw;
 }
 
 /* line 802, ../sass/style.scss */
-/* line 1730, ../sass/style.scss */
+/* line 1731, ../sass/style.scss */
 #footer li a span {
   margin-left: 10px;
 }
 
 /* line 805, ../sass/style.scss */
-/* line 1735, ../sass/style.scss */
+/* line 1736, ../sass/style.scss */
 #footer li a img {
   max-width: 20%;
 }
 
 @media (max-width: 800px) {
   /* line 809, ../sass/style.scss */
-  /* line 1741, ../sass/style.scss */
+  /* line 1742, ../sass/style.scss */
   #footer li a span {
     margin-left: 10px;
     display: block;
   }
 }
 /* line 814, ../sass/style.scss */
-/* line 1747, ../sass/style.scss */
+/* line 1748, ../sass/style.scss */
 .clipboard {
   background: url(../img/clipboard.png);
 }
 
 /* line 815, ../sass/style.scss */
-/* line 1752, ../sass/style.scss */
+/* line 1753, ../sass/style.scss */
 .phone {
   background: url(../img/phone.png);
   padding-left: 140px !important;
 }
 
 /* line 816, ../sass/style.scss */
-/* line 1758, ../sass/style.scss */
+/* line 1759, ../sass/style.scss */
 .speechBubble {
   background: url(../img/speechBubble.png);
   padding-left: 190px !important;
 }
 
 /* line 817, ../sass/style.scss */
-/* line 1764, ../sass/style.scss */
+/* line 1765, ../sass/style.scss */
 .checkmarkFooter {
   background: url(../img/checkmarkFooter.png);
   padding-left: 140px !important;
 }
 
 /* line 819, ../sass/style.scss */
-/* line 1770, ../sass/style.scss */
+/* line 1771, ../sass/style.scss */
 .accordion:first-child {
   padding: 10px;
 }
 
 /* line 822, ../sass/style.scss */
-/* line 1775, ../sass/style.scss */
+/* line 1776, ../sass/style.scss */
 .test {
   width: 100px;
 }
 
-/* line 1778, ../sass/style.scss */
+/* line 1779, ../sass/style.scss */
 .loading img {
   width: 50px;
 }
 
-/* line 1781, ../sass/style.scss */
+/* line 1782, ../sass/style.scss */
 .loading {
   font-size: 20px;
   font-weight: bold;
 }
 
-/* line 1785, ../sass/style.scss */
+/* line 1786, ../sass/style.scss */
 .listStyleNone {
   list-style: none;
 }
 
-/* line 1788, ../sass/style.scss */
+/* line 1789, ../sass/style.scss */
 .hide {
   display: none !important;
 }
 
-/* line 1791, ../sass/style.scss */
+/* line 1792, ../sass/style.scss */
 .btn {
   -webkit-border-radius: 2px !important;
   -moz-border-radius: 2px !important;
   border-radius: 2px !important;
 }
 
-/* line 1798, ../sass/style.scss */
+/* line 1799, ../sass/style.scss */
 .quickdate {
   display: inline-block;
   position: relative;
   font-size: 12px !Important;
 }
 
-/* line 1799, ../sass/style.scss */
+/* line 1800, ../sass/style.scss */
 .quickdate-button div, .quickdate-action-link div {
   display: inline;
 }
 
-/* line 1800, ../sass/style.scss */
+/* line 1801, ../sass/style.scss */
 .quickdate-popup {
   z-index: 10;
   background-color: #fff;
@@ -2149,12 +2149,12 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
-/* line 1801, ../sass/style.scss */
+/* line 1802, ../sass/style.scss */
 .quickdate-popup.open {
   display: block;
 }
 
-/* line 1802, ../sass/style.scss */
+/* line 1803, ../sass/style.scss */
 .quickdate-close {
   position: absolute;
   top: 5px;
@@ -2162,12 +2162,12 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   color: #333;
 }
 
-/* line 1803, ../sass/style.scss */
+/* line 1804, ../sass/style.scss */
 .quickdate-close:hover, .quickdate-close:visited {
   color: #333;
 }
 
-/* line 1804, ../sass/style.scss */
+/* line 1805, ../sass/style.scss */
 .quickdate-calendar-header {
   display: block;
   padding: 2px 0;
@@ -2175,34 +2175,34 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   text-align: center;
 }
 
-/* line 1805, ../sass/style.scss */
+/* line 1806, ../sass/style.scss */
 .quickdate-month {
   display: inline-block;
 }
 
-/* line 1806, ../sass/style.scss */
+/* line 1807, ../sass/style.scss */
 a.quickdate-prev-month {
   float: left;
 }
 
-/* line 1807, ../sass/style.scss */
+/* line 1808, ../sass/style.scss */
 a.quickdate-next-month {
   float: right;
 }
 
-/* line 1808, ../sass/style.scss */
+/* line 1809, ../sass/style.scss */
 .quickdate-text-inputs {
   text-align: left;
   margin-bottom: 5px;
 }
 
-/* line 1809, ../sass/style.scss */
+/* line 1810, ../sass/style.scss */
 .quickdate-input-wrapper {
   width: 48%;
   display: inline-block;
 }
 
-/* line 1810, ../sass/style.scss */
+/* line 1811, ../sass/style.scss */
 input.quickdate-date-input, input.quickdate-time-input {
   width: 200px;
   margin: 0;
@@ -2210,7 +2210,7 @@ input.quickdate-date-input, input.quickdate-time-input {
   padding: 2px 3px;
 }
 
-/* line 1811, ../sass/style.scss */
+/* line 1812, ../sass/style.scss */
 table.quickdate-calendar {
   border-collapse: collapse;
   border-spacing: 0;
@@ -2219,67 +2219,67 @@ table.quickdate-calendar {
   margin-left: -3px;
 }
 
-/* line 1812, ../sass/style.scss */
+/* line 1813, ../sass/style.scss */
 table.quickdate-calendar th, table.quickdate-calendar td {
   padding: 5px;
 }
 
-/* line 1813, ../sass/style.scss */
+/* line 1814, ../sass/style.scss */
 table.quickdate-calendar td:hover {
   cursor: pointer;
 }
 
-/* line 1814, ../sass/style.scss */
+/* line 1815, ../sass/style.scss */
 .quickdate-popup-footer {
   text-align: right;
   display: block;
 }
 
-/* line 1815, ../sass/style.scss */
+/* line 1816, ../sass/style.scss */
 .quickdate-error {
   border: 1px solid #dd3b30 !important;
 }
 
-/* line 1816, ../sass/style.scss */
+/* line 1817, ../sass/style.scss */
 .quickdate-error:focus {
   outline-color: #dd3b30 !important;
 }
 
-/* line 1817, ../sass/style.scss */
+/* line 1818, ../sass/style.scss */
 .is-today {
   background: #49afcd !important;
   color: white !important;
 }
 
-/* line 1821, ../sass/style.scss */
+/* line 1822, ../sass/style.scss */
 .disabled-date {
   cursor: text !important;
   color: #666 !Important;
   background: #b9b9b9 !important;
 }
 
-/* line 1827, ../sass/style.scss */
+/* line 1828, ../sass/style.scss */
 .invalid {
   border-color: red;
 }
 
-/* line 1832, ../sass/style.scss */
+/* line 1833, ../sass/style.scss */
 .modal-body ul {
   list-style-type: none;
   margin-left: 0;
 }
 
-/* line 1839, ../sass/style.scss */
+/* line 1840, ../sass/style.scss */
 .bold {
   font-weight: bold;
 }
 
-/* line 1842, ../sass/style.scss */
+/* line 1843, ../sass/style.scss */
 .underline {
   text-decoration: underline;
 }
 
-/* line 1845, ../sass/style.scss */
+/* line 1846, ../sass/style.scss */
 .notTheOpenedOne {
   max-height: none !Important;
   overflow-y: hidden !important;

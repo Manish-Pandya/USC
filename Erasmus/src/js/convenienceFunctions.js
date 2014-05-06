@@ -37,7 +37,8 @@ angular.module('convenienceMethodModule', ['ngRoute'])
           	 console.log(failParam);
              onFail( obj, failParam );
          });
-        },/**  
+        },
+        /**  
 		* 	UPDATE an object on server and in AngularJS $scope object
 		*	
 		*	@param (obj DTO)          A data transfer object.  Has the properties which will be updated
@@ -59,6 +60,27 @@ angular.module('convenienceMethodModule', ['ngRoute'])
           .error(function(data, status, headers, config, hazard){
           	 console.log(failParam);
              onFail( obj, failParam );
+         });
+        },
+        /**  
+		* 	DELETE an object on server and in AngularJS $scope object
+		*	
+		*	@param (obj DTO)          A data transfer object.  Has the properties which will be updated
+		*	@param (obj OBJ)          The object to be updated in the AngularJS $scope
+		*   @param (function onSave)  AngularJS controller method to call if our server call returns a good code
+		*	@param (function onFail)  AngularJS controller method to call if our server call returns a bad code
+		*   @param (String url)       The URL on the server to which we post
+		*   @param (Object failParam) Object to be passed to failure function
+		*
+		**/
+		deleteObject: function( onSave, onFail, url,object){
+          return $http.delete(  url )
+          .success( function( returnedObj ) {
+          	console.log(returnedObj);
+            onSave(returnedObj,object);
+          })
+          .error(function(data, status, headers, config, hazard){
+             onFail( );
          });
         },
 

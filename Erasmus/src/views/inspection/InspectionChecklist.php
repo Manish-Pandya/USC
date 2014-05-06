@@ -19,9 +19,11 @@ require_once '../top_view.php';
 
 <div class="navbar">    		
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-		<li class="span12">
+		<li class="">
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist</h2>	
+			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist
+			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+			</h2>	
 		</li>
 	</ul>
 </div>
@@ -33,9 +35,10 @@ require_once '../top_view.php';
 	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Getting Checklists...
 	</div>
+
     <!-- begin checklist for this inspection -->
-		<accordion close-others="true" ng-hide="!checklists">
-			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in checklists" is-open="checklist.open">
+		<accordion close-others="true">
+			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in checklists" is-open="checklist.currentlyOpen">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions" ng-init="checklist.AnsweredQuestions = '0'"/>
@@ -83,7 +86,7 @@ require_once '../top_view.php';
 										<ul>
 											<li ng-repeat="room in deficiency.rooms">
 												<label class="checkbox inline">
-													<input type="checkbox" ng-change="selectRoom(question.Responses, deficiency, room)" ng-model="room.checked"/>
+													<input type="checkbox" ng-change="selectRoom(question.Responses, deficiency, room	)" ng-model="room.checked"/>
 													<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="" src="../../img/loading.gif"/></span>
 												</label>
 											</li>
@@ -142,114 +145,13 @@ require_once '../top_view.php';
 							</ul>
 						</span>
 		     		</li>
+		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-			<a class="btn btn-large btn-success" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-success" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
-
 	</div>
-
+	
 	</div>
 </div>
-<div style="clear:both"></div>
 </div>
-<script>
-/*
-//SHOW/HIDE DEFICIENCIES FOR A QUESTION
-$(':radio').on('click', function() {
-   val = $(this).val();
-   if(val == "No"){
-		$(this).closest('.question').children('.deficiencies').show();
-	}else{
-		$(this).closest('.question').children('.deficiencies').hide();
-	}
-});
-//SHOW/HIDE RECOMMENDATIONS FOR A QUESTION
-$('.showHideRecommendations').on('click', function() {
-	   val = $(this).val();
-	   if(val == "hide"){
-			$(this).closest('.question').children('.recommendations').hide();
-			$(this).val('show');
-			$(this).Text('Show Recommendations');
-		}else{
-			$(this).closest('.question').children('.recommendations').show();
-			$(this).val('hide');
-			$(this).Text('Hide Recommendations');
-		}
-});
-
-//HIDE LEFT NAV, DEFICIENCIES AND RECOMMENDATIONS
-$(document).ready(function(){
-	$('#sidebar').hide();
-	$('.deficiencies').hide();	
-	$('.recommendations').hide();
-	$('.toggles').offset({top: 361});
-	offset = $('.whitebg').offset();
-	$('.toggles').offset({left: offset.left - 10});
-});
-//SHOW LEFT NAV, CHANGE DISPLAY OF LEFT NAVE HIDE/REVEAL ICON ICON
-$(document.body).on("click", "a.toggledIn", function(){
-    $('a.toggles i').addClass('icon-arrow-up');
-    $('a.toggles i').removeClass('icon-arrow-down');
-    $('a.toggles').addClass('toggledOut');
-    $('a.toggles').removeClass('toggledIn');
-
-    $('#sidebar').animate({
-        width: '22%',
-        marginRight:  '1.5%',
-        marginLeft:	'1.5%'
-    }, 10)
-    .show();
-
-    $('#inspectionChecklist').animate({
-        width: '72%',
-        marginRight:  '3%',
-        marginLeft:	'0px'
-    }, 10);
-
-    $('#sidebar').offset({top: 161});
-    $('.toggles').offset({top: 361});
-});
-
-//HIDE LEFT NAV, CHANGE DISPLAY OF LEFT NAVE HIDE/REVEAL ICON ICON
-$(document.body).on("click", "a.toggledOut", function(){
-    $('a.toggles i').addClass('icon-arrow-down');
-    $('a.toggles i').removeClass('icon-arrow-up');
-    $('a.toggles').addClass('toggledIn');
-    $('a.toggles').removeClass('toggledOut');
-    
-    $('#sidebar').animate({
-        width: '0px',
-        marginRight:  '0px',
-        marginLeft:	'0px'
-    }, 10,
-    function() {
-    	 $('#sidebar').hide();
-      });
- 
-    $('#inspectionChecklist').animate({
-        width: '98.5%',
-        marginRight:  '0px',
-        marginLeft:	'1.5%'
-    },10);
-});
-//KEEP SIDEBAR IN WINDOW
-$(window).scroll(function(){ // scroll event
-    var windowTop = $(window).scrollTop(); // returns number 
-    console.log(windowTop);
-    $('#sidebar').offset({top: windowTop + 161});
-    $('.toggles').offset({top: windowTop + 361});
-  });
-$(window).resize(function() {
-	offset = $('.whitebg').offset();
-	$('.toggles').offset({left: offset.left - 10});
-});
-$("#sideNav li").click(function(){
-	$("#sideNav li").removeClass('active');
-	$(this).addClass('active');
-})
-$(document.body).on("change", "input.toggler", function(){	
-	$(this).closest('.checkbox').find('div:first').toggleClass('hide shadow');
-});
-*/
-</script>

@@ -853,10 +853,11 @@ img.smallLoading{
 
 /********************CHECKLIST STYLES *****************************/
 /* line 418, ../sass/style.scss */
-.checklist {
-  padding: 0px 1% 15px;
-  margin: 25px 0 25px;
+.checklist.panel {
+  padding:15px;
+  margin: 10px 10px 15px;
   background: #f0f0f0;
+  border-radius:3px;
 }
 
 /* line 423, ../sass/style.scss */
@@ -1521,7 +1522,7 @@ li.active a {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* line 653, ../sass/style.scss */
+/* line 653, ../sass/style.scss 
 .checklist:before {
   display: block;
   content: " ";
@@ -1529,7 +1530,7 @@ li.active a {
   height: 285px;
   visibility: hidden;
 }
-
+*/
 /* line 660, ../sass/style.scss */
 .checklist ul {
   list-style: none !important;

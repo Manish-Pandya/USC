@@ -82,7 +82,7 @@ require_once '../top_view.php';
 		       <div class="controls">
 		       <span ng-show="!PIs">
 		         <input class="span12" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
-		       	<img class="" style="height:23px; margin:-73px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		       	<img class="" style="height:23px; margin:-36px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
 		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="PI.User.Name" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in PIs | filter:$viewValue">
@@ -100,11 +100,14 @@ require_once '../top_view.php';
 			    </div>
 		       </h3>
 	       		<span ng-show="!buildings.length">
-				       	<p style="display: inline-block; margin-top:5px;">
-				       	<img class="" style="height:23px; margin:-4px 0 0 0px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-				       	Select a Principal Investigator.
+				       	<p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
+					       	Select a Principal Investigator.
 				       	</p>
-			       </span>
+				       	 <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
+					    	{{PI.User.Name}} has no rooms <a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}" target="_blank">Add Rooms</a>
+					    </p>
+				</span>
+
 			       <span ng-hide="!buildings || !PI">
 			       		<ul class="selectedBuildings">
 			       			<li ng-repeat="(key, building) in buildings">
@@ -155,10 +158,9 @@ require_once '../top_view.php';
 	    <form>
 	    <span ng-show="hazardsLoading" class="loading">
 	     <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Hazards
+		  Getting Hazards..
 	    </span>
-
-			<ul class="allHazardList">
+	   		<ul class="allHazardList">
 				<li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">
 					<h1 class="hazardListHeader" id="{{hazard.cssId}}" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
 					<span ng-hide="hazard.hidden">
@@ -245,24 +247,64 @@ require_once '../top_view.php';
 </div>
 <span ng-controller="footerController">
 	
-	<div ng-show="selectedFooter == 'reports'" class="selectedFooter">
-		<h3>Archived Reports</h3>
+	<div ng-show="selectedFooter == 'reports'" class="selectedFooter" style="width:auto;">
 		<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
-		<ul>
-			<li><a target="_blank" href="InspectionConfirmation.php/confirmation#/details">Archived Report 1</a></li>
-			<li><a target="_blank" href="InspectionConfirmation.php/confirmation#/details">Archived Report 1</a></li>
-		</ul>
+		<h2 style="text-decoration:underline">ARCHIVED REPORTS</h2>
+		<h2>Principle Investigator: {{PI.User.Name}}</h2>
+		
+		<div class="loading" ng-show='!previousInspections' >
+		Loading Archived Reports...
+		  <img class="" src="../../img/loading.gif"/>
+		</div>
+		<table class="table table-striped table-bordered" style="table-layout:fixed;">
+			<thead>
+				<th>Year</th>
+				<th>Inspection Date</th>
+				<th>Inspector(s)</th>
+				<th>Hazards</th>
+				<th>Inspection Report</th>
+				<th>Close Out Date</th>
+			</thead>
+			<tbody style="max-height:500px; overflow-y:scroll;">
+				<tr ng-repeat="(key, inspection) in previousInspections">
+					<td>{{inspection.year}}</td>
+					<td>{{inspection.startDate}}</td>
+					<td>{{inspection.Inspectors[0].User.Name}}</td>
+					<td>hazards</td>
+					<td><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
+					<td>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
+				</tr>
+			</tbody>	
+		</table>
 	</div>
 
 	<div style="margin-left:25%;" ng-show="selectedFooter == 'contacts'" class="selectedFooter">
-	<h3>Contacts</h3>
-			<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
-		<div class="loading" ng-show='!doneLoading' >
+	<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
+		<h2 style="text-decoration:underline">Lab Contacts</h2>
+		<h2>Principle Investigator: {{PI.User.Name}}</h2>
+		
+		<div class="loading" ng-show='!PI' >
+		Loading Archived Reports...
 		  <img class="" src="../../img/loading.gif"/>
 		</div>
-		<ul>
-			<li ng-repeat="contact in contacts">{{contact.Name}}</li>
-		</ul>
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Lab Phone</th>
+					<th>Emergency Phone</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="(key, contact) in PI.LabPersonnel">
+					<td>{{contact.Name}}</td>
+					<td>{{contact.Lab_phone}}</td>
+					<td>{{contact.Emergency_phone}}</td>
+					<td>{{contact.Email}}</td>
+				</tr>
+			</tbody>	
+		</table>
 	</div>
 
 	<div ng-show="selectedFooter == 'comments'" class="selectedFooter">
@@ -270,8 +312,8 @@ require_once '../top_view.php';
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
 	<ul class="container-fluid whitebg">
-		<li><a ng-click="getArchivedReports()"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
-		<li><a href="../hubs/userhub.php"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
+		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
+		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
 		<li><a><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
 		<li><a href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
 	</ul>

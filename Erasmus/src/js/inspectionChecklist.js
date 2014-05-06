@@ -29,10 +29,15 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   
   //grab set user list data into the $scrope object
   function onGetChecklists(data) {
+    console.log(data);
     $scope.inspection = data;
     $scope.checklists = data.Checklists;
     angular.forEach($scope.checklists, function(checklist, key){
       checklist.isNew = true;
+      angular.forEach(checklist.Questions, function(question, key){
+        if(question.Responses && question.Responses.Answer)question.Responses.previous = angular.copy(question.Responses.Answer); 
+        console.log(question);
+      });
     });
   }
 
@@ -89,35 +94,53 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
   //click handler for questions that have already been answered if we wish to set answers to null
   $scope.setUnchecked = function(checklist, response, question,checklist){
+    console.log(question);
+    console.log(response);
     question.IsDirty = true;
      //this question has already been answered
-    if(response.previous){
+    if(question.Responses && question.Responses.previous){
+      console.log('here');
       //this question's answer has not changed
-      if(response.previous == reponse.Answer){
+      if(question.Responses.previous == response){
         //include a key id in the reponse dto so that we update instead of saving a new one
+        response.Answer = false;
         var responseDTO = {
           Class:          "Response",
           Inspection_id : $scope.inspId,
           Question_id:    question.Key_id,
           Question_text:  question.Text,
-          answer:         response.Answer,
-          Key_id:         response.Key_id
+          answer:         false,
+          Key_id:         question.Responses.Key_id
         }
-        //todo: api call to get rid of relationship between response and question
-        //handleResponse(responseDTO, response, question);
-        response.Answer = false;
+        handleResponse(responseDTO, response, question, checklist);
       }
     }
   }
 
 
   function handleResponse(responseDTO, response, question, checklist){
-    var url = '../../ajaxaction.php?action=saveResponse';
-    convenienceMethods.updateObject( responseDTO, question, onSaveResponse, onFailSaveResponse, url, 'test', checklist, response.previous);
+    console.log('handling');
+    if(responseDTO.answer){
+      var url = '../../ajaxaction.php?action=saveResponse';
+      convenienceMethods.updateObject( responseDTO, question, onSaveResponse, onFailSaveResponse, url, 'test', checklist, response.previous);
+    }
+
+    if(!responseDTO.answer){
+      console.log('doing it');
+      var url = '../../ajaxaction.php?action=removeResponse&id='+responseDTO.Key_id+'&callback=JSON_CALLBACK';
+      convenienceMethods.deleteObject( onSetUncehcked, onFailSaveResponse, url, question );
+    }
+
+  }
+
+  function onSetUncehcked(data,question){
+    question.Responses.Answer = false;
+    question.IsDirty = false;
   }
 
   function onSaveResponse(response, question, checklist, previous){
-    response.previous = previous;
+    if(!question.Responses.previous)question.Responses.previous;
+    question.Responses.previous = previous;
     question.Responses = response;
     question.showChecks = true;
     question.IsDirty = false;
@@ -132,7 +155,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         question.complete = false;
         if(question.Responses){
          answer = question.Responses.Answer;
-         if(answer)question.Responses.previous = true;
+         if(answer)question.Responses.previous = answer;
         //if a user answers "yes" or "n/a", a question is valid
         if(answer.toLowerCase() == 'yes' || answer.toLowerCase() == 'n/a'){
           question.complete = true;
@@ -161,7 +184,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     
    // console.log(question);
 
-    if(question.Responses.Recommendations.length > 0){
+    if(question.Responses && question.Responses.Recommendations.length > 0){
       angular.forEach(question.Recommendations, function(rec, key){
        // console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec)) {
@@ -171,7 +194,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       });
     }
 
-    if(question.Responses.Observations.length > 0){
+    if(question.Responses && question.Responses.Observations.length > 0){
       angular.forEach(question.Observations, function(obs, key){
        // console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Observations, obs)) {
@@ -185,15 +208,14 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
   function evalDefSelections(question){
     angular.forEach(question.Deficiencies, function(def, key){
-     // console.log(def);
       if(convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections,def,["Deficiency_id","Key_id"])){
         def.checked=true;
-        //console.log(def);
       }
     });
   }
 
   function onFailSaveResponse(){
+    alert('The system couldn\'t save the response.');
   }
 
   $scope.handleNotesAndRecommendations = function(question, obj){
