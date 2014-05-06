@@ -19,7 +19,6 @@ require_once '../top_view.php';
 	<div class="whiteBg" style="margin-top:-40px;">
 		<span ng-controller="emergencyInfoController" id="emergency-info">
 			<div id="buildings">
-				
 				<form class="row form-inline" style="margin-left:0">
 					<label>Building</label>
 					<input ng-if="Buildings" style="" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
@@ -30,13 +29,16 @@ require_once '../top_view.php';
 					<input ng-if="!building" placeholder="Select a Building" disabled="disabled">
 
 				</form>
-				<h2 ng-if="building">Select a room to display EMERGENCY INFORMATION for {{building.Name}}</h2>
+				<span ng-if="building">
+				<h2 ng-if="building && !room">Select a room to display EMERGENCY INFORMATION for {{building.Name}}</h2>
 				<div class="roomDisplay" ng-if="room">
 					<h2>Room {{room.Name}}</h2>
 					
 					<h3 style="text-decoration:underline; margin-top:20px;">EMERGENCY CONTACTS</h3>
+					<h4 ng-if="!room.PrincipalInvestigators.length">No Principal Investigators have been assigned to room {{room.Name}}</h4>
 					<ul>
 						<li style="margin:10px auto; width:500px; list-style:none" class="lefterizer row" ng-repeat="pi in room.PrincipalInvestigators">
+						{{pi}}
 							<span style="width:200px; float:left; text-decoration:underline;">Principal Investigator:</span> <span>{{pi.User.Name}}</span><br>
 							<span style="width:150px; float:left; text-decoration:underline;">Emergency Phone: </span><span style="width:265px; margin-left:-16px;">{{pi.User.Emergency_phone}}</span><br>
 							<span style="float:left; width:160px; text-decoration:underline;">Department(s)</span><span><ul><li class="offset2" ng-repeat="department in pi.Departments">{{department.Name}}</li></ul></span>
@@ -44,7 +46,7 @@ require_once '../top_view.php';
 
 					</ul>
 
-					<h3 style="text-decoration:underline; margin-top:20px;">Laboratory Safety Contact(s):</h3>
+					<h3 ng-if="room.PrincipalInvestigators.length && room.PrincipalInvestigators[0] && room.PrincipalInvestigators[0].LabPersonnel.length" style="text-decoration:underline; margin-top:20px;">Laboratory Safety Contact(s):</h3>
 					<li style="margin:10px auto; width:700px; list-style:none;"  class="lefterizer row" ng-repeat="pi in room.PrincipalInvestigators">
 						<ul>
 							<li ng-repeat="contact in pi.LabPersonnel" style="text-align:left; list-style:none"><span><span  style="text-decoration:underline;">Name:</span><span style="width: 200px; display: inline-block;
@@ -53,13 +55,13 @@ margin-left: 10px;">{{contact.Name}}</span><span style="text-decoration:underlin
 					</li>
 
 
-					<div ng-hide="!gettingHazards" class="container loading" style="margin-left:70px; margin-top:20px;">
+					<div ng-if="gettingHazards && room.PrincipalInvestigators.length" class="container loading" style="margin-top:20px;">
 				      <img class="" src="../../img/loading.gif"/>
 				      Building Hazard List...
 				    </div>
 
-			    <h2 ng-show="hazards" style=" margin-top:20px; text-decoration:underline">LABORATORY HAZARDS</h2>
-
+			    <h2 ng-show="numberOfHazardsPresent > 0" style=" margin-top:20px; text-decoration:underline">LABORATORY HAZARDS</h2>
+			    <h4 ng-if="numberOfHazardsPresent < 1 && !gettingHazards">There are no hazards in the system for {{building.Name}}, room {{room.Name}}</h4>
 				<ul class="allHazardList" style="width:960px; margin:30px auto;">
 					<li class="hazardList" ng-if="hazard.IsPresent" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards" style="width:350px;">
 					<h1 class="hazardListHeader" id="{{hazard.cssId}}" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
@@ -77,9 +79,7 @@ margin-left: 10px;">{{contact.Name}}</span><span style="text-decoration:underlin
 					</li>
 					<div style='clear:both'>&nbsp;</div>
 				</ul>
-				<div style='clear:both'>&nbsp;</div>
-
-				<!--<div class="well">{{room.Safety_contact_information}}</div>-->
-					
+				<div style='clear:both'>&nbsp;</div>					
 	</div>		
+	</span>
 </span>

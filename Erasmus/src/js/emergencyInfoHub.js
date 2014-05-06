@@ -57,12 +57,14 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
     console.log(data);
     $scope.gettingHazards = false;
 
-
+    var numberOfHazardsPresent = 0;
     angular.forEach(data.SubHazards, function(hazard, key){
       console.log(hazard);
       hazard.cssId = camelCase(hazard.Name);
+      if(hazard.IsPresent)numberOfHazardsPresent++;
     });
 
+    $scope.numberOfHazardsPresent = numberOfHazardsPresent;
     $scope.hazards = data.SubHazards;
 
    
