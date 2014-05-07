@@ -564,22 +564,23 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
 
     $scope.newNoteIsDirty = true;
     console.log($scope.newNote);
+
     var inspectionDTO = {
-      Class: "Inspection",
-      Key_id:  $scope.inspection.Key_id,
-      Note:  $scope.newNote
+      Class: "EntityText",
+      Entity_id:  $scope.inspection.Key_id,
+      Text:  $scope.newNote
     }
+
     var url = "../../ajaxaction.php?action=saveNoteForInspection";
     convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url);
   }
 
   function onSaveNote(returned){
     $scope.newNoteIsDirty = false;
-    $scope.inspection.Note = returned.Note;
+    $scope.inspection.Note = $scope.newNote;
   }
 
   function onFailSaveNote(data){
-    $scope.inspection.Note = data.Note;
     $scope.newNoteIsDirty = false;
     alert('There was a problem saving the note.');
   }
