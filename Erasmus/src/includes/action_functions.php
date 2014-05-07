@@ -1839,8 +1839,10 @@ function sendInspectionEmail(){
 			$recipientEmails[] = $user->getEmail();
 		}
 		
-		if (!empty($decodedObject->getOther_emails())) {
-			$recipientEmails = array_merge($recipientEmails,$decodedObject->getOther_emails());
+		$otherEmails = $decodedObject->getOther_emails();
+		
+		if (!empty($otherEmails)) {
+			$recipientEmails = array_merge($recipientEmails,$otherEmails);
 		}
 		
 		// Iterate the inspectors and add their email addresses to our array
