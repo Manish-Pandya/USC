@@ -737,7 +737,7 @@ function saveInspector(){
 		return $decodedObject;
 	}
 	else{
-		$dao = getDao(new Inspection());
+		$dao = getDao(new Inspector());
 		$dao->save($decodedObject);
 		return $decodedObject;
 	}
@@ -1826,7 +1826,7 @@ function sendInspectionEmail(){
 		$dao = getDao(new Inspection());
 		$inspection = $dao->getById($decodedObject->getEntity_id());
 		
-		//get the client side email text
+		//get the client side email text	
 		$text = $decodedObject->getText();
 		
 		// Init an array of recipient Email addresses and another of inspector email addresses

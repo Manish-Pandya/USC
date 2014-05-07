@@ -281,6 +281,17 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		setIsDirty: function(obj){
 			obj.IsDirty = !obj.IsDirty;
 			return obj;
+		},
+		sendEmail: function(emailDto, onSendEmail, onFailSendEmail, url){
+			//use jsonp method of the angularjs $http object to ask the server to send an email
+			return $http.post(  url, emailDto )
+			.success( function( returnedObj ) {
+				console.log(returnedObj);
+				onSendEmail(returnedObj, emailDto);
+			})
+			.error(function(data, status, headers, config, hazard){
+			 	onFailSendEmail();
+			});
 		}
 	};
 });
