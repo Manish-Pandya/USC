@@ -256,26 +256,28 @@ require_once '../top_view.php';
 		Loading Archived Reports...
 		  <img class="" src="../../img/loading.gif"/>
 		</div>
-		<table class="table table-striped table-bordered" style="table-layout:fixed;">
-			<thead>
-				<th>Year</th>
-				<th>Inspection Date</th>
-				<th>Inspector(s)</th>
-				<th>Hazards</th>
-				<th>Inspection Report</th>
-				<th>Close Out Date</th>
+		<div  id="tableContainer" class="tableContainer">
+		<table ng-if="previousInspections" class="table table-striped table-bordered" class="scrollTable">
+		<thead class="fixedHeader">
+				<th style="width:60px;">Year</th>
+				<th style="width:170px;">Inspection Date</th>
+				<th style="width:216px;">Inspector(s)</th>
+				<th style="width:120px;">Hazards</th>
+				<th style="width:160px">Inspection Report</th>
+				<th style="width:204px">Close Out Date</th>
 			</thead>
-			<tbody style="max-height:500px; overflow-y:scroll;">
+			<tbody class="scrollContent">
 				<tr ng-repeat="(key, inspection) in previousInspections">
-					<td>{{inspection.year}}</td>
-					<td>{{inspection.startDate}}</td>
-					<td>{{inspection.Inspectors[0].User.Name}}</td>
-					<td>hazards</td>
-					<td><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
-					<td>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
+					<td style="width:61px;">{{inspection.year}}</td>
+					<td style="width:167px;">{{inspection.startDate}}</td>
+					<td  style="width:218px;">{{inspection.Inspectors[0].User.Name}}</td>
+					<td style="width:119px;">hazards</td>
+					<td style="width:156px;"><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
+					<td style="width:197px;">{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
 				</tr>
 			</tbody>	
 		</table>
+		</div>
 	</div>
 
 	<div style="margin-left:25%;" ng-show="selectedFooter == 'contacts'" class="selectedFooter">
@@ -307,14 +309,18 @@ require_once '../top_view.php';
 		</table>
 	</div>
 
-	<div ng-show="selectedFooter == 'comments'" class="selectedFooter">
+	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:50%">
+		<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
+		<a ng-click="saveNoteForInspection()" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
+		<a ng-click="cancelSaveNote()" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
+		<img ng-show="newNote.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
 	<ul class="container-fluid whitebg">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
-		<li><a><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
+		<li><a ng-click="openNotes()"><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
 		<li><a href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
 	</ul>
 </div>

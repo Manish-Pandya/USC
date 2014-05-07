@@ -49,10 +49,11 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   function onSetInspection(inspection){
     console.log(inspection);
     $scope.inspection = inspection;
+
     $scope.PI = inspection.PrincipalInvestigator;
     $scope.selectBuildings();
 
-    $location.search('inspection', $scope.inspection.Key_id);
+    $location.search('inspectionId', $scope.inspection.Key_id);
     $location.search("pi", $scope.PI.Key_id);
   }
 
@@ -551,6 +552,40 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
 
   onFailGetLabContacts = function(){
     alert('Something went wrong when retrieving lab contacts.');
+  }
+
+  $scope.openNotes = function(){
+    console.log($scope.inspection);
+     $scope.newNote = $scope.inspection.Note;
+     $scope.selectedFooter = 'comments'
+  }
+
+  $scope.saveNoteForInspection = function(){
+
+    $scope.newNote.IsDirty = true;
+
+    var inspectionDTO = {
+      Class: "Inspection",
+      Key_id:  $scope.inspection.Key_id,
+      Note:  $scope.newNote
+    }
+    var url = "../../ajaxaction.php?action=saveNoteForInspection&callback=JSON_CALLBACK";
+    convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url);
+  }
+
+  function onSaveNote(returned){
+    $scope.newNote.IsDirty = false;
+    $scope.inspection.Note = returned.Note;
+  }
+
+  function onFailSaveNote(){
+    $scope.newNote.IsDirty = false;
+    alert('There was a problem saving the note.');
+  }
+
+  $scope.cancelSaveNote = function(){
+    $scope.newNote = $scope.inspection.Note;
+    $scope.selectedFooter = false;
   }
 
   $scope.$watch('previousInspections', function(previousInspections, oldValue) {
