@@ -29,7 +29,7 @@
 			<h3>Principal Investigator:</h3> <p>{{Inspection.PrincipalInvestigator.User.Name}}</p>
 		</span>
 		<span class="span3 pull-right">
-			<h3>Inspection Date:</h3> <p>{{Inspection.DateCreated}}</p>
+			<h3>Inspection Date:</h3> <p>{{Inspection.Date_last_modified}}</p>
 		</span>
 		</div>
 
@@ -89,7 +89,7 @@
 		<td valign="top">
 			<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
 				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
-				<br>
+				
 				<label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == 'Accepted'" style="color:#090"></i><img ng-show="def.CorrectiveActionCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>Corrective Action Status:</label>
 				<select ng-hide="def.CorrectiveActionCopy.Status == 'Accepted'" class="{{def.CorrectiveActionCopy.Status}} status"
 				  ng-model="def.CorrectiveActionCopy.Status"
@@ -102,12 +102,20 @@
 					<span ng-switch-when="Incomplete"></span>
 					<span ng-switch-default>
 						<label ng-show="def.CorrectiveActionCopy.Status == 'Pending'">Describe Planned Corrective Action:</label>
-						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'">Describe Completed Corrective Action:</label>
-						<textarea style="width:100%" rows=5 ng-model="def.CorrectiveActionCopy.Text"></textarea>
+						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'"><a class="btn-mini btn btn-danger" ng-show="def.CorrectiveActionCopy.Editing" ng-click="resetEdits(def.CorrectiveActionCopy,def.CorrectiveActions[0])"><i class="icon-cancel"></i></a>Describe Completed Corrective Action:</label>
+						
+						<span ng-if="def.CorrectiveActions[0].Status == 'Pending' || def.CorrectiveActionCopy.Editing == true">
+							<textarea style="width:100%" rows=5 ng-model="def.CorrectiveActionCopy.Text"></textarea>
+						</span>
+						<span ng-if="def.CorrectiveActions[0].Status != 'Pending' && !def.CorrectiveActionCopy.Editing">
+							<p><a class="btn-mini btn btn-primary" ng-click="def.CorrectiveActionCopy.Editing = !def.CorrectiveActionCopy.Editing"><i class="icon-pencil"></i></a>{{def.CorrectiveActionCopy.Text}}</p>
+						</span>
+						
+
 						<label ng-show="def.CorrectiveActionCopy.Status == 'Pending'">Anticipated Completion Date:</label>
 						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'">Corrective Action Completion Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='def.CorrectiveActionCopy.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			             <datepicker2 ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
 			            </p>
 			            <p class="input-group">					
 							<a class="btn btn-primary" ng-click="saveCorrectiveAction(def.CorrectiveActionCopy,def.CorrectiveActions[0])"><i class="icon-checkmark"></i>Save Corrective Action</a>
@@ -151,7 +159,7 @@
 						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
 						<label>Corrective Action Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='response.CorrectiveActionCopy.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+			             <datepicker2 ng-model='response.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
 			            </p>						
 			            <a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
 			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
@@ -244,18 +252,22 @@
 		</td>
 	</tr>
 </table>
-<table class="table table-bordered table-striped table-responsive inspectionReportTable">
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
 	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
 	<tr><td style="font-size:1.5em; text-align:center" valign="top">{{criteria}}</td><td valign="top">{{recommendation}}</td></tr>
 </table>
-
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
-	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">Joe Jones</td></tr>
+	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">{{Inspection.PrincipalInvestigator.User.Name}}</td></tr>
 </table>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">
 	<tr><th align="center"># ITEMS INSPECTED</th><th align="center"># COMPLIANT ITEMS</th><th align="center"># DEFICIENCY ITEMS</th><th align="center">COMPLIANCE SCORE</th></tr>
-	<tr style="background: #c5d8f1;"><td style="text-align:center" valign="top" align="center">97</td><td style="text-align:center" valign="top" align="center">88</td><td  style="text-align:center" valign="top" align="center">9</td><td  style="text-align:center" valign="top" align="center">91%</td></tr>
+	<tr style="background: #c5d8f1;">
+		<td style="text-align:center" valign="top" align="center">{{score.itemsInspected}}</td>
+		<td style="text-align:center" valign="top" align="center">{{score.compliantItems}}</td>
+		<td  style="text-align:center" valign="top" align="center">{{score.deficiencyItems}}</td>
+		<td  style="text-align:center" valign="top" align="center">{{score.score}}%</td>
+	</tr>
 </table>
 <h3 style="text-align:center; font-weight:bold; font-size:13px;">Compliance scores can be used to assess overall safety and compliance progress and can be used as a performance improvement metric.<br>Scores are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.</h3>
 

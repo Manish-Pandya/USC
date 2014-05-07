@@ -14,8 +14,7 @@ postInspection.config(function(ngQuickDateDefaultsProvider) {
     prevLinkHtml: "<i class='icon-arrow-left'></i>",
     // Take advantage of Sugar.js date parsing
     parseDateFunction: function(str) {
-      d = Date.create(str);
-      return d.isValid() ? d : null;
+      return new Date(Date.parse(str));
     }
   });
 });
@@ -102,8 +101,9 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
     alert("There was a problem retrieving your user information");
   }
   function onGetInspection(data){
-  //  console.log(data);
-    data.DateCreated = convenienceMethods.getDate(data.DateCreated);
+    console.log(data);
+    if(data.Date_last_modified)var date = convenienceMethods.getDate(data.Date_last_modified);
+    if(data.Date_last_modified)data.Date_last_modified = date.formattedString;
     $scope.Inspection = data;
     $rootScope.Inspection = data;
     $scope.doneLoading = data.doneLoading;
@@ -131,7 +131,7 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
 
   // Disable weekend selection
   $scope.disabled = function(date, mode) {
-    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+    //return ( mode === 'day' && ( date.getDay() > $scope.Inspection.Date_last_modified) );
   };
 
   $scope.toggleMin = function() {
@@ -169,14 +169,22 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       $scope.Inspection = $rootScope.Inspection;
       onGetInspection($scope.Inspection);
     }
+    $scope.defaultNote = "These are your results from the recent inspection of your laboratory."
+   
   };
+
+  $scope.addOtherRecipient = function(){
+    var other = "";
+    $scope.others.push(other);
+  }
   
+  $scope.addOtherRecipient
+
   //grab set user list data into the $scrope object
   function onGetInspection(data) {  
-    
-  	$scope.PrincipalInvestigator = data.PrincipalInvestigator.User;
-    $scope.Contacts = data.PrincipalInvestigator.LabPersonnel
+    $scope.inspection = data;
     $scope.doneLoading = data.doneLoading;
+    $scope.others = [{email:''}];
   }
 
   function onFailGet(data){
@@ -200,11 +208,46 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
   }
 
-  $scope.sendEmail = function(){
-  	//todo:  send email
-  	//convenienceMethods.updateObject();
-    $scope.setRoute('/review');
+  $scope.handleContactList = function(contact){
+    if(contact.include){
+      $scope.contactList.push(contact.Key_id);
+    }else{
+      $scope.contactList.splice( $scope.contactList.indexOf(contact.Key_id),1);
+    }
+    console.log($scope.contactList);
   }
+
+  $scope.sendEmail = function(){
+
+    othersToSendTo = [];
+
+    angular.forEach($scope.others, function(other, key){
+      othersToSendTo.push(other.email);
+    });
+
+    var emailDto ={
+      Class: "EmailDto",
+      Entity_id: $scope.Inspection.Key_id,
+      Recipient_ids: $scope.contactList,
+      Other_emails: othersToSendTo,
+      Text: $scope.defaultNote
+    }
+
+    console.log(emailDto);
+    var url = '../../ajaxaction.php?action=sendInspectionEmail';
+    convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
+
+   // $scope.setRoute('/review');
+  }
+
+  function onSendEmail(data){
+    $scope.emailSent = true;
+  }
+
+  function onFailSendEmail(){
+    alert('There was a problem when the system tried to send the email.');
+  }
+
 
 }
 
@@ -225,13 +268,43 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
 
   };
 
-  function onGetInspection(data){
+  function calculateScore(){
+    if(!$scope.score)$scope.score = {};
+    $scope.score.itemsInspected = 0;
+    $scope.score.deficiencyItems = 0;
+    $scope.score.compliantItems = 0;
+    angular.forEach($scope.Inspection.Checklists, function(checklist, key){
+      angular.forEach(checklist.Questions, function(question, key){
+        $scope.score.itemsInspected++;
+        if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
+          $scope.score.deficiencyItems++;
+        }else /*if(question.Responses && question.Responses.Answer)*/{
+          $scope.score.compliantItems++;
+          console.log('here');
+        }
+      });
+    });
 
+    console.log(parseInt($scope.score.compliantItems));
+
+    $scope.score.score = Math.round(parseInt($scope.score.compliantItems)/parseInt($scope.score.itemsInspected) * 100);
+    //$scope.score.score = 10/11;
+  }
+
+  function onGetInspection(data){
+    $scope.recommendations = [];
     angular.forEach(data.Checklists, function(checklist, key){
       console.log(checklist);
       if(!checklist.Responses)checklist.Responses = [];
       angular.forEach(checklist.Questions, function(question, key){
-        if(question.Responses.Answer.toLowerCase() == "no"){
+
+        if(question.Responses && question.Responses.Recommendations && question.Responses.Recommendations.length){
+          angular.forEach(question.Responses.Recommendations, function(recommendation, key){
+            $scope.recommendations.push(recommendation);
+          });
+        }
+
+        if(question.Responses && question.Responses.Answer.toLowerCase() == "no"){
           angular.forEach(question.Responses.DeficiencySelections, function(def, key){
              def.questionText = question.Text;
              if(!def.CorrectiveActions.length){
@@ -242,15 +315,13 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
               }
             }
             def.CorrectiveActionCopy =  angular.copy(def.CorrectiveActions[0]);
+            if(def.CorrectiveActionCopy.Completion_date)def.CorrectiveActionCopy.Completion_date = convenienceMethods.getDate(def.CorrectiveActionCopy.Completion_date);
             console.log(def.CorrectiveActionCopy);
-
             checklist.Responses.push(def);
           });
         }
       });
     });
-
-   
 
     var parentHazards = ['BIOLOGICAL SAFETY', 'CHEMICAL SAFETY', 'RADIATION SAFETY'];
 
@@ -296,53 +367,14 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
 
       }
     }
-//   });
 
   // if(orderedChecklists.bioHazards)$scope.bioHazards = orderedChecklists.bioHazards;
    console.log($scope.bioHazards);
+   if(data.Date_last_modified)data.Date_last_modified = convenienceMethods.getDate(data.Date_last_modified );
    $scope.Inspection = data;
-
-   /* var complianceDescriptions = ['All biological safety cabinets must be certified annually. This certification involves a process of inspection and testing by trained personnel, following strict protocols, to verify that it is working properly. This certification should be scheduled by contacting Tom Gardner with Biological Control Services at (919) 906-3046.',
-    'Not established The OSHA Laboratory Standard requires that each laboratory establish and maintain a Chemical Hygiene Plan. This plan should include procedures, equipment, PPE and work practices that are designed to protect employees from the health hazards presented by hazardous chemicals used in the lab. The plan must be accessible to lab personnel at all times. Chemical Hygiene Plan: http://ehs.sc.edu/LabSafety.htm. This plan must be reviewed and updated annually and signed by all lab staff.',
-    'Weekly wipe surveys from radioisotope work areas must be properly documented, maintained, and available upon request by EH&S.'
-    ]
-/*
-    angular.forEach($scope.responses, function(value, key){
-
-      value.complianceReference = Math.random().toString(36).substring(7);
-      value.CorrectiveAction = {};
-      var randomParentHazard = parentHazards[Math.floor(Math.random()*parentHazards.length)];
-      value.ParentHazard = randomParentHazard;
-      value.CorrectiveAction.beingEdited = false;
-      console.log(value);
-      if(randomParentHazard == 'BIOLOGICAL SAFETY'){
-        value.complianceDescription = complianceDescriptions[0];
-        value.CorrectiveAction.Status = 'incomplete';
-        value.CorrectiveAction.Description = 'Re-certification scheduled for 07/01/12';
-        value.CorrectiveAction.Date = convenienceMethods.getDate(data.DateCreated);
-
-      }else if(randomParentHazard == 'CHEMICAL SAFETY'){
-        value.complianceDescription = complianceDescriptions[1];
-
-        value.CorrectiveAction.Status = 'notStarted';
-        value.CorrectiveAction.Description = '';
-        value.CorrectiveAction.Date = convenienceMethods.getDate(data.DateCreated);
-
-      }else if(randomParentHazard == 'RADIATION SAFETY'){
-        value.complianceDescription = complianceDescriptions[2];
-
-        value.CorrectiveAction.Status = 'complete';
-        value.CorrectiveAction.Description = 'Chemical Hygiene Plan was established, and is now accessible to all lab staff';
-        value.CorrectiveAction.Date = convenienceMethods.getDate(data.DateCreated);
-
-      }
-    });*/
-  
+ 
     $scope.doneLoading = data.doneLoading;
-
-    $scope.criteria = 'Replace mercury thermometers';
-    $scope.recommendation = 'Mercury from broken thermometers presents a hazard to laboratory personnel, and hazardous waste that is costly for clean-up and disposal. Non-mercury thermometers are available that are accurate, safe, and less toxic. EH&S recommends that mercury thermometers be replaced with non-mercury alternatives.';
-    $rootScope.Inspection = $scope.Inspection;
+    calculateScore();
   }
 
   function onFailGet(data){
@@ -357,29 +389,20 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
   }
 
   $scope.saveCorrectiveAction = function(CorrectiveActionCopy,CorrectiveAction,accept){
-    console.log(CorrectiveAction);
     $scope.CorrectiveActionCopy = angular.copy(CorrectiveActionCopy);
     CorrectiveActionCopy.IsDirty = true;
-    console.log(CorrectiveActionCopy);
-    
-    if(accept)CorrectiveActionCopy.Status = "Accepted"
+    if($scope.CorrectiveActionCopy.Completion_date)$scope.CorrectiveActionCopy.Completion_date = convenienceMethods.setMysqlTime(CorrectiveActionCopy.Completion_date);
+    if(accept)$scope.CorrectiveActionCopy.Status = "Accepted";
+    console.log($scope.CorrectiveActionCopy);
     var url = "../../ajaxaction.php?action=saveCorrectiveAction";
-    convenienceMethods.updateObject( CorrectiveActionCopy, CorrectiveActionCopy, onSaveCorrectiveAction, onSaveFailCorrectiveAction, url, $scope.CorrectiveActionCopy, CorrectiveAction, CorrectiveAction);
+    convenienceMethods.updateObject( $scope.CorrectiveActionCopy, CorrectiveActionCopy, onSaveCorrectiveAction, onSaveFailCorrectiveAction, url, $scope.CorrectiveActionCopy, CorrectiveAction);
 
-
-    /*
-    CorrectiveAction.beingEdited = false;
-    console.log(CorrectiveAction);
-    CorrectiveAction.Description = $scope.CorrectiveActionCopy.Description;
-    CorrectiveAction.Date = $scope.CorrectiveActionCopy.Date;
-    CorrectiveAction.Status = $scope.CorrectiveActionCopy.Status;
-    console.log(CorrectiveAction);
-    */
   }
 
-  function onSaveCorrectiveAction(returned, old){
+  function onSaveCorrectiveAction(returned, old, CorrectiveAction){
+    console.log(CorrectiveAction);
+    CorrectiveAction.Status = returned.Status;
     old.IsDirty = false;
-    console.log(old);
   }
 
   function onSaveFailCorrectiveAction(data){
@@ -395,7 +418,9 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
   $scope.afterInspection = function(d){
     //console.log( Date.parse(d));
     //console.log(Date.parse($scope.Inspection.DateCreated));
-    if(Date.parse(d)>Date.parse($scope.Inspection.DateCreated)){
+    console.log(Date.parse(d));
+    console.log(Date.parse($scope.Inspection.Date_last_modified));
+    if(Date.parse(d)>Date.parse($scope.Inspection.Date_last_modified)){
       return true;
     }
     return false;
@@ -422,225 +447,6 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
   //grab set user list data into the $scrope object
   function onGetInspection(data) {
     console.log(data);
-    /*
-    data.Checklists = [ 
-    { "key_id" : 200,
-        "label" : "STANDARD MICROBIOLOGICAL PRACTICES",
-        "Questions" : [ { "Deficiencies" : [ { "Text" : "Lab supervisor is not controlling access to the laboratory" } ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 300,
-              "Observations" : [ { "key_id" : 224,
-                    "Text" : "Test note"
-                  },
-                  { "key_id" : 229,
-                    "Text" : "Test note"
-                  }
-                ],
-              "orderIndex" : 1,
-              "Recommendations" : [ { "key_id" : 224,
-                    "Text" : "Test recommendation"
-                  },
-                  { "key_id" : 2454,
-                    "Text" : "Test recommendation"
-                  }
-                ],
-              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "Text" : "Lab supervisor enforces policies that control access to the laboratory"
-            },
-            { "Deficiencies" : [ { "Text" : "Lab personnel are not washing their hands after working with samples" },
-                  { "Text" : "Lab personnel are not washing their hands before leaving the lab" }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 301,
-              "orderIndex" : 2,
-              "Recommendations" : [ { "Text" : "Test Recommendation" } ],
-              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "Text" : "Persons wash their hands after working with hazardous materials and before leaving the lab"
-            },
-            { "Deficiencies" : [ { "Text" : "Lab personnel are eating in lab areas" },
-                  { "Text" : "Lab personnel are drinking in lab areas" },
-                  { "Text" : "Lab personnel are storing food for human consumption in lab areas" }
-                ],
-              "DeficiencyRootCauses" : [ { "Text" : "Test Root Cause" } ],
-              "isMandatory" : true,
-              "key_id" : 302,
-              "Observations" : [ { "key_id" : 224,
-                    "Text" : "Test note"
-                  },
-                  { "key_id" : 229,
-                    "Text" : "Test note"
-                  }
-                ],
-              "orderIndex" : 3,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "Biosafety in Microbiological & Biomedical Labs, 5th Ed.",
-              "Text" : "Eating, drinking, and storing food for consumption are not permitted in lab areas"
-            }
-          ],
-        "rooms" : [ "101",
-            "102",
-            "103"
-          ]
-      },
-      { "key_id" : 201,
-        "label" : "SHIPPING BIOLOGICAL MATERIALS",
-        "Questions" : [ { "Deficiencies" : [ { "key_id" : 222,
-                    "Text" : "Personnel shipping biological samples have not completed biological shipping training"
-                  },
-                  { "key_id" : 223,
-                    "Text" : "Personnel shipping biological samples are overdue for completing biological shipping training"
-                  }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 310,
-              "Observations" : [ { "key_id" : 224,
-                    "Text" : "Test note"
-                  },
-                  { "key_id" : 229,
-                    "Text" : "Test note"
-                  }
-                ],
-              "orderIndex" : 1,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "International Air Transport Association (IATA) & DOT",
-              "Text" : "Personnel shipping biological samples have completed biological shipping training in the past two years"
-            } ],
-        "rooms" : [ "101",
-            "102"
-          ]
-      },
-      { "key_id" : 202,
-        "label" : "BLOODBORNE PATHOGENS (e.g. research involving human blood, body fluids, unfixed tissue)",
-        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 320,
-              "orderIndex" : 1,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
-            },
-            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 321,
-              "orderIndex" : 2,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
-            }
-          ],
-        "rooms" : [ "101",
-            102,
-            "103"
-          ]
-      },
-      { "key_id" : 203,
-        "label" : "Test Checklist 1",
-        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 320,
-              "orderIndex" : 1,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
-            },
-            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 321,
-              "orderIndex" : 2,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
-            }
-          ],
-        "rooms" : [ "101",
-            102,
-            "103"
-          ]
-      },
-      { "key_id" : 204,
-        "label" : "Test Checklist 2",
-        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 320,
-              "orderIndex" : 1,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
-            },
-            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 321,
-              "orderIndex" : 2,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
-            }
-          ],
-        "rooms" : [ "101",
-            102,
-            "103"
-          ]
-      },
-      { "key_id" : 205,
-        "label" : "Test Checklist 3",
-        "Questions" : [ { "Deficiencies" : [ { "Text" : "Exposure Control Plan is not accessible to employees with occupational exposure" } ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-              "isMandatory" : true,
-              "key_id" : 320,
-              "orderIndex" : 1,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan is accessible to employees with occupational exposure to bloodborne pathogens"
-            },
-            { "Deficiencies" : [ { "Text" : "Exposure Control Plan has not been reviewed and updated at least annually" },
-                  { "Text" : "Updates do not reflect new or modified tasks and procedures which affect occupational exposure" },
-                  { "Text" : "Updates do not reflect new or revised employee positions with occupational exposure" }
-                ],
-              "DeficiencyRootCauses" : [{'Text' : 'Sample Root Cause 1' },{'Text' : 'Sample Root Cause 2' },{'Text' : 'Sample Root Cause 3' }  ],
-
-              "isMandatory" : true,
-              "key_id" : 321,
-              "orderIndex" : 2,
-              "Recommendations" : [  ],
-              "StandardsAndGuidelines" : "OSHA Bloodborne Pathogens (29 CFR 1910.1030)",
-              "Text" : "Exposure Control Plan has been reviewed and updated at least annually"
-            }
-          ],
-        "rooms" : [ "101",
-            102,
-            "103"
-          ]
-      }
-    ];
-   
-  */
     $scope.Inspection = data;
    
 
@@ -746,7 +552,10 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
     })   
   }, true);
 
-
+  $scope.resetEdits = function(newCorrAct,oldCorrAct){
+    newCorrAct.Text = oldCorrAct.Text;
+    newCorrAct.Completion_date = oldCorrAct.Completion_date;
+  }
 };
 /*
 inspectionStandardViewController = function($scope,  $location, $anchorScroll, convenienceMethods){

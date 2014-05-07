@@ -6,9 +6,11 @@ require_once '../top_view.php';
 <div class="navbar">    		
 
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-		<li class="span12">
+		<li class="">
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 85px;">Finalize Inspection</h2>	
+			<h2  style="padding: 11px 0 5px 85px;">Finalize Inspection
+				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+			</h2>	
 		</li>
 	</ul>
 </div>

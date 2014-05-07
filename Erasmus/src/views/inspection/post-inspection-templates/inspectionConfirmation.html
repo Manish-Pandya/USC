@@ -3,28 +3,41 @@
   <img class="" src="../../img/loading.gif"/>
  Building List
 </div>
-<form>
-  <fieldset>
-     <label class="checkbox">
-        <input type="checkbox" ng-model="PrincipalInvestigator.include" ng-click="handleContactList(PrincipalInvestigator)"><span class="metro-checkbox">{{PrincipalInvestigator.Name}}</span>
-     </label>
-     <label class="checkbox">
-        <input type="checkbox" ng-model="PrincipalInvestigator.include" ng-click="handleContactList(PrincipalInvestigator)"><span class="metro-checkbox">{{PrincipalInvestigator.Name}}</span>
-     </label>
 
-     <label ng-repeat="contact in Contacts" class="checkbox">
-        <input type="checkbox" ng-model="contact.include" ng-click="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
-     </label>
-     <label class="checkbox">
-     Other
-     </label>
-     <input type="text" ng-model="contact.include" ng-click="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
-     
-     <br>
-  <label>Inspection Comments</label>
-  <textarea ng-model="Inspection.Notes" style="width:800px;" rows="15"></textarea><br>
-  <a ng-click="sendEmail()" class="btn btn-large btn-success"><i class="icon-email"></i>Send Inspection Report</a>
-     <!--<a ng-click="setRoute('/standardView')" class="btn btn-large btn-warning"><i class="icon-clock"></i>Notify Later</a>-->
-  </fieldset>
+<form class="form" style="margin-top:35px;">
+  <div class="control-group">
+      <div class="controls">
+        <label class="checkbox">
+           <input type="checkbox" ng-model="inspection.PrincipalInvestigator.User.include" ng-change="handleContactList(inspection.PrincipalInvestigator.User)"><span class="metro-checkbox">{{Inspection.PrincipalInvestigator.User.Name}}</span>
+        </label>
+        </label>
+      </div>
+  </div>
+
+  <div class="control-group" ng-repeat="contact in Inspection.PrincipalInvestigator.LabPersonnel">
+     <label class="control-label" for="inputEmail">Email</label>
+      <div class="controls">
+        <label class="checkbox">
+           <input type="checkbox" ng-model="contact.include" ng-change="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
+        </label>
+        </label>
+      </div>
+  </div>
+
+  <div class="control-group" style="margin-top:15px;">
+      <div class="controls" ng-repeat="other in others">
+        <label class="control-label" for="inputEmail" style="float: left; margin: 4px 10px 0 0;">Other Recipient</label>
+         <div class="controls">
+            <input type="text" id="inputEmail" ng-model="other.email" placeholder="Other Recipient">
+         </div>
+      </div>
+  </div>
+  <textarea ng-model="defaultNote" style="width:800px;" rows="15"></textarea><br>
+
+    <a ng-click="sendEmail()" class="btn btn-large btn-success"><i class="icon-email"></i>Send Inspection Report</a>
+
+
 </form>
+
 </span>
+{{others}}
