@@ -1854,9 +1854,7 @@ function sendInspectionEmail(){
 			$inspectorEmails[] = $user->getEmail();
 		}
 		
-		$footerText = "\n\n Access the results of this inspection, and document any 
-				corrective actions taken, by logging into the RSMS portal located
-				at http://radon.qa.sc.edu/rsms with your university is and password.";
+		$footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university is and password.";
 		// Send the email
 		mail(implode($recipientEmails,","),"EHS Laboratory Safety Inspection Notice",$text . $footerText,"Cc: ". implode($inspectorEmails,","));
 
