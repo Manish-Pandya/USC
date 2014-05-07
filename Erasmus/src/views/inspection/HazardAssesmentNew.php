@@ -313,7 +313,7 @@ require_once '../top_view.php';
 		<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
 		<a ng-click="saveNoteForInspection()" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
 		<a ng-click="cancelSaveNote()" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
-		<img ng-show="newNote.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">

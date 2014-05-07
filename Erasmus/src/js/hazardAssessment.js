@@ -562,28 +562,30 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
 
   $scope.saveNoteForInspection = function(){
 
-    $scope.newNote.IsDirty = true;
-
+    $scope.newNoteIsDirty = true;
+    console.log($scope.newNote);
     var inspectionDTO = {
       Class: "Inspection",
       Key_id:  $scope.inspection.Key_id,
       Note:  $scope.newNote
     }
-    var url = "../../ajaxaction.php?action=saveNoteForInspection&callback=JSON_CALLBACK";
+    var url = "../../ajaxaction.php?action=saveNoteForInspection";
     convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url);
   }
 
   function onSaveNote(returned){
-    $scope.newNote.IsDirty = false;
+    $scope.newNoteIsDirty = false;
     $scope.inspection.Note = returned.Note;
   }
 
-  function onFailSaveNote(){
-    $scope.newNote.IsDirty = false;
+  function onFailSaveNote(data){
+    $scope.inspection.Note = data.Note;
+    $scope.newNoteIsDirty = false;
     alert('There was a problem saving the note.');
   }
 
   $scope.cancelSaveNote = function(){
+    $scope.newNoteIsDirty = false;
     $scope.newNote = $scope.inspection.Note;
     $scope.selectedFooter = false;
   }
