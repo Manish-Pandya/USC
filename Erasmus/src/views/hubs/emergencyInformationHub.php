@@ -38,9 +38,8 @@ require_once '../top_view.php';
 					<h4 ng-if="!room.PrincipalInvestigators.length">No Principal Investigators have been assigned to room {{room.Name}}</h4>
 					<ul>
 						<li style="margin:10px auto; width:500px; list-style:none" class="lefterizer row" ng-repeat="pi in room.PrincipalInvestigators">
-						{{pi}}
 							<span style="width:200px; float:left; text-decoration:underline;">Principal Investigator:</span> <span>{{pi.User.Name}}</span><br>
-							<span style="width:150px; float:left; text-decoration:underline;">Emergency Phone: </span><span style="width:265px; margin-left:-16px;">{{pi.User.Emergency_phone}}</span><br>
+							<span ng-if="pi.User.Emergency_phone" style="width:150px; float:left; text-decoration:underline;">Emergency Phone: </span><span style="width:265px; margin-left:-16px;">{{pi.User.Emergency_phone}}</span><br>
 							<span style="float:left; width:160px; text-decoration:underline;">Department(s)</span><span><ul><li class="offset2" ng-repeat="department in pi.Departments">{{department.Name}}</li></ul></span>
 						</li>
 
