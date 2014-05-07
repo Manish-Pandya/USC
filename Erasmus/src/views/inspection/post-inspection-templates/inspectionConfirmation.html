@@ -34,10 +34,14 @@
   </div>
   <textarea ng-model="defaultNote" style="width:800px;" rows="15"></textarea><br>
 
-    <a ng-click="sendEmail()" class="btn btn-large btn-success"><i class="icon-email"></i>Send Inspection Report</a>
+  <a ng-click="sendEmail()" class="btn btn-large btn-success" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>
+  <img style="margin-top: 18px;" ng-show="sending" class="smallLoading" src="../../img/loading.gif"/>
+  <div ng-if="emailSent" class="alert span-5" style="float: left; font-size: 30px; margin-left: 15px; padding: 14px;" ng-class="{'alert-success': emailSent == 'success', 'alert-error': emailSent == 'error'}">
+    <span ng-if="emailSent == 'success'">The email was sent successfully.</span>
+    <span ng-if="emailSent == 'error'">There was a problem sending the email.</span>
+  </div>
 
 
 </form>
 
 </span>
-{{others}}

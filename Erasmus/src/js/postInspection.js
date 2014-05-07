@@ -236,15 +236,18 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     console.log(emailDto);
     var url = '../../ajaxaction.php?action=sendInspectionEmail';
     convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
-
+    $scope.sending = true;
    // $scope.setRoute('/review');
   }
 
   function onSendEmail(data){
-    $scope.emailSent = true;
+    $scope.sending = false;
+    $scope.emailSent = 'success';
   }
 
   function onFailSendEmail(){
+    $scope.sending = false;
+    $scope.emailSent = 'error';
     alert('There was a problem when the system tried to send the email.');
   }
 
