@@ -1826,6 +1826,9 @@ function sendInspectionEmail(){
 		$dao = getDao(new Inspection());
 		$inspection = $dao->getById($decodedObject->getEntity_id());
 		
+		//get the client side email text
+		$text = $decodedObject->getText();
+		
 		// Init an array of recipient Email addresses and another of inspector email addresses
 		$recipientEmails = array();
 		$inspectorEmails = array();

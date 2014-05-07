@@ -9,7 +9,7 @@ class EmailDto {
 	public function getEntity_id(){ return $this->entity_id; }
 	public function getRecipient_ids(){ return $this->recipient_ids; }
 	public function getText(){ return $this->text; }
-	public function getOther_emails(){ return $this->$other_emails; }
+	public function getOther_emails(){ return $this->other_emails; }
 	
 	
 	public function setEntity_id($key_id){ $this->entity_id = $key_id; }
