@@ -1134,21 +1134,17 @@ function saveNoteForInspection(){
 		return $decodedObject;
 	}
 	else{
-		$roomIds = $decodedObject->getRooms();
-		if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
-		
-		$inspectorIds = $decodedObject->getInspectors();
-		if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
-		
+				
 		$dao = getDao(new Inspection());
+		
+		// Get the inspection and update its Note property
+		$inspection = $dao->getById($decodedObject->getEntity_id());
+		$inspection->setNote($decodedObject->getText());
 
 		// Save the Inspection
-		$inspection = $dao->save($decodedObject);
+		$dao->save($inspection);
 		
-		// Check this inspection's current persisted rooms and see if they're different
-		// check to see if rooms have been submitted, if not don't worry about it.
-		
-		return $inspection;
+		return true;
 	}
 };
 
