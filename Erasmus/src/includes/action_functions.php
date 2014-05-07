@@ -1859,7 +1859,7 @@ function sendInspectionEmail(){
 
 		$inspection->setNotificationDate(date("Y-m-d H:i:s"));
 		$dao->save($inspection);
-		return $true;
+		return true;
 	}
 	
 
