@@ -22,7 +22,8 @@ class CorrectiveAction extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"status"			=>     "text",
-		"completion_date"   =>     "timestamp"
+		"completion_date"   =>     "timestamp",
+		"promised_date"   =>     "timestamp"
 	);
 	
 	
@@ -73,7 +74,10 @@ class CorrectiveAction extends GenericCrud {
 	public function setStatus($status){ $this->status = $status; }
 	
 	public function getCompletion_date(){ return $this->completion_date; }
-	public function setCompletion_date($completion_dates){ $this->completion_date = $completion_date; }
+	public function setCompletion_date($completion_date){ $this->completion_date = $completion_date; }
+
+	public function getPromised_date(){ return $this->promised_date; }
+	public function setPromised_date($promised_date){ $this->promised_date = $promised_date; }
 
 }
 ?>
