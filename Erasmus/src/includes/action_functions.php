@@ -531,22 +531,24 @@ function removeResponse( $id = NULL ){
 	}
 };
 
-function removeDeficiencySelection( $id = NULL ){
+function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
-	$id = getValueFromRequest('id', $id);
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	
+	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
+		
+		// Find the deficiencySelection
+		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
-	if( $id !== NULL ){
-		$dao = getDao(new DeficiencySelection());
-
-		// Get the deficiencyselection object
-		$ds = $dao->getById($id);
-
-		$LOG->debug("DeficiencySelection is: $ds");
-		if ($ds == null) {
-			$LOG->debug("DeficiencySelection was null");
-			return new ActionError("Bad DeficiencySelection id: $id");
+		if ($ds == null){
+			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 		}
+		
+		$LOG->debug("DeficiencySelection is: $ds->getKey_id()");
+		
+		$dao = getDao($ds);
 
 		// Remove all its child data before deleting the deficiencyselection itself
 		foreach ($ds->getCorrectiveActions() as $child){
@@ -557,15 +559,93 @@ function removeDeficiencySelection( $id = NULL ){
 			$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 		}
 
-		$dao->deleteById($id);
+		$dao->deleteById($ds->getKey_id());
 
 		return true;
 	}
 	else{
 		//error
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("Must provide parameters deficiencyId and inspectionId");
 	}
 };
+
+function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	
+	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
+		
+		// Find the deficiencySelection
+		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+
+		if ($ds == null){
+			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
+		}
+		
+		$LOG->debug("Prepare to add Corrected flag to DeficiencySelection: $ds->getKey_id()");
+		
+		$dao = getDao($ds);
+		$ds->setCorrected_in_inspection(true);
+
+		$dao->save($ds);
+		
+		return true;
+		}
+		else{
+			//error
+			return new ActionError("Must provide parameters deficiencyId and inspectionId");
+		}
+}
+		
+function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	
+	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
+		
+		// Find the deficiencySelection
+		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+
+		if ($ds == null){
+			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
+		}
+		
+		$LOG->debug("Prepare to remove Corrected flag from DeficiencySelection: $ds->getKey_id()");
+		
+		$dao = getDao($ds);
+		$ds->setCorrected_in_inspection(false);
+
+		$dao->save($ds);
+		
+		return true;
+		}
+		else{
+			//error
+			return new ActionError("Must provide parameters deficiencyId and inspectionId");
+		}
+}
+		
+function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId){
+	
+	$dao = getDao(new Inspection());
+	$inspection = $dao->getById($inspectionId);
+	
+	
+	foreach ($inspection->getResponses() as $response){
+		foreach ($response->getDeficiencySelections() as $ds){
+			if ($ds->getDeficiency()->getKey_id() == $deficiencyId){
+				// this is the DeficiencySelection we're looking for
+				return $ds;
+			}
+		}
+	}
+
+	return null;
+}
 
 function saveBuilding(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);

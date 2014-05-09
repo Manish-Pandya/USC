@@ -110,6 +110,8 @@ class ActionMappingFactory {
 				"removeResponse"=>new ActionMapping("removeResponse", "", "","","200","404"),
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
 				"removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", ""),
+				"addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", ""),
+				"removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", ""),
 				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", ""),
 				"saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
