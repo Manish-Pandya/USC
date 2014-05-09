@@ -535,7 +535,7 @@ function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL )
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
-	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
 	
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
@@ -573,7 +573,7 @@ function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
-	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
 	
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
@@ -603,7 +603,7 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
-	$deficiencyId = getValueFromRequest('deficiencyId', $inspectionId);
+	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
 	
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
