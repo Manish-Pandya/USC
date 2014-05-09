@@ -421,6 +421,32 @@ class GenericDAO {
 			
 	}
 	
+	function getUserByUsername($username){
+		
+		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
+		
+		// Get the db connection
+		global $db;
+		
+		$user = new User();
+			
+		//Prepare to query the user table by username
+		$stmt = $db->prepare('SELECT * FROM ' . $user->getTableName() . ' WHERE username = ?');
+		$stmt->bindParam(1,$username,PDO::PARAM_STRING);
+		$stmt->setFetchMode(PDO::FETCH_CLASS, "User");			// Query the db and return one user
+		if ($stmt->execute()) {
+			$result = $stmt->fetch();
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+		
+		return $result;
+		
+		
+	}
+	
 	
 }
 ?>

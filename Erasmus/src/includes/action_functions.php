@@ -1771,7 +1771,7 @@ function login2($username,$password) {
 		// Make sure they're an Erasmus user by username lookup
 		$dao = getDao(new User());
 		
-		$user = $dao->getById(1);
+		$user = $dao->getUserByUsername($username);
 		
 		if ($user != null) {
 			// put the USER and ROLE into session

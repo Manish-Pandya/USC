@@ -26,7 +26,8 @@ class DeficiencySelection extends GenericCrud {
 		"date_created"		=> "timestamp",
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
-		"last_modified_user_id"			=> "integer"
+		"last_modified_user_id"			=> "integer",
+		"corrected_in_inspection"	=> "boolean"
 	);
 	
 		/** Relationships */
@@ -59,6 +60,8 @@ class DeficiencySelection extends GenericCrud {
 	private $correctiveActions;
 	
 	private $roomIds;
+	
+	private $corrected_in_inspection;
 	
 	public function __construct(){
 
@@ -129,5 +132,8 @@ class DeficiencySelection extends GenericCrud {
 	
 	public function getRoomIds() {return $this->roomIds;}
 	public function setRoomIds($roomIds){ $this->roomIds = $roomIds;}
+	
+	public function getCorrected_in_inspection() {return $this->corrected_in_inspection;}
+	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = $corrected; }
 }
 ?>
