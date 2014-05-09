@@ -630,6 +630,7 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 }
 		
 function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	
 	$dao = getDao(new Inspection());
 	$inspection = $dao->getById($inspectionId);
@@ -639,12 +640,13 @@ function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$defi
 		foreach ($response->getDeficiencySelections() as $ds){
 			$def = $ds->getDeficiency();
 			if ($def->getKey_id() == $deficiencyId){
-				// this is the DeficiencySelection we're looking for
+				$LOG->debug("Found a matching DeficiencySelection: $ds->getKey_id()");
 				return $ds;
 			}
 		}
 	}
-
+	$LOG->debug("Found no matching DeficiencySelection for inspection [$inspectionId] and deficiency [$deficiencyId]");
+	
 	return null;
 }
 
