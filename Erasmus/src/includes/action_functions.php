@@ -540,7 +540,7 @@ function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL )
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
 		// Find the deficiencySelection
-		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -578,7 +578,7 @@ function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
 		// Find the deficiencySelection
-		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -608,7 +608,7 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 		
 		// Find the deficiencySelection
-		$ds = $getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
