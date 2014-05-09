@@ -531,6 +531,42 @@ function removeResponse( $id = NULL ){
 	}
 };
 
+function removeDeficiencySelection( $id = NULL ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = getDao(new DeficiencySelection());
+
+		// Get the deficiencyselection object
+		$ds = $dao->getById($id);
+
+		$LOG->debug("DeficiencySelection is: $ds");
+		if ($ds == null) {
+			$LOG->debug("DeficiencySelection was null");
+			return new ActionError("Bad DeficiencySelection id: $id");
+		}
+
+		// Remove all its child data before deleting the deficiencyselection itself
+		foreach ($ds->getCorrectiveActions() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$CORRECTIVE_ACTIONS_RELATIONSHIP));
+		}
+
+		foreach ($ds->getRooms() as $child){
+			$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+		}
+
+		$dao->deleteById($id);
+
+		return true;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+};
+
 function saveBuilding(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
@@ -1116,9 +1152,6 @@ function saveInspection(){
 
 		// Save the Inspection
 		$inspection = $dao->save($decodedObject);
-		
-		// Check this inspection's current persisted rooms and see if they're different
-		// check to see if rooms have been submitted, if not don't worry about it.
 		
 		return $inspection;
 	}

@@ -38,7 +38,7 @@ class DeficiencySelection extends GenericCrud {
 			"foreignKeyName"	=>	"deficiency_selection_id"
 	);
 	
-	protected static $CORRECTIVE_ACTIONS_RELATIONSHIP = array(
+	public static $CORRECTIVE_ACTIONS_RELATIONSHIP = array(
 			"className"	=>	"CorrectiveAction",
 			"tableName"	=>	"corrective_action",
 			"keyName"	=>	"key_id",
