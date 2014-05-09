@@ -637,7 +637,8 @@ function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$defi
 	
 	foreach ($inspection->getResponses() as $response){
 		foreach ($response->getDeficiencySelections() as $ds){
-			if ($ds->getDeficiency()->getKey_id() == $deficiencyId){
+			$def = $ds->getDeficiency();
+			if ($def->getKey_id() == $deficiencyId){
 				// this is the DeficiencySelection we're looking for
 				return $ds;
 			}
