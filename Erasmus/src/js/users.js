@@ -790,24 +790,35 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
   }
 
   $scope.departmentFilter = function() {
-    var showThis = false;
-    console.log($scope.selectedDepartment);
+   
     return function(pi) {
+         var show = false;
+        //for pis that don't have departments, don't filter them unless the filter has some text
+        if(!pi.Departments.length){
+          if(typeof $scope.selectedDepartment == 'undefined' || $scope.selectedDepartment.length == 0){
+            show = true;
+          }
+        }
+
         angular.forEach(pi.Departments, function(department, key){
-          if(!$scope.selectedDepartment || department.Name.toLowerCase().indexOf($scope.selectedDepartment.toLowerCase())>-1)show = true;
+          if(typeof $scope.selectedDepartment == 'undefined'|| department.Name.toLowerCase().indexOf($scope.selectedDepartment.toLowerCase())>-1)show = true;
         });
-        return showThis;
+        return show;
     }
   }
 
   $scope.buildingFilter = function() {
-    var show = false;
     return function(pi) {
+        var show = false;
+        //for pis that don't have buildings, don't filter them unless the filter has some text
+        if(!pi.Buildings.length){
+          if(typeof $scope.selectedBuilding == 'undefined' || $scope.selectedBuilding.length == 0){
+            show = true;
+          }
+        }
         angular.forEach(pi.Buildings, function(building, key){
-          //console.log(building.Name+':'+$scope.selectedBuilding);
-          if(!$scope.selectedBuilding || building.Name.toLowerCase().indexOf($scope.selectedBuilding.toLowerCase())>-1)show = true;
+          if(typeof $scope.selectedBuilding == 'undefined' || building.Name.toLowerCase().indexOf($scope.selectedBuilding.toLowerCase())>-1)show = true;
         });
-       // console.log(show);
         return show;
     }
   }

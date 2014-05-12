@@ -32,7 +32,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="pi in pis | orderBy:order:reverse | filter:searchText | filter:buildingFilter() " ng-if="pi.Is_active != showInactive">
+		<tr ng-repeat="pi in pis | orderBy:order:reverse | filter:searchText | filter:buildingFilter() | filter:departmentFilter() " ng-if="pi.Is_active != showInactive">
 
 			<td style="width:14%;">
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="addPi(pi)"><i class="icon-pencil"></i></a>

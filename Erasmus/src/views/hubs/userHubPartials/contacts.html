@@ -21,11 +21,11 @@
 			</th>
 			<th>
 				<a ng-click="order = 'Supervisor.User.Name'; Supervisor.reverse=!Supervisor.reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedPi.Supervisor.User.Name" placeholder="Filter by PI"/>
+				<input class="span2" ng-model="selectedPi" placeholder="Filter by PI"/>
 			</th>
 			<th>
 				<a ng-click="order = 'Primary_department'; Primary_department.reverse=!Primary_department.reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedDepartment.Primary_department.Name" placeholder="Filter by Department"/>
+				<input class="span2" ng-model="selectedDepartment" placeholder="Filter by Department"/>
 			</th>
 			<th>Lab Phone</th>
 			<th>Email</th>
@@ -35,7 +35,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter:selectedPi " ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: { Primary_department.Name: selectedDepartment } | filter: { Supervisor.User.Name: selectedPi } " ng-if="contact.Is_active != showInactive">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
