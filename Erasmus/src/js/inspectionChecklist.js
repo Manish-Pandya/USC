@@ -27,7 +27,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     alert("There was a problem retrieving your user information");
   }
   
-  //grab set user list data into the $scrope object
+  //grab set user list data into the $scope object
   function onGetChecklists(data) {
     console.log(data);
     $scope.inspection = data;
@@ -136,6 +136,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   function onSetUncehcked(data,question){
     question.Responses.Answer = false;
     question.IsDirty = false;
+    question.Responses.previous = null;
   }
 
   function onSaveResponse(response, question, checklist, previous){
@@ -189,7 +190,6 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
        // console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec)) {
            rec.checked = true; 
-          //console.log(rec);
         }    
       });
     }
@@ -210,6 +210,13 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     angular.forEach(question.Deficiencies, function(def, key){
       if(convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections,def,["Deficiency_id","Key_id"])){
         def.checked=true;
+        var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections,def,["Deficiency_id","Key_id"], true);
+        def.correctedDuringInspection = question.Responses.DeficiencySelections[idx].Corrected_in_inspection;
+        if(def.correctedDuringInspection == 1){
+          def.correctedDuringInspection = true;
+        }else{
+          def.correctedDuringInspection = false;
+        }
       }
     });
   }
@@ -316,36 +323,86 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   $scope.deficiencySelected = function(response, deficiency, rooms){
     response.IsDirty = true;
     console.log(response);
-    if(!deficiency.rooms){
-      var rooms = angular.copy($scope.inspection.Rooms);
-    }
 
-    var RoomIds = [];
-    var atLeastOneChecked = false;
-    angular.forEach(rooms, function(room, key){
-      if(deficiency.rooms){
-        if(room.checked == true){
+    if(deficiency.checked){
+      if(!deficiency.rooms){
+        var rooms = angular.copy($scope.inspection.Rooms);
+      }
+
+      var RoomIds = [];
+      var atLeastOneChecked = false;
+      angular.forEach(rooms, function(room, key){
+        if(deficiency.rooms){
+          if(room.checked == true){
+            RoomIds.push(room.Key_id);
+            atLeastOneChecked = true;
+          }
+        }else{
           RoomIds.push(room.Key_id);
-          atLeastOneChecked = true;
-        }
-      }else{
-        RoomIds.push(room.Key_id);
-      } 
-    });
+        } 
+      });
 
-    if(!deficiency.rooms)deficiency.rooms = angular.copy(rooms);
+      if(!deficiency.rooms)deficiency.rooms = angular.copy(rooms);
 
-    defDto = {
-      Class: "DeficiencySelection",
-      RoomIds: RoomIds,
-      Deficiency_id:  deficiency.Key_id,
-      Response_id: response.Key_id,
-      Key_id:      null
+      defDto = {
+        Class: "DeficiencySelection",
+        RoomIds: RoomIds,
+        Deficiency_id:  deficiency.Key_id,
+        Response_id: response.Key_id,
+        Key_id:      null
+      }
+
+      console.log(defDto);
+      //set checked property to false.  we set it to true only on success, in the callback
+      deficiency.checked = false;
+      var url = '../../ajaxaction.php?action=saveDeficiencySelection';
+      convenienceMethods.updateObject( defDto, response, onSaveDefSelect, onFailSaveDefSelect, url, null, deficiency,response);
+    }else{
+      deficiency.checked = true;
+      def_id = deficiency.Key_id;
+      var url = '../../ajaxaction.php?action=removeDeficiencySelection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
+      convenienceMethods.deleteObject( onRemoveDefSelect, onFailRemoveDefSelect, url, deficiency, response );
     }
-    console.log(defDto);
-    var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-    convenienceMethods.updateObject( defDto, response, onSaveDefSelect, onFailSaveDefSelect, url, null, deficiency,response);
+  }
 
+  function onRemoveDefSelect(bool, deficiency, response){
+    deficiency.checked = false;
+    response.IsDirty = false;
+  }
+
+  function onFailRemoveDefSelect(deficiency, response){
+    deficiency.checked = true;
+    response.IsDirty = false;
+  }
+
+  $scope.handleCorrectedDurringInspection = function(def){
+    def.IsDirty = true;
+    var def_id = def.Key_id;
+    if(def.correctedDuringInspection){
+      //we set corrected durring inpsection
+      var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
+      convenienceMethods.deleteObject( onAddCorrectedDurringInspection, onFailHandleCorrectedDurringInspection, url, def );
+    }else{
+      //we unst corrected durring inspection
+      var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
+      convenienceMethods.deleteObject( onRemoveCorrectedDurringInspection, onFailHandleCorrectedDurringInspection, url, def );
+    }
+    //reverse the the boolean so that we can wait until the callback to set it.  this keeps the view model in sync with the server model
+    def.correctedDuringInspection = !def.correctedDuringInspection;
+  }
+
+  function onAddCorrectedDurringInspection(bool,def){
+    def.correctedDuringInspection = true;
+    def.IsDirty = false;
+  }
+
+  function onRemoveCorrectedDurringInspection(bool,def){
+    def.correctedDuringInspection = false;
+    def.IsDirty = false;
+  }
+
+  function onFailHandleCorrectedDurringInspection(){
+    alert("There was an error when the system tried to update the Deficiency Selection.");
   }
 
   $scope.showRooms = function(event, deficiency, element){
@@ -379,6 +436,8 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       });
     }
     deficiency2.IsDirty = false;
+    deficiency2.checked = true;
+    deficiency2.selectionId = def.Key_id;
   }
 
   function onFailSaveDefSelect(){}
