@@ -29,7 +29,7 @@
 			<h3>Principal Investigator:</h3> <p>{{Inspection.PrincipalInvestigator.User.Name}}</p>
 		</span>
 		<span class="span3 pull-right">
-			<h3>Inspection Date:</h3> <p>{{Inspection.Date_last_modified}}</p>
+			<h3>Inspection Date:</h3> <p>{{Inspection.inspDate}}</p>
 		</span>
 		</div>
 
@@ -87,16 +87,14 @@
 			{{def.Deficiency.Reference}}</span>
 		</td>
 		<td valign="top">
-			<!--<span ng-show="!response.CorrectiveAction.beingEdited">-->
-				<!--<span class="{{response.CorrectiveAction.Status}} icon-adfa status"></span><br>-->
+	
 				
 				<label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == 'Accepted'" style="color:#090"></i><img ng-show="def.CorrectiveActionCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>Corrective Action Status:</label>
 				<select ng-hide="def.CorrectiveActionCopy.Status == 'Accepted'" class="{{def.CorrectiveActionCopy.Status}} status"
 				  ng-model="def.CorrectiveActionCopy.Status"
 				  ng-options="option for option in options">
 				</select>
-			<!--</span>
-			<span ng-show="response.CorrectiveAction.beingEdited">-->
+
 				
 				<span ng-switch on="def.CorrectiveActionCopy.Status">
 					<span ng-switch-when="Incomplete"></span>
@@ -112,22 +110,23 @@
 						</span>
 						
 
-						<label ng-show="def.CorrectiveActionCopy.Status == 'Pending'">Anticipated Completion Date:</label>
-						<label ng-show="def.CorrectiveActionCopy.Status == 'Complete'">Corrective Action Completion Date:</label>
+						<label ng-if="def.CorrectiveActionCopy.Status == 'Pending'">Anticipated Completion Date:</label>
+						<label ng-if="def.CorrectiveActionCopy.Status == 'Complete'">Corrective Action Completion Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+
+							 <datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Pending'" ng-model='def.CorrectiveActionCopy.Promised_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+				             <datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Complete'" ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+
 			            </p>
 			            <p class="input-group">					
-							<a class="btn btn-primary" ng-click="saveCorrectiveAction(def.CorrectiveActionCopy,def.CorrectiveActions[0])"><i class="icon-checkmark"></i>Save Corrective Action</a>
+							<a class="btn btn-primary"  ng-click="saveCorrectiveAction(def.CorrectiveActionCopy,def.CorrectiveActions[0])"><i class="icon-checkmark"></i>Save Corrective Action</a>
 						</p>
 						<p class="input-group">
 			            	<!--<a ng-show="def.CorrectiveActionCopy.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success">--><a ng-show="def.CorrectiveActionCopy.Status == 'Complete'" ng-click="saveCorrectiveAction(def.CorrectiveActionCopy,def.CorrectiveActions[0],true)" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
 			            </p>
-					</span>					</span>
-					
+					</span>					
 				</span>
-				<!--<a class="btn btn-danger" ng-click="cancelEdit(response.CorrectiveAction)">Cancel</a>-->
-			<!--</span>-->
+			</span>
 		</td>
 	</tr>
 	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
@@ -159,8 +158,9 @@
 						<textarea style="width:100%" rows=5 ng-model="CorrectiveActionCopy.Description"></textarea><br><br>
 						<label>Corrective Action Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='response.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
-			            </p>						
+							<datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Pending'" ng-model='def.CorrectiveActionCopy.Promised_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+				             <datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Complete'" ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>			            
+				         </p>						
 			            <a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
 			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
 					</span>
@@ -199,8 +199,8 @@
 						<label ng-show="response.CorrectiveAction.Status == 'Pending'">Planned Completion Date:</label>
 						<label ng-show="response.CorrectiveAction.Status == 'Complete'">Completion Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='response.CorrectiveAction.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
-			            </p>						
+							<datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Pending'" ng-model='def.CorrectiveActionCopy.Promised_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+				             <datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Complete'" ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>			            </p>						
 						<a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
 			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
 					</span>					
@@ -239,8 +239,8 @@
 						<label ng-show="response.CorrectiveAction.Status == 'Pending'">Planned Completion Date:</label>
 						<label ng-show="response.CorrectiveAction.Status == 'Complete'">Completion Date:</label>
 						 <p class="input-group">
-			             <datepicker2 ng-model='response.CorrectiveAction.date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
-			            </p>						
+							<datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Pending'" ng-model='def.CorrectiveActionCopy.Promised_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+				             <datepicker2 ng-if="def.CorrectiveActionCopy.Status == 'Complete'" ng-model='def.CorrectiveActionCopy.Completion_date' disable-timepicker='true' date-filter='afterInspection'></datepicker2>			            </p>						
 						<a class="btn btn-primary" ng-click="saveCorrectiveAction(response.CorrectiveAction)"><i class="icon-checkmark"></i>Save Corrective Action</a><br><br>
 			            	<a ng-show="response.CorrectiveAction.Status == 'Complete' && User.Roles[0] == 'Administrator'" class="btn btn-success"><i class="icon-thumbs-up"></i>Accept Corrective Action</a>
 					</span>					

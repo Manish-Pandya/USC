@@ -63,9 +63,9 @@ postInspection.factory('testFactory', function($http){
     })
     .error(function(data, status, headers, config){
       alert('error');
-      console.log(headers());
-      console.log(status);
-      console.log(config);
+      //console.log(headers());
+      //console.log(status);
+      //console.log(config);
     });
         
   };
@@ -81,7 +81,7 @@ postInspection.factory('testFactory', function($http){
 controllers = {};
 
 mainController = function($scope, $location, convenienceMethods, $rootScope){
- // console.log($location);
+ // //console.log($location);
   $scope.setRoute = function(route){
     $location.path(route);
   }
@@ -95,19 +95,19 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
   };
   function onGetUser(data){
     $scope.User = data;
-   // console.log($scope.User);
+   // //console.log($scope.User);
   }
   function onFailGetUser(){
     alert("There was a problem retrieving your user information");
   }
   function onGetInspection(data){
-    console.log(data);
-    if(data.Date_last_modified)var date = convenienceMethods.getDate(data.Date_last_modified);
-    if(data.Date_last_modified)data.Date_last_modified = date.formattedString;
+    //console.log(data);
+    if(data.Date_last_modified)var inspDate = convenienceMethods.getDate(data.Date_last_modified);
+    data.inspDate = inspDate.formattedString;
     $scope.Inspection = data;
     $rootScope.Inspection = data;
     $scope.doneLoading = data.doneLoading;
-    console.log($rootScope);
+    //console.log($rootScope);
   }
   function onFailGet(){
     alert('There was an error finding the inspection.');
@@ -159,13 +159,13 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   
   init();
   function init(){
-    console.log($rootScope);
+    //console.log($rootScope);
     $scope.doneLoading = false;
     if(!$rootScope.Inspection){
        insp = $location.search().inspection;
        convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id='+insp+'&callback=JSON_CALLBACK',onGetInspection, onFailGet);
     }else{
-      console.log('here');
+      //console.log('here');
       $scope.Inspection = $rootScope.Inspection;
       onGetInspection($scope.Inspection);
     }
@@ -200,7 +200,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   	}else{
   		angular.forEach($scope.contactList, function(value, key){
   			if(value.KeyId === obj.KeyId){
-  				console.log(key);
+  				//console.log(key);
   				$scope.contactList.splice(key,1);
   			}
   		});
@@ -214,7 +214,6 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     }else{
       $scope.contactList.splice( $scope.contactList.indexOf(contact.Key_id),1);
     }
-    console.log($scope.contactList);
   }
 
   $scope.sendEmail = function(){
@@ -233,16 +232,21 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       Text: $scope.defaultNote
     }
 
-    console.log(emailDto);
+
+
     var url = '../../ajaxaction.php?action=sendInspectionEmail';
     convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
     $scope.sending = true;
-   // $scope.setRoute('/review');
   }
 
   function onSendEmail(data){
     $scope.sending = false;
     $scope.emailSent = 'success';
+    
+    console.log($rootScope.Inspection);
+    evaluateCloseInspection();
+
+
   }
 
   function onFailSendEmail(){
@@ -251,6 +255,41 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     alert('There was a problem when the system tried to send the email.');
   }
 
+
+  function evaluateCloseInspection(){
+    var setCompletedDate  = true;
+    $rootScope.Checklists = angular.copy($rootScope.Inspection.Checklists);
+    angular.forEach($rootScope.Checklists, function(checklist, key){
+        angular.forEach(checklist.Questions, function(question, key){
+          if(question.Responses && question.Responses.DeficiencySelections){
+            angular.forEach(question.Responses.DeficiencySelections, function(defSel, key){
+              console.log('here');
+              if(!defSel.Corrected_in_inspection)setCompletedDate = false;
+            });
+          }
+        });
+    });
+    if(setCompletedDate)setInspectionClosed();
+  }
+
+  function setInspectionClosed(){
+    var inspectionDto = angular.copy($rootScope.Inspection);
+    inspectionDto.date_closed = new Date();
+    console.log(inspectionDto);
+    var url = "../../ajaxaction.php?action=saveInspection";
+    convenienceMethods.updateObject( inspectionDto, null, onSetInspectionClosed, onFailSetInspecitonClosed, url);
+  }
+
+  function onSetInspectionClosed(data){
+    console.log('saved')
+    data.Checklists = angular.copy($rootScope.Checklists);
+    $rootScope.Inspection = data;
+    $scope.Inspection = data;
+  }
+
+  function onFailSetInspecitonClosed(){
+    alert("There was an issue when the system tried to set the Inpsection's closeout date");
+  }
 
 }
 
@@ -265,6 +304,7 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
       insp = $location.search().inspection;
       convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id='+insp+'&callback=JSON_CALLBACK',onGetInspection, onFailGet);;
     }else{
+      console.log($rootScope.Inspection);
       onGetInspection($rootScope.Inspection);
     }
     $scope.options = ['Incomplete','Pending','Complete'];
@@ -283,22 +323,26 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
           $scope.score.deficiencyItems++;
         }else /*if(question.Responses && question.Responses.Answer)*/{
           $scope.score.compliantItems++;
-          console.log('here');
         }
       });
     });
 
-    console.log(parseInt($scope.score.compliantItems));
-
     $scope.score.score = Math.round(parseInt($scope.score.compliantItems)/parseInt($scope.score.itemsInspected) * 100);
-    //$scope.score.score = 10/11;
+
   }
 
   function onGetInspection(data){
+
+    if(data.Date_last_modified && !data.inspDate ){
+      var inspDate = convenienceMethods.getDate(data.Date_last_modified);
+      data.inspDate = inspDate.formattedString;
+    }
+
+
     $scope.recommendations = [];
     angular.forEach(data.Checklists, function(checklist, key){
-      console.log(checklist);
-      if(!checklist.Responses)checklist.Responses = [];
+      //console.log(checklist);
+      checklist.Responses = [];
       angular.forEach(checklist.Questions, function(question, key){
 
         if(question.Responses && question.Responses.Recommendations && question.Responses.Recommendations.length){
@@ -318,8 +362,8 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
               }
             }
             def.CorrectiveActionCopy =  angular.copy(def.CorrectiveActions[0]);
-            if(def.CorrectiveActionCopy.Completion_date)def.CorrectiveActionCopy.Completion_date = convenienceMethods.getDate(def.CorrectiveActionCopy.Completion_date);
-            console.log(def.CorrectiveActionCopy);
+            //if(def.CorrectiveActionCopy.Completion_date)def.CorrectiveActionCopy.Completion_date = convenienceMethods.getDate(def.CorrectiveActionCopy.Completion_date);
+            //console.log(def.CorrectiveActionCopy);
             checklist.Responses.push(def);
           });
         }
@@ -331,12 +375,15 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
     orderedChecklists = [];
 
     $scope.typeFlag = '';
-  //  angular.forEach($scope.checklists, function(checklist, key){
+ 
     for(var i=0;data.Checklists.length>i;i++){
       var checklist = data.Checklists[i];
-      console.log(checklist);
+
+      //todo:  change to switch statement:
+
+      //console.log(checklist);
       if(checklist.Responses){
-        console.log('true');
+        //console.log('true');
         if(checklist.Name.indexOf('iological') > -1){
           //set bio flag
           $scope.typeFlag = 'bioHazards';
@@ -370,13 +417,10 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
 
       }
     }
-
-  // if(orderedChecklists.bioHazards)$scope.bioHazards = orderedChecklists.bioHazards;
-   console.log($scope.bioHazards);
-   if(data.Date_last_modified)data.Date_last_modified = convenienceMethods.getDate(data.Date_last_modified );
-   $scope.Inspection = data;
  
     $scope.doneLoading = data.doneLoading;
+    $scope.Inspection = data;
+    $rootScope.Inspection = $scope.Inspection;
     calculateScore();
   }
 
@@ -385,33 +429,33 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
   }
 
   $scope.editCorrectiveAction = function(CorrectiveAction){
-    console.log(CorrectiveAction);
+    //console.log(CorrectiveAction);
     CorrectiveAction.beingEdited = true;
     $scope.CorrectiveActionCopy = angular.copy(CorrectiveAction);
-    console.log($scope.CorrectiveActionCopy);
+    //console.log($scope.CorrectiveActionCopy);
   }
 
   $scope.saveCorrectiveAction = function(CorrectiveActionCopy,CorrectiveAction,accept){
+    console.log(CorrectiveActionCopy);
     $scope.CorrectiveActionCopy = angular.copy(CorrectiveActionCopy);
     CorrectiveActionCopy.IsDirty = true;
-    if($scope.CorrectiveActionCopy.Completion_date)$scope.CorrectiveActionCopy.Completion_date = convenienceMethods.setMysqlTime(CorrectiveActionCopy.Completion_date);
     if(accept)$scope.CorrectiveActionCopy.Status = "Accepted";
-    console.log($scope.CorrectiveActionCopy);
     var url = "../../ajaxaction.php?action=saveCorrectiveAction";
     convenienceMethods.updateObject( $scope.CorrectiveActionCopy, CorrectiveActionCopy, onSaveCorrectiveAction, onSaveFailCorrectiveAction, url, $scope.CorrectiveActionCopy, CorrectiveAction);
-
   }
 
   function onSaveCorrectiveAction(returned, old, CorrectiveAction){
-    console.log(CorrectiveAction);
+    //console.log(CorrectiveAction);
     CorrectiveAction.Status = returned.Status;
     old.IsDirty = false;
+    $rootScope.Inspection = $scope.Inspection;
   }
 
   function onSaveFailCorrectiveAction(data){
     alert("Something went wrong when the system tried to save the Corrective Action");
     data = angular.copy($scope.CorrectiveActionCopy);
     data.IsDirty = false;
+    $rootScope.Inspection = $scope.Inspection;
   }
 
   $scope.cancelEdit = function(action){
@@ -419,10 +463,6 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
   }
 
   $scope.afterInspection = function(d){
-    //console.log( Date.parse(d));
-    //console.log(Date.parse($scope.Inspection.DateCreated));
-    console.log(Date.parse(d));
-    console.log(Date.parse($scope.Inspection.Date_last_modified));
     if(Date.parse(d)>Date.parse($scope.Inspection.Date_last_modified)){
       return true;
     }
@@ -441,7 +481,7 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
       insp = $location.search().inspection;
       convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id='+insp+'&callback=JSON_CALLBACK',onGetInspection, onFailGet);
     }else{
-      console.log('here');
+      //console.log('here');
       $scope.Inspection = $rootScope.Inspection;
       onGetInspection($scope.Inspection);
     }
@@ -449,7 +489,7 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
   
   //grab set user list data into the $scrope object
   function onGetInspection(data) {
-    console.log(data);
+    //console.log(data);
     $scope.Inspection = data;
    
 
@@ -471,7 +511,7 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
         if(question.Response == 'No'){
           question.Deficiency = question.Deficiencies[Math.floor(Math.random()*question.Deficiencies.length)].text;
           question.RootCause = question.DeficiencyRootCauses[Math.floor(Math.random()*question.DeficiencyRootCauses.length)];
-          console.log(question);
+          //console.log(question);
         }
       }
     }
@@ -480,10 +520,10 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
 
    $scope.imgNumber = "1";
     $scope.change = function(imgNumber, checklist) {
-      console.log(imgNumber);
+      //console.log(imgNumber);
       $scope.imgNumber = imgNumber;
       checklist.open = !checklist.open;
-      console.log(checklist);
+      //console.log(checklist);
   }
 
   $scope.questionAnswered = function(checklist, response, question){
@@ -510,7 +550,7 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
             }
           }
            if(checkedCount > 0){
-            console.log(i);
+            //console.log(i);
               checklist.questions[i].complete = true;
            }
         }
@@ -560,25 +600,3 @@ function inspectionDetailsController($scope, $location, $anchorScroll, convenien
     newCorrAct.Completion_date = oldCorrAct.Completion_date;
   }
 };
-/*
-inspectionStandardViewController = function($scope,  $location, $anchorScroll, convenienceMethods){
-  
-  $scope.doneLoading = false;
-  init();
-  function init(){
-    convenienceMethods.getData('/Erasmus/src/views/api/hazardAssApi.php?callback=JSON_CALLBACK&checklists=true',onGetChecklists, onFailGet);
-  };
-  
-  //grab set user list data into the $scrope object
-  function onGetChecklists(data) {
-    console.log(data);
-    console.log('controlled');
-    $scope.Checklists = data.Checklists;
-    $scope.doneLoading = data.doneLoading;
-  }
-  function onFailGet(data){
-    alert('There was a problem trying to get your getData');
-  }
-}*/
-
-//postInspection.controller(controllers);
