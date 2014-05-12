@@ -78,6 +78,7 @@ require_once '../top_view.php';
 										<input type="checkbox" value="true" ng-model="deficiency.checked" ng-change="deficiencySelected(question.Responses, deficiency)" />
 										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{deficiency.Text}}</span>
 									</label>
+
 									<span ng-show="deficiency.checked">
 											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
 									</span>
@@ -96,7 +97,7 @@ require_once '../top_view.php';
 									<ul style="margin:10px" ng-switch on="deficiency.checked">
 										<li ng-switch-when="true">
 											<label class="checkbox inline">
-												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-change="def(checklist, question.Responses, question)" />
+												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-change="handleCorrectedDurringInspection(deficiency)" />
 												<span class="metro-radio">corrected during inpsection</span>
 											</label>
 										</li>

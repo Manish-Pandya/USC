@@ -93,23 +93,24 @@ angular.module('ui.bootstrap.transition', [])
 angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
 
   .directive('collapse', ['$transition', function ($transition, $timeout) {
-
     return {
       link: function (scope, element, attrs) {
-
+        console.log(element);
         var initialAnimSkip = true;
         var currentTransition;
 
         function doTransition(change) {
+          console.log('doing transition');
           var newTransition = $transition(element, change);
           if (currentTransition) {
-            currentTransition.cancel();
+              currentTransition.cancel();
           }
           currentTransition = newTransition;
           newTransition.then(newTransitionDone, newTransitionDone);
           return newTransition;
 
           function newTransitionDone() {
+            console.log("in newTransitionDone")
             // Make sure it's this transition, otherwise, leave it alone.
             if (currentTransition === newTransition) {
               currentTransition = undefined;
@@ -122,12 +123,14 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
             initialAnimSkip = false;
             expandDone();
           } else {
-            element.removeClass('collapse').addClass('collapsing');
-            doTransition({ height: element[0].scrollHeight + 'px' }).then(expandDone);
+              element.removeClass('collapse').addClass('collapsing');
+              expandDone();
+              doTransition({ height: 'auto' }).then(expandDone);
           }
         }
 
         function expandDone() {
+          console.log('expand done');
           element.removeClass('collapsing');
           element.addClass('collapse in');
           element.css({height: 'auto'});
@@ -135,6 +138,7 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
 
         function collapse() {
           if (initialAnimSkip) {
+            console.log('collapsing');
             initialAnimSkip = false;
             collapseDone();
             element.css({height: 0});
@@ -145,12 +149,13 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
             var x = element[0].offsetWidth;
 
             element.removeClass('collapse in').addClass('collapsing');
-
+            collapseDone();
             doTransition({ height: 0 }).then(collapseDone);
           }
         }
 
         function collapseDone() {
+          console.log('collapse done');
           element.removeClass('collapsing');
           element.addClass('collapse');
         }
