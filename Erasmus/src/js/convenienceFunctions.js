@@ -34,7 +34,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
                 onSave(returnedObj, obj );
           })
           .error(function(data, status, headers, config, hazard){
-          	 console.log(failParam);
+          	 //console.log(failParam);
              onFail( obj, failParam );
          });
         },
@@ -50,15 +50,15 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
-		  console.log(objDTO);
+		  //console.log(objDTO);
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
-          	console.log(obj);
+          	//console.log(obj);
             onSave(returnedObj, obj, extra1, extra2, extra3);
           })
           .error(function(data, status, headers, config, hazard){
-          	 console.log(failParam);
+          	 //console.log(failParam);
              onFail( obj, failParam );
          });
         },
@@ -73,14 +73,14 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*   @param (Object failParam) Object to be passed to failure function
 		*
 		**/
-		deleteObject: function( onSave, onFail, url,object){
+		deleteObject: function( onSave, onFail, url,object,parent){
           return $http.delete(  url )
           .success( function( returnedObj ) {
-          	console.log(returnedObj);
-            onSave(returnedObj,object);
+          	//console.log(returnedObj);
+            onSave(returnedObj,object,parent);
           })
           .error(function(data, status, headers, config, hazard){
-             onFail( );
+             onFail(object,parent);
          });
         },
 
@@ -106,17 +106,17 @@ angular.module('convenienceMethodModule', ['ngRoute'])
             })
     	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){
-			console.log(data);
+			//console.log(data);
 			$http.post(url,data)
             .success( function(data) {
                data.doneLoading = true;
                onSuccess(data);
             })
             .error(function(data, status, headers, config){
-            	console.log(status);
-            	console.log(headers());
-            	console.log(config);
-            	console.log(data);
+            	//console.log(status);
+            	//console.log(headers());
+            	//console.log(config);
+            	//console.log(data);
                 onFail(data);
             })
     	},
@@ -155,7 +155,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	      if(!props) {var props = ["Key_id","Key_id"];}	     	
 	      for (i=0;i<array.length;i++) {
 			if (array[i][props[0]] === obj[props[1]]) {
-				console.log('true');
+				//console.log('true');
 				if(returnIdx) return i;
 				return true;
 			}   
@@ -178,7 +178,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	                onSuccess(returnedObj, obj );
 	          })
 	          .error(function(data, status, headers, config, hazard){
-	          	 console.log(failParam);
+	          	 //console.log(failParam);
 	             onFail( obj, failParam );
 	         });
 	  	},
@@ -263,7 +263,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			var formattedTime = {};
 			formattedTime.formattedString = month + '/' + day + '/' + year;
 			formattedTime.year = year;
-			console.log(formattedTime);
+			//console.log(formattedTime);
 			return formattedTime;
 		},
 		setMysqlTime: function(date){
@@ -275,7 +275,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			    ('00' + date.getUTCHours()).slice(-2) + ':' + 
 			    ('00' + date.getUTCMinutes()).slice(-2) + ':' + 
 			    ('00' + date.getUTCSeconds()).slice(-2);
-			console.log(date);
+			//console.log(date);
 			return date;
 		},
 		setIsDirty: function(obj){
@@ -286,7 +286,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			//use jsonp method of the angularjs $http object to ask the server to send an email
 			return $http.post(  url, emailDto )
 			.success( function( returnedObj ) {
-				console.log(returnedObj);
+				//console.log(returnedObj);
 				onSendEmail(returnedObj, emailDto);
 			})
 			.error(function(data, status, headers, config, hazard){
