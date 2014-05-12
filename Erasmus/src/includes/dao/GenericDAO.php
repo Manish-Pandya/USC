@@ -178,7 +178,11 @@ class GenericDAO {
 		}
 		//else use $object as-is!
 		
+		// update the modify timetamp
+		$object->setDate_last_modified(date("Y-m-d H:i:s"));
 
+		// Add the creation timestamp
+		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
 		
 		// Get the db connection
 		global $db;
@@ -198,6 +202,9 @@ class GenericDAO {
 	    	$_SESSION["DEBUG"] = "Calling db insert...";
 			 //echo  "Calling db insert...";
 
+	    	// Add the creation timestamp
+	    	$object->setDate_created(date("Y-m-d H:i:s"));
+	    	
 			$stmt = $this->createInsertStatement($db,$object);
 		   	$stmt = $this->bindColumns($stmt,$object);
 			$stmt->execute();
@@ -364,7 +371,7 @@ class GenericDAO {
 			if ($value == "float") {$type = PDO::PARAM_INT;}
 			if ($value == "boolean") {$type = PDO::PARAM_BOOL;}
 			if ($value == "datetime") {$type = PDO::PARAM_STR;}
-			if ($value == "timestamp") {$type = PDO::PARAM_INT;}
+			if ($value == "timestamp") {$type = PDO::PARAM_STR;}
 			
 			// build the implied getter
 			$key2 = $key;
