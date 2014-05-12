@@ -4,19 +4,19 @@ piHub.config(function($routeProvider){
 	$routeProvider
 		.when('/rooms', 
 			{
-				templateUrl: '../piHubPartials/rooms.html', 
+				templateUrl: 'piHubPartials/rooms.html', 
 				controller: piHubRoomController
 			}
 		)
 		.when('/personnel', 
 			{
-				templateUrl: '../piHubPartials/personnel.html', 
+				templateUrl: 'piHubPartials/personnel.html', 
 				controller: piHubPersonnelController
 			}
 		)		
 		.when('/departments', 
 			{
-				templateUrl: '../piHubPartials/departments.html', 
+				templateUrl: 'piHubPartials/departments.html', 
 				controller: piHubDepartmentsController
 			}
 		)
@@ -28,7 +28,7 @@ piHub.config(function($routeProvider){
 		);
 });
 
-piHubMainController = function($scope, $location, convenienceMethods, $modal){
+piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal){
 	$scope.doneLoading = false;
 
 	$scope.setRoute = function(route){
@@ -53,14 +53,28 @@ piHubMainController = function($scope, $location, convenienceMethods, $modal){
         console.log($location.search());
 
         //always get a list of all PIs so that a user can change the PI in scope
-        var url = '../../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
        	convenienceMethods.getData( url, onGetAllPIs, onFailGetAllPIs );
-        	
+
+       	//a
+ 
+		var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
+		convenienceMethods.getData( url, onGetBuildings, onFailGetBuildings );	
 	}
+
+	function onGetBuildings(data){
+		$scope.buildings = data;
+		$rootScope.buildings = data;
+	}
+
+	function onFailGetBuildings(){
+		alert('There was a problem when the system tried to get the list of buildings.')
+	}
+        
 
 	function getPi(PIKeyID){
 		$scope.PI = false;
-		var url = '../../../ajaxaction.php?action=getPIById&id='+PIKeyID+'&callback=JSON_CALLBACK';
+		var url = '../../ajaxaction.php?action=getPIById&id='+PIKeyID+'&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetPI, onFailGetPI );
 		$scope.noPiSet = false;
 	}
@@ -98,7 +112,7 @@ piHubMainController = function($scope, $location, convenienceMethods, $modal){
 	      add: false
 	    }
 
-	    convenienceMethods.updateObject( roomDto, room, onRemoveRoom, onFailRemoveRoom, '../../../ajaxaction.php?action=savePIRoomRelation' );
+	    convenienceMethods.updateObject( roomDto, room, onRemoveRoom, onFailRemoveRoom, '../../ajaxaction.php?action=savePIRoomRelation' );
 	}
 
 	function onRemoveRoom(returned, room){
@@ -161,14 +175,17 @@ piHubMainController = function($scope, $location, convenienceMethods, $modal){
 
   };
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, PI, adding, convenienceMethods) {
+var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods) {
 	$scope.PI = PI;
 	console.log(adding);
 
 	if(adding)$scope.addRoom = true;
+	if($rootScope.buildings)$scope.buildings = $rootScope.buildings;
+	if(!$scope.buildings){
+		var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
+		convenienceMethods.getData( url, onGetBuildings, onFailGetBuildings );
+	}
 
-	var url = '../../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
-	convenienceMethods.getData( url, onGetBuildings, onFailGetBuildings );
 
 	function onGetBuildings(data){
 		$scope.buildings = data;
@@ -176,7 +193,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, PI, adding, convenienc
 	}
 
 	function onFailGetBuildings(){
-
+		alert('There was a problem when the system tried to get the list of buildings.')
 	}
 
 	$scope.onSelectBuilding = function(item){
@@ -205,7 +222,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, PI, adding, convenienc
 
 	    room.piHasRel = !room.piHasRel;
 	    console.log(roomDto);
-	    convenienceMethods.updateObject( roomDto, room, onSaveRoomRelation, onFailSaveRoomRelation, '../../../ajaxaction.php?action=savePIRoomRelation',building,building );
+	    convenienceMethods.updateObject( roomDto, room, onSaveRoomRelation, onFailSaveRoomRelation, '../../ajaxaction.php?action=savePIRoomRelation',building,building );
 
 	}
 
@@ -249,7 +266,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, PI, adding, convenienc
 	    }
 
 	    console.log(roomDto);
-	    convenienceMethods.updateObject( roomDto, newRoom, onSaveRoom, onFailSaveRoom, '../../../ajaxaction.php?action=saveRoom' );
+	    convenienceMethods.updateObject( roomDto, newRoom, onSaveRoom, onFailSaveRoom, '../../ajaxaction.php?action=saveRoom' );
 	}
 
 	function onSaveRoom(data, room){
@@ -271,7 +288,7 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 	
 	init();
 	function init(){
-		//var url = '../../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
+		//var url = '../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
 		//convenienceMethods.getData( url, onGetDepartemnts, onFailGetDepartments );
 	}
 
@@ -280,7 +297,7 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 piHubPersonnelController = function($scope, $location, convenienceMethods){
 	init();
 	function init(){
-		var url = '../../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
+		var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetUsers, onFailGetUsers );
 
 	}
@@ -299,7 +316,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods){
 		userCopy = angular.copy(user);
 		userCopy.Supervisor_id = $scope.PI.Key_id;
 
-		convenienceMethods.updateObject( userCopy, user, onSaveUser, onFailSaveUser, '../../../ajaxaction.php?action=saveUser' );
+		convenienceMethods.updateObject( userCopy, user, onSaveUser, onFailSaveUser, '../../ajaxaction.php?action=saveUser' );
 
 	}
 
@@ -320,7 +337,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods){
 		userCopy = angular.copy(user);
 		userCopy.Supervisor_id = null;
 
-		convenienceMethods.updateObject( userCopy, user, onRemoveUser, onFailRemoveUser, '../../../ajaxaction.php?action=saveUser' );
+		convenienceMethods.updateObject( userCopy, user, onRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
 
 	}
 
@@ -341,7 +358,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 	init();
 	function init(){
 		$scope.doneLoadingDepartments = false;
-		var url = '../../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
+		var url = '../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetDepartemnts, onFailGetDepartments );
 	}
 
@@ -366,7 +383,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 		
 		
 
-		convenienceMethods.updateObject( piDTO, $item, onAddDepartment, onFailAddDepartment, '../../../ajaxaction.php?action=savePIDepartmentRelation',null, $item );
+		convenienceMethods.updateObject( piDTO, $item, onAddDepartment, onFailAddDepartment, '../../ajaxaction.php?action=savePIDepartmentRelation',null, $item );
 	}
 
 	
@@ -389,7 +406,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 	      add: false
 	    }
 
-		convenienceMethods.updateObject( piDTO, department, onRemoveDepartment, onFailRemoveDepartment, '../../../ajaxaction.php?action=savePIDepartmentRelation',null, department );
+		convenienceMethods.updateObject( piDTO, department, onRemoveDepartment, onFailRemoveDepartment, '../../ajaxaction.php?action=savePIDepartmentRelation',null, department );
 	}
 
 	function onRemoveDepartment(returned,dept){
@@ -410,7 +427,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
   	
   	$scope.room = room;
 
-  	var url = '../../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
+  	var url = '../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
     convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
 
     function onGetHazards(data){

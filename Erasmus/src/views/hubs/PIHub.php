@@ -6,8 +6,10 @@ require_once '../top_view.php';
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
 	<li class="span3">
-		<img src="../../../img/pi-icon.png" class="pull-left" style="height:50px" />
-		<h2  style="padding: 11px 0 5px 85px;">PI Hub</h2>	
+		<img src="<?php echo WEB_ROOT?>img/pi-icon.png" class="pull-left" style="height:50px" />
+			<h2 style="padding: 11px 0 5px 15px; margin-left:63px;">PI Hub
+			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+		</h2>	
 	</li>
 	<div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
 </ul>
@@ -17,25 +19,25 @@ require_once '../top_view.php';
 		     <div class="control-group">
 		       <label class="control-label" for="name"><h3 style="font-weight:bold">Select A Principal Investigator</h3></label>
 		       <div class="controls">
-		       <span ng-show="!doneLoadingAll">
+		       <span ng-if="!PIs || !buildings">
 		         <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
 		       	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
-		       <span ng-hide="!doneLoadingAll">
-		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Add a PI" typeahead="pi as (pi.User.Name+' '+pi.User.Username) for pi in PIs | filter:$viewValue">
+		       <span ng-if="PIs && buildings">
+		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Add a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		     </div>
 		</form>
 	</div>
-	<span ng-hide="!PI">
+	<span ng-if="PI && buildings">
 		<div class="btn-group" id="piButtons">
 			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;
 "><i class="icon-pencil"></i>Edit PI</a>
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>Manage Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Users</a>
 			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>
-			<a class="btn btn-large btn-danger" href="../../inspection/HazardAssesmentNew.php#?inspection={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
+			<a ng-if="inspectionId" class="btn btn-large btn-danger" href="../../inspection/HazardAssesmentNew.php#?inspection={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
 		<!--	<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success"><i class="icon-phone"></i>Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Haz-->
 		</div>
 	</span>

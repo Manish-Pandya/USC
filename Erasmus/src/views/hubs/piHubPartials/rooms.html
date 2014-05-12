@@ -12,7 +12,7 @@
 		<!--<td width="25%">{{room.Capmus}}</td>-->
 		<td width="25%">{{room.Building.Name}}</td>
 		<td width="25%">{{room.Name}}</td>
-		<td><a class="edit btn btn-large btn-warning" target="_blank" href="HazardHubAssessment.php"><i class="icon-lab"></i>Show Hazards</a></td>
+		<td><a class="edit btn btn-large btn-warning" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a></td>
 	</tr>
 </tbody>
 </table>
@@ -35,13 +35,13 @@
 	   		<li ng-repeat="room in chosenBuilding.Rooms">
 	   			<label class="checkbox inline">
 					<input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
-					<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="../../../img/loading.gif"/></span>
+					<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
 				</label>
 	   		</li>
 	   </ul>
 
 	   <ul ng-show="addRoom">
-	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Add a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../../img/loading.gif"/>
+	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Add a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="rsms/img/loading.gif"/>
 	   		<li ng-repeat="room in chosenBuilding.Rooms">
 	   			{{room.Name}}
 	   		</li>
@@ -50,6 +50,26 @@
 
     </div>
     <div class="modal-footer">
-    	<a class="btn btn-large" ng-class="{btn-info: !addRoom, btn-primary: addRoom}" ng-click="close()">Close</a>
+    	<a class="btn btn-large" ng-class="{'btn-info': !addRoom, 'btn-primary': addRoom}" ng-click="close()">Close</a>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="roomHazardsModal.html">
+	<div class="modal-header" style="padding:0;">
+        <h2 ng-show="!addRoom" style="padding:5px;" class="orangeBg">Hazards in room {{room.Key_id}}</h2>
+    <div class="modal-body">
+	   
+	   <img ng-if="!hazards && !noHazards" class="smallLoading" src="../../img/loading.gif"/>
+	   <ul ng-show="hazards">
+	   		<li ng-repeat="hazard in hazards">
+	   			{{hazard.Name}}
+	   		</li>
+	   </ul>
+	   <h3 ng-show="noHazards">{{noHazards}}</h3>
+
+    </div>
+    <div class="modal-footer">
+    	<a class="btn btn-large" ng-click="close()">Close</a>
     </div>
 </script>
