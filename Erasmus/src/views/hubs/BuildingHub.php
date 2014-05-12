@@ -50,7 +50,6 @@ require_once '../top_view.php';
 					</span>
 					<br>
 					<a ng-if="building" class="btn btn-mini btn-info" style="margin:-3px 1px 15px 0" ng-click="setAddNewRoom()"><i class="icon-checkmark"></i>Add Room</a>
-					
 					<ul>
 						<li ng-if="newRoom">
 							<input ng-model="roomCopy.Name">
