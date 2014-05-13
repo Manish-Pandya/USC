@@ -1972,7 +1972,7 @@ function sendInspectionEmail(){
 		
 		$footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university is and password.";
 		// Send the email
-		mail(implode($recipientEmails,","),"EHS Laboratory Safety Inspection Notice",$text . $footerText,"Cc: ". implode($inspectorEmails,","));
+		mail(implode($recipientEmails,","),'EHS Laboratory Safety Inspection Notice',$text . $footerText,'From:no-reply@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode($inspectorEmails,","));
 
 		$inspection->setNotification_date(date("Y-m-d H:i:s"));
 		$dao->save($inspection);
