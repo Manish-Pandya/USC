@@ -655,7 +655,7 @@ function saveBuilding(){
 	$decodedObject = convertInputJson();
 	
 	if( $decodedObject === NULL ){
-		return new ActionError('Error converting input stream to Hazard');
+		return new ActionError('Error converting input stream to Building');
 	}
 	else if( $decodedObject instanceof ActionError ){
 		return $decodedObject;

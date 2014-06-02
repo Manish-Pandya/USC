@@ -60,9 +60,9 @@ class Department extends GenericCrud {
 	public function getPrincipalInvestigators(){
 		if($this->principalInvestigators == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
+			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
 		}
-		return $this->users;
+		return $this->principalInvestigators;
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
 	}
