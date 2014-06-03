@@ -1,30 +1,5 @@
 var hazardHub = angular.module('hazardHub', ['convenienceMethodModule','infinite-scroll']);
-/*
-hazardHub.factory('hazardHubFactory', function($http){
-   
-    //initialize a factory object
-    var tempFactory = {};
-    
-    //simple 'getter' to grab data from service layer
-    tempFactory.getHazardData = function(onSuccess, url){
-    //user jsonp method of the angularjs $http object to request data from service layer
-        $http.jsonp(url)
-            .success( function(data) {  
-               console.log(url);
-               onSuccess(data);
-            })
-            .error(function(data, status, headers, config){
-                //alert('error');
-                console.log(headers());
-                console.log(status);
-                console.log(config);
-                onFailSave(data);
-            });
-    };
 
-    return tempFactory;
-});
-    */
 hazardHub.directive('yaTree', function () {
 
     return {
@@ -408,7 +383,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.addChild = function (child) {
-
         $scope.parentHazard = {};
 
         if(!child.HasChildren){
@@ -446,6 +420,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         }
 
         child.SubHazards.unshift($scope.hazardCopy);
+        child.HasChildren = true;
         console.log( $scope.hazardCopy );
     }
 
