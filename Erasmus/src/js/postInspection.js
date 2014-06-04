@@ -44,39 +44,7 @@ postInspection.config(function($routeProvider){
   .otherwise(
     {redirectTo: '/report'}
   );
-
 });
-
-postInspection.factory('testFactory', function($http){
-  
-  //initialize a factory object
-  var tempFactory = {};
-  
-  //simple 'getter' to grab data from service layer
-  tempFactory.getChecklists = function(onSuccess, url){
-  
-  //user jsonp method of the angularjs $http object to request data from service layer
-  $http.jsonp(url)
-    .success( function(data) {
-      //onSuccess is the method we have passed from the controller.  Binds data from service layer to angularjs $scope object
-      onSuccess(data);
-    })
-    .error(function(data, status, headers, config){
-      alert('error');
-      //console.log(headers());
-      //console.log(status);
-      //console.log(config);
-    });
-        
-  };
-  
-  tempFactory.saveUser = function(onSuccess, url){
-    alert('saving user');
-  }
-  
-  return tempFactory;
-});
-
 
 controllers = {};
 
@@ -95,19 +63,19 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
   };
   function onGetUser(data){
     $scope.User = data;
-   // //console.log($scope.User);
+ 
   }
   function onFailGetUser(){
     alert("There was a problem retrieving your user information");
   }
   function onGetInspection(data){
-    //console.log(data);
+
     if(data.Date_last_modified)var inspDate = convenienceMethods.getDate(data.Date_last_modified);
     data.inspDate = inspDate.formattedString;
     $scope.Inspection = data;
     $rootScope.Inspection = data;
     $scope.doneLoading = data.doneLoading;
-    //console.log($rootScope);
+
   }
   function onFailGet(){
     alert('There was an error finding the inspection.');
@@ -159,13 +127,11 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   
   init();
   function init(){
-    //console.log($rootScope);
     $scope.doneLoading = false;
     if(!$rootScope.Inspection){
        insp = $location.search().inspection;
        convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id='+insp+'&callback=JSON_CALLBACK',onGetInspection, onFailGet);
     }else{
-      //console.log('here');
       $scope.Inspection = $rootScope.Inspection;
       onGetInspection($scope.Inspection);
     }
@@ -178,9 +144,8 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     $scope.others.push(other);
   }
   
-  $scope.addOtherRecipient
+ // $scope.addOtherRecipient();
 
-  //grab set user list data into the $scrope object
   function onGetInspection(data) {  
     $scope.inspection = data;
     $scope.doneLoading = data.doneLoading;
@@ -188,7 +153,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function onFailGet(data){
-  	alert('There was a problem trying to get your getData');
+  	alert('There was a problem trying to get the inspection data.');
   }
 
   $scope.contactList = [];
@@ -200,7 +165,6 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   	}else{
   		angular.forEach($scope.contactList, function(value, key){
   			if(value.KeyId === obj.KeyId){
-  				//console.log(key);
   				$scope.contactList.splice(key,1);
   			}
   		});
@@ -231,8 +195,6 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       Other_emails: othersToSendTo,
       Text: $scope.defaultNote
     }
-
-
 
     var url = '../../ajaxaction.php?action=sendInspectionEmail';
     convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
