@@ -5,7 +5,7 @@ require_once '../top_view.php';
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
-	<li class="span3">
+	<li class="span3" style="margin-left:0">
 		<img src="<?php echo WEB_ROOT?>img/pi-icon.png" class="pull-left" style="height:50px" />
 			<h2 style="padding: 11px 0 5px 15px; margin-left:63px;">PI Hub
 			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
@@ -24,7 +24,7 @@ require_once '../top_view.php';
 		       	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-if="PIs && buildings">
-		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Add a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		     </div>
@@ -52,69 +52,6 @@ require_once '../top_view.php';
 		<ng-view></ng-view>
 	</span>
 
-
-
-
-<!--
-<table class="userList table table-striped table-hover list" id="safetyContacts">
-<thead>
-	<tr><th colspan="5"><h2 class="alert alert-success">Davit Mrelashvili's Safety Contacts</h2></th></tr>
-	<tr><th colspan="5"><a class="btn-success btn-large btn" style="" data-toggle="modal"  href="#addUser" ><img src='../../img/add-user-icon.png'>Add Safety Contact</a></th></tr>
-	<tr>
-		<th width="20%">Edit Safety Contact</th><th width="20%">Remove Room</th><th width="20%">Name</th><th width="20%">LDAP ID</th><th width="20%">Email</th>
-	</tr>
-</thead>
-<tbody>
-	<tr>
-		<td><a class="edit btn btn-large btn-primary"  href="UserHub.php">Edit</a></td>
-		<td><a class="btn btn-danger btn-large removeRow" href="#">Remove</a></td>
-		<td>Bob Userington</td>
-		<td>bUserington</td>
-		<td>bob@bob.bob</td>
-	</tr>
-	<tr>
-		<td><a class="edit btn btn-large btn-primary"  href="UserHub.php">Edit</a></td>
-		<td><a class="btn btn-large btn-danger removeRow" href="#">Remove</a></td>
-		<td>Beth Userington</td>
-		<td>bethUserington</td>
-		<td>bob@bob.bob</td>
-
-	</tr>
-	<tr>
-		<td width="20%"><a class="edit btn btn-large btn-primary"  href="UserHub.php">Edit</a></td>
-		<td><a class="btn btn-danger btn-large removeRow" href="#">Remove</a></td>
-		<td>Jane Doe</td>
-		<td>jDoe</td>
-		<td>bob@bob.bob</td>
-
-	</tr>
-</tbody>
-</table>
-<div id="departments" class="table">
-	<h2 class="alert" style="background: rgba(182, 182, 182, 0.7); border-color:rgba(182, 182, 182, 0.7);">Davit Mrelashvili's Departments</h2>
-	<input class="typeahead" name="buildings" id="departmentsField" autocomplete="off" type="text" style="margin: 0 auto;" data-provide="typeahead" data-items="5000" data-source='["Animal Resource Facilities","Biological Sciences","Cell Biology and Anatomy","Chemical Engineering","Chemistry and Biochemistry","Civil and Environmental Engineering","Earth and Ocean Sciences","Electrical Engineering","Environmental Health and Safety","Environmental Health Sciences","Electron Microscopy Center","Epidemiology and Biostatistics","Exercise Science","Mechanical Engineering","Pathology, Microbiology and Immunology","Pharmaceutical and Biomedical Sciences","Pharmacology, Physiology and Neuroscience","Physics and Astronomy","Psychology","Surgery","Thompson Student Health Lab"]'>
-	<a class="btn" id="addDepartment">Add Department</a>
-	<ul id="departmentList">
-		<li>Biological Sciences</li>
-		<li>Cell Biology and Anatomy</li>
-		<li>Pathology, Microbiology and Immunology</li>
-		<li>Surgery</li>
-</ul>
-</div>
-
-<div id="specialHazards" class="table">
-	<h2 class="alert" style="background: #faa732; border-color: #faa732;">Davit Mrelashvili's Special Hazards</h2>
-	<input class="typeahead" name="buildings" id="specialHazardsField" autocomplete="off" type="text" style="margin: 0 auto;" data-provide="typeahead" data-items="5000" data-source='["Animal Resource Facilities","Biological Sciences","Cell Biology and Anatomy","Chemical Engineering","Chemistry and Biochemistry","Civil and Environmental Engineering","Earth and Ocean Sciences","Electrical Engineering","Environmental Health and Safety","Environmental Health Sciences","Electron Microscopy Center","Epidemiology and Biostatistics","Exercise Science","Mechanical Engineering","Pathology, Microbiology and Immunology","Pharmaceutical and Biomedical Sciences","Pharmacology, Physiology and Neuroscience","Physics and Astronomy","Psychology","Surgery","Thompson Student Health Lab"]'>
-	<a class="btn btn-warning" id="addSpecialHazard">Add Special Hazard</a>
-	<ul id="specialHazardList">
-		<li>Reserpine</li>
-		<li>Dinitrophenol</li>
-		<li>Ethyl carbamate (Urethane)</li>
-		<li>Hexachlorocyclohexanes</li>
-</ul>
-</div>
-
-</div>
 <!-- begin edit user modal dialogue -->
 <div class="modal hide fade" id="editUser1">
   <div class="modal-header">
