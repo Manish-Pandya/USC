@@ -88,7 +88,7 @@ require_once '../top_view.php';
 		       	<input style="" class="span7" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-init="PI.User.Name" ng-model="PI.User.Name" placeholder="Select PI" typeahead="pi as pi.User.Name for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php/#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}" target="_blank">Manage Data for Selected PI</a></h3>
+		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}" target="_blank">Manage Data for Selected PI</a></h3>
 		     </div>
 			<div class="span8">
 		       <div class="controls">

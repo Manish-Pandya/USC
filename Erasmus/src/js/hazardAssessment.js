@@ -205,7 +205,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     $scope.hazardsLoading = false;
     $scope.needNewHazards = false;
     angular.forEach($scope.hazards, function(hazard, key){
-      getShowRooms(hazard);
+      if(hazard.IsPresent)getShowRooms(hazard);
     });
   }
 
@@ -224,7 +224,6 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
     console.log(hazard);
     $scope.walkhazard(hazard);
     event.stopPropagation();
-
     $scope.selectedHazard = hazard;
     calculateClickPosition(event,hazard,element);
     hazard.showRoomsModal = !hazard.showRoomsModal;
@@ -319,7 +318,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //recursively step through a hazard and its children
   $scope.walkhazard = function(hazard){
 
-    if(hazard.SubHazards.length){
+    if(hazard.SubHazards.length  && hazard.IsPresent){
 
       var children = hazard.SubHazards;
 
