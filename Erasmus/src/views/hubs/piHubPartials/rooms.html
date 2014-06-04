@@ -1,7 +1,7 @@
 <table class="roomList table table-striped table-hover list" id="rooms">
 <thead>
 	<tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
-	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large">Add Room</a><a href="#roomModal" ng-click="modalify(PI,true)" class="btn btn-primary btn-large">Create Room</a></tr>
+	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large">Assign Room</a><a href="#roomModal" ng-click="modalify(PI,true)" class="btn btn-primary btn-large">Create Room</a></tr>
 	<tr>
 		<th>Remove Room</th><!--<th>Campus</th>--><th>Building</th><th>Room Number</th><th>Room Hazards</th>
 	</tr>
@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="roomHandlerModal.html">
 	<div class="modal-header" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg">Add a Room to {{PI.User.Name}}</h2>
+        <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg">Assign a Room to {{PI.User.Name}}</h2>
         <h2 ng-show="addRoom" style="padding:5px;" class="purpleBg">Create a New Room</h2>
     </div>
     <div class="modal-body">
@@ -41,7 +41,7 @@
 	   </ul>
 
 	   <ul ng-show="addRoom">
-	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Add a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="rsms/img/loading.gif"/>
+	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="rsms/img/loading.gif"/>
 	   		<li ng-repeat="room in chosenBuilding.Rooms">
 	   			{{room.Name}}
 	   		</li>

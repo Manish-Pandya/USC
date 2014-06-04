@@ -20,7 +20,6 @@ piHub.config(function($routeProvider){
 				controller: piHubDepartmentsController
 			}
 		)
-		//.when('', {template: '', controller: })
 		.otherwise(
 			{
 				redirectTo: '/rooms'
@@ -46,7 +45,6 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         }
 
         if($location.search().hasOwnProperty('inspection')){
-        	console.log('turthisa;lsdkjf');
         	$scope.inspectionId = $location.search().inspection;
         }
 
@@ -56,8 +54,6 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
        	convenienceMethods.getData( url, onGetAllPIs, onFailGetAllPIs );
 
-       	//a
- 
 		var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetBuildings, onFailGetBuildings );	
 	}
