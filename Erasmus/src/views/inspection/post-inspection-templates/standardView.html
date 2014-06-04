@@ -1,9 +1,7 @@
-	
 	<div class="loading" ng-show='!doneLoading' >
 	  <img class="" src="../../img/loading.gif"/>
-	 Getting Inspection Information...
+	  Getting Inspection Information...
 	</div>
-	<!--<pre>{{Inspection | json}}</pre>-->
 	<span  ng-show='doneLoading'>
 	<div class="inspectionHeader row-fluid">
 		<div class="span4">
@@ -51,8 +49,13 @@
 			<span class="span3 pull-right">
 				<h3>Lab Safety Contact:</h3>
 				<p class="pull-right" style="width:154px;">
-					<span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">John Smith<br>
-						<span ng-repeat="contact in room.SafetyContactInformation"><!--{{room.SafetyContactInformation}}<span ng-show="!$last">, </span>--></span>
+					<span ng-if="Inspection.PrincipalInvestigator.LabPersonnel.length">
+						<span ng-repeat="contact in Inspection.PrincipalInvestigator.LabPersonnel"><br>
+							{{contact.Name}}<span ng-show="!$last">, </span>
+						</span>
+					</span>
+					<span ng-if="!Inspection.PrincipalInvestigator.LabPersonnel.length">
+						{{Inspection.PrincipalInvestigator.User.Name}}
 					</span>
 				</p>
 			</span>
