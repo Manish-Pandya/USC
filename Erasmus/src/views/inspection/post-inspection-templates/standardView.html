@@ -59,7 +59,12 @@
 				<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
 			</span>
 			<span class="span3 pull-right">
-				<h3 style="width:177px;">EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
+				<h3 style="width:177px;">EH&S Auditor(s):</h3>
+				<p class="pull-right" style="width:154px;">
+				<span style="margin-top: 0px; display: inline-block;">
+					<span ng-repeat="inspector in Inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
+				</span>
+				</p>
 			</span>
 		</div>
 	</div>
