@@ -12,13 +12,6 @@
 		</div>
 		<div class="span4">
 			<img src="../../img/rsc-logo.png" class="usclogo rsc-logo"/>
-		<!--
-			<h3>Environmental Health & Safety</h3>
-			<img src="../../img/biohazard-largeicon.png"/>
-			<img src="../../img/chemical-safety-large-icon.png"/>
-			<img src="../../img/radiation-large-icon.png"/>
-			<h3>Research Safety & Compliance</h3>
-			-->
 		</div>
 	</div>
 	<div class="inspectionInfo">
@@ -44,7 +37,7 @@
 
 		<div class="row">
 			<span class="span6">
-				<h3>Laboratory Building:</h3><p>Benson</p>
+				<h3>Laboratory Building:</h3><p>{{Inspection.Rooms[0].Building.Name}}</p>
 			</span>
 			<span class="span3 pull-right">
 				<h3>Lab Safety Contact:</h3>
@@ -66,7 +59,7 @@
 				<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
 			</span>
 			<span class="span3 pull-right">
-				<h3 style="width:177px;">EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.Name}}<span ng-show="!$last">, </span></span></p>
+				<h3 style="width:177px;">EH&S Auditor(s):</h3><p><span ng-repeat="inspector in Inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
 			</span>
 		</div>
 	</div>
