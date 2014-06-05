@@ -186,7 +186,7 @@ class User extends GenericCrud{
 	public function setPrimary_department_id($primary_department_id){ $this->primary_department_id = $primary_department_id; }
 
 	public function getPosition(){ return $this->position; }
-	public function setPositione($position){ $this->position = position;}
+	public function setPosition($position){ $this->position = $position;}
 
 	public function getPrimary_department() {
 		if($this->primary_department === NULL && $this->hasPrimaryKeyValue()) {

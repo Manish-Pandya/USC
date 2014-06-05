@@ -88,7 +88,7 @@ function getAllUsers(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$userDao = getDao( new User() );
-	$allUsers = $userDao->getAll();
+	$allUsers = $userDao->getAll('last_name');
 
 	return $allUsers;
 };

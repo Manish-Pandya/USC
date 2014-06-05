@@ -1,7 +1,7 @@
 <table class="userList table table-striped table-hover piTable">
 	<thead>
 		<tr class="purpleBg">
-			<th colspan="7" class="purpleBg">
+			<th colspan="8" class="purpleBg">
 				<h1 class="purpleBg">EHS Personnel</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
@@ -16,9 +16,11 @@
 			<th>Edit User</th>
 			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
 			<th>
-				<a ng-click="order = 'Name'; Name.reverse=!Name.reverse">Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
+				<a ng-click="order = 'Last_name'; Last_name.reverse=!Last_name.reverse">Last Name<i ng-class="{ 'icon-arrow-up':Last_name.reverse, 'icon-arrow-down':!Last_name.reverse }"></i></a><br>
 				<input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
 			</th>
+			<th>First Name</th>
+			<th>Role</th>
 			<th>Position</th>
 			<th>Office Phone</th>
 			<th>Email</th>
@@ -28,21 +30,29 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in Admins | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in Admins | orderBy:order | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
-								<img ng-show="contact.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:5px;"/>
+				<img ng-show="contact.IsDirty" class="smallLoading" src="../../img/loading.gif" style="margin-left:5px;"/>
 
 			</td>
 
 			<td style="width:14%;">
-				{{contact.Name}}
+				{{contact.Last_name}}
+			</td>
+
+			<td style="width:14%;">
+				{{contact.First_name}}
 			</td>
 
 			<td style="width:12%;">
 				{{contact.Roles[0].Name}}
+			</td>
+
+			<td style="width:12%;">
+				{{contact.Position}}
 			</td>
 
 			<td style="width:12%;">
@@ -64,11 +74,10 @@
 <script type="text/ng-template" id="personnelModal.html">
         <div class="modal-header" style="padding:0;" class="">
             <h2 style="padding:5px" ng-show="userCopy.Key_id" class="purpleBg">Editing {{userCopy.Name}}</h2>
-        	<h2 style="padding:5px" ng-hide="userCopy.Key_id" class="purpleBg">Create a New Lab Contact</h2>
+        	<h2 style="padding:5px" ng-hide="userCopy.Key_id" class="purpleBg">Add New EHS Personnel</h2>
         </div>
         <div class="modal-body">
         	<form class="form-horizontal form">
-
         		<div class="control-group">
 		         <label class="control-label" for="inputEmail">Username</label>
 		         <div class="controls">
@@ -82,10 +91,18 @@
 			    </div>
 			    
 			    <div class="control-group">
-		         <label class="control-label" for="inputEmail">Name</label>
+		         <label class="control-label" for="inputEmail">First Name</label>
 		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="userCopy.Name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="Name">
-		            <input type="text" id="inputEmail" ng-model="userCopy.Name" ng-if="!isProductionServer || userCopy.Username" placeholder="Email">
+		         	<input type="text" id="inputEmail" ng-model="userCopy.First_name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="First Name">
+		            <input type="text" id="inputEmail" ng-model="userCopy.First_name" ng-if="!isProductionServer || userCopy.Username" placeholder="First Name">
+		         </div>
+			    </div>
+
+			    <div class="control-group">
+		         <label class="control-label" for="inputEmail">Last Name</label>
+		         <div class="controls">
+		         	<input type="text" id="inputEmail" ng-model="userCopy.Last_name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="Last Name">
+		            <input type="text" id="inputEmail" ng-model="userCopy.Last_name" ng-if="!isProductionServer || userCopy.Username" placeholder="Last Name">
 		         </div>
 			    </div>
 
@@ -109,8 +126,16 @@
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Emergency Phone</label>
 		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-		            <input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Name" ng-if="!isProductionServer || userCopy.Username">
+		         	<input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
+		            <input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || userCopy.Username">
+		         </div>
+			    </div>
+
+			    <div class="control-group">
+		         <label class="control-label" for="inputEmail">Position</label>
+		         <div class="controls">
+		         	<input type="text" id="inputEmail" ng-model="userCopy.Position" placeholder="Position" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
+		            <input type="text" id="inputEmail" ng-model="userCopy.Position" placeholder="Position" ng-if="!isProductionServer || userCopy.Username">
 		         </div>
 			    </div>
 

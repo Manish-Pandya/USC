@@ -23,7 +23,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         controller: personnelController
       }
     )
-    //.when('', {template: '', controller: })
     .otherwise(
       {
         redirectTo: '/pis'
@@ -36,17 +35,15 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser, $s
  //console.log($modal);
 
   $scope.users = [];
+  $scope.order='Last_name';
   
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
-  //
   function init(){
     
     if($window.isProductionServer)$scope.isProductionServer = true;
-
-    console.log('init');
 
     convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
@@ -114,6 +111,18 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser, $s
   }
 
   $scope.putUserInRightPlace = function(user){
+
+     if(user.Class == 'PrincipalInvestigator'){
+        if(!convenienceMethods.arrayContainsObject($scope.PIs, user)){
+          $scope.PIs.push(user);
+        }else{
+          var idx = convenienceMethods.arrayContainsObject($scope.PIs, user, null, true);
+          $scope.PIs[idx] = angular.copy(user);
+        }
+
+        $scope.putUserInRightPlace(user.User);
+     }
+
      if(!user.userTypes)user.userTypes = convenienceMethods.getUserTypes(user);
      if(!$scope.LabContacts)$scope.LabContacts = [];
       if(user.userTypes.indexOf('Lab Contact') > -1){
@@ -242,9 +251,8 @@ var labContactController = function($scope, $modal, $routeParams, $browser, $sni
 //controller for modal instance for lab contacts
 var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
   $scope.failFindUser = false;
-  console.log($window.isProductionServer);
+  console.log(items);
   if($window.isProductionServer)$scope.isProductionServer = true;
-
   
   $scope.getAuthUser = function(){
     console.log('lookingForUser');
@@ -413,8 +421,6 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
 
   //new user save methods
   $scope.saveNewUser = function(userCopy){
-        console.log(userCopy);
-
     userCopy.IsDirty = true;
     userCopy.Is_active = true;
     if(userCopy.Supervisor)userCopy.Supervisor_id = userCopy.Supervisor.Key_id;
@@ -425,7 +431,8 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       Class: "User",
       Is_active: true,
       Key_id: userCopy.Key_id,
-      Name: userCopy.Name,
+      First_name: userCopy.First_name,
+      Last_name: userCopy.Last_name,
       Email: userCopy.Email,
       Emergency_phone: userCopy.Emergency_phone,
       Lab_phone: userCopy.Lab_phone,
@@ -735,14 +742,15 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
   //create a modal instance for editing a user or creating a new one.
   //hold the current route in scope so we can be sure we display the right user type
   $scope.currentRoute = '/pis';
-
+  $scope.order = 'User.Last_name';
   $scope.addPi = function (pi) {
     $scope.items = [];
     if(pi){
-      //we are editing a user that already exists
+      //we are editing a PI that already exists
+      console.log(pi);
       var piCopy = angular.copy(pi);
     }else{
-      //we are creating a new user
+      //we are creating a PI user
       var piCopy = {}
       piCopy.Class = "PrincipalInvestigator";
       piCopy.User = {};
@@ -794,6 +802,7 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
     return function(pi) {
          var show = false;
         //for pis that don't have departments, don't filter them unless the filter has some text
+        if(!pi.Departments)pi.Departments = [];
         if(!pi.Departments.length){
           if(typeof $scope.selectedDepartment == 'undefined' || $scope.selectedDepartment.length == 0){
             show = true;
@@ -811,6 +820,7 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
     return function(pi) {
         var show = false;
         //for pis that don't have buildings, don't filter them unless the filter has some text
+        if(!pi.Buildings)pi.Buildings = [];
         if(!pi.Buildings.length){
           if(typeof $scope.selectedBuilding == 'undefined' || $scope.selectedBuilding.length == 0){
             show = true;
@@ -859,10 +869,9 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
 var piModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
 
   $scope.failFindUser = false;
-  console.log(items);
+  console.log(items[0]);
   if($window.isProductionServer)$scope.isProductionServer = true;
 
-  
   $scope.getAuthUser = function(){
     console.log('lookingForUser');
     $scope.lookingForUser = true;
@@ -904,7 +913,8 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
       Class: "User",
       Is_active: true,
       Key_id: $scope.piCopy.User.Key_id,
-      Name: $scope.piCopy.User.Name,
+      First_name: $scope.piCopy.User.First_name,
+      Last_name: $scope.piCopy.User.Last_name,
       Email: $scope.piCopy.User.Email,
       Emergency_phone: $scope.piCopy.User.Emergency_phone,
       Lab_phone: $scope.piCopy.User.Lab_phone,
@@ -1109,227 +1119,6 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
     $modalInstance.dismiss('cancel');
   }
 
-  /*
-
-  $scope.saveUser = function (piCopy, user) {
-    var roles;
-    piCopy.Is_active = true;
-    piCopy.IsDirty = true;    
-   
-    if(!piCopy.Key_id)roles = piCopy.User.Roles;
-    //save user
-    console.log(piCopy);
-    if(!piCopy.Key_id)piCopy.Is_active = true;
-    convenienceMethods.updateObject( piCopy.User, user, onCreateUser, onFailCreateUser, '../../ajaxaction.php?action=saveUser' );
-  };
-
-  function onFailCreateUser(){
-    alert("There was a problem creating the new user.");
-  }
-
-  function onCreateUser(data,userCopy){
-    userCopy.Key_id = data.Key_id;
-    var rolesToAdd = $scope.userCopy.Roles;
-    //see if we have new roles, but only if the user is not new, in which case all roles are new
-  
-
-    if(!$scope.piCopy.Key_id){
-      var piDTO = {
-        Class: "PrincipalInvestigator",
-        User_id: data.Key_id,
-        Is_active: true
-      }
-      convenienceMethods.updateObject( piDTO, userCopy.Departments, onSaveNewPI, onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
-    }
-   
-    var rolesToAdd = [];
-    angular.forEach($scope.piCopy.User.Roles, function(role, key){
-      if(!convenienceMethods.arrayContainsObject(rolesToAdd,role))rolesToAdd.push(role);
-    });
-    
-    angular.forEach(rolesToAdd, function(role, key){
-      $scope.onSelectRole(role);
-    });
-
-   
-    var deptsToAdd = [];
-    angular.forEach($scope.piCopy.Departments, function(dept, key){
-      if(!convenienceMethods.arrayContainsObject(deptsToAdd,dept))deptsToAdd.push(dept);
-    });
-    angular.forEach(deptsToAdd, function(dept, key){
-      console.log(dept);
-      $scope.onSelectDepartment(dept);
-    });
-
-    $modalInstance.close($scope.userCopy);
-  }
-
-  $scope.onSelectPI = function($item, $model, $label){
-    console.log($item);
-    console.log($model);
-  }
-
-  $scope.onSelectRole = function($item, $model, $label,id){
-      console.log('we are in the role branch');
-      if($model)$model.IsDirty = true;
-
-      if($scope.userCopy.Key_id){
-
-      userDTO = {
-          Class: "RelationshipDto",
-          relation_id: $item.Key_id,
-          master_id: $scope.piCopy.User.Key_id,
-          add: true
-      }
-
-      console.log( userDTO );
-      convenienceMethods.updateObject( userDTO, $item, onAddRole, onFailAddRole, '../../ajaxaction.php?action=saveUserRoleRelation', null, $model  );
-
-     }else{
-        if($model)$model.IsDirty = false;
-        $scope.userCopy.Key_id = id;
-        if(!$scope.userCopy.Roles)$scope.userCopy.Roles = [];
-        $scope.userCopy.Roles.push($item);
-        if(convenienceMethods.arrayContainsObject($scope.userCopy.Roles,$scope.roles[3]))$scope.userCopy.isPI = true;
-     }
-  }
-
-  function onAddRole(returned,dept,model){
-    if(model)model.IsDirty = false;
-    if(!convenienceMethods.arrayContainsObject($scope.userCopy.Roles,dept))$scope.userCopy.Roles.push(dept);
-  }
-
-  function onFailAddRole(){
-    alert("There was a problem when trying to add a role to the user.");
-  }
-
-  //new user save methods
-  $scope.saveNewUser = function(piCopy){
-    console.log(piCopy);
-    piCopy.IsDirty = true;
-    piCopy.Is_active = true;
-    $scope.departmentToAdd = angular.copy($scope.piCopy.Departments);
-    convenienceMethods.updateObject( piCopy.User, piCopy, onCreateUser, onFailCreateUser, '../../ajaxaction.php?action=saveUser' );
-  }
-
-  $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
-  };
-   
-  $scope.onSelectRole = function($item, $model, $label,id){
-      if($model)$model.IsDirty = true;
-
-      if($scope.piCopy.User.Key_id){
-
-      userDTO = {
-          Class: "RelationshipDto",
-          relation_id: $item.Key_id,
-          master_id: $scope.piCopy.User.Key_id,
-          add: true
-      }
-
-      console.log( userDTO );
-      convenienceMethods.updateObject( userDTO, $item, onAddRole, onFailAddRole, '../../ajaxaction.php?action=saveUserRoleRelation', null, $model  );
-
-     }else{
-        if($model)$model.IsDirty = false;
-        $scope.userCopy.Key_id = id;
-        if(!$scope.userCopy.Roles)$scope.userCopy.Roles = [];
-        $scope.userCopy.Roles.push($item);
-     }
-  }
-
-  function onAddRole(returned,role,model){
-    if(model)model.IsDirty = false;
-    if(!convenienceMethods.arrayContainsObject($scope.piCopy.User.Roles,role))$scope.piCopy.User.Roles.push(role);
-  }
-
-  function onFailAddRole(){
-    alert('An error occurred when trying to add the role.');
-  }
-
-  $scope.removeRole = function(Role, item, model){
-    Role.IsDirty = true;
-    console.log(Role);
-
-    userDTO = {
-      Class: "RelationshipDto",
-        relation_id: Role.Key_id,
-        master_id: $scope.piCopy.User.Key_id,
-        add: false
-      }
-
-    if(userDTO.master_id){
-       convenienceMethods.updateObject( userDTO, Role, onRemoveRole, onFailRemoveRole, '../../ajaxaction.php?action=saveUserRoleRelation', null, Role );
-    }else{
-        var idx = convenienceMethods.arrayContainsObject($scope.userCopy.Roles, Role, null, true);
-        if(idx>-1)$scope.userCopy.Roles.splice(idx,1);
-    }
-  }
-
-  function onRemoveRole(returned,dept){
-    console.log(dept);
-    dept.IsDirty = false;
-    var idx = convenienceMethods.arrayContainsObject($scope.piCopy.User.Roles, dept, null, true);
-    console.log(idx);
-    if(idx>-1)$scope.piCopy.User.Roles.splice(idx,1);
-  }
-
-  function onFailRemoveRole(){
-    alert('There was a problem when attempting to remove the role.');
-  }
-
-  function onFailCreateUser(){
-    alert("There was a problem creating the new user.");
-  }
-
-  function onCreateUser(data,userCopy){
-
-    console.log(data);
-    $scope.piCopy.IsDirty = false;
-    $scope.piCopy.User.Key_id = data.Key_id;
-    angular.forEach($scope.piCopy.User.Roles, function(role, key){
-      $scope.onSelectRole(role);
-    });
-
-    if($scope.userCopy.userTypes.indexOf("Safety Inspector" > -1)){
-      var inspectorDTO = {
-        Class: "Inspector",
-        User_id: data.Key_id,
-        Is_active: true
-      }
-      convenienceMethods.updateObject( inspectorDTO, userCopy.Departments, onSaveNewInspector, onFailSaveNewInspector, '../../ajaxaction.php?action=saveInspector');
-    }
-
-   if(!$scope.piCopy.Key_id){
-      var piDTO = {
-        Class: "PrincipalInvestigator",
-        User_id: data.Key_id,
-        Is_active: true
-      }
-      convenienceMethods.updateObject( piDTO, $scope.piCopy.Departments, onSaveNewPI, onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
-    }else{
-      $modalInstance.close($scope.piCopy);
-    }
-
-  }
-
-  function onSaveNewPI(piDTO, depts){
-    console.log('pi');
-    $scope.piCopy = angular.copy(piDTO);
-    console.log($scope.piCopy);
-    angular.forEach($scope.departmentToAdd, function(department, key){
-      console.log(department);
-      $scope.onSelectDepartment( department, $scope.selectedDepartment );
-    });
-
-    $modalInstance.close($scope.piCopy);
-  }
-
-  function onFailSaveNewPi(){
-    alert('There was a problem creating the new Principal Investigator.');
-  }
-*/
   function onSaveNewInspector(inspectorDTO, depts){
     console.log('inspector');
   }
@@ -1633,7 +1422,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, convenienceMeth
   }
 
   $scope.saveNewPi = function(){
-     console.log(userCopy);
+    console.log(userCopy);
     userCopy.IsDirty = true;
     
     console.log(userCopy);
