@@ -166,7 +166,6 @@ require_once '../top_view.php';
 					<span ng-hide="hazard.hidden">
 				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.Name}}</h1>
 					<hr>
-					
 					<ul>
 						<li>
 							<a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
