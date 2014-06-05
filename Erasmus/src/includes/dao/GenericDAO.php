@@ -121,7 +121,7 @@ class GenericDAO {
 	 *
 	 * @return Array of entities
 	 */
-	function getAll( $sortColumn = NULL, $sortDescending = FALSE ){
+	function getAll( $sortColumn = NULL, $sortDescending = FALSE, $activeOnly = FALSE ){
 
 		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 		
@@ -130,7 +130,7 @@ class GenericDAO {
 		$className = get_class($this);
 		
 		//Prepare to query all from the table
-		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($sortColumn == NULL ? '' : " ORDER BY $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
+		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .  ($sortColumn == NULL ? '' : " ORDER BY $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
 			
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -153,6 +153,16 @@ class GenericDAO {
 	 */
 	function getAllSorted( $sortColumn, $sortDescending = FALSE ){
 		return $this->getAll( $sortColumn, $sortDescending );
+	}
+	
+	/**
+	 * Retrieves all active entities of this type
+	 *
+	 * @param unknown $sortColumn
+	 * @return Array:
+	 */
+	function getAllActive(){
+		return $this->getAll( null, false, true );
 	}
 	
 	/**
