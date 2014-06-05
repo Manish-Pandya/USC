@@ -18,7 +18,6 @@ class User extends GenericCrud{
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//roles are a relationship
 		"username"	=> "text",
-		"name"  => 'text',
 		"first_name" => "text",
 		"last_name"		=> "text",
 		"email"		=> "text",
@@ -201,15 +200,10 @@ class User extends GenericCrud{
 	}
 
 	//decorator method to return a user's full name as concatenate string
-	/*
 	public function getName(){
-		return $this->getFirst_name().' '.$this->getLast_name();
-	}*/
-	public function getName(){
-		return $this->name;
+		if($this->getFirst_name() != null)return $this->getFirst_name().' '.$this->getLast_name();
+		return $this->getLast_name();
 	}
-	public function setName($name){
-		$this->name=$name;
-	}
+
 }
 ?>
