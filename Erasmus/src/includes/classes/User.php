@@ -18,7 +18,9 @@ class User extends GenericCrud{
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//roles are a relationship
 		"username"	=> "text",
-		"name"		=> "text",
+		"name"  => 'text',
+		"first_name" => "text",
+		"last_name"		=> "text",
 		"email"		=> "text",
 		"lab_phone"      => "text",
 		"office_phone"	=>  "text",
@@ -163,8 +165,11 @@ class User extends GenericCrud{
 	public function getUsername(){ return $this->username; }
 	public function setUsername($username){ $this->username = $username; }
 
-	public function getName(){ return $this->name; }
-	public function setName($name){ $this->name = $name; }
+	public function getFirst_name(){ return $this->first_name; }
+	public function setFirst_name($first_name){ $this->first_name = $first_name; }
+
+	public function getLast_name(){ return $this->last_name; }
+	public function setLast_name($last_name){ $this->last_name = $last_name; }
 
 	public function getEmail(){ return $this->email; }
 	public function setEmail($email){ $this->email = $email; }
@@ -181,6 +186,9 @@ class User extends GenericCrud{
 	public function getPrimary_department_id(){ return $this->primary_department_id;}
 	public function setPrimary_department_id($primary_department_id){ $this->primary_department_id = $primary_department_id; }
 
+	public function getPosition(){ return $this->position; }
+	public function setPositione($position){ $this->position = position;}
+
 	public function getPrimary_department() {
 		if($this->primary_department === NULL && $this->hasPrimaryKeyValue()) {
 			$deptartmentDAO = new GenericDAO(new Department());
@@ -190,6 +198,18 @@ class User extends GenericCrud{
 	}
 	public function setPrimary_department($primary_department) {
 		$this->supervisor = $primary_department;
+	}
+
+	//decorator method to return a user's full name as concatenate string
+	/*
+	public function getName(){
+		return $this->getFirst_name().' '.$this->getLast_name();
+	}*/
+	public function getName(){
+		return $this->name;
+	}
+	public function setName($name){
+		$this->name=$name;
 	}
 }
 ?>

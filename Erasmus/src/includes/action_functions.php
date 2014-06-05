@@ -1,10 +1,10 @@
-<?php 
+<?php
 /*
  * This file is responsible for providing functions for Action calls,
  * and should not execute any code upon inclusion.
- * 
+ *
  * Because this file merely provides the functions, they are easily testable
- * 
+ *
  * If an error should occur, Action functions should return either NULL or
  * an instance of ActionError. Returning an ActionError allows the function
  * to provide additional information about the error.
@@ -15,9 +15,9 @@
 /**
  * Chooses a return value based on the parameters. If $paramValue
  * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.
- * 
+ *
  * If $valueName is not present in $_REQUEST, NULL is returned.
- * 
+ *
  * @param unknown $valueName
  * @param string $paramValue
  * @return string|unknown|NULL
@@ -40,7 +40,7 @@ function getDao( $modelObject = NULL ){
 		return new MockDAO();
 	}
 	else{
-		return new GenericDAO( $modelObject );		
+		return new GenericDAO( $modelObject );
 	}
 }
 
@@ -86,18 +86,18 @@ function deactivate(){
 // Users Hub
 function getAllUsers(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$userDao = getDao( new User() );
 	$allUsers = $userDao->getAll();
-	
+
 	return $allUsers;
 };
 
 function getUserById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new User());
 		return $dao->getById($id);
@@ -127,11 +127,11 @@ function getRoleById( $id = NULL ){
 function convertInputJson(){
 	try{
 		$decodedObject = JsonManager::decodeInputStream();
-		
+
 		if( $decodedObject === NULL ){
 			return new ActionError('No data read from input stream');
 		}
-		
+
 		return $decodedObject;
 	}
 	catch(Exception $e){
@@ -164,9 +164,9 @@ function getAllRoles(){
 
 // Checklist Hub
 function getChecklistById( $id = NULL ){
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Checklist());
 		return $dao->getById($id);
@@ -180,7 +180,7 @@ function getChecklistById( $id = NULL ){
 function getChecklistByHazardId( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Hazard());
 		$hazard = $dao->getById($id);
@@ -200,11 +200,11 @@ function getChecklistByHazardId( $id = NULL ){
 function getAllQuestions(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$questions = array();
-	
+
 	$dao = getDao(new Question());
-	
+
 		$questions = $dao->getAll();
-	
+
 	return $questions;
 };
 
@@ -331,7 +331,7 @@ function getAllHazardsAsTree() {
 	$entityMaps[] = new EntityMap("lazy","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 	$root->setEntityMaps($entityMaps);
-	
+
 	// Return the object
 	return $root;
 }
@@ -341,7 +341,7 @@ function getAllHazards(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$dao = getDao(new Hazard());
 	$hazards = $dao->getAll();
-	
+
 	$entityMaps = array();
 	$entityMaps[] = new EntityMap("lazy","getSubHazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
@@ -349,20 +349,20 @@ function getAllHazards(){
 	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 	$entityMaps[] = new EntityMap("lazy","getHasChildren");
 	$entityMaps[] = new EntityMap("lazy","getParentIds");
-	
+
 	foreach ($hazards as &$hazard){
 		$hazard->setEntityMaps($entityMaps);
-	}	
-	
+	}
+
 	return $hazards;
 };
 
 function getHazardTreeNode( $id = NULL){
-	
+
 	// get the node hazard
 	$hazard = getHazardById($id);
 	$hazards = array();
-	
+
 	// prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
 	$hazMaps = array();
 	$hazMaps[] = new EntityMap("lazy","getSubHazards");
@@ -371,12 +371,12 @@ function getHazardTreeNode( $id = NULL){
 	$hazMaps[] = new EntityMap("lazy","getInspectionRooms");
 	$hazMaps[] = new EntityMap("eager","getHasChildren");
 	$hazMaps[] = new EntityMap("lazy","getParentIds");
-	
+
 	// prepare a load map for Checklist to load all lazy.
 	$chklstMaps = array();
 	$chklstMaps[] = new EntityMap("lazy","getHazard");
 	$chklstMaps[] = new EntityMap("lazy","getQuestions");
-	
+
 	// For each child hazard, init a lazy-loading checklist, if there is one
 	foreach ($hazard->getSubHazards() as $child){
 		$checklist = $child->getChecklist();
@@ -390,9 +390,9 @@ function getHazardTreeNode( $id = NULL){
 		$child->setEntityMaps($hazMaps);
 		// push this hazard onto the hazards array
 		$hazards[] = $child;
-		
+
 	}
-	
+
 	// Return the child hazards
 	return $hazards;
 };
@@ -401,13 +401,13 @@ function getHazardTreeNode( $id = NULL){
 //FIXME: Remove $name
 function getHazardById( $id = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Hazard());
 		$hazard = $dao->getById($id);
-		
+
 		return $hazard;
 	}
 	else{
@@ -420,29 +420,29 @@ function getHazardById( $id = NULL){
  */
 function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	//Get ids
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
 	$parentHazardId = getValueFromRequest('parentHazardId', $parentHazardId);
-	
+
 	//validate values
-	if( $hazardId === NULL || $parentHazardId === NULL ){		
+	if( $hazardId === NULL || $parentHazardId === NULL ){
 		return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
 	}
 	else{
 		$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
-		
+
 		$dao = getDao(new Hazard());
-		
+
 		// get Hazard by ID
 		$hazard = getHazardById( $hazardId );
 		$LOG->trace("Loaded Hazard to move: $hazard");
-		
-		$hazard->setParent_hazard_id=$parentHazardId;		
+
+		$hazard->setParent_hazard_id=$parentHazardId;
 		// Save
 
 		$dao->save($hazard);
-		
+
 		//TODO: What do we return?
 		$LOG->info("Moved Hazard #$hazardId to new parent Hazard #$parentHazardId");
 		return '';
@@ -452,7 +452,7 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 function saveHazard(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Hazard');
 	}
@@ -469,7 +469,7 @@ function saveHazard(){
 function saveRoom(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Hazard');
 	}
@@ -485,21 +485,21 @@ function saveRoom(){
 
 function removeResponse( $id = NULL ){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Response());
-		
+
 		// Get the response object
 		$response = $dao->getById($id);
-		
+
 		$LOG->debug(" Response is: $response");
 		if ($response == null) {
 			$LOG->debug(" Response was null");
 			return new ActionError("Bad Response id: $id");
 		}
-		
+
 		// Remove all its response data before deleting the response itself
 		foreach ($response->getDeficiencySelections() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
@@ -508,21 +508,21 @@ function removeResponse( $id = NULL ){
 		foreach ($response->getRecommendations() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 		}
-	
+
 		foreach ($response->getObservations() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 		}
-	
+
 		foreach ($response->getSupplementalRecommendations() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
 		}
-	
+
 		foreach ($response->getSupplementalObservations() as $child){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
 		}
-		
+
 		$dao->deleteById($id);
-		
+
 		return true;
 	}
 	else{
@@ -536,18 +536,18 @@ function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL )
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
-	
+
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
-		
+
 		// Find the deficiencySelection
 		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 		}
-		
+
 		$LOG->debug("DeficiencySelection is: $ds->getKey_id()");
-		
+
 		$dao = getDao($ds);
 
 		// Remove all its child data before deleting the deficiencyselection itself
@@ -574,23 +574,23 @@ function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
-	
+
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
-		
+
 		// Find the deficiencySelection
 		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 		}
-		
+
 		$LOG->debug("Prepare to add Corrected flag to DeficiencySelection: $ds->getKey_id()");
-		
+
 		$dao = getDao($ds);
 		$ds->setCorrected_in_inspection(true);
 
 		$dao->save($ds);
-		
+
 		return true;
 		}
 		else{
@@ -598,29 +598,29 @@ function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 			return new ActionError("Must provide parameters deficiencyId and inspectionId");
 		}
 }
-		
+
 function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	$deficiencyId = getValueFromRequest('deficiencyId', $deficiencyId);
-	
+
 	if( $inspectionId !== NULL  && $deficiencyId!== NULL){
-		
+
 		// Find the deficiencySelection
 		$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 		if ($ds == null){
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 		}
-		
+
 		$LOG->debug("Prepare to remove Corrected flag from DeficiencySelection: $ds->getKey_id()");
-		
+
 		$dao = getDao($ds);
 		$ds->setCorrected_in_inspection(false);
 
 		$dao->save($ds);
-		
+
 		return true;
 		}
 		else{
@@ -628,14 +628,14 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 			return new ActionError("Must provide parameters deficiencyId and inspectionId");
 		}
 }
-		
+
 function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
-	
+
 	$dao = getDao(new Inspection());
 	$inspection = $dao->getById($inspectionId);
-	
-	
+
+
 	foreach ($inspection->getResponses() as $response){
 		foreach ($response->getDeficiencySelections() as $ds){
 			$def = $ds->getDeficiency();
@@ -646,14 +646,14 @@ function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$defi
 		}
 	}
 	$LOG->debug("Found no matching DeficiencySelection for inspection [$inspectionId] and deficiency [$deficiencyId]");
-	
+
 	return null;
 }
 
 function saveBuilding(){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to Building');
 	}
@@ -670,9 +670,9 @@ function saveBuilding(){
 
 // Question Hub
 function getQuestionById( $id = NULL ){
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Question());
 		return $dao->getById($id);
@@ -684,11 +684,11 @@ function getQuestionById( $id = NULL ){
 };
 
 function saveRecommendationRelation(){
-	
+
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RelationshipDto');
 	}
@@ -700,9 +700,9 @@ function saveRecommendationRelation(){
 		$responseId = $decodedObject->getMaster_id();
 		$recommendationId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-		
+
 		if( $responseId !== NULL && $recommendationId !== NULL && $add !== null ){
-		
+
 			// Get a DAO
 			$dao = getDao(new Response());
 			// if add is true, add this recommendation to this response
@@ -712,23 +712,23 @@ function saveRecommendationRelation(){
 			} else {
 				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 			}
-		
+
 		} else {
 			//error
 			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
 		}
-		
+
 	}
 	return true;
-	
+
 };
-	
+
 function saveObservationRelation(){
 
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RelationshipDto');
 	}
@@ -736,13 +736,13 @@ function saveObservationRelation(){
 		return $decodedObject;
 	}
 	else{
-	
+
 		$responseId = $decodedObject->getMaster_id();
 		$observationId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-	
+
 		if( $responseId !== NULL && $observationId !== NULL && $add !== null ){
-	
+
 			// Get a DAO
 			$dao = getDao(new Response());
 			// if add is true, add this observation to this response
@@ -752,20 +752,20 @@ function saveObservationRelation(){
 			} else {
 				$dao->removeRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 			}
-	
+
 		} else {
 			//error
 			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
 		}
-	
+
 	}
 	return true;
-	
+
 };
 
 function getInspector( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Inspector());
 		return $dao->getById($id);
@@ -786,9 +786,9 @@ function getAllInspectors(){
 
 // Inspection, step 1 (PI / Room assessment)
 function getPIById( $id = NULL ){
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new PrincipalInvestigator());
 		return $dao->getById($id);
@@ -803,24 +803,24 @@ function getAllPIs(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$dao = getDao(new PrincipalInvestigator());
-	
+
 	return $dao->getAll();
 };
 
 function getAllRooms(){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$dao = getDao(new Room());
-	
+
 	return $dao->getAll();
 };
 
 function getRoomById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
-	
+
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace('getting room');
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Room());
 		return $dao->getById($id);
@@ -864,9 +864,9 @@ function saveInspector(){
 
 function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RelationshipDto');
 	}
@@ -874,13 +874,13 @@ function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 		return $decodedObject;
 	}
 	else{
-	
+
 		$PIId = $decodedObject->getMaster_id();
 		$roomId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-	
+
 		if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
-	
+
 			// Get a DAO
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this room to this PI
@@ -890,21 +890,21 @@ function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 			} else {
 				$dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
 			}
-	
+
 		} else {
 			//error
 			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
 		}
-	
+
 	}
 	return true;
 };
 
 function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RelationshipDto');
 	}
@@ -912,13 +912,13 @@ function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
 		return $decodedObject;
 	}
 	else{
-	
+
 		$PIId = $decodedObject->getMaster_id();
 		$contactId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-	
+
 		if( $PIId !== NULL && $contactId !== NULL && $add !== null ){
-	
+
 			// Get a DAO
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this lab contact to this PI
@@ -928,21 +928,21 @@ function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
 			} else {
 				$dao->removeRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
 			}
-	
+
 		} else {
 			//error
 			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
 		}
-	
+
 	}
 	return true;
 };
-	
+
 function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$decodedObject = convertInputJson();
-	
+
 	if( $decodedObject === NULL ){
 		return new ActionError('Error converting input stream to RelationshipDto');
 	}
@@ -950,17 +950,17 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		return $decodedObject;
 	}
 	else{
-	
+
 		$PIId = $decodedObject->getMaster_id();
 		$deptId = $decodedObject->getRelation_id();
 		$add = $decodedObject->getAdd();
-		
+
 		$pi = getPIById($PIId);
 		$departments = $pi->getDepartments();
 		$departmentToAdd = getDepartmentById($deptId);
-		
+
 		if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
-	
+
 			// Get a DAO
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this department to this PI
@@ -973,16 +973,16 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 			} else {
 				$dao->removeRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
 			}
-	
+
 		} else {
 			//error
 			return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
 		}
-	
+
 	}
 	return true;
 };
-	
+
 
 function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -1005,14 +1005,14 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 			$user = getUserById($userID);
 			$roles = $user->getRoles();
 			$roleToAdd = getRoleById($roleId);
-				
+
 			// Get a DAO
 			$dao = getDao(new User());
 			// if add is true, add this role to this PI
 			if ($add){
 				if(!in_array($roleToAdd, $roles)){
 					// only add the role if the user doesn't already have it
-					$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));	
+					$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 				}
 				// if add is false, remove this role from this PI
 			} else {
@@ -1070,23 +1070,23 @@ function getDepartmentById( $id = NULL ){
 
 function getAllBuildings( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$dao = getDao(new Building());
-	
+
 	// get all buildings
 	$buildings = $dao->getAll();
-	
+
 	// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
 	// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
 	$roomMaps = array();
 	$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
 	$roomMaps[] = new EntityMap("lazy","getHazards");
 	$roomMaps[] = new EntityMap("lazy","getBuilding");
-	
+
 	$bldgMaps = array();
 	$bldgMaps[] = new EntityMap("eager","getRooms");
-	
-	
+
+
 	///iterate the buildings
 	foreach ($buildings as &$building){
 		// get this building's rooms
@@ -1102,12 +1102,12 @@ function getAllBuildings( $id = NULL ){
 	}
 
 	return $buildings;
-	
+
 }
 
 function getBuildingById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Building());
 		return $dao->getById($id);
@@ -1119,30 +1119,30 @@ function getBuildingById( $id = NULL ){
 
 function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	$piId = getValueFromRequest('piId', $piId);
 	$inspectorIds = getValueFromRequest('inspectorIds', $inspectorIds);
-	
+
 	if( $piId !== NULL && $inspectorIds !== null ){
 
 		// Get this room
 		$inspection = new Inspection();
 		$dao = getDao($inspection);
-		
+
 		// Set inspection's keyId and PI.
-		if (!empty($inspectionId)){	
-			$inspection = $dao->getById($inspectionId);} 
+		if (!empty($inspectionId)){
+			$inspection = $dao->getById($inspectionId);}
 		else {
 			$inspection->setKey_id($inspectionId);
 		}
-		
+
 		$inspection->setPrincipal_investigator_id($piId);
 
 		// Save (or update) the inspection
 		$dao->save($inspection);
 		$pi = $inspection->getPrincipalInvestigator();
-		 
+
 		// Remove previous rooms and add the default rooms for this PI.
 		$oldRooms = $inspection->getRooms();
 		if (!empty($oldRooms)) {
@@ -1169,7 +1169,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 			$dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 		}
 
-		
+
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be inspectionId (nullable int), piId int, inspectorIds (one or more ints))");
@@ -1182,18 +1182,18 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 	$entityMaps[] = new EntityMap("lazy","getChecklists");
 	$inspection->setEntityMaps($entityMaps);
-	
+
 	return $inspection;
 	};
-	
+
 
 function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$roomId = getValueFromRequest('roomId', $roomId);
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
 	$add = getValueFromRequest('add', $add);
-	
+
 	if( $roomId !== NULL && $inspectionId !== NULL && $add !== null ){
 
 		// Get this inspection
@@ -1206,13 +1206,13 @@ function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NU
 		} else {
 			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
 		}
-		
+
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be roomId int, inspectionId int, add boolean)");
 	}
 	return true;
-	
+
 };
 
 function saveInspection(){
@@ -1227,15 +1227,15 @@ function saveInspection(){
 	else{
 		$roomIds = $decodedObject->getRooms();
 		if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
-		
+
 		$inspectorIds = $decodedObject->getInspectors();
 		if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
-		
+
 		$dao = getDao(new Inspection());
 
 		// Save the Inspection
 		$inspection = $dao->save($decodedObject);
-		
+
 		return $inspection;
 	}
 };
@@ -1250,16 +1250,16 @@ function saveNoteForInspection(){
 		return $decodedObject;
 	}
 	else{
-				
+
 		$dao = getDao(new Inspection());
-		
+
 		// Get the inspection and update its Note property
 		$inspection = $dao->getById($decodedObject->getEntity_id());
 		$inspection->setNote($decodedObject->getText());
 
 		// Save the Inspection
 		$dao->save($inspection);
-		
+
 		return true;
 	}
 };
@@ -1270,34 +1270,34 @@ function saveNoteForInspection(){
  * Builds an associative array mapping Hazard IDs to the rooms
  * that contain them. The listed rooms are limited by the Room IDs
  * given as a CSV parameter
- *  
+ *
  * @param string $roomIds
  * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
  */
 function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
-	
+
 	if( $roomIdsCsv !== NULL ){
 		$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
-		
-		
+
+
 		$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
-	
+
 		//Get all hazards
 		$allHazards = getAllHazardsAsTree();
-		
+
 		$rooms = array();
 		$roomDao = getDao(new Room());
-		
+
 		// Create an array of Room Objects
 		foreach($roomIdsCsv as $roomId) {
 			array_push($rooms,$roomDao->getById($roomId));
 		}
-		
+
 		// filter by room
 		filterHazards($allHazards,$rooms);
-		
+
 		return $allHazards;
 	}
 	else{
@@ -1329,42 +1329,42 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$LOG->trace("Getting room mappings for $hazard");
 	$relevantRooms = array();
-		
+
 	$hazardRooms = $hazard->getRooms();
 
 	//Check if this hazard is in a room we want
 	foreach ( $rooms as $key=>$room ){
 		if( in_array($room, $hazardRooms) ){
 			$LOG->debug("$hazard is in $room");
-			$room->setContainsHazard(true);			
+			$room->setContainsHazard(true);
 		}else{
 			$LOG->debug("$hazard is NOT in $room");
 			$room->setContainsHazard(false);
-		}	
+		}
 		//Add room to relevant array
 		$relevantRooms[] = $room;
 	}
-	
+
 	if(empty($parentIds)){
 		$parentIds = array();
 	}
-	
+
 	if(!in_array($hazard->getKey_Id(), $parentIds)){
 		array_push($parentIds, $hazard->getKey_Id());
 	}
-	
+
 	$parentIdsForChild = $parentIds;
 	array_pop($parentIdsForChild);
-	
+
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
 	$LOG->trace("Getting mappings for sub-hazards");
 	foreach( $hazard->getSubHazards() as $subHazard ){
-				
+
 		$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
 	}
-	
+
 	//Build the node for this hazard
 	$hazardDto = new HazardTreeNodeDto(
 		$hazard->getKey_Id(),
@@ -1373,7 +1373,7 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 		$subHazardNodeDtos,
 		$parentIdsForChild
 	);
-	
+
 	//Return this node
 	return $hazardDto;
 
@@ -1381,22 +1381,22 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 
 function getHazardsInRoom( $roomId = NULL, $subHazards ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$roomId = getValueFromRequest('roomId', $roomId);
 	$subHazards = getValueFromRequest('subHazards', $subHazards);
 	$LOG->debug("subHazards is $subHazards, roomId is $roomId");
-	
-		
+
+
 	if( $roomId !== NULL ){
-		
+
 		$dao = getDao(new Room());
-		
+
 		//get Room
 		$room = $dao->getById($roomId);
-		
+
 		//get hazards
 		$hazards = $room->getHazards();
-		
+
 		// if subhazards is false, change all hazard subentities to lazy loading
 		if ($subHazards == "false"){
 			$entityMaps = array();
@@ -1406,13 +1406,13 @@ function getHazardsInRoom( $roomId = NULL, $subHazards ){
 			$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 			$entityMaps[] = new EntityMap("eager","getParentIds");
 			$entityMaps[] = new EntityMap("lazy","getHasChildren");
-				
+
 			foreach ($hazards as &$hazard){
 				$hazard->setEntityMaps($entityMaps);
 				$parentIds = array();
 				$hazard->setParentIds($parentIds);
 			}
-				
+
 		}
 		return $hazards;
 	}
@@ -1424,11 +1424,11 @@ function getHazardsInRoom( $roomId = NULL, $subHazards ){
 
 function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$roomId = getValueFromRequest('roomId', $roomId);
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
 	$add = getValueFromRequest('add', $add);
-	
+
 	if( $roomId !== NULL && hazardId !== NULL && $add !== null ){
 
 		// Get this room
@@ -1441,13 +1441,13 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 		} else {
 			$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		}
-		
+
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be roomId int, hazardId int, add boolean)");
 	}
 	return true;
-	
+
 };
 
 function saveRoomRelation($hazardId, $roomId){
@@ -1459,13 +1459,13 @@ function saveRoomRelation($hazardId, $roomId){
 //function getQuestions(){ };	//DUPLICATE FUNCTION
 function getDeficiencyById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Deficiency());
 		$keyid = $id;
-	
+
 		// query for Inspection with the specified ID
 		return $dao->getById($id);
 	}
@@ -1503,22 +1503,22 @@ function saveDeficiencySelection(){
 	else{
 		// check to see if the roomIds array is populated
 		$roomIds = $decodedObject->getRoomIds();
-		
+
 		// start by saving or updating the object.
 		$dao = getDao(new DeficiencySelection());
 		$ds = $dao->save($decodedObject);
-		
+
 		// remove the old rooms. if any
 		foreach ($ds->getRooms() as $room){
 			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 		}
-		
+
 		// if roomIds were provided then save them
 		if (!empty($roomIds)){
 			foreach ($roomIds as $id){
 				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 			}
-				
+
 		// else if no roomIds were provided, then just delete this DeficiencySelection
 		} else {
 			$dao->deleteById($ds->getKey_id());
@@ -1526,7 +1526,7 @@ function saveDeficiencySelection(){
 		}
 
 		return $ds;
-	
+
 	}
 };
 
@@ -1567,7 +1567,7 @@ function getChecklistsForInspection( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 	if( $id !== NULL ){
 		$dao = getDao(new Inspection());
-		
+
 		//get inspection
 		$inspection = $dao->getById($id);
 		// get the rooms for the inspection
@@ -1600,7 +1600,7 @@ function getChecklistsForInspection( $id = NULL ){
 			// no applicable checklists, return false
 			return false;
 		}
-		
+
 	}
 	else{
 		//error
@@ -1610,15 +1610,15 @@ function getChecklistsForInspection( $id = NULL ){
 
 function getInspectionById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Inspection());
-		
+
 		//get inspection
 		$inspection = $dao->getById($id);
-		
+
 		if (empty($inspection) ) {return new ActionError("No Response with id $id exists");}
 
 		$entityMaps = array();
@@ -1697,7 +1697,7 @@ function resetChecklists( $id = NULL ){
 		$inspection->setEntityMaps($entityMaps);
 		$inspection->setChecklists($checklists);
 		return $inspection;
-		
+
 		return $inspection;
 	}
 	else{
@@ -1709,9 +1709,9 @@ function resetChecklists( $id = NULL ){
 
 function getDeficiencySelectionById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao();
 		return $dao->getDeficiencySelectionById($id);
@@ -1725,16 +1725,16 @@ function getDeficiencySelectionById( $id = NULL ){
 // Inspection, step 4 (Review, deficiency report)
 function getDeficiencySelectionsForResponse( $responseId = NULL){
 	$responseId = getValueFromRequest('responseId', $responseId);
-	
+
 	if( $responseId !== NULL ){
 		$selections = array();
-		
+
 		for( $i = 0; $i < 2; $i++ ){
 			$selection = getDeficiencySelectionById($i);
 			//TODO: set response ID?
 			$selections[] = $selection;
 		}
-		
+
 		return $selections;
 	}
 	else{
@@ -1747,9 +1747,9 @@ function getDeficiencySelectionsForResponse( $responseId = NULL){
 
 function getRecommendationById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Recommendation());
 		return $dao->getById($id);
@@ -1762,18 +1762,18 @@ function getRecommendationById( $id = NULL ){
 
 function getRecommendationsForResponse( $responseId = NULL ){
 	//get Recommendations for Response
-	
+
 	$responseId = getValueFromRequest('responseId', $responseId);
-	
+
 	if( $responseId !== NULL ){
 		$recommendations = array();
-		
+
 		for( $i = 0; $i < 2; $i++ ){
 			$recommendation = getRecommendationById($i);
 			//TODO: set response?
 			$recommendations[] = $recommendation;
 		}
-		
+
 		return $recommendations;
 	}
 	else{
@@ -1810,11 +1810,11 @@ function getObservationsForResponse( $responseId = NULL ){
 		if (!empty($response)) {
 			return $response->getObservations;
 		} else {
-			
+
 		//error
 		return new ActionError("No response with id $id was found");
 		}
-		
+
 
 		return $observations;
 	}
@@ -1824,17 +1824,17 @@ function getObservationsForResponse( $responseId = NULL ){
 	}
 };
 
-//TODO: remove HACK specifying inspection ID 
+//TODO: remove HACK specifying inspection ID
 function getResponseById( $id = NULL, $inspectionId = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 	$id = getValueFromRequest('id', $id);
-	
+
 	if( $id !== NULL ){
 		$dao = getDao(new Response());
-		return 
+		return
 		$response = $dao->getById($id);
-		
+
 		return $response;
 	}
 	else{
@@ -1849,10 +1849,10 @@ function getResponsesForInspection( $inspectionId = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
-	
+
 	if( $inspectionId !== NULL ){
 		$keyid = $inspectionId;
-	
+
 		//TODO: query for Responses with the specified Inspection ID
 		$responses = array();
 		for( $i = 0; $i < 5; $i++ ){
@@ -1860,7 +1860,7 @@ function getResponsesForInspection( $inspectionId = NULL){
 			//TODO: set Inspection?
 			$responses[] = $response;
 		}
-	
+
 		return $responses;
 	}
 	else{
@@ -1872,13 +1872,13 @@ function getResponsesForInspection( $inspectionId = NULL){
 function login2($username,$password) {
 	//Get responses for Inspection
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-	
+
 
 	$username = getValueFromRequest('username', $username);
 	$password = getValueFromRequest('password', $password);
-	
-	
-	
+
+
+
 	$ldap = new LDAP();
 
 	// if successfully authenticates by LDAP:
@@ -1886,9 +1886,9 @@ function login2($username,$password) {
 
 		// Make sure they're an Erasmus user by username lookup
 		$dao = getDao(new User());
-		
+
 		$user = $dao->getUserByUsername($username);
-		
+
 		if ($user != null) {
 			// put the USER and ROLE into session
 			$_SESSION['USER'] = $user;
@@ -1917,13 +1917,14 @@ function lookupUser($username = NULL) {
 	$fieldsToFind = array("cn","sn","givenName","mail");
 
 	if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
-		$user->setName($ldapData["givenName"] . " " . $ldapData["sn"]);
+		$user->setFirst_name($ldapData["givenName"]);
+		$user->setLast_name($ldapData["sn"]);
 		$user->setEmail($ldapData["mail"]);
 		$user->setUsername($ldapData["cn"]);
 	} else {
 		return false;
 	}
-		
+
 	return $user;
 }
 
@@ -1941,35 +1942,35 @@ function sendInspectionEmail(){
 		// Get this inspection
 		$dao = getDao(new Inspection());
 		$inspection = $dao->getById($decodedObject->getEntity_id());
-		
-		//get the client side email text	
+
+		//get the client side email text
 		$text = $decodedObject->getText();
-		
+
 		// Init an array of recipient Email addresses and another of inspector email addresses
 		$recipientEmails = array();
 		$inspectorEmails = array();
-		
+
 		// We'll need a user Dao to get Users and find their email addresses
 		$userDao = getDao(new User());
-		
+
 		// Iterate the recipients list and add their email addresses to our array
 		foreach ($decodedObject->getRecipient_ids() as $id){
 			$user = $userDao->getById($id);
 			$recipientEmails[] = $user->getEmail();
 		}
-		
+
 		$otherEmails = $decodedObject->getOther_emails();
-		
+
 		if (!empty($otherEmails)) {
 			$recipientEmails = array_merge($recipientEmails,$otherEmails);
 		}
-		
+
 		// Iterate the inspectors and add their email addresses to our array
 		foreach ($inspection->getInspectors() as $inspector){
 			$user = $inspector->getUser();
 			$inspectorEmails[] = $user->getEmail();
 		}
-		
+
 		$footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university is and password.";
 		// Send the email
 		mail(implode($recipientEmails,","),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:no-reply@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode($inspectorEmails,","));
@@ -1978,11 +1979,27 @@ function sendInspectionEmail(){
 		$dao->save($inspection);
 		return true;
 	}
-	
 
+}
 
-
-
+function makeFancyNames(){
+	$users = getAllUsers();
+	foreach($users as $user){
+		if(stristr($user->getName(), ", ")){
+			$nameParts = explode(", ", $user->getName());
+			$user->setFirst_name($nameParts[1]);
+			$user->setLast_name($nameParts[0]);
+		}elseif(stristr($user->getName(), " ")){
+			$nameParts = explode(" ", $user->getName());
+			$user->setFirst_name($nameParts[0]);
+			$user->setLast_name($nameParts[1]);
+		}else{
+			$user->setLast_name($user->getName());
+		}
+		$dao = getDao( new User() );
+		$dao->save( $user );
+	}
+	return getAllUsers();
 }
 
 ?>
