@@ -5,7 +5,6 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	function init(){
 		if($location.search().id){
 			getQuestionById($location.search().id);
-
 		}else if($location.search().checklist_id){
 		    getChecklist($location.search().checklist_id);
 			$scope.noQuestion = true;

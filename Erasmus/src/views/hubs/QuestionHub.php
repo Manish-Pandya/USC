@@ -18,11 +18,28 @@ require_once '../top_view.php';
 	  Getting Checklist...
 	</div>
 	<h3><span ng-show="noQuestion"  >Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
+	
 	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
+	<h3 ng-if="!question.beingEdited && question.Reference">Compliance Reference: {{question.Reference}}</h3>
+	<h3 ng-if="!question.beingEdited && question.Description">Compliance Description: {{question.Description}}</h3>
 	<form ng-if="question.beingEdited || noQuestion" class="form" style="margin-top:10px;">
 		<input type="text" class="span9" ng-model="questionCopy.Text" placeholder="Question text"/>
-		<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(questionCopy)" class="btn btn-success btn-mini"><i class="icon-checkmark"></i>Save</a>
-		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger btn-mini" ng-click="cancelEdit(question)"><i class="icon-cancel"></i>Cancel</a>
+		<div class="control-group">
+		    <label class="control-label" for="email">COMPLIANCE REFERENCE:</label>
+		    <div class="controls">
+			 	<input type="text" ng-model="questionCopy.Reference"/>
+			</div>
+		</div>
+
+		<div class="control-group">
+	 		<label class="control-label" for="email">COMPLIANCE DESCRIPTION</label>
+	 		<div class="controls">
+	 			<textarea rows="3" ng-model="questionCopy.Description" cols="500" style="width:50%"></textarea><br>
+	 		</div>
+	 	</div>
+
+	 	<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(questionCopy)" class="btn btn-success"><i class="icon-checkmark"></i>Save Question</a>
+		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger" ng-click="cancelEdit(question)"><i class="icon-cancel"></i>Cancel</a>
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 	<span ng-hide="!question">
@@ -33,13 +50,9 @@ require_once '../top_view.php';
 		    <div class="controls">
 		      <label>DEFICIENCY DESCRIPTION</label>
 		      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
-		      <label>COMPLIANCE REFERENCE</label>
-		 	  <input type="text" ng-model="question.newDeficiency.Reference"/>
-		 	  <label>COMPLIANCE DESCRIPTION</label>
-		 	  <textarea rows="3" ng-model="question.newDeficiency.Description" cols="500" style="width:50%"></textarea>
 		 	</div>
 		 </div>
-		 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)">Add</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	<span ng-hide="!question">
@@ -53,8 +66,6 @@ require_once '../top_view.php';
 					<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editDef(def,question)"><i class="icon-pencil"></i></a>
 					<img ng-show="def.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 		     	</h3>
-		     	<h4><span class="bold">Compliance Reference:</span>  {{def.Reference}}</h4>
-		     	<h4><span class="bold">Compliance Description:</span>  {{def.Description}}</h4>
 	     	</span>
 	     	<span ng-show="def.edit">
 		     	<form class="form" style="margin-top:10px;">
@@ -63,10 +74,6 @@ require_once '../top_view.php';
 				    <div class="controls">
 				      <label>DEFICIENCY DESCRIPTION</label>
 				      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
-				      <label>COMPLIANCE REFERENCE</label>
-				 	  <input type="text" ng-model="question.newDeficiency.Reference"/>
-				 	  <label>COMPLIANCE DESCRIPTION</label>
-				 	  <textarea rows="3" ng-model="question.newDeficiency.Description" cols="500" style="width:50%"></textarea>
 				 	</div>
 				 </div>
 				 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
@@ -86,7 +93,7 @@ require_once '../top_view.php';
 		      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
 		    </div>
 		 </div>
-		 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)">Add</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	
@@ -127,7 +134,7 @@ require_once '../top_view.php';
 		      <textarea rows="5" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
 		    </div>
 		 </div>
-		 <a class="btn btn-large btn-success" ng-click="addObservation(question)">Add</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn btn-large btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	
