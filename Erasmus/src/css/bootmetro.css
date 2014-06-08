@@ -42,6 +42,10 @@ html[xmlns] .clearfix {
    padding-left: 70px;
    padding-right: 70px;
 }
+@media(@media (max-width: 1365px) {
+   padding-left: 10px;
+   padding-right: 10px;
+}
 
 .row-fluid .hide {
     display: none;
