@@ -16,7 +16,7 @@
 			<th>Edit User</th>
 			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
 			<th>
-				<a ng-click="order = 'Last_name'; Last_name.reverse=!Last_name.reverse">Last Name<i ng-class="{ 'icon-arrow-up':Last_name.reverse, 'icon-arrow-down':!Last_name.reverse }"></i></a><br>
+				<a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':reverse, 'icon-arrow-down':!reverse }"></i></a><br>
 				<input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
 			</th>
 			<th>First Name</th>
@@ -30,7 +30,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in Admins | orderBy:order | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in Admins | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>

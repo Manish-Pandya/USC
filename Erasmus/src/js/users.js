@@ -47,8 +47,8 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
 
     convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
-	  convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGet);
-    convenienceMethods.getData('../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGet);
+	  convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGetUsers);
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGetDepartments);
 
     if(!$scope.selectedRoute)$scope.selectedRoute = $location.path();
     console.log($scope.selectedRoute);
@@ -57,6 +57,10 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
 
   function onGetDepartments(data){
     $scope.departments = data;
+  }
+
+  function onFailGetDepartments(data){
+    alert("Something went wrong when the system tried to get the list of departments");
   }
 
   function onGetRoles(data){
@@ -73,8 +77,12 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
     $scope.users = data;
   }
 
-  function onFailGet(){
+  function onFailGetUsers(){
     alert('Something went wrong when we tried to build the list of users.');
+  }
+
+  function onFailGetPIs(){
+    alert('Something went wrong when we tried to build the list of Principal Investigators.');
   }
 
   function onGetPis(data){
