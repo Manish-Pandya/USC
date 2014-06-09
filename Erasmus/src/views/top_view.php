@@ -55,8 +55,9 @@ if(!$_SERVER['HTTP_HOST'] == 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-mobile-menu.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/convenienceMethodsModule.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-quick-date.js"></script>
+<!--<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-infinite-scroll.min.js"></script>-->
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-infinite-scroll.min.js"></script>
-
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
 <!--<script type="text/javascript" src="<?php echo WEB_ROOT?>js/wrapperApp.js"></script>-->
 
 
