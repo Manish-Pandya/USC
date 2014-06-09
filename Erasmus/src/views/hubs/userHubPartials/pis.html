@@ -1,7 +1,7 @@
 <table class="userList table table-striped table-hover piTable">
 	<thead>
 		<tr>
-			<th colspan="8" class="blueBg">
+			<th colspan="9" class="blueBg">
 				<h1 class="blueBg">Principal Investigators</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
@@ -14,17 +14,18 @@
 		<tr>
 			<th>Edit PI</th>
 			<th>
-				<a ng-click="order = 'Name'; Name.reverse=!Name.reverse">Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
+				<a ng-click="order = 'User.Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
 				<input ng-model="searchText" style="width:125px;" placeholder="Filter by Name"/>
 			</th>
+			<th>First Name</th>
 			<th>
-				<a ng-click="order = 'Departments[0]'; Departments[0].reverse=!Departments[0].reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
+				Department(s)<br>
 				<input ng-model="selectedDepartment" style="width:165px;" placeholder="Filter by Department"/>
 			</th>
 			<th>Office Phone</th>
 			<th>Lab Phone</th>
 			<th>
-				<a ng-click="order = 'Primary_department'; Primary_department.reverse=!Primary_department.reverse">Building(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
+				Building(s)<br>
 				<input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
 			</th>
 			<th><a ng-click="order = 'Email'; reverse=!reverse">Email</a></th>
@@ -32,46 +33,49 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="pi in pis | orderBy:order:reverse | filter:searchText | filter:buildingFilter() | filter:departmentFilter() " ng-if="pi.Is_active != showInactive">
+		<tr ng-repeat="pi in pis | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse " ng-if="pi.Is_active != showInactive">
 
-			<td style="width:14%;">
+			<td style="width:12%;">
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="addPi(pi)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="!pi.Is_active">Activate</a>
 				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="pi.IsDirty"/>
-				<!-- ng-show="pi.IsDirty"-->
 			</td>
 
-			<td style="width:12%;">
-				{{pi.User.Name}}
+			<td style="width:9%;" once-text="pi.User.Last_name">
+				<!--{{pi.User.Last_name}}-->
 			</td>
 
-			<td style="width:11%;">
+			<td style="width:9%;" once-text="pi.User.First_name">
+				<!--{{pi.User.First_name}}-->
+			</td>
+
+			<td style="width:20%;">
 				<ul>
-					<li ng-repeat="department in pi.Departments">{{department.Name}}</li>
+					<li ng-repeat="department in pi.Departments" once-text="department.Name"><!--{{department.Name}}--></li>
 				</ul>
 			</td>
 
-			<td style="width:12%;">
-				{{pi.User.Office_phone}}
+			<td style="width:9%;" once-text="pi.User.Office_phone">
+				<!--{{pi.User.Office_phone}}-->
 			</td>
 
-			<td style="width:12%;">
-				{{pi.User.Lab_phone}}
+			<td style="width:9%;" once-text="pi.User.Lab_phone">
+				<!--{{pi.User.Lab_phone}}-->
 			</td>
 
-			<td style="width:12%;">
+			<td style="width:17%;">
 				<ul>
-					<li ng-repeat="building in pi.Buildings">{{building.Name}}</li>
+					<li ng-repeat="building in pi.Buildings" once-text="building.Name"><!--{{building.Name}}-->/li>
 				</ul>
 			</td>
 
-			<td style="width:12%;">
-				{{pi.User.Email}}
+			<td style="width:12%;" once-text="pi.User.Email">
+				<!--{{pi.User.Email}}-->
 			</td>
 
-			<td style="width:12%;">
-				{{pi.User.Emergency_phone}}
+			<td style="width:7%;" once-text="pi.User.Emergency_phone">
+				<!--{{pi.User.Emergency_phone}}-->
 			</td>
 
 		</tr>
@@ -100,10 +104,18 @@
 			    </div>
 			    
 			    <div class="control-group">
-		         <label class="control-label" for="inputEmail">Name</label>
+		         <label class="control-label" for="inputEmail">First Name</label>
 		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled" placeholder="Name">
-		            <input type="text" id="inputEmail" ng-model="piCopy.User.Name" ng-if="!isProductionServer || piCopy.User.Username" placeholder="Name">
+		         	<input type="text" id="inputEmail" ng-model="piCopy.User.First_name" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled" placeholder="First Name">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.First_name" ng-if="!isProductionServer || piCopy.User.Username" placeholder="First Name">
+		         </div>
+			    </div>
+
+			    <div class="control-group">
+		         <label class="control-label" for="inputEmail">Last Name</label>
+		         <div class="controls">
+		         	<input type="text" id="inputEmail" ng-model="piCopy.User.Last_name" ng-if="isProductionServer && !piCopy.User.Username" disabled="disabled" placeholder="Last Name">
+		            <input type="text" id="inputEmail" ng-model="piCopy.User.Last_name" ng-if="!isProductionServer || piCopy.User.Username" placeholder="Last Name">
 		         </div>
 			    </div>
 

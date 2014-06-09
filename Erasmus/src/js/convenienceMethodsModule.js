@@ -288,6 +288,15 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 			.error(function(data, status, headers, config, hazard){
 			 	onFailSendEmail();
 			});
-		}
+		},
+		watchersContainedIn: function(scope) {
+            var watchers = (scope.$$watchers) ? scope.$$watchers.length : 0;
+            var child = scope.$$childHead;
+            while (child) {
+                watchers += (child.$$watchers) ? child.$$watchers.length : 0;
+                child = child.$$nextSibling;
+            }
+            return watchers;
+        }
 	};
 });

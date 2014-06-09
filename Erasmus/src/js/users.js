@@ -1,6 +1,6 @@
 ///////////to do:figure out how to defer promise for pis and then close modal
 
-var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule'])
+var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule','once'])
 
 
 .config(function($routeProvider){
@@ -31,7 +31,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 });
 
 //called on page load, gets initial user data to list users
-var MainUserListController = function($scope, $modal, $routeParams, $browser, $sniffer, $rootElement, $location, convenienceMethods, $filter, $route,$window) {
+var MainUserListController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window) {
  //console.log($modal);
 
   $scope.users = [];
@@ -169,7 +169,7 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser, $s
 
 };
 
-var labContactController = function($scope, $modal, $routeParams, $browser, $sniffer, $rootElement, $location, convenienceMethods, $filter, $route) {
+var labContactController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route) {
   //create a modal instance for editing a user or creating a new one.
   //hold the current route in scope so we can be sure we display the right user type
   $scope.currentRoute = '/contacts';
@@ -476,7 +476,7 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
   };
   
 };
-var personnelController = function($scope, $modal, $routeParams, $browser, $sniffer, $rootElement, $location, convenienceMethods, $filter, $route) {
+var personnelController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route) {
   //create a modal instance for editing a user or creating a new one.
   //hold the current route in scope so we can be sure we display the right user type
   $scope.currentRoute = '/contacts';
@@ -737,8 +737,14 @@ var personnelModalInstanceController = function ($scope, $modalInstance, items, 
   
 };
 
-var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $rootElement, $location, convenienceMethods, $filter, $route) {
-  console.log('pi contoller');
+var piController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route, $timeout) {
+
+  $scope.wcount = function() {
+    $timeout(function() {
+      $scope.watchers = convenienceMethods.watchersContainedIn($scope);
+    });
+  };
+
   //create a modal instance for editing a user or creating a new one.
   //hold the current route in scope so we can be sure we display the right user type
   $scope.currentRoute = '/pis';
@@ -862,6 +868,7 @@ var piController = function($scope, $modal, $routeParams, $browser, $sniffer, $r
     $scope.piCopy.IsDirty = false;
     alert("The PI could not be saved.");
   }
+  $scope.wcount();
 }
 
 
