@@ -105,6 +105,29 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	                onFail(data,parentObject);
 	            })
     	},
+
+        /**  
+		* 	Get data from the server via REST like call, call callback method of controller accordingly 
+		*	
+		*   @param (Function onSuccess)  AngularJS controller method to call if our server call returns a good code
+		*	@param (Function onFail)     AngularJS controller method to call if our server call returns a bad code
+		*   @param (String url)          The URL on the server to which we post
+		*   @param (Object parentObject) An optional parent object.   If this is passed, we are doing an asynch query to load child data for a parent object, for example asychronously loading a hazard's SubHazards
+		*
+		**/
+
+        getDataAsPromise: function( url ){
+    	//use jsonp method of the angularjs $http object to request data from service layer
+        	var promise = $http.jsonp(url)
+	            .success( function(data) {
+	               data.doneLoading = true;
+	               return data;
+	            })
+	            .error(function(data, status, headers, config){
+					return data;
+	            });
+	        return promise;
+    	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){
 			//console.log(data);
 			$http.post(url,data)
