@@ -120,12 +120,13 @@ angular.module('convenienceMethodModule', ['ngRoute'])
     	//use jsonp method of the angularjs $http object to request data from service layer
         	var promise = $http.jsonp(url)
 	            .success( function(data) {
-	               data.doneLoading = true;
-	               return data;
+					data.doneLoading = true;
+					return data;
 	            })
 	            .error(function(data, status, headers, config){
 					return data;
 	            });
+	            
 	        return promise;
     	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){

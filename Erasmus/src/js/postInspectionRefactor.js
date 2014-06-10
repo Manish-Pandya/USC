@@ -20,7 +20,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   });
 })
 
-
 .config(function($routeProvider){
 
   $routeProvider
@@ -56,14 +55,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   };
 
   factory.getInspection = function(){
-    if(!this.inspection){
-      this.getInspectionData().then(function(promise) {
-        this.inspection = promise.data;
-        return this.inspection;
-      });
-    }else{
-      return this.inspection;
-    }
+    return this.inspection;
   };
 
   factory.updateInspection = function(){
@@ -80,9 +72,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   return factory;
 });
 
-mainController = function($scope, $location, convenienceMethods, $rootScope, postInspectionFactory){
-  $scope.Inspection = postInspectionFactory.getInspection();
-  console.log($scope.Inspection);
+mainController = function($scope, $location, postInspectionFactory,$q,convenienceMethods){
+  var defer = $q.defer();
+  convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK')
+    .then(function(promise){
+      inspection = promise.data;
+      console.log(inspection);
+      postInspectionFactory.setInspection(promise.data);
+    });
+    
+   $scope.Inspection = postInspectionFactory.getInspection();
+/*
+
+  postInspectionFactory.getInspection().then(function(promise){
+    console.log(promise);
+  });
+*/
 }
 
 inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods){}

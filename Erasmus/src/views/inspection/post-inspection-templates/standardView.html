@@ -1,3 +1,4 @@
+	<pre>{{bioHazards.Responses|json}}</pre>
 	<div class="loading" ng-show='!doneLoading' >
 	  <img class="" src="../../img/loading.gif"/>
 	  Getting Inspection Information...
@@ -76,8 +77,11 @@
 
 </th>
 	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY</td></tr>
+	
 	<tr ng-repeat="def in bioHazards.Responses" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
+	
 	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
+	
 	<tr ng-repeat="response in responses | filter:{ParentHazard:'CHEMICAL SAFETY'}" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/radiation-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
