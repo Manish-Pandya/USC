@@ -1,8 +1,9 @@
 <?php
 require_once '../top_view.php';
 ?>
-<script src="../../js/postInspection.js"></script>
+<script src="../../js/postInspectionRefactor.js"></script>
 <div ng-app="postInspections" ng-controller="mainController">
+{{Inspection}}
 <div class="navbar">    		
 
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
