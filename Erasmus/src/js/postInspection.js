@@ -1,4 +1,5 @@
 var postInspection = angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate']);
+
 postInspection.filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -69,18 +70,15 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
     alert("There was a problem retrieving your user information");
   }
   function onGetInspection(data){
-
     if(data.Date_last_modified)var inspDate = convenienceMethods.getDate(data.Date_last_modified);
     data.inspDate = inspDate.formattedString;
     $scope.Inspection = data;
     $rootScope.Inspection = data;
     $scope.doneLoading = data.doneLoading;
-
   }
   function onFailGet(){
     alert('There was an error finding the inspection.');
   }
-
   //initialize date controls
   $scope.today = function() {
     $scope.dt = new Date();
@@ -96,17 +94,14 @@ mainController = function($scope, $location, convenienceMethods, $rootScope){
   $scope.clear = function () {
     $scope.dt = null;
   };
-
   // Disable weekend selection
   $scope.disabled = function(date, mode) {
     //return ( mode === 'day' && ( date.getDay() > $scope.Inspection.Date_last_modified) );
   };
-
   $scope.toggleMin = function() {
     $scope.minDate = ( $scope.minDate ) ? null : new Date();
   };
   $scope.toggleMin();
-
   $scope.open = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -153,22 +148,22 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function onFailGet(data){
-  	alert('There was a problem trying to get the inspection data.');
+    alert('There was a problem trying to get the inspection data.');
   }
 
   $scope.contactList = [];
 
   $scope.handleContactList = function(obj, $index){
 
-  	if(!convenienceMethods.arrayContainsObject($scope.contactList,obj)){
-  		$scope.contactList.push(obj);
-  	}else{
-  		angular.forEach($scope.contactList, function(value, key){
-  			if(value.KeyId === obj.KeyId){
-  				$scope.contactList.splice(key,1);
-  			}
-  		});
-  	}
+    if(!convenienceMethods.arrayContainsObject($scope.contactList,obj)){
+      $scope.contactList.push(obj);
+    }else{
+      angular.forEach($scope.contactList, function(value, key){
+        if(value.KeyId === obj.KeyId){
+          $scope.contactList.splice(key,1);
+        }
+      });
+    }
 
   }
 
@@ -303,7 +298,6 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
 
     $scope.recommendations = [];
     angular.forEach(data.Checklists, function(checklist, key){
-      //console.log(checklist);
       checklist.Responses = [];
       angular.forEach(checklist.Questions, function(question, key){
 
@@ -315,6 +309,7 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
 
         if(question.Responses && question.Responses.Answer.toLowerCase() == "no"){
           angular.forEach(question.Responses.DeficiencySelections, function(def, key){
+            
              def.questionText = question.Text;
              if(!def.CorrectiveActions.length){
               def.CorrectiveActions[0]={
@@ -324,8 +319,6 @@ inspectionReviewController = function($scope, $location, $anchorScroll, convenie
               }
             }
             def.CorrectiveActionCopy =  angular.copy(def.CorrectiveActions[0]);
-            //if(def.CorrectiveActionCopy.Completion_date)def.CorrectiveActionCopy.Completion_date = convenienceMethods.getDate(def.CorrectiveActionCopy.Completion_date);
-            //console.log(def.CorrectiveActionCopy);
             checklist.Responses.push(def);
           });
         }
