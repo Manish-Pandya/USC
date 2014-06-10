@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate','once'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate','ngRoute','once'])
 
 .filter('joinBy', function () {
   return function (input,delimiter) {
@@ -36,45 +36,53 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
       controller: inspectionReviewController 
     }
   )
+  /*
   .when('/details', 
     {
       templateUrl: 'post-inspection-templates/inspectionDetails.html', 
       controller: inspectionDetailsController 
     }
   )
+*/
   .otherwise(
     {redirectTo: '/report'}
   );
 })
 
 .factory('postInspectionFactory', function(convenienceMethods){
-  var inspection = {};
+  var factory = {};
+  factory.getInspectionData = function(){
+    return convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK', this.setChecklist, this.onFailGet);
+  };
 
-  return{
-    getChecklistData: function(convenienceMethods){
-        convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK', setChecklist, onFailGet);
-    },
-
-    getChecklist: function(){
-      if(inspection)return inspection;
-      return this.getChecklistData;
-    },
-
-    updateChecklist: function(convenienceMethods){
-      //this should call convenienceMethods call to update an object on the server
-    },
-
-    setChecklist: function(data){
-      this.inspeciton = data;
-    },
-    onFailGet: function(){
-      alert('uh oh');
+  factory.getInspection = function(){
+    if(!this.inspection){
+      this.getInspectionData().then(function(promise) {
+        this.inspection = promise.data;
+        return this.inspection;
+      });
+    }else{
+      return this.inspection;
     }
-  }
+  };
+
+  factory.updateInspection = function(){
+    //this should call convenienceMethods call to update an object on the server
+  };
+
+  factory.setInspection = function(data){
+    return this.inspection = data;
+  };
+
+  factory.onFailGet = function(){
+    alert('uh oh');
+  };
+  return factory;
 });
 
 mainController = function($scope, $location, convenienceMethods, $rootScope, postInspectionFactory){
-  $scope.Inspection = postInspectionFactory.getChecklist;
+  $scope.Inspection = postInspectionFactory.getInspection();
+  console.log($scope.Inspection);
 }
 
 inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods){}
