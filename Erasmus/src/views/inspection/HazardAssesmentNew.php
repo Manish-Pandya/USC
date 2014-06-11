@@ -104,7 +104,7 @@ require_once '../top_view.php';
 					       	Select a Principal Investigator.
 				       	</p>
 				       	 <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-					    	<span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id+'&inspection='+inspection.Key_id" target="_blank">Add Rooms</a>
+					    	<span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id+'&inspection='+inspection.Key_id">Add Rooms</a>
 					    </p>
 				</span>
 
