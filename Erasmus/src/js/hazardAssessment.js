@@ -1,4 +1,4 @@
-var hazardAssesment = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodModule']);
+var hazardAssesment = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodModule','once']);
 
 controllers = {};
 
@@ -248,9 +248,10 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //set a boolean flag to determine if rooms are shown beneath a hazard
 
   function getShowRooms(hazard){
-    hazard.showRooms = false;
+    if(hazard.IsPresent){
+     hazard.showRooms = false;
       angular.forEach(hazard.InspectionRooms, function(room, key){
-        if(hazard.IsPresent && !hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
+        if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
           console.log(hazard.Name);
           hazard.showRooms = true;
         }else{
@@ -263,7 +264,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
           getShowRooms(child);
         });
       }
-
+    }
   }
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
