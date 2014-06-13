@@ -1,4 +1,4 @@
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule']);
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule','once']);
 
 //called on page load, gets initial user data to list users
 function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window) {
@@ -6,18 +6,18 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
-  //
   function init(){
-
     if($location.search().inspection){
-
       $scope.inspId = $location.search().inspection;
-
-     // convenienceMethods.getData('../../ajaxaction.php?action=getUserById&id=1&callback=JSON_CALLBACK',onGetUser, onFailGetUser);
-        convenienceMethods.getData('../../ajaxaction.php?action=resetChecklists&id='+$scope.inspId +'&callback=JSON_CALLBACK',onGetChecklists, onFailGetChecklists);
-    //  convenienceMethods.getData('../../ajaxaction.php?action=getInspectionById&id='+$scope.inspId +'&callback=JSON_CALLBACK',onGetInsp, onFailGetInsp);
+      convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+$scope.inspId+'&callback=JSON_CALLBACK', onFailGetInsp)
+      .then(function(data){
+        $scope.inspection = data.data;
+        $scope.checklists = data.data.Checklists;
+      })
+    }else{
+      $scope.error="No inspection has been specifed.";
+      $scope.checklists = true;
     }
-    
   }
 
   function onGetUser(data){
@@ -28,33 +28,76 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
   
   //grab set user list data into the $scope object
-  function onGetChecklists(data) {
-    console.log(data);
-    $scope.inspection = data;
-    $scope.checklists = data.Checklists;
-    angular.forEach($scope.checklists, function(checklist, key){
+  var onGetChecklists = function(checklists){
+
+    var len = checklists.length;
+    //We loop through each checklist, and each checklist's questions, to see if questions have already been answered
+    for(i=0;i<len;i++){
+      var checklist = checklists[i];
       checklist.isNew = true;
-      angular.forEach(checklist.Questions, function(question, key){
-        if(question.Responses && question.Responses.Answer)question.Responses.previous = angular.copy(question.Responses.Answer); 
-        console.log(question);
-      });
-    });
+      var questions = checklist.Questions;
+      var qLen = questions.length;
+      for(x=0;x<qLen;x++){
+        var question = questions[x];
+        if(question.Responses && question.Responses.Answer){
+          //set a previous response object for each question that has been answered so that the question can be "unanswered" by a user
+          question.Responses.previous = angular.copy(question.Responses.Answer); 
+          question = evaluateQuestionComplete(question);
+          evaluateRecommendationsAndObservations(question);
+        }
+      }
+      countAnswers(checklist);
+    }
+    return checklists;
+  }
+
+  //Evaluate whether a question has been completed
+  function evaluateQuestionComplete(question){
+    question.isComplete = false;
+    //Check whether the question has been answered
+    if(question.Responses.Answer){
+      //if a question has an answer of 'Yes' or 'N/A', we can consider it completed on the checklist
+      if(question.Responses.Answer.toLowerCase() == 'yes' || question.Responses.Answer.toLowerCase() ==  'n/a'){
+        question.isComplete = true;
+      //If a question has been answered 'No', the user must select one or more deficiences before the question is complete
+      }else if(question.Deficiencies && question.Responses.Answer.toLowerCase() == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length ){
+        question.isComplete = true;
+        checkQuestionsDeficiencies(question);
+      }else{
+        question.isComplete = false;
+      }
+    } 
+    return question;
+  }
+
+  function checkQuestionsDeficiencies(question){
+    //see if any of the deficiencies for this question are in the Inspection's list of Deficiency Selections.
+    //Inspection.Deficiency_selections contains a list of the key_ids of all deficiencies that have been selected
+    var dLen = question.Deficiencies.length
+    for(z=0;z<dLen;z++){
+      var defID = question.Deficiencies[z].Key_id;
+      //Does this deficiency's key_id occur in the list of selected deficiencies?
+      if($scope.inspection.Deficiency_selections[0].indexOf(defID)>-1){
+        //at least one Deficiency has been selected for this question, so the question is complete
+        question.Deficiencies[z].selected = true;
+        //was this deficiency Corrected durring the inspection?
+        if(($scope.inspection.Deficiency_selections[1].indexOf(defID)>-1))question.Deficiencies[i].correctedDuringInspection = true;
+      }
+    }
+    return question;
   }
 
   function onFailGetChecklists(){
     alert('There was a problem getting the checklist for this inspection.');
   }
   function onFailGetInsp(){
-
-  }
-
-  function onGetInsp(data){
-    $scope.inspection = data;
+    $scope.Inspection = '';
+    $scope.checklists = true;
+    $scope.error = 'There was an error getting the checklists for this inspection.  Check your internet connection and try again.'; 
   }
 
   $scope.imgNumber = "1";
   $scope.change = function(imgNumber, checklist) {
-
       $scope.imgNumber = imgNumber;
       checklist.open = !checklist.open;
   }
@@ -71,13 +114,12 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
           Inspection_id : $scope.inspId,
           Question_id:    question.Key_id,
           Question_text:  question.Text,
-          answer:         response.Answer,
+          Answer:         response.Answer,
           Key_id:         response.Key_id
         }
         handleResponse(responseDTO, response, question, checklist);
       }
       //if the question has an answer that is the same as it's previos answer, we let the click handler setUnchecked handle it instead
-
     }else{
       //this question has not been answered
      //Don't include a key id; we are saving a new response for this question
@@ -86,7 +128,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         Inspection_id : $scope.inspId,
         Question_id:    question.Key_id,
         Question_text:  question.Text,
-        answer:         response.Answer,
+        Answer:         response.Answer,
       }
       handleResponse(responseDTO, response, question, checklist);
     }
@@ -94,12 +136,9 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
   //click handler for questions that have already been answered if we wish to set answers to null
   $scope.setUnchecked = function(checklist, response, question,checklist){
-    console.log(question);
-    console.log(response);
     question.IsDirty = true;
      //this question has already been answered
     if(question.Responses && question.Responses.previous){
-      console.log('here');
       //this question's answer has not changed
       if(question.Responses.previous == response){
         //include a key id in the reponse dto so that we update instead of saving a new one
@@ -109,7 +148,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
           Inspection_id : $scope.inspId,
           Question_id:    question.Key_id,
           Question_text:  question.Text,
-          answer:         false,
+          Answer:         false,
           Key_id:         question.Responses.Key_id
         }
         handleResponse(responseDTO, response, question, checklist);
@@ -119,14 +158,10 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
 
   function handleResponse(responseDTO, response, question, checklist){
-    console.log('handling');
-    if(responseDTO.answer){
+    if(responseDTO.Answer){
       var url = '../../ajaxaction.php?action=saveResponse';
       convenienceMethods.updateObject( responseDTO, question, onSaveResponse, onFailSaveResponse, url, 'test', checklist, response.previous);
-    }
-
-    if(!responseDTO.answer){
-      console.log('doing it');
+    }else{
       var url = '../../ajaxaction.php?action=removeResponse&id='+responseDTO.Key_id+'&callback=JSON_CALLBACK';
       convenienceMethods.deleteObject( onSetUncehcked, onFailSaveResponse, url, question );
     }
@@ -145,49 +180,28 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     question.Responses = response;
     question.showChecks = true;
     question.IsDirty = false;
-    $scope.countAnswers(checklist);
+    evaluateQuestionComplete(question);
+    countAnswers(checklist);
   }
 
- $scope.countAnswers = function(checklist,idx){
-    checklist.AnsweredQuestions = 0;
-    for(i=0;checklist.Questions.length > i;i++){
-        if(checklist.hasBeenCounted == 1){evaluateRecsAndObs(question);}
-        question =  checklist.Questions[i];
-        question.complete = false;
-        if(question.Responses){
-         answer = question.Responses.Answer;
-         if(answer)question.Responses.previous = answer;
-        //if a user answers "yes" or "n/a", a question is valid
-        if(answer.toLowerCase() == 'yes' || answer.toLowerCase() == 'n/a'){
-          question.complete = true;
-        }else{
-          //if a user answers "no", a question is not valid until the user speficies one or more deficiencies
-          evalDefSelections(question);
-          checkedCount = 0;
-          for(defCount=0;question.Deficiencies.length > defCount;defCount++){
-            if(question.Deficiencies[defCount].checked == true){
-              checkedCount++;
-            }
-          }
-         if(checkedCount > 0){
-            question.complete = true;
-         }
-        }        
-        if(question.complete == true){
-          checklist.AnsweredQuestions++;
-        }
-      }
+ //Counts the number of questions that have been completely answered in a checklist
+ countAnswers = function(checklist){
+  checklist.AnsweredQuestions = 0;
+  var cLen = checklist.Questions.length;
+  for(j=0;j<cLen;j++){
+    question = checklist.Questions[j];
+    if(question.isComplete){
+      checklist.AnsweredQuestions++;
     }
-    checklist.hasBeenCounted++; 
   }
+  if(checklist.AnsweredQuestions === cLen)checklist.complete = true;
+ }
 
   function evaluateRecsAndObs(question){
     
-   // console.log(question);
-
     if(question.Responses && question.Responses.Recommendations.length > 0){
       angular.forEach(question.Recommendations, function(rec, key){
-       // console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
+       // //console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec)) {
            rec.checked = true; 
         }    
@@ -196,29 +210,12 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
     if(question.Responses && question.Responses.Observations.length > 0){
       angular.forEach(question.Observations, function(obs, key){
-       // console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
+       // //console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Observations, obs)) {
            obs.checked = true; 
-           //console.log(obs);
         }    
       });
     } 
-  }
-
-
-  function evalDefSelections(question){
-    angular.forEach(question.Deficiencies, function(def, key){
-      if(convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections,def,["Deficiency_id","Key_id"])){
-        def.checked=true;
-        var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections,def,["Deficiency_id","Key_id"], true);
-        def.correctedDuringInspection = question.Responses.DeficiencySelections[idx].Corrected_in_inspection;
-        if(def.correctedDuringInspection == 1){
-          def.correctedDuringInspection = true;
-        }else{
-          def.correctedDuringInspection = false;
-        }
-      }
-    });
   }
 
   function onFailSaveResponse(){
@@ -285,6 +282,8 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onSaveRelationship(serverResp, obj, relationshipDTO){
+    console.log(serverResp);
+    console.log(relationshipDTO);
     obj.IsDirty = false;
     obj.checked = relationshipDTO.add;
   }
@@ -315,34 +314,34 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   $scope.selectRoom = function(response, deficiency, room){
-    console.log(room);
     room.IsDirty = true;
     $scope.deficiencySelected(response, deficiency);
   }
 
-  $scope.deficiencySelected = function(response, deficiency, rooms){
+  $scope.deficiencySelected = function(question, deficiency, rooms, checklist){
+    console.log(deficiency);
+    response = question.Responses;
     response.IsDirty = true;
-    console.log(response);
 
-    if(deficiency.checked){
-      if(!deficiency.rooms){
+    //the deficieny has been switched from an uncheked to a checked state
+    if(deficiency.selected){
+
+      //if this deficiency doesn't have a rooms collection, make one
+      if(!deficiency.Rooms){
         var rooms = angular.copy($scope.inspection.Rooms);
+      }else{
+        rooms = deficiency.Rooms;
       }
 
-      var RoomIds = [];
-      var atLeastOneChecked = false;
-      angular.forEach(rooms, function(room, key){
-        if(deficiency.rooms){
-          if(room.checked == true){
-            RoomIds.push(room.Key_id);
-            atLeastOneChecked = true;
-          }
-        }else{
-          RoomIds.push(room.Key_id);
-        } 
-      });
 
-      if(!deficiency.rooms)deficiency.rooms = angular.copy(rooms);
+      var RoomIds = [];
+      var atLeastOneChecked = true;
+
+      //build out an array of Room key_ids for the server request
+      for(i=0;i<rooms.length;i++){
+        rooms[i].checked = true;
+        RoomIds.push(rooms[i]);
+      }
 
       defDto = {
         Class: "DeficiencySelection",
@@ -352,21 +351,37 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         Key_id:      null
       }
 
-      console.log(defDto);
       //set checked property to false.  we set it to true only on success, in the callback
       deficiency.checked = false;
       var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-      convenienceMethods.updateObject( defDto, response, onSaveDefSelect, onFailSaveDefSelect, url, null, deficiency,response);
+      convenienceMethods.updateObject( defDto, question, onSaveDefSelect, onFailSaveDefSelect, url, null, checklist, deficiency);
     }else{
+      //console.log('here');  
       deficiency.checked = true;
       def_id = deficiency.Key_id;
       var url = '../../ajaxaction.php?action=removeDeficiencySelection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
-      convenienceMethods.deleteObject( onRemoveDefSelect, onFailRemoveDefSelect, url, deficiency, response );
+      convenienceMethods.deleteObject( onRemoveDefSelect, onFailRemoveDefSelect, url, deficiency, question, checklist  );
     }
   }
 
-  function onRemoveDefSelect(bool, deficiency, response){
-    deficiency.checked = false;
+  function onRemoveDefSelect(bool, deficiency, question, checklist){
+    console.log(deficiency);
+    //get the index of the deficiency selection for the question
+    var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections, deficiency, null, true);
+    //if we find the deficiency selection, remove it
+    if(idx)question.Responses.DeficiencySelections.splice(idx, 1);
+  
+    //also remove the key id of the deficiency selection from the Inspection's array of deficiency selections
+    $scope.inspection.Deficiency_selections[0].splice($scope.inspection.Deficiency_selections[0].indexOf(deficiency.Deficiency_id,1));
+
+    //determine if the question is completely answered
+    evaluateQuestionComplete(question);
+  
+    //count the checklists answers
+    countAnswers(checklist);
+
+    //update the view
+    deficiency.selected = false;
     response.IsDirty = false;
   }
 
@@ -414,7 +429,6 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
   //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
   function calculateClickPosition(event, deficiency, element){
-    console.log(event);
     var x = event.clientX;
     var y = event.clientY+$window.scrollY;
 
@@ -423,45 +437,73 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     deficiency.calculatedOffset.y = y-185;
   } 
 
+  function onSaveDefSelect(returnedDeficiencySelection, question, checklist, deficiency){
 
+    //push the def selections deficiency_id into the inspections array of deficiency Key_ids
+    $scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
 
-  function onSaveDefSelect(def,deficiency,deficiency2){
-    console.log(deficiency2)
-    console.log(def);
     var atLeastOneChecked = false;
-    if(deficiency2.rooms.length){
-      angular.forEach(deficiency2.rooms, function(room, key){
-        room.IsDirty = false;
-        if(room.checked)atLeastOneChecked = true;
-      });
-    }
-    deficiency2.IsDirty = false;
-    deficiency2.checked = true;
-    deficiency2.selectionId = def.Key_id;
+    if(!deficiency.Rooms)deficiency.Rooms = $scope.inspection.Rooms;
+    angular.forEach(deficiency.rooms, function(room, key){
+      room.IsDirty = false;
+      if(room.checked)atLeastOneChecked = true;
+    });
+
+    deficiency.IsDirty = false;
+    deficiency.selected = true;
+    question.Responses.DeficiencySelections.push(returnedDeficiencySelection);
+    evaluateQuestionComplete(question);
+    countAnswers(checklist);
   }
 
-  function onFailSaveDefSelect(){}
+  function onFailSaveDefSelect(){
 
-  $scope.$watch('checklists', function(checklists){
-    angular.forEach(checklists, function(checklist, idx){
-      if(!checklist.hasBeenCounted)checklist.hasBeenCounted = 0;
+  }
 
-      if(checklist.hasBeenCounted < 2)$scope.countAnswers(checklist,idx);
-      checklist.currentlyOpen = false;
-      if (checklist.open) {
-        checklist.currentlyOpen = true;
-        checklist.hasBeenSelected = true;
+  //
+  var unwatch = $scope.$watch('checklists', function(loadedChecklists, promisedChecklists, scope) {
+    if(loadedChecklists && loadedChecklists.length){
+      onGetChecklists($scope.checklists);
+      unwatch();
+    }
+  });
+
+  //set the recommendations and observations to their correct view state based on the server state for a question
+  function evaluateRecommendationsAndObservations(question){
+    //do we have responses for this question
+    if(question.Responses){
+      //we have reponses.  do we have observations?
+      if(question.Responses.Observations && question.Responses.Observations.length){
+        question.Responses.Observations = setViewStateForObservationsOrRecommendations(question, question.Responses.Observations, "Observations");
       }
 
-      if(checklist.hasBeenSelected == true){
-        if(checklist.AnsweredQuestions < checklist.Questions.length){
-          checklist.countClass = 'red';
-        }else{
-          checklist.countClass = 'green';
-        }
+      //we have reponses.  do we have recommednations?
+      if(question.Responses.Recommendations && question.Responses.Recommendations.length){
+        question.Responses.Recommendations = setViewStateForObservationsOrRecommendations(question, question.Responses.Recommendations, "Recommendations");
       }
-    })   
-  }, true);
+
+    }
+  }
+
+  //set the view state properly on page load for observations or recommendations.  Used by evaluateRecommendationsAndObservations()
+  function setViewStateForObservationsOrRecommendations(question, array, type){
+    arrayLen = array.length;
+    for(k=0;k<arrayLen;k++){
+      //does the array of either Observations or recommendations, specified by the type passed, contain this observation or recommendation
+      //if so, get its index
+      console.log( array[k] );
+      var idx = convenienceMethods.arrayContainsObject(question[type], array[k], null, true);
+      console.log(idx);
+      //if we found an index, set the checked state to true for the checkbox in the view.
+      if(idx || idx > -1){
+        console.log('index matched at:' + idx);
+        if(question[type][idx])question[type][idx].checked = true;
+      }
+    }
+
+    return array;
+  }
+
 };
 
 //set controller

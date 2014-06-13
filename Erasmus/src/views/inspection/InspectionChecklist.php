@@ -31,9 +31,12 @@ require_once '../top_view.php';
 <div class="row-fluid">
 <!--<a ng-click="$spMenu.toggle()" .icon-menu-2 style="background:blue;font-size: 27px !important; color: black; text-decoration:none!important" class="toggles toggledIn"><p class="rotate">Show/Hide Menu<i style="margin-top: 16px; font-size: 50px !important;" class="icon-arrow-down"></i></p></a>  
 -->	
-	 <div class="loading" ng-show='!checklists' >
+	<div class="loading" ng-show='!checklists' >
 	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Getting Checklists...
+	</div>
+	<div class="alert alert-error" ng-if="error" style="margin-top:10px;">
+		<h2>{{error}}</h2>
 	</div>
 
     <!-- begin checklist for this inspection -->
@@ -41,12 +44,12 @@ require_once '../top_view.php';
 			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in checklists" is-open="checklist.currentlyOpen">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
-					<input type="hidden" ng-model="checklist.AnsweredQuestions" ng-init="checklist.AnsweredQuestions = '0'"/>
+					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
 					<h2>{{checklist.Name}}<span style="float:right" ng-class="checklist.countClass">{{checklist.AnsweredQuestions}}/{{checklist.Questions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
 		     		<li class="question" ng-repeat="question in checklist.Questions">
-		     			<h3 style="width:45%; float:left;"><img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{question.Text}}</h3>
+		     			<h3 style="width:45%; float:left;"><img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="question.Text"></span></h3>
 		     			<div class="questionAnswerInputs">
 	     					<label class="radio inline">
 								<input type="radio" value="yes" ng-model="question.Responses.Answer" ng-change="questionAnswered(checklist, question.Responses, question)"  ng-click="setUnchecked(question.Responses.previous,'yes',question,checklist)"/>
@@ -75,11 +78,11 @@ require_once '../top_view.php';
 								<h3>Deficiencies:</h3>
 								<li ng-repeat="deficiency in question.Deficiencies">
 									<label class="checkbox inline">
-										<input type="checkbox" value="true" ng-model="deficiency.checked" ng-change="deficiencySelected(question.Responses, deficiency)" />
-										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{deficiency.Text}}</span>
+										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, null, checklist)" />
+										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="deficiency.Text"></span></span>
 									</label>
 
-									<span ng-show="deficiency.checked">
+									<span ng-show="deficiency.selected">
 											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
 									</span>
 
@@ -94,7 +97,7 @@ require_once '../top_view.php';
 										</ul>
 									</div>
 
-									<ul style="margin:10px" ng-switch on="deficiency.checked">
+									<ul style="margin:10px" ng-switch on="deficiency.selected">
 										<li ng-switch-when="true">
 											<label class="checkbox inline">
 												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-change="handleCorrectedDurringInspection(deficiency)" />
@@ -149,10 +152,9 @@ require_once '../top_view.php';
 		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-		    <a class="btn btn-large btn-success" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-success" ng-if="checklists.length" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
 	</div>
-	
 	</div>
 </div>
 </div>

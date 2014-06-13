@@ -73,11 +73,11 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*   @param (Object failParam) Object to be passed to failure function
 		*
 		**/
-		deleteObject: function( onSave, onFail, url,object,parent){
+		deleteObject: function( onSave, onFail, url, object, parent, parent2){
           return $http.delete(  url )
           .success( function( returnedObj ) {
           	//console.log(returnedObj);
-            onSave(returnedObj,object,parent);
+            onSave(returnedObj, object, parent, parent2);
           })
           .error(function(data, status, headers, config, hazard){
              onFail(object,parent);
@@ -116,7 +116,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		*
 		**/
 
-        getDataAsPromise: function( url ){
+        getDataAsPromise: function( url, errorCallback ){
     	//use jsonp method of the angularjs $http object to request data from service layer
         	var promise = $http.jsonp(url)
 	            .success( function(data) {
@@ -124,9 +124,9 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 					return data;
 	            })
 	            .error(function(data, status, headers, config){
-					return data;
+	            	errorCallback(status);
 	            });
-	            
+	        console.log(promise);
 	        return promise;
     	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){
@@ -173,12 +173,10 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		**/
 		arrayContainsObject: function(array, obj, props, returnIdx) {
 	      if(!props) {var props = ["Key_id","Key_id"];}
-	      for (i=0;i<array.length;i++) {
-			if (array[i][props[0]] === obj[props[1]]) {
-				//console.log('true');
-				if(returnIdx) return i;
-				return true;
-			}   
+	      for (localI=0;localI<array.length;localI++) {
+	      	if (array[localI][props[0]] === obj[props[1]]) {
+				return localI;
+			}
 	      }
 	      return false;
 	  	},
