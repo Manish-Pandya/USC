@@ -2014,7 +2014,10 @@ label.checkbox input[type=checkbox]:disabled ~ span.metro-checkbox::after {
 label.checkbox input[type=checkbox]:disabled ~ span.metro-checkbox::after {
    color: #4c4c4c;
 }
-
+span.metro-checkbox span{
+   display: inline-block;
+   margin-top:4px;
+}
 
 
 
@@ -2281,8 +2284,8 @@ Thumbnail
 .alert-danger,
 .alert-error {
    color: #FFFFFF;
-   background-color: #BC1C48;
-   border-color: #BC1C48;
+   background-color: #d00;
+   border-color: #d00;
 }
 
 .alert-info {
