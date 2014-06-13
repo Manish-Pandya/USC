@@ -81,7 +81,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         //at least one Deficiency has been selected for this question, so the question is complete
         question.Deficiencies[z].selected = true;
         //was this deficiency Corrected durring the inspection?
-        if(($scope.inspection.Deficiency_selections[1].indexOf(defID)>-1))question.Deficiencies[i].correctedDuringInspection = true;
+        if(($scope.inspection.Deficiency_selections[1].indexOf(defID)>-1))question.Deficiencies[z].correctedDuringInspection = true;
       }
     }
     return question;
