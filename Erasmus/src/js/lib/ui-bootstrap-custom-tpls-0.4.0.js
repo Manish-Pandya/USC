@@ -95,12 +95,10 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
   .directive('collapse', ['$transition', function ($transition, $timeout) {
     return {
       link: function (scope, element, attrs) {
-        console.log(element);
         var initialAnimSkip = true;
         var currentTransition;
 
         function doTransition(change) {
-          console.log('doing transition');
           var newTransition = $transition(element, change);
           if (currentTransition) {
               currentTransition.cancel();
@@ -110,7 +108,6 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
           return newTransition;
 
           function newTransitionDone() {
-            console.log("in newTransitionDone")
             // Make sure it's this transition, otherwise, leave it alone.
             if (currentTransition === newTransition) {
               currentTransition = undefined;
@@ -130,7 +127,6 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
         }
 
         function expandDone() {
-          console.log('expand done');
           element.removeClass('collapsing');
           element.addClass('collapse in');
           element.css({height: 'auto'});
@@ -138,7 +134,6 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
 
         function collapse() {
           if (initialAnimSkip) {
-            console.log('collapsing');
             initialAnimSkip = false;
             collapseDone();
             element.css({height: 0});
@@ -155,7 +150,6 @@ angular.module('ui.bootstrap.collapse', ['ui.bootstrap.transition'])
         }
 
         function collapseDone() {
-          console.log('collapse done');
           element.removeClass('collapsing');
           element.addClass('collapse');
         }
