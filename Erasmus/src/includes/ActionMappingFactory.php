@@ -63,6 +63,7 @@ class ActionMappingFactory {
 				"getAllQuestions"=>new ActionMapping("getAllQuestions", "", ""),
 				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
+				"setMasterHazardsForAllChecklists"=>new ActionMapping("setMasterHazardsForAllChecklists", "", ""),
 
 				// Hazards Hub
 				"getAllHazards"=>new ActionMapping("getAllHazards", "", ""),
