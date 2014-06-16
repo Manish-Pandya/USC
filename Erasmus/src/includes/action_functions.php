@@ -250,7 +250,6 @@ function saveChecklist($checklist = null){
 
 		$dao->save($decodedObject);
 
-
 		return $decodedObject;
 	}
 };
