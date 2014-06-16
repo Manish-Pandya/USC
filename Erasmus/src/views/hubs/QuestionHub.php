@@ -43,8 +43,12 @@ require_once '../top_view.php';
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 	<span ng-hide="!question">
-	<h2 style="margin-top:30px;" class="bold">Deficiencies:<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addQuestion, 'btn-danger': addQuestion}" ng-click="addQuestion = !addQuestion"><i ng-class="{'icon-plus': !addQuestion, 'icon-cancel': addQuestion}"></i></a></h2>
-	<form class="form" ng-if="!question.Deficiencies.length || addQuestion"  style="margin-top:10px;">
+	<h2 style="margin-top:30px;" class="bold">Deficiencies
+		<a ng-show="question.Deficiencies.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addDef, 'btn-danger': addDef}" ng-click="addDef = !addDef">
+			<i ng-class="{'icon-plus': !addDef, 'icon-cancel': addDef}"></i>
+		</a>
+	</h2>
+	<form class="form" ng-if="!question.Deficiencies.length || addDef"  style="margin-top:10px;">
 	    <div class="control-group">
 		    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
 		    <div class="controls">
@@ -52,13 +56,13 @@ require_once '../top_view.php';
 		      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
 		 	</div>
 		 </div>
-		 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	<span ng-hide="!question">
 	<hr>
 	<ul class="deficiencyList questionList">
-		<li ng-repeat="def in question.Deficiencies">
+		<li ng-repeat="def in question.Deficiencies" ng-class="{inactive: !def.Is_active}">
 			<span ng-show="!def.edit">
 				<h3><span class="bold">{{def.Text}}</span>
 					<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(def,question)" ng-if="def.Is_active"><i class="icon-remove"></i></a>
@@ -76,15 +80,19 @@ require_once '../top_view.php';
 				      <textarea rows="5" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
 				 	</div>
 				 </div>
-				 <a class="btn btn-large btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
-				 <a class="btn btn-large btn-danger addDeficiency" ng-click="cancelEdit(def)"><i class="icon-cancel"></i>Cancel</a>
+				 <a class="btn  btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
+				 <a class="btn  btn-danger addDeficiency" ng-click="cancelEdit(def)"><i class="icon-cancel"></i>Cancel</a>
 				 <img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
 				</form>
 			</span>
      	</li>
 	</ul>
 
-	<h2 style="margin-top:50px;" class="bold">Recommendations<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec"><i ng-class="{'icon-plus': !addRec, 'icon-cancel': addRec}"></i></a></h2>
+	<h2 style="margin-top:50px;" class="bold">Recommendations
+		<a ng-show="question.Recommendations.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec">
+			<i ng-class="{'icon-plus': !addRec, 'icon-cancel': addRec}"></i>
+		</a>
+	</h2>
 	<hr>
 	<form class="form" style="margin-top:10px;" ng-if="addRec || !question.Recommendations.length">
 	    <div class="control-group">
@@ -93,12 +101,12 @@ require_once '../top_view.php';
 		      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
 		    </div>
 		 </div>
-		 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	
-	<ul class="recommendationList listWithChecks sortable" id="sortable">
-		<li ng-repeat="rec in question.Recommendations">
+	<ul class="questionList sortable" id="sortable">
+		<li ng-repeat="rec in question.Recommendations" ng-class="{inactive: !rec.Is_active}">
 			<span ng-show="rec.edit">
 				<form class="form" style="margin-top:10px;">
 				    <div class="control-group">
@@ -107,8 +115,8 @@ require_once '../top_view.php';
 					      <textarea rows="5" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
 					    </div>
 					 </div>
-					 <a class="btn btn-large btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save</a>
-					 <a class="btn btn-large btn-danger" ng-click="cancelEdit(rec)"><i class="icon-cancel"></i>Cancel</a>
+					 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save</a>
+					 <a class="btn  btn-danger" ng-click="cancelEdit(rec)"><i class="icon-cancel"></i>Cancel</a>
 					 <img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
 				</form>
 			</span>	
@@ -125,31 +133,35 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 
-	<h2 style="margin-top:50px;" class="bold">Notes<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs"><i ng-class="{'icon-plus': !addObvs, 'icon-cancel': addObvs}"></i></a></h2>
+	<h2 style="margin-top:50px;" class="bold">Notes
+		<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs" ng-show="question.Observations.length">
+			<i ng-class="{'icon-plus': !addObvs, 'icon-cancel': addObvs}"></i>
+		</a>
+	</h2>
 	
 	<form class="form" style="margin-top:10px;" ng-if="addObvs || !question.Observations.length">
 	    <div class="control-group">
-		    <label class="control-label" for="email">Add a Observation for this Question:</label>
+		    <label class="control-label" for="email">Add a Note or Comment for this Question:</label>
 		    <div class="controls">
 		      <textarea rows="5" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
 		    </div>
 		 </div>
-		 <a class="btn btn-large btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
+		 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 
 	
-	<ul class="obsommendationList listWithChecks sortable" id="sortable">
-		<li ng-repeat="obs in question.Observations">
+	<ul class="questionList sortable" id="sortable">
+		<li ng-repeat="obs in question.Observations" ng-class="{inactive: !obs.Is_active}">
 			<span ng-show="obs.edit">
 				<form class="form" style="margin-top:10px;">
 				    <div class="control-group">
-					    <label class="control-label" for="email">Add a Note for this Question:</label>
+					    <label class="control-label" for="observation">Add a Note or Comment for this Question:</label>
 					    <div class="controls">
 					      <textarea rows="5" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
 					    </div>
 					 </div>
-					 <a class="btn btn-large btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save</a>
-					 <a class="btn btn-large btn-danger" ng-click="cancelEdit(obs)"><i class="icon-cancel"></i>Cancel</a>
+					 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save</a>
+					 <a class="btn  btn-danger" ng-click="cancelEdit(obs)"><i class="icon-cancel"></i>Cancel</a>
 					 <img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 				</form>
 			</span>	
@@ -190,8 +202,8 @@ require_once '../top_view.php';
 		 </div>
 	</div>
 	 <div class="modal-footer">
-    <a href="#" class="btn btn-danger btn-large" data-dismiss="modal">Close</a>
-    <a href="#" id="confirmNewQuestionText" class="btn btn-primary btn-large" data-dismiss="modal">Set Question Text</a>
+    <a href="#" class="btn btn-danger " data-dismiss="modal">Close</a>
+    <a href="#" id="confirmNewQuestionText" class="btn btn-primary " data-dismiss="modal">Set Question Text</a>
   </div>
   </form>
 </div>

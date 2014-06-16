@@ -105,6 +105,7 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 
 	function onAddDef(def, question){
 		$scope.question.newDeficiency = {};
+		$scope.addDef = false;
 		$scope.savingDeficiency = false;
 		if(!question.Deficiencies)question.Deficiencies = [];
 		question.Deficiencies.push(def);
@@ -208,7 +209,6 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 
 	function onUpdateRec(rec, question){
 		$scope.addRec = false;
-		console.log(rec);
 		console.log($scope.question.Recommendations);
 		var idx = convenienceMethods.arrayContainsObject($scope.question.Recommendations, rec, null, true);
 		console.log(idx);
