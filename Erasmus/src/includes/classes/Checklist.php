@@ -72,7 +72,7 @@ class Checklist extends GenericCrud {
 
 	public function getHazard(){
 		if($this->hazard == null) {
-			$hazardDAO = new GenericDAO("Hazard");
+			$hazardDAO = new GenericDAO(new Hazard());
 			$this->hazard = $hazardDAO->getById($this->hazard_id);
 		}
 		return $this->hazard;
