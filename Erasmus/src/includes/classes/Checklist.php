@@ -16,6 +16,7 @@ class Checklist extends GenericCrud {
 		//hazards is a relationship
 		"hazard_id"	=>	"integer",
 		//questions is a relationship
+		"master_hazard" => "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -39,6 +40,10 @@ class Checklist extends GenericCrud {
 	/** The Hazard entity to which this Checklist applies */
 	private $hazard;
 	private $hazard_id;
+	
+	/** The name of the master hazard category assigned to this checklist's hazard, e.g. Chemical, Biological Radiological */
+	private $master_hazard;
+	
 	
 	/** Array of Question entities that comprise this Checklist */
 	private $questions;
@@ -81,6 +86,9 @@ class Checklist extends GenericCrud {
 
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+
+	public function getMaster_hazard(){ return $this->$master_hazard; }
+	public function setMaster_hazard($master_hazard){ $this->master_hazard = $master_hazard; }
 
 	public function getQuestions(){
 		$thisDAO = new GenericDAO($this);

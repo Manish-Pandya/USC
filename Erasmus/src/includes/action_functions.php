@@ -216,7 +216,34 @@ function saveChecklist(){
 	}
 	else{
 		$dao = getDao(new Checklist());
+
+		// Find the name of the master hazard
+		if ($decodedObject->getHazard_id() != null) {
+			// Get the hazard for this checklist
+			$hazard = $decodedObject->getHazard();
+			// Get the array of parent hazards
+			$hazard->setParent_ids(null);
+			$parentIds = $hazard->getParentIds();
+
+			$master_hazard = null;
+			
+			// If there are at least 2 hazards, get the second to last one (this is the master category)
+			if (!empty($parentIds)){
+				$count = count($parentIds);
+				if ($count >= 2){
+					$masterHazardId = $parentIds[$count - 2];
+					$hazardDao = getDao ($hazard);
+					$masterHazard = $hazardDao->getById($masterHazardId);
+					$master_hazard = $masterHazard->getName();
+				}
+			}
+			
+			$decodedObject->setMaster_hazard($master_hazard);
+		}
+		
 		$dao->save($decodedObject);
+		
+		
 		return $decodedObject;
 	}
 };
