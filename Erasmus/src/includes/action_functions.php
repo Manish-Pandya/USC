@@ -242,6 +242,10 @@ function saveChecklist($checklist = null){
 					$hazardDao = getDao ($hazard);
 					$masterHazard = $hazardDao->getById($masterHazardId);
 					$master_hazard = $masterHazard->getName();
+				}else{
+					//if we don't have a parent hazard, other than Root, we set the master hazard to be the hazard
+					//i.e. Biological Hazards' checklist should have Biological Hazards as its master hazard
+					$master_hazard = $hazard->getName();
 				}
 			}
 
@@ -262,26 +266,7 @@ function setMasterHazardsForAllChecklists(){
 	foreach($checklists as $checklist){
 		//if this checklist has a hazard_id, call the saveChecklist function, which will find and set the master hazard and save the checklist
 		if ($checklist->getHazard_id() != null) {
-		// Get the hazard for this checklist
-			$hazard = $checklist->getHazard();
-			// Get the array of parent hazards
-			$hazard->setParentIds(null);
-			$parentIds = $hazard->getParentIds();
-
-			$master_hazard = null;
-
-			// If there are at least 2 hazards, get the second to last one (this is the master category)
-			if (!empty($parentIds)){
-				$count = count($parentIds);
-				if ($count >= 2){
-					$masterHazardId = $parentIds[$count - 2];
-					$hazardDao = getDao ($hazard);
-					$masterHazard = $hazardDao->getById($masterHazardId);
-					$master_hazard = $masterHazard->getName();
-				}
-			}
-
-			$checklist->setMaster_hazard($master_hazard);
+			saveChecklist($checklist);
 		}
 
 		$dao->save($checklist);
