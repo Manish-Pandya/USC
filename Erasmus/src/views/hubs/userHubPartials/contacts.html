@@ -24,22 +24,21 @@
 			</th>
 			<th>
 				<a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedPi" placeholder="Filter by PI"/>
+				<input class="span2" ng-model="selectedPi.Supervisor.User.Name" placeholder="Filter by PI"/>
 			</th>
 			<th>
 				<a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedDepartment" placeholder="Filter by Department"/>
+				<input class="span2" ng-model="selectedDepartment.Primary_department.Name" placeholder="Filter by Department"/>
 			</th>
-			<th>Lab Phone</th>
+			<!--<th>Lab Phone</th>-->
 			<th>Email</th>
 			<th>Emergency Phone</th>
-			<!--<th>Roles</th>-->
 		</tr>
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: { Primary_department.Name: selectedDepartment } | filter: { Supervisor.User.Name: selectedPi } " ng-if="contact.Is_active != showInactive">
-			<td style="width:12%;">
+		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: selectedDepartment | filter: selectedPi" ng-if="contact.Is_active != showInactive">
+			<td style="width:18%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="addUser(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0">Activate</a>
@@ -53,19 +52,19 @@
 			<td style="width:14%;" once-text="contact.First_name">
 				<!--{{contact.First_name}}-->
 			</td>
-
-			<td style="width:14%;" once-text="contact.Supervisor.User.Name">
+			<td style="width:14%;" >
+				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.Key_id" once-text="contact.Supervisor.User.Name"></a>
 				<!--{{contact.Supervisor.User.Name}}-->
 			</td>
 
 			<td style="width:16%;" once-text="contact.Primary_department.Name">
 				<!--{{contact.Primary_department.Name}}-->
 			</td>
-
+			<!--
 			<td style="width:12%;" once-text="contact.Lab_phone">
-				<!--{{contact.Lab_phone}}-->
+			
 			</td>
-
+			-->
 			<td style="width:12%;" once-text="contact.Email">
 				<!--{{contact.Email}}-->
 			</td>
@@ -121,7 +120,7 @@
 		            <input type="text" id="inputEmail" ng-model="userCopy.Email" ng-if="!isProductionServer || userCopy.Username" placeholder="Email">
 		         </div>
 			    </div>
-
+			    <!--
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Lab Phone</label>
 		         <div class="controls">
@@ -130,7 +129,7 @@
 
 		         </div>
 			    </div>
-
+			    -->
 			    <div class="control-group">
 		         <label class="control-label" for="inputEmail">Emergency Phone</label>
 		         <div class="controls">

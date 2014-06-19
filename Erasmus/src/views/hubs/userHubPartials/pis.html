@@ -39,7 +39,7 @@
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="addPi(pi)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="!pi.Is_active">Activate</a>
-				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="pi.IsDirty"/>
+				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position:absolute;" ng-show="pi.IsDirty"/>
 			</td>
 
 			<td style="width:9%;" once-text="pi.User.Last_name">
