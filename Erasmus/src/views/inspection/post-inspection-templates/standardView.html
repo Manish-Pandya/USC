@@ -85,8 +85,11 @@
 	</th>
 	<th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th>
 
-	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY</td></tr>	
-	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<!-- init filter to hide all questions with responses other than 'no'-->
+	<input type="hidden" ng-model="filterForNo.Responses.Answer" ng-init="filterForNo.Responses.Answer = 'no'"/>
+
+	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td></tr>
+	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions | filter: filterForNo" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
@@ -109,10 +112,10 @@
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">
 	<tr><th align="center"># ITEMS INSPECTED</th><th align="center"># COMPLIANT ITEMS</th><th align="center"># DEFICIENCY ITEMS</th><th align="center">COMPLIANCE SCORE</th></tr>
 	<tr style="background: #c5d8f1;">
-		<td style="text-align:center" valign="top" align="center">{{score.itemsInspected}}</td>
-		<td style="text-align:center" valign="top" align="center">{{score.compliantItems}}</td>
-		<td  style="text-align:center" valign="top" align="center">{{score.deficiencyItems}}</td>
-		<td  style="text-align:center" valign="top" align="center">{{score.score}}%</td>
+		<td style="text-align:center" valign="top" align="center">{{inspection.score.itemsInspected}}</td>
+		<td style="text-align:center" valign="top" align="center">{{inspection.score.compliantItems}}</td>
+		<td  style="text-align:center" valign="top" align="center">{{inspection.score.deficiencyItems}}</td>
+		<td  style="text-align:center" valign="top" align="center">{{inspection.score.score}}%</td>
 	</tr>
 </table>
 <h3 style="text-align:center; font-weight:bold; font-size:13px;">Compliance scores can be used to assess overall safety and compliance progress and can be used as a performance improvement metric.<br>Scores are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.</h3>
