@@ -1,4 +1,4 @@
-///////////to do:figure out how to defer promise for pis and then close modal
+///////////to do: develop a local factory to share data between views
 
 var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule','once'])
 
@@ -33,7 +33,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 //called on page load, gets initial user data to list users
 var MainUserListController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window) {
  //console.log($modal);
-
+  $scope.showInactive = false;
   $scope.users = [];
   $scope.order='Last_name';
   
