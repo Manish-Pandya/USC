@@ -185,7 +185,9 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	      if(!props) {var props = ["Key_id","Key_id"];}
 	      for (localI=0;localI<array.length;localI++) {
 	      	if (array[localI][props[0]] === obj[props[1]]) {
-				return localI;
+	      		console.log(array[localI][props[0]]+' | '+obj[props[1]]);
+				if(returnIdx)return localI;
+				return true;
 			}
 	      }
 	      return false;
