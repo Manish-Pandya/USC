@@ -1,9 +1,13 @@
-	<pre>{{bioHazards.Responses|json}}</pre>
+	<div class="alert alert-error" ng-if="error" style="margin-top:10px;">
+		<h2>{{error}}</h2>
+	</div>
+
 	<div class="loading" ng-show='!doneLoading' >
 	  <img class="" src="../../img/loading.gif"/>
 	  Getting Inspection Information...
 	</div>
-	<span  ng-show='doneLoading'>
+
+	<span ng-if='doneLoading && !error'>
 	<div class="inspectionHeader row-fluid">
 		<div class="span4">
 			<img src='../../img/usclogo.jpg' class="usclogo"/>
@@ -18,10 +22,10 @@
 	<div class="inspectionInfo">
 		<div class="row">
 		<span class="span6">
-			<h3>Principal Investigator:</h3> <p>{{Inspection.PrincipalInvestigator.User.Name}}</p>
+			<h3>Principal Investigator:</h3> <p>{{inspection.PrincipalInvestigator.User.Name}}</p>
 		</span>
 		<span class="span3 pull-right">
-			<h3>Inspection Date:</h3> <p>{{Inspection.inspDate}}</p>
+			<h3>Inspection Date:</h3> <p>{{inspection.viewDate_started}}</p>
 		</span>
 		</div>
 
@@ -38,7 +42,7 @@
 
 		<div class="row">
 			<span class="span6">
-				<h3>Laboratory Building:</h3><p>{{Inspection.Rooms[0].Building.Name}}</p>
+				<h3>Laboratory Building:</h3><p>{{inspection.Rooms[0].Building.Name}}</p>
 			</span>
 			<span class="span3 pull-right">
 				<h3>Lab Safety Contact:</h3>
@@ -49,7 +53,7 @@
 						</span>
 					</span>
 					<span ng-if="!Inspection.PrincipalInvestigator.LabPersonnel.length">
-						{{Inspection.PrincipalInvestigator.User.Name}}
+						{{inspection.PrincipalInvestigator.User.Name}}
 					</span>
 				</p>
 			</span>
@@ -70,31 +74,36 @@
 		</div>
 	</div>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable">
-<th style="width:10%">AUDIT CRITERIA</th><th style="width:10%">DEFICIENCY DESCRIPTION</th><th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th><th style="width:14%">CORRECTIVE ACTION STATUS<br><a ng-show="User.Roles[0] == 'Administrator'" class="btn btn-mini btn-info" ng-click="showMenu = !showMenu"><i class="icon-thumbs-up"></i>Accept All</a>
-<div ng-show="showMenu" class="correctiveAction">
-	
-</div>
+	<th style="width:10%">AUDIT CRITERIA</th>
+	<th colspan="2" style="width:34%;">
+		<div class="row-fluid">
+			<span class="span6">DEFICIENCY DESCRIPTION</span>
+			<span class="span6">CORRECTIVE ACTION STATUS<br><a ng-show="User.Roles[0] == 'Administrator'" class="btn btn-mini btn-info" ng-click="showMenu = !showMenu"><i class="icon-thumbs-up"></i>Accept All</a>
+			<div ng-show="showMenu" class="correctiveAction"></div>	
+			</span>
+		</div>
+	</th>
+	<th style="width:20%">COMPLIANCE DESCRIPTION</th><th style="width:6%">COMPLIANCE REFERENCE</th>
 
-</th>
-	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY</td></tr>
-	
-	<tr ng-repeat="def in bioHazards.Responses" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
-	
+	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY</td></tr>	
+	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+
 	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
-	
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'CHEMICAL SAFETY'}" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/radiation-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'GENERAL SAFETY'}" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	
 	<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
-	<tr ng-repeat="response in responses | filter:{ParentHazard:'RADIATION SAFETY'}" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
 	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
 	<tr><td style="font-size:1.5em; text-align:center" valign="top">{{criteria}}</td><td valign="top">{{recommendation}}</td></tr>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
-	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">{{Inspection.PrincipalInvestigator.User.Name}}</td></tr>
+	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">{{inspection.PrincipalInvestigator.User.Name}}</td></tr>
 </table>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">

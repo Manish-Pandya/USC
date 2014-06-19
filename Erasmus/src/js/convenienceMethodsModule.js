@@ -1,5 +1,5 @@
 angular.module('convenienceMethodModule', ['ngRoute'])
-.factory('convenienceMethods', function($http){
+.factory('convenienceMethods', function($http,$q){
 	return{
 		//
 		/**  
@@ -109,25 +109,35 @@ angular.module('convenienceMethodModule', ['ngRoute'])
         /**  
 		* 	Get data from the server via REST like call, call callback method of controller accordingly 
 		*	
-		*   @param (Function onSuccess)  AngularJS controller method to call if our server call returns a good code
-		*	@param (Function onFail)     AngularJS controller method to call if our server call returns a bad code
+		*	@param (Function onFail)     method to call if our server call returns a bad code
 		*   @param (String url)          The URL on the server to which we post
-		*   @param (Object parentObject) An optional parent object.   If this is passed, we are doing an asynch query to load child data for a parent object, for example asychronously loading a hazard's SubHazards
 		*
 		**/
-
         getDataAsPromise: function( url, errorCallback ){
-    	//use jsonp method of the angularjs $http object to request data from service layer
+          	//use jsonp method of the angularjs $http object to request data from service layer
         	var promise = $http.jsonp(url)
 	            .success( function(data) {
 					data.doneLoading = true;
 					return data;
 	            })
 	            .error(function(data, status, headers, config){
-	            	errorCallback(status);
+	            	errorCallback();
 	            });
 	        console.log(promise);
 	        return promise;
+    	},
+    	saveDataAndDefer: function(url, obj){
+            var deferred = $q.defer();
+            var promise = $http.post(url,obj)
+	        .success( function(data) {
+					data.doneLoading = true;
+					deferred.resolve(data);
+		        })
+		        .error(function(data, status){
+		        	deferred.reject(data);
+		        });
+		    console.log(deferred.promise);
+			return deferred.promise;
     	},
     	getDataFromPostRequest: function(url, data, onSuccess, onFail ){
 			//console.log(data);
@@ -253,6 +263,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
     	*
 		**/
 		getDate: function(time){
+
 			Date.prototype.getMonthFormatted = function() {
 			    var month = this.getMonth();
 			    return month < 10 ? '0' + month : month; // ('' + month) for string result
@@ -286,14 +297,15 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		},
 		setMysqlTime: function(date){
 			var date;
-			date = new Date();
-			date = date.getUTCFullYear() + '-' +
-			    ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
-			    ('00' + date.getUTCDate()).slice(-2) + ' ' + 
-			    ('00' + date.getUTCHours()).slice(-2) + ':' + 
-			    ('00' + date.getUTCMinutes()).slice(-2) + ':' + 
-			    ('00' + date.getUTCSeconds()).slice(-2);
 			//console.log(date);
+			date = new Date(Date.parse(date));
+			date = date.getFullYear() + '-' +
+			    ('00' + (date.getMonth()+1)).slice(-2) + '-' +
+			    ('00' + date.getDate()).slice(-2) + ' ' + 
+			    ('00' + date.getHours()).slice(-2) + ':' + 
+			    ('00' + date.getMinutes()).slice(-2) + ':' + 
+			    ('00' + date.getSeconds()).slice(-2);
+			console.log(date);
 			return date;
 		},
 		setIsDirty: function(obj){

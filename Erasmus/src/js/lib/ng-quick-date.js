@@ -178,10 +178,7 @@
             if (compareTimes) {
               return (d1 - d2) === 0;
             } else {
-              console.log(d1);
               d1 = stringToDate(d1);
-              console.log(d1);
-              console.log(d2);
               d2 = stringToDate(d2);
               return d1 && d2 && (d1.getYear() === d2.getYear()) && (d1.getMonth() === d2.getMonth()) && (d1.getDate() === d2.getDate());
             }
@@ -190,6 +187,8 @@
             if (!(d1 && d2)) {
               return false;
             }
+            if(typeof d1 != "object") d1 = stringToDate(d1);
+            if(typeof d2 != "object") d2 = stringToDate(d2);
             return parseInt(d1.getTime() / 60000) === parseInt(d2.getTime() / 60000);
           };
           getDaysInMonth = function(year, month) {
