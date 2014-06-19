@@ -105,22 +105,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     for(i=0;i<checklists.length;i++){
       var checklist = checklists[i];
 
-      if(checklist.Master_hazard.toLowerCase().indexOf('biolog')){
+      if(checklist.Master_hazard.toLowerCase().indexOf('biological') > -1){
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
         checklistHolder.biologicalHazards.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
-      else if(checklist.Master_hazard.toLowerCase().indexOf('chemical')){
+      else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
         checklistHolder.chemicalHazards.push(checklist);
         checklistHolder.chemicalHazards.Questions = checklistHolder.chemicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
-      else if(checklist.Master_hazard.toLowerCase().indexOf('radia')){
+      else if(checklist.Master_hazard.toLowerCase().indexOf('radiation') > -1){
         if(!checklistHolder.radiationHazards.Questions)checklistHolder.radiationHazards.Questions = [];
         checklistHolder.radiationHazards.push(checklist);
         checklistHolder.radiationHazards.Questions = checklistHolder.radiationHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
-      else if(checklist.Master_hazard.toLowerCase().indexOf('gener')){
+      else if(checklist.Master_hazard.toLowerCase().indexOf('general') > -1){
         if(!checklistHolder.generalHazards.Questions)checklistHolder.generalHazards.Questions = [];
         checklistHolder.generalHazards.push(checklist);
         checklistHolder.generalHazards.Questions = checklistHolder.generalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
@@ -147,6 +147,35 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     return obj;
   }
 
+  //calculate the inspection's scores
+  factory.calculateScore = function(inspection){
+    if(!inspection.score)inspection.score = {};
+    inspection.score.itemsInspected = 0;
+    inspection.score.deficiencyItems = 0;
+    inspection.score.compliantItems = 0;
+    angular.forEach(inspection.Checklists, function(checklist, key){
+      angular.forEach(checklist.Questions, function(question, key){
+        inspection.score.itemsInspected++;
+        if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
+          inspection.score.deficiencyItems++;
+        }else /*if(question.Responses && question.Responses.Answer)*/{
+          inspection.score.compliantItems++;
+        }
+      });
+    });
+
+    //javascript does not believe that 0 is a number in spite of my long philosophical debates with it
+    //if either compliantItems or itemsInspected is 0, we cannot calculate because they are undefined according to JS
+    if(inspection.compliantItems && inspection.itemsInspected){
+      //we have both numbers, so we can calculate a score
+      inspection.score.score = Math.round(parseInt(inspection.compliantItems)/parseInt(inspection.itemsInspected) * 100);
+    }else{
+      //since 0 is undefined, we se this property to the String "0"
+      inspection.score.score = '0';
+    }
+    return this.inspection = inspection;
+  }
+
   return factory;
 });
 
@@ -162,55 +191,179 @@ mainController = function($scope, $location, postInspectionFactory,convenienceMe
         inspection = promise.data;
         console.log(inspection);
         postInspectionFactory.setInspection(promise.data);
-        $scope.Inspection = postInspectionFactory.getInspection();
+        $scope.inspection = postInspectionFactory.getInspection();
       });
   }else{
-    $scope.Inspection = postInspectionFactory.getInspection();
+    $scope.inspection = postInspectionFactory.getInspection();
   }
   */
 }
 
 inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory){
-  if(!postInspectionFactory.getInspection()){
-    $scope.doneLoading = false;
-    convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK')
-      .then(function(promise){
-        $scope.inspection = promise.data;
-        $scope.doneLoading = true;
-        // call the manager's setter to store the inspection in the local model
-        postInspectionFactory.setInspection($scope.inspection);
-        $scope.doneLoading = true;
-      });
+  if($location.search().inspection){
+    var id = $location.search().inspection;
+
+    if(!postInspectionFactory.getInspection()){
+
+      $scope.doneLoading = false;
+      convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+        .then(function(promise){
+          $scope.inspection = promise.data;
+
+          //set view init values for email
+          $scope.others = [{email:''}];
+          $scope.defaultNote = "These are your results from the recent inspection of your laboratory.";
+
+          $scope.doneLoading = true;
+          // call the manager's setter to store the inspection in the local model
+          postInspectionFactory.setInspection($scope.inspection);
+          $scope.doneLoading = true;
+        });
+    }else{
+      //set view init values for email
+      $scope.others = [{email:''}];
+      $scope.defaultNote = "These are your results from the recent inspection of your laboratory.";
+      $scope.inspection = postInspectionFactory.getInspection();
+    }
   }else{
-    $scope.Inspection = postInspectionFactory.getInspection();
+    $scope.error = 'No inspection has been specified';
   }
+
+  function onFailGetInspeciton(){
+    $scope.doneLoading = true;
+    $scope.error="The system couldn't find the inspection.  Check your internet connection."
+  }
+
+  $scope.contactList = [];
+
+  $scope.handleContactList = function(obj, $index){
+
+    if(!convenienceMethods.arrayContainsObject($scope.contactList,obj)){
+      $scope.contactList.push(obj);
+    }else{
+      angular.forEach($scope.contactList, function(value, key){
+        if(value.KeyId === obj.KeyId){
+          $scope.contactList.splice(key,1);
+        }
+      });
+    }
+  }
+
+  $scope.handleContactList = function(contact){
+    if(contact.include){
+      $scope.contactList.push(contact.Key_id);
+    }else{
+      $scope.contactList.splice( $scope.contactList.indexOf(contact.Key_id),1);
+    }
+  }
+
+  $scope.sendEmail = function(){
+
+    othersToSendTo = [];
+
+    angular.forEach($scope.others, function(other, key){
+      othersToSendTo.push(other.email);
+    });
+
+    var emailDto ={
+      Class: "EmailDto",
+      Entity_id: $scope.inspection.Key_id,
+      Recipient_ids: $scope.contactList,
+      Other_emails: othersToSendTo,
+      Text: $scope.defaultNote
+    }
+
+    var url = '../../ajaxaction.php?action=sendInspectionEmail';
+    convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
+    $scope.sending = true;
+  }
+
+  function onSendEmail(data){
+    $scope.sending = false;
+    $scope.emailSent = 'success';
+    
+    console.log($rootScope.Inspection);
+    evaluateCloseInspection();
+
+  }
+
+  function onFailSendEmail(){
+    $scope.sending = false;
+    $scope.emailSent = 'error';
+    alert('There was a problem when the system tried to send the email.');
+  }
+
+
+  function evaluateCloseInspection(){
+    var setCompletedDate  = true;
+    $rootScope.Checklists = angular.copy($rootScope.Inspection.Checklists);
+    angular.forEach($rootScope.Checklists, function(checklist, key){
+        angular.forEach(checklist.Questions, function(question, key){
+          if(question.Responses && question.Responses.DeficiencySelections){
+            angular.forEach(question.Responses.DeficiencySelections, function(defSel, key){
+              console.log('here');
+              if(!defSel.Corrected_in_inspection)setCompletedDate = false;
+            });
+          }
+        });
+    });
+    if(setCompletedDate)setInspectionClosed();
+  }
+
+  function setInspectionClosed(){
+    var inspectionDto = angular.copy($rootScope.Inspection);
+    inspectionDto.date_closed = new Date();
+    console.log(inspectionDto);
+    var url = "../../ajaxaction.php?action=saveInspection";
+    convenienceMethods.updateObject( inspectionDto, null, onSetInspectionClosed, onFailSetInspecitonClosed, url);
+  }
+
+  function onSetInspectionClosed(data){
+    console.log('saved')
+    data.Checklists = angular.copy($rootScope.Checklists);
+    $rootScope.Inspection = data;
+    $scope.inspection = data;
+  }
+
+  function onFailSetInspecitonClosed(){
+    alert("There was an issue when the system tried to set the Inpsection's closeout date");
+  }
+
 }
 
 inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory){
   
   function init(){
-    if(!postInspectionFactory.getInspection()){
-      $scope.doneLoading = false;
-      convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK', onFailGetInspeciton)
-        .then(function(promise){
-          //set the inspection date as a javascript date object
-          if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
-          $scope.inspection = promise.data;
-          $scope.doneLoading = true;
-          // call the manager's setter to store the inspection in the local model
-          postInspectionFactory.setInspection($scope.inspection);
-          $scope.doneLoading = true;
-          //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
-          //organized by parent hazard
-          //each group of checklists will have a Questions property containing all questions for each checklist in a given category
-          $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
-        });
+    if($location.search().inspection){
+      var id = $location.search().inspection;
+      if(!postInspectionFactory.getInspection()){
+        $scope.doneLoading = false;
+        convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+          .then(function(promise){
+
+            //set the inspection date as a javascript date object
+            if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
+            $scope.inspection = promise.data;
+            $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
+            $scope.doneLoading = true;
+            // call the manager's setter to store the inspection in the local model
+            postInspectionFactory.setInspection($scope.inspection);
+            $scope.doneLoading = true;
+            //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
+            //organized by parent hazard
+            //each group of checklists will have a Questions property containing all questions for each checklist in a given category
+            $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+          });
+      }else{
+        $scope.inspection = postInspectionFactory.getInspection();
+        $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
+        $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+        $scope.doneLoading = true;
+      }
+      $scope.options = ['Incomplete','Pending','Complete'];
     }else{
-      $scope.Inspection = postInspectionFactory.getInspection();
-      if(!$scope.inspection.length) $scope.error="There was a problem when trying to get the inpseciton.  Check your internet connection."
-      $scope.doneLoading = true;
+      $scope.error = 'No inspection has been specified';
     }
-    $scope.options = ['Incomplete','Pending','Complete'];
   }
   init();
 
