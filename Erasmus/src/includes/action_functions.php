@@ -215,7 +215,7 @@ function saveChecklist($checklist = null){
 	if($checklist == null){
 		$decodedObject = convertInputJson();
 	}else{
-		$decodedObject = $hazard;
+		$decodedObject = $checklist	;
 	}
 
 	if( $decodedObject === NULL ){
@@ -1185,13 +1185,12 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 
 		// Set inspection's keyId and PI.
 		if (!empty($inspectionId)){
-			$inspection = $dao->getById($inspectionId);}
-		else {
-			$inspection->setKey_id($inspectionId);
+			$inspection = $dao->getById($inspectionId);
 		}
 
 		$inspection->setPrincipal_investigator_id($piId);
 
+		if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
 		// Save (or update) the inspection
 		$dao->save($inspection);
 		$pi = $inspection->getPrincipalInvestigator();
