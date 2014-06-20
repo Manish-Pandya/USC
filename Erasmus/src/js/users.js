@@ -52,7 +52,6 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
 
     if(!$scope.selectedRoute)$scope.selectedRoute = $location.path();
     console.log($scope.selectedRoute);
-
   }
 
   function onGetDepartments(data){
@@ -178,6 +177,14 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
 };
 
 var labContactController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route) {
+
+  //look at GET parameters to determine if we should alter the view accordingly
+  //if we have linked to this view from the PI hub to manage a PI's lab personnel, filter the view to only those PI's associated with th
+  if($location.search().piName){
+
+  }
+
+
   //create a modal instance for editing a user or creating a new one.
   //hold the current route in scope so we can be sure we display the right user type
   $scope.currentRoute = '/contacts';
@@ -230,7 +237,6 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
     }else{
       userCopy.Is_active = false;
     }
-    console.log(userCopy);
     convenienceMethods.updateObject( userCopy, user, onSetUserActive, onFailSetUserActive, '../../ajaxaction.php?action=saveUser' );
   }
 
@@ -252,7 +258,21 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
     alert("The user could not be saved");
   }
 
+  $scope.deactiveUser = function(user){
+    $scope.handleUserActive(user);
+    var userCopy = angular.user(user);
+    userCopy.Is_active = false;
+    convenienceMethods.updateObject (userCopy, user, onDeactivateUser, onFailDeactivateUser, '../../ajaxaction.php?action=saveUser' );
+  }
 
+  function onDeactivateUser(userDTO,user){
+    idx = convenienceMethods.arrayContainsObject(user, $scope.PI.LabPersonnel, null, true);
+    $scope.PI.LabPersonnel.splice(idx, 1);
+  }
+
+  function onFailDeactivateUser(){
+    $scope.error = 'There was a problem when the system tried to deactivate the user.  Check your internet connection.'
+  }
 }
 
 

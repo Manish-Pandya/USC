@@ -1,6 +1,6 @@
-var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodModule']);
+var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodModule'])
 
-piHub.config(function($routeProvider){
+.config(function($routeProvider){
 	$routeProvider
 		.when('/rooms', 
 			{
@@ -25,9 +25,27 @@ piHub.config(function($routeProvider){
 				redirectTo: '/rooms'
 			}
 		);
+})
+
+.factory('piHubFactory', function(convenienceMethods,$q){
+	var factory = {};
+	factory.setPI = function(pi){
+		this.pi = pi;
+	}
+	factory.getPI = function(){
+		return this.pi;
+	}
+	factory.setUser = function(user){
+		this.user = user;
+	}
+	factory.getUser = function(){
+		return this.user;
+	}
+
+	return factory;
 });
 
-piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal){
+piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory){
 	$scope.doneLoading = false;
 
 	$scope.setRoute = function(route){
@@ -36,6 +54,8 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
 	init();
 
+	$scope.order='Last_name';
+
 	function init(){
         if($location.search().hasOwnProperty('pi')){
         	 //getPI if there is a "pi" index in the GET
@@ -43,6 +63,8 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         }else{
         	$scope.noPiSet = true;
         }
+
+
 
         if($location.search().hasOwnProperty('inspection')){
         	$scope.inspectionId = $location.search().inspection;
@@ -78,6 +100,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 	function onGetPI(data){
 		console.log(data);
 		$scope.PI = data;
+		piHubFactory.setPI($scope.PI);
 		$scope.doneLoading = data.doneLoading;
 	}
 
@@ -147,6 +170,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 	    });
 
 	}
+
 	$scope.showHazards = function(room){
 		console.log(room);
 		
@@ -171,7 +195,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
   };
 
-var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods) {
+var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods, piHubFactory) {
 	$scope.PI = PI;
 	console.log(adding);
 
@@ -290,7 +314,7 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 
 }
 
-piHubPersonnelController = function($scope, $location, convenienceMethods){
+piHubPersonnelController = function($scope, $location, convenienceMethods, $modal, piHubFactory){
 	init();
 	function init(){
 		var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
@@ -305,6 +329,25 @@ piHubPersonnelController = function($scope, $location, convenienceMethods){
 
 	function onFailGetUsers(){
 		alert("Something went wrong when the system tried to get the list of users.");
+	}
+
+	$scope.editUser = function(i){
+		var modalInstance = $modal.open({
+	      templateUrl: 'personnelModal.html',
+	      controller: personnelModalController,
+	      resolve: {
+	        items: function () {
+	          return i;
+	        }
+	      }
+	    });
+
+		modalInstance.result.then(function (i) {
+		   console.log(piHubFactory.getUser());
+	       $scope.PI.LabPersonnel[i] = angular.copy(piHubFactory.getUser());
+	       piHubFactory.setPI($scope.PI);
+	    });
+
 	}
 
 	$scope.onSelectUser = function(user){
@@ -328,24 +371,72 @@ piHubPersonnelController = function($scope, $location, convenienceMethods){
 		alert('There was a problem trying to save the user.')
 	}
 
-	$scope.removeUser = function(user){
-		user.IsDirty = true;
-		userCopy = angular.copy(user);
-		userCopy.Supervisor_id = null;
+	$scope.deactivateUser = function(user){
 
-		convenienceMethods.updateObject( userCopy, user, onRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
+		piHubFactory.setUser(user);
+		var functionType = 'remove';
+		var modalInstance = $modal.open({
+	      templateUrl: 'confirmationModal.html',
+	      controller: confirmationController,
+	      resolve: {
+	        items: function () {
+	          return functionType;
+	        }
+	      }
+	    });
+
+		modalInstance.result.then(function (user) {
+	       onRemoveUser(user);
+	    });
 
 	}
 
-	function onRemoveUser(data, user){
+	function onRemoveUser(user){
 		user.IsDirty = false;
-		var idx = convenienceMethods.arrayContainsObject($scope.PI.LabPersonnel, data, true);
+		var idx = convenienceMethods.arrayContainsObject($scope.PI.LabPersonnel, user, true);
 	    if(idx>-1)$scope.PI.LabPersonnel.splice(idx,1);
-		
 	}
 
 	function onFailRemoveUser(){
-		alert('There was a problem trying to save the user.')
+		alert('There was a problem trying to save the user.');
+	}
+
+}
+
+confirmationController = function(items, $scope, piHubFactory, $modalInstance, convenienceMethods){
+	$scope.userCopy = piHubFactory.getUser();
+	var functionType = items;
+	if(functionType.toLowerCase() == 'remove'){
+		$scope.message = 'Do you want to inactive  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
+	}else{
+		$scope.message = "Do you want to remove "+$scope.userCopy.Name+" from the PI's lab personnel list?";
+	}
+
+	$scope.confirm = function(){
+		$scope.userCopy.IsDirty = true;
+		//are we deactivating this user?  Set the user's Is_active property to false, if so.
+		if(functionType.toLowerCase() == 'remove')$scope.userCopy.Is_active = false;
+
+		//get rid of the user's PI relationship.
+		userCopy.Supervisor_id = null;
+
+		//save the user
+		convenienceMethods.updateObject( $scope.userCopy, null, onConfirmRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
+	}
+
+	//save call succeeded.  go back to the normal view
+	function onConfirmRemoveUser(user){
+		$scope.userCopy.IsDirty = false;
+		$modalInstance.close(user);
+	}
+
+	function onFailRemoveUser(){
+		$scope.userCopy.IsDirty = false;
+		$scope.error='There was a problem when the system tried to remove the user.  Please check your internet connection and try again.';
+	}
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
 	}
 
 }
@@ -376,8 +467,6 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 	      master_id: $scope.PI.Key_id,
 	      add: true
 	    }
-		
-		
 
 		convenienceMethods.updateObject( piDTO, $item, onAddDepartment, onFailAddDepartment, '../../ajaxaction.php?action=savePIDepartmentRelation',null, $item );
 	}
@@ -416,6 +505,38 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 
 	}
 
+
+  }
+
+  personnelModalController = function($scope, $modalInstance, convenienceMethods, piHubFactory, items){
+  	var pi = piHubFactory.getPI();
+  	$scope.userCopy = angular.copy(pi.LabPersonnel[items]);
+  	piHubFactory.setUser($scope.userCopy);
+  	$scope.userCopy.Supervisor = pi;
+
+	$scope.saveUser = function(){
+		$scope.userCopy.IsDirty = true;
+		//save the user
+		convenienceMethods.updateObject( $scope.userCopy, null, onSaveUser, onFailSaveUser, '../../ajaxaction.php?action=saveUser' );
+	}
+
+	//save call succeeded.  go back to the normal view
+	function onSaveUser(user){
+		$scope.userCopy.IsDirty = false;
+		$scope.userCopy = angular.copy(user);
+		console.log($scope.userCopy);
+		piHubFactory.setUser($scope.userCopy);
+		$modalInstance.close(items);
+	}
+
+	function onFailSaveUser(){
+		$scope.userCopy.IsDirty = false;
+		$scope.error='There was a problem when the system tried to save the user.  Please check your internet connection and try again.';
+	}
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
+	}
 
   }
   
