@@ -1927,3 +1927,28 @@ html>body tbody.scrollContent {
 table{
   font-size:12px;
 }
+
+//*******************************************************************************
+//
+//  PI HUB
+//
+//*******************************************************************************
+
+table.roomList{
+  td{
+    vertical-align: middle;
+  }
+  h2{
+    margin-top: 0;
+  }
+}
+.piHeader{
+  width: 60%;
+  font-size:30px;
+  display:inline-block;
+  padding-top:15px;
+}
+
+#piButtons{
+  width:100%;
+}

@@ -2368,3 +2368,25 @@ html > body tbody.scrollContent {
 table {
   font-size: 12px;
 }
+
+/* line 1938, ../sass/style.scss */
+table.roomList td {
+  vertical-align: middle;
+}
+/* line 1941, ../sass/style.scss */
+table.roomList h2 {
+  margin-top: 0;
+}
+
+/* line 1945, ../sass/style.scss */
+.piHeader {
+  width: 60%;
+  font-size: 30px;
+  display: inline-block;
+  padding-top: 15px;
+}
+
+/* line 1952, ../sass/style.scss */
+#piButtons {
+  width: 100%;
+}
