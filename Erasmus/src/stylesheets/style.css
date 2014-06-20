@@ -9,8 +9,8 @@
 
 /* line 18, ../sass/style.scss */
 .greenBg {
-  background-color: #51a351 !important;
-  border-color: #51a351 !important;
+  background-color: #5bb75b !important;
+  border-color: #5bb75b !important;
   color: white !important;
 }
 
@@ -1480,7 +1480,7 @@ ul.key li.deficiencies span {
 }
 /* line 1238, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
-  color: #51a351;
+  color: #5bb75b;
 }
 /* line 1241, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
