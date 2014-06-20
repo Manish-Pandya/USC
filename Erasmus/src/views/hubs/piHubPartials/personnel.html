@@ -1,10 +1,11 @@
-
+<!--
 <input style="" type="text"  typeahead-on-select='onSelectUser($item)' ng-model="selectedUser" placeholder="Add a lab contact" typeahead="user as user.Name for user in users | filter:$viewValue"><img ng-show="selectedUser.IsDirty" class="smallLoading" src="../../../img/loading.gif"/>
+-->
 
+<a class="pull-right btn btn-large btn-info" href="userhub.php#/contacts">Add Lab Personnel</a>
 <table class="roomList table table-striped table-hover list" id="rooms">
 <thead>
-	<tr><td colspan="8"><h2 class="alert greenBg" style="">PI's Laboratory Personnel</h2></td></tr>
-
+	<tr><td colspan="5" style="padding:3px 0;"><h2 class="alert greenBg" style="">PI's Laboratory Personnel</h2></td></tr>
 		<th>Remove User</th><th>Name</th><th>Username</th><th>Email</th><th>Edit</th>
 	</tr>
 </thead>

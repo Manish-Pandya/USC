@@ -31,17 +31,16 @@ require_once '../top_view.php';
 		</form>
 	</div>
 	<span ng-if="PI && buildings">
-		<div class="btn-group" id="piButtons">
-			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;
-"><i class="icon-pencil"></i>Edit PI</a>
-			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>PI’s Laboratory Rooms</a>
+		<div class="btn-group" id="piButtons" style="">
+			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
+			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Personnel</a>
 			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>
 			<a ng-if="inspectionId" class="btn btn-large btn-danger" href="../../inspection/HazardAssesmentNew.php#?inspection={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
 		<!--	<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success"><i class="icon-phone"></i>Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Haz-->
 		</div>
 	</span>
-	<h1 ng-hide="!PI">Principle Investigator:  {{PI.User.Name}}</h1>
+	<h3 ng-hide="!PI" class="piHeader">Principle Investigator:  {{PI.User.Name}}</h3>
 	<div class="loading" ng-show='!PI' >
 		<span ng-hide="noPiSet">
 		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
