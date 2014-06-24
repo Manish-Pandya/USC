@@ -1,6 +1,8 @@
 <?php
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 	require_once('../Application.php');
+}elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
+	require_once('Application.php');
 }else{
 	require_once('../../Application.php');
 }
