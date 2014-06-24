@@ -33,7 +33,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 		console.log(data);
 		if(!data.Name){
 			$scope.noChecklist = true;
-			$scope.edit = true;
+			$scope.edit = false;
 		}else{
 			$scope.checklist = data;
 			$scope.checklistCopy = angular.copy($scope.checklist);

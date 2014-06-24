@@ -6,7 +6,8 @@ require_once '../top_view.php';
 		<li class="">
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Checklist Hub
-        <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
+        <a style="float:right;margin: 6px 28px 0 30px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
+        <a href="hazardhub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Hazard Hub</a>
       </h2>	
 		</li>
 	</ul>
@@ -18,23 +19,10 @@ require_once '../top_view.php';
   Loading Checklist
 </span>
 
-<form class="form" style="margin-top:10px;">
-      <div class="control-group row">
-       <label class="control-label" for="name"><h3>Choose a different hazard.</h3></label>
-       <div class="controls">
-       <span ng-show="!hazards">
-         <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting Hazards..." disabled="disabled">
-       	<img class="" style="height:23px; margin: -11px 0 0 -37px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-       </span>
-       <span ng-hide="!hazards">
-       	<input style="" class="span4" typeahead-on-select='onSelectHazard($item, $model, $label)' type="text" ng-model="$viewValue" placeholder="Select Hazard" typeahead="hazard as hazard.Name for hazard in hazards | filter:$viewValue">
-       </span>
-      </div>
-      </div>
-    </form>
 	<h1 ng-hide="!checklist" id="currentChecklist">Currently Editing:<br>{{checklist.Name}}<a class="btn btn-mini btn-primary" ng-click="edit = !edit" ng-show="!edit"><i class="icon-pencil"></i></a></h1>
-    <h2 ng-show="noChecklist">No checklist has been created for the hazard {{hazard.Name}} yet.</h2>
-    <form ng-show="edit">
+    <h2 ng-if="noChecklist && !checklist" style="">{{hazard.Name}}<br><a style="margin-top:5px;" ng-click="edit=!edit" class="btn btn-primary">Create Checklist</a></h2>
+   
+   <form ng-show="edit" style="margin-top:5px;">
     	<input ng-model="checklistCopy.Name" class="span6" placeholder="Enter a name for this checklist."/>
     	<a class="btn btn-success btn-mini" ng-click="saveChecklist(checklistCopy, checklist)"><i class="icon-checkmark"></i>Save Checklist</a>
     	<a class="btn btn-danger btn-mini" ng-show="!noChecklist" ng-click="edit = false"><i class="icon-cancel"></i>Cancel</a>
@@ -43,10 +31,19 @@ require_once '../top_view.php';
 
     <hr>
     <span ng-hide="!checklist">
-      <h3>This Checklist's Questions:<a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success hazardBtn" style="margin-left:10px"><i class="icon-plus"></i>Add Question</a></h3>
-      <div id="showHideQuestions" class="btn btn-primary btn-large" style="margin:10px 0">Hide Disabled Questions</div>
+      <h3>This Checklist's Questions:
+        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success hazardBtn" style="margin-left:10px">
+         <i class="icon-plus"></i>Add Question
+        </a>
+        <Input type="hidden" ng-model="showInactive.Is_active" ng-init="showInactive.Is_active = true">
+        <a class="btn" ng-click="showInactive.Is_active = !showInactive.Is_active">
+         <span ng-show="!showInactive.Is_active"><i class="icon-minus-3"></i>Hide Inactive Questions</span>
+         <span ng-hide="!showInactive.Is_active"><i class="icon-plus-3" ></i>Show Inactive Questions</span>
+        </a>
+      </h3>
+      <br>
       <ul class="questionList sortable" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
-     		<li ng-repeat="question in checklist.Questions" ng-class="{inactive: question.Is_active == false}">
+     		<li ng-repeat="question in checklist.Questions | filter: showInactive"  ng-class="{inactive: question.Is_active == false}">
           <h2>
               {{question.Text}}
               <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary btn-mini DeactivateeRow"><i class="icon-pencil"></i></a>
