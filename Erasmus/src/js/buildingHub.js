@@ -2,23 +2,22 @@ var buildingHub = angular.module('buildingHub', ['ui.bootstrap','convenienceMeth
 
 
 //called on page load, gets initial user data to list users
-function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootElement,$location, convenienceMethods, $location) {
+function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootElement,$location, convenienceMethods) {
   $scope.users = [];
   
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
-  //
+  
   function init(){
     $scope.newRoom = false;
     //get a building list
 	  convenienceMethods.getData('../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
   };
 
-  //grab set user list data into the $scrope object
+  //grab set user list data into the $scope object
   function onGetBuildings(data) {
-    console.log(data);
 	  $scope.Buildings = data;
     $scope.building = false;
     if($location.search().building){
@@ -28,22 +27,20 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
           $scope.selectedBuilding = building;
         }
       });
-      
     }
-
   }
+
   function onFailGet(){
     alert('Something went wrong when we tried to build the list of buildings.');
   }
 
-  $scope.onSelectBuilding = function(building, $model, $label){
-    $scope.building = building;
+  $scope.onSelectBuilding = function(buildingDTO, $model, $label){
+    $scope.building = buildingDTO;
+    $location.search({building: buildingDTO.Key_id});
   }
 
   $scope.onSelectRoom = function(room, $model, $label){
     $scope.room = room;
-
-
     var url = '../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
     convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
 
@@ -146,7 +143,6 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
     $scope.buildingCopy = {};
   }
 
-
   $scope.editRoom = function(room){
     room.edit = true;
     $scope.roomCopy = angular.copy(room);
@@ -186,7 +182,8 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
     alert('Something went wrong when the system tried to save the room.')
   }
 
-  var onAddRoom = function( objDTO, building ){
+  var onAddRoom = function( returnedFromServer, building ){
+
     if($scope.roomDTO)room = angular.copy($scope.roomDTO);
     if($scope.roomCopy)room = $scope.roomCopy;
     room.isNew = false;
@@ -197,9 +194,8 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
       $scope.building.Rooms.unshift(room);
       $scope.newRoom = false;
     }else{
-      console.log('else');
       var idx = convenienceMethods.arrayContainsObject($scope.building.Rooms,room, null, true);
-      $scope.building.Rooms[idx] = angular.copy(objDTO);
+      room = angular.copy(returnedFromServer);
       $scope.roomCopy = {};
     }
   }
