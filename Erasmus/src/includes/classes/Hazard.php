@@ -80,6 +80,7 @@ class Hazard extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getSubHazards");
+		$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -116,10 +117,19 @@ class Hazard extends GenericCrud {
 	public function getSubHazards(){
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
+			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),"name",false);
+		}
+		return $this->subHazards;
+	}
+
+	public function getActiveSubHazards(){
+		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
 			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),"name",true);
 		}
 		return $this->subHazards;
 	}
+
 	public function setSubHazards($subHazards){ $this->subHazards = $subHazards; }
 
 	public function getChecklist(){

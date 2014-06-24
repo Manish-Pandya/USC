@@ -380,6 +380,7 @@ function getAllHazardsAsTree() {
 	// Define which subentities to load
 	$entityMaps = array();
 	$entityMaps[] = new EntityMap("eager","getSubhazards");
+	$entityMaps[] = new EntityMap("lazy","getActiveSubhazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
 	$entityMaps[] = new EntityMap("lazy","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -397,6 +398,7 @@ function getAllHazards(){
 
 	$entityMaps = array();
 	$entityMaps[] = new EntityMap("lazy","getSubHazards");
+	$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
 	$entityMaps[] = new EntityMap("lazy","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -419,6 +421,7 @@ function getHazardTreeNode( $id = NULL){
 	// prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
 	$hazMaps = array();
 	$hazMaps[] = new EntityMap("lazy","getSubHazards");
+	$hazMaps[] = new EntityMap("lazy","getActiveSubHazards");
 	$hazMaps[] = new EntityMap("eager","getChecklist");
 	$hazMaps[] = new EntityMap("lazy","getRooms");
 	$hazMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -1359,7 +1362,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 }
 
 function filterHazards (&$hazard, $rooms){
-	foreach ($hazard->getSubhazards() as $subhazard){
+	foreach ($hazard->getActiveSubhazards() as $subhazard){
 		$subhazard->setInspectionRooms($rooms);
 		$subhazard->filterRooms();
 		filterHazards($subhazard, $rooms);
@@ -1411,7 +1414,7 @@ function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = nul
 	//Build nodes for sub-hazards
 	$subHazardNodeDtos = array();
 	$LOG->trace("Getting mappings for sub-hazards");
-	foreach( $hazard->getSubHazards() as $subHazard ){
+	foreach( $hazard->getActiveSubHazards() as $subHazard ){
 
 		$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
 		$subHazardNodeDtos[$node->getKey_Id()] = $node;
@@ -1453,6 +1456,7 @@ function getHazardsInRoom( $roomId = NULL, $subHazards ){
 		if ($subHazards == "false"){
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("lazy","getSubHazards");
+			$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
 			$entityMaps[] = new EntityMap("lazy","getChecklist");
 			$entityMaps[] = new EntityMap("lazy","getRooms");
 			$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
