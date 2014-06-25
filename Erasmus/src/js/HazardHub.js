@@ -1,4 +1,10 @@
-var hazardHub = angular.module('hazardHub', ['convenienceMethodModule','infinite-scroll']);
+var hazardHub = angular.module('hazardHub', ['convenienceMethodModule','infinite-scroll','once']);
+
+hazardHub.filter('makeUppercase', function () {
+  return function (item) {
+    return item.toUpperCase();
+  };
+});
 
 hazardHub.directive('yaTree', function () {
 
@@ -18,10 +24,9 @@ hazardHub.directive('yaTree', function () {
             branchExpr = repeatExpr[4];
 
             return function link(scope, element, attrs) {
-
+                console.log(scope);
                 var rootElement = element[0].parentNode,
                     cache = [];
-
 
                 // Reverse lookup object to avoid re-rendering elements
                 function lookup(child) {
@@ -33,13 +38,13 @@ hazardHub.directive('yaTree', function () {
                     }
                 }
 
-                scope.$watch(rootExpr, function (root) {
-                                       var currentCache = [];
+                scope.$watch("SubHazards", function (root) {
+                    var currentCache = [];
                     // Recurse the data structure
                     (function walk(SubHazards, parentNode, parentScope, depth) {
                         //console.log(children);
                         var i = 0,
-                            n = SubHazards.length,
+                            n = SubHazards.length - 1,
                             last = n - 1,
                             cursor,
                             child,
@@ -56,9 +61,8 @@ hazardHub.directive('yaTree', function () {
                             cursor = parentNode.childNodes[i];
 
                             child = SubHazards[i];
-
                             //console.log(child);
-
+                            scope.getShowHazard(child);
                             // See if this child has been previously rendered
                             // using a reverse lookup by object reference
                             cached = lookup(child);
@@ -148,7 +152,7 @@ hazardHub.directive('yaTree', function () {
         }
     };
 });
-
+/*
 
 hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
 
@@ -198,7 +202,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
         }
     };
 }]);  
-
+*/
 hazardHub.directive('buttongroup', function () {
      return {
         restrict: 'A',
@@ -212,7 +216,7 @@ hazardHub.directive('buttongroup', function () {
            };
           },
           function (newValue, oldValue) {
-           if (newValue.w < 900 && newValue.w !== 0) {
+           if (newValue.w < 1000 && newValue.w !== 0) {
                 element.addClass('small');
            }else{
                 element.removeClass('small');
@@ -240,9 +244,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
     //grab set user list data into the $scrope object
     function onGetHazards (data) {
-        console.log(data.SubHazards);
+        delete data.doneLoading;
         $scope.SubHazards = data;
-        $scope.doneLoading = true;
+        $scope.doneLoading = true; 
     }
 
     function onFailGet(){
@@ -259,7 +263,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
             child.loadingChildren = true;
             if(adding)convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK', onGetSubhazards, onFailGetSubhazards, child, adding);
             if(!adding)convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK', onGetSubhazards, onFailGetSubhazards, child);
-
         }
     };
 
@@ -348,7 +351,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         hazard.firstIndex = start;
         hazard.SubHazards = [];
         for(start; start<=limit; start++){
-            console.log(start);
             hazard.SubHazardsHolder[start].displayIndex = start;
             hazard.SubHazards.push(hazard.SubHazardsHolder[start]);
         }
@@ -576,6 +578,39 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         //set a flag property to indicate that we have tried to move this hazard.  This will call our watch expression to fire and reset the DOM tree of subhazards
         hazard.update = hazardDTO.update;
         alert('Something went wrong moving '+hazard.Name);
+    }
+
+    //by default, this is true.  This means that we will display hazards with a TRUE Is_active property
+    //returns boolean to determine if a hazard should be shown or hidden based on user input and the hazard's Is_active property
+    $scope.getShowHazard = function(hazard){
+        hazard.show = false;
+        //return true for all hazards if $scope.SubHazards.activeMatch is null or undefined
+        if(!$scope.SubHazards[$scope.SubHazards.length-1].activeMatch) hazard.show = true;
+        //if we have a $scope.activeMatch, return true for the hazards that have a matchin Is_active property.
+        //i.e. display only hazards with a FALSE for Is_active if $scope.SubHazards.activeMatch is false 
+        //The server will give us 0 or 1 boolean for these values.  0 and 1 are not actual boolean values in JS, so we must to a two step check here.
+        if(hazard.Is_active == 0 || hazard.Is_active == false && $scope.SubHazards[$scope.SubHazards.length-1].activeMatch === false){
+            hazard.show = true;
+            return
+        }
+        if(hazard.Is_active == 1 || hazard.Is_active == true && $scope.SubHazards[$scope.SubHazards.length-1].activeMatch === true){
+            hazard.show = true;
+            return;
+        }
+        console.log(hazard);
+       
+    }
+
+    $scope.hazardFilter = function(hazard){
+      console.log(hazard);
+      if($scope.hazardFilterSetting.Is_active == 'both'){
+        return true;  
+      }else if($scope.hazardFilterSetting.Is_active == 'active'){
+        if(hazard.Is_active == true)return true;
+      }else if($scope.hazardFilterSetting.Is_active == 'inactive'){
+        if(hazard.Is_active == false)return true;
+      }
+      return false;
     }
 
 });  
