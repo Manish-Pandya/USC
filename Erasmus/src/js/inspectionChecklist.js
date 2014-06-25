@@ -1,5 +1,11 @@
 var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule','once']);
 
+inspectionChecklist.run(function($rootScope, $templateCache) {
+   $rootScope.$on('$viewContentLoaded', function() {
+      $templateCache.removeAll();
+   });
+});
+
 //called on page load, gets initial user data to list users
 function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window) {
   init();
@@ -427,13 +433,15 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     calculateClickPosition(event,deficiency,element);
     deficiency.showRoomsModal = !deficiency.showRoomsModal;
   }
+
   //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
   function calculateClickPosition(event, deficiency, element){
+    console.log(deficiency);
     var x = event.clientX;
     var y = event.clientY+$window.scrollY;
 
     deficiency.calculatedOffset = {};
-    deficiency.calculatedOffset.x = x+-80;
+    deficiency.calculatedOffset.x = x-110;
     deficiency.calculatedOffset.y = y-185;
   } 
 

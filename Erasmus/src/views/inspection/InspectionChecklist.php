@@ -86,7 +86,7 @@ require_once '../top_view.php';
 											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
 									</span>
 
-									<div class="roomsModal popUp" ng-show="deficiency.rooms" ng-if="deficiency.showRoomsModal" style="width:200px;left:{{deficiency.calculatedOffset.x}}px;top:{{deficiency.calculatedOffset.y}}px;">
+									<div class="roomsModal popUp" ng-show="deficiency.rooms" ng-if="deficiency.showRoomsModal" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;">
 										<ul>
 											<li ng-repeat="room in deficiency.rooms">
 												<label class="checkbox inline">
