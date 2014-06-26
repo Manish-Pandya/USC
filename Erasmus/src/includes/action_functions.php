@@ -2058,4 +2058,21 @@ function makeFancyNames(){
 	return getAllUsers();
 }
 
+function createOrderIndicesForHazards(){
+	$hazards = getAllHazards();
+	foreach($hazards as $hazard){
+		$subs = $hazard->getSubHazards();
+		if($subs != null){
+			$i = 1;
+			foreach($subs as $sub){
+				$sub->setOrder_index($i);
+				$dao = getDao( new Hazard() );
+				$dao->save( $sub );
+				$i++;
+			}
+		}
+	}
+	return $hazards;
+}
+
 ?>

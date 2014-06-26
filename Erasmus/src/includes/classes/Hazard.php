@@ -18,6 +18,7 @@ class Hazard extends GenericCrud {
 		"parent_hazard_id" => "integer",
 		//checklist is a relationship
 		//rooms are relationships
+		"order_index" => "integer",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -72,6 +73,9 @@ class Hazard extends GenericCrud {
 
 	/** Array of the parent ids of this hazard */
 	private $parentIds;
+
+	/** Hazards will be ordered by order_index in hazard hub **/
+	private $order_index;
 
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -198,6 +202,16 @@ class Hazard extends GenericCrud {
 			return true;
 		}
 		return false;
+	}
+
+	public function getOrder_index()
+	{
+	    return $this->order_index;
+	}
+
+	public function setOrder_index($order_index)
+	{
+	    $this->$order_index = $order_index;
 	}
 }
 

@@ -72,6 +72,7 @@ class ActionMappingFactory {
 				"getHazardById"=>new ActionMapping("getHazardById", "", ""),
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
+				"createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", ""),
 
 				// Question Hub
 				"getQuestionById"=>new ActionMapping("getQuestionById", "", ""),
