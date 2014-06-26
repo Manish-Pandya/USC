@@ -39,7 +39,6 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   function setInspection(PIKeyID,inspectorIds,inspectionId){
     console.log('setting inpsection' + inspectionId);
     if(!inspectionId) inspectionId = '';
-    console.log(inspectorIds);
     $scope.PI = false;
     var url = '../../ajaxaction.php?action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
     convenienceMethods.updateObject( PIKeyID, inspectorIds, onSetInspection, onFailSetInspection, url );

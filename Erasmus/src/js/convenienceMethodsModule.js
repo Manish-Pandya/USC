@@ -51,6 +51,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		**/
 		updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
 		  //console.log(objDTO);
+		  console.log(url);
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
