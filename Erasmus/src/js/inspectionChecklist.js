@@ -241,24 +241,26 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
       if(obj.Class == "Observation"){
          var url = '../../ajaxaction.php?action=saveObservationRelation';
-      }
-
-      if(obj.Class == "Recommendation"){
+      }else if(obj.Class == "Recommendation"){
         var url = '../../ajaxaction.php?action=saveRecommendationRelation';
       }
 
       convenienceMethods.updateObject( relationshipDTO, obj, onSaveRelationship, onFailSaveRelationship, url,'', relationshipDTO);
   }
 
-  $scope.createNewNoteOrRec = function(question, response, persist, type){    
+
+
+  $scope.createNewNoteOrRec = function(question, response, persist, type){  
+    question.savingNew = true;
     if(question.noteText != null && type == 'observation'){
-      
+
       obsDto = {
-        Text:  question.noteText
+        Text:  question.noteText,
+        Is_active: true
       }
       if(!persist){
         obsDto.Class = "SupplementalObservation";
-        obsDto.Response_id = Question.ResponsesKey_id;
+        obsDto.Response_id = question.Responses.Key_id;
         var url = '../../ajaxaction.php?action=saveSupplementalObservation';
       }else{
         obsDto.Class = "Observation";
@@ -276,13 +278,14 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       }
       if(!persist){
          obsDto.Class = "SupplementalRecommendation";
-         obsDto.Response_id = Question.ResponsesKey_id;
+         obsDto.Response_id = question.Responses.Key_id;
          var url = '../../ajaxaction.php?action=saveSupplementalRecommendation';
       }else{
         obsDto.Class = "Recommendation";
         obsDto.Question_id = question.Key_id;
         var url = '../../ajaxaction.php?action=saveRecommendation';
       }
+      console.log(url);
       convenienceMethods.updateObject( obsDto, question, onSaveRec, onFailSaveRec, url);
     }
   }
@@ -299,10 +302,15 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onSaveObs(obsDto,question){
+    question.savingNew = false;
     obsDto.checked = true;
-    question.Observations.push(obsDto);
-    //make second api call to create relationship between new observation or recommendation and response, but only if the obs or rec is not supplemental
-    if(obsDto.Class.indexOf("Supplemental") > -1)$scope.handleNotesAndRecommendations(question,obsDto);
+    obsDto.isNew = true;
+    if(obsDto.Class.indexOf("Supplemental") == -1){
+      question.Observations.push(obsDto);
+      $scope.handleNotesAndRecommendations(question,obsDto);
+    }else{
+      question.Responses.SupplementalObservations.push(obsDto);
+    }
   }
 
   function onFailSaveObs(){
@@ -310,16 +318,23 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onSaveRec(obsDto,question){
+    question.savingNew = true;
     obsDto.checked = true;
-    question.Recommendations.push(obsDto);
-    $scope.handleNotesAndRecommendations(question,obsDto);
+    obsDto.isNew = true;
+    if(obsDto.Class.indexOf("Supplemental") == -1){
+      question.Recommendations.push(obsDto);
+      $scope.handleNotesAndRecommendations(question,obsDto);
+    }else{
+      question.Responses.SupplementalRecommendations.push(obsDto);
+    }
+
   }
 
   function onFailSaveRec(){
     alert("There was a problem saving the new recommendation");
   }
 
-  $scope.selectRoom = function(response, deficiency, room){
+  $scope.selectRoom = function(response, deficiency, room, checklist){
     room.IsDirty = true;
     $scope.deficiencySelected(response, deficiency);
   }
@@ -446,7 +461,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   } 
 
   function onSaveDefSelect(returnedDeficiencySelection, question, checklist, deficiency){
-
+    console.log(checklist);
     //push the def selections deficiency_id into the inspections array of deficiency Key_ids
     $scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
 
@@ -508,8 +523,79 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         if(question[type][idx])question[type][idx].checked = true;
       }
     }
-
     return array;
+  }
+
+  $scope.editItem = function(question, item){
+    //is this an observation or recommendation?
+    if(item.Class.indexOf("Rec") > -1){
+      //disable all other edits
+      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inpsections?
+      if(item.Class.indexOf("Sup") > -1){
+        angular.forEach(question.Responses.SupplementalRecommendations, function(rec, key){
+          rec.edit = false;
+        });
+      }else{
+        angular.forEach(question.Recommendations, function(rec, key){
+          rec.edit = false;
+        });
+      }
+      //this is a recommendation, so we make a recommendation copy for editing
+      $scope.recommendationCopy = angular.copy(item);
+    }else{
+      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inpsections?
+      //disable all other edits
+      if(item.Class.indexOf("Sup") > -1){
+
+        angular.forEach(question.Responses.SupplementalObservations, function(rec, key){
+          rec.edit = false;
+        });
+      }else{
+        angular.forEach(question.Observations, function(rec, key){
+          rec.edit = false;
+        });
+      }
+
+      //this is an observation so we make an observation copy for editing
+      $scope.noteCopy = angular.copy(item);
+    }
+
+    //set the view states so that we display form elements for editing
+    item.edit = true;
+    question.edit = true;
+    question.editedItem = item;
+  }
+
+  $scope.saveEdit = function(question, copy, item){
+    console.log(question);
+    item.IsDirty = true;
+    var url = '../../ajaxaction.php?action=save'+item.Class;
+    convenienceMethods.updateObject( copy, item, onSaveEdit, onFailSaveEdit, url, item, question);
+  }
+
+  function onSaveEdit(returned, old, question){
+    question.edit=false;
+    old.Text = returned.Text;
+    old.Is_active = returned.Is_active;
+    old.edit = false;
+    old.IsDirty = false;
+
+  }
+
+  function onFailSaveEdit(item){
+    item.IsDirty = false;
+    if(item.Class.toLowerCase().indexOf('sup')>-1)item.Is_active = !item.Is_active
+    alert('The edit could not be saved.  Please check your internet connection and try again.')
+  }
+
+  $scope.cancelEdit = function(item){
+    item.edit = false;
+  }
+
+  $scope.setNoteOrObsActiveOrInactive = function(question, item){
+    item.IsDirty = true;
+    copy = angular.copy(item);
+    $scope.saveEdit(question, copy, item)
   }
 
 };
