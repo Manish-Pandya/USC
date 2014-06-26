@@ -90,7 +90,7 @@ require_once '../top_view.php';
 										<ul>
 											<li ng-repeat="room in deficiency.rooms">
 												<label class="checkbox inline">
-													<input type="checkbox" ng-change="selectRoom(question.Responses, deficiency, room	)" ng-model="room.checked"/>
+													<input type="checkbox" ng-change="selectRoom(question, deficiency, room, checklist)" ng-model="room.checked"/>
 													<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="" src="../../img/loading.gif"/></span>
 												</label>
 											</li>
@@ -113,17 +113,34 @@ require_once '../top_view.php';
 							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;">
 								<h3>Recommendations:</h3>
 								<li ng-repeat="recommendation in question.Recommendations" style="margin-bottom:3px;">
-									<label class="checkbox inline">
+									<label class="checkbox inline" ng-show="!recommendation.edit">
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-change="handleNotesAndRecommendations(question, recommendation)" />
-										<span class="metro-checkbox">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span ng-show="recommendation.persist" class="label label-success" style="margin-left:3px;">New Option</span><span style="margin-left:3px;" ng-hide="recommendation.persist || !recommendation.isNew" class="label label-info">Lab Specific</span></span>
+										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.isNew}">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-show="recommendation.isNew" ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
+									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
+										<textarea ng-show="!recommendation.edit" ng-model="recommendationCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="recommendation.edit" ng-click="saveEdit(question, recommendationCopy, recommendation)" class="btn btn-success">Save</a>
+										<a ng-show="recommendation.edit" ng-click="cancelEdit(recommendation)" class="btn btn-danger">Cancel</a>
+									</span>
 								</li>
+								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
+									<label class="checkbox inline" ng-show="!recommendation.edit" >
+										<input type="checkbox" value="true" ng-model="recommendation.Is_active" ng-change="setNoteOrObsActiveOrInactive(question, recommendation)" />
+										<span class="metro-checkbox labSpecific" ng-class="{edit:recommendation.edit}">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+									</label>
+									<span ng-show="recommendation.edit" style="margin: 20px 0 ;display: block;">
+										<textarea ng-model="recommendationCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="recommendation.edit" ng-click="saveEdit(question, recommendationCopy, recommendation)" class="btn btn-success">Save</a>
+										<a ng-show="recommendation.edit" ng-click="cancelEdit(recommendation)" class="btn btn-danger">Cancel</a><img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+									</span>
+								</li><!--editItem = function(item, question)-->
 								<li>
 									 <form>
 									 	<input type="hidden" value="recommendation" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
 							        	<textarea ng-model="question.recommendationText" rows="6" style="width:100%;"></textarea>
-								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="createNewNoteOrRec(question,question.Responses,false,'recommendation')"/>
-								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'recommendation')"/>
+								        <input  class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="createNewNoteOrRec(question,question.Responses,false,'recommendation')"/>
+								        <input  class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'recommendation')"/>
+								    	<img ng-show="question.savingNew" class="smallLoading" src="../../img/loading.gif"/>
 								    </form>
 								</li>
 							</ul>
@@ -134,9 +151,25 @@ require_once '../top_view.php';
 								<h3>Notes:</h3>
 								<li ng-repeat="note in question.Observations" style="margin-bottom:3px;">
 									<label class="checkbox inline">
-										<input type="checkbox" value="true" ng-model="note.checked" ng-change="handleNotesAndRecommendations(question, note)"/>
-										<span class="metro-checkbox">{{note.Text}}<img ng-show="note.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span style="margin-left:3px;" ng-show="note.persist" class="label label-success">New Option</span><span style="margin-left:3px;" ng-hide="note.persist  || !note.isNew" class="label label-info">Lab Specific</span></span>
+										<input type="checkbox" value="true" ng-show="!note.edit" ng-model="note.checked" ng-change="handleNotesAndRecommendations(question, note)"/>
+										<span class="metro-checkbox" ng-class="{newRecOrObs:note.isNew}">{{note.Text}}<img ng-show="note.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span style="margin-left:3px;" ng-show="note.isNew" class="label label-success">New Option</span>--><a ng-show="note.isNew" ng-click="editItem (question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
+									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
+										<textarea ng-show="note.edit" ng-model="noteCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="note.edit" ng-click="saveEdit(question, noteCopy, note)" class="btn btn-success">Save</a>
+										<a ng-show="note.edit"  ng-click="cancelEdit(note)" class="btn btn-danger">Cancel</a>
+									</span>
+								</li>
+								<li ng-repeat="note in question.Responses.SupplementalObservations" style="margin-bottom:3px;">
+									<label class="checkbox inline" ng-show="!note.edit">
+										<input type="checkbox" value="true" ng-model="note.Is_active" ng-change="setNoteOrObsActiveOrInactive(question, note)"/>
+										<span class="metro-checkbox labSpecific">{{note.Text}}<img ng-show="note.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="editItem (question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+									</label>
+									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
+										<textarea  ng-model="noteCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="note.edit" ng-click="saveEdit(question, noteCopy, note)" class="btn btn-success">Save</a>
+										<a ng-show="note.edit" ng-click="cancelEdit(note)" class="btn btn-danger">Cancel</a><img ng-show="note.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+									</span>
 								</li>
 								<li>		
 									<form>
@@ -144,6 +177,7 @@ require_once '../top_view.php';
 							        	<textarea ng-model="question.noteText" rows="6" style="width:100%;"></textarea>
 								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="createNewNoteOrRec(question,question.Responses,false,'observation')"/>
 								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Note Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'observation')"/>
+								        <img ng-show="questionquestion.savingNew" class="smallLoading" src="../../img/loading.gif"/>
 								    </form>					
 								</li>
 							</ul>
