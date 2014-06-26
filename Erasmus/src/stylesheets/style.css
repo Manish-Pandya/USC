@@ -2390,3 +2390,18 @@ table.roomList h2 {
 #piButtons {
   width: 100%;
 }
+
+/* line 1956, ../sass/style.scss */
+.edit {
+  font-weight: bold !important;
+}
+
+/* line 1960, ../sass/style.scss */
+.labSpecific {
+  color: #49afcd !important;
+}
+
+/* line 1964, ../sass/style.scss */
+.newRecOrObs {
+  color: #5bb75b !important;
+}
