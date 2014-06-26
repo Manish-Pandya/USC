@@ -6,10 +6,10 @@
  * @author Mitch Martin, GraySail LLC
  */
 class Response extends GenericCrud {
-	
+
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "response";
-	
+
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"question_text"	=> "text",
@@ -20,7 +20,7 @@ class Response extends GenericCrud {
 		//question is a relationship
 		//deficiencySelections are a relationship
 		//recommendations are a relationship
-				
+
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
@@ -28,7 +28,7 @@ class Response extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer"
 	);
-	
+
 	/** Relationships */
 	public static $DEFICIENCIES_RELATIONSHIP = array(
 			"className"	=>	"DeficiencySelection",
@@ -36,14 +36,14 @@ class Response extends GenericCrud {
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"response_id"
 	);
-	
+
 	public static $RECOMMENDATIONS_RELATIONSHIP = array(
 			"className"	=>	"Recommendation",
 			"tableName"	=>	"response_recommendation",
 			"keyName"	=>	"recommendation_id",
 			"foreignKeyName"	=>	"response_id"
 	);
-	
+
 	public static $OBSERVATIONS_RELATIONSHIP = array(
 			"className"	=>	"Observation",
 			"tableName"	=>	"response_observation",
@@ -57,25 +57,25 @@ class Response extends GenericCrud {
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"response_id"
 	);
-	
+
 	public static $SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP = array(
 			"className"	=>	"SupplementalObservation",
 			"tableName"	=>	"supplemental_observation",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"response_id"
 	);
-	
+
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
 	}
-	
+
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
-	
+
 	public function __construct(){
-		
+
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getQuestion");
@@ -86,73 +86,73 @@ class Response extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getSupplementalRecommendations");
 		$entityMaps[] = new EntityMap("eager","getSupplementalObservations");
 		$this->setEntityMaps($entityMaps);
-		
+
 	}
-	
+
 	/** Reference to Question entity to which this Response applies */
 	private $question;
 	private $question_id;
-	
+
 	/** Reference to the Inspection entity's KeyId to which this Response belongs */
 	private $inspection;
 	private $inspection_id;
-	
+
 	/** Answer selected by inspector for the associated Question */
 	private $answer;
-	
+
 	/** Text of the question asked */
 	private $question_text;
-	
+
 	/** Array of DeficiencySelection entities describing this Question's deficiencies */
 	private $deficiencySelections;
-	
+
 	/** Array of Recommendation entities selected as part of the associated Question */
 	private $recommendations;
-	
+
 	/** Array of Recommendation entities selected as part of the associated Question */
 	private $observations;
-	
+
 	private $supplementalObservations;
-	
+
 	private $supplementalRecommendations;
-	
-	
-	
-	public function getQuestion(){ 
+
+
+
+	public function getQuestion(){
 		if($this->question == null) {
 			$questionDAO = new GenericDAO("Question");
 			$this->question = $questionDAO->getById($this->question_id);
 		}
-		return $this->question; 
+		return $this->question;
 	}
 	public function setQuestion($question){
-		$this->question = $question; 
+		$this->question = $question;
 	}
-	
+
 	public function getQuestion_id(){ return $this->question_id; }
 	public function setQuestion_id($question_id){ $this->question_id = $question_id; }
-	
+
 	public function getInspection(){
 		if($this->inspection == null) {
 			$inspectionDAO = new GenericDAO("Inspection");
 			$this->inspection = $inspectionDAO->getById($this->inspection_id);
 		}
-		return $this->inspection; 
+		return $this->inspection;
 	}
 	public function setInspection($inspection){
 		$this->inspection = $inspection;
 	}
-	
+
 	public function getInspection_id(){ return $this->inspection_id; }
 	public function setInspection_id($inspection_id){ $this->inspection_id = $inspection_id; }
-	
+
 	public function getAnswer(){ return $this->answer; }
 	public function setAnswer($answer){ $this->answer = $answer; }
-	
+
 	public function getQuestion_text(){ return $this->question_text; }
 	public function setQuestion_text($question_text){ $this->question_text = $question_text; }
-		
-	public function getDeficiencySelections(){ 
+
+	public function getDeficiencySelections(){
 		if($this->deficiencySelections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->deficiencySelections = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
@@ -160,8 +160,8 @@ class Response extends GenericCrud {
 		return $this->deficiencySelections;
 	}
 	public function setDeficiencySelections($deficiencySelections){ $this->deficiencySelections = $deficiencySelections; }
-	
-	public function getRecommendations(){ 
+
+	public function getRecommendations(){
 		if($this->recommendations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->recommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RECOMMENDATIONS_RELATIONSHIP));
@@ -169,8 +169,8 @@ class Response extends GenericCrud {
 		return $this->recommendations;
 	}
 	public function setRecommendations($recommendations){ $this->recommendations = $recommendations; }
-	
-	public function getObservations(){ 
+
+	public function getObservations(){
 		if($this->observations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->observations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$OBSERVATIONS_RELATIONSHIP));
@@ -179,18 +179,18 @@ class Response extends GenericCrud {
 	}
 
 	public function setObservations($observations){ $this->observations = $observations; }
-	
-	public function getSupplementalRecommendations(){ 
+
+	public function getSupplementalRecommendations(){
 			$thisDAO = new GenericDAO($this);
 			$this->supplementalRecommendations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SUPPLEMENTAL_RECOMMENDATIONS_RELATIONSHIP));
-		return $this->supplementalRecommendations;
+			return $this->supplementalRecommendations;
 	}
 	public function setSupplementalRecommendations($supplementalRecommendations){ $this->supplementalRecommendations = $supplementalRecommendations; }
-	
-	public function getSupplementalObservations(){ 
+
+	public function getSupplementalObservations(){
 		$thisDAO = new GenericDAO($this);
 		$this->supplementalObservations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
-		return $this->observations;
+		return $this->supplementalObservations;
 	}
 	public function setSupplementalObservations($supplementalObservations){ $this->supplementalObservations = $supplementalObservations; }
 }
