@@ -2065,6 +2065,7 @@ function createOrderIndicesForHazards(){
 		if($subs != null){
 			$i = 1;
 			foreach($subs as $sub){
+				$sub->setOrder_index(null);
 				$sub->setOrder_index($i);
 				$dao = getDao( new Hazard() );
 				$dao->save( $sub );
@@ -2075,4 +2076,38 @@ function createOrderIndicesForHazards(){
 	return $hazards;
 }
 
+//reorder hazards
+function reorderHazards(){
+
+	$hazardId = getValueFromRequest('hazardId', $hazardId);
+	$beforeHazardId = getValueFromRequest('beforeHazardId', $beforeHazardId);
+	$afterHazarId = getValueFromRequest('afterHazarId', $afterHazarId);
+
+	if( $hazardId !== NULL && $beforeHazardId !== NULL && $afterHazarId !== NULL){
+		$dao = getDao(new Hazard());
+		$hazard = $dao->getById($hazardId);
+		$beforeHazard = $dao->getById($beforeHazardId);
+		$afterHazard = $dao->getById($afterHazarId);
+		//set the hazard's order index to a random float between the order indices of the other two hazards
+		$hazard->setOrder_index(random_float ($beforeHazard->getOrder_index(),$afterHazard->getOrder_index()));
+		$dao->save($hazard);
+
+		return $hazard;
+		//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view
+		$parentDao = getDao(new Hazard());
+		$parent = $parentDao->getById($hazard->getParent_hazard_id());
+		return $parent->getSubHazards();
+	}
+	else{
+		//error
+		if($hazardId == null)return new ActionError("No request parameter 'hazardId' was provided");
+		if($beforeHazardId == null)return new ActionError("No request parameter 'beforeHazardId' was provided");
+		if($afterHazardId == null)return new ActionError("No request parameter 'afterHazardId' was provided");
+	}
+
+}
+//generate a random float
+function random_float ($min,$max) {
+	return ($min+lcg_value()*(abs($max-$min)));
+}
 ?>
