@@ -2405,3 +2405,37 @@ table.roomList h2 {
 .newRecOrObs {
   color: #5bb75b !important;
 }
+
+/* line 1968, ../sass/style.scss */
+.center-element {
+  float: none;
+  margin: 0  auto;
+}
+
+/* line 1973, ../sass/style.scss */
+.center-text {
+  text-align: center;
+}
+
+/* line 1976, ../sass/style.scss */
+.absoluteBtns {
+  position: absolute;
+  left: 101%;
+  margin-top: -32px;
+  width: 225px;
+}
+
+/* line 1982, ../sass/style.scss */
+.editTable td {
+  position: relative;
+}
+
+/* line 1985, ../sass/style.scss */
+.bottomMargin {
+  margin-bottom: 35px;
+}
+
+/* line 1988, ../sass/style.scss */
+a.btn i.icon-right{
+  margin: 3px 0 0 10px !important;
+}

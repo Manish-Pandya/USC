@@ -1964,3 +1964,27 @@ table.roomList{
 .newRecOrObs{
   color: $green !Important;
 }
+
+.center-element{
+  float:none;
+  margin: 0  auto;
+}
+
+.center-text{
+  text-align:center;
+}
+.absoluteBtns{
+  position: absolute;
+  left: 101%;
+  margin-top: -32px;
+  width:225px;
+}
+.editTable td{
+  position:relative;
+}
+.bottomMargin{
+  margin-bottom: 35px;
+}
+.icon-right{
+  margin: 3px 0 0 10px !important;
+}

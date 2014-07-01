@@ -127,6 +127,19 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	        console.log(promise);
 	        return promise;
     	},
+        getDataAsDefferedPromise: function( url ){
+        	var deferred = $q.defer();
+          	//use jsonp method of the angularjs $http object to request data from service layer
+        	var promise = $http.jsonp(url)
+	            .success( function(data) {
+					deferred.resolve(data);
+	            })
+	            .error(function(data, status, headers, config){
+	            	console.log(headers());
+		        	deferred.reject(data);
+	            });
+	        return deferred.promise;
+    	},
     	saveDataAndDefer: function(url, obj){
             var deferred = $q.defer();
             var promise = $http.post(url,obj)
@@ -266,6 +279,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
     	*
 		**/
 		getDate: function(time){
+			console.log(time);
 
 			Date.prototype.getMonthFormatted = function() {
 			    var month = this.getMonth();
