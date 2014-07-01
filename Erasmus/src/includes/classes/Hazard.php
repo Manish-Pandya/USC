@@ -189,7 +189,11 @@ class Hazard extends GenericCrud {
 		// Get the db connection
 		global $db;
 		
-		$roomIds = implode (',',$this->inspectionRooms);
+		
+		foreach($this->inspectionRooms as $room){
+			$rooms[] = $room->getKey_id();
+		}
+		$roomIds = implode (',',$rooms);
 		$queryString = "SELECT count(*) FROM hazard_room WHERE hazard_id = ' . $this->key_id . ' AND room_id IN (' . $roomIds . ')";
 		$LOG->debug("query: " . $queryString);
 		$stmt = $db->prepare($queryString);
