@@ -379,8 +379,8 @@ function getAllHazardsAsTree() {
 
 	// Define which subentities to load
 	$entityMaps = array();
-	$entityMaps[] = new EntityMap("eager","getSubhazards");
-	$entityMaps[] = new EntityMap("lazy","getActiveSubhazards");
+	$entityMaps[] = new EntityMap("lazy","getSubhazards");
+	$entityMaps[] = new EntityMap("eager","getActiveSubhazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
 	$entityMaps[] = new EntityMap("lazy","getRooms");
 	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -1124,6 +1124,27 @@ function getDepartmentById( $id = NULL ){
 	}
 }
 
+function saveDepartment($department = null){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	if($department == null){
+		$decodedObject = convertInputJson();
+	}else{
+		$decodedObject = $department;
+	}
+
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Hazard');
+	}
+	else if( $decodedObject instanceof ActionError ){
+		return $decodedObject;
+	}
+	else{
+		$dao = getDao(new Department());
+		$dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 function getAllBuildings( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
@@ -1367,7 +1388,8 @@ function filterHazards (&$hazard, $rooms){
 		$subhazard->filterRooms();
 		filterHazards($subhazard, $rooms);
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getSubhazards");
+		$entityMaps[] = new EntityMap("lazy","getSubhazards");
+		$entityMaps[] = new EntityMap("eager","getActiveSubhazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
@@ -2092,11 +2114,8 @@ function reorderHazards(){
 		$hazard->setOrder_index(random_float ($beforeHazard->getOrder_index(),$afterHazard->getOrder_index()));
 		$dao->save($hazard);
 
-		return $hazard;
 		//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view
-		$parentDao = getDao(new Hazard());
-		$parent = $parentDao->getById($hazard->getParent_hazard_id());
-		return $parent->getSubHazards();
+		return getHazardTreeNode($hazard->getParent_hazard_id());
 	}
 	else{
 		//error
