@@ -1,14 +1,15 @@
-<h2>Who should the system notify?</h2>
-<div class="loading" ng-show='!doneLoading' >
+<h2>Please select personnel to receive the lab safety inspection report:</h2>
+<div class="loading" ng-show='!inspection' >
   <img class="" src="../../img/loading.gif"/>
  Building List
 </div>
+<span ng-if='inspection'>
 
 <form class="form" style="margin-top:35px;">
   <div class="control-group">
       <div class="controls">
         <label class="checkbox">
-           <input type="checkbox" ng-model="inspection.PrincipalInvestigator.User.include" ng-change="handleContactList(inspection.PrincipalInvestigator.User)"><span class="metro-checkbox">{{Inspection.PrincipalInvestigator.User.Name}}</span>
+           <input type="checkbox" ng-model="inspection.PrincipalInvestigator.User.include" ng-init="inspection.PrincipalInvestigator.User.include = true" ng-change="handleContactList(inspection.PrincipalInvestigator.User)"><span class="metro-checkbox">{{inspection.PrincipalInvestigator.User.Name}}</span>
         </label>
         </label>
       </div>
@@ -28,11 +29,12 @@
       <div class="controls" ng-repeat="other in others">
         <label class="control-label" for="inputEmail" style="float: left; margin: 4px 10px 0 0;">Other Recipient</label>
          <div class="controls">
-            <input type="text" id="inputEmail" ng-model="other.email" placeholder="Other Recipient">
+            <input type="text" id="inputEmail" ng-model="other.email" placeholder="Email">
          </div>
       </div>
   </div>
-  <textarea ng-model="defaultNote" style="width:800px;" rows="15"></textarea><br>
+
+  <textarea ng-model="defaultNote.Text" style="width:800px;" rows="10" html-text></textarea><br>
 
   <a ng-click="sendEmail()" class="btn btn-large btn-success" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>
   <img style="margin-top: 18px;" ng-show="sending" class="smallLoading" src="../../img/loading.gif"/>
@@ -43,5 +45,6 @@
 
 
 </form>
+
 
 </span>
