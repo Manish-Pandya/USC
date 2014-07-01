@@ -171,7 +171,7 @@ class Hazard extends GenericCrud {
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for hazard: " . $this->getName() . ", key_id " . $this->getKey_id());
 		$this->isPresent = false;
-		foreach ( $this->inspectionRooms as $room){
+/*		foreach ( $this->inspectionRooms as $room){
 			$LOG->debug("Checking inspection room with key_id " . $room->getKey_id());
 			foreach ($this->getRooms() as $hazroom){
 				$LOG->debug("Hazard is found in room " . $hazroom->getKey_id() . " ...");
@@ -185,6 +185,19 @@ class Hazard extends GenericCrud {
 				}
 			}
 		}
+*/
+		// Get the db connection
+		global $db;
+		
+		$roomIds = implode (',',$this->inspectionRooms);
+		$queryString = "SELECT count(*) FROM hazard_room WHERE room_id IN (' . $roomIds . ')";
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		if ($result->fetchColumn() > 0){
+			$this->isPresent = true;
+		}
+		
+	
 	}
 
 	private function findParents($hazard,&$parentIds) {
