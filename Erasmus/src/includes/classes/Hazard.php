@@ -193,7 +193,8 @@ class Hazard extends GenericCrud {
 		$queryString = "SELECT count(*) FROM hazard_room WHERE room_id IN (' . $roomIds . ')";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
-		if ($result->fetchColumn() > 0){
+		$count = $stmt->fetchColumn();
+		if ($count > 0){
 			$this->isPresent = true;
 		}
 		
