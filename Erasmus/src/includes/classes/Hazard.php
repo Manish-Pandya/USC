@@ -190,10 +190,12 @@ class Hazard extends GenericCrud {
 		global $db;
 		
 		$roomIds = implode (',',$this->inspectionRooms);
-		$queryString = "SELECT count(*) FROM hazard_room WHERE room_id IN (' . $roomIds . ')";
+		$queryString = "SELECT count(*) FROM hazard_room WHERE hazard_id = ' . $this->key_id . ' AND room_id IN (' . $roomIds . ')";
+		$LOG->debug("query: " . $queryString);
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$count = $stmt->fetchColumn();
+		$LOG->debug("returned count: " . $count);
 		if ($count > 0){
 			$this->isPresent = true;
 		}
