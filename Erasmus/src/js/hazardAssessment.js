@@ -195,7 +195,7 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   function onGetHazards (data) {
     console.log(data);
     if(!data.InspectionRooms)data.InspectionRooms = [];
-    $scope.hazards = data.SubHazards;
+    $scope.hazards = data.ActiveSubHazards;
   //  console.log(data);
     angular.forEach($scope.hazards, function(hazard, key){
      // console.log(hazard);
@@ -258,8 +258,8 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
           hazard.showRooms = false;
         }
       });
-      if(hazard.SubHazards.length){
-        angular.forEach(hazard.SubHazards, function(child, key){
+      if(hazard.ActiveSubHazards.length){
+        angular.forEach(hazard.ActiveSubHazards, function(child, key){
           getShowRooms(child);
         });
       }
@@ -298,9 +298,9 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
           }
         }
 
-        if(hazard.SubHazards.length){
+        if(hazard.ActiveSubHazards.length){
           var releventRooms = hazard.InspectionRooms;
-          angular.forEach(hazard.SubHazards, function(child, key){
+          angular.forEach(hazard.ActiveSubHazards, function(child, key){
               angular.forEach(child.InspectionRooms, function(room, key){
               room.IsAllowed = true;
             });
@@ -318,9 +318,9 @@ controllers.hazardAssessmentController = function ($scope, $timeout, $location, 
   //recursively step through a hazard and its children
   $scope.walkhazard = function(hazard){
 
-    if(hazard.SubHazards.length  && hazard.IsPresent){
+    if(hazard.ActiveSubHazards.length  && hazard.IsPresent){
 
-      var children = hazard.SubHazards;
+      var children = hazard.ActiveSubHazards;
 
       angular.forEach(children, function(child, key){
         

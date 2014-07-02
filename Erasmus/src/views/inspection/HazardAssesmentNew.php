@@ -24,7 +24,7 @@ require_once '../top_view.php';
 				<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
 				<span class="metro-checkbox targetHaz"><span once-text="child.Name"></span></span>
 			</label>
-			<span ng-show="child.SubHazards.length">
+			<span ng-show="child.ActiveSubHazards.length">
 				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 			</span>
 			<span ng-show="child.IsPresent">
@@ -34,7 +34,7 @@ require_once '../top_view.php';
 			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;"> 
 				<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 				<ul>
-					<li ng-repeat="(key, child) in child.SubHazards">
+					<li ng-repeat="(key, child) in child.ActiveSubHazards">
 						<label class="checkbox inline">
 							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
 							<span class="metro-checkbox">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
@@ -70,7 +70,7 @@ require_once '../top_view.php';
 		</ul>
 
 		<ul>
-			<li ng-repeat="child in child.SubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
+			<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
 		</ul>
     </script>
 
@@ -177,7 +177,7 @@ require_once '../top_view.php';
 								</span>
 							</a>
 						</li>
-						<li ng-repeat="(key, child) in hazard.SubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
+						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
 							<h4 class="hazardLi">
 								<label class="checkbox inline">
 									<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
@@ -185,7 +185,7 @@ require_once '../top_view.php';
 									<!--<pre>{{child | json}}</pre>-->
 									</span>
 								</label>
-								<span ng-show="child.SubHazards.length && child.IsPresent">
+								<span ng-show="child.ActiveSubHazards.length && child.IsPresent">
 									<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 								</span>
 								<span ng-show="child.IsPresent">
@@ -195,7 +195,7 @@ require_once '../top_view.php';
 								<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
 									<h3 class="orangeBg"><span once-text="child.Name"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 									<ul>
-										<li ng-repeat="(key, child) in child.SubHazards">
+										<li ng-repeat="(key, child) in child.ActiveSubHazards">
 											<label class="checkbox inline">
 												<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
 												<span class="metro-checkbox"><span once-text="child.Name"></span></span>
@@ -223,7 +223,7 @@ require_once '../top_view.php';
 								<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}" once-text="room.Name"></li>
 							</ul>
 							<ul>
-								<li ng-repeat="child in child.SubHazards" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
+								<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
 									<span data-ng-include="'sub-hazard.html'"></span>				
 								</li>
 							</ul>
