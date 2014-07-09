@@ -111,10 +111,21 @@ class Hazard extends GenericCrud {
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
+		//$LOG->debug($roomDao);
+
 		foreach ($inspectionRooms as $rm){
-			$this->inspectionRooms[] = $roomDao->getById($rm->getKey_id());
+			//if the hazard has been received from an API call, each of its inpsection rooms will be an array instead of an object, because PHP\
+			//If so, we set the key id by index instead of calling the getter
+			if(!is_object($rm)){
+				$key_id = $rm['Key_id'];
+			}else{
+				$key_id = $rm->getKey_id();
+			}
+			$this->inspectionRooms[] = $roomDao->getById($key_id);
 		}
 	}
 
@@ -156,6 +167,7 @@ class Hazard extends GenericCrud {
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 
 	public function getIsPresent() {return $this->isPresent;}
+	public function setIsPresent($isPresent) {$this->isPresent = $isPresent;}
 
 	public function getParentIds() {return $this->parentIds;}
 
@@ -188,23 +200,23 @@ class Hazard extends GenericCrud {
 */
 		// Get the db connection
 		global $db;
-		
-		
+
+
 		foreach($this->inspectionRooms as $room){
 			$rooms[] = $room->getKey_id();
 		}
 		$roomIds = implode (',',$rooms);
-		$queryString = "SELECT count(*) FROM hazard_room WHERE hazard_id = ' . $this->key_id . ' AND room_id IN (' . $roomIds . ')";
+		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->key_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
-		$count = $stmt->fetchColumn();
-		$LOG->debug("returned count: " . $count);
-		if ($count > 0){
+		while($roomId = $stmt->fetchColumn()){
 			$this->isPresent = true;
+			foreach ($this->inspectionRooms as $room){
+				$LOG->debug("room: " . $room->getKey_id());
+				if(in_array ( $room->getKey_id() , $rooms ))$room->setContainsHazard(true);
+			}
 		}
-		
-	
 	}
 
 	private function findParents($hazard,&$parentIds) {
@@ -218,7 +230,7 @@ class Hazard extends GenericCrud {
 	}
 
 	public function getHasChildren(){
-		if ($this->getSubHazards() != null) {
+		if ($this->getActiveSubHazards() != null) {
 			return true;
 		}
 		return false;
@@ -233,6 +245,7 @@ class Hazard extends GenericCrud {
 	{
 	    $this->order_index = $order_index;
 	}
+
 }
 
 ?>
