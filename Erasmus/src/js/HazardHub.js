@@ -216,7 +216,8 @@ hazardHub.directive('buttongroup', function () {
            };
           },
           function (newValue, oldValue) {
-           if (newValue.w < 1000 && newValue.w !== 0) {
+           if (newValue.w < 1200 && newValue.w !== 0) {
+                console.log(newValue.w);
                 element.addClass('small');
            }else{
                 element.removeClass('small');
@@ -279,21 +280,12 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         console.log( hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].Name);
         $scope.openedHazard = hazard;  
 
-        var counter = Math.min(hazard.SubHazardsHolder.length-1, 15 );
+        var counter = Math.min(hazard.SubHazardsHolder.length-1, 2000 );
         if(adding)buildSubsArray(hazard, 0, counter, adding);
         if(!adding)buildSubsArray(hazard, 0, counter);
        // sorticus(hazard,adding);
        
     }
-
-    function sorticus(hazard,adding){
-        hazard.SubHazardsHolder.sort(function(a,b) {return (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0);} );
-        
-       
-  
-    }
-
-
 
     function onFailGetSubhazards(){
         $scope.doneLoading = "failed";
@@ -471,7 +463,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         $scope.hazardCopy = angular.copy(hazard);
         $scope.hazardCopy.Is_active = !$scope.hazardCopy.Is_active;
         if($scope.hazardCopy.Is_active === null)hazard.Is_active = false;
-
         var url = '../../ajaxaction.php?action=saveHazard';
         convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
     }
@@ -602,7 +593,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
     }
 
     $scope.hazardFilter = function(hazard){
-      console.log(hazard);
       if($scope.hazardFilterSetting.Is_active == 'both'){
         return true;  
       }else if($scope.hazardFilterSetting.Is_active == 'active'){
@@ -613,4 +603,40 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
       return false;
     }
 
+    $scope.moveHazard = function(idx, parent, direction){
+        
+        //Make a copy of the hazard we want to move, so that it can be temporarily moved in the view
+        var clickedHazard   = angular.copy(parent.SubHazards[idx]);
+        parent.SubHazards[idx].IsDirty = true;
+        console.log(clickedHazard);
+        if(direction == 'up'){
+            //We are moving a hazard up. Get the indices of the two hazards above it.
+            var afterHazardIdx = idx-1;
+            var beforeHazardIdx = idx-2;
+        }else if(direction == 'down'){
+            //We are moving a hazard down.  Get the indices of the two hazards below it.
+            var beforeHazardIdx = idx+1;
+            var afterHazardIdx = idx+2;
+        }else{
+            return
+        }
+
+        //get the key_ids of the hazards involved so we can build the request.
+        var hazardId       = parent.SubHazards[idx].Key_id;
+        var beforeHazardId = parent.SubHazards[beforeHazardIdx].Key_id;
+        var afterHazarId   = parent.SubHazards[afterHazardIdx].Key_id;
+        var url = '../../ajaxaction.php?action=reorderHazards&hazardId='+hazardId+'&beforeHazardId='+beforeHazardId+'&afterHazarId='+afterHazarId;
+
+        //make the call
+        convenienceMethods.saveDataAndDefer(url, clickedHazard).then(function(promise){
+            console.log(promise);
+            parent.SubHazards[idx].IsDirty = false;
+            parent.SubHazards = promise;
+        });
+    }
+
+
+    $scope.order = function(hazard){
+        return parseFloat(hazard.Order_index);
+    }
 });  
