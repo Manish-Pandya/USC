@@ -12,7 +12,7 @@
           </span>
          </button>
         <span ng-hide="child.isBeingEdited">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="child.Name"></span></h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
         </span>
 
         <span ng-show="child.isBeingEdited">
@@ -20,6 +20,18 @@
         </span>
       </div>
       <div class="hazarNodeButtons" >
+        <div class="span1" style="width:40px;" ng-if="child.Parent_hazard_id != 10000">
+          <!-- 
+              we are four $scopes down from the parent hazard here:
+              1. the $scope created by the ng-id above
+              2. the $scope created by the ng-include directive
+              3. the $scope created by ng-repeat
+              4. the $scope created by the ng-if below
+              Therefore, the parent hazard is in the $scope $parent.$parent.$parent.$parent
+          -->
+          <a class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-if="!$first" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'up')"><i class="icon-arrow-up"></i></a><br>
+          <a class="btn btn-mini btn-info upvote" ng-if="!$last" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'down')"><i class="icon-arrow-down"></i></a>
+        </div>
         <a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': child.Is_active == true, 'btn-success' :  child.Is_active == false}" ng-click="handleHazardActive(child)" >
           <i ng-class="{ 'icon-check-alt' :  child.Is_active == false, 'icon-remove' :  child.Is_active == true}" ></i>
           <span ng-show="child.Is_active == true">Disable</span><span ng-show="child.Is_active == false">Activate</span>
@@ -44,8 +56,9 @@
          Loading Subhazards for <span once-text="child.Name"></span>
       </div>                  
     </div>
-      <ol ng-if="!child.minimized && child.SubHazards"> 
-        <li ng-repeat="child in child.SubHazards" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" ng-show="hazardFilter(child)" >
+     
+      <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
+        <li ng-repeat="child in child.SubHazards | orderBy: [order]" ng-show="hazardFilter(child, $parent)" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
           <span ng-include src="'hazard-hub-partial.html'"></span>       
         </li>
       </ol> 
@@ -65,20 +78,23 @@
                   ui-nested-sortable-begin="start($event, $ui)"-->
 
 <div class="whitebg" >
-	<div >
+	<div>
     <div>
 
     <div ng-hide="doneLoading" class="container loading" style="margin-left:70px; margin-top:15px;">
       <img class="" src="../../img/loading.gif"/>
       Building Hazard List...
     </div>
-        <div class="live" ng-if="SubHazards">
+    <div class="alert alert-danger" ng-if="error">
+      <h1>{{error}}</h1>
+    </div>
+        <div class="live">
           <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 43px 0;" ng-init="hazardFilterSetting.Is_active = 'active'">
             <option value="active">Display Active Hazards</option>
             <option value="inactive">Display Inactive Hazards</option>
             <option value="both">Display Active & Inactive Hazards</option>
           </select>
-          <ol id="hazardTree" style="padding-top:0"> 
+          <ol id="hazardTree" style="padding-top:0" ng-hide="!SubHazards"> 
             <li ng-repeat="child in SubHazards" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
               <span ng-include src="'hazard-hub-partial.html'"></span>
             </li>
