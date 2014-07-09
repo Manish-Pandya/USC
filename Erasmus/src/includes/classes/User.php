@@ -80,6 +80,10 @@ class User extends GenericCrud{
 
 	/** 'Real' name of this User */
 	private $name;
+	private $first_name;
+	private $last_name;
+
+	private $position;
 
 	/** Email address of this User */
 	private $email;
@@ -196,7 +200,7 @@ class User extends GenericCrud{
 		return $this->primary_department;
 	}
 	public function setPrimary_department($primary_department) {
-		$this->supervisor = $primary_department;
+		$this->primary_department = $primary_department;
 	}
 
 	//decorator method to return a user's full name as concatenate string
