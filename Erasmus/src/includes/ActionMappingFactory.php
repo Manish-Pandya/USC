@@ -94,6 +94,7 @@ class ActionMappingFactory {
 				"saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", ""),
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				"saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", ""),
+				"getSubHazards"=>new ActionMapping("getSubHazards", "", ""),
 
 				"getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", ""),
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),
@@ -107,6 +108,7 @@ class ActionMappingFactory {
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
 				"getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", ""),
+				"saveHazardRoomRelations"=>new ActionMapping("saveHazardRoomRelations", "", ""),
 				"saveHazardRelation"=>new ActionMapping("saveHazardRelation", "", ""),
 				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
 

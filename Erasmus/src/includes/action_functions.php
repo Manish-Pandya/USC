@@ -1348,9 +1348,10 @@ function saveNoteForInspection(){
  * given as a CSV parameter
  *
  * @param string $roomIds
+ * @param Hazard $hazard
  * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
  */
-function getHazardRoomMappingsAsTree( $roomIds = NULL ){
+function getHazardRoomMappingsAsTree( $roomIds = NULL, $hazard = null ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	$roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
 
@@ -1361,7 +1362,11 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 		$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
 
 		//Get all hazards
-		$allHazards = getAllHazardsAsTree();
+		if($hazard != null){
+		  $allHazards = $hazard;
+		}else{
+		  $allHazards = getAllHazardsAsTree();
+		}
 
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getSubHazards");
@@ -1404,29 +1409,65 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL ){
 }
 
 function filterHazards (&$hazard, $rooms){
-
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$LOG->debug($hazard->getName());
 	$entityMaps = array();
 	$entityMaps[] = new EntityMap("lazy","getSubHazards");
-	$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
 	$entityMaps[] = new EntityMap("lazy","getChecklist");
 	$entityMaps[] = new EntityMap("lazy","getRooms");
 	$entityMaps[] = new EntityMap("eager","getInspectionRooms");
 	$entityMaps[] = new EntityMap("eager","getHasChildren");
 	$entityMaps[] = new EntityMap("lazy","getParentIds");
 
+	$hazard->setInspectionRooms($rooms);
+	$hazard->filterRooms();
+
+	if($hazard->getIsPresent() || $hazard->getParent_hazard_id() != 1000){
+		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+	}else{
+		$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+	}
+
+	$hazard->setEntityMaps($entityMaps);
+
+
 	foreach ($hazard->getActiveSubhazards() as $subhazard){
+		$LOG = Logger::getLogger( 'Action within loop:' . __FUNCTION__ );
+		//if we have called this function by passing a hazard from the view, the subhazards will be read as arrays rather than objects, because php
+		if(!is_object($subhazard)){
+			$subDao = getDao(new Hazard());
+			$subhazard = $subDao->getById($subhazard[$Key_id]);
+		}
+
 		$subhazard->setInspectionRooms($rooms);
 		$subhazard->filterRooms();
-		/*
+
+
 		if($subhazard->getIsPresent() == true){
+			$LOG->debug($subhazard->getName()." is Present? ". $subhazard->getIsPresent());
+			//$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy","getSubHazards");
+			$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+			$entityMaps[] = new EntityMap("lazy","getChecklist");
+			$entityMaps[] = new EntityMap("lazy","getRooms");
+			$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+			$entityMaps[] = new EntityMap("eager","getHasChildren");
+			$entityMaps[] = new EntityMap("lazy","getParentIds");
+			$subhazard->setEntityMaps($entityMaps);
 			filterHazards($subhazard, $rooms);
 		}else{
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy","getSubHazards");
 			$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+			$entityMaps[] = new EntityMap("lazy","getChecklist");
+			$entityMaps[] = new EntityMap("lazy","getRooms");
+			$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+			$entityMaps[] = new EntityMap("eager","getHasChildren");
+			$entityMaps[] = new EntityMap("lazy","getParentIds");
+			$subhazard->setEntityMaps($entityMaps);
 		}
-		*/
-		filterHazards($subhazard, $rooms);
-		$subhazard->setEntityMaps($entityMaps);
-		//$subhazard->setParentIds(array());
+
 	}
 }
 
@@ -1530,12 +1571,60 @@ function getHazardsInRoom( $roomId = NULL, $subHazards ){
 	}
 };
 
+function saveHazardRoomRelations( $hazard = null ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Inspection');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+
+		$dao = getDao(new Hazard());
+		// Get the hazard
+		$hazard = $decodedObject;
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getSubHazards");
+		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+		$entityMaps[] = new EntityMap("lazy","getChecklist");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
+		$entityMaps[] = new EntityMap("lazy","getParentIds");
+		$hazard->setEntityMaps($entityMaps);
+
+		foreach($hazard->getInspectionRooms() as $room){
+			if($hazard->getIsPresent() == true){
+				//create hazard room relations
+				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+				$room->setContainsHazard(true);
+			}else{
+				//delete room relations
+				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
+				//we must also remove the relationships for any subhazards, so we call recursively
+				foreach($hazard->getActiveSubHazards() as $subhazard){
+					saveHazardRelation($room->getKey_id(),$subhazard->getKey_id(),false);
+					$subhazard->filterRooms();
+				}
+			}
+		}
+		$hazard->filterRooms();
+		$LOG->debug($hazard);
+		//filterHazards($hazard, $hazard->getInspectionRooms());
+		return $hazard;
+
+	}
+}
+
 function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
-	$roomId = getValueFromRequest('roomId', $roomId);
-	$hazardId = getValueFromRequest('hazardId', $hazardId);
-	$add = getValueFromRequest('add', $add);
+	if($roomId == null)$roomId = getValueFromRequest('roomId', $roomId);
+	if($hazardId == null)$hazardId = getValueFromRequest('hazardId', $hazardId);
+	if($add == null)$add = getValueFromRequest('add', $add);
 
 	if( $roomId !== NULL && hazardId !== NULL && $add !== null ){
 
@@ -1557,6 +1646,37 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	return true;
 
 };
+
+function getSubHazards($hazard = NULL){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ){
+		return new ActionError('Error converting input stream to Inspection');
+	}
+	else if( $decodedObject instanceof ActionError){
+		return $decodedObject;
+	}
+	else{
+
+		$dao = getDao(new Hazard());
+		// Get the hazard
+		$hazard = $decodedObject;
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getSubHazards");
+		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+		$entityMaps[] = new EntityMap("lazy","getChecklist");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
+		$entityMaps[] = new EntityMap("lazy","getParentIds");
+		$hazard->setEntityMaps($entityMaps);
+		$hazard->filterRooms();
+
+		filterHazards($hazard, $hazard->getInspectionRooms());
+		return $hazard->getActiveSubHazards();
+	}
+}
 
 function saveRoomRelation($hazardId, $roomId){
 	//temporarily return true so server returns 200 code
