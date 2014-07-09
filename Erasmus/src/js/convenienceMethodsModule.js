@@ -127,7 +127,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	        console.log(promise);
 	        return promise;
     	},
-        getDataAsDefferedPromise: function( url ){
+        getDataAsDeferredPromise: function( url ){
         	var deferred = $q.defer();
           	//use jsonp method of the angularjs $http object to request data from service layer
         	var promise = $http.jsonp(url)
@@ -135,7 +135,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 					deferred.resolve(data);
 	            })
 	            .error(function(data, status, headers, config){
-	            	console.log(headers());
+	            	console.log(status);
 		        	deferred.reject(data);
 	            });
 	        return deferred.promise;
