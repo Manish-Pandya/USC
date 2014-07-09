@@ -1952,34 +1952,39 @@ span.green {
   margin: 5px 0;
 }
 
+/* line 1651, ../sass/style.scss */
+.hazardLi {
+  margin-bottom: 3px;
+}
+
 /* line 737, ../sass/style.scss */
 /* line 740, ../sass/style.scss */
-/* line 1657, ../sass/style.scss */
+/* line 1660, ../sass/style.scss */
 .topSub h1, .topSub h2, .topSub h3, .topSub h4, .topSub h5, .topSub h6 {
   color: black;
 }
 
 /* line 743, ../sass/style.scss */
-/* line 1662, ../sass/style.scss */
+/* line 1665, ../sass/style.scss */
 .topSub {
   padding: 5px 0;
   padding: 5px;
 }
 
 /* line 749, ../sass/style.scss */
-/* line 1668, ../sass/style.scss */
+/* line 1671, ../sass/style.scss */
 .topSub:hover {
   background: #eeeeee;
 }
 
 /* line 752, ../sass/style.scss */
-/* line 1673, ../sass/style.scss */
+/* line 1676, ../sass/style.scss */
 .subHazards {
   margin: -9px 0 11px 39px !important;
 }
 
 /* line 755, ../sass/style.scss */
-/* line 1678, ../sass/style.scss */
+/* line 1681, ../sass/style.scss */
 .subHazards > li, .subHazards > p, .topSub > p, .topSub > li, .roomRepeat {
   font-size: 15px;
   margin: 15px 0;
@@ -1987,7 +1992,7 @@ span.green {
 
 /****overrides for small room number checkboxes in hazard assessment***************/
 /* line 760, ../sass/style.scss */
-/* line 1685, ../sass/style.scss */
+/* line 1688, ../sass/style.scss */
 label.checkbox input[type=checkbox] ~ span.smaller::after {
   padding: 0 0 15px 2px;
   font-family: 'IcoMoon';
@@ -2002,25 +2007,25 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 }
 
 /* line 772, ../sass/style.scss */
-/* line 1699, ../sass/style.scss */
+/* line 1702, ../sass/style.scss */
 .roomRepeat {
   margin: 3px;
 }
 
 /* line 775, ../sass/style.scss */
-/* line 1704, ../sass/style.scss */
+/* line 1707, ../sass/style.scss */
 .roomRepeat:after {
   content: ", ";
 }
 
 /* line 778, ../sass/style.scss */
-/* line 1709, ../sass/style.scss */
+/* line 1712, ../sass/style.scss */
 .last:after {
   content: "" !important;
 }
 
 /* line 781, ../sass/style.scss */
-/* line 1714, ../sass/style.scss */
+/* line 1717, ../sass/style.scss */
 .modal-trigger-plus {
   color: #090;
   font-size: 25px;
@@ -2028,131 +2033,131 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
 }
 
 /* line 787, ../sass/style.scss */
-/* line 1721, ../sass/style.scss */
+/* line 1724, ../sass/style.scss */
 .subHazards > li h4, .topSub > li h4 {
   white-space: nowrap;
 }
 
 /* line 790, ../sass/style.scss */
-/* line 1726, ../sass/style.scss */
+/* line 1729, ../sass/style.scss */
 #footer ul {
   list-style: none;
   margin: 15px 0;
 }
 
 /* line 795, ../sass/style.scss */
-/* line 1732, ../sass/style.scss */
+/* line 1735, ../sass/style.scss */
 #footer li {
   float: left;
   width: 25%;
 }
 
 /* line 799, ../sass/style.scss */
-/* line 1738, ../sass/style.scss */
+/* line 1741, ../sass/style.scss */
 #footer li a {
   font-size: 1vw;
 }
 
 /* line 802, ../sass/style.scss */
-/* line 1743, ../sass/style.scss */
+/* line 1746, ../sass/style.scss */
 #footer li a span {
   margin-left: 10px;
 }
 
 /* line 805, ../sass/style.scss */
-/* line 1748, ../sass/style.scss */
+/* line 1751, ../sass/style.scss */
 #footer li a img {
   max-width: 20%;
 }
 
 @media (max-width: 800px) {
   /* line 809, ../sass/style.scss */
-  /* line 1754, ../sass/style.scss */
+  /* line 1757, ../sass/style.scss */
   #footer li a span {
     margin-left: 10px;
     display: block;
   }
 }
 /* line 814, ../sass/style.scss */
-/* line 1760, ../sass/style.scss */
+/* line 1763, ../sass/style.scss */
 .clipboard {
   background: url(../img/clipboard.png);
 }
 
 /* line 815, ../sass/style.scss */
-/* line 1765, ../sass/style.scss */
+/* line 1768, ../sass/style.scss */
 .phone {
   background: url(../img/phone.png);
   padding-left: 140px !important;
 }
 
 /* line 816, ../sass/style.scss */
-/* line 1771, ../sass/style.scss */
+/* line 1774, ../sass/style.scss */
 .speechBubble {
   background: url(../img/speechBubble.png);
   padding-left: 190px !important;
 }
 
 /* line 817, ../sass/style.scss */
-/* line 1777, ../sass/style.scss */
+/* line 1780, ../sass/style.scss */
 .checkmarkFooter {
   background: url(../img/checkmarkFooter.png);
   padding-left: 140px !important;
 }
 
 /* line 819, ../sass/style.scss */
-/* line 1783, ../sass/style.scss */
+/* line 1786, ../sass/style.scss */
 .accordion:first-child {
   padding: 10px;
 }
 
 /* line 822, ../sass/style.scss */
-/* line 1788, ../sass/style.scss */
+/* line 1791, ../sass/style.scss */
 .test {
   width: 100px;
 }
 
-/* line 1791, ../sass/style.scss */
+/* line 1794, ../sass/style.scss */
 .loading img {
   width: 50px;
 }
 
-/* line 1794, ../sass/style.scss */
+/* line 1797, ../sass/style.scss */
 .loading {
   font-size: 20px;
   font-weight: bold;
 }
 
-/* line 1798, ../sass/style.scss */
+/* line 1801, ../sass/style.scss */
 .listStyleNone {
   list-style: none;
 }
 
-/* line 1801, ../sass/style.scss */
+/* line 1804, ../sass/style.scss */
 .hide {
   display: none !important;
 }
 
-/* line 1804, ../sass/style.scss */
+/* line 1807, ../sass/style.scss */
 .btn {
   -webkit-border-radius: 2px !important;
   -moz-border-radius: 2px !important;
   border-radius: 2px !important;
 }
 
-/* line 1811, ../sass/style.scss */
+/* line 1814, ../sass/style.scss */
 .quickdate {
   display: inline-block;
   position: relative;
   font-size: 12px !Important;
 }
 
-/* line 1812, ../sass/style.scss */
+/* line 1815, ../sass/style.scss */
 .quickdate-button div, .quickdate-action-link div {
   display: inline;
 }
 
-/* line 1813, ../sass/style.scss */
+/* line 1816, ../sass/style.scss */
 .quickdate-popup {
   z-index: 10;
   background-color: #fff;
@@ -2165,12 +2170,12 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
-/* line 1814, ../sass/style.scss */
+/* line 1817, ../sass/style.scss */
 .quickdate-popup.open {
   display: block;
 }
 
-/* line 1815, ../sass/style.scss */
+/* line 1818, ../sass/style.scss */
 .quickdate-close {
   position: absolute;
   top: 5px;
@@ -2178,12 +2183,12 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   color: #333;
 }
 
-/* line 1816, ../sass/style.scss */
+/* line 1819, ../sass/style.scss */
 .quickdate-close:hover, .quickdate-close:visited {
   color: #333;
 }
 
-/* line 1817, ../sass/style.scss */
+/* line 1820, ../sass/style.scss */
 .quickdate-calendar-header {
   display: block;
   padding: 2px 0;
@@ -2191,34 +2196,34 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   text-align: center;
 }
 
-/* line 1818, ../sass/style.scss */
+/* line 1821, ../sass/style.scss */
 .quickdate-month {
   display: inline-block;
 }
 
-/* line 1819, ../sass/style.scss */
+/* line 1822, ../sass/style.scss */
 a.quickdate-prev-month {
   float: left;
 }
 
-/* line 1820, ../sass/style.scss */
+/* line 1823, ../sass/style.scss */
 a.quickdate-next-month {
   float: right;
 }
 
-/* line 1821, ../sass/style.scss */
+/* line 1824, ../sass/style.scss */
 .quickdate-text-inputs {
   text-align: left;
   margin-bottom: 5px;
 }
 
-/* line 1822, ../sass/style.scss */
+/* line 1825, ../sass/style.scss */
 .quickdate-input-wrapper {
   width: 48%;
   display: inline-block;
 }
 
-/* line 1823, ../sass/style.scss */
+/* line 1826, ../sass/style.scss */
 input.quickdate-date-input, input.quickdate-time-input {
   width: 200px;
   margin: 0;
@@ -2226,7 +2231,7 @@ input.quickdate-date-input, input.quickdate-time-input {
   padding: 2px 3px;
 }
 
-/* line 1824, ../sass/style.scss */
+/* line 1827, ../sass/style.scss */
 table.quickdate-calendar {
   border-collapse: collapse;
   border-spacing: 0;
@@ -2235,74 +2240,74 @@ table.quickdate-calendar {
   margin-left: -3px;
 }
 
-/* line 1825, ../sass/style.scss */
+/* line 1828, ../sass/style.scss */
 table.quickdate-calendar th, table.quickdate-calendar td {
   padding: 5px;
 }
 
-/* line 1826, ../sass/style.scss */
+/* line 1829, ../sass/style.scss */
 table.quickdate-calendar td:hover {
   cursor: pointer;
 }
 
-/* line 1827, ../sass/style.scss */
+/* line 1830, ../sass/style.scss */
 .quickdate-popup-footer {
   text-align: right;
   display: block;
 }
 
-/* line 1828, ../sass/style.scss */
+/* line 1831, ../sass/style.scss */
 .quickdate-error {
   border: 1px solid #dd3b30 !important;
 }
 
-/* line 1829, ../sass/style.scss */
+/* line 1832, ../sass/style.scss */
 .quickdate-error:focus {
   outline-color: #dd3b30 !important;
 }
 
-/* line 1830, ../sass/style.scss */
+/* line 1833, ../sass/style.scss */
 .is-today {
   background: #49afcd !important;
   color: white !important;
 }
 
-/* line 1834, ../sass/style.scss */
+/* line 1837, ../sass/style.scss */
 .disabled-date {
   cursor: text !important;
   color: #666 !Important;
   background: #b9b9b9 !important;
 }
 
-/* line 1840, ../sass/style.scss */
+/* line 1843, ../sass/style.scss */
 .invalid {
   border-color: red;
 }
 
-/* line 1845, ../sass/style.scss */
+/* line 1848, ../sass/style.scss */
 .modal-body ul {
   list-style-type: none;
   margin-left: 0;
 }
 
-/* line 1852, ../sass/style.scss */
+/* line 1855, ../sass/style.scss */
 .bold {
   font-weight: bold;
 }
 
-/* line 1855, ../sass/style.scss */
+/* line 1858, ../sass/style.scss */
 .underline {
   text-decoration: underline;
 }
 
-/* line 1858, ../sass/style.scss */
+/* line 1861, ../sass/style.scss */
 .notTheOpenedOne {
   max-height: none !Important;
   overflow-y: hidden !important;
 }
 
 /* define height and width of scrollable area. Add 16px to width for scrollbar          */
-/* line 1866, ../sass/style.scss */
+/* line 1869, ../sass/style.scss */
 div.tableContainer {
   clear: both;
   max-height: 500px;
@@ -2311,14 +2316,14 @@ div.tableContainer {
 }
 
 /* Reset overflow value to hidden for all non-IE browsers. */
-/* line 1874, ../sass/style.scss */
+/* line 1877, ../sass/style.scss */
 div.tableContainer {
   overflow: hidden;
   width: auto;
 }
 
 /* define width of table. IE browsers only                 */
-/* line 1880, ../sass/style.scss */
+/* line 1883, ../sass/style.scss */
 div.tableContainer table {
   float: left;
   width: auto;
@@ -2326,7 +2331,7 @@ div.tableContainer table {
 
 /* define width of table. Add 16px to width for scrollbar.           */
 /* All other non-IE browsers.                                        */
-/* line 1887, ../sass/style.scss */
+/* line 1890, ../sass/style.scss */
 div.tableContainer table {
   width: auto;
 }
@@ -2335,14 +2340,14 @@ div.tableContainer table {
 /* In WinIE 6.x, any element with a position property set to relative and is a child of       */
 /* an element that has an overflow property set, the relative value translates into fixed.    */
 /* Ex: parent element DIV with a class of tableContainer has an overflow property set to auto */
-/* line 1895, ../sass/style.scss */
+/* line 1898, ../sass/style.scss */
 thead.fixedHeader tr {
   position: relative;
 }
 
 /* set THEAD element to have block level attributes. All other non-IE browsers            */
 /* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
-/* line 1901, ../sass/style.scss */
+/* line 1904, ../sass/style.scss */
 html > body thead.fixedHeader tr {
   display: block;
 }
@@ -2353,7 +2358,7 @@ html > body thead.fixedHeader tr {
 /* set TBODY element to have block level attributes. All other non-IE browsers            */
 /* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
 /* induced side effect is that child TDs no longer accept width: auto                     */
-/* line 1917, ../sass/style.scss */
+/* line 1920, ../sass/style.scss */
 html > body tbody.scrollContent {
   display: block;
   max-height: 450px;
@@ -2364,21 +2369,21 @@ html > body tbody.scrollContent {
 /* define width of TH elements: 1st, 2nd, and 3rd respectively.          */
 /* Add 16px to last TH for scrollbar padding. All other non-IE browsers. */
 /* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors        */
-/* line 1927, ../sass/style.scss */
+/* line 1930, ../sass/style.scss */
 table {
   font-size: 12px;
 }
 
-/* line 1938, ../sass/style.scss */
+/* line 1941, ../sass/style.scss */
 table.roomList td {
   vertical-align: middle;
 }
-/* line 1941, ../sass/style.scss */
+/* line 1944, ../sass/style.scss */
 table.roomList h2 {
   margin-top: 0;
 }
 
-/* line 1945, ../sass/style.scss */
+/* line 1948, ../sass/style.scss */
 .piHeader {
   width: 60%;
   font-size: 30px;
@@ -2386,38 +2391,38 @@ table.roomList h2 {
   padding-top: 15px;
 }
 
-/* line 1952, ../sass/style.scss */
+/* line 1955, ../sass/style.scss */
 #piButtons {
   width: 100%;
 }
 
-/* line 1956, ../sass/style.scss */
+/* line 1959, ../sass/style.scss */
 .edit {
   font-weight: bold !important;
 }
 
-/* line 1960, ../sass/style.scss */
+/* line 1963, ../sass/style.scss */
 .labSpecific {
   color: #49afcd !important;
 }
 
-/* line 1964, ../sass/style.scss */
+/* line 1967, ../sass/style.scss */
 .newRecOrObs {
   color: #5bb75b !important;
 }
 
-/* line 1968, ../sass/style.scss */
+/* line 1971, ../sass/style.scss */
 .center-element {
   float: none;
   margin: 0  auto;
 }
 
-/* line 1973, ../sass/style.scss */
+/* line 1976, ../sass/style.scss */
 .center-text {
   text-align: center;
 }
 
-/* line 1976, ../sass/style.scss */
+/* line 1979, ../sass/style.scss */
 .absoluteBtns {
   position: absolute;
   left: 101%;
@@ -2425,17 +2430,22 @@ table.roomList h2 {
   width: 225px;
 }
 
-/* line 1982, ../sass/style.scss */
+/* line 1985, ../sass/style.scss */
 .editTable td {
   position: relative;
 }
 
-/* line 1985, ../sass/style.scss */
+/* line 1988, ../sass/style.scss */
 .bottomMargin {
   margin-bottom: 35px;
 }
 
-/* line 1988, ../sass/style.scss */
-a.btn i.icon-right{
+/* line 1991, ../sass/style.scss */
+.icon-right {
   margin: 3px 0 0 10px !important;
+}
+
+/* line 1994, ../sass/style.scss */
+.nudge-up {
+  margin-top: 0 !important;
 }

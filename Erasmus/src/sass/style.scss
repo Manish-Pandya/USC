@@ -1648,6 +1648,9 @@ span.green {
     margin:5px 0;
   }
 }
+.hazardLi{
+  margin-bottom:3px;
+}
 
 /* line 737, ../sass/style.scss */
 .hazardList > ul li > ul {
@@ -1987,4 +1990,7 @@ table.roomList{
 }
 .icon-right{
   margin: 3px 0 0 10px !important;
+}
+.nudge-up{
+  margin-top: 0 !important;
 }
