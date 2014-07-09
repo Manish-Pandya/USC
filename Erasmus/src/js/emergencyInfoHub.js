@@ -19,7 +19,7 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
   function onGetBuildings(data) {
     console.log(data);
 	  $scope.Buildings = data;
-
+    $scope.error = '';
     console.log($location.search());
 
     if($location.search().building){
@@ -34,7 +34,7 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
 
   }
   function onFailGet(){
-    alert('Something went wrong when we tried to build the list of buildings.');
+   $scope.error = 'Something went wrong when we tried to build the list of buildings.';
   }
 
   $scope.onSelectBuilding = function(building, $model, $label){
@@ -80,7 +80,7 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
   }
 
   function onFailGetHazards(){
-
+    $scope.error = 'There was a problem getting the hazards.  Please check your internet connection and try again.'
   }
 
   function getBuilding(id){

@@ -22,13 +22,14 @@ require_once '../top_view.php';
 				<form class="row form-inline" style="margin-left:0">
 					<label>Building</label>
 					<input ng-if="Buildings" style="" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
-					<input ng-if="!Buildings" style="" type="text" disabled="disabled" placeholder="Getting buildings...">
+						<input ng-if="!Buildings" style="" type="text" disabled="disabled" placeholder="Getting buildings...">
 			       	<img ng-if="!Buildings" class="" style="height: 23px; margin: 3px 0 0 -60px; position: absolute;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 					<label>Room</label>
 					<input ng-if="building" style="" type="text" typeahead-on-select='onSelectRoom($item, $model, $label)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="rooms as room.Name for room in building.Rooms | filter:$viewValue2">
 					<input ng-if="!building" placeholder="Select a Building" disabled="disabled">
 
 				</form>
+				<h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
 				<span ng-if="building">
 				<h2 ng-if="building && !room">Select a room to display EMERGENCY INFORMATION for {{building.Name}}</h2>
 				<div class="roomDisplay" ng-if="room">
