@@ -7,7 +7,7 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodModule','ngRo
 		var url = "../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK";
     	var deferred = $q.defer();
 
-    	convenienceMethods.getDataAsDefferedPromise(url).then(
+    	convenienceMethods.getDataAsDeferredPromise(url).then(
 			function(promise){
 				deferred.resolve(promise);
 			},
@@ -32,19 +32,19 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodModule','ngRo
 		return this.departments;
 	}
 	factory.saveDepartment = function(department){
-    var url = "../../ajaxaction.php?action=saveDepartment";
-    var deferred = $q.defer();
+        var url = "../../ajaxaction.php?action=saveDepartment";
+        var deferred = $q.defer();
 
-    convenienceMethods.saveDataAndDefer(url, department).then(
-      function(promise){
-        deferred.resolve(promise);
-      },
-      function(promise){
-        deferred.reject(promise);
-      }
-    );
-    return deferred.promise
-  }
+        convenienceMethods.saveDataAndDefer(url, department).then(
+          function(promise){
+            deferred.resolve(promise);
+          },
+          function(promise){
+            deferred.reject(promise);
+          }
+        );
+        return deferred.promise
+    }
 	return factory;
 });
 
