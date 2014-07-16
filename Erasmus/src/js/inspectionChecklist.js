@@ -67,7 +67,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         question.isComplete = true;
       //If a question has been answered 'No', the user must select one or more deficiences before the question is complete
       }else if(question.Deficiencies && question.Responses.Answer.toLowerCase() == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length ){
-        question.isComplete = true;
+        question.isComplete = false;
         checkQuestionsDeficiencies(question);
       }else{
         question.isComplete = false;
@@ -85,6 +85,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       //Does this deficiency's key_id occur in the list of selected deficiencies?
       if($scope.inspection.Deficiency_selections[0].indexOf(defID)>-1){
         //at least one Deficiency has been selected for this question, so the question is complete
+        question.isComplete = true;
         question.Deficiencies[z].selected = true;
         //was this deficiency Corrected durring the inspection?
         if(($scope.inspection.Deficiency_selections[1].indexOf(defID)>-1))question.Deficiencies[z].correctedDuringInspection = true;
@@ -105,7 +106,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   $scope.imgNumber = "1";
   $scope.change = function(imgNumber, checklist) {
       $scope.imgNumber = imgNumber;
-      checklist.open = !checklist.open;
+      checklist.currentlyOpen = !checklist.currentlyOpen;
   }
 
   $scope.questionAnswered = function(checklist, response, question){
@@ -340,6 +341,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   $scope.deficiencySelected = function(question, deficiency, rooms, checklist){
+    console.log(rooms);
     console.log(deficiency);
     response = question.Responses;
     response.IsDirty = true;
@@ -348,10 +350,11 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     if(deficiency.selected){
 
       //if this deficiency doesn't have a rooms collection, make one
-      if(!deficiency.Rooms){
+      if(!deficiency.rooms){
         var rooms = angular.copy($scope.inspection.Rooms);
+        deficiency.rooms = angular.copy($scope.inspection.Rooms);
       }else{
-        rooms = deficiency.Rooms;
+        rooms = deficiency.rooms;
       }
 
 
@@ -361,8 +364,9 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       //build out an array of Room key_ids for the server request
       for(i=0;i<rooms.length;i++){
         rooms[i].checked = true;
-        RoomIds.push(rooms[i]);
+        RoomIds.push(rooms[i].Key_id);
       }
+
 
       defDto = {
         Class: "DeficiencySelection",
@@ -371,6 +375,8 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         Response_id: response.Key_id,
         Key_id:      null
       }
+
+      console.log( RoomIds );
 
       //set checked property to false.  we set it to true only on success, in the callback
       deficiency.checked = false;
@@ -386,7 +392,6 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onRemoveDefSelect(bool, deficiency, question, checklist){
-    console.log(deficiency);
     //get the index of the deficiency selection for the question
     var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections, deficiency, null, true);
     //if we find the deficiency selection, remove it
@@ -466,7 +471,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     $scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
 
     var atLeastOneChecked = false;
-    if(!deficiency.Rooms)deficiency.Rooms = $scope.inspection.Rooms;
+    if(!deficiency.rooms)deficiency.rooms = $scope.inspection.Rooms;
     angular.forEach(deficiency.rooms, function(room, key){
       room.IsDirty = false;
       if(room.checked)atLeastOneChecked = true;

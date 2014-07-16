@@ -11,7 +11,7 @@ require_once '../top_view.php';
         </ul>
     </div><!--/span-->
 <div class="tst">
-<div id="sp-page" class="whitebg">
+<div id="sp-page" class="whitebg checklist">
 	<div style="position:fixed">
 	</div>
 
@@ -78,7 +78,7 @@ require_once '../top_view.php';
 								<h3>Deficiencies:</h3>
 								<li ng-repeat="deficiency in question.Deficiencies">
 									<label class="checkbox inline">
-										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, null, checklist)" />
+										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, deficiency.rooms, checklist)" />
 										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="deficiency.Text"></span></span>
 									</label>
 
@@ -86,7 +86,8 @@ require_once '../top_view.php';
 											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
 									</span>
 
-									<div class="roomsModal popUp" ng-show="deficiency.rooms" ng-if="deficiency.showRoomsModal" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;">
+									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.rooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;">
+										<i class="icon-cancel-2" style="margin:5px;" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i>
 										<ul>
 											<li ng-repeat="room in deficiency.rooms">
 												<label class="checkbox inline">
