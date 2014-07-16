@@ -12,14 +12,14 @@
 <tbody>
 	<tr ng-repeat="user in PI.LabPersonnel | filter: active">
 
-		<td><a class="btn btn-warning btn-large" ng-click="removeUser(user)"><i class="icon-remove"></i>Remove</a><img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../../img/loading.gif"/></td>
+		<td><a class="btn btn-warning btn-large" ng-click="removeUser(user)"><i class="icon-remove"></i>Remove</a><img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/></td>
 
-		<td><a class="btn btn-danger btn-large" ng-click="deactivateUser(user)"><i class="icon-remove"></i>Inactivate</a><img ng-if="user.beingDeactivated" class="smallLoading" src="../../../img/loading.gif"/></td>
+		<td><a class="btn btn-danger btn-large" ng-click="deactivateUser(user)"><i class="icon-remove"></i>Inactivate</a><img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/></td>
 
 		<td ng-show="user.edit"><a class="btn btn-large btn-danger" ng-click="cancelEdits(user)">Cancel</a></td>
 		<td ng-hide="user.edit">{{user.Name}}</td><td ng-show="user.edit"><input ng-model="userCopy.Name"/></td>
 		<td ng-hide="user.edit">{{user.Email}}</td><td ng-show="user.edit"><input ng-model="userCopy.Email"/></td>
-		<td><a class="edit btn btn-large btn-warning" target="_blank" ng-click="editUser($index)"><i class="icon-lab"></i>Edit User</a></td><!--href="userHub.php?{{user.KeyId}}"-->
+		<td><a class="edit btn btn-large btn-primary" target="_blank" ng-click="editUser($index)"><i class="icon-pencil"></i>Edit User</a></td><!--href="userHub.php?{{user.KeyId}}"-->
 	</tr>
 </tbody>
 
@@ -113,6 +113,7 @@
 		    </div>
 
 		    <div class="" style="padding:3px 0;">
+		    <!--
 			    <div  class="control-group">
 		         <label class="control-label" for="inputEmail">Roles(s)</label>
 		         <div class="controls">
@@ -120,11 +121,12 @@
 					<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
 					<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 			   		
-			    <ul style="margin-top:3px;">
-			    	<li ng-repeat="role in userCopy.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-					</li>
-			    </ul>
+				    <ul style="margin-top:3px;">
+				    	<li ng-repeat="role in userCopy.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+						</li>
+				    </ul>
 			   </div>
+			-->
 		    </div>
 
 		      <div class=""style="padding:3px 0">

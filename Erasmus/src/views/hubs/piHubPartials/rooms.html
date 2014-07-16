@@ -8,7 +8,7 @@
 </thead>
 <tbody>
 	<tr ng-repeat="room in PI.Rooms">
-		<td><a class="btn btn-danger btn-large removeRow" ng-click="removeRoom(room)" href="#"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../../img/loading.gif"/></td>
+		<td><a class="btn btn-danger btn-large removeRow" ng-click="removeRoom(room)" href="#"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif"/></td>
 		<!--<td width="25%">{{room.Capmus}}</td>-->
 		<td width="25%">{{room.Building.Name}}</td>
 		<td width="25%">{{room.Name}}</td>
@@ -41,7 +41,7 @@
 	   </ul>
 
 	   <ul ng-show="addRoom">
-	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="rsms/img/loading.gif"/>
+	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	   		<li ng-repeat="room in chosenBuilding.Rooms">
 	   			{{room.Name}}
 	   		</li>
