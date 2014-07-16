@@ -42,6 +42,34 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodModule'])
 		return this.user;
 	}
 
+	factory.createRoom = function(roomDto){
+		var url = "../../ajaxaction.php?action=saveRoom";
+		var deferred = $q.defer();
+		convenienceMethods.saveDataAndDefer(url, roomDto).then(
+			function(promise){
+				deferred.resolve(promise);
+			},
+			function(promise){
+				deferred.reject();
+			}
+		);	
+		return deferred.promise
+	}
+
+	factory.addRoom = function(roomDto){
+		var url = "../../ajaxaction.php?action=savePIRoomRelation";
+		var deferred = $q.defer();
+		convenienceMethods.saveDataAndDefer(url, roomDto).then(
+			function(promise){
+				deferred.resolve(promise);
+			},
+			function(promise){
+				deferred.reject();
+			}
+		);	
+		return deferred.promise
+	}
+
 	return factory;
 });
 
@@ -102,6 +130,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 		$scope.PI = data;
 		piHubFactory.setPI($scope.PI);
 		$scope.doneLoading = data.doneLoading;
+		$location.search("pi", $scope.PI.Key_id);
 	}
 
 	function onFailGetPI(){
@@ -195,7 +224,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
   };
 
-var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods, piHubFactory) {
+var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods, piHubFactory, $q) {
 	$scope.PI = PI;
 	console.log(adding);
 
@@ -240,30 +269,41 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
 	      add: add
 	    }
 
-	    room.piHasRel = !room.piHasRel;
-	    console.log(roomDto);
-	    convenienceMethods.updateObject( roomDto, room, onSaveRoomRelation, onFailSaveRoomRelation, '../../ajaxaction.php?action=savePIRoomRelation',building,building );
+	    //room.piHasRel = !room.piHasRel;
+	    
+	    piHubFactory.addRoom(roomDto).then(
+	    	function(promise){
+	    		console.log(room);
+	    		room.Building = {};
+				room.Building.Name = building.Name;
+				//room.piHasRel = !room.piHasRel;
+				console.log(roomDto);
+				if(room.piHasRel){
+					$scope.PI.Rooms.push(room);
+				}else{
+
+					var idx = convenienceMethods.arrayContainsObject($scope.PI.Rooms, room, null, true);
+					console.log(idx);
+					console.log($scope.PI.Rooms[idx]);
+					$scope.PI.Rooms.splice(idx,1);
+				}
+				console.log($scope.PI);
+
+				room.IsDirty = false;
+	    	},
+	    	function(){
+	    		$scope.error = "The room could not be added to the PI.  Please check your internet connection and try again."
+	    	}
+	    )
+
+	    
 
 	}
 
 	function onSaveRoomRelation(data,room,building){
 		console.log(data);
 		console.log(room);
-		room.Building = {};
-		room.Building.Name = building.Name;
-		room.piHasRel = !room.piHasRel;
-
-		if(room.piHasRel){
-			$scope.PI.Rooms.push(room);
-		}else{
-			var idx = convenienceMethods.arrayContainsObject($scope.PI.Rooms, room, null, true);
-			console.log(idx);
-			console.log($scope.PI.Rooms[idx]);
-			$scope.PI.Rooms.splice(idx,1);
-		}
-		console.log($scope.PI);
-
-		room.IsDirty = false;
+		
 
 		/*
 		angular.forEach(building.Rooms, function(room, key){
@@ -286,12 +326,34 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
 	    }
 
 	    console.log(roomDto);
-	    convenienceMethods.updateObject( roomDto, newRoom, onSaveRoom, onFailSaveRoom, '../../ajaxaction.php?action=saveRoom' );
+	    var createDefer = $q.defer();
+		piHubFactory.createRoom(roomDto).then(
+	    	function(room){
+    			room.IsDirty = false;
+				$scope.chosenBuilding.Rooms.push(room);
+				newRoom.IsDirty = false;
+				createDefer.resolve(room);
+				return createDefer.promise;
+	    	},
+	    	function(){
+	    		newRoom.IsDirty = false;
+	    		$scope.error="The room could not be created.  Please check your internet connection.";
+	    		createDefer.reject();
+	    		return createDefer.promise;
+	    	}
+	    ).then(
+	    	function(room){
+	    		console.log(room);
+	    		room.piHasRel = true;
+
+	    		//add room to pi
+	    		$scope.handleRoomChecked(room,$scope.chosenBuilding);
+	    	}
+	    )
 	}
 
 	function onSaveRoom(data, room){
-		room.IsDirty = false;
-		$scope.chosenBuilding.Rooms.push(room);
+
 	}
 
 	function onFailSaveRoom(){
@@ -391,9 +453,19 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 
 	}
 
+	$scope.removeUser = function(user){
+		user.IsDirty = true;
+		userCopy = angular.copy(user);
+		userCopy.Supervisor_id = null;
+
+		convenienceMethods.updateObject( userCopy, user, onRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
+
+	}
+
 	function onRemoveUser(user){
 		user.IsDirty = false;
-		var idx = convenienceMethods.arrayContainsObject($scope.PI.LabPersonnel, user, true);
+		var idx = convenienceMethods.arrayContainsObject($scope.PI.LabPersonnel, user, null,true);
+		console.log(idx);
 	    if(idx>-1)$scope.PI.LabPersonnel.splice(idx,1);
 	}
 
@@ -418,7 +490,7 @@ confirmationController = function(items, $scope, piHubFactory, $modalInstance, c
 		if(functionType.toLowerCase() == 'remove')$scope.userCopy.Is_active = false;
 
 		//get rid of the user's PI relationship.
-		userCopy.Supervisor_id = null;
+		$scope.userCopy.Supervisor_id = null;
 
 		//save the user
 		convenienceMethods.updateObject( $scope.userCopy, null, onConfirmRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
