@@ -118,7 +118,7 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
   }
 
   function onFailSaveBuilding(){
-       if($scope.newBuilding)$scope.newBuilding.IsDirty = false;
+    if($scope.newBuilding)$scope.newBuilding.IsDirty = false;
     if($scope.buildingCopy)$scope.buildingCopy.IsDirty = false;
     alert("There was an error when the system tried to save the building.");
   }

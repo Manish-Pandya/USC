@@ -534,7 +534,7 @@ function saveRoom(){
 	}
 	else{
 		$dao = getDao(new Room());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
