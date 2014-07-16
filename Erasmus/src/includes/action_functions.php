@@ -602,7 +602,7 @@ function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL )
 			return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 		}
 
-		$LOG->debug("DeficiencySelection is: $ds->getKey_id()");
+		$LOG->debug("DeficiencySelection is: $ds->getKey_id()".$ds);
 
 		$dao = getDao($ds);
 
@@ -685,18 +685,17 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 		}
 }
 
-function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId){
+function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId = null,$deficiencyId = null){
 	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	$dao = getDao(new Inspection());
 	$inspection = $dao->getById($inspectionId);
 
-
 	foreach ($inspection->getResponses() as $response){
 		foreach ($response->getDeficiencySelections() as $ds){
 			$def = $ds->getDeficiency();
 			if ($def->getKey_id() == $deficiencyId){
-				$LOG->debug("Found a matching DeficiencySelection: $ds->getKey_id()");
+				$LOG->debug("Found a matching DeficiencySelection: ". $ds);
 				return $ds;
 			}
 		}
