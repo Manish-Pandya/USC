@@ -1,0 +1,3 @@
+# specify line endings to avoid git commits that change entire files when worked on in different platforms
+*.js text eol=crlf
+*.html text eol=crlf
