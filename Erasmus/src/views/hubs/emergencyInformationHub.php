@@ -3,7 +3,7 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/emergencyInfoHub.js"></script>
 
-<span class="whiteBg" id="buildingHub"  ng-app="emergencyInfo" >
+<span id="buildingHub"  ng-app="emergencyInfo" >
 	<div class="navbar">
 		<ul class="nav pageMenu row-fluid orangeBg">
 			<li class="span12">			
