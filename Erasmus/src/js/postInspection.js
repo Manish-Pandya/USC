@@ -183,9 +183,9 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
     //javascript does not believe that 0 is a number in spite of my long philosophical debates with it
     //if either compliantItems or itemsInspected is 0, we cannot calculate because they are undefined according to JS
-    if(inspection.compliantItems && inspection.itemsInspected){
+    if(inspection.score.compliantItems && inspection.score.itemsInspected){
       //we have both numbers, so we can calculate a score
-      inspection.score.score = Math.round(parseInt(inspection.compliantItems)/parseInt(inspection.itemsInspected) * 100);
+      inspection.score.score = Math.round(parseInt(inspection.score.compliantItems)/parseInt(inspection.score.itemsInspected) * 100);
     }else{
       //since 0 is undefined, we se this property to the String "0"
       inspection.score.score = '0';
