@@ -18,6 +18,7 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
 
   //grab set user list data into the $scope object
   function onGetBuildings(data) {
+    $scope.error = '';
 	  $scope.Buildings = data;
     $scope.building = false;
     if($location.search().building){
@@ -31,7 +32,7 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
   }
 
   function onFailGet(){
-    alert('Something went wrong when we tried to build the list of buildings.');
+    $scope.error="There was a problem retrieving the list of all the buildings in the system.  Please check your internet connection and try again."
   }
 
   $scope.onSelectBuilding = function(buildingDTO, $model, $label){
