@@ -202,36 +202,92 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
         }
     };
 }]);  
-*/
-hazardHub.directive('buttongroup', function () {
+
+hazardHub.directive('buttongroup', function ($window) {
      return {
         restrict: 'A',
         link: function (scope, element, attrs) {
          // Observe the element's dimensions.
-         scope.$watch
-         (
-          function () {
-           return {
-             w:element.width(),
-           };
-          },
-          function (newValue, oldValue) {
-           if (newValue.w < 1200 && newValue.w !== 0) {
-                console.log(newValue.w);
-                element.addClass('small');
-           }else{
-                element.removeClass('small');
-           }
-          },
-          true
-         );
+         scope.$watch(
+            function () {
+                return {
+                    w:element.width(),
+                };
+            },
+            function (newValue, oldValue) {
+                if (newValue.w < 1200 && newValue.w !== 0) {
+                    console.log(newValue.w);
+                    element.addClass('small');
+                }else{
+                    element.removeClass('small');
+                }
+            },
+            true
+        );
     }
  }
 
 });
+*/
+hazardHub.directive('buttongroup', ['$window', function($window) {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+            scope.onResize = function() {
+                console.log('resize');
+                w = elem.width();
+                console.log(w+" | "+$($window).width());
+                if(w<1200 && $($window).width()>1365){
+                     elem.addClass('small');
+                }else if(w<1140 && $($window).width()<1365){
+                     elem.addClass('small');
+                }else{
+                    elem.removeClass('small');
+                }
 
+                console.log(elem.children().children().children('.leftThings').children());
 
-hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMethods) {
+                var btnWidth  = elem.children().children().children('.hazarNodeButtons').width();
+                var leftWidth = w - btnWidth - 50;
+                elem.children().children().children('.leftThings').width(leftWidth);
+                elem.children().children().children('.leftThings').children('span').css({width:leftWidth-50+'px'});
+
+            }
+            scope.onResize();
+
+            scope.$watch(
+                function(){
+                    return scope.onResize();
+                }
+                
+            )
+
+            angular.element($window).bind('resize', function() {
+                scope.onResize();
+            });
+        }
+    }
+}])
+
+hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
+    var factory = {};
+    factory.saveHazard = function(hazard){
+        var url = "../../ajaxaction.php?action=saveHazard";
+        var deferred = $q.defer();
+        convenienceMethods.saveDataAndDefer(url, hazard).then(
+            function(promise){
+                deferred.resolve(promise);
+            },
+            function(promise){
+                deferred.reject();
+            }
+        );  
+        return deferred.promise;
+    }
+    return factory;
+});
+
+hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMethods, hazardHubFactory) {
 
     init();
   
@@ -427,8 +483,23 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
             hazard.Invalid = true;
         }else{
             hazard.IsDirty = true;
-            var url = '../../ajaxaction.php?action=saveHazard';
-            convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
+            //var url = '../../ajaxaction.php?action=saveHazard';
+           // convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
+
+            hazardHubFactory.saveHazard($scope.hazardCopy).then(
+                function(returnedHazard){
+                    hazard.isBeingEdited = false;
+                    hazard.IsDirty = false;
+                    hazard.Invalid = false;
+                    $scope.hazardCopy = {};
+                    hazard.Name = returnedHazard.Name;
+                    hazard.Key_id = returnedHazard.Key_id;
+                },
+                function(){
+                    hazard.error = hazard.Name + ' could not be saved.  Please check your internet connection and try again.'
+                }
+            )
+
         }
     }
       //if this function is called, we have received a successful response from the server

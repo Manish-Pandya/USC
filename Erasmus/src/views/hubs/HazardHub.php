@@ -80,7 +80,6 @@
 <div class="whitebg" >
 	<div>
     <div>
-
     <div ng-hide="doneLoading" class="container loading" style="margin-left:70px; margin-top:15px;">
       <img class="" src="../../img/loading.gif"/>
       Building Hazard List...
@@ -88,13 +87,13 @@
     <div class="alert alert-danger" ng-if="error">
       <h1>{{error}}</h1>
     </div>
-        <div class="live">
-          <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 43px 0;" ng-init="hazardFilterSetting.Is_active = 'active'">
+        <div class="live" ng-hide="!SubHazards.length">
+          <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 19px 0;" ng-init="hazardFilterSetting.Is_active = 'active'">
             <option value="active">Display Active Hazards</option>
             <option value="inactive">Display Inactive Hazards</option>
             <option value="both">Display Active & Inactive Hazards</option>
           </select>
-          <ol id="hazardTree" style="padding-top:0" ng-hide="!SubHazards"> 
+          <ol id="hazardTree" style="padding-top:0"> 
             <li ng-repeat="child in SubHazards" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
               <span ng-include src="'hazard-hub-partial.html'"></span>
             </li>
