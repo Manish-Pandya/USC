@@ -62,7 +62,41 @@ body {
 /* line 34, ../sass/style.scss */
 .whitebg,.whiteBg {
   background: #fff;
+  padding:70px 15px !Important;
 }
+.whitebg.checklist{
+   padding:0px !Important;
+}
+@media screen and (max-width: 1375px){
+  .whitebg.checklist{
+    margin-left:53px !Important;
+    padding:0px !Important;
+  }
+}
+
+@media (min-width: 1500px){
+  .whitebg,.whiteBg {
+    background: #fff;
+    padding:70px 30px !Important;
+  }
+
+}
+.navbar{
+  margin-bottom:0;
+  margin-top: 20px;
+}
+@media (max-height:900px){
+    .navbar{
+      margin-bottom:0;
+      margin-top: 0
+    }
+    body{
+      padding-top: 0 !Important;
+    }
+}
+
+
+
 
 /******************************************************************************
 *
@@ -354,6 +388,7 @@ tr.notedit, tr.notedit td {
 #hazardTree {
   padding-top:60px;
   font-size: 25px;
+  margin-left:0;
   /*********** toggle hidden state of subhazards **********************/
 }
 /* line 212, ../sass/style.scss */
@@ -388,6 +423,7 @@ a i{
   height: auto;
   border: 0 none transparent;
   background: transparent;
+  width:33px;
 }
 /* line 244, ../sass/style.scss */
 #hazardTree textarea:focus, #hazardTree input:focus, #hazardTree button:focus {
@@ -400,15 +436,14 @@ a i{
 /* line 256, ../sass/style.scss */
 #hazardTree h2 {
   display: inline;
-  font-size: .9vw;
+  font-size: 18px;
 }
 /* line 261, ../sass/style.scss */
 #hazardTree .leftThings {
   height: 46px;
   padding-top: 6px;
   display: inline-block;
-  max-width: 60%;
-  min-width:450px;
+
 }
  #hazardTree li.small .leftThings {
   max-width: 70%;
@@ -647,7 +682,7 @@ div.deficiencyRoomList {
 -------------------------------------------------- */
 /* line 372, ../sass/style.scss */
 body {
-  padding-top: 14px;
+  padding-top: 0;
   position: relative;
   font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
   font-weight: 300;
@@ -778,6 +813,7 @@ img.smallLoading{
   width: 17px;
 }
 .subHazardModal, .roomsModal{
+  padding:0 3px;
   margin-top:-5px;
   border: 1px solid #ddd;
   position: absolute;
@@ -796,7 +832,7 @@ img.smallLoading{
     max-height: 300px;
     overflow: auto;
     overflow-x: hidden;
-    padding: 10px 1px;
+    padding: 14px 1px;
     width: 100%;
     li{
       width:100%;
@@ -827,7 +863,7 @@ img.smallLoading{
   position: fixed;
   padding: 25px;
   width: auto;
-  margin-bottom: 30px;
+  margin-bottom: 3px;
   h2{
     text-align: center;
   }
@@ -926,7 +962,7 @@ div.question, li.question {
   list-style: none;
   width:100%;
   height: 70px;
-  margin-top:16px;
+  margin:23px;
 }
 .postInspectionNav li{
   float:left;
@@ -1244,7 +1280,7 @@ ul.key{
   }
 }
 
-@media (max-width: 1365px) {
+@media (max-width: 1375px) {
   /* line 501, ../sass/style.scss */
   .hazardList {
     width: 100%;
@@ -1304,17 +1340,17 @@ ul.key{
 }
 
 /* line 523, ../sass/style.scss */
-#biologicalMaterials, #biologicalSafety, #biologicalHazards {
+#biologicalMaterials, #biologicalSafety, #biologicalHazards, #hazardListHeader1 {
   background: url(../img/biohazard-largeicon.png);
 }
 
 /* line 527, ../sass/style.scss */
-#generalLaboratorySafety, #chemicalSafety, #chemicalHazards {
+#generalLaboratorySafety, #chemicalSafety, #chemicalHazards, #hazardListHeader10009 {
   background: url(../img/chemical-safety-large-icon.png);
 }
 
 /* line 530, ../sass/style.scss */
-#radiationSafety, #radiationHazards {
+#radiationSafety, #radiationHazards, #hazardListHeader10010 {
   background: url(../img/radiation-large-icon.png);
 }
 .pseudoSelect{
@@ -1805,9 +1841,9 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   display: none !important;
 }
 .btn{
-  -webkit-border-radius: 2px !important;
-   -moz-border-radius:2px !important;
-   border-radius: 2px !important;
+  -webkit-border-radius: 4px !important;
+   -moz-border-radius:4px !important;
+   border-radius: 4px !important;
 }
 
 //datepickter styles
@@ -1868,7 +1904,7 @@ table.quickdate-calendar td:hover{cursor:pointer}
 /* define height and width of scrollable area. Add 16px to width for scrollbar          */
 div.tableContainer {
   clear: both;
-  max-height: 500px;
+  max-height: 360px;
   overflow: auto;
   width: auto;
 }
@@ -1919,7 +1955,7 @@ html>body thead.fixedHeader tr {
 /* induced side effect is that child TDs no longer accept width: auto                     */
 html>body tbody.scrollContent {
   display: block;
-  max-height: 450px;
+  max-height: 300px;
   overflow: auto;
   width: 100%
 }
@@ -1993,4 +2029,23 @@ table.roomList{
 }
 .nudge-up{
   margin-top: 0 !important;
+}
+
+
+///modal top position fixes;
+.modal.in{
+  margin-top: 10px !Important;
+}
+
+.btn{
+  box-shadow:0 2px 5px 0 rgba(0,0,0,.26) !important;
+}
+
+.btn:hover{
+  box-shadow:0 2px 5px 0 rgba(0,0,0,.36) !important;
+}
+
+
+.btn:active{
+  box-shadow:none !important;
 }
