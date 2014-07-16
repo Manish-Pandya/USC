@@ -88,6 +88,9 @@ class ActionMappingFactory {
 				"getAllInspectors"=>new ActionMapping("getAllInspectors", "", ""),
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
 
+				// Department Hub
+				"saveDepartment"=>new ActionMapping("saveDepartment", "", ""),
+
 				// Inspection, step 1 (PI / Room assessment)
 				"getAllRooms"=>new ActionMapping("getAllRooms", "", ""),
 				"initiateInspection"=>new ActionMapping("initiateInspection", "", ""),
@@ -128,6 +131,7 @@ class ActionMappingFactory {
 				"saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", ""),
 				"getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", ""),
 				"getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", ""),
+				"getDeficiencySelectionByInspectionIdAndDeficiencyId"=>new ActionMapping("getDeficiencySelectionByInspectionIdAndDeficiencyId", "", ""),
 
 
 				// Inspection, step 4 (Review, deficiency report)
