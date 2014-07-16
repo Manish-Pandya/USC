@@ -479,7 +479,7 @@ confirmationController = function(items, $scope, piHubFactory, $modalInstance, c
 	$scope.userCopy = piHubFactory.getUser();
 	var functionType = items;
 	if(functionType.toLowerCase() == 'remove'){
-		$scope.message = 'Do you want to inactive  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
+		$scope.message = 'Do you want to inactivate  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
 	}else{
 		$scope.message = "Do you want to remove "+$scope.userCopy.Name+" from the PI's lab personnel list?";
 	}
