@@ -165,9 +165,9 @@ require_once '../top_view.php';
 	    </span>
 	   		<ul class="allHazardList">
 				<li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">
-					<h1 class="hazardListHeader" once-id="hazard.cssId" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
+					<h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
 					<span ng-hide="hazard.hidden">
-				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="hazard.cssId" once-text="hazard.Name"></h1>
+				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" once-text="hazard.Name"></h1>
 					<hr>
 					<ul>
 						<li>
@@ -317,7 +317,7 @@ require_once '../top_view.php';
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
-	<ul class="container-fluid whitebg">
+	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
 		<li><a ng-click="openNotes()"><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>

@@ -80,17 +80,17 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	factory.setHazarRoomRelations = function(hazard){
 		console.log(hazard);
 		var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
-        var deferred = $q.defer();
+      var deferred = $q.defer();
 
-        convenienceMethods.saveDataAndDefer(url, hazard).then(
-          function(promise){
-            deferred.resolve(promise);
-          },
-          function(promise){
-            deferred.reject(promise);
-          }
-        );
-        return deferred.promise
+      convenienceMethods.saveDataAndDefer(url, hazard).then(
+        function(promise){
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject(promise);
+        }
+      );
+      return deferred.promise
 	}
 
 	factory.setSingleHazardRoomRelations = function(hazard, room, add){
@@ -345,10 +345,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     if(!data.InspectionRooms)data.InspectionRooms = [];
     $scope.hazards = data.ActiveSubHazards;
   //  console.log(data);
+    /*
     angular.forEach($scope.hazards, function(hazard, key){
      // console.log(hazard);
       hazard.cssId = camelCase(hazard.Name);
     });
+    */
     $scope.hazardsLoading = false;
     $scope.needNewHazards = false;
     angular.forEach($scope.hazards, function(hazard, key){
