@@ -92,13 +92,13 @@
 	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions | filter: filterForNo" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions | filter: filterForNo" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/radiation-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions | filter: filterForNo" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 	
 	<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions | filter: filterForNo" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
