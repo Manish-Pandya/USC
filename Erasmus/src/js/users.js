@@ -42,15 +42,18 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
   function init(){
-    console.log($location);
 
     convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
 	  convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGetUsers);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGetDepartments);
 
+    // sometimes $location.path() isn't set yet, so check for this
+    if(!$location.path()) {
+      // by default pis are loaded, so set path to this, and update selectedRoute accordingly
+      $location.path("/pis");
+    }
     if(!$scope.selectedRoute)$scope.selectedRoute = $location.path();
-    console.log($scope.selectedRoute);
   }
 
   function onGetDepartments(data){
