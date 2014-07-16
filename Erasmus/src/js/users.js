@@ -42,8 +42,7 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
   function init(){
-    
-    if($window.isProductionServer)$scope.isProductionServer = true;
+    console.log($location);
 
     convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
@@ -183,6 +182,7 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
   if($location.search().piName){
 
   }
+  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
 
 
   //create a modal instance for editing a user or creating a new one.
@@ -278,6 +278,8 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
 
 //controller for modal instance for lab contacts
 var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
+  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+
   $scope.failFindUser = false;
   console.log(items);
   if($window.isProductionServer)$scope.isProductionServer = true;
@@ -583,6 +585,8 @@ var personnelController = function($scope, $modal, $routeParams, $browser,  $roo
 
 //controller for modal instance for lab contacts
 var personnelModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
+  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+
   $scope.failFindUser = false;
   console.log($window.isProductionServer);
   if($window.isProductionServer)$scope.isProductionServer = true;
@@ -902,6 +906,8 @@ var piController = function($scope, $modal, $routeParams, $browser,  $rootElemen
 
 //controller for modal instance for lab contacts
 var piModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
+  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+
 
   $scope.failFindUser = false;
   console.log(items[0]);
@@ -939,7 +945,6 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
   $scope.roles = items[2]
   $scope.pis = items[3];
   $scope.departments = items[4];
-
 
   $scope.savePi = function(){
     $scope.piCopy.IsDirty = true;

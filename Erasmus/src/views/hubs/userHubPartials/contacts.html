@@ -8,7 +8,7 @@
 				     <span ng-show="showInactive"><i class="icon-minus-3" style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Hide Inactive Contacts</span>
 				     <span ng-hide="showInactive"><i class="icon-plus-3"  style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Show Inactive Contacts</span>
 			     </a>
-			     <a class="btn-large btn btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
+			     <a class="btn-large btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
 			   </div>
 			</th>
 		</tr>
@@ -88,10 +88,12 @@
         		<div class="control-group">
 		         <label class="control-label" for="inputEmail">Username</label>
 		         <div class="controls">
-		         	<div class="input-append">
-		             <input type="text" ng-if="isProductionServer && !userCopy.Username" id="inputEmail" ng-model="userCopy.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
-			      	<img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
-			      </div>
+
+		         	<div class="input-append" ng-if="isProductionServer && !userCopy.Username">
+		             	<input type="text" id="inputEmail" ng-model="userCopy.userNameForQuery" placeholder="Username">
+		             	<a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
+			      		<img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
+			      	</div>
 		            <input type="text" ng-if="!isProductionServer || userCopy.Username" id="inputEmail" disabled="disabled" ng-model="userCopy.Username" placeholder="Username">
 		         	<input type="hidden" ng-model="userCopy.Username"/>
 		         </div>
