@@ -3,7 +3,7 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/buildingHub.js"></script>
 
-<span class="whiteBg" id="buildingHub"  ng-app="buildingHub" >
+<span class="" id="buildingHub"  ng-app="buildingHub" >
 	<div class="navbar" style="margin-bottom:0">
 		<ul class="nav pageMenu" style=" background: #49afcd; color:white !important; padding: 4px 0 0 0; width:100%">
 			<li class="">
@@ -17,6 +17,7 @@ require_once '../top_view.php';
 	</div>
 	<div class="whiteBg" style="margin-top:-30px;">
 		<span ng-controller="buildingHubController">
+			<h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
 			<div id="buildings">
 				<div class="row" style="margin-left:0">
 					<input style="" ng-if="Buildings" type="text" typeahead-on-select='onSelectBuilding($item, $model, $label)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in Buildings | filter:$viewValue">
