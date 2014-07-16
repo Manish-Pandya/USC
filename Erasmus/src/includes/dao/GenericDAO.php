@@ -234,7 +234,8 @@ class GenericDAO {
 
 		// Otherwise, the statement failed to execute, so return false.
 		} else {
-			$object = false;
+			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
+			$object = null;
 		}
 
 		// return the updated object
