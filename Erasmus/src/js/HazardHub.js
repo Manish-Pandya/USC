@@ -234,9 +234,7 @@ hazardHub.directive('buttongroup', ['$window', function($window) {
         restrict: 'A',
         link: function(scope, elem, attrs) {
             scope.onResize = function() {
-                console.log('resize');
                 w = elem.width();
-                console.log(w+" | "+$($window).width());
                 if(w<1200 && $($window).width()>1365){
                      elem.addClass('small');
                 }else if(w<1140 && $($window).width()<1365){
@@ -245,9 +243,11 @@ hazardHub.directive('buttongroup', ['$window', function($window) {
                     elem.removeClass('small');
                 }
 
-                console.log(elem.children().children().children('.leftThings').children());
+                //this code ensures that the hazard names, buttons and toggle buttons all line up properly, displaying cleanly even with linebreaks
 
+                //get the width of the container element of for our buttons
                 var btnWidth  = elem.children().children().children('.hazarNodeButtons').width();
+                //set the width of all the elements on the left side of our hazard li elements
                 var leftWidth = w - btnWidth - 50;
                 elem.children().children().children('.leftThings').width(leftWidth);
                 elem.children().children().children('.leftThings').children('span').css({width:leftWidth-50+'px'});
@@ -259,7 +259,6 @@ hazardHub.directive('buttongroup', ['$window', function($window) {
                 function(){
                     return scope.onResize();
                 }
-                
             )
 
             angular.element($window).bind('resize', function() {
@@ -287,7 +286,7 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
     return factory;
 });
 
-hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMethods, hazardHubFactory) {
+hazardHub.controller('TreeController', function ($scope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory) {
 
     init();
   
@@ -387,9 +386,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
                    
                     limit = start + Math.min(15,hazard.SubHazardsHolder.length);
                     buildSubsArray(hazard, start, limit);
-
-                }
-                
+                }               
             }
         }
     }
@@ -538,110 +535,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
         convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
     }
 
-    //called when a hazard drag event is begun
-    $scope.start = function(event, ui){
-        $scope.event = event;
-        $scope.ui = ui;
-
-        var root = event.target,
-            item = ui.item,
-            parent = item.parent(),
-            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
-            child = item.scope().child,
-            index = item.index();
-
-        $scope.hazardsCopy = angular.copy($scope.SubHazards);
-
-        $scope.previousParent  = target.child.KeyId;
-    }
-
-    //called when a Hazard drag has stopped
-    $scope.update = function (event, ui) {
-        $scope.event = event;
-        $scope.ui = ui;
-
-        var root = event.target,
-            item = ui.item,
-            parent = item.parent(),
-            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
-            child = item.scope().child,
-            index = item.index();
-
-            console.log(target);
-
-        hazardDTO = {
-            Class:         'Hazard',
-            Key_id:         child.Key_id,
-            Parent_hazard_id:  target.child.Key_id,
-            index:         index,
-            Name:          child.Name,
-            Is_active:     child.Is_active,
-            update:        true 
-        }
-
-        console.log(hazardDTO);
-
-        //REST calls
-        hazard.IsDirty;
-        var url = '../../ajaxaction.php?action=saveHazard';
-        convenienceMethods.updateObject( hazardDTO, child, onMoveHazard, onFailMove, url, hazardDTO ) ;
-    };
-
-    //called when a hazard is moved and the server successfully udpates accordingly
-    onMoveHazard = function( hazardDTO, hazard ){
-      
-        convenienceMethods.setPropertiesFromDTO( hazardDTO, hazard );
-        hazard.IsDirty = false;
-
-        event = $scope.event;
-        ui    = $scope.ui;
-
-        var root = event.target,
-            item = ui.item,
-            parent = item.parent(),
-            target =  (parent[0] === root) ? $scope.SubHazards : parent.scope(),
-            child = item.scope().child,
-            index = item.index();
-
-        //if the location we are moving to has no subhazards, set up an empty array for our moved hazard to live in
-        target.SubHazards || (target.SubHazards = []);
-        
-        //loop through the new parent
-        function walk(target, child) {
-         
-            var children = target.SubHazards,
-            i;
-
-            if (children) {
-                //console.log('here');
-                i = children.length;
-                while (i--) {
-                    if (children[i] === child) {
-                        //if we find a match for the element, splice if FROM the scope to prevent duplicates
-                        //console.log('match found');   
-                        return children.splice(i, 1);
-                    } else {
-                        //recurse down and look again for duplicate, assuring we never duplicate an object we mean to move
-                        walk(children[i], child);
-                    }
-                }
-            }
-        }
-
-        walk(target, child);
-        
-        //add the child to the $scope, placing it in the subhazards array of the parent target $scope object
-        target.child.SubHazards.splice(index, 0, child);
-    }
-
-    //called when a hazard is moved and the server sends an error response
-    onFailMove = function( hazard ){
-        hazard.IsDirty = false;
-        //set a flag property to indicate that we have tried to move this hazard.  This will call our watch expression to fire and reset the DOM tree of subhazards
-        hazard.update = hazardDTO.update;
-        alert('Something went wrong moving '+hazard.Name);
-    }
-
     //by default, this is true.  This means that we will display hazards with a TRUE Is_active property
     //returns boolean to determine if a hazard should be shown or hidden based on user input and the hazard's Is_active property
     $scope.getShowHazard = function(hazard){
@@ -694,16 +587,37 @@ hazardHub.controller('TreeController', function ($scope, $timeout, convenienceMe
 
         //get the key_ids of the hazards involved so we can build the request.
         var hazardId       = parent.SubHazards[idx].Key_id;
-        var beforeHazardId = parent.SubHazards[beforeHazardIdx].Key_id;
-        var afterHazarId   = parent.SubHazards[afterHazardIdx].Key_id;
-        var url = '../../ajaxaction.php?action=reorderHazards&hazardId='+hazardId+'&beforeHazardId='+beforeHazardId+'&afterHazarId='+afterHazarId;
+
+        //if we are moving the hazard up to the first spot, the index for the before hazard will be - 1, so we can't get a key_id
+        if(beforeHazardIdx > -1){
+            var beforeHazardId = parent.SubHazards[beforeHazardIdx].Key_id;
+        }else{
+            var beforeHazardId = null
+        }
+
+        //if we are moving the hazard down to the last spot, the index for the before hazard will out of range, so we can't get a key_id
+        if(afterHazardIdx < parent.SubHazards.length){
+            var afterHazardId = parent.SubHazards[afterHazardIdx].Key_id;  
+       }else{
+            var afterHazardId = null;
+       }
+
+        var url = '../../ajaxaction.php?action=reorderHazards&hazardId='+hazardId+'&beforeHazardId='+beforeHazardId+'&afterHazardId='+afterHazardId;
 
         //make the call
-        convenienceMethods.saveDataAndDefer(url, clickedHazard).then(function(promise){
-            console.log(promise);
-            parent.SubHazards[idx].IsDirty = false;
-            parent.SubHazards = promise;
-        });
+        convenienceMethods.saveDataAndDefer(url, clickedHazard).then(
+            function(promise){
+                parent.SubHazards[idx].IsDirty = false;
+                parent.SubHazards = promise;
+                $location.hash('hazard'+hazardId);
+                // call $anchorScroll()
+                $anchorScroll();
+            },
+            function(){
+                parent.SubHazards[idx].error = true;
+                $scope.error="The hazard could not be moved.  Please check your internet connection.";  
+            }
+        );
     }
 
 

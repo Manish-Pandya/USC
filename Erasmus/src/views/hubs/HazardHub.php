@@ -12,7 +12,7 @@
           </span>
          </button>
         <span ng-hide="child.isBeingEdited">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} | {{child.Order_index}}</h2>
         </span>
 
         <span ng-show="child.isBeingEdited">
@@ -58,7 +58,7 @@
     </div>
      
       <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
-        <li ng-repeat="child in child.SubHazards | orderBy: [order]" ng-show="hazardFilter(child, $parent)" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
+        <li ng-repeat="child in child.SubHazards | orderBy: [order]" ng-show="hazardFilter(child, $parent)"  id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
           <span ng-include src="'hazard-hub-partial.html'"></span>       
         </li>
       </ol> 
@@ -94,7 +94,7 @@
             <option value="both">Display Active & Inactive Hazards</option>
           </select>
           <ol id="hazardTree" style="padding-top:0"> 
-            <li ng-repeat="child in SubHazards" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
+            <li ng-repeat="child in SubHazards" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
               <span ng-include src="'hazard-hub-partial.html'"></span>
             </li>
           </ol>
