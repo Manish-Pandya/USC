@@ -23,6 +23,9 @@
  * @return string|unknown|NULL
  */
 function getValueFromRequest( $valueName, $paramValue = NULL ){
+
+	if(stristr($paramValue, "null"))return null;
+
 	if( $paramValue !== NULL ){
 		return $paramValue;
 	}
@@ -2249,18 +2252,40 @@ function createOrderIndicesForHazards(){
 
 //reorder hazards
 function reorderHazards(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
 	$beforeHazardId = getValueFromRequest('beforeHazardId', $beforeHazardId);
-	$afterHazarId = getValueFromRequest('afterHazarId', $afterHazarId);
+	$afterHazardId = getValueFromRequest('afterHazardId', $afterHazardId);
 
-	if( $hazardId !== NULL && $beforeHazardId !== NULL && $afterHazarId !== NULL){
+	$LOG->debug('BEFORE ID: '.$beforeHazardId);
+	$LOG->debug('AFTER ID: '.$afterHazardId);
+
+	if( $hazardId !== NULL){
 		$dao = getDao(new Hazard());
 		$hazard = $dao->getById($hazardId);
-		$beforeHazard = $dao->getById($beforeHazardId);
-		$afterHazard = $dao->getById($afterHazarId);
+
+		//if we are moving a hazard to the lowest order_index, we won't have a hazard before it
+		if($beforeHazardId != "null"){
+			$beforeHazard = $dao->getById($beforeHazardId);
+			$beforeOrderIdx = $beforeHazard->getOrder_index();
+		}else{
+			$beforeOrderIdx = 0;
+		}
+
+		//if we are moving a hazard to the last index, we won't have a hazard after it.
+		if($afterHazardId != "null"){
+			$afterHazard = $dao->getById($afterHazardId);
+			$afterHazardIdx = $afterHazard->getOrder_index();
+		}else{
+			$afterHazardIdx = $beforeOrderIdx + 1;
+		}
+
+		$LOG->debug("before index: ".$beforeOrderIdx);
+		$LOG->debug("after index: ".$afterHazardIdx);
+
 		//set the hazard's order index to a random float between the order indices of the other two hazards
-		$hazard->setOrder_index(random_float ($beforeHazard->getOrder_index(),$afterHazard->getOrder_index()));
+		$hazard->setOrder_index(random_float ($beforeOrderIdx,$afterHazardIdx));
 		$dao->save($hazard);
 
 		//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view
