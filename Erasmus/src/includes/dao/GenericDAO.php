@@ -183,8 +183,7 @@ class GenericDAO {
 			// we have a problem!
 			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
 
-			//NULL return indicates error
-			return NULL;
+			return new SaveError("Entity did not match model object class", $object);
 		}
 		//else use $object as-is!
 
