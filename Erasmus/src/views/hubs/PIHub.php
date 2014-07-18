@@ -32,7 +32,7 @@ require_once '../top_view.php';
 	</div>
 	<span ng-if="PI">
 		<div class="btn-group" id="piButtons" style="">
-			<a href="UserHub.php#3" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
+			<a href="UserHub.php#/pis?pi={{PI.User.Last_name}}" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Personnel</a>
 			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>
@@ -51,44 +51,6 @@ require_once '../top_view.php';
 		<ng-view></ng-view>
 	</span>
 
-<!-- begin edit user modal dialogue -->
-<div class="modal hide fade" id="editUser1">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Editing Bob Userington</h3>
-  </div>
-  <form style="padding:0; margin:0;" class="form-horizontal">
-  <div class="modal-body">
- 
-  	<div class="control-group">
-	    <label class="control-label" for="fName">First Name</label>
-	    <div class="controls">
-	      <input type="text" name="fName" id="fName" placeholder="Password" value="Bob">
-	    </div>
-    </div>
-    
-    <div class="control-group">
-	    <label class="control-label" for="lName">Last Name</label>
-	    <div class="controls">
-	      <input type="text" name="lName" id="lName" placeholder="Password" value="Userington">
-	    </div>
-    </div>
-    
-    <div class="control-group">
-	    <label class="control-label" for="email">Email</label>
-	    <div class="controls">
-	      <input type="text" name="email" id="email" placeholder="Password" value="bob@bob.bob">
-	    </div>
-    </div>
-
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn btn-danger btn-large" data-dismiss="modal">Close</a>
-    <a href="#" class="btn btn-primary btn-large">Save changes</a>
-  </div>
-  </form>
-</div>
-<!-- end edit user modal dialogue -->
 
 <?php
 require_once '../bottom_view.php';

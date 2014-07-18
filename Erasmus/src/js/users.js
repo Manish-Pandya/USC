@@ -89,7 +89,7 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
   function onGetPis(data){
      angular.forEach(data, function(pi, key){
       pi.Buildings = [];
-      angular.forEach(pi.Rooms, function(room, key){
+      angular.forEach(pi.Rooms, function(room, key){  
        if(room&&!convenienceMethods.arrayContainsObject(pi.Buildings, room.Building))pi.Buildings.push(room.Building);
       });
     });
@@ -773,6 +773,12 @@ var personnelModalInstanceController = function ($scope, $modalInstance, items, 
 };
 
 var piController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route, $timeout) {
+
+
+  //have we come here from piHub, by clicking the edit PI button?
+  //if so, we should have a pi's last name in our $location.search()
+
+  if($location.search().pi)$scope.searchText = $location.search().pi;
 
   $scope.wcount = function() {
     $timeout(function() {
