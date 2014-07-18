@@ -90,7 +90,7 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
      angular.forEach(data, function(pi, key){
       pi.Buildings = [];
       angular.forEach(pi.Rooms, function(room, key){
-        if(!convenienceMethods.arrayContainsObject(pi.Buildings, room.Building))pi.Buildings.push(room.Building);
+       if(room&&!convenienceMethods.arrayContainsObject(pi.Buildings, room.Building))pi.Buildings.push(room.Building);
       });
     });
 
