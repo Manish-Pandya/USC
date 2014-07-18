@@ -235,7 +235,9 @@ class GenericDAO {
 		// Otherwise, the statement failed to execute, so return false.
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
-			$object = null;
+
+			// note to self, replace with more detailed SaveError object, extension of ActionError
+			$object = new ActionError("Could not save Object");
 		}
 
 		// return the updated object
