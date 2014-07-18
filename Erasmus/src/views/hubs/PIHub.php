@@ -32,7 +32,7 @@ require_once '../top_view.php';
 	</div>
 	<span ng-if="PI">
 		<div class="btn-group" id="piButtons" style="">
-			<a href="UserHub.php#/pis?pi={{PI.User.Last_name}}" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
+			<a href="UserHub.php#/pis?pi={{PI.User.Last_name}}piId={{PI.Key_id}}" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Personnel</a>
 			<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>

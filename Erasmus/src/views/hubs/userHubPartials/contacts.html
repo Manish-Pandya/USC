@@ -9,6 +9,8 @@
 				     <span ng-hide="showInactive"><i class="icon-plus-3"  style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Show Inactive Contacts</span>
 			     </a>
 			     <a class="btn-large btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
+			     <a class="btn-large btn" ng-if="piId" href="piHub.php#?piHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
+
 			   </div>
 			</th>
 		</tr>

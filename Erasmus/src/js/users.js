@@ -28,10 +28,24 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         redirectTo: '/pis'
       }
     );
-});
+})
+.factory('userHubFactory', function(convenienceMethods,$q){
 
+  var factory = {};
+
+  factory.setPIs = function(pis){
+    this.pis = pis;
+  }
+
+  factory.getPIs = function(){
+    return this.pis;
+  }
+
+  return factory
+
+});
 //called on page load, gets initial user data to list users
-var MainUserListController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window) {
+var MainUserListController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
  //console.log($modal);
   $scope.showInactive = false;
   $scope.users = [];
@@ -182,9 +196,12 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
 
   //look at GET parameters to determine if we should alter the view accordingly
   //if we have linked to this view from the PI hub to manage a PI's lab personnel, filter the view to only those PI's associated with th
-  if($location.search().piName){
-
+  
+  if($location.search().piId){
+    $scope.piId = $location.search().piId;
+    console.log('yes');
   }
+
   if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
 
 
@@ -282,6 +299,7 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
 //controller for modal instance for lab contacts
 var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
   if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+
 
   $scope.failFindUser = false;
   console.log(items);
