@@ -1,5 +1,33 @@
 var hazardInventory = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodModule','once']);
 
+hazardInventory.directive('hazardLi', ['$window', function($window) {
+    return {
+        restrict: 'C',
+        link: function(scope, elem, attrs) {
+
+            scope.onResize = function() {
+                w = elem.width();
+                checkbox = $(elem).find($('.targetHaz span'));
+                label = $(elem).find($('label'));
+                console.log(w);
+                //label.width(w);
+               // checkbox.width(w-27);
+
+            }
+
+            scope.$watch(
+                function(){
+                    return scope.onResize();
+                }
+            )
+
+            angular.element($window).bind('resize', function() {
+                scope.onResize();
+            });
+        }
+    }
+}])
+
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
 	var factory = {};
 	var PI = {};

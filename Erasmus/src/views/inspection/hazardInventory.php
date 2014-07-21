@@ -19,10 +19,9 @@ require_once '../top_view.php';
 	<div class="" >
 	<!-- recursive subhazard template -->
     <script type="text/ng-template" id="sub-hazard.html">
-		<h4 style="display:inline-block;" class="hazardLi">
 			<label class="checkbox inline">
 				<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-				<span class="metro-checkbox targetHaz"><span once-text="child.Name" class="nudge-up"></span></span>
+				<span class="metro-checkbox targetHaz" once-text="child.Name"></span>
 			</label>
 			<span ng-if="child.ActiveSubHazards.length || child.HasChildren">
 				<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
@@ -31,7 +30,7 @@ require_once '../top_view.php';
 				<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
 			</span>
 
-			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;"> 
+			<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;"> 
 				<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
 				<ul>
 					<li ng-repeat="(key, child) in child.ActiveSubHazards">
@@ -43,7 +42,7 @@ require_once '../top_view.php';
 				</ul>
 			</div>	
 
-			<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
+			<div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
 				<h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
 				<ul>
 					<li ng-repeat="(key, room) in child.InspectionRooms">
@@ -58,10 +57,7 @@ require_once '../top_view.php';
 						</label>
 					</li>			
 				</ul>
-			</div>
-
-			</h4>		
-		
+			</div>		
 		<ul ng-hide="!child.showRooms" class="subRooms">
 			<li>Rooms:</li>
 			<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
@@ -181,45 +177,49 @@ require_once '../top_view.php';
 							</a>
 						</li>
 						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
-							<h4 class="hazardLi">
-								<label class="checkbox inline">
-									<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-									<span class="metro-checkbox targetHaz"><span once-text="child.Name" class="nudge-up"></span><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-									<!--<pre>{{child | json}}</pre>-->
-									</span>
-								</label>
-								<span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
-									<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
-								</span>
-								<span ng-show="child.IsPresent">
-									<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
-								</span>
+							<!--<h4 class="">-->
+							<label class="checkbox inline">
+								<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+								<span class="metro-checkbox targetHaz" once-text="child.Name">
+									<!--<span once-text="child.Name" class="nudge-up"></span>-->
 
-								<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
-									<h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
-									<ul>
-										<li ng-repeat="(key, child) in child.ActiveSubHazards">
-											<label class="checkbox inline">
-												<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-												<span class="metro-checkbox"><span once-text="child.Name" class="nudge-up"></span></span>
-											</label>
-										</li>
-									</ul>
-								</div>	
+									<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+								<!--<pre>{{child | json}}</pre>-->
+								</span>
+							</label>
+							<!--</h4>-->		
+							<span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
+								<i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
+							</span>
+							<span ng-show="child.IsPresent">
+								<i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
+							</span>
 
-								<div class="roomsModal popUp" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-									<h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
-									<ul>
-										<li ng-repeat="(key, room) in child.InspectionRooms">
-											<label class="checkbox inline">
-												<input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-												<span class="metro-checkbox" once-text="room.Name"><img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-											</label>
-										</li>
-									</ul>
-								</div>
-							</h4>		
-							
+							<div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px"> 
+								<h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+								<ul>
+									<li ng-repeat="(key, child) in child.ActiveSubHazards">
+										<label class="checkbox inline">
+											<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+											<span class="metro-checkbox" once-text="child.Name" ></span>
+										</label>
+										<div class="clearfix"></div>
+									</li>
+								</ul>
+							</div>	
+
+							<div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
+								<h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+								<ul>
+									<li ng-repeat="(key, room) in child.InspectionRooms">
+										<label class="checkbox inline">
+											<input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
+											<span class="metro-checkbox" once-text="room.Name"><img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+										</label>
+										<div class="clearfix"></div>
+									</li>
+								</ul>
+							</div>
 
 							<ul ng-show="getShowRooms(child)" class="subRooms">
 								<li>Rooms:</li>
