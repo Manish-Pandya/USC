@@ -820,6 +820,9 @@ img.smallLoading{
   background: white;
   z-index: 50000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  &.skinny{
+    padding:0;
+  }
   h3{
     font-weight: normal;
     i{
@@ -835,7 +838,11 @@ img.smallLoading{
     padding: 14px 1px;
     width: 100%;
     li{
-      width:100%;
+      width: 100%;
+      padding: 5px 0;
+      display: block;
+      clear: both;
+
       label{
         span.metro-checkbox{
           width:100%;
@@ -1252,22 +1259,27 @@ ul.key{
   margin-bottom: -35px;
 }
 .hazardLi{
+  width:100%;
   clear:both;
-  h4{
       label{
-        white-space:nowrap;
+        max-width: 87%;
+        padding-top: 0px;
+        padding-left: 0;
         span.metro-checkbox{
           margin-right:0 !Important;
-          width:100%;
-          display: inline !Important;
+          //width:100%;
+          padding-top:4px !Important;
         }
       }
-    }
+  .radio.inline, .checkbox.inline{
+    float:left;
+  }
 }
+
+
 /* line 497, ../sass/style.scss */
 .hazardList, .hazardList ul {
   list-style: none !Important;
-
   i{
     margin:5px 2px 0;
     font-size:17px;
@@ -1278,6 +1290,9 @@ ul.key{
       color:$blue;
     }
   }
+}
+.hazardList span > ul{
+  margin-left:0 !important;
 }
 
 @media (max-width: 1375px) {
@@ -1685,7 +1700,8 @@ span.green {
   }
 }
 .hazardLi{
-  margin-bottom:3px;
+  margin-bottom: 0px;
+  padding: 3px 0;
 }
 
 /* line 737, ../sass/style.scss */
