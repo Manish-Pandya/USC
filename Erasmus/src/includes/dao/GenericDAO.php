@@ -83,10 +83,10 @@ class GenericDAO {
 			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
 			if ($stmt->execute()) {
 				$result = $stmt->fetch();
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 			} else {
 				$error = $stmt->errorInfo();
-				die($error[2]);
+				$result = new GetError($error);
 			}
 
 			return $result;

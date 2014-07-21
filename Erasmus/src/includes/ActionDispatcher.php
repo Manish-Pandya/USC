@@ -123,7 +123,7 @@ class ActionDispatcher {
 			else if($this->result->actionFunctionResult instanceof ActionError) {
 				// once there are more detailed subclasses of ActionError, may be helpful to note
 				// the type of error in the log
-				$this->LOG->WARN("Dispatch Complete, but returning a " . get_class($this->result->actionFunctionResult) 
+				$this->LOG->warn("Dispatch Complete, but returning a " . get_class($this->result->actionFunctionResult)
 					. ' with message: ' . ($this->result->actionFunctionResult->getMessage()) );
 				$this->dispatchSuccess($this->result, $actionMapping);
 			}
