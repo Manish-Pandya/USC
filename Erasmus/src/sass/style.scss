@@ -438,9 +438,14 @@ a i{
   display: inline;
   font-size: 18px;
 }
+.leftThings {
+  span.hazardName{
+    display:inline-block;
+  }
+}
 /* line 261, ../sass/style.scss */
 #hazardTree .leftThings {
-  height: 46px;
+  min-height: 46px;
   padding-top: 6px;
   display: inline-block;
 
