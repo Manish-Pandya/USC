@@ -86,7 +86,7 @@ class GenericDAO {
 			// ... otherwise, generate error message to be returned
 			} else {
 				$error = $stmt->errorInfo();
-				$result = new GetError($error);
+				$result = new QueryError($error);
 			}
 
 			return $result;
@@ -183,7 +183,7 @@ class GenericDAO {
 			// we have a problem!
 			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
 
-			return new SaveError("Entity did not match model object class", $object);
+			return new ModifyError("Entity did not match model object class", $object);
 		}
 		//else use $object as-is!
 
@@ -235,7 +235,7 @@ class GenericDAO {
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
 
-			$object = new SaveError("Could not save Object", $object);
+			$object = new ModifyError("Could not save Object", $object);
 		}
 
 		// return the updated object

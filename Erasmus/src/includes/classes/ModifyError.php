@@ -1,6 +1,7 @@
 <?php
 
-class SaveError extends ActionError {
+// Holds errors related to INSERTs, UPDATEs, etc. to the database
+class ModifyError extends ActionError {
 	public $attemptedObject;
 
 	public function __construct($message, $attemptedObject) {
