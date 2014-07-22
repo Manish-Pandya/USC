@@ -7,11 +7,11 @@
     <div>
      <div class="leftThings">
         <button class="toggle" ng-click="toggleMinimized(child, false)">
-          <span ng-if="child.HasChildren" >  
+          <span ng-if="child.HasChildren" >
                 <span ng-if="!child.minimized">&#x25BC;</span><span ng-if="child.minimized">&#x25B6;</span>
           </span>
          </button>
-        <span ng-hide="child.isBeingEdited">
+        <span ng-hide="child.isBeingEdited" class="hazardName">
             <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
         </span>
 
@@ -59,7 +59,7 @@
      
       <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
         <li ng-repeat="child in child.SubHazards | orderBy: [order]" ng-show="hazardFilter(child, $parent)"  id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
-          <span ng-include src="'hazard-hub-partial.html'"></span>       
+          <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
         </li>
       </ol> 
     </li>
@@ -95,7 +95,7 @@
           </select>
           <ol id="hazardTree" style="padding-top:0"> 
             <li ng-repeat="child in SubHazards" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
-              <span ng-include src="'hazard-hub-partial.html'"></span>
+              <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>
             </li>
           </ol>
         </div>
