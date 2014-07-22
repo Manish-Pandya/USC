@@ -12,13 +12,14 @@ require_once '../top_view.php';
 			</h2>	
 		</li>
 	</ul>
+	<div class="clearfix"></div>
 </div>
 
-<span ng-app="userList" ng-controller="MainUserListController">
-    <form class="form-horizontal" style="margin: 71px 0 -11px -38px;">
+<span ng-app="userList" ng-controller="MainUserListController" style="clear:both">
+    <form class="form-horizontal" style="margin: 10px 0 0;">
       <div class="control-group">
-         <label class="control-label" for="route" style="font-weight:bold;">Select User Type:</label>
-         <div class="controls">
+         <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
+         <div class="controls" style="margin-left:128px;">
             <select ng-model="selectedRoute" ng-change="setRoute()" id="route">
 			  <option value="/pis">Principal Investigators</option>
 			  <option value="/contacts">Laboratory Contacts</option>
