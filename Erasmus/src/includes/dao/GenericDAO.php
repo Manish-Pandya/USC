@@ -135,10 +135,10 @@ class GenericDAO {
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			$result = new QueryError($error);
 		}
 
 		return $result;
@@ -231,7 +231,7 @@ class GenericDAO {
 			$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
 			$object = $this->getById( $object->getKey_Id() );
 
-		// Otherwise, the statement failed to execute, so return false.
+		// Otherwise, the statement failed to execute, so return an error
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
 
@@ -282,7 +282,7 @@ class GenericDAO {
 		// ... otherwise, die and echo the db error
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			die($error[2]); // TODO: fix dying here, use error message instead
 		}
 
 		$resultList = array();
@@ -336,10 +336,11 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$this->LOG->debug( "Inserted new related item with key_id [$key_id]");
 			return true;
-		// ... otherwise, die and echo the db error
+		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			// create modify error with human readable error message
+			return new ModifyError($error[2]);
 		}
 	}
 
@@ -369,10 +370,11 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$this->LOG->debug( "Remove related item with key_id [$key_id]");
 			return true;
-		// ... otherwise, die and echo the db error
+		// ... otherwise, generate an error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			// create modify error with human readable error message
+			return new ModifyError($error[2]);
 		}
 	}
 
@@ -455,10 +457,10 @@ class GenericDAO {
 		$stmt->setFetchMode(PDO::FETCH_CLASS, "User");			// Query the db and return one user
 		if ($stmt->execute()) {
 			$result = $stmt->fetch();
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			$result = new QueryError($error[2]);
 		}
 
 		return $result;
