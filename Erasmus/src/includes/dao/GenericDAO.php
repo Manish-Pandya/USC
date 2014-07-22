@@ -87,6 +87,7 @@ class GenericDAO {
 			} else {
 				$error = $stmt->errorInfo();
 				$result = new QueryError($error);
+				$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 			}
 
 			return $result;
@@ -139,6 +140,7 @@ class GenericDAO {
 		} else {
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
 
 		return $result;
@@ -234,7 +236,7 @@ class GenericDAO {
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
-
+			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
 			$object = new ModifyError("Could not save Object", $object);
 		}
 
@@ -279,10 +281,12 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$keys = $stmt->fetchAll();
 			$this->LOG->debug( "... returned " . count($keys) . " related records.");
-		// ... otherwise, die and echo the db error
+		// ... otherwise, return an error
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]); // TODO: fix dying here, use error message instead
+			$queryError = new QueryError($error);
+			$this->LOG->error("statement failed, returning QueryError with message: " . $queryError->getMessage());
+			return $queryError;
 		}
 
 		$resultList = array();
@@ -339,8 +343,11 @@ class GenericDAO {
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
+
 			// create modify error with human readable error message
-			return new ModifyError($error[2]);
+			$result = new ModifyError($error[2]);
+			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
+			return $result;
 		}
 	}
 
@@ -368,13 +375,18 @@ class GenericDAO {
 
 		// Delete the record and return true
 		if ($stmt->execute() ) {
+c.) Which has the best noise:feel ratio?
 			$this->LOG->debug( "Remove related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate an error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
+
 			// create modify error with human readable error message
-			return new ModifyError($error[2]);
+			$result = new ModifyError($error[2]);
+			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
+
+			return $result;
 		}
 	}
 
@@ -460,6 +472,8 @@ class GenericDAO {
 			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+
 			$result = new QueryError($error[2]);
 		}
 
