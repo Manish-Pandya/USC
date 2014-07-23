@@ -367,6 +367,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     }
   }
 
+  $scope.select
+
   //grab set user list data into the $scope object
   function onGetHazards (data) {
     console.log(data);
@@ -636,6 +638,15 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
           room.IsSelected = true;
       }else{
           room.IsSelected = false;
+      }
+    });
+  }
+
+  $scope.selectRoom = function(room,building){
+    building.IsChecked = false;
+    angular.forEach(building.Rooms, function(room, key){
+      if(room.IsSelected){
+        building.IsChecked = true;
       }
     });
   }
