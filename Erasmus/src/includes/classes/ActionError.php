@@ -8,6 +8,7 @@ class ActionError {
 	public function __construct( $message ){
 		$this->message = $message;
 		$this->LOG = Logger::getLogger( __CLASS__ );
+		// TODO: possibly log what created this instance of ActionError, if possible?
 
 	}
 	
@@ -23,6 +24,8 @@ class ActionError {
 	public function __call($method, $args) {
 		if(!isset($this->$method)) {
 			$this->LOG->error('Method ' . $method . ' does not exist on object of type ' . get_class());
+			// Thought for future self: Would it make more sense to return an error instead?
+			// or would that be redundant?
 			return NULL;
 		}
 	}
