@@ -26,7 +26,7 @@
     	<div class="control-group">
          <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls">
-            <input style="" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue">
+            <input style="" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
          </div>
 	    </div>
 
@@ -42,7 +42,7 @@
 
 	   <ul ng-show="addRoom">
 	   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-	   		<li ng-repeat="room in chosenBuilding.Rooms">
+	   		<li ng-repeat="room in chosenBuilding.Rooms | orderBy: room.Name">
 	   			{{room.Name}}
 	   		</li>
 	   </ul>

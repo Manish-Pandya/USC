@@ -41,12 +41,14 @@ $grey:                        #ccc;
 /* line 22, ../sass/style.scss */
 html {
   height: 100%;
-  background: #fff;
+  background: #ddd;
+
 }
 
 /* line 24, ../sass/style.scss */
 body {
   min-height: 100%;
+  overflow-x:hidden;
 }
 
 /* line 26, ../sass/style.scss */
@@ -285,6 +287,8 @@ div.rsmsCenterIconContainer a p {
 /* line 145, ../sass/style.scss */
 .userList{
   background:white;
+  max-width: 100%;
+  overflow-x: scroll;
   th{
     h1{
       display: inline-block;
@@ -292,6 +296,7 @@ div.rsmsCenterIconContainer a p {
   }
 }
 .userList tr {
+  max-width: 100%;
   border: none;
   th{
     font-size:18px;
@@ -598,8 +603,11 @@ a.btn i{
   margin: 4px 15px 5px 0 !important;
   font-size: 25px;
 }
-a.hazardBtn i{
-  margin: 4px 10px 2px 0px !important;
+a i{
+  margin: 7px 3px 0px 3px !important;
+  &.icon-plus-2{
+    margin: 7px 8px 0px 8px !important;
+  }
 }
 .small a.hazardBtn i{
   margin: 7px 13px 2px 5px !important;

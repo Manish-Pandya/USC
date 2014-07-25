@@ -7,8 +7,10 @@ angular.module('modalPosition', [])
 	    link : function(scope, element, attributes) {
 	    	scope.onResize = function() {
 	            var topMargin = $window.innerHeight - element[0].clientHeight;
-                $(element[0]).css({maxHeight: $window.innerHeight*.9});	            
-                $(element[0]).css({top: topMargin/2, marginTop:-10, overflowY:'auto'});
+                $(element[0]).css({maxHeight: $window.innerHeight*.9, minHeight:'250px'});	    
+                $(element[0]).find('.modal-content').css({maxHeight: $window.innerHeight*.9, minHeight:'250px'});          
+                $(element[0]).css({top: topMargin/2, marginTop:-10});
+                $(element[0]).find('.modal-body').css({overflowY:'auto', maxHeight:$window.innerHeight*.85-50});
         	}
         	scope.onResize();
 

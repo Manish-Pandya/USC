@@ -250,13 +250,17 @@ require_once '../top_view.php';
 	<div ng-show="selectedFooter == 'reports'" class="selectedFooter" style="width:auto;">
 		<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
 		<h2 style="text-decoration:underline">ARCHIVED REPORTS</h2>
+		<span ng-if="!PI">
+		<h2 style="min-width:460px;">Please select a principal investigator.</h2>
+		</span>
+		<span ng-if="PI">
 		<h2>Principle Investigator: <span once-text="PI.User.Name"></span></h2>
 		
 		<div class="loading" ng-show='!previousInspections' >
 		Loading Archived Reports...
 		  <img class="" src="../../img/loading.gif"/>
 		</div>
-		<div  id="tableContainer" class="tableContainer">
+		<div id="tableContainer" class="tableContainer">
 		<table ng-if="previousInspections" class="table table-striped table-bordered" class="scrollTable">
 		<thead class="fixedHeader">
 				<th style="width:60px;">Year</th>
@@ -278,11 +282,17 @@ require_once '../top_view.php';
 			</tbody>	
 		</table>
 		</div>
+		</span>
 	</div>
+
 
 	<div style="margin-left:25%;" ng-show="selectedFooter == 'contacts'" class="selectedFooter">
 	<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
 		<h2 style="text-decoration:underline">Lab Contacts</h2>
+		<span ng-if="!PI">
+			<h2>Please select a principal investigator.</h2>
+		</span>
+		<span ng-if="PI">
 		<h2>Principle Investigator: {{PI.User.Name}}</h2>
 		
 		<div class="loading" ng-show='!PI' >
@@ -307,6 +317,7 @@ require_once '../top_view.php';
 				</tr>
 			</tbody>	
 		</table>
+		</span>
 	</div>
 
 	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:50%">

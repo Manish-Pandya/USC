@@ -246,7 +246,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 		inspectionId = '';
 	}
 
+
 	//get our factory to tell the server to initiate an inspection
+  var inspectionDefer = $q.defer();
 	hazardInventoryFactory.initialiseInspection(PIKeyID, inspectorIds, inspectionId).then(
 		function(inspection){
 			console.log(inspection);
@@ -275,7 +277,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   	$scope.inspection = {};
   	$scope.buildings = [];
   	$location.search('inspectionId','');
-	$location.search("pi",'');
+	  $location.search("pi",'');
 
     setInspection($item);
   }
@@ -366,6 +368,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
       $scope.noRoomsAssigned = true;;
     }
   }
+
+  $scope.select
 
   //grab set user list data into the $scope object
   function onGetHazards (data) {
@@ -636,6 +640,15 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
           room.IsSelected = true;
       }else{
           room.IsSelected = false;
+      }
+    });
+  }
+
+  $scope.selectRoom = function(room,building){
+    building.IsChecked = false;
+    angular.forEach(building.Rooms, function(room, key){
+      if(room.IsSelected){
+        building.IsChecked = true;
       }
     });
   }
