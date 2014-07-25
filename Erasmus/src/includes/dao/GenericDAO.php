@@ -375,7 +375,6 @@ class GenericDAO {
 
 		// Delete the record and return true
 		if ($stmt->execute() ) {
-c.) Which has the best noise:feel ratio?
 			$this->LOG->debug( "Remove related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate an error message to be returned
