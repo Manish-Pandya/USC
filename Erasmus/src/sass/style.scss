@@ -204,6 +204,9 @@ div.rsmsCenterIconContainer a:hover {
   text-decoration: none !Important;
 }
 @media (max-width: 1200px) {
+
+
+
   /* line 109, ../sass/style.scss */
   div.rsmsCenterIconContainer a:hover {
     -webkit-transform: scale(1.03);
@@ -220,7 +223,7 @@ div.rsmsCenterIconContainer a p {
   padding: 5px;
   font-size: 1.7vw;
 }
-@media (max-width: 772px) {
+@media (max-width: 900px) {
   /* line 131, ../sass/style.scss */
   div.rsmsCenterIconContainer a img {
     float: right;
@@ -229,12 +232,41 @@ div.rsmsCenterIconContainer a p {
     max-width: 277px;
   }
 }
-@media (min-width: 1201px) {
-  div.rsmsCenterIconContainer a{
-   
+
+.centerIcons{
+  width:1000px;
+  margin:30px auto;
+  div.rsmsCenterIconContainer{
+    width:29%;
+    margin-right:1%;
+    a{
+      width:100%;
+      img{
+        width:100% !important;
+      }
+    }
   }
-  div.rsmsCenterIconContainer a img{
-    width:100% !important;
+}
+
+@media (min-width: 1000px) {
+  .centerIcons{
+    width:1000px;
+    margin:30px auto;
+    div.rsmsCenterIconContainer{
+      width:29%;
+      margin-right:1%;
+      a{
+        width:100%;
+        img{
+          width:100% !important;
+        }
+      }
+    }
+  }
+}
+@media (min-width: 773px ) and (max-width: 999px) {
+  .centerIcons{
+    width:700px;
   }
 }
 
@@ -1941,7 +1973,7 @@ div.tableContainer {
 /* Reset overflow value to hidden for all non-IE browsers. */
 div.tableContainer {
   overflow: hidden;
-   width: auto;
+  width: auto;
 }
 
 /* define width of table. IE browsers only                 */
