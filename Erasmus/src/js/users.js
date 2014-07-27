@@ -32,6 +32,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 .factory('userHubFactory', function(convenienceMethods,$q){
 
   var factory = {};
+  var allPis = [];
 
   factory.setPIs = function(pis){
     this.pis = pis;
@@ -39,6 +40,30 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 
   factory.getPIs = function(){
     return this.pis;
+  }
+
+
+  factory.getAllPis = function(){
+    
+    //if we don't have a the list of pis, get it from the server
+    var deferred = $q.defer();
+
+    //lazy load
+    if(this.allPis){
+      deferred.resolve(this.allPis);
+      return deferred.promise;
+    }
+
+    var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );
+    return deferred.promise;
   }
 
   return factory
@@ -199,7 +224,6 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
   
   if($location.search().piId){
     $scope.piId = $location.search().piId;
-    console.log('yes');
   }
 
   if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
@@ -300,6 +324,9 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
 var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
   if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
 
+  if($location.search().piId){
+    $scope.piId = $location.search().piId;
+  }
 
   $scope.failFindUser = false;
   console.log(items);

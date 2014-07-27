@@ -226,6 +226,9 @@ div.rsmsCenterIconContainer a p {
 @media (max-width: 773px) {
   /* line 131, ../sass/style.scss */
   .centerIcons{
+    h3{
+      margin-left:0;
+    }
     width:96% !important;
     margin-left:2%;
     margin-right:2%;
@@ -268,6 +271,9 @@ div.rsmsCenterIconContainer a p {
 
 @media (min-width: 1000px) {
   .centerIcons{
+    h3{
+      margin-left:6%;
+    }
     width:1000px;
     margin:30px auto;
     div.rsmsCenterIconContainer{
@@ -290,6 +296,9 @@ div.rsmsCenterIconContainer a p {
 }
 @media (min-width: 773px ) and (max-width: 999px) {
   .centerIcons{
+    h3{
+      margin-left:6%;
+    }
     width:700px;
     div.rsmsCenterIconContainer{
       width:29%;
