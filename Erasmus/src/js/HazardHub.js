@@ -250,7 +250,7 @@ hazardHub.directive('buttongroup', ['$window', function($window) {
                 //set the width of all the elements on the left side of our hazard li elements
                 var leftWidth = w - btnWidth - 50;
                 elem.children().children().children('.leftThings').width(leftWidth);
-                elem.children().children().children('.leftThings').children('span').css({width:leftWidth-50+'px'});
+                elem.children().children().children('.leftThings').children('span').css({width:leftWidth-90+'px'});
 
             }
             scope.onResize();
