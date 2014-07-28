@@ -9,7 +9,7 @@
 				     <span ng-hide="showInactive"><i class="icon-plus-3"  style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Show Inactive Contacts</span>
 			     </a>
 			     <a class="btn-large btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
-			     <a class="btn-large btn" ng-if="piId" href="piHub.php#?piHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
+			     <a class="btn-large btn" ng-if="piId" href="piHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
 
 			   </div>
 			</th>
@@ -148,7 +148,6 @@
 			         <div class="controls">
 						<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="userCopy.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
 				   		<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="userCopy.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-
 				    </div>
 			    </div>
 
