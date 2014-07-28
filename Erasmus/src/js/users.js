@@ -33,6 +33,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 
   var factory = {};
   var allPis = [];
+  var pis = [];
 
   factory.setPIs = function(pis){
     this.pis = pis;
@@ -41,7 +42,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
   factory.getPIs = function(){
     return this.pis;
   }
-
 
   factory.getAllPis = function(){
     
@@ -70,7 +70,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 
 });
 //called on page load, gets initial user data to list users
-var MainUserListController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
+var MainUserListController = function(userHubFactory,$scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
  //console.log($modal);
   $scope.showInactive = false;
   $scope.users = [];
@@ -126,9 +126,10 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
   }
 
   function onGetPis(data){
+     userHubFactory.setPIs(data);
      angular.forEach(data, function(pi, key){
       pi.Buildings = [];
-      angular.forEach(pi.Rooms, function(room, key){  
+      angular.forEach(pi.Rooms, function(room, key){
        if(room&&!convenienceMethods.arrayContainsObject(pi.Buildings, room.Building))pi.Buildings.push(room.Building);
       });
     });
@@ -217,7 +218,7 @@ var MainUserListController = function($scope, $modal, $routeParams, $browser,  $
 
 };
 
-var labContactController = function($scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route) {
+var labContactController = function(userHubFactory, $scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route) {
 
   //look at GET parameters to determine if we should alter the view accordingly
   //if we have linked to this view from the PI hub to manage a PI's lab personnel, filter the view to only those PI's associated with th
@@ -321,12 +322,10 @@ var labContactController = function($scope, $modal, $routeParams, $browser,  $ro
 
 
 //controller for modal instance for lab contacts
-var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
+var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window, userHubFactory) {
   if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
 
-  if($location.search().piId){
-    $scope.piId = $location.search().piId;
-  }
+
 
   $scope.failFindUser = false;
   console.log(items);
@@ -363,6 +362,20 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
   $scope.roles = items[2]
   $scope.pis = items[3];
   $scope.departments = items[4];
+
+  if($location.search().piId){
+    $scope.piId = $location.search().piId;
+    $scope.pis = userHubFactory.getPIs();
+
+    if(!$scope.userCopy.Supervisor){
+      var piLen = $scope.pis.length;
+      for(i=0;i<piLen;i++){
+        if($location.search().piId === $scope.pis[i].Key_id){
+          $scope.userCopy.Supervisor = $scope.pis[i];
+        }
+      }
+    }
+  }
 
   $scope.saveUser = function (userCopy, user) {
     console.log(userCopy);
