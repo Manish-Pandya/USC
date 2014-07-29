@@ -24,7 +24,7 @@ require_once '../top_view.php';
 		<span ng-if="newDepartment" style="width:100%; display: block;">
 			<input style="width:50%" ng-model="newDepartment.Name">
 			<span style="width:50%">
-				<a class="btn-success btn" ng-click="saveDepartment(newDepartment)">Save<i class="icon-checkmark"></i></a>
+				<a class="btn-success btn" ng-click="saveNewDepartment(newDepartment)">Save<i class="icon-checkmark"></i></a>
 				<a class="btn-danger btn" ng-click="cancelEdit(newDepartment)">Cancel<i class="icon-cancel"></i></a>
 				<img ng-show="newDepartment.isDirty" class="smallLoading" src="../../img/loading.gif"/>
 			</span>
