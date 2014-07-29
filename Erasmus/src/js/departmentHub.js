@@ -73,6 +73,7 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     $scope.editDepartment = function(department){
     	$scope.departments = departmentFactory.editNoDepartments();
     	department.edit = true;
+        // create a copy of this department so we can cancel edit if necessary
     	$scope.departmentCopy = angular.copy(department);
     }
 
@@ -106,9 +107,10 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     	department.setActive = true;
     }
 
+    // overwrites department with modified $scope.departmentCopy
+    // note that the department parameter is the department to be overwritten.
     $scope.saveDepartment = function(department){
     	console.log(department);
-    	if(!$scope.departmentCopy && department)$scope.departmentCopy = angular.copy(department);
     	if(!department.Class)department.Class="Department";
       	department.isDirty = true;
 	    departmentFactory.saveDepartment($scope.departmentCopy).then(
@@ -133,5 +135,24 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
 
 	      }
 	    );
+	}
+
+	// adds a newly created department
+	$scope.saveNewDepartment = function(department) {
+		department.isDirty = true;
+		departmentFactory.saveDepartment(department).then(
+			function(returnedData) {
+				$scope.departments.push(department);
+			},
+			function(errorData) {
+				department.error = 'There was a problem when saving the new department. See console log for details.';
+				console.log('Server returned error: ');
+				console.dir(errorData);
+			})['finally'](function() { // note: odd ['finally'] syntax is so that it can be called in ie8.
+				department.isDirty = false;
+				$scope.creatingDepartment = false;
+				$scope.newDepartment = false;
+				department.setActive = false;
+			})
 	}
 }
