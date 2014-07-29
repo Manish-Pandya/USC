@@ -8,7 +8,7 @@ require_once '../top_view.php';
 			<img src="../../img/question-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Question Hub
 				<a style="float:right;margin: 6px 28px 0 30px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
-       			<a href="hazardhub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Return to Hazard Hub</a>
+				<a href="HazardHub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Return to Hazard Hub</a>
 			</h2>
 		</li>
 	</ul>
@@ -18,7 +18,7 @@ require_once '../top_view.php';
 	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Getting Checklist...
 	</div>
-	<h3><span ng-show="noQuestion"  >Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="checklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
+	<h3><span ng-show="noQuestion"  >Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
 	
 	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
 	<h3 ng-if="!question.beingEdited && question.Reference">Compliance Reference: {{question.Reference}}</h3>

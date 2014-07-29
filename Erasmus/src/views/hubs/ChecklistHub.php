@@ -7,7 +7,7 @@ require_once '../top_view.php';
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Checklist Hub
         <a style="float:right;margin: 6px 28px 0 30px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
-        <a href="hazardhub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Return to Hazard Hub</a>
+        <a href="HazardHub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Return to Hazard Hub</a>
       </h2>	
 		</li>
 	</ul>

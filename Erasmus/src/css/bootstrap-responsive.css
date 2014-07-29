@@ -74,10 +74,6 @@
   .hidden-tablet {
     display: none !important;
   }
-  .rsmsCenterIconContainer{
-  	//display:none !important;
-  	height:5000px !important;
-  }
 }
 
 @media (max-width: 767px) {
