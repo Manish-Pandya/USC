@@ -297,7 +297,7 @@ class GenericDAO {
 			// Add the results to an array
 			array_push($resultList, $item);
 		}
-		$this->LOG->debug("$this->logprefix returning count($resultList) related records");
+		$this->LOG->debug("$this->logprefix returning" . count($resultList)  . "related records");
 
 		return $resultList;
 	}
