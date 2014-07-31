@@ -23,13 +23,17 @@
  * @return string|unknown|NULL
  */
 function getValueFromRequest( $valueName, $paramValue = NULL ){
-
-	if(stristr($paramValue, "null"))return null;
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
 
 	if( $paramValue !== NULL ){
 		return $paramValue;
 	}
 	else if( array_key_exists($valueName, $_REQUEST)){
+		if(stristr($_REQUEST[ $valueName ], "null"))return null;
+		if(stristr($_REQUEST[ $valueName ], "false")){
+			$LOG->debug('value: '.$paramValue);
+			return false;
+		}
 		return $_REQUEST[ $valueName ];
 	}
 	else{
@@ -1362,7 +1366,7 @@ function getHazardRoomMappingsAsTree( $roomIds = NULL, $hazard = null ){
 
 
 		$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
-
+		$LOG->debug($roomIdsCsv);
 		//Get all hazards
 		if($hazard != null){
 		  $allHazards = $hazard;
@@ -1628,16 +1632,17 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 	if($hazardId == null)$hazardId = getValueFromRequest('hazardId', $hazardId);
 	if($add == null)$add = getValueFromRequest('add', $add);
 
-	if( $roomId !== NULL && hazardId !== NULL && $add !== null ){
-
+	if( $roomId !== NULL && $hazardId !== NULL && $add !== null ){
+		$LOG->debug("ADD's type: ".gettype($add)." add's value: ".$add);
 		// Get this room
 		$dao = getDao(new Room());
 		$room = $dao->getById($roomId);
 		// if add is true, add this hazard to this room
-		if ($add){
+		if ($add != false){
 			$dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		// if add is false, remove this hazard from this room
 		} else {
+			$LOG->debug("in remove branch");
 			$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		}
 
@@ -2251,7 +2256,7 @@ function createOrderIndicesForHazards(){
 }
 
 //reorder hazards
-function reorderHazards(){
+function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId = null){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	$hazardId = getValueFromRequest('hazardId', $hazardId);
