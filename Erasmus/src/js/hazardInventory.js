@@ -9,7 +9,6 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
                 w = elem.width();
                 checkbox = $(elem).find($('.targetHaz span'));
                 label = $(elem).find($('label'));
-                console.log(w);
                 //label.width(w);
                // checkbox.width(w-27);
 
@@ -122,7 +121,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	}
 
 	factory.setSingleHazardRoomRelations = function(hazard, room, add){
-		var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add;
+		var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
 		var deferred = $q.defer();
 		convenienceMethods.getDataAsDeferredPromise(url).then(
 			function(promise){
@@ -348,12 +347,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   if(rooms.length){
 	  	while(rooms.length > 0) {
 	    rooms.pop();
-	}
+	  }
   }
   console.log(rooms);
   angular.forEach($scope.buildings, function(building, key){
     angular.forEach(building.Rooms, function(room, key){
-      rooms.push(room.Key_id);
+      if(room.IsSelected)rooms.push(room.Key_id);
     });
   });
     console.log(rooms);
@@ -369,14 +368,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     }
   }
 
-  $scope.select
-
   //grab set user list data into the $scope object
   function onGetHazards (data) {
     console.log(data);
     if(!data.InspectionRooms)data.InspectionRooms = [];
     $scope.hazards = data.ActiveSubHazards;
-  //  console.log(data);
+    console.log(data);
     /*
     angular.forEach($scope.hazards, function(hazard, key){
      // console.log(hazard);
@@ -455,7 +452,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
      hazard.showRooms = false;
       angular.forEach(hazard.InspectionRooms, function(room, key){
         if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
-          console.log(hazard.Name);
           hazard.showRooms = true;
         }else{
           //console.log(hazard.Name);
