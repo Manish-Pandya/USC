@@ -54,20 +54,12 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
   }
 
   function onGetHazards(data){
-    console.log(data);
     $scope.gettingHazards = false;
 
     var numberOfHazardsPresent = 0;
-    angular.forEach(data.SubHazards, function(hazard, key){
-      console.log(hazard);
-      hazard.cssId = camelCase(hazard.Name);
-      if(hazard.IsPresent)numberOfHazardsPresent++;
-    });
 
-    $scope.numberOfHazardsPresent = numberOfHazardsPresent;
-    $scope.hazards = data.SubHazards;
-
-   
+    $scope.numberOfHazardsPresent = countPresentSubHazards(data);
+    $scope.hazards = data.ActiveSubHazards;
 /*
     angular.forEach(data, function(hazard, key){
       console.log(hazard.ParentIds)
@@ -77,6 +69,23 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
       }
     });
 */
+  }
+
+  function countPresentSubHazards(hazard) {
+    var numberOfHazards = 0;
+
+    angular.forEach(hazard.ActiveSubHazards, function(subHazard, key){
+      hazard.cssId = camelCase(subHazard.Name);
+
+      if(subHazard.IsPresent) {
+        numberOfHazards ++;
+      }
+
+      if(subHazard.ActiveSubHazards) {
+        numberOfHazards += countPresentSubHazards(subHazard);
+      }
+    });
+    return numberOfHazards;
   }
 
   function onFailGetHazards(){

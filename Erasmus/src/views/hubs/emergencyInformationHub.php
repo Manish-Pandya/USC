@@ -63,18 +63,13 @@ margin-left: 10px;">{{contact.Name}}</span><span style="text-decoration:underlin
 			    <h2 ng-show="numberOfHazardsPresent > 0" style=" margin-top:20px; text-decoration:underline">LABORATORY HAZARDS</h2>
 			    <h4 ng-if="numberOfHazardsPresent < 1 && !gettingHazards">There are no hazards in the system for {{building.Name}}, room {{room.Name}}</h4>
 				<ul class="allHazardList" style="width:960px; margin:30px auto;">
-					<li class="hazardList" ng-if="hazard.IsPresent" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards" style="width:350px;">
+					<li class="hazardList" ng-if="numberOfHazardsPresent > 0" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards" style="width:350px;">
 					<h1 class="hazardListHeader" id="{{hazard.cssId}}" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
 					<span ng-hide="hazard.hidden">
 				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" id="{{hazard.cssId}}">{{hazard.Name}}</h1>
-					<hr>
-					<ul ng-show="hazard.SubHazards.length">
-		    			<li ng-show="hazard.IsPresent" ng-repeat="hazard in hazard.SubHazards" style="font-size: 19px; margin-bottom: 15px; line-height: normal;">
-		    				{{hazard.Name}} 
-		    				<ul ng-show="hazard.SubHazards.length">
-		    					<li ng-show="hazard.IsPresent" ng-repeat="hazard in hazard.SubHazards">({{hazard.Name}})</li>
-		    				</ul>
-		    			</li>
+
+					<ul ng-show="hazard.ActiveSubHazards">
+						<div ng-include="'EmergencyInfoList.php'" ng-init="SubHazards = hazard.ActiveSubHazards"></div>
 		    		</ul>
 					</li>
 					<div style='clear:both'>&nbsp;</div>
