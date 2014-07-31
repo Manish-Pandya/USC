@@ -205,16 +205,27 @@ class Hazard extends GenericCrud {
 		foreach($this->inspectionRooms as $room){
 			$rooms[] = $room->getKey_id();
 		}
+		foreach($rooms as $room){
+			$LOG->debug("the room is: ".$room);
+		}
 		$roomIds = implode (',',$rooms);
 		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->key_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
+		$roomIdsToEval = array();
 		while($roomId = $stmt->fetchColumn()){
 			$this->isPresent = true;
-			foreach ($this->inspectionRooms as $room){
-				$LOG->debug("room: " . $room->getKey_id());
-				if(in_array ( $room->getKey_id() , $rooms ))$room->setContainsHazard(true);
+			array_push($roomIdsToEval,$roomId);
+		}
+
+		foreach ($this->inspectionRooms as $room){
+			$room->setContainsHazard(false);
+			$LOG->debug('roomId:  '.$roomId);
+			$LOG->debug('rooms: '. $rooms);
+			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
+			if(in_array ( $room->getKey_id() , $roomIdsToEval )){
+				$room->setContainsHazard(true);
 			}
 		}
 	}
