@@ -57,9 +57,9 @@ angular.module('convenienceMethodModule', ['ngRoute'])
           	console.log(returnedObj);
             if(returnedObj.IsError) {
                 onFail(returnedObj);
+            } else {
+                onSave(returnedObj, obj, extra1, extra2, extra3);
             }
-          	//console.log(obj);
-            onSave(returnedObj, obj, extra1, extra2, extra3);
           })
           .error(function(data, status, headers, config, hazard){
           	 //console.log(failParam);
