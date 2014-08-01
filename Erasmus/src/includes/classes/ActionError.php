@@ -1,9 +1,6 @@
 <?php
 
 class ActionError {
-	// This constant is what the frontend will check for to see if it got an error back.
-	define("isError", true);
-
 	public $message;
 	private $LOG;
 
@@ -20,6 +17,11 @@ class ActionError {
 	
 	public function getMessage(){ return $this->message; }
 	public function setMessage($m){ $this->message = $m; }
+
+	// tells JSON encoder to give ActionError a property IsError with value true.
+	// This will give the frontend something to check to see if the value it gets
+	// back is an error.
+	public function getIsError() { return true; }
 
 	// prevent any undefined method exceptions if ActionError is passed to a
 	// function that expects another type of object.
