@@ -55,6 +55,9 @@ angular.module('convenienceMethodModule', ['ngRoute'])
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
           	console.log(returnedObj);
+            if(returnedObj.IsError) {
+                onFail(returnedObj);
+            }
           	//console.log(obj);
             onSave(returnedObj, obj, extra1, extra2, extra3);
           })
