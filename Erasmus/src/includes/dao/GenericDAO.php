@@ -236,8 +236,8 @@ class GenericDAO {
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
-			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
 			$object = new ModifyError("Could not save Object", $object);
+			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
 		}
 
 		// return the updated object
