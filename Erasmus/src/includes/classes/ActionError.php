@@ -1,8 +1,10 @@
 <?php
 
 class ActionError {
+	// This constant is what the frontend will check for to see if it got an error back.
+	define("isError", true);
+
 	public $message;
-	
 	private $LOG;
 
 	public function __construct( $message ){
