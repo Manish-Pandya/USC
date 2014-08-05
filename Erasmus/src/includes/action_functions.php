@@ -1266,8 +1266,46 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	$inspection->setEntityMaps($entityMaps);
 
 	return $inspection;
-	};
+}
 
+//Appropriately sets relationships for an inspection if an inspector is not inspecting all of a PI's rooms
+function resetInspectionRooms($inspectionId = NULL, $roomIds = null){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$roomIds = getValueFromRequest('roomIds', $roomIds);
+
+	if($roomIds !== NULL && $inspectionId !== NULL ){
+		$dao = getDao(New Inspection());
+		$inspectionDao = $dao->getById($inspectionId);
+
+		$LOG->debug($inspectionDao);
+
+		return removeAllInspectionRooms($inspectionDao);
+
+		foreach($roomIds as $id){
+			saveInspectionRoomRelation( $id, $inspectionId, true );
+		}
+
+	} else {
+		return new ActionError("No Inspection or room IDs provided");
+	}
+
+
+	return getHazardRoomMappingsAsTree( $roomIds );
+
+}
+
+function removeAllInspectionRooms(&$inspectionDao){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$inspectionId = $inspectionDao->getKey_id();
+
+	foreach($inspectionDao->getRooms() as $room){
+		saveInspectionRoomRelation( $room->getKey_id(), $inspectionId, false );
+	}
+
+}
 
 function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -1283,10 +1321,10 @@ function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NU
 		$inspection = $dao->getById($inspectionId);
 		// if add is true, add this room to this inspection
 		if ($add){
-			$dao->addRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
+			$dao->addRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 		// if add is false, remove this room from this inspection
 		} else {
-			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
+			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
 		}
 
 	} else {
