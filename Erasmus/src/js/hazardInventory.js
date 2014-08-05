@@ -2,28 +2,25 @@ var hazardInventory = angular.module('hazardAssesment', ['ui.bootstrap','conveni
 
 hazardInventory.directive('hazardLi', ['$window', function($window) {
     return {
-        restrict: 'C',
-        link: function(scope, elem, attrs) {
+      restrict: 'C',
+      link: function(scope, elem, attrs) {
 
-            scope.onResize = function() {
-                w = elem.width();
-                checkbox = $(elem).find($('.targetHaz span'));
-                label = $(elem).find($('label'));
-                //label.width(w);
-               // checkbox.width(w-27);
-
-            }
-
-            scope.$watch(
-                function(){
-                    return scope.onResize();
-                }
-            )
-
-            angular.element($window).bind('resize', function() {
-                scope.onResize();
-            });
+        scope.onResize = function() {
+          w = elem.width();
+          checkbox = $(elem).find($('.targetHaz span'));
+          label = $(elem).find($('label'));
         }
+
+        scope.$watch(
+          function(){
+              return scope.onResize();
+          }
+        )
+
+        angular.element($window).bind('resize', function() {
+          scope.onResize();
+        });
+      }
     }
 }])
 
@@ -51,12 +48,16 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     }
 
 	factory.getPi = function(id){
-		//lazy load
-		if(this.PI)return this.PI;
+    console.log('id passed to getPi in factory ' + id);
 
 		//if we don't have a pi, get one from the server
 		var deferred = $q.defer();
-		if(id){
+
+    //lazy load
+    if(this.PI && this.PI.Key_id == id){
+      deferred.resolve( this.PI );
+		}else{
+      //eager load
 			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&callback=JSON_CALLBACK';
 	    	convenienceMethods.getDataAsDeferredPromise(url).then(
 				function(promise){
@@ -67,9 +68,43 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 					deferred.reject();
 				}
 			);
-	    }
+	  }
 		return deferred.promise;
 	}
+
+  factory.getHazards = function(rooms){
+    //on page load, get the collection of hazards for all of the PI's rooms 
+    var deferred = $q.defer();
+    var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
+    var temp = this;
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise;
+  }
+
+  factory.resetInspectionRooms = function(roomIds, inspectionId){
+
+    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
+    var deferred = $q.defer();
+    
+    var url = '../../ajaxaction.php?action=resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
+    var temp = this;
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise;
+  }
 
 	factory.setAllPis = function(PIs){
 		this.PIs = PIs;
@@ -87,7 +122,13 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 		var temp = this;
     	convenienceMethods.getDataAsDeferredPromise(url).then(
 			function(promise){
-				deferred.resolve(promise);
+        //if the PI doesn't have any rooms, we should reject the promise and let the controller know why
+        if(!promise.Rooms.length){
+          deferred.reject(true);
+        }else{
+          //we have a good inspection with a collection of rooms
+          deferred.resolve(promise); 
+        }
 			},
 			function(promise){
 				deferred.reject();
@@ -147,6 +188,33 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 		);	
 		return deferred.promise
 	}
+  //invert a collection of room objects with building properties to transform it into a collection of building objects with rooms collection properties
+  factory.parseBuildings = function(rooms)
+  {
+      var buildings = [];
+      var roomsLength = rooms.length;
+      for(var i = 0; i < roomsLength; i++){
+        var room = rooms[i];
+
+        //on page load, all rooms are checked
+        room.IsSelected = true;
+
+        if(!convenienceMethods.arrayContainsObject(buildings, room.Building)){
+          buildings.push(room.Building);
+        }
+
+        var idx = convenienceMethods.arrayContainsObject(buildings, room.Building, null, true);
+        var building = buildings[idx];
+
+        building.IsChecked = true;
+        
+        if(!building.Rooms)building.Rooms = [];
+        building.Rooms.push(room);
+
+      }
+
+      return buildings;
+  }
 
 	return factory;
 });
@@ -155,117 +223,175 @@ controllers = {};
 
 //called on page load, gets initial user data to list users
 controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
- 
-  function camelCase(input) {
-    return input.toLowerCase().replace(/ (.)/g, function(match, group1) {
-      return group1.toUpperCase();
-    });
+
+  var comboBreaker = $q.defer();
+  var getAllPis = function()
+  {
+      return hazardInventoryFactory
+              .getAllPis()
+                .then(function(pis)
+                {
+                  hazardInventoryFactory.getAllPis(pis);
+                  //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
+                  return pis;
+                },
+                function()
+                {
+                  $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
+                  return comboBreaker.reject();
+                });
+  },
+  getPi = function(piKey_id)
+  {
+      return hazardInventoryFactory
+              .getPi(piKey_id)
+                .then(function(pi){
+                    console.log(pi);
+                    $scope.PI = pi;
+                    return pi;
+                },
+                function(fail){
+                     comboBreaker.reject();
+                     $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+                });
+  },
+  setInspection = function(pi)
+  {
+
+      //set up our $q so that we can break the promise chain if there is an error
+      var inspectionDefer = $q.defer();
+
+      //fill the PI select field with the selected PI's name
+      $scope.customSelected = pi.User.Name;
+
+      //now that we have a PI, we can initialize the inspection
+      var PIKeyID = pi.Key_id;
+
+      //todo:  when we do user siloing, give the user a way to add another inspection
+      //dummy value for inspector ids
+      inspectorIds = [1];
+
+      //if we are accessing an inspection that has already been started, we get it's get ID from the $location.search() property (AngularJS hashed get param)
+      if($location.search().inspectionId){
+        inspectionId = $location.search().inspectionId
+      }else{
+        inspectionId = '';
+      }
+
+      return hazardInventoryFactory
+              .initialiseInspection(PIKeyID, inspectorIds, inspectionId)
+                .then(function(inspection)
+                {
+                    //set our get params so that this inspection can be quickly accessed on page reload
+                    $location.search('inspectionId', inspection.Key_id);
+                    $location.search("pi", inspection.PrincipalInvestigator.Key_id);
+
+
+                    //set up our list of buildings
+                    $scope.buildings = hazardInventoryFactory.parseBuildings( inspection.Rooms );
+
+                    //set our inspection scope object
+                    $scope.inspection = inspection;
+
+                    //we return the inspection's rooms so that we can query for hazards
+                    return inspection.Rooms;
+                },
+                function(noRooms)
+                {
+                    alert('no rooms');
+                    if(noRooms){
+                      //there was no error, but this PI doesn't have any rooms, so we can't inspect
+                      $scope.noRoomsAssigned = true;
+                    }else{
+                      $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
+                    }
+                });
+  },
+  resetInspectionRooms = function(roomIds,  inspectionId)
+  {
+       return hazardInventoryFactory
+              .resetInspectionRooms(roomIds,  inspectionId)
+                .then(function(hazards)
+                {
+                  console.log(hazards);
+                  if(!data.InspectionRooms)data.InspectionRooms = [];
+                  $scope.hazards = data.ActiveSubHazards;
+                  console.log(data);
+                  /*
+                  angular.forEach($scope.hazards, function(hazard, key){
+                   // console.log(hazard);
+                    hazard.cssId = camelCase(hazard.Name);
+                  });
+                  */
+                  $scope.hazardsLoading = false;
+                  $scope.needNewHazards = false;
+                  angular.forEach($scope.hazards, function(hazard, key){
+                    if(hazard.IsPresent)getShowRooms(hazard);
+                  });
+                },
+                function(){
+                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
+                    return comboBreaker.reject();
+
+                });
   }
+  getHazards = function(rooms)
+  {     
+            //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
+            var roomIds = [];
+            var roomsLength = rooms.length;
+            for(var i = 0; i < roomsLength; i++){
+              if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
+            }
+            $scope.hazardsLoading = true;
+            return hazardInventoryFactory
+              .getHazards( roomIds )
+                .then(function( hazards )
+                {
+                  $scope.hazardsLoading = false;
+                  //create our view model for hazards
+                  $scope.hazards = hazards.ActiveSubHazards;
+                  
+                  $scope.hazardsLoading = false;
+                  $scope.needNewHazards = false;
+
+                  angular.forEach($scope.hazards, function(hazard, key){
+                    if( hazard.IsPresent )getShowRooms(hazard);
+                  });
+
+                  console.log( $scope.hazards );
+                },
+                function(){
+                    $scope.hazardsLoading = false;
+                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
+                    return comboBreaker.reject();
+                });
+  },
+  initiateInspection = function(piKey_id)
+  {
+    //start our inspeciton creation/load process
+    //chained promises to get a PI, Inspection, and Hazards
+    getPi( piKey_id )
+      .then( setInspection )
+      .then( getHazards  );
+  };
+
 
   init();
   
-  //call the method of the factory to get users, pass controller function to set data inot $scope object
-  //we do it this way so that we know we get data before we set the $scope object
   function init(){
 
-    if($location.search().hasOwnProperty('inspectionId')){
+    //are we loading an old inspection?
+    if($location.search().hasOwnProperty('inspectionId') && $location.search().hasOwnProperty('pi')){
        $scope.getAll = true;
-       //getPI if there is a "pi" index in the GET
-       initiateInspection($location.search().pi);
-       //$scope.needNewHazards = true;
+       initiateInspection( $location.search().pi );
     }else{
       $scope.noPiSet = true;
     }
 
-    //always get a list of all PIs so that a user can change the PI in scope
-    getAllPis();
+    //always get a list of all PIs so that a user can change the PI in scope, separate from the promise chain that gets our individual PI, Inspeciton and list of Hazards
+    $scope.PIs = getAllPis();
 
-  }
-
-  function getAllPis(){
-  	hazardInventoryFactory.getAllPis().then(
-  		function(pis){
-  			hazardInventoryFactory.getAllPis(pis);
-  			//we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
-  			$scope.PIs = pis;
-  		},
-  		function(fail){
-  			$scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
-  		}
-  	);
-  }
-
-  //once we have a pi, we start a chain of promises to create/load an inspection on/from the server and pass it to the view
-  function initiateInspection(PIKeyID){
-  	 //get rid of the previous
-
-	 //get our PI
-	 getPi(PIKeyID)
-  	.then(
-  		//now that we have a PI, we know their rooms and can set an inspection and get hazards
-  		function(pi){
-  			setInspection(pi);
-  		}
-  	)
-  }
-
-  function getPi(id){
-	piDefer = $q.defer();
-  	console.log(id);
-
-	//get our PI from the sever   
-    hazardInventoryFactory.getPi(id).then(
-  		function(pi){
- 			inspectionDefer = $q.defer();
-  			$scope.PI = pi;
-  			piDefer.resolve(pi);
-  		},
-  		function(fail){
-  			$scope.error = 'There was a problem getting the selected of Principal Investigator.  Please check your internet connection.'
-  			piDefer.reject();
-  		}
-  	);
-  	return piDefer.promise;
-  }
-
-  function setInspection(pi){
-  	console.log(pi);
-	$scope.customSelected = pi.User.Name;
-	//now that we have a PI, we can initialize the inspection
-	var PIKeyID = pi.Key_id;
-
-	//todo:  when we do user siloing, give the user a way to add another inspection
-	//dummy value for inspector ids
-	inspectorIds = [1];
-
-	//if this is a new inspection, call without passing a key id
-	if($location.search().inspectionId){
-		inspectionId = $location.search().inspectionId
-	}else{
-		inspectionId = '';
-	}
-
-
-	//get our factory to tell the server to initiate an inspection
-  var inspectionDefer = $q.defer();
-	hazardInventoryFactory.initialiseInspection(PIKeyID, inspectorIds, inspectionId).then(
-		function(inspection){
-			console.log(inspection);
-			$scope.inspection = inspection;
-			$scope.PI = inspection.PrincipalInvestigator;
-			$scope.selectBuildings();
-			$location.search('inspectionId', $scope.inspection.Key_id);
-			$location.search("pi", $scope.PI.Key_id);
-
-			//resolve the promise
-			inspectionDefer.resolve(inspection);
-			return inspectionDefer.promise;
-		},
-		function(){
-			inspectionDefer.reject();
-			return inspectionDefer.promise;
-		}
-	)
   }
 
 
@@ -278,29 +404,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   	$location.search('inspectionId','');
 	  $location.search("pi",'');
 
-    setInspection($item);
-  }
+    console.log($item);
 
-  $scope.selectedBuildings = [];
-  $scope.selectBuildings = function($item, $model, $label){
-   
-    //replace with a request to get rooms by building
-    $scope.buildings = [];
-    var bldgCount = 0;
-    console.log($scope.PI.Rooms);
-    angular.forEach($scope.PI.Rooms, function(room, key){    
-      room.IsSelected = true;
-      if(!convenienceMethods.arrayContainsObject($scope.buildings, room.Building)){
-        $scope.buildings.push(room.Building);
-        bldgCount++;
-      }
-      var iterator = bldgCount-1;
-      var building = $scope.buildings[iterator];
-      building.IsChecked = true;
-      if(!building.Rooms) building.Rooms = [];
-      building.Rooms.push(room);
-    });
-    $scope.getHazards();
+    initiateInspection($item.Key_id);
   }
 
   $scope.removeBuilding = function(building){
@@ -337,59 +443,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
       building.IsChecked = false;
     }
 
-  }
-
-
-  //get our hazards
-  $scope.getHazards = function( rooms ){
- 
-  rooms = [];
-  if(rooms.length){
-	  	while(rooms.length > 0) {
-	    rooms.pop();
-	  }
-  }
-  console.log(rooms);
-  angular.forEach($scope.buildings, function(building, key){
-    angular.forEach(building.Rooms, function(room, key){
-      if(room.IsSelected)rooms.push(room.Key_id);
-    });
-  });
-    console.log(rooms);
-    $scope.selectRooms = false;
-    
-    var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
-    if(rooms.length){
-      $scope.hazardsLoading = true;
-      $scope.noRoomsAssigned = false;;
-      convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
-    }else{
-      $scope.noRoomsAssigned = true;;
-    }
-  }
-
-  //grab set user list data into the $scope object
-  function onGetHazards (data) {
-    console.log(data);
-    if(!data.InspectionRooms)data.InspectionRooms = [];
-    $scope.hazards = data.ActiveSubHazards;
-    console.log(data);
-    /*
-    angular.forEach($scope.hazards, function(hazard, key){
-     // console.log(hazard);
-      hazard.cssId = camelCase(hazard.Name);
-    });
-    */
-    $scope.hazardsLoading = false;
-    $scope.needNewHazards = false;
-    angular.forEach($scope.hazards, function(hazard, key){
-      if(hazard.IsPresent)getShowRooms(hazard);
-    });
-  }
-
-
-  function onFailGetHazards(){
-    alert("There was a problem when the system tried to get the hazards.");
   }
 
   $scope.showSubHazards = function(event, hazard, element){
@@ -464,6 +517,25 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
         });
       }
     }
+  }
+
+
+  //reset the inspection with a new set of rooms, based on user selection
+  $scope.resetInspection = function(){
+    //For which rooms do we need hazards?
+    var roomIds = [];
+    var bldLen = $scope.buildings.length;
+    for( var i=0; i < bldLen; i++ ){
+      var building = $scope.buildings[i];
+      var roomLen = building.Rooms.length;
+      for( var j=0; j < roomLen; j++){
+        var room = building.Rooms[j];
+        if( roomIds.indexOf( room.Key_id )<0 && room.IsSelected) roomIds.push( room.Key_id );
+      }
+    }
+
+    resetInspectionRooms( roomIds,  $scope.inspection.Key_id )
+      .then( getHazards );
   }
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
