@@ -385,7 +385,10 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
               if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
             }
             $scope.hazardsLoading = true;
-            return hazardInventoryFactory
+
+            var hazardDefer = $q.defer();
+
+            hazardInventoryFactory
               .getHazards( roomIds )
                 .then(function( hazards )
                 {
@@ -396,11 +399,14 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
                   $scope.hazards = hazardInventoryFactory.parseHazards( $scope.hazards );
 
+                  hazardDefer.resolve( $scope.hazards );
                 },
                 function(){
                     $scope.hazardsLoading = false;
-                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.'
+                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
+                    hazardDefer.reject();
                 });
+            return hazardDefer.promise();
   },
   initiateInspection = function(piKey_id)
   {
