@@ -121,13 +121,14 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 		var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
 		var temp = this;
     	convenienceMethods.getDataAsDeferredPromise(url).then(
-			function(promise){
+			function( inspection ){
         //if the PI doesn't have any rooms, we should reject the promise and let the controller know why
-        if(!promise.Rooms.length){
+        if(!inspection.Rooms.length){
           deferred.reject(true);
         }else{
+          console.log( inspection );
           //we have a good inspection with a collection of rooms
-          deferred.resolve(promise); 
+          deferred.resolve(inspection); 
         }
 			},
 			function(promise){
@@ -216,6 +217,47 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       return buildings;
   }
 
+  factory.parseHazards = function( hazards )
+  {
+    angular.forEach( hazards, function( hazard, key ){
+      factory.getShowRooms( hazard );
+    });
+
+    return hazards;
+  }
+
+  factory.getShowRooms = function( hazard )
+  {
+    //determine whether the hazard is present in some but NOT all of the rooms
+    if(hazard.ActiveSubHazards){
+     hazard.showRooms = false;
+      angular.forEach(hazard.InspectionRooms, function(room, key){
+        if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
+          hazard.showRooms = true;
+        }else{
+          hazard.showRooms = false;
+        }
+      });
+
+      if(hazard.ActiveSubHazards.length){
+        angular.forEach(hazard.ActiveSubHazards, function(child, key){
+          factory.getShowRooms(child);
+        });
+      }
+    }
+  }
+
+  factory.roomDoesNotContainHazard =  function( room ){
+    if(room.ContainsHazard == false) return true;
+    return false;
+  }
+
+  factory.roomContainsHazard =  function( room ){
+    if(room.ContainsHazard == false) return true;
+    return false;
+  }
+
+
 	return factory;
 });
 
@@ -238,29 +280,26 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                 function()
                 {
                   $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
-                  return comboBreaker.reject();
                 });
   },
   getPi = function(piKey_id)
   {
-      return hazardInventoryFactory
+      var piDefer = $q.defer();
+      hazardInventoryFactory
               .getPi(piKey_id)
                 .then(function(pi){
                     console.log(pi);
                     $scope.PI = pi;
-                    return pi;
+                    piDefer.resolve( pi );
                 },
                 function(fail){
-                     comboBreaker.reject();
-                     $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+                    piDefer.reject();
+                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
                 });
+      return piDefer.promise;
   },
   setInspection = function(pi)
   {
-
-      //set up our $q so that we can break the promise chain if there is an error
-      var inspectionDefer = $q.defer();
-
       //fill the PI select field with the selected PI's name
       $scope.customSelected = pi.User.Name;
 
@@ -278,62 +317,64 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
         inspectionId = '';
       }
 
-      return hazardInventoryFactory
-              .initialiseInspection(PIKeyID, inspectorIds, inspectionId)
-                .then(function(inspection)
-                {
-                    //set our get params so that this inspection can be quickly accessed on page reload
-                    $location.search('inspectionId', inspection.Key_id);
-                    $location.search("pi", inspection.PrincipalInvestigator.Key_id);
+      //set up our $q object so that we can either return a promise on success or break the promise chain on error
+      var inspectionDefer = $q.defer();
 
+      hazardInventoryFactory
+            .initialiseInspection( PIKeyID, inspectorIds, inspectionId )
+              .then(function(inspection)
+              {
+                  //set our get params so that this inspection can be quickly accessed on page reload
+                  $location.search('inspectionId', inspection.Key_id);
+                  $location.search("pi", inspection.PrincipalInvestigator.Key_id);
 
-                    //set up our list of buildings
-                    $scope.buildings = hazardInventoryFactory.parseBuildings( inspection.Rooms );
+                  //set up our list of buildings
+                  $scope.buildings = hazardInventoryFactory.parseBuildings( inspection.Rooms );
 
-                    //set our inspection scope object
-                    $scope.inspection = inspection;
+                  //set our inspection scope object
+                  $scope.inspection = inspection;
 
-                    //we return the inspection's rooms so that we can query for hazards
-                    return inspection.Rooms;
-                },
-                function(noRooms)
-                {
-                    alert('no rooms');
-                    if(noRooms){
-                      //there was no error, but this PI doesn't have any rooms, so we can't inspect
-                      $scope.noRoomsAssigned = true;
-                    }else{
-                      $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
-                    }
-                });
+                  //we return the inspection's rooms so that we can query for hazards
+                  inspectionDefer.resolve(inspection.Rooms);
+              },
+              function(noRooms)
+              {
+                  if(noRooms){
+                    //there was no error, but this PI doesn't have any rooms, so we can't inspect
+                    $scope.noRoomsAssigned = true;
+                  }else{
+                    $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
+                  }
+                  //call our $q object's reject method to break the promise chain
+                  inspectionDefer.reject();
+              });
+
+      return inspectionDefer.promise;
   },
-  resetInspectionRooms = function(roomIds,  inspectionId)
+  resetInspectionRooms = function( roomIds,  inspectionId )
   {
-       return hazardInventoryFactory
-              .resetInspectionRooms(roomIds,  inspectionId)
-                .then(function(hazards)
+      //set up our $q object so that we can either return a promise on success or break the promise chain on error
+      var resetInspectionDefer = $q.defer();
+
+       hazardInventoryFactory
+              .resetInspectionRooms( roomIds,  inspectionId )
+                .then(function( hazards )
                 {
-                  console.log(hazards);
-                  if(!data.InspectionRooms)data.InspectionRooms = [];
-                  $scope.hazards = data.ActiveSubHazards;
-                  console.log(data);
-                  /*
-                  angular.forEach($scope.hazards, function(hazard, key){
-                   // console.log(hazard);
-                    hazard.cssId = camelCase(hazard.Name);
-                  });
-                  */
+                  if(!hazards.InspectionRooms)hazards.InspectionRooms = [];
+                  $scope.hazards = hazards.ActiveSubHazards;
                   $scope.hazardsLoading = false;
                   $scope.needNewHazards = false;
                   angular.forEach($scope.hazards, function(hazard, key){
                     if(hazard.IsPresent)getShowRooms(hazard);
                   });
+
+                  resetInspectionDefer.resolve( hazards );
                 },
                 function(){
                     $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
-                    return comboBreaker.reject();
-
+                    resetInspectionDefer.reject();
                 });
+      return resetInspectionDefer.promise;
   }
   getHazards = function(rooms)
   {     
@@ -348,23 +389,17 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
               .getHazards( roomIds )
                 .then(function( hazards )
                 {
-                  $scope.hazardsLoading = false;
                   //create our view model for hazards
                   $scope.hazards = hazards.ActiveSubHazards;
-                  
                   $scope.hazardsLoading = false;
                   $scope.needNewHazards = false;
 
-                  angular.forEach($scope.hazards, function(hazard, key){
-                    if( hazard.IsPresent )getShowRooms(hazard);
-                  });
+                  $scope.hazards = hazardInventoryFactory.parseHazards( $scope.hazards );
 
-                  console.log( $scope.hazards );
                 },
                 function(){
                     $scope.hazardsLoading = false;
-                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
-                    return comboBreaker.reject();
+                    $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.'
                 });
   },
   initiateInspection = function(piKey_id)
@@ -502,20 +537,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   //set a boolean flag to determine if rooms are shown beneath a hazard
   $scope.getShowRooms = function(hazard){
     if(hazard.IsPresent && hazard.ActiveSubHazards){
-     hazard.showRooms = false;
-      angular.forEach(hazard.InspectionRooms, function(room, key){
-        if(!hazard.InspectionRooms.every(roomDoesNotContainHazard) && !hazard.InspectionRooms.every(roomContainsHazard)){
-          hazard.showRooms = true;
-        }else{
-          //console.log(hazard.Name);
-          hazard.showRooms = false;
-        }
-      });
-      if(hazard.ActiveSubHazards.length){
-        angular.forEach(hazard.ActiveSubHazards, function(child, key){
-          $scope.getShowRooms(child);
-        });
-      }
+      hazardInventoryFactory.getShowRooms( hazard );
     }
   }
 
