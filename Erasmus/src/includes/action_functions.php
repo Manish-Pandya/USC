@@ -1281,7 +1281,7 @@ function resetInspectionRooms($inspectionId = NULL, $roomIds = null){
 
 		$LOG->debug($inspectionDao);
 
-		return removeAllInspectionRooms($inspectionDao);
+		removeAllInspectionRooms($inspectionDao);
 
 		foreach($roomIds as $id){
 			saveInspectionRoomRelation( $id, $inspectionId, true );
