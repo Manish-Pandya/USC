@@ -853,6 +853,7 @@ html[xmlns] .clearfix {
 .subRooms{
   margin-left:0;
   list-style:none;
+  margin-top:3px;
   li{
     font-size: 12px;
     border:none;
@@ -866,6 +867,11 @@ html[xmlns] .clearfix {
       visibility: visible;
     }
     &:last-child{
+      &:after { 
+      content: ""; 
+      }
+    }
+    &:first-child{
       &:after { 
       content: ""; 
       }
