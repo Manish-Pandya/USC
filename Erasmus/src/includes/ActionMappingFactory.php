@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Class that wraps a static accessor that returns all Action Mappings
  *
@@ -13,10 +14,24 @@ class ActionMappingFactory {
 	public static function readActionConfig(){
 		$mappings = new ActionMappingFactory();
 
-		return $mappings->getConfig();
+		$config = [];
+
+		// get additional Radiaton modules, if enabled
+		if(isRadiationEnabled()) {
+			$config = Rad_ActionMappingFactory::readActionConfig();
+		}
+
+		$config = array_merge($config, $mappings->getConfig());
+
+		return $config;
 	}
 
-	public function __construct(){ }
+	public function __construct(){
+        // if using the radiation safety module, include these extra actions
+        if(isRadiationEnabled()) {
+                require_once "Rad_ActionMappingFactory.php";
+        }
+	}
 
 	/**
 	 * Retrieves array of ActionMappings
