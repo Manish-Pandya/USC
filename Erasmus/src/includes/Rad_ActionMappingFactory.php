@@ -8,7 +8,6 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	
 	public static function readActionConfig() {
 		$mappings = new Rad_ActionMappingFactory();
-		$mappings->LOG->DEBUG("inside Rad_ActionMappingdoohickey");
 		
 		return $mappings->getConfig();
 		
