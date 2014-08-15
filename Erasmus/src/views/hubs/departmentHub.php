@@ -4,7 +4,7 @@ require_once '../top_view.php';
 <script src="../../js/departmentHub.js"></script>
 
 <div class="navbar">
-	<ul class="nav pageMenu" style="min-height: 50px; background: #49afcd; color:white !important; padding: 4px 0 0 0; width:100%">
+	<ul class="nav pageMenu purpleBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">
 		<li class="">
 			<i class="pull-left fa fa-university fa-4x" style="height:50px;margin: 4px 10px 0;"></i>
 			<h2  style="padding: 11px 0 5px 85px;">Department Hub
@@ -20,13 +20,13 @@ require_once '../top_view.php';
 	  Loading Departments
 	</span>
 	<div class="span5 center-element center-text bottomMargin">
-		<a ng-click="createDepartment()" class="btn btn-success btn-large bottomMargin" ng-if="!creatingDepartment && departments">Add New Department<i class="icon-plus-2 icon-right"></i></a>
-		<span ng-if="newDepartment" style="width:100%; display: block;">
-			<input style="width:50%" ng-model="newDepartment.Name">
+		<a ng-click="createDepartment()" class="btn btn-success btn-large" ng-if="!creatingDepartment && departments"><i class="icon-plus-2 icon-right" style="margin-bottom:13px;"></i>Add New Department</a>
+		<span ng-if="creatingDepartment" style="width:100%; display: block;">
+			<input style="width:50%" ng-model="departmentCopy.Name">
 			<span style="width:50%">
-				<a class="btn-success btn" ng-click="saveNewDepartment(newDepartment)">Save<i class="icon-checkmark"></i></a>
-				<a class="btn-danger btn" ng-click="cancelEdit(newDepartment)">Cancel<i class="icon-cancel"></i></a>
-				<img ng-show="newDepartment.isDirty" class="smallLoading" src="../../img/loading.gif"/>
+				<a class="btn-success btn" ng-click="saveDepartment(departmentCopy)"><i class="icon-checkmark"></i>Save</a>
+				<a class="btn-danger btn" ng-click="cancelEdit(departmentCopy)"><i class="icon-cancel"></i>Cancel</a>
+				<img ng-show="departmentCopy.isDirty" class="smallLoading" src="../../img/loading.gif"/>
 			</span>
 		</span>
 	</div>
@@ -39,9 +39,9 @@ require_once '../top_view.php';
 			</tr>
 		</THEAD>
 		<tbody>
-			<tr ng-repeat="(key, department) in departments" class="center-block" ng-class="{inactive:!department.Is_active}">
+			<tr ng-repeat="(key, department) in departments | orderBy: 'Name'" class="center-block" ng-class="{inactive:!department.Is_active}">
 				<td>
-					<a class="btn btn-primary" ng-click="editDepartment(department)">Edit<i class="icon-pencil"></i></a>
+					<a class="btn btn-primary" ng-click="editDepartment(department)"><i class="icon-pencil icon-right"></i>Edit</a>
 					<a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
 						<span ng-if="department.Is_active"><i class="icon-remove"></i></span>
 						<span ng-if="!department.Is_active"><i class="icon-checkmark-2"></i></span>
@@ -55,8 +55,8 @@ require_once '../top_view.php';
 					<span ng-if="department.edit">
 						<input style="width:100%" ng-model="departmentCopy.Name">
 						<span class="absoluteBtns" ng-of="department.edit">
-							<a class="btn-success btn" ng-click="saveDepartment(department)">Save<i class="icon-checkmark"></i></a>
-							<a class="btn-danger btn" ng-click="cancelEdit(department)">Cancel<i class="icon-cancel"></i></a>
+							<a class="btn-success btn" ng-click="saveDepartment(department)"><i class="icon-checkmark"></i>Save</a>
+							<a class="btn-danger btn" ng-click="cancelEdit(department)"><i class="icon-cancel"></i>Cancel</a>
 							<img ng-show="department.isDirty" class="smallLoading" src="../../img/loading.gif"/>
 						</span>
 					</span>
@@ -65,6 +65,7 @@ require_once '../top_view.php';
 		</tbody>
 	</table>
 </div>
+<div class="bottomMargin" style="clear:both;">&nbsp;</div>
 <?php
 require_once '../bottom_view.php';
 ?>
