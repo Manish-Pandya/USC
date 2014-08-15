@@ -20,7 +20,7 @@ require_once '../top_view.php';
 	  Loading Departments
 	</span>
 	<div class="span5 center-element center-text bottomMargin">
-		<a ng-click="createDepartment()" class="btn btn-success btn-large" ng-if="!creatingDepartment && departments"><i class="icon-plus-2 icon-right" style="margin-bottom:13px;"></i>Add New Department</a>
+		<a ng-click="createDepartment()" class="btn btn-success btn-large" ng-if="!creatingDepartment && departments"><i class="icon-plus-5 icon-right"></i>Add New Department</a>
 		<span ng-if="creatingDepartment" style="width:100%; display: block;">
 			<input style="width:50%" ng-model="departmentCopy.Name">
 			<span style="width:50%">
