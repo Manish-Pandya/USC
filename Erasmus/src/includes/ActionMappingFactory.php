@@ -14,7 +14,7 @@ class ActionMappingFactory {
 	public static function readActionConfig(){
 		$mappings = new ActionMappingFactory();
 
-		$config = [];
+		$config = array();
 
 		// get additional Radiaton modules, if enabled
 		if(isRadiationEnabled()) {
