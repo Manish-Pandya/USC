@@ -1,6 +1,6 @@
 var questionHub = angular.module('questionHub', ['convenienceMethodModule']);
 
-function QuestionHubController($scope, $rootElement, $location, convenienceMethods) {
+function QuestionHubController($scope, $q, $rootElement, $location, convenienceMethods) {
 	
 	function init(){
 		if($location.search().id){
@@ -245,7 +245,6 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 	}
 
 	function onSaveQuestion(dto, question){
-		console.log(dto);
 	     //temporarily use our question copy client side to bandaid server side bug that causes subquestions to be returned as indexed instead of associative
         $scope.question = angular.copy(dto);
         $scope.question.IsDirty = false;
@@ -264,11 +263,33 @@ function QuestionHubController($scope, $rootElement, $location, convenienceMetho
 		$scope.question.beingEdited = !$scope.question.beingEdited;
 		$scope.questionCopy = angular.copy($scope.question);
 	}
-	$scope.saveEditedQuestion = function(question){
+	$scope.saveEditedQuestion = function( question ){
+
 		$scope.questionCopy.IsDirty = true;
 		$scope.questionCopy.Is_active = true;
 		var url = '../../ajaxaction.php?action=saveQuestion';
-        convenienceMethods.updateObject( $scope.questionCopy, question, onSaveQuestion, onFailSaveQuestion, url );
+
+		var defer = $q.defer();
+		convenienceMethods.saveDataAndDefer( url, $scope.questionCopy )
+			.then(
+				function( returnedQuestion ){
+					//succes
+					console.log( returnedQuestion );
+					defer.resolve( returnedQuestion );
+					question.Text 	     = returnedQuestion.Text;
+					question.Reference   = returnedQuestion.Reference;
+					question.Description = returnedQuestion.Description;
+					question.Key_id      = returnedQuestion.Key_id;
+					$scope.questionCopy.IsDirty = false;
+					question.beingEdited = false;
+				},
+				function( fail ){
+					//failure
+					defer.reject( fail );
+					question.beingEdited = false;
+				}
+			);
+
 	}
 /*
 	$scope.$watch('checklist', function(oldValue, newValue){

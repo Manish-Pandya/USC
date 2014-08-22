@@ -18,8 +18,7 @@ require_once '../top_view.php';
 	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Getting Checklist...
 	</div>
-	<h3><span ng-show="noQuestion"  >Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
-	
+	<h3><span ng-show="noQuestion">Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
 	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
 	<h3 ng-if="!question.beingEdited && question.Reference">Compliance Reference: {{question.Reference}}</h3>
 	<h3 ng-if="!question.beingEdited && question.Description">Compliance Description: {{question.Description}}</h3>
@@ -39,7 +38,7 @@ require_once '../top_view.php';
 	 		</div>
 	 	</div>
 
-	 	<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion(questionCopy)" class="btn btn-success"><i class="icon-checkmark"></i>Save Question</a>
+	 	<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion( question )" class="btn btn-success"><i class="icon-checkmark"></i>Save Question</a>
 		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger" ng-click="cancelEdit(question)"><i class="icon-cancel"></i>Cancel</a>
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
