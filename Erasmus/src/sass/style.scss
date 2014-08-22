@@ -853,9 +853,10 @@ html[xmlns] .clearfix {
   }
 }
 .subRooms{
-  margin-left:0;
-  list-style:none;
-  margin-top:3px;
+  margin-left: 28px;
+  list-style: none;
+  margin-top: 3px;
+  clear: both;
   li{
     font-size: 12px;
     border:none;
@@ -1392,7 +1393,7 @@ ul.key{
     }
   }
 }
-.hazardList span > ul{
+.hazardList span > ul:not(.subRooms){
   margin-left:0 !important;
 }
 
