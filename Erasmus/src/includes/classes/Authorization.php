@@ -98,3 +98,4 @@ class Authorization extends GenericCrud {
 	public function setRevocation_date($newDate) { $this->revocation_date = $newDate; }
 
 }
+?>
