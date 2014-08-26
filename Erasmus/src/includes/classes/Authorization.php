@@ -77,7 +77,7 @@ class Authorization extends GenericCrud {
 	public function getIsotope() {
 		if($this->isotope == null) {
 			$isotopeDAO = new GenericDAO(new Isotope());
-			$this->isotope = $isotopeDAO->getById($this->isotope_id);
+			$this->isotope = $isotopeDAO->getById($this->getIsotope_id());
 		}
 		return $this->isotope;
 	}

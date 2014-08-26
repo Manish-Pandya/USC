@@ -66,7 +66,7 @@ class ParcelUse extends GenericCrud {
 	public function getParcel() {
 		if($this->parcel == null) {
 			$parcelDAO = new GenericDAO(new Parcel());
-			$this->parcel = $parcelDAO->getById($this->parcel_id);
+			$this->parcel = $parcelDAO->getById($this->getParcel_id());
 		}
 		return $this->parcel;
 	}
