@@ -44,7 +44,7 @@ class ParcelUse extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getParcel");
-
+		$this->setEntityMaps($entityMaps);
 	}
 
 	// Required for GenericCrud

@@ -44,6 +44,7 @@ class PurchaseOrder extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
+		$this->setEntityMaps($entityMaps);
 
 	}
 	

@@ -58,6 +58,7 @@ class Authorization extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getIsotope");
+		$this->setEntityMaps($entityMaps);
 
 	}
 	
