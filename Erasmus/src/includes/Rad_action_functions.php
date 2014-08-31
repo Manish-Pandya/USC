@@ -1,0 +1,26 @@
+<?php
+/*
+ * This file contains action functions specific to the radiation module.
+ * 
+ * If a non-fatal error occurs, Rad_action_functions should return an ActionError
+ * (or subclass of ActionError) containing information about the error.
+ * 
+ */
+
+function getIsotopeById($id = NULL) {
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ){
+		$dao = getDao(new Isotope());
+		return $dao->getById($id);
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+	
+	
+}
+
+?>

@@ -12,6 +12,10 @@
 ?><?php
 //TODO: Split these functions up into further includes?
 
+if(isRadiationEnabled()) {
+	include_once 'Rad_action_functions.php';
+}
+
 /**
  * Chooses a return value based on the parameters. If $paramValue
  * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.

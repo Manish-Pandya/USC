@@ -14,7 +14,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 	public function getConfig() {
 		return array(
-			"getAllIsotopes"=>new ActionMapping("getAllIsotopes", "", "")
+			"getIsotopeById"=>new ActionMapping("getIsotopeById", "", "")
+			
 		);
 	}
 }
