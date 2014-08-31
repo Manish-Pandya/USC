@@ -27,7 +27,8 @@ class DeficiencySelection extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"corrected_in_inspection"	=> "boolean"
+		"corrected_in_inspection"	=> "boolean",
+		"created_user_id"	=> "integer"
 	);
 	
 		/** Relationships */

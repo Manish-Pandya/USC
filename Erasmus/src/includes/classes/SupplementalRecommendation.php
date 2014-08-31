@@ -20,7 +20,8 @@ class SupplementalRecommendation extends GenericCrud {
 		"date_created"		=> "timestamp",
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
-		"last_modified_user_id"			=> "integer"
+		"last_modified_user_id"			=> "integer",
+		"created_user_id"	=> "integer"
 	);
 	
 	/** Reference to the Response entity to which this SupplementalRecommendation applies */
