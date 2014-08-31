@@ -29,8 +29,8 @@
               4. the $scope created by the ng-if below
               Therefore, the parent hazard is in the $scope $parent.$parent.$parent.$parent
           -->
-          <a class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-if="!$first" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'up')"><i class="icon-arrow-up"></i></a><br>
-          <a class="btn btn-mini btn-info upvote" ng-if="!$last" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'down')"><i class="icon-arrow-down"></i></a>
+          <a class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-if="!$first" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'up', filteredSubHazards)"><i class="icon-arrow-up"></i></a><br>
+          <a class="btn btn-mini btn-info upvote" ng-if="!$last" ng-click="moveHazard($index, $parent.$parent.$parent.$parent.child, 'down', filteredSubHazards)"><i class="icon-arrow-down"></i></a>
         </div>
         <a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': child.Is_active == true, 'btn-success' :  child.Is_active == false}" ng-click="handleHazardActive(child)" >
           <i ng-class="{ 'icon-check-alt' :  child.Is_active == false, 'icon-remove' :  child.Is_active == true}" ></i>
@@ -58,7 +58,7 @@
     </div>
      
       <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
-        <li ng-repeat="child in child.SubHazards | orderBy: [order]" ng-show="hazardFilter(child, $parent)"  id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
+        <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | orderBy: [order] | filter: hazardFilter))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
           <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
         </li>
       </ol> 

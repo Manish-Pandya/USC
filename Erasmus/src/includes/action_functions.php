@@ -2309,15 +2309,16 @@ function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId
 		$hazard = $dao->getById($hazardId);
 
 		//if we are moving a hazard to the lowest order_index, we won't have a hazard before it
-		if($beforeHazardId != "null"){
+		if($beforeHazardId != NULL && $beforeHazardId != "null"){
 			$beforeHazard = $dao->getById($beforeHazardId);
 			$beforeOrderIdx = $beforeHazard->getOrder_index();
 		}else{
+			$LOG->debug('There is no before hazard');
 			$beforeOrderIdx = 0;
 		}
 
 		//if we are moving a hazard to the last index, we won't have a hazard after it.
-		if($afterHazardId != "null"){
+		if($afterHazardId != NULL && $afterHazardId != "null"){
 			$afterHazard = $dao->getById($afterHazardId);
 			$afterHazardIdx = $afterHazard->getOrder_index();
 		}else{

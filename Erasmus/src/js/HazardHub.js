@@ -567,12 +567,12 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
       return false;
     }
 
-    $scope.moveHazard = function(idx, parent, direction){
-        
+    $scope.moveHazard = function(idx, parent, direction, filteredSubHazards){
+        console.log(filteredSubHazards);
+
         //Make a copy of the hazard we want to move, so that it can be temporarily moved in the view
         var clickedHazard   = angular.copy(parent.SubHazards[idx]);
-        parent.SubHazards[idx].IsDirty = true;
-        console.log(clickedHazard);
+        filteredSubHazards[idx].IsDirty = true;
         if(direction == 'up'){
             //We are moving a hazard up. Get the indices of the two hazards above it.
             var afterHazardIdx = idx-1;
@@ -586,18 +586,18 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         }
 
         //get the key_ids of the hazards involved so we can build the request.
-        var hazardId       = parent.SubHazards[idx].Key_id;
+        var hazardId       = filteredSubHazards[idx].Key_id;
 
         //if we are moving the hazard up to the first spot, the index for the before hazard will be - 1, so we can't get a key_id
         if(beforeHazardIdx > -1){
-            var beforeHazardId = parent.SubHazards[beforeHazardIdx].Key_id;
+            var beforeHazardId = filteredSubHazards[beforeHazardIdx].Key_id;
         }else{
             var beforeHazardId = null
         }
 
         //if we are moving the hazard down to the last spot, the index for the before hazard will out of range, so we can't get a key_id
-        if(afterHazardIdx < parent.SubHazards.length){
-            var afterHazardId = parent.SubHazards[afterHazardIdx].Key_id;  
+        if(afterHazardIdx < filteredSubHazards.length){
+            var afterHazardId = filteredSubHazards[afterHazardIdx].Key_id;  
        }else{
             var afterHazardId = null;
        }
@@ -607,14 +607,14 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         //make the call
         convenienceMethods.saveDataAndDefer(url, clickedHazard).then(
             function(promise){
-                parent.SubHazards[idx].IsDirty = false;
+                filteredSubHazards.IsDirty = false;
                 parent.SubHazards = promise;
                 $location.hash('hazard'+hazardId);
                 // call $anchorScroll()
                 $anchorScroll();
             },
             function(){
-                parent.SubHazards[idx].error = true;
+                filteredSubHazards.error = true;
                 $scope.error="The hazard could not be moved.  Please check your internet connection.";  
             }
         );
