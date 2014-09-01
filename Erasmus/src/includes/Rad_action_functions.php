@@ -49,5 +49,19 @@ function getCarboyUseCycleById($id = NULL) {
 	}
 }
 
+function getDisposalLotById($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL) {
+		$dao = getDao(new DisposalLot());
+		return $dao->getById($id);
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 
 ?>
