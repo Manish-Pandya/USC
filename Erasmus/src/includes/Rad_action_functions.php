@@ -26,7 +26,7 @@ function getCarboyById($id = NULL) {
 	
 	$id = getValueFromRequest('id', $id);
 	
-	if( $id !== NULL) {
+	if( $id !== NULL ) {
 		$dao = getDao(new Carboy());
 		return $dao->getById($id);
 	}
@@ -40,7 +40,7 @@ function getCarboyUseCycleById($id = NULL) {
 	
 	$id = getValueFromRequest('id', $id);
 	
-	if( $id !== NULL) {
+	if( $id !== NULL ) {
 		$dao = getDao(new CarboyUseCycle());
 		return $dao->getById($id);
 	}
@@ -54,7 +54,7 @@ function getDisposalLotById($id = NULL) {
 	
 	$id = getValueFromRequest('id', $id);
 	
-	if( $id !== NULL) {
+	if( $id !== NULL ) {
 		$dao = getDao(new DisposalLot());
 		return $dao->getById($id);
 	}
@@ -68,7 +68,7 @@ function getDrumById($id = NULL) {
 	
 	$id = getValueFromRequest('id', $id);
 	
-	if( $id !== NULL) {
+	if( $id !== NULL ) {
 		$dao = getDao(new Drum());
 		return $dao->getById($id);
 	}
@@ -76,6 +76,5 @@ function getDrumById($id = NULL) {
 		return new ActionError("No request parameter 'id' was provided");
 	}
 }
-
 
 ?>
