@@ -77,4 +77,18 @@ function getDrumById($id = NULL) {
 	}
 }
 
+function getParcelById($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ) {
+		$dao = getDao(new Parcel());
+		return $dao->getById($id);
+	}
+	else {
+		return new ActionError("No request Parameter 'id' was provided");
+	}
+}
+
 ?>
