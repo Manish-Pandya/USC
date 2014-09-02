@@ -84,10 +84,11 @@ class GenericDAO {
 			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
 			if ($stmt->execute()) {
 				$result = $stmt->fetch();
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 			} else {
 				$error = $stmt->errorInfo();
-				die($error[2]);
+				$result = new QueryError($error);
+				$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 			}
 
 			return $result;
@@ -136,10 +137,11 @@ class GenericDAO {
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
 
 		return $result;
@@ -184,8 +186,7 @@ class GenericDAO {
 			// we have a problem!
 			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
 
-			//NULL return indicates error
-			return NULL;
+			return new ModifyError("Entity did not match model object class", $object);
 		}
 		//else use $object as-is!
 
@@ -233,10 +234,11 @@ class GenericDAO {
 			$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
 			$object = $this->getById( $object->getKey_Id() );
 
-		// Otherwise, the statement failed to execute, so return false.
+		// Otherwise, the statement failed to execute, so return an error
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
-			$object = null;
+			$object = new ModifyError($stmt->errorInfo()[2], $object);
+			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
 		}
 
 		// return the updated object
@@ -280,10 +282,12 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$keys = $stmt->fetchAll();
 			$this->LOG->debug( "... returned " . count($keys) . " related records.");
-		// ... otherwise, die and echo the db error
+		// ... otherwise, return an error
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			$queryError = new QueryError($error);
+			$this->LOG->error("statement failed, returning QueryError with message: " . $queryError->getMessage());
+			return $queryError;
 		}
 
 		$resultList = array();
@@ -337,10 +341,14 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$this->LOG->debug( "Inserted new related item with key_id [$key_id]");
 			return true;
-		// ... otherwise, die and echo the db error
+		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+
+			// create modify error with human readable error message
+			$result = new ModifyError($error[2]);
+			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
+			return $result;
 		}
 	}
 
@@ -370,10 +378,15 @@ class GenericDAO {
 		if ($stmt->execute() ) {
 			$this->LOG->debug( "Remove related item with key_id [$key_id]");
 			return true;
-		// ... otherwise, die and echo the db error
+		// ... otherwise, generate an error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+
+			// create modify error with human readable error message
+			$result = new ModifyError($error[2]);
+			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
+
+			return $result;
 		}
 	}
 
@@ -456,10 +469,12 @@ class GenericDAO {
 		$stmt->setFetchMode(PDO::FETCH_CLASS, "User");			// Query the db and return one user
 		if ($stmt->execute()) {
 			$result = $stmt->fetch();
-			// ... otherwise, die and echo the db error
+			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			die($error[2]);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+
+			$result = new QueryError($error[2]);
 		}
 
 		return $result;

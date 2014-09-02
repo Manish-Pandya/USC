@@ -115,9 +115,15 @@ class ActionDispatcher {
 			$this->result->actionFunctionResult = $this->doAction($actionMapping);
 				
 			//NULL indicates something was wrong
-			if( $this->result->actionFunctionResult === NULL || $this->result->actionFunctionResult instanceof ActionError ){
+			if( $this->result->actionFunctionResult === NULL  ){
 				// Forward to the failure page
 				$this->dispatchError($this->result, $actionMapping);
+			}
+			//ActionError indicates a nonfatal error to be handled by the frontend
+			else if($this->result->actionFunctionResult instanceof ActionError) {
+				$this->LOG->warn("Dispatch Complete, but returning a " . get_class($this->result->actionFunctionResult)
+					. ' with message: ' . ($this->result->actionFunctionResult->getMessage()) );
+				$this->dispatchSuccess($this->result, $actionMapping);
 			}
 			else{
 				// Forward to the success page
@@ -223,7 +229,7 @@ class ActionDispatcher {
 	 * @param ActionMapping $actionMapping
 	 * 
 	 * @return unknown: The return value of the called function,
-	 * 	or NULL if the if the function does not exist
+	 *  	or NULL if the if the function does not exist
 	 */
 	public function doAction( ActionMapping $actionMapping ){
 		$action_function = $actionMapping->actionFunctionName;

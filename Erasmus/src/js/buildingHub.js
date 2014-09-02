@@ -179,8 +179,12 @@ function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootEleme
     $scope.building.Rooms.push(data);
   }
 
-  function onFailSaveRoom(){
-    alert('Something went wrong when the system tried to save the room.')
+  function onFailSaveRoom(data){
+    if(data) {
+      $scope.error = data.Message;
+    } else {
+      $scope.error = 'Something went wrong when the system tried to save the room.';
+    }
   }
 
   var onAddRoom = function( returnedFromServer, building ){

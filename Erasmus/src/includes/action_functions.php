@@ -196,8 +196,12 @@ function getChecklistByHazardId( $id = NULL ){
 		$dao = getDao(new Hazard());
 		$hazard = $dao->getById($id);
 		$checklist = $hazard->getChecklist();
-		if (!empty($checklist)) {
-				return $checklist;
+
+		// ActionError indicates a nonfatal problem, return it to report the error.
+		if ($hazard instanceof ActionError) {
+			return $hazard;
+		} else if (!empty($checklist)) {
+			return $checklist;
 		} else {
 			return true;
 		}
@@ -214,7 +218,7 @@ function getAllQuestions(){
 
 	$dao = getDao(new Question());
 
-		$questions = $dao->getAll();
+	$questions = $dao->getAll();
 
 	return $questions;
 };
@@ -226,7 +230,7 @@ function saveChecklist($checklist = null){
 	if($checklist == null){
 		$decodedObject = convertInputJson();
 	}else{
-		$decodedObject = $checklist	;
+		$decodedObject = $checklist;
 	}
 
 	if( $decodedObject === NULL ){
@@ -263,7 +267,7 @@ function saveChecklist($checklist = null){
 			$decodedObject->setMaster_hazard($master_hazard);
 		}
 
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 
 		return $decodedObject;
 	}
@@ -296,7 +300,7 @@ function saveQuestion(){
 	}
 	else{
 		$dao = getDao(new Question());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -312,7 +316,7 @@ function saveDeficiency(){
 	}
 	else{
 		$dao = getDao(new Deficiency());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -328,7 +332,7 @@ function saveObservation(){
 	}
 	else{
 		$dao = getDao(new Observation());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -344,7 +348,7 @@ function saveRecommendation(){
 	}
 	else{
 		$dao = getDao(new Recommendation());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -360,7 +364,7 @@ function saveSupplementalObservation(){
 	}
 	else{
 		$dao = getDao(new SupplementalObservation());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -376,7 +380,7 @@ function saveSupplementalRecommendation(){
 	}
 	else{
 		$dao = getDao(new SupplementalRecommendation());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -429,6 +433,12 @@ function getHazardTreeNode( $id = NULL){
 	$hazard = getHazardById($id);
 	$hazards = array();
 
+	// if getHazardById did not succeed, no point in continuing down the tree
+	if ($hazard instanceof ActionError) {
+		// error returned to ensure useful error output.
+		return $hazard;
+	}
+
 	// prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
 	$hazMaps = array();
 	$hazMaps[] = new EntityMap("lazy","getSubHazards");
@@ -465,7 +475,6 @@ function getHazardTreeNode( $id = NULL){
 };
 
 
-//FIXME: Remove $name
 function getHazardById( $id = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
@@ -508,11 +517,10 @@ function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
 		$hazard->setParent_hazard_id=$parentHazardId;
 		// Save
 
-		$dao->save($hazard);
+		$result = $dao->save($hazard);
 
-		//TODO: What do we return?
 		$LOG->info("Moved Hazard #$hazardId to new parent Hazard #$parentHazardId");
-		return '';
+		return $result;
 	}
 }
 
@@ -528,7 +536,7 @@ function saveHazard(){
 	}
 	else{
 		$dao = getDao(new Hazard());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -588,9 +596,9 @@ function removeResponse( $id = NULL ){
 			$dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
 		}
 
-		$dao->deleteById($id);
+		$result = $dao->deleteById($id);
 
-		return true;
+		return $result;
 	}
 	else{
 		//error
@@ -626,9 +634,9 @@ function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL )
 			$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 		}
 
-		$dao->deleteById($ds->getKey_id());
+		$result = $dao->deleteById($ds->getKey_id());
 
-		return true;
+		return $result;
 	}
 	else{
 		//error
@@ -656,9 +664,9 @@ function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
 		$dao = getDao($ds);
 		$ds->setCorrected_in_inspection(true);
 
-		$dao->save($ds);
+		$ds = $dao->save($ds);
 
-		return true;
+		return $ds;
 		}
 		else{
 			//error
@@ -686,9 +694,9 @@ function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL
 		$dao = getDao($ds);
 		$ds->setCorrected_in_inspection(false);
 
-		$dao->save($ds);
+		$result = $dao->save($ds);
 
-		return true;
+		return $result;
 		}
 		else{
 			//error
@@ -712,7 +720,7 @@ function getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId = nul
 		}
 	}
 	$LOG->debug("Found no matching DeficiencySelection for inspection [$inspectionId] and deficiency [$deficiencyId]");
-
+	//TODO: Would it be more appropriate to return null or an ActionError?
 	return null;
 }
 
@@ -728,7 +736,7 @@ function saveBuilding(){
 	}
 	else{
 		$dao = getDao(new Building());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -773,10 +781,10 @@ function saveRecommendationRelation(){
 			$dao = getDao(new Response());
 			// if add is true, add this recommendation to this response
 			if ($add){
-				$dao->addRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
+				$result = $dao->addRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 				// if add is false, remove this recommendation from this response
 			} else {
-				$dao->removeRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($recommendationId,$responseId,DataRelationship::fromArray(Response::$RECOMMENDATIONS_RELATIONSHIP));
 			}
 
 		} else {
@@ -785,8 +793,7 @@ function saveRecommendationRelation(){
 		}
 
 	}
-	return true;
-
+	return $result;
 };
 
 function saveObservationRelation(){
@@ -813,10 +820,10 @@ function saveObservationRelation(){
 			$dao = getDao(new Response());
 			// if add is true, add this observation to this response
 			if ($add){
-				$dao->addRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
+				$result = $dao->addRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 				// if add is false, remove this observation from this response
 			} else {
-				$dao->removeRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($observationId,$responseId,DataRelationship::fromArray(Response::$OBSERVATIONS_RELATIONSHIP));
 			}
 
 		} else {
@@ -825,7 +832,7 @@ function saveObservationRelation(){
 		}
 
 	}
-	return true;
+	return $result;
 
 };
 
@@ -907,7 +914,7 @@ function savePI(){
 	}
 	else{
 		$dao = getDao(new PrincipalInvestigator());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -923,7 +930,7 @@ function saveInspector(){
 	}
 	else{
 		$dao = getDao(new Inspector());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -951,10 +958,10 @@ function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this room to this PI
 			if ($add){
-				$dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+				$result = $dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
 			// if add is false, remove this room from this PI
 			} else {
-				$dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
 			}
 
 		} else {
@@ -963,7 +970,7 @@ function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
 		}
 
 	}
-	return true;
+	return $result;
 };
 
 function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
@@ -989,10 +996,10 @@ function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
 			$dao = getDao(new PrincipalInvestigator());
 			// if add is true, add this lab contact to this PI
 			if ($add){
-				$dao->addRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
+				$result = $dao->addRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
 			// if add is false, remove this lab contact from this PI
 			} else {
-				$dao->removeRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($contactId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$LABPERSONNEL_RELATIONSHIP));
 			}
 
 		} else {
@@ -1001,7 +1008,7 @@ function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
 		}
 
 	}
-	return true;
+	return $result;
 };
 
 function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
@@ -1025,6 +1032,14 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		$departments = $pi->getDepartments();
 		$departmentToAdd = getDepartmentById($deptId);
 
+		// if an error occurred getting these two items, it's safer to catch here, just in case.
+		if($departments instanceof ActionError || $departments === NULL) {
+			return $departments;
+		}
+		if($departmentToAdd instanceof ActionError || $departmentToAdd === NULL) {
+			return $departmentToAdd;
+		}
+
 		if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
 
 			// Get a DAO
@@ -1033,11 +1048,11 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 			if ($add){
 				if(!in_array($departmentToAdd, $departments)){
 					// only add the department if the pi doesn't already have it
-					$dao->addRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+					$result = $dao->addRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
 				}
 			// if add is false, remove this department from this PI
 			} else {
-				$dao->removeRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($deptId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
 			}
 
 		} else {
@@ -1046,7 +1061,7 @@ function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		}
 
 	}
-	return true;
+	return $result;
 };
 
 
@@ -1078,11 +1093,11 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 			if ($add){
 				if(!in_array($roleToAdd, $roles)){
 					// only add the role if the user doesn't already have it
-					$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+					$result = $dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 				}
 				// if add is false, remove this role from this PI
 			} else {
-				$dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+				$result = $dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 			}
 
 		} else {
@@ -1091,7 +1106,7 @@ function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
 		}
 
 	}
-	return true;
+	return $result;
 };
 
 //Get a room dto duple
@@ -1150,7 +1165,7 @@ function saveDepartment($department = null){
 	}
 	else{
 		$dao = getDao(new Department());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 }
@@ -1226,7 +1241,7 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 
 		if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
 		// Save (or update) the inspection
-		$dao->save($inspection);
+		$inspection = $dao->save($inspection);
 		$pi = $inspection->getPrincipalInvestigator();
 
 		// Remove previous rooms and add the default rooms for this PI.
@@ -1325,17 +1340,17 @@ function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NU
 		$inspection = $dao->getById($inspectionId);
 		// if add is true, add this room to this inspection
 		if ($add){
-			$dao->addRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+			$result = $dao->addRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
 		// if add is false, remove this room from this inspection
 		} else {
-			$dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+			$result = $dao->removeRelatedItems($roomId,$inspectionId,DataRelationship::fromArray(Room::$ROOMS_RELATIONSHIP));
 		}
 
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be roomId int, inspectionId int, add boolean)");
 	}
-	return true;
+	return $result;
 
 };
 
@@ -1382,9 +1397,9 @@ function saveNoteForInspection(){
 		$inspection->setNote($decodedObject->getText());
 
 		// Save the Inspection
-		$dao->save($inspection);
+		$result = $dao->save($inspection);
 
-		return true;
+		return $result;
 	}
 };
 
@@ -1485,6 +1500,11 @@ function filterHazards (&$hazard, $rooms){
 		if(!is_object($subhazard)){
 			$subDao = getDao(new Hazard());
 			$subhazard = $subDao->getById($subhazard[$Key_id]);
+		}
+
+		// better to check for error now than later
+		if($subhazard instanceof ActionError) {
+			return $subhazard;
 		}
 
 		$subhazard->setInspectionRooms($rooms);
@@ -1647,14 +1667,14 @@ function saveHazardRoomRelations( $hazard = null ){
 		foreach($hazard->getInspectionRooms() as $room){
 			if($hazard->getIsPresent() == true){
 				//create hazard room relations
-				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+				$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 				$room->setContainsHazard(true);
 			}else{
 				//delete room relations
-				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
+				$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
 				//we must also remove the relationships for any subhazards, so we call recursively
 				foreach($hazard->getActiveSubHazards() as $subhazard){
-					saveHazardRelation($room->getKey_id(),$subhazard->getKey_id(),false);
+					$result = saveHazardRelation($room->getKey_id(),$subhazard->getKey_id(),false);
 					$subhazard->filterRooms();
 				}
 			}
@@ -1662,7 +1682,7 @@ function saveHazardRoomRelations( $hazard = null ){
 		$hazard->filterRooms();
 		$LOG->debug($hazard);
 		//filterHazards($hazard, $hazard->getInspectionRooms());
-		return $hazard;
+		return $result;
 
 	}
 }
@@ -1681,18 +1701,18 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 		$room = $dao->getById($roomId);
 		// if add is true, add this hazard to this room
 		if ($add != false){
-			$dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+			$result = $dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		// if add is false, remove this hazard from this room
 		} else {
 			$LOG->debug("in remove branch");
-			$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+			$result = $dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		}
 
 	} else {
 		//error
 		return new ActionError("Missing proper parameters (should be roomId int, hazardId int, add boolean)");
 	}
-	return true;
+	return $result;
 
 };
 
@@ -1728,6 +1748,7 @@ function getSubHazards($hazard = NULL){
 }
 
 function saveRoomRelation($hazardId, $roomId){
+	//TODO: I assume this should do something now?
 	//temporarily return true so server returns 200 code
 	return true;
 };
@@ -1763,7 +1784,7 @@ function saveResponse(){
 	}
 	else{
 		$dao = getDao(new Response());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -1798,8 +1819,8 @@ function saveDeficiencySelection(){
 
 		// else if no roomIds were provided, then just delete this DeficiencySelection
 		} else {
-			$dao->deleteById($ds->getKey_id());
-			return true;
+			$result = $dao->deleteById($ds->getKey_id());
+			return $result;
 		}
 
 		return $ds;
@@ -1818,7 +1839,7 @@ function saveRootCause(){
 	}
 	else{
 		$dao = getDao();
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -1834,7 +1855,7 @@ function saveCorrectiveAction(){
 	}
 	else{
 		$dao = getDao(new CorrectiveAction());
-		$dao->save($decodedObject);
+		$decodedObject = $dao->save($decodedObject);
 		return $decodedObject;
 	}
 };
@@ -1847,8 +1868,15 @@ function getChecklistsForInspection( $id = NULL ){
 
 		//get inspection
 		$inspection = $dao->getById($id);
+
+		// catch any possible errors from $dao->getById();
+		if($inspection instanceof ActionError) {
+			return $inspection;
+		}
+
 		// get the rooms for the inspection
 		$rooms = $inspection->getRooms();
+
 		$masterHazards = array();
 		//iterate the rooms and find the hazards present
 		foreach ($rooms as $room){
@@ -2109,7 +2137,6 @@ function getResponseById( $id = NULL, $inspectionId = NULL ){
 
 	if( $id !== NULL ){
 		$dao = getDao(new Response());
-		return
 		$response = $dao->getById($id);
 
 		return $response;
@@ -2253,8 +2280,7 @@ function sendInspectionEmail(){
 		mail(implode($recipientEmails,","),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:no-reply@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode($inspectorEmails,","));
 
 		$inspection->setNotification_date(date("Y-m-d H:i:s"));
-		$dao->save($inspection);
-		return true;
+		return $dao->save($inspection);
 	}
 
 }
