@@ -30,8 +30,11 @@ abstract class GenericCrud {
 	// Active
 	protected $is_active;
 	
-	// User who created/last updated
+	// User who last updated
 	protected $last_modified_user_id;
+	
+	// User who created
+	protected $created_user_id;
 	
 	// Array of EntityMap objects that describe which properties are entities and how to load them.
 	protected $entityMaps;
@@ -66,6 +69,10 @@ abstract class GenericCrud {
 		return $this->last_modified_user_id;
 	}
 	
+	public function getCreated_user_id() {
+		return $this->created_user_id;
+	}
+	
 	public function setDate_last_modified($dateLastModified){
 		$this->date_last_modified = $dateLastModified;
 	}
@@ -79,6 +86,10 @@ abstract class GenericCrud {
 	
 	public function setLast_modified_user_id($id){
 		$this->last_modified_user_id = $id; }
+		
+	public function setCreated_user_id($id) {
+		$this->created_user_id = $id;
+	}
 	
 	public function getEntityMaps(){
 		return $this->entity_maps;
