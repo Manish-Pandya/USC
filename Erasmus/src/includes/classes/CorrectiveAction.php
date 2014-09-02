@@ -23,8 +23,7 @@ class CorrectiveAction extends GenericCrud {
 		"last_modified_user_id"			=> "integer",
 		"status"			=>     "text",
 		"completion_date"   =>     "timestamp",
-		"promised_date"   =>     "timestamp",
-		"created_user_id"	=> "integer"
+		"promised_date"   =>     "timestamp"
 	);
 	
 	

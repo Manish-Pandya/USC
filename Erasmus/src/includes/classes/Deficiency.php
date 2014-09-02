@@ -23,8 +23,7 @@ class Deficiency extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"description" => "text",
-		"reference" => "text",
-		"created_user_id"	=> "integer"
+		"reference" => "text"
 	);
 
 	/** Reference to the Question entity to which this Deficiency applies */
