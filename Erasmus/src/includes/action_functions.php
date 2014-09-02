@@ -2276,21 +2276,30 @@ function makeFancyNames(){
 }
 
 function createOrderIndicesForHazards(){
-	$hazards = getAllHazards();
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$hazards = getHazardTreeNode(10000);
 	foreach($hazards as $hazard){
-		$subs = $hazard->getSubHazards();
-		if($subs != null){
-			$i = 1;
-			foreach($subs as $sub){
-				$sub->setOrder_index(null);
-				$sub->setOrder_index($i);
-				$dao = getDao( new Hazard() );
-				$dao->save( $sub );
-				$i++;
-			}
+		setOrderIndicesForSubHazards( $hazard );
+	}
+	return getAllHazards();
+}
+
+function setOrderIndicesForSubHazards( $hazard ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$subs = $hazard->getSubHazards();
+	if($subs != null){
+		$i = 0;
+		foreach($subs as $sub){
+			$i++;
+			$sub->setOrder_index(null);
+			$sub->setOrder_index($i);
+			$dao = getDao( new Hazard() );
+			$LOG->debug($sub->getName()."'s order index is ".$sub->getOrder_index($i));
+			$sub = $dao->save( $sub );
+			if($sub->getSubHazards() != null)setOrderIndicesForSubHazards( $sub );
 		}
 	}
-	return $hazards;
 }
 
 //reorder hazards
@@ -2328,8 +2337,8 @@ function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId
 		$LOG->debug("before index: ".$beforeOrderIdx);
 		$LOG->debug("after index: ".$afterHazardIdx);
 
-		//set the hazard's order index to a random float between the order indices of the other two hazards
-		$hazard->setOrder_index(random_float ($beforeOrderIdx,$afterHazardIdx));
+		//set the hazard's order index to a float between halfway between the order indices of the other two hazards
+		$hazard->setOrder_index(($beforeOrderIdx+$afterHazardIdx)/2);
 		$dao->save($hazard);
 
 		//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view

@@ -18,7 +18,7 @@ class Hazard extends GenericCrud {
 		"parent_hazard_id" => "integer",
 		//checklist is a relationship
 		//rooms are relationships
-		"order_index" => "integer",
+		"order_index" => "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
