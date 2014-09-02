@@ -58,8 +58,8 @@
     </div>
      
       <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
-        <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | orderBy: [order] | filter: hazardFilter))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
-          <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
+        <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | orderBy: [order] | filter: hazardFilter))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup> 
+         <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
         </li>
       </ol> 
     </li>
