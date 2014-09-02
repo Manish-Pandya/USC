@@ -22,7 +22,7 @@ function getIsotopeById($id = NULL) {
 }
 
 function getCarboyById($id = NULL) {
-	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
@@ -36,7 +36,7 @@ function getCarboyById($id = NULL) {
 }
 
 function getCarboyUseCycleById($id = NULL) {
-	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__);
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
@@ -50,7 +50,7 @@ function getCarboyUseCycleById($id = NULL) {
 }
 
 function getDisposalLotById($id = NULL) {
-	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
@@ -64,7 +64,7 @@ function getDisposalLotById($id = NULL) {
 }
 
 function getDrumById($id = NULL) {
-	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
 	$id = getValueFromRequest('id', $id);
 	
