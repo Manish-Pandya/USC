@@ -50,8 +50,9 @@ class GenericDAO {
 	 */
 	public function doesTableExist(){
 		$tableName = $this->modelObject->getTableName();
-		$result = mysql_query("SHOW TABLES LIKE '$tableName'");
-		$tableExists = mysql_num_rows($result) > 0;
+		global $db;
+		$result = $db->query("SHOW TABLES LIKE '$tableName'");
+		$tableExists = $result->fetch(PDO::FETCH_NUM) > 0;
 		return $tableExists;
 	}
 

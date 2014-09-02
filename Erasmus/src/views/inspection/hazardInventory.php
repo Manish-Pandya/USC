@@ -134,7 +134,7 @@ require_once '../top_view.php';
 										</li>
 									</ul>
 						       	 </li>
-						       	 <li><a a class="btn btn-warning" ng-click="getHazards()">Get Hazards</a></li>
+						       	 <li><a a class="btn btn-warning" ng-click="resetInspection()">Get Hazards</a></li>
 						       	</ul>
 					       </span>
 			       		</ul>
@@ -157,7 +157,7 @@ require_once '../top_view.php';
 	    <form>
 	    <span ng-show="hazardsLoading" class="loading">
 	     <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Hazards..
+		  Building Hazard List...
 	    </span>
 	   		<ul class="allHazardList">
 				<li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">

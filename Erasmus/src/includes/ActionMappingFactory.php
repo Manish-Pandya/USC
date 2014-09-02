@@ -107,13 +107,14 @@ class ActionMappingFactory {
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
 				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
+				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
 
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
 				"getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", ""),
 				"saveHazardRoomRelations"=>new ActionMapping("saveHazardRoomRelations", "", ""),
 				"saveHazardRelation"=>new ActionMapping("saveHazardRelation", "", ""),
-				"saveRoomRelation"=>new ActionMapping("saveRoomRelation", "", ""),
+				"resetInspectionRooms"=>new ActionMapping("resetInspectionRooms", "", ""),
 
 				// Inspection, step 3 (Checklist)
 				"resetChecklists"=>new ActionMapping("resetChecklists","",""),

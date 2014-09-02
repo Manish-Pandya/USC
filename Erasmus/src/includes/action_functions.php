@@ -1281,8 +1281,46 @@ function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NUL
 	$inspection->setEntityMaps($entityMaps);
 
 	return $inspection;
-	};
+}
 
+//Appropriately sets relationships for an inspection if an inspector is not inspecting all of a PI's rooms
+function resetInspectionRooms($inspectionId = NULL, $roomIds = null){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$inspectionId = getValueFromRequest('inspectionId', $inspectionId);
+	$roomIds = getValueFromRequest('roomIds', $roomIds);
+
+	if($roomIds !== NULL && $inspectionId !== NULL ){
+		$dao = getDao(New Inspection());
+		$inspectionDao = $dao->getById($inspectionId);
+
+		$LOG->debug($inspectionDao);
+
+		removeAllInspectionRooms($inspectionDao);
+
+		foreach($roomIds as $id){
+			saveInspectionRoomRelation( $id, $inspectionId, true );
+		}
+
+	} else {
+		return new ActionError("No Inspection or room IDs provided");
+	}
+
+
+	return getHazardRoomMappingsAsTree( $roomIds );
+
+}
+
+function removeAllInspectionRooms(&$inspectionDao){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$inspectionId = $inspectionDao->getKey_id();
+
+	foreach($inspectionDao->getRooms() as $room){
+		saveInspectionRoomRelation( $room->getKey_id(), $inspectionId, false );
+	}
+
+}
 
 function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
