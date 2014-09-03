@@ -84,6 +84,12 @@ class GenericDAO {
 			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
 			if ($stmt->execute()) {
 				$result = $stmt->fetch();
+
+				// $result being false indicates no rows returned.
+				if(!$result) {
+					$this->LOG->debug('No Rows returned. Returning ActionError');
+					return new ActionError('No rows returned');
+				}
 			// ... otherwise, generate error message to be returned
 			} else {
 				$error = $stmt->errorInfo();
