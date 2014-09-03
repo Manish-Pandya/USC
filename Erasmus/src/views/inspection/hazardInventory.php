@@ -127,7 +127,7 @@ require_once '../top_view.php';
 									
 						       	 	<ul>
 							       	 	<li ng-repeat="(key, room) in building.Rooms" style="width:100%">
-								       	 	<label class="checkbox inline">
+								       	 	<label class="checkbox inline smaller">
 												<input ng-model='room.IsSelected' type="checkbox" ng-change="selectRoom(room,building)"/>
 												<span class="metro-checkbox smaller" once-text="room.Name"></span>
 											</label>
@@ -135,6 +135,7 @@ require_once '../top_view.php';
 									</ul>
 						       	 </li>
 						       	 <li><a a class="btn btn-warning" ng-click="resetInspection()">Get Hazards</a></li>
+						       	 <li ng-if="noRoomsSelected" class="alert alert-danger">Please select one or more rooms.</li>
 						       	</ul>
 					       </span>
 			       		</ul>
@@ -146,12 +147,13 @@ require_once '../top_view.php';
 
 	    <div class="loading" ng-show='!PI' >
 
-	    <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
+		    <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
 
-		<span ng-hide="noPiSet">
-		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Selected Principal Investigator...
-		</span>
+			<span ng-if="piLoading">
+			  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+			  Getting Selected Principal Investigator...
+			</span>
+		
 		</div>								
 
 	    <form>

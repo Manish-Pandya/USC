@@ -285,14 +285,17 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   },
   getPi = function(piKey_id)
   {
+        $scope.piLoading = true;
 	      var piDefer = $q.defer();
 	      hazardInventoryFactory
 	              .getPi(piKey_id)
 	                .then(function(pi){
+                      $scope.piLoading = false;
 	                    $scope.PI = pi;
 	                    piDefer.resolve( pi );
 	                },
 	                function(fail){
+                      $scope.piLoading = false;
 	                    piDefer.reject();
 	                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
 	                });
@@ -563,7 +566,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
       }
     }
 
-    resetInspectionRooms( roomIds,  $scope.inspection.Key_id );
+    if(roomIds.length){
+      $scope.noRoomsSelected = false;
+      resetInspectionRooms( roomIds,  $scope.inspection.Key_id );
+    }else{
+      $scope.noRoomsSelected = true;
+    }
   }
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
