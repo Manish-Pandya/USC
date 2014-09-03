@@ -77,11 +77,11 @@ require_once '../top_view.php';
 		       <label class="control-label" for="name"><h3>Principal Investigator</h3></label>
 		       <div class="controls">
 		       <span ng-show="!PIs">
-		         <input class="span12" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+		         <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
 		       	<img class="" style="height:23px; margin:-36px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span4" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}" target="_blank">Manage Data for Selected PI</a></h3>

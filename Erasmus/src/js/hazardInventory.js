@@ -94,6 +94,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     var deferred = $q.defer();
     
     var url = '../../ajaxaction.php?action=resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
+    
     var temp = this;
     convenienceMethods.getDataAsDeferredPromise(url).then(
       function(promise){
@@ -284,19 +285,18 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   },
   getPi = function(piKey_id)
   {
-      var piDefer = $q.defer();
-      hazardInventoryFactory
-              .getPi(piKey_id)
-                .then(function(pi){
-                    console.log(pi);
-                    $scope.PI = pi;
-                    piDefer.resolve( pi );
-                },
-                function(fail){
-                    piDefer.reject();
-                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
-                });
-      return piDefer.promise;
+	      var piDefer = $q.defer();
+	      hazardInventoryFactory
+	              .getPi(piKey_id)
+	                .then(function(pi){
+	                    $scope.PI = pi;
+	                    piDefer.resolve( pi );
+	                },
+	                function(fail){
+	                    piDefer.reject();
+	                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+	                });
+	      return piDefer.promise;
   },
   setInspection = function(pi)
   {
@@ -355,8 +355,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   {
       //set up our $q object so that we can either return a promise on success or break the promise chain on error
       var resetInspectionDefer = $q.defer();
-
-       hazardInventoryFactory
+      $scope.hazards = [];
+      $scope.hazardsLoading = true;
+      hazardInventoryFactory
               .resetInspectionRooms( roomIds,  inspectionId )
                 .then(function( hazards )
                 {
@@ -365,7 +366,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                   $scope.hazardsLoading = false;
                   $scope.needNewHazards = false;
                   angular.forEach($scope.hazards, function(hazard, key){
-                    if(hazard.IsPresent)getShowRooms(hazard);
+                    if(hazard.IsPresent)$scope.getShowRooms(hazard);
                   });
 
                   resetInspectionDefer.resolve( hazards );
@@ -398,7 +399,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                   $scope.needNewHazards = false;
 
                   $scope.hazards = hazardInventoryFactory.parseHazards( $scope.hazards );
-
                   hazardDefer.resolve( $scope.hazards );
                 },
                 function(){
@@ -406,7 +406,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                     $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
                     hazardDefer.reject();
                 });
-            return hazardDefer.promise();
+            console.log( hazardDefer );
+            return hazardDefer.promise;
   },
   initiateInspection = function(piKey_id)
   {
@@ -562,8 +563,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
       }
     }
 
-    resetInspectionRooms( roomIds,  $scope.inspection.Key_id )
-      .then( getHazards );
+    resetInspectionRooms( roomIds,  $scope.inspection.Key_id );
   }
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
@@ -658,9 +658,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
         });
 
         //rooms are finished processing, we can set hazard to clean
-        if(hazard.InspectionRooms.every(isNotDirty)){
+        /*if(hazard.InspectionRooms.every(isNotDirty)){
             hazard.IsDirty = false;
-        }
+        }*/
 
         //recurse down the tree
         $scope.walkhazard(child);
@@ -669,19 +669,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     //If at least one room contains the hazard, but not all rooms, set property of hazard so that rooms can be displayed
     $scope.getShowRooms(hazard);
 }
-    
-  /*
-   * HAZARD SAVE METHODS
-   * used for creating and updating users
-   * 
-   */
 
-  function isNotDirty(element, index, array){
-    if(!element.IsDirty){
-      return true;
-    }
-    return false;
-  }
+
 
   $scope.handleRoom = function(room, hazard, parent){
     console.log(room);
