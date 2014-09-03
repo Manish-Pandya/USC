@@ -176,4 +176,19 @@ function getAuthorizationsByPIId($id = NULL) {
 	}
 }
 
+function getPickupLotsByPickupId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$pickupDao = getDao(new Pickup());
+		$selectedPickup = $pickupDao->getById($id);
+		return $selectedPickup->getPickupLots();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 ?>
