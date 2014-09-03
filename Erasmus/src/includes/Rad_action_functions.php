@@ -161,4 +161,19 @@ function getWasteTypeById($id = NULL) {
 	}
 }
 
+function getAuthorizationsByPIId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$piDao = getDao(new PrincipalInvestigator());
+		$selectedPi = $piDao->getById($id);
+		return $selectedPi->getAuthorizations();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 ?>
