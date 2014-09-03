@@ -21,7 +21,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getDrumById" => new ActionMapping("getDrumById", "", ""),
 			"getParcelById" => new ActionMapping("getParcelById", "", ""),
 			"getParcelUseById" => new ActionMapping("getParcelUseById", "", ""),
-			"getPickupById" => new ActionMapping("getPickupById", "", "")
+			"getPickupById" => new ActionMapping("getPickupById", "", ""),
+			"getPickupLotById" => new ActionMapping("getPickupLotById", "", "")
 		);
 	}
 }
