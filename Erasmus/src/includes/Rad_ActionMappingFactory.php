@@ -14,15 +14,15 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 	public function getConfig() {
 		return array(
-			"getIsotopeById" => new ActionMapping("getIsotopeById", "", ""),
-			"getCarboyById" => new ActionMapping("getCarboyById", "", ""),
+			"getIsotopeById" 		=> new ActionMapping("getIsotopeById", "", ""),
+			"getCarboyById" 		=> new ActionMapping("getCarboyById", "", ""),
 			"getCarboyUseCycleById" => new ActionMapping("getCarboyUseCycleById", "", ""),
-			"getDisposalLotById" => new ActionMapping("getDisposalLotById", "", ""),
-			"getDrumById" => new ActionMapping("getDrumById", "", ""),
-			"getParcelById" => new ActionMapping("getParcelById", "", ""),
-			"getParcelUseById" => new ActionMapping("getParcelUseById", "", ""),
-			"getPickupById" => new ActionMapping("getPickupById", "", ""),
-			"getPickupLotById" => new ActionMapping("getPickupLotById", "", "")
+			"getDisposalLotById" 	=> new ActionMapping("getDisposalLotById", "", ""),
+			"getDrumById" 			=> new ActionMapping("getDrumById", "", ""),
+			"getParcelById" 		=> new ActionMapping("getParcelById", "", ""),
+			"getParcelUseById" 		=> new ActionMapping("getParcelUseById", "", ""),
+			"getPickupById"    		=> new ActionMapping("getPickupById", "", ""),
+			"getPickupLotById" 		=> new ActionMapping("getPickupLotById", "", "")
 		);
 	}
 }
