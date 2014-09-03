@@ -29,6 +29,14 @@ class Pickup extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 	
+	/** Relationships */
+	public static $PICKUPLOTS_RELATIONSHIP = array(
+		"className" => "PickupLot",
+		"tableName" => "pickup_lot",
+		"keyName"   => "key_id",
+		"foreignKeyName"	=> "pickup_id"
+	);
+	
 	//access information
 	
 	/** Date (DateTime) that this pickup occurred. */
@@ -47,7 +55,8 @@ class Pickup extends GenericCrud {
 	/** Integer id of the principal investigator who requested this pickup. */
 	private $principal_investigator_id;
 	
-
+	/** Array of pickup lots this pickup consists of. */
+	private $pickupLots;
 	
 	public function __construct() {
 		
@@ -55,6 +64,7 @@ class Pickup extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getRooms");
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$entityMaps[] = new EntityMap("lazy", "getPickupLots");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -101,5 +111,16 @@ class Pickup extends GenericCrud {
 	
 	public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
 	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
+	
+	public function getPickupLots() {
+		if($this->pickupLots === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->pickupLots = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PICKUPLOTS_RELATIONSHIP));
+		}
+		return $this->pickupLots;
+	}
+	public function setPickupLots($newLots) {
+		$this->pickupLots = $newLots;
+	}
 }
 ?>
