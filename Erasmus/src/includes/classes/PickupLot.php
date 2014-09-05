@@ -65,7 +65,7 @@ class PickupLot extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager", "getIsotope");
 		$entitymaps[] = new EntityMap("eager", "getWaste_type");
-		$entityMaps[] = new EntityMap("lazy", "getdisposalLots");
+		$entityMaps[] = new EntityMap("lazy", "getDisposalLots");
 		$this->setEntityMaps($entityMaps);
 
 	}
