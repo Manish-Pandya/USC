@@ -32,6 +32,14 @@ class Drum extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 	
+	/** Relationships */
+	protected static $DISPOSALLOTS_RELATIONSHIP = array(
+			"className" => "DisposalLot",
+			"tableName" => "disposal_lot",
+			"keyName"	=> "key_id",
+			"foreignKeyName"	=> "drum_id"
+	);
+	
 	//access information
 
 	/** DateTime containing the date this drum was made. */
@@ -51,6 +59,18 @@ class Drum extends GenericCrud {
 	
 	/** String of details about this drum's shipping. */
 	private $shipping_info;
+	
+	/** Array of disposal lots going into this drum. */
+	private $disposalLots;
+	
+	
+	public function __construct() {
+		
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getDisposalLots");
+		$this->setEntityMaps($entityMaps);
+	}
 	
 	
 	// Required for GenericCrud
@@ -81,5 +101,15 @@ class Drum extends GenericCrud {
 	public function getShipping_info() { return $this->shipping_info; }
 	public function setShipping_info($newInfo) { $this->shipping_info = $newInfo; }
 	
+	public function getDisposalLots() {
+		if($this->DisposalLots === NULL) {
+			$thisDao = new GenericDAO($this);
+			$this->disposalLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DISPOSALLOTS_RELATIONSHIP));
+		}
+		return $this->disposalLots;
+	}
+	public function setDisposalLots($newLots) {
+		$this->disposalLots = $newLots;
+	}
 }
 ?>
