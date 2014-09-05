@@ -85,6 +85,10 @@ class ActionDispatcher {
 		if( !array_key_exists($actionName, $actionConfig)){
 			$this->LOG->error("Invalid action name '$actionName' - No such action exists");
 		
+			// Send ActionError to client for debugging purposes
+			$error = new ActionError("Invalid action name '$actionName' - No such action exists");
+			$result->actionFunctionResult = $error;
+
 			// Invalid action specified
 			$this->dispatchError( $result );
 		}
