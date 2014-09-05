@@ -191,4 +191,19 @@ function getPickupLotsByPickupId($id = NULL) {
 	}
 }
 
+function getDisposalLotsByPickupLotId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$pickupLotDao = getDao(new PickupLot());
+		$pickupLot = $pickupLotDao->getById($id);
+		return $pickupLot->getDisposalLots();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 ?>
