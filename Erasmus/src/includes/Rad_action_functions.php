@@ -206,4 +206,19 @@ function getDisposalLotsByPickupLotId($id = NULL) {
 	}
 }
 
+function getDisposalLotsByDrumId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ) {
+		$drumDao = getDao(new PickupLot());
+		$selectedDrum = $drumDao->getById($id);
+		return $selectedDrum->getDisposalLots();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 ?>
