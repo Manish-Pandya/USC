@@ -29,6 +29,15 @@ class PickupLot extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 	
+	/** Relationships */
+	protected static $DISPOSALLOTS_RELATIONSHIP = array(
+		"className" => "DisposalLot",
+		"tableName" => "disposal_lot",
+		"keyName"	=> "key_id",
+		"foreignKeyName"	=> "pickup_lot_id"
+	);
+	
+	
 	//access information
 
 	/** Integer containing the id of the pickup this lot was in. */
@@ -46,6 +55,9 @@ class PickupLot extends GenericCrud {
 	private $waste_type;
 	private $waste_type_id;
 	
+	/** Array of children Disposal Lots */
+	private $disposalLots;
+	
 	
 	public function __construct() {
 		
@@ -53,6 +65,7 @@ class PickupLot extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager", "getIsotope");
 		$entitymaps[] = new EntityMap("eager", "getWaste_type");
+		$entityMaps[] = new EntityMap("lazy", "getdisposalLots");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -101,6 +114,17 @@ class PickupLot extends GenericCrud {
 	
 	public function getWaste_type_id() { return $this->waste_type_id; }
 	public function setWaste_type_id($newId) { $this->waste_type_id = $newId; }
+	
+	public function getDisposalLots() {
+		if($this->DisposalLots === NULL) {
+			$thisDao = new GenericDAO($this);
+			$this->disposalLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DISPOSALLOTS_RELATIONSHIP));
+		}
+		return $this->disposalLots;
+	}
+	public function setDisposalLots($newLots) {
+		$this->disposalLots = $newLots;
+	}
 	
 }
 ?>
