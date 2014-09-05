@@ -14,21 +14,21 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 	public function getConfig() {
 		return array(
-			"getIsotopeById" 		=> new ActionMapping("getIsotopeById", "", ""),
-			"getCarboyById" 		=> new ActionMapping("getCarboyById", "", ""),
-			"getCarboyUseCycleById" => new ActionMapping("getCarboyUseCycleById", "", ""),
-			"getDisposalLotById" 	=> new ActionMapping("getDisposalLotById", "", ""),
-			"getDrumById" 			=> new ActionMapping("getDrumById", "", ""),
-			"getParcelById" 		=> new ActionMapping("getParcelById", "", ""),
-			"getParcelUseById" 		=> new ActionMapping("getParcelUseById", "", ""),
-			"getPickupById"    		=> new ActionMapping("getPickupById", "", ""),
-			"getPickupLotById" 		=> new ActionMapping("getPickupLotById", "", ""),
-			"getPurchaseOrderById"	=> new ActionMapping("getPurchaseOrderById", "", ""),
-			"getWasteTypeById"		=> new ActionMapping("getWasteTypeById", "", ""),
-			"getAuthorizationsByPIId"=> new ActionMapping("getAuthorizationsByPIId", "", ""),
-			"getPickupLotsByPickupId"=> new ActionMapping("getPickupLotsByPickupId", "", ""),
-			"getDisposalLotsByPickupLotId" => new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
-			"getDisposalLotsByDrumId"=> new ActionMapping("getDisposalLotsByDrumId", "", "")
+			"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", ""),
+			"getCarboyById" 				=> new ActionMapping("getCarboyById", "", ""),
+			"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", ""),
+			"getDisposalLotById" 			=> new ActionMapping("getDisposalLotById", "", ""),
+			"getDrumById" 					=> new ActionMapping("getDrumById", "", ""),
+			"getParcelById" 				=> new ActionMapping("getParcelById", "", ""),
+			"getParcelUseById" 				=> new ActionMapping("getParcelUseById", "", ""),
+			"getPickupById"    				=> new ActionMapping("getPickupById", "", ""),
+			"getPickupLotById" 				=> new ActionMapping("getPickupLotById", "", ""),
+			"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", ""),
+			"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", ""),
+			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
+			"getPickupLotsByPickupId"		=> new ActionMapping("getPickupLotsByPickupId", "", ""),
+			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
+			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", "")
 		);
 	}
 }
