@@ -33,7 +33,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			
 			// save functions
 			"saveIsotope"		=> new ActionMapping("saveIsotope", "", ""),
-			"saveCarboy"		=> new ActionMapping("saveCarboy", "", "")
+			"saveCarboy"		=> new ActionMapping("saveCarboy", "", ""),
+			"saveCarboyUseCycle"=> new ActionMapping("saveCarboyUseCycle", "", "")
 		);
 	}
 }
