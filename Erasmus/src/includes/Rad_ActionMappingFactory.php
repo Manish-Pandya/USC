@@ -14,6 +14,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 	public function getConfig() {
 		return array(
+			// get functions
 			"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", ""),
 			"getCarboyById" 				=> new ActionMapping("getCarboyById", "", ""),
 			"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", ""),
@@ -28,7 +29,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
 			"getPickupLotsByPickupId"		=> new ActionMapping("getPickupLotsByPickupId", "", ""),
 			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
-			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", "")
+			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
+			
+			// save functions
+			"saveIsotope"		=> new ActionMapping("saveIsotope", "", "")
 		);
 	}
 }
