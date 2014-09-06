@@ -301,4 +301,20 @@ function saveDrum() {
 	}
 }
 
+function saveParcel() {
+	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to Parcel');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new Parcel());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 ?>
