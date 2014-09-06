@@ -13,6 +13,7 @@
 //TODO: Split these functions up into further includes?
 
 if(isRadiationEnabled()) {
+	// include radiation-module specific functions
 	include_once 'Rad_action_functions.php';
 }
 
