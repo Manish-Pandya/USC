@@ -268,4 +268,22 @@ function saveCarboyUseCycle() {
 		return $decodedObject;
 	}
 }
+
+function saveDisposalLot() {
+	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to DisposalLot');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new DisposalLot());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
+	
 ?>
