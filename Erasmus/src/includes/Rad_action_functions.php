@@ -285,5 +285,20 @@ function saveDisposalLot() {
 	}
 }
 
-	
+function saveDrum() {
+	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to Drum');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new Drum());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 ?>
