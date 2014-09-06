@@ -333,4 +333,20 @@ function saveParcelUse() {
 	}
 }
 
+function savePickup() {
+	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to Pickup');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new Pickup());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 ?>
