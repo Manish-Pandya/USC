@@ -349,4 +349,20 @@ function savePickup() {
 	}
 }
 
+function savePickupLot() {
+	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to PickupLot');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new PickupLot());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 ?>

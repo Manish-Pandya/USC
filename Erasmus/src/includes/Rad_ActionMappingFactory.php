@@ -39,7 +39,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveDrum"			=> new ActionMapping("saveDrum", "", ""),
 			"saveParcel"		=> new ActionMapping("saveParcel", "", ""),
 			"saveParcelUse"		=> new ActionMapping("saveParcelUse", "", ""),
-			"savePickup"		=> new ActionMapping("savePickup", "", "")
+			"savePickup"		=> new ActionMapping("savePickup", "", ""),
+			"savePickupLot"		=> new ActionMapping("savePickupLot", "", "")
 		);
 	}
 }
