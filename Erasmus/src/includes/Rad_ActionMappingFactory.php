@@ -32,7 +32,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
 			
 			// save functions
-			"saveIsotope"		=> new ActionMapping("saveIsotope", "", "")
+			"saveIsotope"		=> new ActionMapping("saveIsotope", "", ""),
+			"saveCarboy"		=> new ActionMapping("saveCarboy", "", "")
 		);
 	}
 }

@@ -237,4 +237,20 @@ function saveIsotope() {
 	}
 }
 
+function saveCarboy() {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to Carboy');
+	}
+	else if ( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new Carboy());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 ?>
