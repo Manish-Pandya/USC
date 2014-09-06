@@ -37,7 +37,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveCarboyUseCycle"=> new ActionMapping("saveCarboyUseCycle", "", ""),
 			"saveDisposalLot"	=> new ActionMapping("saveDisposalLot", "", ""),
 			"saveDrum"			=> new ActionMapping("saveDrum", "", ""),
-			"saveParcel"		=> new ActionMapping("saveParcel", "", "")
+			"saveParcel"		=> new ActionMapping("saveParcel", "", ""),
+			"saveParcelUse"		=> new ActionMapping("saveParcelUse", "", "")
 		);
 	}
 }
