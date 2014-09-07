@@ -221,6 +221,22 @@ function getDisposalLotsByDrumId($id = NULL) {
 	}
 }
 
+function saveAuthorization() {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$decodedObject = convertInputJson();
+	if( $decodedObject === NULL ) {
+		return new ActionError('Error converting input stream to Authorziation');
+	}
+	else if( $decodedObject instanceof ActionError) {
+		return $decodedObject;
+	}
+	else {
+		$dao = getDao(new Authorization());
+		$decodedObject = $dao->save($decodedObject);
+		return $decodedObject;
+	}
+}
+
 function saveIsotope() {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
