@@ -35,7 +35,7 @@ class Parcel extends GenericCrud {
 	protected static $PARCELUSE_RELATIONSHIP = array(
 		"className" => "ParcelUse",
 		"tableName" => "parcel_use",
-		"keyName"	=> "kay_id",
+		"keyName"	=> "key_id",
 		"foreignKeyName" => "parcel_id"
 	);
 	
@@ -153,5 +153,19 @@ class Parcel extends GenericCrud {
 		$this->uses = $newUsesArray;
 	}
 	
+	public function getRemainder() {
+		if($this->remainder == null) {
+			// Get total amount used from this parcel
+			$uses = $this->getUses();
+			$usedAmount = 0;
+			foreach($uses as $use) {
+				$usedAmount += $use->getQuantity();
+			}
+
+			// subtract the amount used from the initial quantity
+			$this->remainder = $this->getQuantity() - $usedAmount;
+		}
+		return $this->remainder;
+	}
 }
 ?>

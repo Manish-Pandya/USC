@@ -30,7 +30,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getPickupLotsByPickupId"		=> new ActionMapping("getPickupLotsByPickupId", "", ""),
 			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
 			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
-			
+
 			// save functions
 			"saveAuthorization" => new ActionMapping("saveAuthorization", "", ""),
 			"saveIsotope"		=> new ActionMapping("saveIsotope", "", ""),
@@ -43,7 +43,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"savePickup"		=> new ActionMapping("savePickup", "", ""),
 			"savePickupLot"		=> new ActionMapping("savePickupLot", "", ""),
 			"savePurchaseOrder"	=> new ActionMapping("savePurchaseOrder", "", ""),
-			"saveWasteType"		=> new ActionMapping("saveWasteType", "", "")
+			"saveWasteType"		=> new ActionMapping("saveWasteType", "", ""),
+
+			// other functions
+			"getParcelRemainder"=> new actionMapping("getParcelRemainder", "", "")
 		);
 	}
 }

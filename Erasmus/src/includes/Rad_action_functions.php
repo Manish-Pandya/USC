@@ -419,4 +419,19 @@ function saveWasteType() {
 }
 
 
+// other functions
+
+function getParcelRemainder($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+	if($id !== NULL) {
+        $parcelDao = new GenericDAO(new Parcel());
+        $parcel = $parcelDao->getById($id);
+        return $parcel->getRemainder();
+	}
+	else {
+        return new ActionError("No request parameter 'id' was provided.");
+	}
+}
 ?>
