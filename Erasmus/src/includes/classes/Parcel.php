@@ -65,7 +65,10 @@ class Parcel extends GenericCrud {
 	
 	/** Float ammount of isotope that has not been used yet. */
 	private $remainder;
-
+	
+	/** Array of parcel uses that pertain to this parcel. */
+	private $uses;
+	
 	
 	public function __construct() {
 		// Define which subentities to load
@@ -73,6 +76,7 @@ class Parcel extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
 		$entityMaps[] = new EntityMap("eager", "getIsotope");
+		$entityMaps[] = new EntityMap("lazy", "getUses");
 		$this->setEntityMaps($entityMaps);
 
 	}
