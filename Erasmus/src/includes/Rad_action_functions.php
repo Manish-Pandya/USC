@@ -7,6 +7,9 @@
  * 
  */
 
+
+// get functions
+
 function getIsotopeById($id = NULL) {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 	
@@ -221,6 +224,8 @@ function getDisposalLotsByDrumId($id = NULL) {
 	}
 }
 
+// save functions
+
 function saveAuthorization() {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
@@ -270,7 +275,7 @@ function saveCarboy() {
 }
 
 function saveCarboyUseCycle() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to CarboyUseCycle');
@@ -286,7 +291,7 @@ function saveCarboyUseCycle() {
 }
 
 function saveDisposalLot() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to DisposalLot');
@@ -302,7 +307,7 @@ function saveDisposalLot() {
 }
 
 function saveDrum() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to Drum');
@@ -318,7 +323,7 @@ function saveDrum() {
 }
 
 function saveParcel() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to Parcel');
@@ -334,7 +339,7 @@ function saveParcel() {
 }
 
 function saveParcelUse() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to ParcelUse');
@@ -350,7 +355,7 @@ function saveParcelUse() {
 }
 
 function savePickup() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to Pickup');
@@ -366,7 +371,7 @@ function savePickup() {
 }
 
 function savePickupLot() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to PickupLot');
@@ -382,7 +387,7 @@ function savePickupLot() {
 }
 
 function savePurchaseOrder() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to PurchaseOrder');
@@ -398,7 +403,7 @@ function savePurchaseOrder() {
 }
 
 function saveWasteType() {
-	$LOG = LOgger::getLogger( 'Action' . __FUNCTION__ );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$decodedObject = convertInputJson();
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to WasteType');
@@ -412,5 +417,6 @@ function saveWasteType() {
 		return $decodedObject;
 	}
 }
+
 
 ?>
