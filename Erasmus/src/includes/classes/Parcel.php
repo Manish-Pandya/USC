@@ -31,8 +31,16 @@ class Parcel extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 	
-	//access information
+	/** Relationships */
+	protected static $PARCELUSE_RELATIONSHIP = array(
+		"className" => "ParcelUse",
+		"tableName" => "parcel_use",
+		"keyName"	=> "kay_id",
+		"foreignKeyName" => "parcel_id"
+	);
 	
+
+	//access information
 	
 	/** Reference to the principal investigator this parcel belongs to. */
 	private $principal_investigator;
@@ -55,9 +63,11 @@ class Parcel extends GenericCrud {
 	/** Float quantity of isotope in the parcel. */
 	private $quantity;
 	
+	/** Float ammount of isotope that has not been used yet. */
+	private $remainder;
+
 	
 	public function __construct() {
-		
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
@@ -127,6 +137,17 @@ class Parcel extends GenericCrud {
 	
 	public function getQuantity() { return $this->quantity; }
 	public function setQuantity($newQuantity) { $this->quantity = $newQuantity; }
+	
+	public function getUses() {
+		if($this->uses == null && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->uses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP));
+		}
+		return $this->uses;
+	}
+	public function setUses($newUsesArray) {
+		$this->uses = $newUsesArray;
+	}
 	
 }
 ?>
