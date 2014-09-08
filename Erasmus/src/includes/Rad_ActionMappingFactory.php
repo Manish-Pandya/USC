@@ -50,7 +50,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveWasteType"		=> new ActionMapping("saveWasteType", "", ""),
 
 			// other functions
-			"getParcelRemainder"=> new actionMapping("getParcelRemainder", "", "")
+			"getParcelRemainder"=> new ActionMapping("getParcelRemainder", "", "")
 		);
 	}
 }
