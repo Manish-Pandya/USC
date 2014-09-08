@@ -490,6 +490,9 @@ function disposeParcelRemainder($id = NULL) {
 
 		return $parcelUse;
 	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
 }
 
 ?>
