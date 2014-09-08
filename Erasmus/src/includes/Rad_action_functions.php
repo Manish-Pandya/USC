@@ -164,6 +164,8 @@ function getWasteTypeById($id = NULL) {
 	}
 }
 
+// get by relationships
+
 function getAuthorizationsByPIId($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
 	
@@ -218,6 +220,21 @@ function getDisposalLotsByDrumId($id = NULL) {
 		$drumDao = getDao(new PickupLot());
 		$selectedDrum = $drumDao->getById($id);
 		return $selectedDrum->getDisposalLots();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getParcelUsesByParcelId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$parcelDao = getDao(new Parcel());
+		$selectedParcel = $parcelDao->getById($id);
+		return $selectedParcel->getUses();
 	}
 	else {
 		return new ActionError("No request parameter 'id' was provided");

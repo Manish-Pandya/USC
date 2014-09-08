@@ -14,6 +14,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 	public function getConfig() {
 		return array(
+
 			// get functions
 			"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", ""),
 			"getCarboyById" 				=> new ActionMapping("getCarboyById", "", ""),
@@ -26,10 +27,13 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getPickupLotById" 				=> new ActionMapping("getPickupLotById", "", ""),
 			"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", ""),
 			"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", ""),
+			
+			// get entity by relationship functions
 			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
 			"getPickupLotsByPickupId"		=> new ActionMapping("getPickupLotsByPickupId", "", ""),
 			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
 			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
+			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
 
 			// save functions
 			"saveAuthorization" => new ActionMapping("saveAuthorization", "", ""),
