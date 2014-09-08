@@ -355,9 +355,17 @@ function saveParcel() {
 	}
 }
 
-function saveParcelUse() {
+function saveParcelUse($parcel = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-	$decodedObject = convertInputJson();
+	
+	// check if this function was called from another action function
+	if($parcel == NULL) {
+        $decodedObject = convertInputJson();
+	}
+	else {
+		// use method parameters if they exist
+		$decodedObject = $parcel;
+	}
 	if( $decodedObject === NULL ) {
 		return new ActionError('Error converting input stream to ParcelUse');
 	}
@@ -438,6 +446,7 @@ function saveWasteType() {
 
 // other functions
 
+// Returns amount of unused isotope in a parcel
 function getParcelRemainder($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -451,4 +460,36 @@ function getParcelRemainder($id = NULL) {
         return new ActionError("No request parameter 'id' was provided.");
 	}
 }
+
+// Assigns all remaining isotope in a parcel to a usage
+function disposeParcelRemainder($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if($id !== NULL) {
+		// get remaining isotope in the parcel
+		$parcelDao = new GenericDAO(new Parcel());
+		$parcel = $parcelDao->getById($id);
+		$remainder = $parcel->getRemainder();
+
+        // if no isotope remaining to assign, return ActionError saying so.
+        if($remainder == 0) {
+        	return new ActionError("No remainder left to dispose of.");
+        }
+
+		// create new parcel usage, fill with remainder of old parcel
+		$parcelUse = new ParcelUse();
+		$parcelUse->setQuantity($remainder);
+		$parcelUse->setParcel_id($parcel->getKey_id());
+		$parcelUse->setIs_active(true);
+
+		// save record of new parcel use
+		$parcelUseDao = new GenericDAO(new ParcelUse());
+		$parcelUse = $parcelUseDao->save($parcelUse);
+
+		return $parcelUse;
+	}
+}
+
 ?>
