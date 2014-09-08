@@ -241,6 +241,21 @@ function getParcelUsesByParcelId($id = NULL) {
 	}
 }
 
+function getActiveParcelsFromPIById($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$PiDao = getDao(new PrincipalInvestigator());
+		$selectedPi = $PiDao->getById($id);
+		return $selectedPi->getActiveParcels();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 // save functions
 
 function saveAuthorization() {
@@ -494,5 +509,6 @@ function disposeParcelRemainder($id = NULL) {
 		return new ActionError("No request parameter 'id' was provided");
 	}
 }
+
 
 ?>

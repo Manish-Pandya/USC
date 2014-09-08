@@ -62,6 +62,13 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName"	=> "principal_investigator_id"
 	);
 	
+	public static $ACTIVEPARCELS_RELATIONSHIP = array(
+		"className" => "Parcel",
+		"tableName" => "parcel",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "principal_investigator_id"
+	);
+	
 /** Base User object that this PI represents */
 	private $user_id;
 	private $user;
@@ -80,6 +87,9 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** Array of Authorizations entities */
 	private $authorizations;
+	
+	/** Array of Active (not completed) parcels */
+	private $activeParcels;
 
 	
 	public function __construct(){
@@ -91,6 +101,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -162,5 +173,20 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->authorizations;
 	}
 	public function setAuthorizations($authorizations) { $this->authorizations = $authorizations; }
+	
+	public function getActiveParcels() {
+		if($this->activeParcels === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->activeParcels = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$ACTIVEPARCELS_RELATIONSHIP)
+			);
+		}
+		return $this->activeParcels;
+	}
 }
+
 ?>

@@ -34,6 +34,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
 			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
 			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
+			"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", ""),
 
 			// save functions
 			"saveAuthorization" => new ActionMapping("saveAuthorization", "", ""),
