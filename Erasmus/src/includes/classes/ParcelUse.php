@@ -17,6 +17,7 @@ class ParcelUse extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"quantity"						=> "float",
 		"parcel_id"						=> "integer",
+		"date_of_use"					=> "DateTime",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -37,6 +38,9 @@ class ParcelUse extends GenericCrud {
 
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
+	
+	/** DateTime of the date that this usage took place */
+	private $date_of_use;
 	
 
 	public function __construct() {
@@ -73,6 +77,9 @@ class ParcelUse extends GenericCrud {
 	public function setParcel($newParcel) {
 		$this->parcel = $newParcel;
 	}
+	
+	public function getDate_of_use() { return $this->date_of_use; }
+	public function setDate_of_use($newDate) { $this->date_of_use = $newDate; }
 
 }
 ?>
