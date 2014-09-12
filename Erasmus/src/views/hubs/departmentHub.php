@@ -22,11 +22,11 @@ require_once '../top_view.php';
 	<div class="span5 center-element center-text bottomMargin">
 		<a ng-click="createDepartment()" class="btn btn-success btn-large" ng-if="!creatingDepartment && departments"><i class="icon-plus-5 icon-right"></i>Add New Department</a>
 		<span ng-if="creatingDepartment" style="width:100%; display: block;">
-			<input style="width:50%" ng-model="departmentCopy.Name">
+			<input style="width:50%" ng-model="newDepartment.Name">
 			<span style="width:50%">
-				<a class="btn-success btn" ng-click="saveDepartment(departmentCopy)"><i class="icon-checkmark"></i>Save</a>
-				<a class="btn-danger btn" ng-click="cancelEdit(departmentCopy)"><i class="icon-cancel"></i>Cancel</a>
-				<img ng-show="departmentCopy.isDirty" class="smallLoading" src="../../img/loading.gif"/>
+				<a class="btn-success btn" ng-click="saveNewDepartment(newDepartment)"><i class="icon-checkmark"></i>Save</a>
+				<a class="btn-danger btn" ng-click="cancelEdit(newDepartment)"><i class="icon-cancel"></i>Cancel</a>
+				<img ng-show="newDepartment.isDirty" class="smallLoading" src="../../img/loading.gif"/>
 			</span>
 		</span>
 	</div>

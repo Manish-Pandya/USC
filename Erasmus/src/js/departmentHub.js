@@ -60,7 +60,7 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     	console.log('here');
     	departmentFactory.getAllDepartments().then(
     		function(promise){
-    			console.log(promise);
+    			console.table(promise);
     			departmentFactory.setDepartments(promise);
     			$scope.departments = departmentFactory.getDepartments();
     		},
