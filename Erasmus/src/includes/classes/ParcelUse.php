@@ -28,6 +28,14 @@ class ParcelUse extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 
+	/** Relationships */
+	protected static $USEAMOUNTS_RELATIONSHIP = array(
+		"className" => "ParcelUseAmount",
+		"tableName" => "parcel_use_amount",
+		"keyName"	=> "key_id",
+		"foreignKeyName"	=> "parcel_use_id"
+	);
+	
 	//access information
 
 	/** Float containing the amount of isotope used */
@@ -41,6 +49,9 @@ class ParcelUse extends GenericCrud {
 	
 	/** DateTime of the date that this usage took place */
 	private $date_of_use;
+	
+	/** Array of waste types and amounts from this use */
+	private $parcelUseAmounts;
 	
 
 	public function __construct() {
@@ -80,6 +91,20 @@ class ParcelUse extends GenericCrud {
 	
 	public function getDate_of_use() { return $this->date_of_use; }
 	public function setDate_of_use($newDate) { $this->date_of_use = $newDate; }
+	
+	public function getParcelUseAmounts() {
+		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->parcelUseAmounts = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP)
+			);
+		}
+		return $this->parcelUseAmounts;
+	}
+	public function setParcelUseAmounts($newUseAmounts) {
+		$this->parcelUseAmounts = $newUseAmounts;
+	}
 
 }
 ?>
