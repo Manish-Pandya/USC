@@ -19,6 +19,7 @@ include_once 'GenericCrud.php';
         "curie_level"          		=> "float",
         "waste_type_id"         	=> "integer",
         "carboy_id"          		=> "integer",
+    	"parcel_use_id"				=> "integer",
 
         //GenericCrud
         "key_id"                    => "integer",
@@ -41,6 +42,9 @@ include_once 'GenericCrud.php';
     /** Reference to the carboy containing this amount. Null if not liquid waste. */
     private $carboy;
     private $carboy_id;
+    
+    /** Id of is use amount's parent parcel use. */
+    private $parcel_use_id;
 
     // Required for GenericCrud
     public function getTableName() {
@@ -82,6 +86,9 @@ include_once 'GenericCrud.php';
     
     public function getCarboy_id() { return $this->carboy_id; }
     public function setCarboy_id($newValue) { $this->carboy_id = $newValue; }
+
+    public function getParcel_use_id() { return $this->parcel_use_id; }
+    public function setParcel_use_id($newId) { $this->parcel_use_id = $newId; }
 
 }
 ?>
