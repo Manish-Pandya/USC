@@ -510,5 +510,71 @@ function disposeParcelRemainder($id = NULL) {
 	}
 }
 
+// Returns associative array of WasteAmounts containing waste types and respective amounts 
+function getWasteAmountsByParcelId($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		// get selected parcel's usages
+		$parcelDao = new GenericDAO(new Parcel());
+		$parcelUseDao = new GenericDAO(new ParcelUse());
+		$parcel = $parcelDao->getById($id);
+		$parcelUses = $parcel->getUses();
+
+		$typesAndAmounts = array();
+		
+		// iterate through parcel uses, adding up waste types and amounts
+		foreach($parcelUses as $use) {
+			$usedAmounts = $use->getParcelUseAmounts();
+			
+			// Note to self: nested loops are annoying, and it feels like
+			//     all the abstractions are getting in the way to some extent
+			//     Parcel, ParcelUse, ParcelUseAmount, etc. Could there be a
+			//     better way?
+			
+			// sum the amount of waste present for each type of waste
+			foreach($usedAmounts as $amount) {
+				$wasteType = $amount->getWaste_type();
+				$wasteName = $wasteType->getName();
+				$wasteAmount = $amount->getCurie_level();
+				
+				$typesAndAmounts[$wasteName] += $wasteAmount;
+				
+			}
+		}
+		
+		// associative array isn't transfered correctly over JSON, convert into
+		// 	   array of WasteAmount Dtos
+		$wasteAmounts = array();
+		foreach($typesAndAmounts as $type => $amount) {
+
+			$waste = new WasteAmount($type, $amount);
+			$wasteAmounts[] = $waste;
+		}
+		
+		return $wasteAmounts;
+		
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
+function getParcelUseWaste($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id !== NULL ) {
+		$parcelUseDao = new GenericDAO(new ParcelUse());
+		$parcelUse = $parcelUseDao->getById($id);
+		
+		return $parcelUse->getParcelUseAmounts();
+	}
+	else {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
 
 ?>

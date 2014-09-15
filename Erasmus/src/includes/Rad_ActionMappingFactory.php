@@ -52,7 +52,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 			// other functions
 			"getParcelRemainder"=> new ActionMapping("getParcelRemainder", "", ""),
-			"disposeParcelRemainder" => new ActionMapping("disposeParcelRemainder", "","")
+			"disposeParcelRemainder" => new ActionMapping("disposeParcelRemainder", "",""),
+			"getWasteAmountsByParcelId"=> new ActionMapping("getWasteAmountsByParcelId", "", ""),
+			"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", "")
 		);
 	}
 }
