@@ -45,6 +45,15 @@ include_once 'GenericCrud.php';
     
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
+    
+    public function __construct() {
+    	
+    	// Define which subentities to load
+    	$entityMaps = array();
+    	$entityMaps[] = new EntityMap("eager", "getCarboy");
+    	$entityMaps[] = new EntityMap("eager", "getWaste_type");
+    	$this->setEntityMaps($entityMaps);
+    }
 
     // Required for GenericCrud
     public function getTableName() {
