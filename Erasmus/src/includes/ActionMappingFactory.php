@@ -44,6 +44,8 @@ class ActionMappingFactory {
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
+				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
+
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
 

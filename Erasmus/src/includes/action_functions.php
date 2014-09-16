@@ -115,6 +115,30 @@ function getUserById( $id = NULL ){
 	}
 }
 
+function getSupervisorByUserId( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = getDao(new User());
+		$user = $dao->getById($id);
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+
+		$supervisor = $user->getSupervisor();
+		$supervisor->setEntityMaps($entityMaps);
+
+		return $supervisor;
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 function getRoleById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
