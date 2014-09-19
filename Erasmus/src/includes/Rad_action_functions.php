@@ -562,6 +562,7 @@ function getWasteAmountsByParcelId($id = NULL) {
 	}
 }
 
+// Returns array of this parcelUse's types and quantities of waste.
 function getParcelUseWaste($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
@@ -575,6 +576,86 @@ function getParcelUseWaste($id = NULL) {
 	else {
 		return new ActionError("No request parameter 'id' was provided");
 	}
+}
+
+// Returns the waste this PI has from it's active parcels, in the form of an array of waste
+// 	amounts, one waste amount per type.
+function getPresentWasteFromPI($id = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION );
+	$id = getValueFromRequest('id', $id);
+	
+	if( $id == NULL ) {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+	
+	// get parcels belonging to this PI to check for waste
+	$parcels = getActiveParcelsFromPIById($id);
+	
+	$totalWastes = array();
+	
+	// get waste used in each parcel, adding up totals for each waste type as we go.
+	foreach($parcels as $parcel) {
+		$wastes = getWasteAmountsByParcelId($parcel->getKey_id());
+		$totalWastes = addWasteAmounts($totalWastes, $wastes);
+	}
+	
+	return $totalWastes;
+}
+
+
+// Utility Functions
+// Not exposed to frontend, just helpful for internal use.
+
+
+// Returns wasteAmounts in the second array added to the first.
+// Only adds an amount in the second to the first if they have the same type.
+// If there is an amount in the second array that doesn't have a match in the
+//     first array, creates a new entry for it.
+function addWasteAmounts($wasteArray, $wasteArrayToAdd) {
+	
+	// convert input arrays of Dtos into associative arrays.
+	// (associative arrays will simplify comparisons later)
+	$wasteArray = unpackWasteAmounts($wasteArray);
+	$wasteArrayToAdd = unpackWasteAmounts($wasteArrayToAdd);
+	
+	foreach( $wasteArrayToAdd as $type => $amount ) {
+		if( array_key_exists($type, $wasteArray) ) {
+			// waste array has some existing quantity of that waste type, add to it.
+			$wasteArray[$type] += $amount;
+		}
+		else {
+			// waste array doesn't yet have that type of waste, create a new entry for it.
+			$wasteArray[$type] = $amount;
+		}
+	}
+
+	//convert associative $wasteArray into array of Dtos since that's what was inputed,
+	//   and probably what will be sent back to the client anyway.
+	$wasteAmounts = packWasteAmounts($wasteArray);
+
+	return $wasteAmounts;
+}
+
+// converts array of waste amount dtos into associative array of types and amounts
+function unpackWasteAmounts($wasteAmounts) {
+	$wastes = array();
+
+	foreach( $wasteAmounts as $waste ) {
+		$wastes[$waste->getType()] = $waste->getAmount();
+	}
+	
+	return $wastes;
+}
+
+// converts associative array of types and amounts into array of waste amount dtos
+function packWasteAmounts($wasteArray) {
+	$wasteAmounts = array();
+	
+	foreach($wasteArray as $type => $amount ) {
+		$wasteAmounts[] = new WasteAmount($type, $amount);
+	}
+	
+	return $wasteAmounts;
 }
 
 ?>
