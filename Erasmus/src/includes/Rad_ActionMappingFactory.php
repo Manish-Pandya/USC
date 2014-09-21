@@ -34,6 +34,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
 			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
 			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
+			"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", ""),
 			"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", ""),
 
 			// save functions
@@ -55,7 +56,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"disposeParcelRemainder" => new ActionMapping("disposeParcelRemainder", "",""),
 			"getWasteAmountsByParcelId"=> new ActionMapping("getWasteAmountsByParcelId", "", ""),
 			"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", ""),
-			"getPresentWasteFromPI"=> new ActionMapping("getPresentWasteFromPI", "", "")
+			"getPresentWasteFromPI"=> new ActionMapping("getPresentWasteFromPI", "", ""),
+			"getWasteFromPISinceDate" => new ActionMapping("getWastefRomPISinceDate", "", "")
 		);
 	}
 }

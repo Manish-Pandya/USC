@@ -241,6 +241,41 @@ function getParcelUsesByParcelId($id = NULL) {
 	}
 }
 
+function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$date = getValueFromRequest('date', $date);
+	$id = getValueFromRequest('id', $id);
+
+	if( $id === NULL ) {
+		return new ActionError("No request paramter 'id' was provided");
+	}
+	if( $date === NULL ) {
+		return new ActionError("No request parameter 'date' was provided");
+	}
+
+	// get selected PI
+	$piDao = new GenericDAO(new PrincipalInvestigator());
+	$pi = $piDao->getById($id);
+
+	// get parcels from PI, search for recent uses
+	$parcelUses = array();
+	$parcels = $pi->getActiveParcels();
+	foreach( $parcels as $parcel ) {
+		$uses = $parcel->getUses();
+		
+		foreach( $uses as $use ) {
+			// did this use take place since the given date?
+			if( $use->getDate_of_use() < $date ) {
+				$parcelUses[] = $use;
+				// WARNING: No idea if I did this right. Look up
+				//     comparing dates in PHP once back online.
+			}
+		}
+	}
+	
+	return $parcelUses;
+}
+
 function getActiveParcelsFromPIById($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
@@ -581,7 +616,7 @@ function getParcelUseWaste($id = NULL) {
 // Returns the waste this PI has from it's active parcels, in the form of an array of waste
 // 	amounts, one waste amount per type.
 function getPresentWasteFromPI($id = NULL) {
-	$LOG = Logger::getLogger( 'Action' . __FUNCTION );
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
 	
 	if( $id == NULL ) {
@@ -600,6 +635,31 @@ function getPresentWasteFromPI($id = NULL) {
 	}
 	
 	return $totalWastes;
+}
+
+function getWasteFromPISinceDate($id = NULL, $date = null) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$id = getValueFromRequest('id', $id);
+	$date = getValueFromRequest('date', $date);
+	
+	if( $id = NULL ) {
+		return new ActionError("No request parameter 'id' was provided");
+	}
+	if( $date = NULL ) {
+		return new ActionError("No request parameter 'date' was provided");
+	}
+	
+	// get relevant uses
+	$parcelUses = getParcelUsesFromPISinceDate($id, $date);
+	
+	// total the wastes from each uses
+	$wasteAmounts = array();
+	foreach($parcelUses as $use) {
+		$useWastes = $use->getParcelUseAmounts();
+		$wasteAmounts = addWasteAmounts($wasteAmounts, $useWastes);
+	}
+	
+	return wasteAmounts;
 }
 
 
