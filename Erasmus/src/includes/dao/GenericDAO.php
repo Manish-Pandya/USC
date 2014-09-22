@@ -243,7 +243,8 @@ class GenericDAO {
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
 			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
-			$object = new ModifyError($stmt->errorInfo()[2], $object);
+			$errorInfo = $stmt->errorInfo();
+			$object = new ModifyError($errorInfo[2], $object);
 			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
 		}
 
