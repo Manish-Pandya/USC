@@ -244,6 +244,8 @@ function getParcelUsesByParcelId($id = NULL) {
 function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$date = getValueFromRequest('date', $date);
+	// convert string input date to a format we can do comparisons with
+	$date = strtotime($date);
 	$id = getValueFromRequest('id', $id);
 
 	if( $id === NULL ) {
@@ -265,10 +267,8 @@ function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
 		
 		foreach( $uses as $use ) {
 			// did this use take place since the given date?
-			if( $use->getDate_of_use() < $date ) {
+			if( $use->getDate_of_use() > $date ) {
 				$parcelUses[] = $use;
-				// WARNING: No idea if I did this right. Look up
-				//     comparing dates in PHP once back online.
 			}
 		}
 	}
