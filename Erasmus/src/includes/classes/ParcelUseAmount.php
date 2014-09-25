@@ -83,7 +83,8 @@ include_once 'GenericCrud.php';
     public function setWaste_type_id($newValue) { $this->waste_type_id = $newValue; }
 
     public function getCarboy() {
-    	if($this->carboy == NULL) {
+    	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
+    	if($this->carboy == NULL && $this->getCarboy_id() != null) {
     		$carboyDao = new GenericDAO(new Carboy());
     		$this->carboy = $carboyDao->getById($this->getCarboy_id());
     	}
