@@ -617,9 +617,9 @@ function getParcelUseWaste($id = NULL) {
 	}
 }
 
-// Returns the waste this PI has from it's active parcels, in the form of an array of waste
-// 	amounts, one waste amount per type.
-function getPresentWasteFromPI($id = NULL) {
+// Returns the waste this PI has from all of its active parcels, in the form of 
+// an array of waste amounts, one waste amount per type.
+function getTotalWasteFromPI($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
 	
@@ -635,8 +635,13 @@ function getPresentWasteFromPI($id = NULL) {
 	// get waste used in each parcel, adding up totals for each waste type as we go.
 	foreach($parcels as $parcel) {
 		$wastes = getWasteAmountsByParcelId($parcel->getKey_id());
-		$totalWastes = addWasteAmounts($totalWastes, $wastes);
+		// convert waste amounts into associative array for ease of manipulation
+		$wastes = unpackWasteDtos($wastes);
+		$totalWastes = addArrays($totalWastes, $wastes);
 	}
+	
+	// wrap result in Dtos for returning to client
+	$totalWastes = packWasteDtos($totalWastes);
 	
 	return $totalWastes;
 }
@@ -727,8 +732,6 @@ function unpackWasteDtos($wasteDtos) {
 	$wastes = array();
 
 	foreach( $wasteDtos as $waste ) {
-		print_r("    Next:    ");
-		print_r($waste);
 		$wastes[$waste->getType()] = $waste->getAmount();
 	}
 	
