@@ -19,7 +19,7 @@ class Parcel extends GenericCrud {
 		"purchase_order_id"				=> "integer", 
 		"status"						=> "text",
 		"isotope_id"					=> "integer",
-		"arrival_date"					=> "DateTime",
+		"arrival_date"					=> "timestamp",
 		"quantity"						=> "float",
 		
 		//GenericCrud

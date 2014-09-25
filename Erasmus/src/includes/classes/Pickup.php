@@ -15,7 +15,7 @@ class Pickup extends GenericCrud {
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"pickup_date"					=> "DateTime",
+		"pickup_date"					=> "timestamp",
 		"room_id"						=> "integer",
 		"pickup_user_id"				=> "integer",
 		"principal_investigator_id"		=> "integer",

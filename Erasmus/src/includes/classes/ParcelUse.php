@@ -17,7 +17,7 @@ class ParcelUse extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"quantity"						=> "float",
 		"parcel_id"						=> "integer",
-		"date_of_use"					=> "DateTime",
+		"date_of_use"					=> "timestamp",
 
 		//GenericCrud
 		"key_id"						=> "integer",

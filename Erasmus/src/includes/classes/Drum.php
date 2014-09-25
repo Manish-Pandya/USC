@@ -15,11 +15,11 @@ class Drum extends GenericCrud {
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"commission_date"				=> "DateTime",
-		"retirement_date"				=> "DateTime",
+		"commission_date"				=> "timestamp",
+		"retirement_date"				=> "timestamp",
 		"status"						=> "text",
-		"date_closed"					=> "DateTime",
-		"pickup_date"					=> "DateTime",
+		"date_closed"					=> "timestamp",
+		"pickup_date"					=> "timestamp",
 		"shipping_info"					=> "text",
 		
 		

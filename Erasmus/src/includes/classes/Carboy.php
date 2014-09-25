@@ -15,8 +15,8 @@ class Carboy extends GenericCrud {
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"commission_date"				=> "DateTime",
-		"retirement_date"				=> "DateTime",
+		"commission_date"				=> "timestamp",
+		"retirement_date"				=> "timestamp",
 		
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -29,10 +29,10 @@ class Carboy extends GenericCrud {
 	
 	//access information
 	
-	/** DateTime (not to be confused with timestamp) with the date this carboy was made */
+	/** timestamp with the date this carboy was made */
 	private $commission_date;
 	
-	/** DateTime with the date this carboy should be thrown away */
+	/** timestamp with the date this carboy should be thrown away */
 	private $retirement_date;
 
 	// Required for GenericCrud

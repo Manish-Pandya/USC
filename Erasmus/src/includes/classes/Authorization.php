@@ -18,8 +18,8 @@ class Authorization extends GenericCrud {
 		"principal_investigator_id"		=> "integer",
 		"isotope_id"					=> "integer",
 		"max_quantity"					=> "float",
-		"approval_date"					=> "DateTime",
-		"revocation_date"				=> "DateTime",
+		"approval_date"					=> "timestamp",
+		"revocation_date"				=> "timestamp",
 		
 		//GenericCrud
 		"key_id"						=> "integer",
