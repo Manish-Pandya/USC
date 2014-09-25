@@ -244,8 +244,6 @@ function getParcelUsesByParcelId($id = NULL) {
 function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$date = getValueFromRequest('date', $date);
-	// convert string input date to a format we can do comparisons with
-	$date = strtotime($date);
 	$id = getValueFromRequest('id', $id);
 
 	if( $id === NULL ) {
@@ -254,6 +252,9 @@ function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
 	if( $date === NULL ) {
 		return new ActionError("No request parameter 'date' was provided");
 	}
+
+	// convert string input date to a format we can do comparisons with
+	$inputDate = strtotime($date);
 
 	// get selected PI
 	$piDao = new GenericDAO(new PrincipalInvestigator());
@@ -266,8 +267,11 @@ function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
 		$uses = $parcel->getUses();
 		
 		foreach( $uses as $use ) {
-			// did this use take place since the given date?
-			if( $use->getDate_of_use() > $date ) {
+			// convert date of use into format we can do comparisons with
+			$useDate = strtotime($use->getDate_of_use());
+        	
+			// check if this use took place since the given input date
+			if( $useDate > $inputDate ) {
 				$parcelUses[] = $use;
 			}
 		}
@@ -581,15 +585,15 @@ function getWasteAmountsByParcelId($id = NULL) {
 		}
 		
 		// associative array isn't transfered correctly over JSON, convert into
-		// 	   array of WasteAmount Dtos
-		$wasteAmounts = array();
+		// 	   array of Waste Dtos
+		$wasteDtos = array();
 		foreach($typesAndAmounts as $type => $amount) {
 
 			$waste = new WasteAmount($type, $amount);
-			$wasteAmounts[] = $waste;
+			$wasteDtos[] = $waste;
 		}
 		
-		return $wasteAmounts;
+		return $wasteDtos;
 		
 	}
 	else {
@@ -637,6 +641,7 @@ function getPresentWasteFromPI($id = NULL) {
 	return $totalWastes;
 }
 
+// Returns the amount of waste produced by this PI since the given date
 function getWasteFromPISinceDate($id = NULL, $date = null) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	$id = getValueFromRequest('id', $id);
@@ -655,11 +660,18 @@ function getWasteFromPISinceDate($id = NULL, $date = null) {
 	// total the wastes from each uses
 	$wasteAmounts = array();
 	foreach($parcelUses as $use) {
-		$useWastes = $use->getParcelUseAmounts();
-		$wasteAmounts = addWasteAmounts($wasteAmounts, $useWastes);
+		// get amount of waste from this PI's use, convert into associative array (easier to work with)
+		$useAmounts = $use->getParcelUseAmounts();
+		$wastes = convertParcelUseAmountsToWasteArray($useAmounts);
+		
+		// add waste from this parcel use to total waste
+		$wasteAmounts = addArrays($wasteAmounts, $wastes);
 	}
 	
-	return wasteAmounts;
+	// convert associative array into easily JSONable array of waste Dtos
+	$waste = packWasteDtos($wasteAmounts);
+
+	return $waste;
 }
 
 
@@ -667,40 +679,56 @@ function getWasteFromPISinceDate($id = NULL, $date = null) {
 // Not exposed to frontend, just helpful for internal use.
 
 
-// Returns wasteAmounts in the second array added to the first.
-// Only adds an amount in the second to the first if they have the same type.
-// If there is an amount in the second array that doesn't have a match in the
-//     first array, creates a new entry for it.
-function addWasteAmounts($wasteArray, $wasteArrayToAdd) {
+// converts array of ParcelUseAmounts to associative array of [Type] => [Amount]
+// (this format of associative array is just nicer to work with)
+function convertParcelUseAmountsToWasteArray($uses) {
+	$wasteArray = array();
 	
-	// convert input arrays of Dtos into associative arrays.
-	// (associative arrays will simplify comparisons later)
-	$wasteArray = unpackWasteAmounts($wasteArray);
-	$wasteArrayToAdd = unpackWasteAmounts($wasteArrayToAdd);
+	foreach($uses as $use) {
+		$wasteType = $use->getWaste_type();
+		$amount = $use->getCurie_level();
+		$wasteName = $wasteType->getName();
+
+		if( array_key_exists($wasteName, $wasteArray) ) {
+			$wasteArray[$wasteName] += $amount;
+		}
+		else {
+			$wasteArray[$wasteName] = $amount;
+		}
+	}
 	
-	foreach( $wasteArrayToAdd as $type => $amount ) {
-		if( array_key_exists($type, $wasteArray) ) {
-			// waste array has some existing quantity of that waste type, add to it.
-			$wasteArray[$type] += $amount;
+	return $wasteArray;
+}
+
+// Returns all items in second associative array added to the first.
+// if two keys are shared, their amount is combined. Keys in the second not present in the first
+// will create a new entry in the first array.
+function addArrays($firstArray, $secondArray) {
+	
+	// base array to start adding items in the second array to
+	$combinedArrays = $firstArray;
+	
+	foreach( $secondArray as $key => $value ) {
+		if( array_key_exists($key, $combinedArrays) ) {
+			// First array already has some existing quantity of that waste type, add to it.
+			$combinedArrays[$key] += $value;
 		}
 		else {
 			// waste array doesn't yet have that type of waste, create a new entry for it.
-			$wasteArray[$type] = $amount;
+			$combinedArrays[$key] = $value;
 		}
 	}
 
-	//convert associative $wasteArray into array of Dtos since that's what was inputed,
-	//   and probably what will be sent back to the client anyway.
-	$wasteAmounts = packWasteAmounts($wasteArray);
-
-	return $wasteAmounts;
+	return $combinedArrays;
 }
 
 // converts array of waste amount dtos into associative array of types and amounts
-function unpackWasteAmounts($wasteAmounts) {
+function unpackWasteDtos($wasteDtos) {
 	$wastes = array();
 
-	foreach( $wasteAmounts as $waste ) {
+	foreach( $wasteDtos as $waste ) {
+		print_r("    Next:    ");
+		print_r($waste);
 		$wastes[$waste->getType()] = $waste->getAmount();
 	}
 	
@@ -708,14 +736,14 @@ function unpackWasteAmounts($wasteAmounts) {
 }
 
 // converts associative array of types and amounts into array of waste amount dtos
-function packWasteAmounts($wasteArray) {
-	$wasteAmounts = array();
+function packWasteDtos($wasteArray) {
+	$wasteDtos = array();
 	
 	foreach($wasteArray as $type => $amount ) {
-		$wasteAmounts[] = new WasteAmount($type, $amount);
+		$wasteDtos[] = new WasteDto($type, $amount);
 	}
 	
-	return $wasteAmounts;
+	return $wasteDtos;
 }
 
 ?>

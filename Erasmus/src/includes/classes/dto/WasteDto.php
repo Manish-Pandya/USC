@@ -6,7 +6,7 @@
  * @author Perry Cate, GraySail LLC
  */
 
-class WasteAmount {
+class WasteDto {
 	private $type;
 	private $amount;
 	
