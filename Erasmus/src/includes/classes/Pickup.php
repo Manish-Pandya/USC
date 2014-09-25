@@ -39,7 +39,7 @@ class Pickup extends GenericCrud {
 	
 	//access information
 	
-	/** Date (DateTime) that this pickup occurred. */
+	/** Date (timestamp) that this pickup occurred. */
 	private $pickup_date;
 	
 	/** Reference to the room this pickup was for. */

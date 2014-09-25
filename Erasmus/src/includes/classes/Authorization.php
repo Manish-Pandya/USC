@@ -46,10 +46,10 @@ class Authorization extends GenericCrud {
 	/** maximum curie concentration that can be used */
 	private $max_quantity;
 	
-	/** DateTime containing the date this authorization was... Authorized. */
+	/** timestamp containing the date this authorization was... Authorized. */
 	private $approval_date;
 	
-	/** DateTime containing the date this aurhtoization will expire */
+	/** timestamp containing the date this aurhtoization will expire */
 	private $revocation_date;
 	
 	

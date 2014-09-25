@@ -47,7 +47,7 @@ class ParcelUse extends GenericCrud {
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
 	
-	/** DateTime of the date that this usage took place */
+	/** timestamp of the date that this usage took place */
 	private $date_of_use;
 	
 	/** Array of waste types and amounts from this use */

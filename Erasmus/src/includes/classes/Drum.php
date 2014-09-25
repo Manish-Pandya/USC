@@ -42,19 +42,19 @@ class Drum extends GenericCrud {
 	
 	//access information
 
-	/** DateTime containing the date this drum was made. */
+	/** timestamp containing the date this drum was made. */
 	private $commission_date;
 	
-	/** DateTime containing the date this drum will be disposed of. */
+	/** timestamp containing the date this drum will be disposed of. */
 	private $retirement_date;
 	
 	/** String containing the current status of this drum. */
 	private $status;
 	
-	/** DateTime containing the date this drum was filled and closed. */
+	/** timestamp containing the date this drum was filled and closed. */
 	private $date_closed;
 	
-	/** DateTime containing the date this drum was picked up for shipping. */
+	/** timestamp containing the date this drum was picked up for shipping. */
 	private $pickup_date;
 	
 	/** String of details about this drum's shipping. */

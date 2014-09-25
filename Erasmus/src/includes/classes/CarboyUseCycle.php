@@ -52,13 +52,13 @@ class CarboyUseCycle extends GenericCrud {
 	/** String describing the current status of this carboy. */
 	private $status;
 	
-	/** DateTime containing the date this carboy was sent to a lab. */
+	/** timestamp containing the date this carboy was sent to a lab. */
 	private $lab_date;
 	
-	/** DateTime containing the date this carboy was sent to the hotroom. */
+	/** timestamp containing the date this carboy was sent to the hotroom. */
 	private $hotroom_date;
 	
-	/** DateTime containing the date this carboy was emptied. */
+	/** timestamp containing the date this carboy was emptied. */
 	private $pour_date;
 	
 	/** Reference to the room this carboy was sent to. */
