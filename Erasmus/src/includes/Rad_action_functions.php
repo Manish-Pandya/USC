@@ -549,7 +549,7 @@ function disposeParcelRemainder($id = NULL) {
 	}
 }
 
-// Returns associative array of WasteAmounts containing waste types and respective amounts 
+// Returns associative array of Waste Amounts containing waste types and respective amounts 
 function getWasteAmountsByParcelId($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
@@ -589,7 +589,7 @@ function getWasteAmountsByParcelId($id = NULL) {
 		$wasteDtos = array();
 		foreach($typesAndAmounts as $type => $amount) {
 
-			$waste = new WasteAmount($type, $amount);
+			$waste = new WasteDto($type, $amount);
 			$wasteDtos[] = $waste;
 		}
 		
