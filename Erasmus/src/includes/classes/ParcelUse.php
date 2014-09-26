@@ -15,7 +15,6 @@ class ParcelUse extends GenericCrud {
 
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"quantity"						=> "float",
 		"parcel_id"						=> "integer",
 		"date_of_use"					=> "timestamp",
 
@@ -59,6 +58,7 @@ class ParcelUse extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getParcel");
+		$entityMaps[] = new EntityMap("eager", "getQuantity");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -72,8 +72,17 @@ class ParcelUse extends GenericCrud {
 	}
 
 	// Accessors / Mutators
-	public function getQuantity() { return $this->quantity; }
-	public function setQuantity($newQuantity) { $this->quantity = $newQuantity; }
+	public function getQuantity() {
+		if( $this->quantity == NULL ) {
+			$useAmounts = $this->getParcelUseAmounts();
+
+			$this->quantity = 0;
+			foreach($useAmounts as $amount) {
+				$this->quantity += $amount->getCurie_level();
+			}
+		}
+		return $this->quantity;
+	}
 	
 	public function getParcel_id() { return $this->parcel_id; }
 	public function setParcel_id($newId) { $this->parcel_id = $newId; }
