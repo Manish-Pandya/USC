@@ -8,7 +8,10 @@
  */
 
 
-// get functions
+/*****************************************************************************\
+ *                            Get Functions                                  *
+\*****************************************************************************/
+
 
 function getIsotopeById($id = NULL) {
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -164,7 +167,12 @@ function getWasteTypeById($id = NULL) {
 	}
 }
 
-// get by relationships
+
+/*****************************************************************************\
+ *                        Get By Relationships Functions                     *
+ *  Gets functions dependent on another entity or some form of relationship  *
+\*****************************************************************************/
+
 
 function getAuthorizationsByPIId($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
@@ -295,7 +303,11 @@ function getActiveParcelsFromPIById($id = NULL) {
 	}
 }
 
-// save functions
+ 
+/*****************************************************************************\
+ *                             Save Functions                               *
+\*****************************************************************************/
+
 
 function saveAuthorization() {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
@@ -498,7 +510,11 @@ function saveWasteType() {
 }
 
 
-// other functions
+/*****************************************************************************\
+ *                             Other Functions                               *
+ *  For a very specific purpose, or I couldn't think of a category for them. *
+\*****************************************************************************/
+
 
 // Returns amount of unused isotope in a parcel
 function getParcelRemainder($id = NULL) {
@@ -680,12 +696,19 @@ function getWasteFromPISinceDate($id = NULL, $date = null) {
 }
 
 
-// Utility Functions
-// Not exposed to frontend, just helpful for internal use.
+/*****************************************************************************\
+ *                            Utility Functions                              *
+ *         Not exposed to frontend, just helpful for internal use.           *
+\*****************************************************************************/
 
 
-// converts array of ParcelUseAmounts to associative array of [Type] => [Amount]
-// (this format of associative array is just nicer to work with)
+/**
+ * Converts array of ParcelUseAmounts into associative array of [Type] => [Amount].
+ * (This format is nicer to work with when adding waste totals)
+ * 
+ * @param array $uses
+ * @return Associative array: [string Type] => [integer Amount]
+ */
 function convertParcelUseAmountsToWasteArray($uses) {
 	$wasteArray = array();
 	
@@ -705,9 +728,15 @@ function convertParcelUseAmountsToWasteArray($uses) {
 	return $wasteArray;
 }
 
-// Returns all items in second associative array added to the first.
-// if two keys are shared, their amount is combined. Keys in the second not present in the first
-// will create a new entry in the first array.
+/**
+ * Returns all items in the second associative array added to the first.
+ * If two keys are shared, their value is combined.
+ * If a key exists in the second array but not the first, a new key will be created in the new array.
+ * 
+ * @param Associative array: [string Type] => [integer Amount] $firstArray
+ * @param Associative array: [string Type] => [integer Amount] $secondArray
+ * @return Associative array: [string Type] => [integer Amount]
+ */
 function addArrays($firstArray, $secondArray) {
 	
 	// base array to start adding items in the second array to
@@ -727,7 +756,12 @@ function addArrays($firstArray, $secondArray) {
 	return $combinedArrays;
 }
 
-// converts array of waste amount dtos into associative array of types and amounts
+/**
+ * Converts array of waste amount dtos into associative arrays of types and amounts.
+ * 
+ * @param array( WasteDto ) $wasteDtos
+ * @return Associative array: [string Type] => integer Amount
+ */
 function unpackWasteDtos($wasteDtos) {
 	$wastes = array();
 
@@ -738,7 +772,13 @@ function unpackWasteDtos($wasteDtos) {
 	return $wastes;
 }
 
-// converts associative array of types and amounts into array of waste amount dtos
+/**
+ * Converts associative array of types and amounts into array of waste amount dtos.
+ * (The opposite of unpackWasteDtos)
+ * 
+ * @param  Associative array: [string Type] => integer Amount   $wasteArray
+ * @return array( WasteDto )
+ */
 function packWasteDtos($wasteArray) {
 	$wasteDtos = array();
 	
