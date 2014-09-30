@@ -6,10 +6,10 @@ require_once '../top_view.php';
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li class="">
 			<img src="../../img/question-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 85px;">Question Hub
-				<a style="float:right;margin: 6px 28px 0 30px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
-				<a href="HazardHub.php" style="float:right;"><img src="../../img/hazard-icon.png" class="pull-left" style="height:50px; margin:-7px 7px 0 5px" />Return to Hazard Hub</a>
-			</h2>
+			<h2 style="padding: 11px 0 5px 85px;margin-left: -15px;">Question Hub
+				<a style="float:right;margin: 6px 35px 0 9px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>  
+        		<a href="HazardHub.php" style="float:right; font-size:20px;"><i class="icon-arrow-left-2" style="font-size: 20px; margin: 7px 12px 0 0;"></i>Hazard Hub</a>
+        	</h2>
 		</li>
 	</ul>
 </div>
@@ -18,8 +18,9 @@ require_once '../top_view.php';
 	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Getting Checklist...
 	</div>
-	<h3><span ng-show="noQuestion">Add a new question to</span> <span ng-show="question">Editing a question in </span><span ng-if="question || noQuestion">the checklist {{checklist.Name}}.<a class="btn btn-mini btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></span></h3>
-	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Current Question:<br><span id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
+	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}">View Checklist</a></h1>
+
+	<h1 ng-show="!question.beingEdited" ng-hide="!question" id="currentQuestion">Question Text:><span class="span8" id="questionText">{{question.Text}}</span><a style="margin-left:5px;" class="btn btn-primary btn-mini"  ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question</a></h1>
 	<h3 ng-if="!question.beingEdited && question.Reference"><span class="bold">Compliance Reference:</span> {{question.Reference}}</h3>
 	<h3 ng-if="!question.beingEdited && question.Description"><span class="bold">Compliance Description:</span> {{question.Description}}</h3>
 	<form ng-if="question.beingEdited || noQuestion" class="form" style="margin-top:10px;">
@@ -39,7 +40,7 @@ require_once '../top_view.php';
 	 	</div>
 
 	 	<a style="margin:-10px 0 0 0;" ng-click="saveEditedQuestion( question )" class="btn btn-success"><i class="icon-checkmark"></i>Save Question</a>
-		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger" ng-click="cancelEdit(question)"><i class="icon-cancel"></i>Cancel</a>
+		<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger" ng-click="cancelEdit( question )"><i class="icon-cancel"></i>Cancel</a>
 		<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 	</form>
 	<span ng-hide="!question">
