@@ -61,4 +61,21 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
 	}
 	
+	// getCarboyUseCycleById
+	public function test_getCarboyUseCycleById_noId() {
+		$cycle = getCarboyUseCycleById();
+		$this->assertTrue( $cycle instanceof ActionError );
+	}
+	public function test_getCarboyUseCycleById_passId() {
+		$cycle = getCarboyUseCycleById( KEY_ID );
+		$this->assertTrue( $cycle instanceof CarboyUseCycle );
+		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
+	}
+	public function test_getCarboyUseCycleById_requestId() {
+		$_REQUEST['id'] = KEY_ID;
+		$cycle = getCarboyUseCycleById();
+		$this->assertTrue( $cycle instanceof CarboyUseCycle );
+		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
+	}
+	
 }
