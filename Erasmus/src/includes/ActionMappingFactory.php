@@ -75,6 +75,7 @@ class ActionMappingFactory {
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
 				"createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", ""),
+				"setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", ""),
 				"reorderHazards"=>new ActionMapping("reorderHazards", "", ""),
 
 				// Question Hub

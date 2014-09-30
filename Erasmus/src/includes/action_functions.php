@@ -127,11 +127,16 @@ function getSupervisorByUserId( $id = NULL ){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy","getUser");
 
 		$supervisor = $user->getSupervisor();
-		$supervisor->setEntityMaps($entityMaps);
+		if($supervisor != null){
+			$supervisor->setEntityMaps($entityMaps);
+			return $supervisor;
+		}
 
-		return $supervisor;
+		return null;
+
 	}
 	else{
 		//error
@@ -548,9 +553,74 @@ function saveHazard(){
 	}
 	else{
 		$dao = getDao(new Hazard());
+		$hazard = $decodedObject;
+		//set the hazard's order index, if it doesn't already have one
+		if($decodedObject->getOrder_index() == null){
+
+			//get the hazard's siblings
+			if($decodedObject->getParent_hazard_id() != null){
+				$parentDao = getDao( new Hazard() );
+				$parentHazard = $parentDao->getById( $hazard->getParent_hazard_id() );
+				$siblings = $parentHazard->getSubHazards();
+				$count = count( $siblings );
+
+				if( getIsAlphabetized( $siblings ) ){
+
+					//the list is in alphabetical order.  Find the right spot for the new hazard
+					for($i = 0; $i < count( $siblings ); ++$i) {
+
+						//find the first hazard that comes after the new one in alphabetical order
+						if( lcfirst( $hazard->getName() ) < lcfirst( $siblings[$i]->getName() ) ){
+
+							//is our new hazard first in alphabetical order?
+							if($i == 0){
+								$LOG->debug($hazard->getName().' came first in order, before '. $siblings[$i]->getName());
+								$beforeIdx = $siblings[0]->getOrder_index();
+								$hazard->setOrder_index( $beforeIdx - 1 );
+								break;
+
+							}else{
+								$LOG->debug($hazard->getName().' came somewhere in the middle.');
+								//our hazard is somewhere between first and last
+								$beforeIdx = $siblings[$i-1]->getOrder_index();
+								$afterIdx  = $siblings[$i]->getOrder_index();
+								$hazard->setOrder_index( ( $beforeIdx + $afterIdx )/2 );
+								break;
+							}
+
+						}elseif($i == $count-1){
+							$LOG->debug($hazard->getName().' came last in order');
+							//our new hazard is last in alphabetical order
+							$beforeIdx = $siblings[$count-1]->getOrder_index();
+							$hazard->setOrder_index( $beforeIdx + 1 );
+							break;
+						}
+					}
+				}else{
+					//the list is not alphebetized.  Put the new hazard at the end of the list.
+					$LOG->debug('list was not alphabetized');
+					$hazard->setOrder_index( $siblings[$count-1]->getOrder_index()+1 );
+				}
+			}
+		}
+		$LOG->debug($hazard);
 		$dao->save($decodedObject);
+
 		return $decodedObject;
 	}
+};
+
+function getIsAlphabetized( $list ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+
+	$length = count($list);
+
+	foreach($list as $key=>$hazard){
+		if( $key != $length-1 && lcfirst( $list[$key]->getName() ) > lcfirst( $list[$key+1]->getName() ) )
+		return false;
+	}
+
+	return true;
 };
 
 function saveRoom(){
@@ -2308,8 +2378,18 @@ function createOrderIndicesForHazards(){
 	return getAllHazards();
 }
 
-function setOrderIndicesForSubHazards( $hazard ){
+function setOrderIndicesForSubHazards( $hazard = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	//if we have passed a hazard, use it, if not, use the input stream
+	if($hazard == null){
+		$hazardId = getValueFromRequest('hazardId', $hazardId);
+		if($hazardId == null)return new ActionError("No request parameter 'hazardId' was provided");
+		$hazDao = getDao( new Hazard() );
+		$hazard = $hazDao->getById( $hazardId );
+
+		return $hazard;
+	}
 
 	$subs = $hazard->getSubHazards();
 	if($subs != null){
@@ -2319,11 +2399,13 @@ function setOrderIndicesForSubHazards( $hazard ){
 			$sub->setOrder_index(null);
 			$sub->setOrder_index($i);
 			$dao = getDao( new Hazard() );
-			$LOG->debug($sub->getName()."'s order index is ".$sub->getOrder_index($i));
+			$LOG->debug($sub->getName()."'s order index is ".$sub->getOrder_index());
 			$sub = $dao->save( $sub );
 			if($sub->getSubHazards() != null)setOrderIndicesForSubHazards( $sub );
 		}
 	}
+
+	return $hazard;
 }
 
 //reorder hazards
