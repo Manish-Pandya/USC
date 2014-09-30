@@ -78,4 +78,21 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
 	}
 	
+	// getDisposalLotById
+	public function test_getDisposalLotById_noId() {
+		$lot = getDisposalLotById();
+		$this->assertTrue( $lot instanceof ActionError );
+	}
+	public function test_getDisposalLotById_passId() {
+		$lot = getDisposalLotById( KEY_ID );
+		$this->assertTrue( $lot instanceof DisposalLot );
+		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+	}
+	public function test_getDisposalLotById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$lot = getDisposalLotById();
+		$this->assertTrue( $lot instanceof DisposalLot );
+		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+	}
+	
 }
