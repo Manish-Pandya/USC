@@ -55,7 +55,7 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
 	}
 	public function test_getCarboyById_requestId() {
-		$_REQUEST['id'] = 1;
+		$_REQUEST['id'] = KEY_ID;
 		$carboy = getCarboyById();
 		$this->assertTrue( $carboy instanceof Carboy );
 		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
