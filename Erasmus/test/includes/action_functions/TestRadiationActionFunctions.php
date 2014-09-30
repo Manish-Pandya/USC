@@ -11,7 +11,20 @@ require_once(dirname(__FILE__) . '/../../../src/includes/Rad_action_functions.ph
 require_once(dirname(__FILE__) . '/../../../src/includes/action_functions.php');
 
 
+/*
+	IMPORTANT: Until I can find a different way, most of these tests are dependent on
+	entities having a record in the database with key_id = 1
+*/
+
+
 class TestRadiationActionFunctions extends UnitTestCase {
+	
+	// Reset $_REQUEST between tests so that tests aren't affected by previous ones.
+	function tearDown() {
+		foreach( $_REQUEST as $key=>$value ) {
+			unset( $_REQUEST[$key] );
+		}
+	}
 	
 	// getIsotopeById
 	public function test_getIsotopeById_noId() {
@@ -28,21 +41,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertTrue( $isotope instanceof Isotope);
 	}
 	
-	/* Note to self:
-	 * 
-	 * perhaps instead of assertTrue( $isotope instanceof Isotope);
-	 * use assertEqual(gettype($isotope), Isotope);
-	 * 
-	 * Reason being, if it fails, output will say what the type
-	 * it recieved was, instead of just saying it got false when
-	 * expecting true.
-	 * 
-	 * Try out later
-	 */
-	
-	 // Other note to self: is there a way to be less dependent on Isotope with
-	 // Key_id = 1 existing in the database? right now, if that one particular
-	 // isotope is removed, it would cause test to fail.
-	
+	// getCarboyById
+	public function test_getCarboyById_noId() {
+		$carboy = getCarboyById();
+		$this->assertTrue( $carboy instanceof ActionError);
+	}
+	public function test_getCarboyById_passId() {
+		$carboy = getCarboyById(1);
+		$this->assertTrue( $carboy instanceof Carboy);
+	}
+	public function test_getCarboyById_requestId() {
+		$_REQUEST['id'] = 1;
+		$carboy = getCarboyById();
+		$this->assertTrue( $carboy instanceof Carboy);
+	}
 	
 }
