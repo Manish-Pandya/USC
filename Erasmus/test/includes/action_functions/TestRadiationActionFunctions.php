@@ -95,4 +95,21 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $lot->getKey_id(), KEY_ID );
 	}
 	
+	// getDrumById
+	public function test_getDrumById_noId() {
+		$drum = getDrumById();
+		$this->assertTrue( $drum instanceof ActionError );
+	}
+	public function test_getDrumById_passId() {
+		$drum = getDrumById( KEY_ID );
+		$this->assertTrue( $drum instanceof Drum );
+		$this->assertEqual( $drum->getKey_id(), KEY_ID );
+	}
+	public function test_getDrumById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$drum = getDrumById();
+		$this->assertTrue( $drum instanceof Drum );
+		$this->assertEqual( $drum->getKey_id(), KEY_ID );
+	}
+	
 }
