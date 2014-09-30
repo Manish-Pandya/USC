@@ -12,7 +12,7 @@
           </span>
          </button>
         <span ng-hide="child.isBeingEdited" class="hazardName">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} | {{child.Order_index}}</h2>
         </span>
 
         <span ng-show="child.isBeingEdited">
@@ -40,7 +40,7 @@
           <i class="icon-pencil"></i>
           <span>Edit Hazard</span>
         </a>
-        <a href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'">
+        <a href="" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'">
           <i class="icon-plus-2"></i><span>Add Child</span>
         </a>
           <a class="btn btn-large hazardBtn" ng-class="{'btn-info':child.Checklist, 'btn-primary':!child.Checklist}" href="ChecklistHub.php#?id={{child.Key_id}}">
