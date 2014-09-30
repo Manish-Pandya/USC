@@ -147,4 +147,22 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $parcel->getKey_id(), KEY_ID );
 	}
 	
+	
+	// getParcelUseById
+	public function test_getParcelUseById_noId() {
+		$use = getParcelUseById();
+		$this->assertTrue( $use instanceof ActionError );
+	}
+	public function test_getParcelUseById_passId() {
+		$use = getParcelUseById( KEY_ID );
+		$this->assertTrue( $use instanceof ParcelUse );
+		$this->assertEqual( $use->getKey_id(), KEY_ID );
+	}
+	public function test_getParcelUseById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$use = getParcelUseById();
+		$this->assertTrue( $use instanceof ParcelUse );
+		$this->assertEqual( $use->getKey_id(), KEY_ID );
+	}
+	
 }
