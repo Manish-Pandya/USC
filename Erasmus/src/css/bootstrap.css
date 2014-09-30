@@ -1941,7 +1941,7 @@ table {
 
 .table-bordered th,
 .table-bordered td {
-  border-bottom: 1px solid #dddddd;
+  border: 1px solid #dddddd;
 }
 .table-bordered td {
   border: 1px solid #dddddd;
@@ -2014,12 +2014,12 @@ table {
 
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
-  background-color: #f7f7f7;
+  background-color: #e7eeee;
 }
 
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
-  background-color: #f0f0f0;
+  background-color: #ccc;
 }
 
 table td[class*="span"],

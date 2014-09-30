@@ -539,11 +539,7 @@ tr.notedit, tr.notedit td {
 
 /* line 212, ../sass/style.scss */
 /* line 482, ../sass/style.scss */
-a i {
-  text-align: center;
-  margin: 3px 12px 0 -2px;
-  width: 1em;
-}
+
 
 /* line 217, ../sass/style.scss */
 /* line 489, ../sass/style.scss */
@@ -809,7 +805,7 @@ a.btn i {
 
 /* line 688, ../sass/style.scss */
 a i {
-  margin: 7px 3px 0px 3px !important;
+  //margin: 7px 3px 0px 3px !important;
 }
 /* line 690, ../sass/style.scss */
 a i.icon-plus-2 {
@@ -2648,4 +2644,19 @@ table.roomList h2 {
 /* line 2170, ../sass/style.scss */
 .btn:active {
   box-shadow: none !important;
+}
+
+.spacer{
+  height:40px;
+  display:block;
+}
+
+tr.blue-tr td, tr.blue-tr th{
+  background: #003399 !important;
+  color:white !important;
+}
+tr th{
+  padding-top:20px !important;
+  padding-bottom:20px !important;
+  font-size:30px !important;
 }
