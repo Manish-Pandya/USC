@@ -265,6 +265,11 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
 	}
 	$scope.saveEditedQuestion = function( question ){
 
+		if(!question){
+			question = $scope.questionCopy;
+			newQuestion = true;
+		}
+
 		$scope.questionCopy.IsDirty = true;
 		$scope.questionCopy.Is_active = true;
 		var url = '../../ajaxaction.php?action=saveQuestion';
@@ -282,6 +287,12 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
 					question.Key_id      = returnedQuestion.Key_id;
 					$scope.questionCopy.IsDirty = false;
 					question.beingEdited = false;
+
+					//if this question is new, set up the view booleans so that we don't show the form after saving
+					if(newQuestion){
+						$scope.question = angular.copy( question );
+						$scope.noQuestion = false;
+					} 
 				},
 				function( fail ){
 					//failure
