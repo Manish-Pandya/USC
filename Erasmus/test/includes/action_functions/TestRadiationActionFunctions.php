@@ -226,6 +226,24 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertTrue( $order instanceof PurchaseOrder );
 		$this->assertEqual( $order->getKey_id(), KEY_ID );
 	}
-
 	
+	
+	// getWasteTypeById
+	public function test_getWasteTypeById_noId() {
+		$type = getWasteTypeById();
+		$this->assertTrue( $type instanceof ActionError );
+	}
+	
+	public function test_getWasteTypeById_passId() {
+		$type = getWasteTypeById( KEY_ID );
+		$this->assertTrue( $type instanceof WasteType );
+		$this->assertEqual( $type->getKey_id(), KEY_ID );
+	}
+	
+	public function test_getWasteTypeById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$type = getWasteTypeById();
+		$this->assertTrue( $type instanceof WasteType );
+		$this->assertEqual( $type->getKey_id(), KEY_ID );
+	}
 }
