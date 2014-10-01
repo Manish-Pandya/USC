@@ -165,4 +165,23 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertEqual( $use->getKey_id(), KEY_ID );
 	}
 	
+
+	// getPickupById
+	public function test_getPickupById_noId() {
+		$pickup = getPickupById();
+		$this->assertTrue( $pickup instanceof ActionError );
+	}
+
+	public function test_getPickupById_passId() {
+		$pickup = getPickupById( KEY_ID );
+		$this->assertTrue( $pickup instanceof Pickup );
+		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
+	}
+
+	public function test_getPickupById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$pickup = getPickupById();
+		$this->assertTrue( $pickup instanceof Pickup );
+		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
+	}
 }
