@@ -26,7 +26,9 @@ class TestRadiationActionFunctions extends UnitTestCase {
 			unset( $_REQUEST[$key] );
 		}
 	}
-
+	
+	
+	// tests for basic getters
 	
 	// getIsotopeById
 	public function test_getIsotopeById_noId() {
@@ -245,5 +247,42 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$type = getWasteTypeById();
 		$this->assertTrue( $type instanceof WasteType );
 		$this->assertEqual( $type->getKey_id(), KEY_ID );
+	}
+	
+	
+	// tests for "get by relationship" functions
+	
+	// getAuthorizationsByPIId
+	public function test_getAuthorizationsByPIId_noId() {
+		$auths = getAuthorizationsByPIId();
+		$this->assertTrue( $auths instanceof ActionError );
+	} 
+	
+	public function test_getAuthorizationsByPIId_passId() {
+		$auths = getAuthorizationsByPIId( KEY_ID );
+		
+		$this->checkArrayAndTypes( $auths, new Authorization );
+	}
+	
+	public function test_getAuthorizationsByPIId_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$auths = getAuthorizationsByPIId();
+		
+		$this->checkArrayAndTypes( $auths, new Authorization );
+	}
+	
+
+	// UTILITY FUNCTIONS
+	
+	// confirms that given object is an array and that nested objects are of given type
+	public function checkArrayAndTypes($object, $targetType) {
+		$this->assertTrue( is_array($object) );
+		
+		// if array is empty, below foreach loop will not run
+		$this->assertFalse( empty($object) );
+
+		foreach( $object as $element ) {
+			$this->assertTrue( $element instanceof $targetType );
+		}
 	}
 }
