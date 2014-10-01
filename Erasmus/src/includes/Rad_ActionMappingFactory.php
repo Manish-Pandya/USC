@@ -52,12 +52,12 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveWasteType"		=> new ActionMapping("saveWasteType", "", ""),
 
 			// other functions
-			"getParcelRemainder"=> new ActionMapping("getParcelRemainder", "", ""),
-			"disposeParcelRemainder" => new ActionMapping("disposeParcelRemainder", "",""),
-			"getWasteAmountsByParcelId"=> new ActionMapping("getWasteAmountsByParcelId", "", ""),
+			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),
+			"disposeParcelRemainder" 	   	 => new ActionMapping("disposeParcelRemainder", "",""),
+			"getWasteAmountsByParcelId"		 => new ActionMapping("getWasteAmountsByParcelId", "", ""),
 			"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", ""),
-			"getTotalWasteFromPI"=> new ActionMapping("getTotalWasteFromPI", "", ""),
-			"getWasteFromPISinceDate" => new ActionMapping("getWastefRomPISinceDate", "", "")
+			"getTotalWasteFromPI"			 => new ActionMapping("getTotalWasteFromPI", "", ""),
+			"getWasteFromPISinceDate"        => new ActionMapping("getWastefRomPISinceDate", "", "")
 		);
 	}
 }
