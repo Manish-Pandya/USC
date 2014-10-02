@@ -261,16 +261,32 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	public function test_getAuthorizationsByPIId_passId() {
 		$auths = getAuthorizationsByPIId( KEY_ID );
 		
-		$this->checkArrayAndTypes( $auths, new Authorization );
+		$this->checkArrayAndTypes( $auths, new Authorization() );
 	}
 	
 	public function test_getAuthorizationsByPIId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$auths = getAuthorizationsByPIId();
 		
-		$this->checkArrayAndTypes( $auths, new Authorization );
+		$this->checkArrayAndTypes( $auths, new Authorization() );
 	}
 	
+	// getPickupLotsByPickupId
+	public function test_getPickupLotsByPickupId_noId() {
+		$lots = getPickupLotsByPickupId();
+		$this->assertTrue( $lots instanceof ActionError );
+	}
+	
+	public function test_getPickupLotsByPickupId_passId() {
+		$lots = getPickupLotsByPickupId( KEY_ID );
+		$this->checkArrayAndTypes( $lots, new PickupLot());
+	}
+	
+	public function test_getPickupLotsByPickupId_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$lots = getPickupLotsByPickupId();
+		$this->checkArrayAndTypes($lots, new PickupLot());
+	}
 
 	// UTILITY FUNCTIONS
 	
