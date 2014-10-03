@@ -116,7 +116,7 @@ class PickupLot extends GenericCrud {
 	public function setWaste_type_id($newId) { $this->waste_type_id = $newId; }
 	
 	public function getDisposalLots() {
-		if($this->DisposalLots === NULL) {
+		if($this->disposalLots === NULL) {
 			$thisDao = new GenericDAO($this);
 			$this->disposalLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DISPOSALLOTS_RELATIONSHIP));
 		}
