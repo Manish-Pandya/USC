@@ -344,6 +344,24 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	}
 	
 	
+	// getActiveParcelsFromPIById
+	public function test_getActiveParcelsFromPIById_noId() {
+		$parcels = getActiveParcelsFromPIById();
+		$this->assertTrue( $parcels instanceof ActionError );
+	}
+	
+	public function test_getActiveParcelsFromPIById_passId() {
+		$parcels = getActiveParcelsFromPIById( KEY_ID );
+		$this->checkArrayAndTypes( $parcels, new Parcel() );
+	}
+	
+	public function test_getActiveParcelsFromPIById_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$parcels = getActiveParcelsFromPIById();
+		$this->checkArrayAndTypes( $parcels, new Parcel() );
+	}
+
+
 	// UTILITY FUNCTIONS
 	
 	// confirms that given object is an array and that nested objects are of given type
