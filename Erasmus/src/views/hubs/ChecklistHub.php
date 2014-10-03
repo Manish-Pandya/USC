@@ -40,7 +40,7 @@ require_once '../top_view.php';
         </a>
       </h3>
       <span class="spacer"></span>
-      <table class="table table-striped table-hover table-bordered" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
+      <table class="table table-striped table-hover table-bordered large" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
      		
         <tr class="blue-tr">
           <th>Checklist Questions</th>

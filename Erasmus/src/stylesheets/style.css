@@ -2661,7 +2661,7 @@ tr.blue-tr td, tr.blue-tr th{
   background: #003399 !important;
   color:white !important;
 }
-tr th{
+table.large tr th{
   padding-top:20px !important;
   padding-bottom:20px !important;
   font-size:30px !important;
