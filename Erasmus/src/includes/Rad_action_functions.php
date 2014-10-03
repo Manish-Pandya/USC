@@ -274,6 +274,10 @@ function getAllCarboys() {
 	return $carboyDao->getAll();
 }
 
+function getAllDrums() {
+	$drumDao = new GenericDAO(new Drum());
+	return $drumDao->getAll();
+}
 
  
 /*****************************************************************************\

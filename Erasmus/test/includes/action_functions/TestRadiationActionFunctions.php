@@ -369,7 +369,12 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->checkArrayAndTypes( $carboys, new Carboy() );
 	}
 	
-
+	public function test_getAllDrums() {
+		$drums = getAllDrums();
+		$this->checkArrayAndTypes( $drums, new Drum() );
+	}
+	
+	
 	// UTILITY FUNCTIONS
 	
 	// confirms that given object is an array and that nested objects are of given type
