@@ -271,6 +271,7 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->checkArrayAndTypes( $auths, new Authorization() );
 	}
 	
+
 	// getPickupLotsByPickupId
 	public function test_getPickupLotsByPickupId_noId() {
 		$lots = getPickupLotsByPickupId();
@@ -279,13 +280,13 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	
 	public function test_getPickupLotsByPickupId_passId() {
 		$lots = getPickupLotsByPickupId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, new PickupLot());
+		$this->checkArrayAndTypes( $lots, new PickupLot() );
 	}
 	
 	public function test_getPickupLotsByPickupId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lots = getPickupLotsByPickupId();
-		$this->checkArrayAndTypes($lots, new PickupLot());
+		$this->checkArrayAndTypes( $lots, new PickupLot() );
 	}
 	
 	
@@ -305,6 +306,7 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$lots = getDisposalLotsByPickupLotId();
 		$this->checkArrayAndTypes( $lots, new DisposalLot() );
 	}
+
 
 	// UTILITY FUNCTIONS
 	
