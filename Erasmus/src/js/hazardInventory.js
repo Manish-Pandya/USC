@@ -274,7 +274,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
               .getAllPis()
                 .then(function(pis)
                 {
-                  hazardInventoryFactory.getAllPis(pis);
+                  hazardInventoryFactory.setAllPis(pis);
                   //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
                   return pis;
                 },
@@ -435,7 +435,11 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     }
 
     //always get a list of all PIs so that a user can change the PI in scope, separate from the promise chain that gets our individual PI, Inspeciton and list of Hazards
-    $scope.PIs = getAllPis();
+    getAllPis().then(
+        function(pis){
+          $scope.PIs = pis;
+        }
+    );
 
   }
 
