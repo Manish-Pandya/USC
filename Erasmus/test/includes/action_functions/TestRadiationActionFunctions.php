@@ -360,7 +360,15 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$parcels = getActiveParcelsFromPIById();
 		$this->checkArrayAndTypes( $parcels, new Parcel() );
 	}
-
+	
+	
+	// Tests for "getAll" functions
+	
+	public function test_getAllCarboys() {
+		$carboys = getAllCarboys();
+		$this->checkArrayAndTypes( $carboys, new Carboy() );
+	}
+	
 
 	// UTILITY FUNCTIONS
 	

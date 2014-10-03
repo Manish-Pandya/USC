@@ -36,6 +36,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
 			"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", ""),
 			"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", ""),
+				
+			// getAll functions
+			"getAllCarboys"                 => new ActionMapping("getAllCarboys", "", ""),
 
 			// save functions
 			"saveAuthorization" => new ActionMapping("saveAuthorization", "", ""),
