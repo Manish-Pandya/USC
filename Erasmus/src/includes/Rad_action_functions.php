@@ -269,6 +269,7 @@ function getActiveParcelsFromPIById($id = NULL) {
  *                               getAll functions                            *
 \*****************************************************************************/
 
+
 function getAllCarboys() {
 	$carboyDao = new GenericDAO(new Carboy());
 	return $carboyDao->getAll();
@@ -278,6 +279,12 @@ function getAllDrums() {
 	$drumDao = new GenericDAO(new Drum());
 	return $drumDao->getAll();
 }
+
+function getAllIsotopes() {
+	$isotopeDao = new GenericDAO(new Isotope());
+	return $isotopeDao->getAll();
+}
+
 
  
 /*****************************************************************************\
