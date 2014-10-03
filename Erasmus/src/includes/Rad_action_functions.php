@@ -249,45 +249,6 @@ function getParcelUsesByParcelId($id = NULL) {
 	}
 }
 
-function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
-	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-	$date = getValueFromRequest('date', $date);
-	$id = getValueFromRequest('id', $id);
-
-	if( $id === NULL ) {
-		return new ActionError("No request paramter 'id' was provided");
-	}
-	if( $date === NULL ) {
-		return new ActionError("No request parameter 'date' was provided");
-	}
-
-	// convert string input date to a format we can do comparisons with
-	$inputDate = strtotime($date);
-
-	// get selected PI
-	$piDao = new GenericDAO(new PrincipalInvestigator());
-	$pi = $piDao->getById($id);
-
-	// get parcels from PI, search for recent uses
-	$parcelUses = array();
-	$parcels = $pi->getActiveParcels();
-	foreach( $parcels as $parcel ) {
-		$uses = $parcel->getUses();
-		
-		foreach( $uses as $use ) {
-			// convert date of use into format we can do comparisons with
-			$useDate = strtotime($use->getDate_of_use());
-        	
-			// check if this use took place since the given input date
-			if( $useDate > $inputDate ) {
-				$parcelUses[] = $use;
-			}
-		}
-	}
-	
-	return $parcelUses;
-}
-
 function getActiveParcelsFromPIById($id = NULL) {
 	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
@@ -660,6 +621,46 @@ function getTotalWasteFromPI($id = NULL) {
 	$totalWastes = packWasteDtos($totalWastes);
 	
 	return $totalWastes;
+}
+
+// Returns all parcel uses from this PI that have taken place since the given date
+function getParcelUsesFromPISinceDate($id = NULL, $date = NULL) {
+	$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	$date = getValueFromRequest('date', $date);
+	$id = getValueFromRequest('id', $id);
+
+	if( $id === NULL ) {
+		return new ActionError("No request paramter 'id' was provided");
+	}
+	if( $date === NULL ) {
+		return new ActionError("No request parameter 'date' was provided");
+	}
+
+	// convert string input date to a format we can do comparisons with
+	$inputDate = strtotime($date);
+
+	// get selected PI
+	$piDao = new GenericDAO(new PrincipalInvestigator());
+	$pi = $piDao->getById($id);
+
+	// get parcels from PI, search for recent uses
+	$parcelUses = array();
+	$parcels = $pi->getActiveParcels();
+	foreach( $parcels as $parcel ) {
+		$uses = $parcel->getUses();
+		
+		foreach( $uses as $use ) {
+			// convert date of use into format we can do comparisons with
+			$useDate = strtotime($use->getDate_of_use());
+        	
+			// check if this use took place since the given input date
+			if( $useDate > $inputDate ) {
+				$parcelUses[] = $use;
+			}
+		}
+	}
+	
+	return $parcelUses;
 }
 
 // Returns the amount of waste produced by this PI since the given date
