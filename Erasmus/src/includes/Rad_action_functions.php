@@ -285,6 +285,10 @@ function getAllIsotopes() {
 	return $isotopeDao->getAll();
 }
 
+function getAllWasteTypes() {
+	$typeDao = new GenericDAO(new WasteType());
+	return $typeDao->getAll();
+}
 
  
 /*****************************************************************************\

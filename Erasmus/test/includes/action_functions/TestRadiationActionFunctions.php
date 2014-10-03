@@ -379,6 +379,10 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->checkArrayAndTypes( $isotopes, new Isotope() );
 	}
 	
+	public function test_getAllWasteTypes() {
+		$types = getAllWasteTypes();
+		$this->checkArrayAndTypes( $types, new WasteType() );
+	}
 
 	
 	// UTILITY FUNCTIONS
