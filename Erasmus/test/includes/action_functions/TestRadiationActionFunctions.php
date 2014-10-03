@@ -287,6 +287,24 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$lots = getPickupLotsByPickupId();
 		$this->checkArrayAndTypes($lots, new PickupLot());
 	}
+	
+	
+	// getDisposalLotsByPickupLotId
+	public function test_getDisposalLotsByPickupLotId_noId() {
+		$lots = getDisposalLotsByPickupLotId();
+		$this->assertTrue( $lots instanceof ActionError );
+	}
+	
+	public function test_getDisposalLotsByPickupLotId_passId() {
+		$lots = getDisposalLotsByPickupLotId( KEY_ID );
+		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+	}
+	
+	public function test_getDisposalLotsByPickupLotId_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$lots = getDisposalLotsByPickupLotId();
+		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+	}
 
 	// UTILITY FUNCTIONS
 	
