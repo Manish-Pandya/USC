@@ -12,7 +12,7 @@
 <tbody>
 	<tr ng-repeat="user in PI.LabPersonnel | filter: active">
 
-		<td><a class="btn btn-warning btn-large" ng-click="removeUser(user)"><i class="icon-remove"></i>Remove</a><img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/></td>
+		<td><a class="btn btn-warning btn-large" ng-click="confirmRemoveUser(user)"><i class="icon-remove"></i>Remove</a><img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/></td>
 
 		<td><a class="btn btn-danger btn-large" ng-click="deactivateUser(user)"><i class="icon-remove"></i>Inactivate</a><img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/></td>
 
