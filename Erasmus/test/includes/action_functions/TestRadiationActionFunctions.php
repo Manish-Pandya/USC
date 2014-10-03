@@ -308,6 +308,24 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	}
 
 
+	// getDisposalLotsByDrumId
+	public function test_getDisposalLotsByDrumId_noId() {
+		$lots = getDisposalLotsByDrumId();
+		$this->assertTrue( $lots instanceof ActionError );
+	}
+	
+	public function test_getDisposalLotsByDrumId_passId() {
+		$lots = getDisposalLotsByDrumId( KEY_ID );
+		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+	}
+	
+	public function test_getDisposalLotsByDrumId_requestId() {
+		$_REQUEST["id"] = KEY_ID;
+		$lots = getDisposalLotsByDrumId();
+		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+	}
+	
+	
 	// UTILITY FUNCTIONS
 	
 	// confirms that given object is an array and that nested objects are of given type
