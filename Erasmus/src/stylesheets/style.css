@@ -2650,6 +2650,12 @@ table.roomList h2 {
   height:40px;
   display:block;
 }
+.spacer.small{
+  height:15px;
+}
+.spacer.med{
+  height:20px;
+}
 
 tr.blue-tr td, tr.blue-tr th{
   background: #003399 !important;
