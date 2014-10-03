@@ -22,7 +22,7 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
         });
       }
     }
-}])
+}]);
 
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
 	var factory = {};
@@ -230,34 +230,34 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   factory.getShowRooms = function( hazard )
   {
     //determine whether the hazard is present in some but NOT all of the rooms
-    if(hazard.ActiveSubHazards){
-     hazard.showRooms = false;
-      angular.forEach(hazard.InspectionRooms, function(room, key){
-        if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
-          hazard.showRooms = true;
-        }else{
-          hazard.showRooms = false;
-        }
-      });
+    hazard.showRooms = false;
+    console.log( hazard.Name )
+    console.log( hazard.InspectionRooms );
 
-      if(hazard.ActiveSubHazards.length){
-        angular.forEach(hazard.ActiveSubHazards, function(child, key){
-          factory.getShowRooms(child);
-        });
-      }
+    var roomLength = hazard.InspectionRooms;
+
+    if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
+      return true;
+    }else{
+      return false;
     }
+
   }
 
-  factory.roomDoesNotContainHazard =  function( room ){
-    if(room.ContainsHazard == false) return true;
+  factory.roomDoesNotContainHazard = function( room ){
+    
+    if(room.ContainsHazard != true){
+      //console.log( room );
+      return true;
+    } 
+    //console.log( room );
     return false;
   }
 
-  factory.roomContainsHazard =  function( room ){
-    if(room.ContainsHazard == false) return true;
+  factory.roomContainsHazard = function( room ){
+    if(room.ContainsHazard == true) return true;
     return false;
   }
-
 
 	return factory;
 });
@@ -368,9 +368,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                   $scope.hazards = hazards.ActiveSubHazards;
                   $scope.hazardsLoading = false;
                   $scope.needNewHazards = false;
-                  angular.forEach($scope.hazards, function(hazard, key){
-                    if(hazard.IsPresent)$scope.getShowRooms(hazard);
-                  });
+                  //angular.forEach($scope.hazards, function(hazard, key){
+                    //if(hazard.IsPresent)$scope.getShowRooms(hazard);
+                  //});
 
                   resetInspectionDefer.resolve( hazards );
                 },
@@ -549,9 +549,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   }
 */
   //set a boolean flag to determine if rooms are shown beneath a hazard
-  $scope.getShowRooms = function(hazard){
-    if(hazard.IsPresent && hazard.ActiveSubHazards){
-      hazardInventoryFactory.getShowRooms( hazard );
+  $scope.getShowRooms = function( hazard ){
+    if(hazard.IsPresent){
+      return hazardInventoryFactory.getShowRooms( hazard );
     }
   }
 
@@ -679,7 +679,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     });
   } 
     //If at least one room contains the hazard, but not all rooms, set property of hazard so that rooms can be displayed
-    $scope.getShowRooms(hazard);
+   // $scope.getShowRooms(hazard);
 }
 
 

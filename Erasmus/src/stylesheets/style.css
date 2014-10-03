@@ -1652,10 +1652,11 @@ ul.key li.deficiencies span {
   color: #49afcd;
 }
 
-/* line 1396, ../sass/style.scss */
-.hazardList span > ul:not(.subRooms) {
+
+.hazardList span > ul.topChildren {
   margin-left: 0 !important;
 }
+
 
 @media (max-width: 1375px) {
   /* line 501, ../sass/style.scss */
@@ -2126,6 +2127,9 @@ span.green {
 .hazardLi {
   margin-bottom: 0px;
   padding: 3px 0;
+}
+.hazardLi:not(.topChild){
+  padding-top:10px;
 }
 
 /* line 737, ../sass/style.scss */

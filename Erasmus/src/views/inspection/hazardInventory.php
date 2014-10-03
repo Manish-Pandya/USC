@@ -57,17 +57,18 @@ require_once '../top_view.php';
 						</label>
 					</li>			
 				</ul>
-			</div>		
-		<ul ng-hide="!child.showRooms" class="subRooms">
-			<li>Rooms:</li>
-			<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
-				{{room.Name}}
-			</li>
-		</ul>
+			</div>
 
-		<ul>
-			<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
-		</ul>
+			<ul ng-if="getShowRooms(child)" class="subRooms">
+				<li>Rooms:</li>
+				<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
+					{{room.Name}}
+				</li>
+			</ul>
+
+			<ul>
+				<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
+			</ul>
     </script>
 
 	    <div>
@@ -78,7 +79,7 @@ require_once '../top_view.php';
 		       <div class="controls">
 		       <span ng-show="!PIs">
 		         <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
-		       	<img class="" style="height:23px; margin:-36px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		       	 <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
 		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
@@ -167,7 +168,7 @@ require_once '../top_view.php';
 					<span ng-hide="hazard.hidden">
 				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" once-text="hazard.Name"></h1>
 					<hr>
-					<ul>
+					<ul class="topChildren">
 						<li>
 							<a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
 								<span ng-show="!hazard.hideUnselected">
@@ -178,7 +179,7 @@ require_once '../top_view.php';
 								</span>
 							</a>
 						</li>
-						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
+						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
 							<!--<h4 class="">-->
 							<label class="checkbox inline">
 								<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
@@ -223,7 +224,7 @@ require_once '../top_view.php';
 								</ul>
 							</div>
 
-							<ul ng-show="getShowRooms(child)" class="subRooms">
+							<ul ng-if="getShowRooms(child)" class="subRooms">
 								<li>Rooms:</li>
 								<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}" once-text="room.Name"></li>
 							</ul>
