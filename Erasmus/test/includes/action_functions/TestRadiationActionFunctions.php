@@ -33,19 +33,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getIsotopeById
 	public function test_getIsotopeById_noId() {
 		$isotope = getIsotopeById();
-		$this->assertTrue( $isotope instanceof ActionError );
+		$this->assertIsA( $isotope, 'ActionError' );
 	}
 
 	public function test_getIsotopeById_passId() {
 		$isotope = getIsotopeById( KEY_ID );
-		$this->assertTrue( $isotope instanceof Isotope );
+		$this->assertIsA( $isotope, 'Isotope' );
 		$this->assertEqual( $isotope->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getIsotopeById_requestId() {
 		$_REQUEST['id'] = KEY_ID;
 		$isotope = getIsotopeById();
-		$this->assertTrue( $isotope instanceof Isotope );
+		$this->assertIsA( $isotope, 'Isotope' );
 		$this->assertEqual( $isotope->getKey_id(), KEY_ID );
 	}
 	
@@ -53,19 +53,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getCarboyById
 	public function test_getCarboyById_noId() {
 		$carboy = getCarboyById();
-		$this->assertTrue( $carboy instanceof ActionError );
+		$this->assertIsA( $carboy, 'ActionError' );
 	}
 
 	public function test_getCarboyById_passId() {
 		$carboy = getCarboyById( KEY_ID );
-		$this->assertTrue( $carboy instanceof Carboy );
+		$this->assertIsA( $carboy, 'Carboy' );
 		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
 	}
 
 	public function test_getCarboyById_requestId() {
 		$_REQUEST['id'] = KEY_ID;
 		$carboy = getCarboyById();
-		$this->assertTrue( $carboy instanceof Carboy );
+		$this->assertIsA( $carboy, 'Carboy');
 		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
 	}
 	
@@ -73,19 +73,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getCarboyUseCycleById
 	public function test_getCarboyUseCycleById_noId() {
 		$cycle = getCarboyUseCycleById();
-		$this->assertTrue( $cycle instanceof ActionError );
+		$this->assertIsA( $cycle, 'ActionError' );
 	}
 
 	public function test_getCarboyUseCycleById_passId() {
 		$cycle = getCarboyUseCycleById( KEY_ID );
-		$this->assertTrue( $cycle instanceof CarboyUseCycle );
+		$this->assertIsA( $cycle, 'CarboyUseCycle' );
 		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
 	}
 
 	public function test_getCarboyUseCycleById_requestId() {
 		$_REQUEST['id'] = KEY_ID;
 		$cycle = getCarboyUseCycleById();
-		$this->assertTrue( $cycle instanceof CarboyUseCycle );
+		$this->assertIsA( $cycle, 'CarboyUseCycle' );
 		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
 	}
 	
@@ -93,19 +93,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getDisposalLotById
 	public function test_getDisposalLotById_noId() {
 		$lot = getDisposalLotById();
-		$this->assertTrue( $lot instanceof ActionError );
+		$this->assertIsA( $lot, 'ActionError' );
 	}
 
 	public function test_getDisposalLotById_passId() {
 		$lot = getDisposalLotById( KEY_ID );
-		$this->assertTrue( $lot instanceof DisposalLot );
+		$this->assertIsA( $lot, 'DisposalLot' );
 		$this->assertEqual( $lot->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getDisposalLotById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lot = getDisposalLotById();
-		$this->assertTrue( $lot instanceof DisposalLot );
+		$this->assertIsA( $lot, 'DisposalLot' );
 		$this->assertEqual( $lot->getKey_id(), KEY_ID );
 	}
 	
@@ -113,19 +113,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getDrumById
 	public function test_getDrumById_noId() {
 		$drum = getDrumById();
-		$this->assertTrue( $drum instanceof ActionError );
+		$this->assertIsA( $drum, 'ActionError' );
 	}
 	
 	public function test_getDrumById_passId() {
 		$drum = getDrumById( KEY_ID );
-		$this->assertTrue( $drum instanceof Drum );
+		$this->assertIsA( $drum, 'Drum' );
 		$this->assertEqual( $drum->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getDrumById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$drum = getDrumById();
-		$this->assertTrue( $drum instanceof Drum );
+		$this->assertIsA( $drum, 'Drum' );
 		$this->assertEqual( $drum->getKey_id(), KEY_ID );
 	}
 	
@@ -133,19 +133,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getParcelByid
 	public function test_getParcelById_noId() {
 		$parcel = getParcelById();
-		$this->assertTrue( $parcel instanceof ActionError );
+		$this->assertIsA( $parcel, 'ActionError' );
 	}
 	
 	public function test_getParcelById_passId() {
 		$parcel = getParcelById( KEY_ID );
-		$this->assertTrue( $parcel instanceof Parcel );
+		$this->assertIsA( $parcel, 'Parcel' );
 		$this->assertEqual( $parcel->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getParcelById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$parcel = getParcelById();
-		$this->assertTrue( $parcel instanceof Parcel );
+		$this->assertIsA( $parcel, 'Parcel');
 		$this->assertEqual( $parcel->getKey_id(), KEY_ID );
 	}
 	
@@ -153,19 +153,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getParcelUseById
 	public function test_getParcelUseById_noId() {
 		$use = getParcelUseById();
-		$this->assertTrue( $use instanceof ActionError );
+		$this->assertIsA( $use, 'ActionError' );
 	}
 
 	public function test_getParcelUseById_passId() {
 		$use = getParcelUseById( KEY_ID );
-		$this->assertTrue( $use instanceof ParcelUse );
+		$this->assertIsA( $use, 'ParcelUse' );
 		$this->assertEqual( $use->getKey_id(), KEY_ID );
 	}
 
 	public function test_getParcelUseById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$use = getParcelUseById();
-		$this->assertTrue( $use instanceof ParcelUse );
+		$this->assertIsA( $use, 'ParcelUse' );
 		$this->assertEqual( $use->getKey_id(), KEY_ID );
 	}
 	
@@ -173,19 +173,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getPickupById
 	public function test_getPickupById_noId() {
 		$pickup = getPickupById();
-		$this->assertTrue( $pickup instanceof ActionError );
+		$this->assertIsA( $pickup, 'ActionError' );
 	}
 
 	public function test_getPickupById_passId() {
 		$pickup = getPickupById( KEY_ID );
-		$this->assertTrue( $pickup instanceof Pickup );
+		$this->assertIsA( $pickup, 'Pickup' );
 		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
 	}
 
 	public function test_getPickupById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$pickup = getPickupById();
-		$this->assertTrue( $pickup instanceof Pickup );
+		$this->assertIsA( $pickup, 'Pickup' );
 		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
 	}
 	
@@ -193,19 +193,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getPickupLotById
 	public function test_getPickupLotById_noId() {
 		$lot = getPickupLotById();
-		$this->assertTrue( $lot instanceof ActionError );
+		$this->assertIsA( $lot, 'ActionError' );
 	}
 	
 	public function test_getPickupLotById_passId() {
 		$lot = getPickupLotById( KEY_ID );
-		$this->assertTrue( $lot instanceof PickupLot );
+		$this->assertIsA( $lot, 'PickupLot' );
 		$this->assertEqual( $lot->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getPickupLotById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lot = getPickupLotById();
-		$this->assertTrue( $lot instanceof PickupLot );
+		$this->assertIsA( $lot, 'PickupLot' );
 		$this->assertEqual( $lot->getKey_id(), KEY_ID );
 	}
 	
@@ -213,19 +213,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getPurchaseOrderById
 	public function test_getPurchaseOrderById_noId() {
 		$order = getPurchaseOrderById();
-		$this->assertTrue( $order instanceof ActionError );
+		$this->assertIsA( $order, 'ActionError' );
 	}
 
 	public function test_getPurchaseOrderById_passId() {
 		$order = getPurchaseOrderById( KEY_ID );
-		$this->assertTrue( $order instanceof PurchaseOrder );
+		$this->assertIsA( $order, 'PurchaseOrder' );
 		$this->assertEqual( $order->getKey_id(), KEY_ID );
 	}
 
 	public function test_getPurchaseOrderById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$order = getPurchaseOrderById();
-		$this->assertTrue( $order instanceof PurchaseOrder );
+		$this->assertIsA( $order, 'PurchaseOrder' );
 		$this->assertEqual( $order->getKey_id(), KEY_ID );
 	}
 	
@@ -233,19 +233,19 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getWasteTypeById
 	public function test_getWasteTypeById_noId() {
 		$type = getWasteTypeById();
-		$this->assertTrue( $type instanceof ActionError );
+		$this->assertIsA( $type, 'ActionError' );
 	}
 	
 	public function test_getWasteTypeById_passId() {
 		$type = getWasteTypeById( KEY_ID );
-		$this->assertTrue( $type instanceof WasteType );
+		$this->assertIsA( $type, 'WasteType' );
 		$this->assertEqual( $type->getKey_id(), KEY_ID );
 	}
 	
 	public function test_getWasteTypeById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$type = getWasteTypeById();
-		$this->assertTrue( $type instanceof WasteType );
+		$this->assertIsA( $type, 'WasteType' );
 		$this->assertEqual( $type->getKey_id(), KEY_ID );
 	}
 	
@@ -255,110 +255,110 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	// getAuthorizationsByPIId
 	public function test_getAuthorizationsByPIId_noId() {
 		$auths = getAuthorizationsByPIId();
-		$this->assertTrue( $auths instanceof ActionError );
+		$this->assertIsA( $auths, 'ActionError' );
 	} 
 	
 	public function test_getAuthorizationsByPIId_passId() {
 		$auths = getAuthorizationsByPIId( KEY_ID );
 		
-		$this->checkArrayAndTypes( $auths, new Authorization() );
+		$this->checkArrayAndTypes( $auths, 'Authorization' );
 	}
 	
 	public function test_getAuthorizationsByPIId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$auths = getAuthorizationsByPIId();
 		
-		$this->checkArrayAndTypes( $auths, new Authorization() );
+		$this->checkArrayAndTypes( $auths, 'Authorization' );
 	}
 	
 
 	// getPickupLotsByPickupId
 	public function test_getPickupLotsByPickupId_noId() {
 		$lots = getPickupLotsByPickupId();
-		$this->assertTrue( $lots instanceof ActionError );
+		$this->assertIsA( $lots, 'ActionError' );
 	}
 	
 	public function test_getPickupLotsByPickupId_passId() {
 		$lots = getPickupLotsByPickupId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, new PickupLot() );
+		$this->checkArrayAndTypes( $lots, 'PickupLot' );
 	}
 	
 	public function test_getPickupLotsByPickupId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lots = getPickupLotsByPickupId();
-		$this->checkArrayAndTypes( $lots, new PickupLot() );
+		$this->checkArrayAndTypes( $lots, 'PickupLot' );
 	}
 	
 	
 	// getDisposalLotsByPickupLotId
 	public function test_getDisposalLotsByPickupLotId_noId() {
 		$lots = getDisposalLotsByPickupLotId();
-		$this->assertTrue( $lots instanceof ActionError );
+		$this->assertIsA( $lots, 'ActionError' );
 	}
 	
 	public function test_getDisposalLotsByPickupLotId_passId() {
 		$lots = getDisposalLotsByPickupLotId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
 	}
 	
 	public function test_getDisposalLotsByPickupLotId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lots = getDisposalLotsByPickupLotId();
-		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
 	}
 
 
 	// getDisposalLotsByDrumId
 	public function test_getDisposalLotsByDrumId_noId() {
 		$lots = getDisposalLotsByDrumId();
-		$this->assertTrue( $lots instanceof ActionError );
+		$this->assertIsA( $lots, 'ActionError' );
 	}
 	
 	public function test_getDisposalLotsByDrumId_passId() {
 		$lots = getDisposalLotsByDrumId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
 	}
 	
 	public function test_getDisposalLotsByDrumId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$lots = getDisposalLotsByDrumId();
-		$this->checkArrayAndTypes( $lots, new DisposalLot() );
+		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
 	}
 	
 	
 	// getParcelUsesByParcelId
 	public function test_getParcelUsesByParcelId_noId() {
 		$uses = getParcelUsesByParcelId();
-		$this->assertTrue( $uses instanceof ActionError );
+		$this->assertIsA( $uses, 'ActionError' );
 	}
 	
 	public function test_getParcelUsesByParcelId_passId() {
 		$uses = getParcelUsesByParcelId( KEY_ID );
-		$this->checkArrayAndTypes( $uses, new ParcelUse() );
+		$this->checkArrayAndTypes( $uses, 'ParcelUse' );
 	}
 	
 	public function test_getParcelUsesByParcelId_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$uses = getParcelUsesByParcelId();
-		$this->checkArrayAndTypes( $uses, new ParcelUse() );
+		$this->checkArrayAndTypes( $uses, 'ParcelUse' );
 	}
 	
 	
 	// getActiveParcelsFromPIById
 	public function test_getActiveParcelsFromPIById_noId() {
 		$parcels = getActiveParcelsFromPIById();
-		$this->assertTrue( $parcels instanceof ActionError );
+		$this->assertIsA( $parcels, 'ActionError' );
 	}
 	
 	public function test_getActiveParcelsFromPIById_passId() {
 		$parcels = getActiveParcelsFromPIById( KEY_ID );
-		$this->checkArrayAndTypes( $parcels, new Parcel() );
+		$this->checkArrayAndTypes( $parcels, 'Parcel' );
 	}
 	
 	public function test_getActiveParcelsFromPIById_requestId() {
 		$_REQUEST["id"] = KEY_ID;
 		$parcels = getActiveParcelsFromPIById();
-		$this->checkArrayAndTypes( $parcels, new Parcel() );
+		$this->checkArrayAndTypes( $parcels, 'Parcel' );
 	}
 	
 	
@@ -366,22 +366,22 @@ class TestRadiationActionFunctions extends UnitTestCase {
 	
 	public function test_getAllCarboys() {
 		$carboys = getAllCarboys();
-		$this->checkArrayAndTypes( $carboys, new Carboy() );
+		$this->checkArrayAndTypes( $carboys, 'Carboy' );
 	}
 	
 	public function test_getAllDrums() {
 		$drums = getAllDrums();
-		$this->checkArrayAndTypes( $drums, new Drum() );
+		$this->checkArrayAndTypes( $drums, 'Drum' );
 	}
 	
 	public function test_getAllIsotopes() {
 		$isotopes = getAllIsotopes();
-		$this->checkArrayAndTypes( $isotopes, new Isotope() );
+		$this->checkArrayAndTypes( $isotopes, 'Isotope' );
 	}
 	
 	public function test_getAllWasteTypes() {
 		$types = getAllWasteTypes();
-		$this->checkArrayAndTypes( $types, new WasteType() );
+		$this->checkArrayAndTypes( $types, 'WasteType' );
 	}
 
 	
@@ -395,7 +395,7 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		$this->assertFalse( empty($object) );
 
 		foreach( $object as $element ) {
-			$this->assertTrue( $element instanceof $targetType );
+			$this->assertIsA( $element, $targetType );
 		}
 	}
 }
