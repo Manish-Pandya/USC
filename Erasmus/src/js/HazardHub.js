@@ -275,6 +275,7 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, hazard).then(
             function(promise){
+            	console.log(promise);
                 deferred.resolve(promise);
             },
             function(promise){
@@ -489,7 +490,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
                     hazard.IsDirty = false;
                     hazard.Invalid = false;
                     $scope.hazardCopy = {};
-                    hazard.Name = returnedHazard.Name;
+                    angular.extend(hazard, returnedHazard);
                     hazard.Key_id = returnedHazard.Key_id;
                 },
                 function(){
