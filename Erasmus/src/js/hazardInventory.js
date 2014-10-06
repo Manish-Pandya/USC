@@ -231,10 +231,6 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   {
     //determine whether the hazard is present in some but NOT all of the rooms
     hazard.showRooms = false;
-    console.log( hazard.Name )
-    console.log( hazard.InspectionRooms );
-
-    var roomLength = hazard.InspectionRooms;
 
     if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
       return true;
@@ -409,7 +405,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                     $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
                     hazardDefer.reject();
                 });
-            console.log( hazardDefer );
             return hazardDefer.promise;
   },
   initiateInspection = function(piKey_id)
@@ -452,9 +447,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   	$scope.buildings = [];
   	$location.search('inspectionId','');
 	  $location.search("pi",'');
-
-    console.log($item);
-
     initiateInspection($item.Key_id);
   }
 
@@ -508,7 +500,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   		hazard.IsDirty = true;
   		hazardInventoryFactory.getSubHazards(hazard).then(
   			function(promise){
-  				console.log(promise);
   				hazard.error = "";
   				hazard.IsDirty = false;
   				hazard.ActiveSubHazards = promise;
@@ -550,6 +541,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 */
   //set a boolean flag to determine if rooms are shown beneath a hazard
   $scope.getShowRooms = function( hazard ){
+
     if(hazard.IsPresent){
       return hazardInventoryFactory.getShowRooms( hazard );
     }
@@ -660,7 +652,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
           //get the array index of the room so that we can use it to check the hazard's parent's rooms quickly
           var index = child.InspectionRooms.indexOf(room);
           if(hazard.InspectionRooms[index].ContainsHazard){
-            console.log(room);
             room.IsAllowed = true;
           }else{
            // room.IsAllowed = false;
