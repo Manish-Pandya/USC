@@ -44,18 +44,21 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getIsotopeById_passId() {
+		// set mock to return object with specific type and key id
 		$returnedIsotope = new Isotope();
 		$returnedIsotope->setKey_id(1);
 		$this->mockGetById($returnedIsotope);
 
 		$isotope = getIsotopeById(1);
 
+		// make sure returned object has same type and key id
 		$this->assertInstanceOf( 'Isotope', $isotope );
 		$this->assertEquals( 1, $isotope->getKey_id() );
 	}
 	
 	
 	public function test_getIsotopeById_requestId() {
+		// set mock to return object with specific type and key_id
 		$returnedIsotope = new Isotope();
 		$returnedIsotope->setKey_id(1);
 		$this->mockGetById($returnedIsotope);
@@ -63,31 +66,47 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$_REQUEST['id'] = 1;
 		$isotope = getIsotopeById();
 
+		// make sure returned object has same type and key id
 		$this->assertInstanceOf( 'Isotope', $isotope );
 		$this->assertEquals( 1, $isotope->getKey_id() );
 	}
 
-	/*
 	// getCarboyById
 	public function test_getCarboyById_noId() {
+		$this->mockGetById(new Carboy());
+
 		$carboy = getCarboyById();
-		$this->assertIsA( $carboy, 'ActionError' );
+		$this->assertInstanceOf( 'ActionError', $carboy );
 	}
 
 	public function test_getCarboyById_passId() {
-		$carboy = getCarboyById( KEY_ID );
-		$this->assertIsA( $carboy, 'Carboy' );
-		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new Carboy();
+		$objToReturn->setKey_id(1);
+		$this->mockGetById( $objToReturn );
+		
+		$carboy = getCarboyById(1);
+
+		// make sure same object is returned
+		$this->assertInstanceOf( 'Carboy', $carboy );
+		$this->assertEquals( 1, $carboy->getKey_id() );
 	}
 
 	public function test_getCarboyById_requestId() {
-		$_REQUEST['id'] = KEY_ID;
-		$carboy = getCarboyById();
-		$this->assertIsA( $carboy, 'Carboy');
-		$this->assertEqual( $carboy->getKey_id(), KEY_ID );
-	}
-	
+		// set mock to return object with specific type and key id
+		$objToReturn = new Carboy();
+		$objToReturn->setKey_id(1);
+		$this->mockGetById( $objToReturn );
 
+		$_REQUEST['id'] = 1;
+		$carboy = getCarboyById();
+
+		// check same object returned
+		$this->assertInstanceOf( 'Carboy', $carboy );
+		$this->assertEquals( 1, $carboy->getKey_id() );
+	}
+
+	/*
 	// getCarboyUseCycleById
 	public function test_getCarboyUseCycleById_noId() {
 		$cycle = getCarboyUseCycleById();
