@@ -182,27 +182,43 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	/*
 	// getDrumById
 	public function test_getDrumById_noId() {
+		$this->mockGetById( new Drum() );
+
 		$drum = getDrumById();
-		$this->assertIsA( $drum, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $drum );
 	}
 	
 	public function test_getDrumById_passId() {
-		$drum = getDrumById( KEY_ID );
-		$this->assertIsA( $drum, 'Drum' );
-		$this->assertEqual( $drum->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new Drum();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById($objToReturn);
+
+		$drum = getDrumById( 1 );
+		 
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'Drum', $drum );
+		$this->assertEquals( 1, $drum->getKey_id() );
 	}
 	
 	public function test_getDrumById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new Drum();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById($objToReturn);
+
+		$_REQUEST["id"] = 1;
 		$drum = getDrumById();
-		$this->assertIsA( $drum, 'Drum' );
-		$this->assertEqual( $drum->getKey_id(), KEY_ID );
+
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'Drum', $drum );
+		$this->assertEquals( 1, $drum->getKey_id() );
 	}
 	
-
+	/*
 	// getParcelByid
 	public function test_getParcelById_noId() {
 		$parcel = getParcelById();
