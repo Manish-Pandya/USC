@@ -1,5 +1,8 @@
 <?php
-require_once(dirname(__FILE__) . '/../../simpletest/autorun.php');
+/**
+ * @backupGlobals disabled
+ * @backupStaticAttributes disabled
+ */
 
 require_once(dirname(__FILE__) . '/../../../src/Autoloader.php');
 Logger::configure( dirname(__FILE__) . "/../../../src/includes/conf/log4php-config.php");
@@ -11,14 +14,9 @@ require_once(dirname(__FILE__) . '/../../../src/includes/Rad_action_functions.ph
 require_once(dirname(__FILE__) . '/../../../src/includes/action_functions.php');
 
 
-/*
-	IMPORTANT: Until I can find a different way, most of these tests are dependent on
-	entities having a record in the database with the following key id:
-*/
-define("KEY_ID", 1);
+// Note: Tests not yet converted to PHPUnit are commented out
 
-
-class TestRadiationActionFunctions extends UnitTestCase {
+class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
 	function tearDown() {
@@ -27,29 +25,49 @@ class TestRadiationActionFunctions extends UnitTestCase {
 		}
 	}
 	
+	// sets up GenericDAO mock, sets getById to return specific object
+	function mockGetById($returnObject) {
+		$mockDao = $this->getMock('GenericDAO');
+		$mockDao->method('getById')->willReturn($returnObject);
+		setDaoType($mockDao);
+	}
 	
 	// tests for basic getters
 	
 	// getIsotopeById
 	public function test_getIsotopeById_noId() {
+		$this->mockGetById(new Isotope);
+		
 		$isotope = getIsotopeById();
-		$this->assertIsA( $isotope, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $isotope );
 	}
 
 	public function test_getIsotopeById_passId() {
-		$isotope = getIsotopeById( KEY_ID );
-		$this->assertIsA( $isotope, 'Isotope' );
-		$this->assertEqual( $isotope->getKey_id(), KEY_ID );
+		$returnedIsotope = new Isotope();
+		$returnedIsotope->setKey_id(1);
+		$this->mockGetById($returnedIsotope);
+
+		$isotope = getIsotopeById(1);
+
+		$this->assertInstanceOf( 'Isotope', $isotope );
+		$this->assertEquals( 1, $isotope->getKey_id() );
 	}
+	
 	
 	public function test_getIsotopeById_requestId() {
-		$_REQUEST['id'] = KEY_ID;
+		$returnedIsotope = new Isotope();
+		$returnedIsotope->setKey_id(1);
+		$this->mockGetById($returnedIsotope);
+		
+		$_REQUEST['id'] = 1;
 		$isotope = getIsotopeById();
-		$this->assertIsA( $isotope, 'Isotope' );
-		$this->assertEqual( $isotope->getKey_id(), KEY_ID );
-	}
-	
 
+		$this->assertInstanceOf( 'Isotope', $isotope );
+		$this->assertEquals( 1, $isotope->getKey_id() );
+	}
+
+	/*
 	// getCarboyById
 	public function test_getCarboyById_noId() {
 		$carboy = getCarboyById();
@@ -398,4 +416,6 @@ class TestRadiationActionFunctions extends UnitTestCase {
 			$this->assertIsA( $element, $targetType );
 		}
 	}
+	
+	*/
 }
