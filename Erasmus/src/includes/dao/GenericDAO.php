@@ -44,6 +44,12 @@ class GenericDAO {
 
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 	}
+	
+	public function setModelObject(GenericCrud $new_model_object) {
+		$this->modelObject = $new_model_object;
+		$this->modelClassName = get_class($new_model_object);
+		$this->logprefix = "[$this->modelClassName" . "DAO]";
+	}
 
 	/**
 	 * @return boolean True if the associated table exists

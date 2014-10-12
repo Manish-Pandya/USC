@@ -12,6 +12,17 @@
 ?><?php
 //TODO: Split these functions up into further includes?
 
+// factory for creating Dao to use. Allows injecting mock Daos while unit testing.
+$daoFactory = new DaoFactory(new GenericDAO());
+
+// sets daoFactory so unit tests can swap in mocked GenericDao
+function setDaoType( $dao ) {
+	global $daoFactory;
+	$daoFactory->setModelDao($dao);
+	return $daoFactory;
+}
+
+
 if(isRadiationEnabled()) {
 	// include radiation-module specific functions
 	include_once 'Rad_action_functions.php';
@@ -52,9 +63,11 @@ function getDao( $modelObject = NULL ){
 		return new MockDAO();
 	}
 	else{
-		return new GenericDAO( $modelObject );
+		global $daoFactory;
+		return $daoFactory->createDao($modelObject);
 	}
 }
+
 
 function loginAction(){ };
 function logoutAction(){ };
