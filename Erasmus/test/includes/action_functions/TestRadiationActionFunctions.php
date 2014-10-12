@@ -122,7 +122,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$objToReturn->setKey_id( 1 );
 		$this->mockGetById( $objToReturn );
 		
-		$cycle = getCarboyUseCycleById( KEY_ID );
+		$cycle = getCarboyUseCycleById( 1 );
 
 		// make sure same object is returned
 		$this->assertInstanceOf( 'CarboyUseCycle', $cycle );
@@ -135,7 +135,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$objToReturn->setKey_id( 1 );
 		$this->mockGetById( $objToReturn );
 
-		$_REQUEST['id'] = KEY_ID;
+		$_REQUEST['id'] = 1;
 
 		$cycle = getCarboyUseCycleById();
 
@@ -145,27 +145,44 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	/*
 	// getDisposalLotById
 	public function test_getDisposalLotById_noId() {
+		$this->mockGetById( new DisposalLot() );
+
 		$lot = getDisposalLotById();
-		$this->assertIsA( $lot, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $lot );
 	}
 
 	public function test_getDisposalLotById_passId() {
-		$lot = getDisposalLotById( KEY_ID );
-		$this->assertIsA( $lot, 'DisposalLot' );
-		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new DisposalLot();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById( $objToReturn );
+
+		$lot = getDisposalLotById( 1 );
+
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'DisposalLot', $lot );
+		$this->assertEquals( 1, $lot->getKey_id() );
 	}
 	
 	public function test_getDisposalLotById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new DisposalLot();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$lot = getDisposalLotById();
-		$this->assertIsA( $lot, 'DisposalLot' );
-		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'DisposalLot', $lot );
+		$this->assertEquals( 1, $lot->getKey_id() );
 	}
 	
 
+	/*
 	// getDrumById
 	public function test_getDrumById_noId() {
 		$drum = getDrumById();
