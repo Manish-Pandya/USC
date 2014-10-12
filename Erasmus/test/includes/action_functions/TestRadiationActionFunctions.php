@@ -27,6 +27,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
 	// sets up GenericDAO mock, sets getById to return specific object
 	function mockGetById($returnObject) {
+		// genericDao is sepparate from action functions, so should be mocked here
 		$mockDao = $this->getMock('GenericDAO');
 		$mockDao->method('getById')->willReturn($returnObject);
 		setDaoType($mockDao);
@@ -106,27 +107,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $carboy->getKey_id() );
 	}
 
-	/*
 	// getCarboyUseCycleById
 	public function test_getCarboyUseCycleById_noId() {
+		$this->mockGetById( new CarboyUseCycle() );
+
 		$cycle = getCarboyUseCycleById();
-		$this->assertIsA( $cycle, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $cycle );
 	}
 
 	public function test_getCarboyUseCycleById_passId() {
+		// set mock to return object with specific type and key id
+		$objToReturn = new CarboyUseCycle();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById( $objToReturn );
+		
 		$cycle = getCarboyUseCycleById( KEY_ID );
-		$this->assertIsA( $cycle, 'CarboyUseCycle' );
-		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
+
+		// make sure same object is returned
+		$this->assertInstanceOf( 'CarboyUseCycle', $cycle );
+		$this->assertEquals( 1, $cycle->getKey_id() );
 	}
 
 	public function test_getCarboyUseCycleById_requestId() {
+		// set mock to return object with specific type and key id
+		$objToReturn = new CarboyUseCycle();
+		$objToReturn->setKey_id( 1 );
+		$this->mockGetById( $objToReturn );
+
 		$_REQUEST['id'] = KEY_ID;
+
 		$cycle = getCarboyUseCycleById();
-		$this->assertIsA( $cycle, 'CarboyUseCycle' );
-		$this->assertEqual( $cycle->getKey_id(), KEY_ID );
+
+		// make sure same object is returned
+		$this->assertInstanceOf( 'CarboyUseCycle', $cycle );
+		$this->assertEquals( 1, $cycle->getKey_id() );
 	}
 	
 
+	/*
 	// getDisposalLotById
 	public function test_getDisposalLotById_noId() {
 		$lot = getDisposalLotById();
