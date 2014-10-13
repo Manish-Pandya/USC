@@ -267,27 +267,44 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// getParcelUseById
 	public function test_getParcelUseById_noId() {
+		$this->setGetByIdToReturn( new ParcelUse() );
+
 		$use = getParcelUseById();
-		$this->assertIsA( $use, 'ActionError' );
+
+		// should return actionError when no id provided
+		$this->assertInstanceOf( 'ActionError', $use );
 	}
 
 	public function test_getParcelUseById_passId() {
-		$use = getParcelUseById( KEY_ID );
-		$this->assertIsA( $use, 'ParcelUse' );
-		$this->assertEqual( $use->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new ParcelUse();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+		
+		$use = getParcelUseById( 1 );
+		
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'ParcelUse', $use );
+		$this->assertEquals( 1, $use->getKey_id() );
 	}
 
 	public function test_getParcelUseById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new ParcelUse();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$use = getParcelUseById();
-		$this->assertIsA( $use, 'ParcelUse' );
-		$this->assertEqual( $use->getKey_id(), KEY_ID );
+
+		$this->assertInstanceOf( 'ParcelUse', $use );
+		$this->assertEquals( 1, $use->getKey_id() );
 	}
 	
 
+	/*
 	// getPickupById
 	public function test_getPickupById_noId() {
 		$pickup = getPickupById();
