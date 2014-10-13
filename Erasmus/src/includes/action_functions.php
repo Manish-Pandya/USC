@@ -1212,6 +1212,15 @@ function getAllDepartments(){
 	return $dao->getAll();
 };
 
+function getAllActiveDepartments(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$dao = getDao(new Department());
+
+	return $dao->getAll('name', false, true);
+};
+
+
 function getDepartmentById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
@@ -1734,11 +1743,33 @@ function saveHazardRoomRelations( $hazard = null ){
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$hazard->setEntityMaps($entityMaps);
 
+		$LOG->debug($hazard);
+
+		//make sure we send back the child hazards with a collection of inspection rooms, and that those rooms do not contain the child hazard
+		$inspectionRooms = $hazard->getInspectionRooms();
+		foreach($inspectionRooms as $room){
+			$room->setContainsHazard(false);
+		}
+
 		foreach($hazard->getInspectionRooms() as $room){
 			if($hazard->getIsPresent() == true){
 				//create hazard room relations
 				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 				$room->setContainsHazard(true);
+				foreach($hazard->getActiveSubHazards() as $subhazard){
+					$subhazard->setInspectionRooms($inspectionRooms);
+
+					$subEntityMaps = array();
+					$subEntityMaps[] = new EntityMap("lazy","getSubHazards");
+					$subEntityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+					$subEntityMaps[] = new EntityMap("lazy","getChecklist");
+					$subEntityMaps[] = new EntityMap("lazy","getRooms");
+					$subEntityMaps[] = new EntityMap("eager","getInspectionRooms");
+					$subEntityMaps[] = new EntityMap("eager","getHasChildren");
+
+					$subhazard->setEntityMaps($subEntityMaps);
+				}
+
 			}else{
 				//delete room relations
 				saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
@@ -1749,6 +1780,8 @@ function saveHazardRoomRelations( $hazard = null ){
 				}
 			}
 		}
+
+
 		$hazard->filterRooms();
 		$LOG->debug($hazard);
 		//filterHazards($hazard, $hazard->getInspectionRooms());
@@ -1757,12 +1790,14 @@ function saveHazardRoomRelations( $hazard = null ){
 	}
 }
 
-function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
+function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL, $recurse = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	if($roomId == null)$roomId = getValueFromRequest('roomId', $roomId);
 	if($hazardId == null)$hazardId = getValueFromRequest('hazardId', $hazardId);
 	if($add == null)$add = getValueFromRequest('add', $add);
+	if($recurse == null)$recurse = getValueFromRequest('recurse', $recurse);
+
 
 	if( $roomId !== NULL && $hazardId !== NULL && $add !== null ){
 		$LOG->debug("ADD's type: ".gettype($add)." add's value: ".$add);
@@ -1774,8 +1809,19 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 			$dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		// if add is false, remove this hazard from this room
 		} else {
-			$LOG->debug("in remove branch");
+			$hazDao = getDao(new Hazard());
+			$hazard = $hazDao->getById($hazardId);
+			$LOG->debug("removing " . $hazard->getName() . " from room with key id" . $roomId);
 			$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+
+			//if we are recursing, we need to get the subhazards
+			if($recurse == true){
+				$subs = $hazard->getActiveSubHazards();
+				foreach ($subs as $sub){
+					saveHazardRelation($roomId,$sub->getKey_id(),false,true);
+				}
+			}
+
 		}
 
 	} else {
