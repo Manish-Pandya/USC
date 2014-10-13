@@ -323,11 +323,18 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:50%">
-		<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
-		<a ng-click="saveNoteForInspection()" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
-		<a ng-click="cancelSaveNote()" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
-		<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
+	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:48%; width:19%;">
+		<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
+		<h3 style="text-decoration:underline; margin-bottom:5px;">INSPECTION COMMENTS</h3>
+		<span ng-if="!inspection.Note || noteEdited">
+			<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
+			<a ng-click="saveNoteForInspection(newNote)" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
+			<a ng-click="cancelSaveNote(); editNote = false;" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
+			<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		</span>
+		<span ng-if="inspection.Note && !noteEdited">
+			<h4>{{inspection.Note}}<a style="margin-left:5px;" class="btn btn-mini btn-primary" ng-click="editNote()"><i class="icon-pencil"></i></a></h4>
+		</span>
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">

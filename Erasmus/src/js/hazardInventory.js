@@ -127,7 +127,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         if(!inspection.Rooms.length){
           deferred.reject(true);
         }else{
-          console.log( inspection );
+          factory.setInspection(inspection);
           //we have a good inspection with a collection of rooms
           deferred.resolve(inspection); 
         }
@@ -144,16 +144,17 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	}
 
 	factory.setInspection = function(inspection){
+    console.log(inspection);
 		this.Inspection = inspection;
 	}
 
 	factory.setHazarRoomRelations = function(hazard){
-		console.log(hazard);
 		var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
       var deferred = $q.defer();
 
       convenienceMethods.saveDataAndDefer(url, hazard).then(
         function(promise){
+          console.log(promise);
           deferred.resolve(promise);
         },
         function(promise){
@@ -164,7 +165,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	}
 
 	factory.setSingleHazardRoomRelations = function(hazard, room, add){
-		var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
+		var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
 		var deferred = $q.defer();
 		convenienceMethods.getDataAsDeferredPromise(url).then(
 			function(promise){
@@ -677,7 +678,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
   $scope.handleRoom = function(room, hazard, parent){
     console.log(room);
-    //room.ContainsHazard = !room.ContainsHazard;
 
     //did we uncheck the last room?
     if(hazard.InspectionRooms.every(roomDoesNotContainsHazard)){
@@ -689,6 +689,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     	hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
     		function(promise){
     			room.IsDirty = false;
+          removeSubHazardsFromRoom(room, hazard);
     		},
     		function(){
     			room.ContainsHazard = !room.ContainsHazard;
@@ -697,6 +698,20 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     	);
     }
     
+  }
+
+  function removeSubHazardsFromRoom(room, hazard){
+      //set the room's containsHazard property to false for each of the subhazards
+      //get the index of the room in the parent hazard's rooms collection
+      var idx = convenienceMethods.arrayContainsObject(hazard.InspectionRooms, room, null, true);
+      if(!room.ContainsHazard && hazard.ActiveSubHazards){
+        var subLen = hazard.ActiveSubHazards.length;
+        for(var i = 0; i < subLen; i++ ){
+            console.log(hazard.ActiveSubHazards[i]);
+            hazard.ActiveSubHazards[i].InspectionRooms[idx].ContainsHazard = false;
+            if(hazard.ActiveSubHazards[i].ActiveSubHazards)removeSubHazardsFromRoom(room, hazard.ActiveSubHazards[i]);
+        }
+      }
   }
 
   function roomDoesNotContainsHazard(room){
@@ -710,6 +725,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     hazardInventoryFactory.setHazarRoomRelations(hazard).then(
     	function(promise){
     		hazard.IsDirty = false;
+        console.log($scope);
     		hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
     		hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
     	},
@@ -743,12 +759,14 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $timeout, $filter,convenienceMethods){
+controllers.footerController = function($scope, $timeout, $filter,convenienceMethods,hazardInventoryFactory){
   
   init();
 
   function init(){
     $scope.selectedFooter = '';
+    $scope.inspection = hazardInventoryFactory.getInspection();
+    console.log($scope.inspection);
   }
 
   $scope.close = function(){
@@ -793,30 +811,34 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
     alert('Something went wrong when retrieving lab contacts.');
   }
 
+  $scope.editNote = function(){
+    $scope.noteEdited = true;
+  }
+
   $scope.openNotes = function(){
-    console.log($scope.inspection);
-     $scope.newNote = $scope.inspection.Note;
+     if(!$scope.inspection)$scope.inspection = hazardInventoryFactory.getInspection();
+     $scope.newNote = angular.copy($scope.inspection.Note);
+     $scope.noteEdited = false;
      $scope.selectedFooter = 'comments'
   }
 
-  $scope.saveNoteForInspection = function(){
-
+  $scope.saveNoteForInspection = function(note){
+    console.log(note);
     $scope.newNoteIsDirty = true;
-    console.log($scope.newNote);
-
     var inspectionDTO = {
       Class: "EntityText",
       Entity_id:  $scope.inspection.Key_id,
-      Text:  $scope.newNote
+      Text:  note
     }
-
     var url = "../../ajaxaction.php?action=saveNoteForInspection";
-    convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url);
+    convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url, null, note);
   }
 
-  function onSaveNote(returned){
+  function onSaveNote(returned, note, test){
+    console.log(test);
+    $scope.noteEdited = false;
     $scope.newNoteIsDirty = false;
-    $scope.inspection.Note = $scope.newNote;
+    $scope.inspection.Note = test;
   }
 
   function onFailSaveNote(data){
