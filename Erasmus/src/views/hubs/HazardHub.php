@@ -12,7 +12,7 @@
           </span>
          </button>
         <span ng-hide="child.isBeingEdited" class="hazardName">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} | {{child.Order_index}}</h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} </h2>
         </span>
 
         <span ng-show="child.isBeingEdited">
