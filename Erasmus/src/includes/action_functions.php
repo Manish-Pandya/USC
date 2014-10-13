@@ -16,10 +16,9 @@
 $daoFactory = new DaoFactory(new GenericDAO());
 
 // sets daoFactory so unit tests can swap in mocked GenericDao
-function setDaoType( $dao ) {
+function setDaoFactory( DaoFactory $newFactory ) {
 	global $daoFactory;
-	$daoFactory->setModelDao($dao);
-	return $daoFactory;
+	$daoFactory = $newFactory;
 }
 
 

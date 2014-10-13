@@ -14,6 +14,8 @@ require_once(dirname(__FILE__) . '/../../../src/includes/Rad_action_functions.ph
 require_once(dirname(__FILE__) . '/../../../src/includes/action_functions.php');
 
 
+// TODO: check that getById was called with correct arguments
+
 // Note: Tests not yet converted to PHPUnit are commented out
 
 class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
@@ -25,19 +27,29 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
-	// sets up GenericDAO mock, sets getById to return specific object
-	function mockGetById($returnObject) {
-		// genericDao is sepparate from action functions, so should be mocked here
-		$mockDao = $this->getMock('GenericDAO');
-		$mockDao->method('getById')->willReturn($returnObject);
-		setDaoType($mockDao);
+	// sets mock for GenericDAO to return specific object when getById is called
+	function setGetByIdToReturn($returnObject) {
+
+		$mockDao = $this->getMock( 'GenericDAO' );
+		$mockDao->method( 'getById' )->willReturn($returnObject);
+		$this->setMockDao( $mockDao );
+
 	}
 	
+	// sets dao factory to return a new given mock dao
+	function setMockDao( $mockDao ) {
+		$newFactory = new DaoFactory();
+		$newFactory->setModelDao( $mockDao );
+
+		setDaoFactory( $newFactory );
+	}
+	
+
 	// tests for basic getters
 	
 	// getIsotopeById
 	public function test_getIsotopeById_noId() {
-		$this->mockGetById(new Isotope);
+		$this->setGetByIdToReturn(new Isotope);
 		
 		$isotope = getIsotopeById();
 
@@ -48,7 +60,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$returnedIsotope = new Isotope();
 		$returnedIsotope->setKey_id(1);
-		$this->mockGetById($returnedIsotope);
+		$this->setGetByIdToReturn($returnedIsotope);
 
 		$isotope = getIsotopeById(1);
 
@@ -62,7 +74,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key_id
 		$returnedIsotope = new Isotope();
 		$returnedIsotope->setKey_id(1);
-		$this->mockGetById($returnedIsotope);
+		$this->setGetByIdToReturn($returnedIsotope);
 		
 		$_REQUEST['id'] = 1;
 		$isotope = getIsotopeById();
@@ -74,7 +86,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	// getCarboyById
 	public function test_getCarboyById_noId() {
-		$this->mockGetById(new Carboy());
+		$this->setGetByIdToReturn(new Carboy());
 
 		$carboy = getCarboyById();
 		$this->assertInstanceOf( 'ActionError', $carboy );
@@ -84,7 +96,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new Carboy();
 		$objToReturn->setKey_id(1);
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 		
 		$carboy = getCarboyById(1);
 
@@ -97,7 +109,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new Carboy();
 		$objToReturn->setKey_id(1);
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 
 		$_REQUEST['id'] = 1;
 		$carboy = getCarboyById();
@@ -109,7 +121,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	// getCarboyUseCycleById
 	public function test_getCarboyUseCycleById_noId() {
-		$this->mockGetById( new CarboyUseCycle() );
+		$this->setGetByIdToReturn( new CarboyUseCycle() );
 
 		$cycle = getCarboyUseCycleById();
 
@@ -120,7 +132,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new CarboyUseCycle();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 		
 		$cycle = getCarboyUseCycleById( 1 );
 
@@ -133,7 +145,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new CarboyUseCycle();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 
 		$_REQUEST['id'] = 1;
 
@@ -147,7 +159,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	// getDisposalLotById
 	public function test_getDisposalLotById_noId() {
-		$this->mockGetById( new DisposalLot() );
+		$this->setGetByIdToReturn( new DisposalLot() );
 
 		$lot = getDisposalLotById();
 
@@ -158,7 +170,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new DisposalLot();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 
 		$lot = getDisposalLotById( 1 );
 
@@ -171,7 +183,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new DisposalLot();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById( $objToReturn );
+		$this->setGetByIdToReturn( $objToReturn );
 
 		$_REQUEST["id"] = 1;
 		$lot = getDisposalLotById();
@@ -184,7 +196,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	// getDrumById
 	public function test_getDrumById_noId() {
-		$this->mockGetById( new Drum() );
+		$this->setGetByIdToReturn( new Drum() );
 
 		$drum = getDrumById();
 
@@ -195,7 +207,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new Drum();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById($objToReturn);
+		$this->setGetByIdToReturn($objToReturn);
 
 		$drum = getDrumById( 1 );
 		 
@@ -208,7 +220,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set mock to return object with specific type and key id
 		$objToReturn = new Drum();
 		$objToReturn->setKey_id( 1 );
-		$this->mockGetById($objToReturn);
+		$this->setGetByIdToReturn($objToReturn);
 
 		$_REQUEST["id"] = 1;
 		$drum = getDrumById();
