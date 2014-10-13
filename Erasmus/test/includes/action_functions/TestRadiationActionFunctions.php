@@ -419,27 +419,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// getWasteTypeById
 	public function test_getWasteTypeById_noId() {
+		$this->setGetByIdToReturn( new WasteType() );
+
 		$type = getWasteTypeById();
-		$this->assertIsA( $type, 'ActionError' );
+
+		// should return actionError when no id is provided
+		$this->assertInstanceOf( 'ActionError', $type );
 	}
 	
 	public function test_getWasteTypeById_passId() {
-		$type = getWasteTypeById( KEY_ID );
-		$this->assertIsA( $type, 'WasteType' );
-		$this->assertEqual( $type->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new WasteType();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$type = getWasteTypeById( 1 );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'WasteType', $type );
+		$this->assertEquals( 1, $type->getKey_id() );
 	}
 	
 	public function test_getWasteTypeById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new WasteType();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$type = getWasteTypeById();
-		$this->assertIsA( $type, 'WasteType' );
-		$this->assertEqual( $type->getKey_id(), KEY_ID );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'WasteType', $type );
+		$this->assertEquals( 1, $type->getKey_id() );
 	}
 	
 	
+	/*
 	// tests for "get by relationship" functions
 	
 	// getAuthorizationsByPIId
