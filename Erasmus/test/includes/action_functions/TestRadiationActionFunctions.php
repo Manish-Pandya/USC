@@ -230,27 +230,44 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $drum->getKey_id() );
 	}
 	
-	/*
 	// getParcelByid
 	public function test_getParcelById_noId() {
+		$this->setGetByIdToReturn( new Parcel() );
+
 		$parcel = getParcelById();
-		$this->assertIsA( $parcel, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $parcel );
 	}
 	
 	public function test_getParcelById_passId() {
-		$parcel = getParcelById( KEY_ID );
-		$this->assertIsA( $parcel, 'Parcel' );
-		$this->assertEqual( $parcel->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new Parcel();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn($objToReturn);
+
+		$parcel = getParcelById( 1 );
+		
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'Parcel', $parcel );
+		$this->assertEquals( 1, $parcel->getKey_Id() );
 	}
 	
 	public function test_getParcelById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new Parcel();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn($objToReturn);
+		
+		$_REQUEST["id"] = 1;
 		$parcel = getParcelById();
-		$this->assertIsA( $parcel, 'Parcel');
-		$this->assertEqual( $parcel->getKey_id(), KEY_ID );
+
+		// check that specific object returned correctly
+		$this->assertInstanceOf( 'Parcel', $parcel );
+		$this->assertEquals( 1, $parcel->getKey_id() );
 	}
 	
 	
+	/*
 	// getParcelUseById
 	public function test_getParcelUseById_noId() {
 		$use = getParcelUseById();
