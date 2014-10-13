@@ -304,27 +304,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	/*
 	// getPickupById
 	public function test_getPickupById_noId() {
+		$this->setGetByIdToReturn( new Pickup() );
+
 		$pickup = getPickupById();
-		$this->assertIsA( $pickup, 'ActionError' );
+		
+		// should return actionError when no id provided
+		$this->assertInstanceOf( 'ActionError', $pickup );
 	}
 
 	public function test_getPickupById_passId() {
-		$pickup = getPickupById( KEY_ID );
-		$this->assertIsA( $pickup, 'Pickup' );
-		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new Pickup();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$pickup = getPickupById( 1 );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'Pickup', $pickup );
+		$this->assertEquals( 1, $pickup->getKey_id() );
 	}
 
 	public function test_getPickupById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new Pickup();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$pickup = getPickupById();
-		$this->assertIsA( $pickup, 'Pickup' );
-		$this->assertEqual( $pickup->getKey_id(), KEY_ID );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'Pickup', $pickup );
+		$this->assertEquals( 1, $pickup->getKey_id() );
 	}
 	
 	
+	/*
 	// getPickupLotById
 	public function test_getPickupLotById_noId() {
 		$lot = getPickupLotById();
