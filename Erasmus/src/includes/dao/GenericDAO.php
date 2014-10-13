@@ -407,7 +407,7 @@ class GenericDAO {
 		foreach ($object->getColumnData() as $key=>$value){
 			if ($value == "integer") {$type = PDO::PARAM_INT;}
 			if ($value == "text") {$type = PDO::PARAM_STR;}
-			if ($value == "float") {$type = PDO::PARAM_INT;}
+			if ($value == "float") {$type = PDO::PARAM_STR;}
 			if ($value == "boolean") {$type = PDO::PARAM_BOOL;}
 			if ($value == "datetime") {$type = PDO::PARAM_STR;}
 			if ($value == "timestamp") {$type = PDO::PARAM_STR;}

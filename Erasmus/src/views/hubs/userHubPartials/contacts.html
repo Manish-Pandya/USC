@@ -5,8 +5,8 @@
 				<h1 class="greenBg">Lab Contacts</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
-				     <span ng-show="showInactive"><i class="icon-minus-3" style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Hide Inactive Contacts</span>
-				     <span ng-hide="showInactive"><i class="icon-plus-3"  style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Show Inactive Contacts</span>
+				     <span ng-show="showInactive">Show Active Contacts</span>
+				     <span ng-hide="showInactive">Show Inactive Contacts</span>
 			     </a>
 			     <a class="btn-large btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
 			     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
@@ -34,6 +34,7 @@
 			</th>
 			<!--<th>Lab Phone</th>-->
 			<th>Email</th>
+			<th>Lab Phone</th>
 			<th>Emergency Phone</th>
 		</tr>
 	</thead>
@@ -47,11 +48,11 @@
 				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 			</td>
 
-			<td style="width:14%;" once-text="contact.Last_name">
+			<td style="width:12%;" once-text="contact.Last_name">
 				<!--{{contact.Last_name}}-->
 			</td>
 
-			<td style="width:14%;" once-text="contact.First_name">
+			<td style="width:12%;" once-text="contact.First_name">
 				<!--{{contact.First_name}}-->
 			</td>
 			<td style="width:14%;" >
@@ -59,7 +60,7 @@
 				<!--{{contact.Supervisor.User.Name}}-->
 			</td>
 
-			<td style="width:16%;" once-text="contact.Primary_department.Name">
+			<td style="width:14%;" once-text="contact.Primary_department.Name">
 				<!--{{contact.Primary_department.Name}}-->
 			</td>
 			<!--
@@ -67,11 +68,15 @@
 			
 			</td>
 			-->
-			<td style="width:12%;" once-text="contact.Email">
+			<td style="width:10%;" once-text="contact.Email">
 				<!--{{contact.Email}}-->
 			</td>
 
-			<td style="width:12%;" once-text="contact.Emergency_phone">
+			<td style="width:10%;" once-text="contact.Supervisor.User.Lab_phone">
+				<!--{{contact.Emergency_phone}}-->
+			</td>
+
+			<td style="width:10%;" once-text="contact.Emergency_phone">
 				<!--{{contact.Emergency_phone}}-->
 			</td>
 

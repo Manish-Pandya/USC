@@ -22,7 +22,7 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
         });
       }
     }
-}])
+}]);
 
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
 	var factory = {};
@@ -94,6 +94,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     var deferred = $q.defer();
     
     var url = '../../ajaxaction.php?action=resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
+    
     var temp = this;
     convenienceMethods.getDataAsDeferredPromise(url).then(
       function(promise){
@@ -126,7 +127,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         if(!inspection.Rooms.length){
           deferred.reject(true);
         }else{
-          console.log( inspection );
+          factory.setInspection(inspection);
           //we have a good inspection with a collection of rooms
           deferred.resolve(inspection); 
         }
@@ -143,16 +144,17 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	}
 
 	factory.setInspection = function(inspection){
+    console.log(inspection);
 		this.Inspection = inspection;
 	}
 
 	factory.setHazarRoomRelations = function(hazard){
-		console.log(hazard);
 		var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
       var deferred = $q.defer();
 
       convenienceMethods.saveDataAndDefer(url, hazard).then(
         function(promise){
+          console.log(promise);
           deferred.resolve(promise);
         },
         function(promise){
@@ -163,7 +165,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	}
 
 	factory.setSingleHazardRoomRelations = function(hazard, room, add){
-		var url = "../../ajaxaction.php?action=saveHazardRelation&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
+		var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
 		var deferred = $q.defer();
 		convenienceMethods.getDataAsDeferredPromise(url).then(
 			function(promise){
@@ -229,34 +231,30 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   factory.getShowRooms = function( hazard )
   {
     //determine whether the hazard is present in some but NOT all of the rooms
-    if(hazard.ActiveSubHazards){
-     hazard.showRooms = false;
-      angular.forEach(hazard.InspectionRooms, function(room, key){
-        if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
-          hazard.showRooms = true;
-        }else{
-          hazard.showRooms = false;
-        }
-      });
+    hazard.showRooms = false;
 
-      if(hazard.ActiveSubHazards.length){
-        angular.forEach(hazard.ActiveSubHazards, function(child, key){
-          factory.getShowRooms(child);
-        });
-      }
+    if(!hazard.InspectionRooms.every( factory.roomDoesNotContainHazard ) && !hazard.InspectionRooms.every( factory.roomContainsHazard )){
+      return true;
+    }else{
+      return false;
     }
+
   }
 
-  factory.roomDoesNotContainHazard =  function( room ){
-    if(room.ContainsHazard == false) return true;
+  factory.roomDoesNotContainHazard = function( room ){
+    
+    if(room.ContainsHazard != true){
+      //console.log( room );
+      return true;
+    } 
+    //console.log( room );
     return false;
   }
 
-  factory.roomContainsHazard =  function( room ){
-    if(room.ContainsHazard == false) return true;
+  factory.roomContainsHazard = function( room ){
+    if(room.ContainsHazard == true) return true;
     return false;
   }
-
 
 	return factory;
 });
@@ -273,7 +271,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
               .getAllPis()
                 .then(function(pis)
                 {
-                  hazardInventoryFactory.getAllPis(pis);
+                  hazardInventoryFactory.setAllPis(pis);
                   //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
                   return pis;
                 },
@@ -284,19 +282,21 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   },
   getPi = function(piKey_id)
   {
-      var piDefer = $q.defer();
-      hazardInventoryFactory
-              .getPi(piKey_id)
-                .then(function(pi){
-                    console.log(pi);
-                    $scope.PI = pi;
-                    piDefer.resolve( pi );
-                },
-                function(fail){
-                    piDefer.reject();
-                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
-                });
-      return piDefer.promise;
+        $scope.piLoading = true;
+	      var piDefer = $q.defer();
+	      hazardInventoryFactory
+	              .getPi(piKey_id)
+	                .then(function(pi){
+                      $scope.piLoading = false;
+	                    $scope.PI = pi;
+	                    piDefer.resolve( pi );
+	                },
+	                function(fail){
+                      $scope.piLoading = false;
+	                    piDefer.reject();
+	                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+	                });
+	      return piDefer.promise;
   },
   setInspection = function(pi)
   {
@@ -355,8 +355,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   {
       //set up our $q object so that we can either return a promise on success or break the promise chain on error
       var resetInspectionDefer = $q.defer();
-
-       hazardInventoryFactory
+      $scope.hazards = [];
+      $scope.hazardsLoading = true;
+      hazardInventoryFactory
               .resetInspectionRooms( roomIds,  inspectionId )
                 .then(function( hazards )
                 {
@@ -364,9 +365,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                   $scope.hazards = hazards.ActiveSubHazards;
                   $scope.hazardsLoading = false;
                   $scope.needNewHazards = false;
-                  angular.forEach($scope.hazards, function(hazard, key){
-                    if(hazard.IsPresent)getShowRooms(hazard);
-                  });
+                  //angular.forEach($scope.hazards, function(hazard, key){
+                    //if(hazard.IsPresent)$scope.getShowRooms(hazard);
+                  //});
 
                   resetInspectionDefer.resolve( hazards );
                 },
@@ -398,7 +399,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                   $scope.needNewHazards = false;
 
                   $scope.hazards = hazardInventoryFactory.parseHazards( $scope.hazards );
-
                   hazardDefer.resolve( $scope.hazards );
                 },
                 function(){
@@ -406,7 +406,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                     $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
                     hazardDefer.reject();
                 });
-            return hazardDefer.promise();
+            return hazardDefer.promise;
   },
   initiateInspection = function(piKey_id)
   {
@@ -431,7 +431,11 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     }
 
     //always get a list of all PIs so that a user can change the PI in scope, separate from the promise chain that gets our individual PI, Inspeciton and list of Hazards
-    $scope.PIs = getAllPis();
+    getAllPis().then(
+        function(pis){
+          $scope.PIs = pis;
+        }
+    );
 
   }
 
@@ -444,9 +448,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   	$scope.buildings = [];
   	$location.search('inspectionId','');
 	  $location.search("pi",'');
-
-    console.log($item);
-
     initiateInspection($item.Key_id);
   }
 
@@ -500,7 +501,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   		hazard.IsDirty = true;
   		hazardInventoryFactory.getSubHazards(hazard).then(
   			function(promise){
-  				console.log(promise);
   				hazard.error = "";
   				hazard.IsDirty = false;
   				hazard.ActiveSubHazards = promise;
@@ -541,9 +541,10 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   }
 */
   //set a boolean flag to determine if rooms are shown beneath a hazard
-  $scope.getShowRooms = function(hazard){
-    if(hazard.IsPresent && hazard.ActiveSubHazards){
-      hazardInventoryFactory.getShowRooms( hazard );
+  $scope.getShowRooms = function( hazard ){
+
+    if(hazard.IsPresent){
+      return hazardInventoryFactory.getShowRooms( hazard );
     }
   }
 
@@ -562,8 +563,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
       }
     }
 
-    resetInspectionRooms( roomIds,  $scope.inspection.Key_id )
-      .then( getHazards );
+    if(roomIds.length){
+      $scope.noRoomsSelected = false;
+      resetInspectionRooms( roomIds,  $scope.inspection.Key_id );
+    }else{
+      $scope.noRoomsSelected = true;
+    }
   }
 
   //get boolean for hazard.ContainsRoom  Used for our hazard.every functions, to determine if any rooms in a hazard's collection contain the hazard
@@ -648,7 +653,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
           //get the array index of the room so that we can use it to check the hazard's parent's rooms quickly
           var index = child.InspectionRooms.indexOf(room);
           if(hazard.InspectionRooms[index].ContainsHazard){
-            console.log(room);
             room.IsAllowed = true;
           }else{
            // room.IsAllowed = false;
@@ -658,34 +662,22 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
         });
 
         //rooms are finished processing, we can set hazard to clean
-        if(hazard.InspectionRooms.every(isNotDirty)){
+        /*if(hazard.InspectionRooms.every(isNotDirty)){
             hazard.IsDirty = false;
-        }
+        }*/
 
         //recurse down the tree
         $scope.walkhazard(child);
     });
   } 
     //If at least one room contains the hazard, but not all rooms, set property of hazard so that rooms can be displayed
-    $scope.getShowRooms(hazard);
+   // $scope.getShowRooms(hazard);
 }
-    
-  /*
-   * HAZARD SAVE METHODS
-   * used for creating and updating users
-   * 
-   */
 
-  function isNotDirty(element, index, array){
-    if(!element.IsDirty){
-      return true;
-    }
-    return false;
-  }
+
 
   $scope.handleRoom = function(room, hazard, parent){
     console.log(room);
-    //room.ContainsHazard = !room.ContainsHazard;
 
     //did we uncheck the last room?
     if(hazard.InspectionRooms.every(roomDoesNotContainsHazard)){
@@ -697,6 +689,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     	hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
     		function(promise){
     			room.IsDirty = false;
+          removeSubHazardsFromRoom(room, hazard);
     		},
     		function(){
     			room.ContainsHazard = !room.ContainsHazard;
@@ -705,6 +698,20 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     	);
     }
     
+  }
+
+  function removeSubHazardsFromRoom(room, hazard){
+      //set the room's containsHazard property to false for each of the subhazards
+      //get the index of the room in the parent hazard's rooms collection
+      var idx = convenienceMethods.arrayContainsObject(hazard.InspectionRooms, room, null, true);
+      if(!room.ContainsHazard && hazard.ActiveSubHazards){
+        var subLen = hazard.ActiveSubHazards.length;
+        for(var i = 0; i < subLen; i++ ){
+            console.log(hazard.ActiveSubHazards[i]);
+            hazard.ActiveSubHazards[i].InspectionRooms[idx].ContainsHazard = false;
+            if(hazard.ActiveSubHazards[i].ActiveSubHazards)removeSubHazardsFromRoom(room, hazard.ActiveSubHazards[i]);
+        }
+      }
   }
 
   function roomDoesNotContainsHazard(room){
@@ -718,6 +725,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     hazardInventoryFactory.setHazarRoomRelations(hazard).then(
     	function(promise){
     		hazard.IsDirty = false;
+        console.log($scope);
     		hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
     		hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
     	},
@@ -751,12 +759,14 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $timeout, $filter,convenienceMethods){
+controllers.footerController = function($scope, $timeout, $filter,convenienceMethods,hazardInventoryFactory){
   
   init();
 
   function init(){
     $scope.selectedFooter = '';
+    $scope.inspection = hazardInventoryFactory.getInspection();
+    console.log($scope.inspection);
   }
 
   $scope.close = function(){
@@ -801,30 +811,34 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
     alert('Something went wrong when retrieving lab contacts.');
   }
 
+  $scope.editNote = function(){
+    $scope.noteEdited = true;
+  }
+
   $scope.openNotes = function(){
-    console.log($scope.inspection);
-     $scope.newNote = $scope.inspection.Note;
+     if(!$scope.inspection)$scope.inspection = hazardInventoryFactory.getInspection();
+     $scope.newNote = angular.copy($scope.inspection.Note);
+     $scope.noteEdited = false;
      $scope.selectedFooter = 'comments'
   }
 
-  $scope.saveNoteForInspection = function(){
-
+  $scope.saveNoteForInspection = function(note){
+    console.log(note);
     $scope.newNoteIsDirty = true;
-    console.log($scope.newNote);
-
     var inspectionDTO = {
       Class: "EntityText",
       Entity_id:  $scope.inspection.Key_id,
-      Text:  $scope.newNote
+      Text:  note
     }
-
     var url = "../../ajaxaction.php?action=saveNoteForInspection";
-    convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url);
+    convenienceMethods.updateObject(inspectionDTO, $scope.inspection, onSaveNote, onFailSaveNote, url, null, note);
   }
 
-  function onSaveNote(returned){
+  function onSaveNote(returned, note, test){
+    console.log(test);
+    $scope.noteEdited = false;
     $scope.newNoteIsDirty = false;
-    $scope.inspection.Note = $scope.newNote;
+    $scope.inspection.Note = test;
   }
 
   function onFailSaveNote(data){

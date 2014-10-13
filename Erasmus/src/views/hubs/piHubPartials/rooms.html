@@ -26,7 +26,11 @@
     	<div class="control-group">
          <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls">
-            <input style="" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
+            <input style="" ng-if="buildings" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
+            <span ng-if="!buildings">
+	        	<input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
+		       	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+	        </span>
          </div>
 	    </div>
 

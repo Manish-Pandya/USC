@@ -5,8 +5,8 @@
 				<h1 class="purpleBg">EHS Personnel</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
-				     <span ng-show="showInactive"><i class="icon-minus-3" style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Hide Inactive Personnel</span>
-				     <span ng-hide="showInactive"><i class="icon-plus-3"  style="font-size:30px; width: 35px; font-size: 30px; margin-left:-9px"></i>Show Inactive Personnel</span>
+				     <span ng-show="showInactive">Show Active Personnel</span>
+				     <span ng-hide="showInactive">Show Inactive Personnel</span>
 			     </a>
 			     <a class="btn-large btn" ng-click="addUser()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add</a>
 			   </div>
@@ -62,7 +62,7 @@
 				<!--{{contact.Email}}-->
 			</td>
 
-			<td style="width:12%;" once-text="Emergency_phone">
+			<td style="width:12%;" once-text="contact.Emergency_phone">
 				<!--{{contact.Emergency_phone}}-->
 			</td>
 

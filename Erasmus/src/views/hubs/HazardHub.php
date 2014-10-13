@@ -12,7 +12,7 @@
           </span>
          </button>
         <span ng-hide="child.isBeingEdited" class="hazardName">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} </h2>
         </span>
 
         <span ng-show="child.isBeingEdited">
@@ -40,7 +40,7 @@
           <i class="icon-pencil"></i>
           <span>Edit Hazard</span>
         </a>
-        <a href="#hazardModal" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'">
+        <a href="" ng-click="addChild(child)" class="btn btn-large btn-warning childHazard hazardBtn" node-id="'+node.id+'">
           <i class="icon-plus-2"></i><span>Add Child</span>
         </a>
           <a class="btn btn-large hazardBtn" ng-class="{'btn-info':child.Checklist, 'btn-primary':!child.Checklist}" href="ChecklistHub.php#?id={{child.Key_id}}">
@@ -58,8 +58,8 @@
     </div>
      
       <ol ng-if="!child.minimized && child.SubHazards"> <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
-        <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | orderBy: [order] | filter: hazardFilter))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
-          <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
+        <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | orderBy: [order] | filter: hazardFilter))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup> 
+         <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>       
         </li>
       </ol> 
     </li>

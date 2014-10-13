@@ -1969,7 +1969,7 @@ label.checkbox input[type=checkbox] {
 }
 label.checkbox input[type=checkbox] ~ span.metro-checkbox {
    padding-left: 27px;
-   padding-top: 0px;
+   padding-top: 4px;
 }
 .inline input[type=checkbox] ~ span.metro-checkbox {
    margin-right: 10px;

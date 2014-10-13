@@ -57,10 +57,8 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     init();
 
     function getDepartments(){
-    	console.log('here');
     	departmentFactory.getAllDepartments().then(
     		function(promise){
-    			console.log(promise);
     			departmentFactory.setDepartments(promise);
     			$scope.departments = departmentFactory.getDepartments();
     		},
@@ -111,6 +109,15 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     // note that the department parameter is the department to be overwritten.
     $scope.saveDepartment = function(department){
     	console.log(department);
+
+        // prevent user from changing name to an already existing department
+        if(convenienceMethods.arrayContainsObject($scope.departments, $scope.departmentCopy, ['Name', 'Name'])) {
+            $scope.error = "Department with name " + $scope.departmentCopy.Name + " already exists!";
+            // TODO: sort out department vs $scope.departmentCopy (ie department passed in, but still has to use departmentCopy, a scope variable)
+            // Mixed up here, later in this method, and in departmentHub.php itself.
+            return false;
+        }
+
     	if(!department.Class)department.Class="Department";
       	department.isDirty = true;
 	    departmentFactory.saveDepartment($scope.departmentCopy).then(
@@ -139,6 +146,14 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
 
 	// adds a newly created department
 	$scope.saveNewDepartment = function(department) {
+
+        // Prevent user from saving a duplicate department
+        if(convenienceMethods.arrayContainsObject($scope.departments, department, ['Name', 'Name'])) {
+            $scope.error = "Department with name " + department.Name + " already exists!";
+            return false;
+        }
+
+
 		department.isDirty = true;
 		departmentFactory.saveDepartment(department).then(
 			function(returnedData) {

@@ -59,6 +59,8 @@ class ActionMappingFactory {
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
+				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
+
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
 
@@ -88,6 +90,7 @@ class ActionMappingFactory {
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
 				"createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", ""),
+				"setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", ""),
 				"reorderHazards"=>new ActionMapping("reorderHazards", "", ""),
 
 				// Question Hub
@@ -118,6 +121,7 @@ class ActionMappingFactory {
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),
 				"getDepartmentById"=>new ActionMapping("getDepartmentById", "", ""),
 				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
+				"getAllActiveDepartments"=>new ActionMapping("getAllActiveDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),

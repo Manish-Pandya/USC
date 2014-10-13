@@ -132,6 +132,35 @@ function getUserById( $id = NULL ){
 	}
 }
 
+function getSupervisorByUserId( $id = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$id = getValueFromRequest('id', $id);
+
+	if( $id !== NULL ){
+		$dao = getDao(new User());
+		$user = $dao->getById($id);
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy","getUser");
+
+		$supervisor = $user->getSupervisor();
+		if($supervisor != null){
+			$supervisor->setEntityMaps($entityMaps);
+			return $supervisor;
+		}
+
+		return null;
+
+	}
+	else{
+		//error
+		return new ActionError("No request parameter 'id' was provided");
+	}
+}
+
 function getRoleById( $id = NULL ){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
@@ -549,9 +578,72 @@ function saveHazard(){
 	}
 	else{
 		$dao = getDao(new Hazard());
-		$decodedObject = $dao->save($decodedObject);
-		return $decodedObject;
+		$hazard = $decodedObject;
+		//set the hazard's order index, if it doesn't already have one
+		if($decodedObject->getOrder_index() == null){
+
+			//get the hazard's siblings
+			if($decodedObject->getParent_hazard_id() != null){
+				$parentDao = getDao( new Hazard() );
+				$parentHazard = $parentDao->getById( $hazard->getParent_hazard_id() );
+				$siblings = $parentHazard->getSubHazards();
+				$count = count( $siblings );
+
+				if( getIsAlphabetized( $siblings ) ){
+
+					//the list is in alphabetical order.  Find the right spot for the new hazard
+					for($i = 0; $i < count( $siblings ); ++$i) {
+
+						//find the first hazard that comes after the new one in alphabetical order
+						if( lcfirst( $hazard->getName() ) < lcfirst( $siblings[$i]->getName() ) ){
+
+							//is our new hazard first in alphabetical order?
+							if($i == 0){
+								$LOG->debug($hazard->getName().' came first in order, before '. $siblings[$i]->getName());
+								$beforeIdx = $siblings[0]->getOrder_index();
+								$hazard->setOrder_index( $beforeIdx - 1 );
+								break;
+
+							}else{
+								$LOG->debug($hazard->getName().' came somewhere in the middle.');
+								//our hazard is somewhere between first and last
+								$beforeIdx = $siblings[$i-1]->getOrder_index();
+								$afterIdx  = $siblings[$i]->getOrder_index();
+								$hazard->setOrder_index( ( $beforeIdx + $afterIdx )/2 );
+								break;
+							}
+
+						}elseif($i == $count-1){
+							$LOG->debug($hazard->getName().' came last in order');
+							//our new hazard is last in alphabetical order
+							$beforeIdx = $siblings[$count-1]->getOrder_index();
+							$hazard->setOrder_index( $beforeIdx + 1 );
+							break;
+						}
+					}
+				}else{
+					//the list is not alphebetized.  Put the new hazard at the end of the list.
+					$LOG->debug('list was not alphabetized');
+					$hazard->setOrder_index( $siblings[$count-1]->getOrder_index()+1 );
+				}
+			}
+		}
+		$LOG->debug($hazard);
+		return $dao->save($decodedObject);
 	}
+};
+
+function getIsAlphabetized( $list ){
+	$LOG = Logger::getLogger('Action:' . __FUNCTION__);
+
+	$length = count($list);
+
+	foreach($list as $key=>$hazard){
+		if( $key != $length-1 && lcfirst( $list[$key]->getName() ) > lcfirst( $list[$key+1]->getName() ) )
+		return false;
+	}
+
+	return true;
 };
 
 function saveRoom(){
@@ -1150,6 +1242,15 @@ function getAllDepartments(){
 	return $dao->getAll();
 };
 
+function getAllActiveDepartments(){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	$dao = getDao(new Department());
+
+	return $dao->getAll('name', false, true);
+};
+
+
 function getDepartmentById( $id = NULL ){
 	$id = getValueFromRequest('id', $id);
 
@@ -1677,11 +1778,33 @@ function saveHazardRoomRelations( $hazard = null ){
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$hazard->setEntityMaps($entityMaps);
 
+		$LOG->debug($hazard);
+
+		//make sure we send back the child hazards with a collection of inspection rooms, and that those rooms do not contain the child hazard
+		$inspectionRooms = $hazard->getInspectionRooms();
+		foreach($inspectionRooms as $room){
+			$room->setContainsHazard(false);
+		}
+
 		foreach($hazard->getInspectionRooms() as $room){
 			if($hazard->getIsPresent() == true){
 				//create hazard room relations
 				$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 				$room->setContainsHazard(true);
+				foreach($hazard->getActiveSubHazards() as $subhazard){
+					$subhazard->setInspectionRooms($inspectionRooms);
+
+					$subEntityMaps = array();
+					$subEntityMaps[] = new EntityMap("lazy","getSubHazards");
+					$subEntityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+					$subEntityMaps[] = new EntityMap("lazy","getChecklist");
+					$subEntityMaps[] = new EntityMap("lazy","getRooms");
+					$subEntityMaps[] = new EntityMap("eager","getInspectionRooms");
+					$subEntityMaps[] = new EntityMap("eager","getHasChildren");
+
+					$subhazard->setEntityMaps($subEntityMaps);
+				}
+
 			}else{
 				//delete room relations
 				$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
@@ -1692,6 +1815,8 @@ function saveHazardRoomRelations( $hazard = null ){
 				}
 			}
 		}
+
+
 		$hazard->filterRooms();
 		$LOG->debug($hazard);
 		//filterHazards($hazard, $hazard->getInspectionRooms());
@@ -1700,12 +1825,14 @@ function saveHazardRoomRelations( $hazard = null ){
 	}
 }
 
-function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
+function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL, $recurse = NULL){
 	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
 	if($roomId == null)$roomId = getValueFromRequest('roomId', $roomId);
 	if($hazardId == null)$hazardId = getValueFromRequest('hazardId', $hazardId);
 	if($add == null)$add = getValueFromRequest('add', $add);
+	if($recurse == null)$recurse = getValueFromRequest('recurse', $recurse);
+
 
 	if( $roomId !== NULL && $hazardId !== NULL && $add !== null ){
 		$LOG->debug("ADD's type: ".gettype($add)." add's value: ".$add);
@@ -1717,8 +1844,18 @@ function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL){
 			$result = $dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
 		// if add is false, remove this hazard from this room
 		} else {
-			$LOG->debug("in remove branch");
+			$hazDao = getDao(new Hazard());
+			$hazard = $hazDao->getById($hazardId);
+			$LOG->debug("removing " . $hazard->getName() . " from room with key id" . $roomId);
 			$result = $dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+
+			//if we are recursing, we need to get the subhazards
+			if($recurse == true){
+				$subs = $hazard->getActiveSubHazards();
+				foreach ($subs as $sub){
+					saveHazardRelation($roomId,$sub->getKey_id(),false,true);
+				}
+			}
 		}
 
 	} else {
@@ -2319,21 +2456,42 @@ function makeFancyNames(){
 }
 
 function createOrderIndicesForHazards(){
-	$hazards = getAllHazards();
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+	$hazards = getHazardTreeNode(10000);
 	foreach($hazards as $hazard){
-		$subs = $hazard->getSubHazards();
-		if($subs != null){
-			$i = 1;
-			foreach($subs as $sub){
-				$sub->setOrder_index(null);
-				$sub->setOrder_index($i);
-				$dao = getDao( new Hazard() );
-				$dao->save( $sub );
-				$i++;
-			}
+		setOrderIndicesForSubHazards( $hazard );
+	}
+	return getAllHazards();
+}
+
+function setOrderIndicesForSubHazards( $hazard = NULL ){
+	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+	//if we have passed a hazard, use it, if not, use the input stream
+	if($hazard == null){
+		$hazardId = getValueFromRequest('hazardId', $hazardId);
+		if($hazardId == null)return new ActionError("No request parameter 'hazardId' was provided");
+		$hazDao = getDao( new Hazard() );
+		$hazard = $hazDao->getById( $hazardId );
+
+		return $hazard;
+	}
+
+	$subs = $hazard->getSubHazards();
+	if($subs != null){
+		$i = 0;
+		foreach($subs as $sub){
+			$i++;
+			$sub->setOrder_index(null);
+			$sub->setOrder_index($i);
+			$dao = getDao( new Hazard() );
+			$LOG->debug($sub->getName()."'s order index is ".$sub->getOrder_index());
+			$sub = $dao->save( $sub );
+			if($sub->getSubHazards() != null)setOrderIndicesForSubHazards( $sub );
 		}
 	}
-	return $hazards;
+
+	return $hazard;
 }
 
 //reorder hazards
@@ -2371,8 +2529,8 @@ function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId
 		$LOG->debug("before index: ".$beforeOrderIdx);
 		$LOG->debug("after index: ".$afterHazardIdx);
 
-		//set the hazard's order index to a random float between the order indices of the other two hazards
-		$hazard->setOrder_index(random_float ($beforeOrderIdx,$afterHazardIdx));
+		//set the hazard's order index to a float between halfway between the order indices of the other two hazards
+		$hazard->setOrder_index(($beforeOrderIdx+$afterHazardIdx)/2);
 		$dao->save($hazard);
 
 		//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view

@@ -57,17 +57,18 @@ require_once '../top_view.php';
 						</label>
 					</li>			
 				</ul>
-			</div>		
-		<ul ng-hide="!child.showRooms" class="subRooms">
-			<li>Rooms:</li>
-			<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
-				{{room.Name}}
-			</li>
-		</ul>
+			</div>
 
-		<ul>
-			<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
-		</ul>
+			<ul ng-if="getShowRooms(child)" class="subRooms">
+				<li>Rooms:</li>
+				<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
+					{{room.Name}}
+				</li>
+			</ul>
+
+			<ul>
+				<li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
+			</ul>
     </script>
 
 	    <div>
@@ -77,14 +78,14 @@ require_once '../top_view.php';
 		       <label class="control-label" for="name"><h3>Principal Investigator</h3></label>
 		       <div class="controls">
 		       <span ng-show="!PIs">
-		         <input class="span12" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
-		       	<img class="" style="height:23px; margin:-36px 0 0 110px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+		         <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+		       	 <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span4" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}" target="_blank">Manage Data for Selected PI</a></h3>
+		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}">Manage Data for Selected PI</a></h3>
 		     </div>
 			<div class="span8">
 		       <div class="controls">
@@ -127,7 +128,7 @@ require_once '../top_view.php';
 									
 						       	 	<ul>
 							       	 	<li ng-repeat="(key, room) in building.Rooms" style="width:100%">
-								       	 	<label class="checkbox inline">
+								       	 	<label class="checkbox inline smaller">
 												<input ng-model='room.IsSelected' type="checkbox" ng-change="selectRoom(room,building)"/>
 												<span class="metro-checkbox smaller" once-text="room.Name"></span>
 											</label>
@@ -135,6 +136,7 @@ require_once '../top_view.php';
 									</ul>
 						       	 </li>
 						       	 <li><a a class="btn btn-warning" ng-click="resetInspection()">Get Hazards</a></li>
+						       	 <li ng-if="noRoomsSelected" class="alert alert-danger">Please select one or more rooms.</li>
 						       	</ul>
 					       </span>
 			       		</ul>
@@ -146,12 +148,13 @@ require_once '../top_view.php';
 
 	    <div class="loading" ng-show='!PI' >
 
-	    <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
+		    <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
 
-		<span ng-hide="noPiSet">
-		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Selected Principal Investigator...
-		</span>
+			<span ng-if="piLoading">
+			  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+			  Getting Selected Principal Investigator...
+			</span>
+		
 		</div>								
 
 	    <form>
@@ -165,7 +168,7 @@ require_once '../top_view.php';
 					<span ng-hide="hazard.hidden">
 				    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" once-text="hazard.Name"></h1>
 					<hr>
-					<ul>
+					<ul class="topChildren">
 						<li>
 							<a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
 								<span ng-show="!hazard.hideUnselected">
@@ -176,7 +179,7 @@ require_once '../top_view.php';
 								</span>
 							</a>
 						</li>
-						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
+						<li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
 							<!--<h4 class="">-->
 							<label class="checkbox inline">
 								<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
@@ -221,7 +224,7 @@ require_once '../top_view.php';
 								</ul>
 							</div>
 
-							<ul ng-show="getShowRooms(child)" class="subRooms">
+							<ul ng-if="getShowRooms(child)" class="subRooms">
 								<li>Rooms:</li>
 								<li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}" once-text="room.Name"></li>
 							</ul>
@@ -320,11 +323,18 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:50%">
-		<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
-		<a ng-click="saveNoteForInspection()" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
-		<a ng-click="cancelSaveNote()" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
-		<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
+	<div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:48%; width:19%;">
+		<i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
+		<h3 style="text-decoration:underline; margin-bottom:5px;">INSPECTION COMMENTS</h3>
+		<span ng-if="!inspection.Note || noteEdited">
+			<textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
+			<a ng-click="saveNoteForInspection(newNote)" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
+			<a ng-click="cancelSaveNote(); editNote = false;" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
+			<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
+		</span>
+		<span ng-if="inspection.Note && !noteEdited">
+			<h4>{{inspection.Note}}<a style="margin-left:5px;" class="btn btn-mini btn-primary" ng-click="editNote()"><i class="icon-pencil"></i></a></h4>
+		</span>
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">

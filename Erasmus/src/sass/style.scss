@@ -1508,7 +1508,7 @@ ul.key{
   width: 224px;
   border: 2px solid #ccc;
   margin: 0;
-  margin-top: -21px;
+  margin-top: 0;
   margin-left: 9px;
   padding: 10px;
   background: white;
@@ -1850,6 +1850,9 @@ label.checkbox input[type=checkbox] ~ span.smaller::after {
   width: 12px !important;
   height: 0 !important;
   z-index: 1000;
+}
+label.smaller{
+  padding-top:8px !important;
 }
 
 /* line 772, ../sass/style.scss */

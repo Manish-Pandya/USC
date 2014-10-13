@@ -436,6 +436,26 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 	$scope.deactivateUser = function(user){
 
 		piHubFactory.setUser(user);
+		var functionType = 'inactivate';
+		var modalInstance = $modal.open({
+	      templateUrl: 'confirmationModal.html',
+	      controller: confirmationController,
+	      resolve: {
+	        items: function () {
+	          return functionType;
+	        }
+	      }
+	    });
+
+		modalInstance.result.then(function (user) {
+	       onRemoveUser(user);
+	    });
+
+	}
+
+	$scope.confirmRemoveUser = function(user){
+
+		piHubFactory.setUser(user);
 		var functionType = 'remove';
 		var modalInstance = $modal.open({
 	      templateUrl: 'confirmationModal.html',
@@ -478,10 +498,10 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 confirmationController = function(items, $scope, piHubFactory, $modalInstance, convenienceMethods){
 	$scope.userCopy = piHubFactory.getUser();
 	var functionType = items;
-	if(functionType.toLowerCase() == 'remove'){
-		$scope.message = 'Do you want to inactivate  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
+	if(functionType.toLowerCase() == 'inactivate'){
+		$scope.message =  "Do you want to remove "+$scope.userCopy.Name+" from the PI's lab personnel list?";
 	}else{
-		$scope.message = "Do you want to remove "+$scope.userCopy.Name+" from the PI's lab personnel list?";
+		$scope.message =  'Do you want to inactivate  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
 	}
 
 	$scope.confirm = function(){
