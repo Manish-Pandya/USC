@@ -381,27 +381,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	/*
 	// getPurchaseOrderById
 	public function test_getPurchaseOrderById_noId() {
+		$this->setGetByIdToReturn( new PurchaseOrder() );
+
 		$order = getPurchaseOrderById();
-		$this->assertIsA( $order, 'ActionError' );
+		
+		// should return actionError when no id is provided
+		$this->assertInstanceOf( 'ActionError', $order );
 	}
 
 	public function test_getPurchaseOrderById_passId() {
-		$order = getPurchaseOrderById( KEY_ID );
-		$this->assertIsA( $order, 'PurchaseOrder' );
-		$this->assertEqual( $order->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new PurchaseOrder();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$order = getPurchaseOrderById( 1 );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'PurchaseOrder', $order );
+		$this->assertEquals( 1, $order->getKey_id() );
 	}
 
 	public function test_getPurchaseOrderById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new PurchaseOrder();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$order = getPurchaseOrderById();
-		$this->assertIsA( $order, 'PurchaseOrder' );
-		$this->assertEqual( $order->getKey_id(), KEY_ID );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'PurchaseOrder', $order );
+		$this->assertEquals( 1, $order->getKey_id() );
 	}
 	
 	
+	/*
 	// getWasteTypeById
 	public function test_getWasteTypeById_noId() {
 		$type = getWasteTypeById();
