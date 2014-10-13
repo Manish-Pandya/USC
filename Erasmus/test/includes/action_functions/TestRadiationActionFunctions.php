@@ -343,27 +343,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// getPickupLotById
 	public function test_getPickupLotById_noId() {
+		$this->setGetByIdToReturn( new PickupLot() );
+
 		$lot = getPickupLotById();
-		$this->assertIsA( $lot, 'ActionError' );
+		
+		// should return actionError when no id is provided
+		$this->assertInstanceOf( 'ActionError', $lot );
 	}
 	
 	public function test_getPickupLotById_passId() {
-		$lot = getPickupLotById( KEY_ID );
-		$this->assertIsA( $lot, 'PickupLot' );
-		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+		// set mock to return object with specific type and key id
+		$objToReturn = new PickupLot();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+		
+		$lot = getPickupLotById( 1 );
+
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'PickupLot', $lot );
+		$this->assertEquals( 1, $lot->getKey_id() );
 	}
 	
 	public function test_getPickupLotById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// set mock to return object with specific type and key id
+		$objToReturn = new PickupLot();
+		$objToReturn->setKey_id( 1 );
+		$this->setGetByIdToReturn( $objToReturn );
+
+		$_REQUEST["id"] = 1;
 		$lot = getPickupLotById();
-		$this->assertIsA( $lot, 'PickupLot' );
-		$this->assertEqual( $lot->getKey_id(), KEY_ID );
+		
+		// check that specific object was returned correctly
+		$this->assertInstanceOf( 'PickupLot', $lot );
+		$this->assertEquals( 1, $lot->getKey_id() );
 	}
 	
 
+	/*
 	// getPurchaseOrderById
 	public function test_getPurchaseOrderById_noId() {
 		$order = getPurchaseOrderById();
