@@ -299,6 +299,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$_REQUEST["id"] = 1;
 		$use = getParcelUseById();
 
+		// check that specific object was returned correctly
 		$this->assertInstanceOf( 'ParcelUse', $use );
 		$this->assertEquals( 1, $use->getKey_id() );
 	}
