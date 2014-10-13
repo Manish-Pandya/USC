@@ -85,7 +85,7 @@ var MainUserListController = function(userHubFactory,$scope, $modal, $routeParam
     convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGetUsers);
-    convenienceMethods.getData('../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGetDepartments);
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllActiveDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGetDepartments);
 
     // sometimes $location.path() isn't set yet, so check for this
     if(!$location.path()) {
@@ -228,7 +228,7 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
     $scope.piId = $location.search().piId;
   }
 
-  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
 
   //create a modal instance for editing a user or creating a new one.
@@ -324,13 +324,10 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
 
 //controller for modal instance for lab contacts
 var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window, userHubFactory) {
-  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
-
-
+  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
   console.log(items);
-  if($window.isProductionServer)$scope.isProductionServer = true;
   
   $scope.getAuthUser = function(){
     console.log('lookingForUser');
@@ -647,12 +644,9 @@ var personnelController = function($scope, $modal, $routeParams, $browser,  $roo
 
 //controller for modal instance for lab contacts
 var personnelModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
-  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
+  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
-  console.log($window.isProductionServer);
-  if($window.isProductionServer)$scope.isProductionServer = true;
-
   
   $scope.getAuthUser = function(){
     console.log('lookingForUser');
@@ -974,12 +968,10 @@ var piController = function($scope, $modal, $routeParams, $browser,  $rootElemen
 
 //controller for modal instance for lab contacts
 var piModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
-  if($location.$$host.indexOf('graysail'<0))$scope.isProductionServer = true;
-
+  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
   console.log(items[0]);
-  if($window.isProductionServer)$scope.isProductionServer = true;
 
   $scope.getAuthUser = function(){
     console.log('lookingForUser');
