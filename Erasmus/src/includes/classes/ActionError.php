@@ -13,12 +13,12 @@ class ActionError {
 
 	}
 	
-	public function __toString(){
+	public function __toString() {
 		return "[ActionError: $this->message]";
 	}
 	
-	public function getMessage(){ return $this->message; }
-	public function setMessage($m){ $this->message = $m; }
+	public function getMessage() { return $this->message; }
+	public function setMessage($m) { $this->message = $m; }
 	
 	public function getStatusCode() { return $this->statusCode; }
 	public function setStatusCode($newCode) { $this->statusCode = $newCode; }
