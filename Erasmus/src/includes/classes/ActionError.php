@@ -2,10 +2,12 @@
 
 class ActionError {
 	public $message;
+	protected $statusCode;
 	private $LOG;
 
-	public function __construct( $message ){
+	public function __construct( $message, $statusCode ) {
 		$this->message = $message;
+		$this->statusCode = $statusCode;
 		$this->LOG = Logger::getLogger( __CLASS__ );
 		// TODO: possibly log what created this instance of ActionError, if possible?
 
@@ -17,6 +19,9 @@ class ActionError {
 	
 	public function getMessage(){ return $this->message; }
 	public function setMessage($m){ $this->message = $m; }
+	
+	public function getStatusCode() { return $this->statusCode; }
+	public function setStatusCode($newCode) { $this->statusCode = $newCode; }
 
 	// tells JSON encoder to give ActionError a property IsError with value true.
 	// This will give the frontend something to check to see if the value it gets
