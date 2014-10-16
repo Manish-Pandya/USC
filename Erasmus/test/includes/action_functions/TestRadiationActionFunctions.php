@@ -457,16 +457,35 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// tests for "get by relationship" functions
 	
 	// getAuthorizationsByPIId
 	public function test_getAuthorizationsByPIId_noId() {
+		
 		$auths = getAuthorizationsByPIId();
-		$this->assertIsA( $auths, 'ActionError' );
+		
+		// should return actionError when no id is provided
+		$this->assertInstanceOf( 'ActionError', $auths );
+		
+		/* If error happened inside action functions due to lack of id paramateter
+		   (which is what should have happened), ActionError will have error code 201 */
+		$this->assertEquals(201, $auths->getStatusCode() );
 	} 
 	
+	/*
 	public function test_getAuthorizationsByPIId_passId() {
+		/*
+		// authorizations to be returned by mock
+		$arrayOfAuths = array_fill(0, 3, new Authorization());
+		
+		// make a PI mock that returns above authorizations when asked.
+		$PiMock = $this->getMock('PrincipalInvestigator');
+		$PiMock->method('getAuthorizations')->willReturn($arrayOfAuths);
+		
+		// tell Dao (used by action functions) to return the mocked PI
+		$this->setGetByIdToReturn($PiMock);
+		
+		
 		$auths = getAuthorizationsByPIId( KEY_ID );
 		
 		$this->checkArrayAndTypes( $auths, 'Authorization' );
@@ -480,6 +499,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
+	/*
 	// getPickupLotsByPickupId
 	public function test_getPickupLotsByPickupId_noId() {
 		$lots = getPickupLotsByPickupId();

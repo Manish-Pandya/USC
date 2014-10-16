@@ -185,7 +185,7 @@ function getAuthorizationsByPIId($id = NULL) {
 		return $selectedPi->getAuthorizations();
 	}
 	else {
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'id' was provided", 201);
 	}
 }
 
