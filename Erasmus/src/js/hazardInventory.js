@@ -759,11 +759,12 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $timeout, $filter,convenienceMethods,hazardInventoryFactory){
+controllers.footerController = function($scope, $location, $filter,convenienceMethods,hazardInventoryFactory){
   
   init();
 
   function init(){
+    $scope.location = $location.search();
     $scope.selectedFooter = '';
     $scope.inspection = hazardInventoryFactory.getInspection();
     console.log($scope.inspection);
@@ -839,6 +840,7 @@ controllers.footerController = function($scope, $timeout, $filter,convenienceMet
     $scope.noteEdited = false;
     $scope.newNoteIsDirty = false;
     $scope.inspection.Note = test;
+    $scope.newNote = angular.copy($scope.inspection.Note);
   }
 
   function onFailSaveNote(data){
