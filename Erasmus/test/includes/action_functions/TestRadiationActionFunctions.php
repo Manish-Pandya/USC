@@ -514,26 +514,44 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $auths );
 	}
 	
-
-	/*
 	// getPickupLotsByPickupId
 	public function test_getPickupLotsByPickupId_noId() {
 		$lots = getPickupLotsByPickupId();
-		$this->assertIsA( $lots, 'ActionError' );
+
+		//should return actionError when no id provided
+		$this->assertInstanceOf( 'ActionError', $lots );
+		
+		// ActionError should have code 201 if created due to lack of id
+		$this->assertEquals( 201, $lots->getStatusCode() );
 	}
 	
 	public function test_getPickupLotsByPickupId_passId() {
-		$lots = getPickupLotsByPickupId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, 'PickupLot' );
+
+		// create mock to return array of pickuplots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PickUp", "getPickupLots", "PickupLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+
+		$lots = getPickupLotsByPickupId( 0 );
+
+		$this->assertContainsOnlyInstancesOf( 'PickupLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 	
 	public function test_getPickupLotsByPickupId_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+
+		// create mock to return array of pickuplots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PickUp", "getPickupLots", "PickupLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+
+		$_REQUEST["id"] = 0;
 		$lots = getPickupLotsByPickupId();
-		$this->checkArrayAndTypes( $lots, 'PickupLot' );
+
+		$this->assertContainsOnlyInstancesOf( 'PickupLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 	
 	
+	/*
 	// getDisposalLotsByPickupLotId
 	public function test_getDisposalLotsByPickupLotId_noId() {
 		$lots = getDisposalLotsByPickupLotId();
