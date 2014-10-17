@@ -215,11 +215,19 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
                 var question = questions[j];
                 console.log(question);
-                if(question.Responses && question.Responses.Recommendations)this.recommendations.concat(question.Responses.Recommendations);
-                if(question.SupplementalRecommendations)this.recommendations.concat(question.SupplementalRecommendations);
+                if(question.Responses && question.Responses.Recommendations) {
+                  this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
+                }
+                if(question.SupplementalRecommendations) {
+                  this.recommendations = this.recommendations.concat(question.SupplementalRecommendations);
+                }
 
-                if(question.Responses && question.Responses.Observations)this.observations.concat(question.Responses.Observations);
-                if(question.SupplementalObservations)this.observations.concat(question.SupplementalObservations);
+                if(question.Responses && question.Responses.Observations) {
+                  this.observations = this.observations.concat(question.Responses.Observations);
+                }
+                if(question.SupplementalObservations) {
+                  this.observations = this.observations.concat(question.SupplementalObservations);
+                }
 
             }
         }
