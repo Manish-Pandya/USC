@@ -513,6 +513,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
 		$this->assertCount( 5, $auths );
 	}
+
 	
 	// getPickupLotsByPickupId
 	public function test_getPickupLotsByPickupId_noId() {
@@ -549,27 +550,45 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertContainsOnlyInstancesOf( 'PickupLot', $lots );
 		$this->assertCount( 5, $lots );
 	}
+
 	
-	
-	/*
 	// getDisposalLotsByPickupLotId
 	public function test_getDisposalLotsByPickupLotId_noId() {
 		$lots = getDisposalLotsByPickupLotId();
-		$this->assertIsA( $lots, 'ActionError' );
+
+		// should have returned actionError with error code for missing parameter
+		$this->assertInstanceOf( 'ActionError', $lots );
+		$this->assertEquals( 201, $lots->getStatusCode() );
+
 	}
 	
 	public function test_getDisposalLotsByPickupLotId_passId() {
-		$lots = getDisposalLotsByPickupLotId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
+		
+		// create mock to return array of pickuplots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PickupLot", "getDisposalLots", "DisposalLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+		
+		$lots = getDisposalLotsByPickupLotId( 0 );
+
+		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 	
 	public function test_getDisposalLotsByPickupLotId_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+
+		// create mock to return array of pickuplots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PickupLot", "getDisposalLots", "DisposalLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+
+		$_REQUEST["id"] = 0;
 		$lots = getDisposalLotsByPickupLotId();
-		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
+
+		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 
 
+	/*
 	// getDisposalLotsByDrumId
 	public function test_getDisposalLotsByDrumId_noId() {
 		$lots = getDisposalLotsByDrumId();

@@ -215,7 +215,7 @@ function getDisposalLotsByPickupLotId($id = NULL) {
 		return $pickupLot->getDisposalLots();
 	}
 	else {
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'id' was provided", 201);
 	}
 }
 
