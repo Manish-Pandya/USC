@@ -138,7 +138,7 @@ require_once '../top_view.php';
 								<li>
 									 <form>
 									 	<input type="hidden" value="recommendation" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
-							        	<textarea ng-model="question.recommendationText" rows="6" style="width:100%;"></textarea>
+							        	<textarea ng-model="question.recommendationText" rows="2" style="width:100%;"></textarea>
 								        <input  class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="createNewNoteOrRec(question,question.Responses,false,'recommendation')"/>
 								        <input  class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'recommendation')"/>
 								    	<img ng-show="question.savingNew" class="smallLoading" src="../../img/loading.gif"/>
@@ -175,7 +175,7 @@ require_once '../top_view.php';
 								<li>		
 									<form>
 									 	<input type="hidden" value="note" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
-							        	<textarea ng-model="question.noteText" rows="6" style="width:100%;"></textarea>
+							        	<textarea ng-model="question.noteText" rows="2" style="width:100%;"></textarea>
 								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="createNewNoteOrRec(question,question.Responses,false,'observation')"/>
 								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Note Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'observation')"/>
 								        <img ng-show="questionquestion.savingNew" class="smallLoading" src="../../img/loading.gif"/>

@@ -35,7 +35,7 @@ require_once '../top_view.php';
 				<ul>
 					<li ng-repeat="(key, child) in child.ActiveSubHazards">
 						<label class="checkbox inline">
-							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child)"/>
 							<span class="metro-checkbox">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
 						</label>
 					</li>
@@ -338,11 +338,12 @@ require_once '../top_view.php';
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
+
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
 		<li><a ng-click="openNotes()"><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
-		<li><a href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
+		<li><a href="InspectionChecklist.php#?inspection={{location.inspectionId}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
 	</ul>
 </div>
 </span>

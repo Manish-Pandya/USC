@@ -1786,11 +1786,33 @@ function saveHazardRoomRelations( $hazard = null ){
 			$room->setContainsHazard(false);
 		}
 
-		foreach($hazard->getInspectionRooms() as $room){
+		//get the parent so that we can determine if it's present in each of the rooms
+		$parentDao = getDao(new Hazard());
+		$parent    = $parentDao->getById($hazard->getParent_hazard_id());
+		$parent->setInspectionRooms($hazard->getInspectionRooms());
+		$parent->filterRooms();
+		$parentRooms = $parent->getInspectionRooms();
+
+		$parentsToSkip = array(10000,1,10009,10010);
+
+		foreach($hazard->getInspectionRooms() as $i=>$room){
 			if($hazard->getIsPresent() == true){
+				$LOG->debug('hazard was present');
 				//create hazard room relations
 				$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 				$room->setContainsHazard(true);
+
+				if( !in_array($parent->getKey_id(), $parentsToSkip) ){
+					if($parentRooms[$i]->getContainsHazard() == true){
+						$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+						$room->setContainsHazard(true);
+					}
+				}else{
+					$LOG->debug('hazard was a child of root');
+					$result = saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+					$room->setContainsHazard(true);
+				}
+
 				foreach($hazard->getActiveSubHazards() as $subhazard){
 					$subhazard->setInspectionRooms($inspectionRooms);
 
