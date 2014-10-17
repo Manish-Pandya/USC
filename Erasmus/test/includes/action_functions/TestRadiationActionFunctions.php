@@ -472,9 +472,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(201, $auths->getStatusCode() );
 	} 
 	
-	/*
 	public function test_getAuthorizationsByPIId_passId() {
-		/*
+
 		// authorizations to be returned by mock
 		$arrayOfAuths = array_fill(0, 3, new Authorization());
 		
@@ -485,17 +484,27 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// tell Dao (used by action functions) to return the mocked PI
 		$this->setGetByIdToReturn($PiMock);
 		
+		$auths = getAuthorizationsByPIId( 0 );
 		
-		$auths = getAuthorizationsByPIId( KEY_ID );
-		
-		$this->checkArrayAndTypes( $auths, 'Authorization' );
+		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
 	}
 	
 	public function test_getAuthorizationsByPIId_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		
+		// authorizations to be returned by mock
+		$arrayOfAuths = array_fill(0, 3, new Authorization());
+		
+		// make a PI mock that returns above authorizations when asked.
+		$PiMock = $this->getMock('PrincipalInvestigator');
+		$PiMock->method('getAuthorizations')->willReturn($arrayOfAuths);
+		
+		// tell Dao (used by action functions) to return the mocked PI
+		$this->setGetByIdToReturn($PiMock);
+		
+		$_REQUEST["id"] = 0;
 		$auths = getAuthorizationsByPIId();
 		
-		$this->checkArrayAndTypes( $auths, 'Authorization' );
+		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
 	}
 	
 
@@ -611,21 +620,5 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$types = getAllWasteTypes();
 		$this->checkArrayAndTypes( $types, 'WasteType' );
 	}
-
-	
-	// UTILITY FUNCTIONS
-	
-	// confirms that given object is an array and that nested objects are of given type
-	public function checkArrayAndTypes($object, $targetType) {
-		$this->assertTrue( is_array($object) );
-		
-		// if array is empty, below foreach loop will not run
-		$this->assertFalse( empty($object) );
-
-		foreach( $object as $element ) {
-			$this->assertIsA( $element, $targetType );
-		}
-	}
-	
 	*/
 }
