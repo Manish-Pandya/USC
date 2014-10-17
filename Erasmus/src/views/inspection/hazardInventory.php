@@ -35,8 +35,7 @@ require_once '../top_view.php';
 				<ul>
 					<li ng-repeat="(key, child) in child.ActiveSubHazards">
 						<label class="checkbox inline">
-							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, +
-								)"/>
+							<input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child)"/>
 							<span class="metro-checkbox">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
 						</label>
 					</li>
