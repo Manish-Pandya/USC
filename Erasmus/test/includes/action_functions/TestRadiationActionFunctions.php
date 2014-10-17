@@ -36,6 +36,19 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	}
 	
+	// returns mock of type $mockType that will return an array of $itemType with
+	// length $itemCount when $methodName is called
+	function prepareMockToReturnArray( $mockType, $methodName, $itemType, $itemCount = 3 ) {
+		// create array filled with type $itemType
+		$array = array_fill( 0, $itemCount, new $itemType() );
+		
+		// create a mock that returns array of itemType when methodName is called
+		$mock = $this->getMock( $mockType );
+		$mock->method( $methodName )->willReturn( $array );
+		
+		return $mock;
+	}
+	
 	// sets dao factory to return a new given mock dao
 	function setMockDao( $mockDao ) {
 		$newFactory = new DaoFactory();
@@ -474,37 +487,31 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
 	public function test_getAuthorizationsByPIId_passId() {
 
-		// authorizations to be returned by mock
-		$arrayOfAuths = array_fill(0, 3, new Authorization());
+		// create mock that will return array of authorizations when asked
+		$mock = $this->prepareMockToReturnArray( "PrincipalInvestigator", "getAuthorizations", "Authorization", 5 );
 		
-		// make a PI mock that returns above authorizations when asked.
-		$PiMock = $this->getMock('PrincipalInvestigator');
-		$PiMock->method('getAuthorizations')->willReturn($arrayOfAuths);
-		
-		// tell Dao (used by action functions) to return the mocked PI
-		$this->setGetByIdToReturn($PiMock);
+		// tell Dao to use the created mock
+		$this->setGetByIdToReturn( $mock );
 		
 		$auths = getAuthorizationsByPIId( 0 );
 		
 		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
+		$this->assertCount( 5, $auths );
 	}
 	
 	public function test_getAuthorizationsByPIId_requestId() {
 		
-		// authorizations to be returned by mock
-		$arrayOfAuths = array_fill(0, 3, new Authorization());
+		// create mock that will return array of authorizations when asked
+		$mock = $this->prepareMockToReturnArray( "PrincipalInvestigator", "getAuthorizations", "Authorization", 5 );
 		
-		// make a PI mock that returns above authorizations when asked.
-		$PiMock = $this->getMock('PrincipalInvestigator');
-		$PiMock->method('getAuthorizations')->willReturn($arrayOfAuths);
-		
-		// tell Dao (used by action functions) to return the mocked PI
-		$this->setGetByIdToReturn($PiMock);
+		// tell Dao to use the created mock
+		$this->setGetByIdToReturn( $mock );
 		
 		$_REQUEST["id"] = 0;
 		$auths = getAuthorizationsByPIId();
 		
 		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
+		$this->assertCount( 5, $auths );
 	}
 	
 
