@@ -72,8 +72,12 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 })
 
 .factory('postInspectionFactory', function(convenienceMethods,$q){
+
   var factory = {};
   var inspection = {};
+  factory.recommendations = [];
+  factory.observations = [];
+
   factory.getInspectionData = function(url){
     //return convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById3&id=132&callback=JSON_CALLBACK', this.onFailGet);
   };
@@ -86,8 +90,8 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     //this should call convenienceMethods call to update an object on the server
   };
 
-  factory.setInspection = function(data){
-    return this.inspection = data;
+  factory.setInspection = function(inspection){
+    return this.inspection = inspection;
   };
 
   factory.saveCorrectiveAction = function(action){
@@ -192,6 +196,48 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     }
     return this.inspection = inspection;
   }
+
+  factory.setRecommendationsAndObservations = function()
+  {   
+
+        var defer = $q.defer();
+
+        var checklistLength = this.inspection.Checklists.length;
+
+        for(var i = 0; i < checklistLength; i++){
+
+            var checklist = this.inspection.Checklists[i];
+
+            var questions = checklist.Questions;
+            var qLength   = questions.length
+
+            for(var j = 0; j < qLength; j++){
+
+                var question = questions[j];
+                console.log(question);
+                if(question.Responses && question.Responses.Recommendations)this.recommendations.concat(question.Responses.Recommendations);
+                if(question.SupplementalRecommendations)this.recommendations.concat(question.SupplementalRecommendations);
+
+                if(question.Responses && question.Responses.Observations)this.observations.concat(question.Responses.Observations);
+                if(question.SupplementalObservations)this.observations.concat(question.SupplementalObservations);
+
+            }
+        }
+
+        defer.resolve();
+        return defer.promise;
+  }
+
+  factory.getRecommendations = function()
+  {
+          return this.recommendations;
+  }
+
+  factory.getObservations = function()
+  {
+          return this.observations;
+  }
+
   return factory;
 });
 
@@ -357,8 +403,9 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       var id = $location.search().inspection;
       if(!postInspectionFactory.getInspection()){
         $scope.doneLoading = false;
-        convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+        convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
           .then(function(promise){
+            console.log(promise.data);
 
             //set the inspection date as a javascript date object
             if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
@@ -367,6 +414,16 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             $scope.doneLoading = true;
             // call the manager's setter to store the inspection in the local model
             postInspectionFactory.setInspection($scope.inspection);
+
+            postInspectionFactory.setRecommendationsAndObservations()
+                .then(
+                  function(){
+                    console.log(postInspectionFactory.getRecommendations());
+                    $scope.recommendations = postInspectionFactory.getRecommendations();
+                  });
+
+            console.log($scope.recommendations);
+
             $scope.doneLoading = true;
             //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
             //organized by parent hazard
