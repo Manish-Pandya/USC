@@ -588,25 +588,42 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 
 
-	/*
 	// getDisposalLotsByDrumId
 	public function test_getDisposalLotsByDrumId_noId() {
 		$lots = getDisposalLotsByDrumId();
-		$this->assertIsA( $lots, 'ActionError' );
+
+		// should have returned ActionError with status code for missing parameter
+		$this->assertInstanceOf('ActionError', $lots);
+		$this->assertEquals( 201, $lots->getStatusCode() );
 	}
 	
 	public function test_getDisposalLotsByDrumId_passId() {
-		$lots = getDisposalLotsByDrumId( KEY_ID );
-		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
+		
+		// create mock to return array of disposalLots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "Drum", "getDisposalLots", "DisposalLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+		
+		$lots = getDisposalLotsByDrumId( 0 );
+
+		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 	
 	public function test_getDisposalLotsByDrumId_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		
+		// create mock to return array of disposalLots, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "Drum", "getDisposalLots", "DisposalLot", 5 );
+		$this->setGetByIdToReturn( $mock );
+		
+		$_REQUEST["id"] = 0;
 		$lots = getDisposalLotsByDrumId();
-		$this->checkArrayAndTypes( $lots, 'DisposalLot' );
+
+		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
+		$this->assertCount( 5, $lots );
 	}
 	
 	
+	/*
 	// getParcelUsesByParcelId
 	public function test_getParcelUsesByParcelId_noId() {
 		$uses = getParcelUsesByParcelId();
