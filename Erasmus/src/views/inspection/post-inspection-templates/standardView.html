@@ -31,7 +31,7 @@
 
 		<div class="row">
 			<span class="span6">
-				<h3>Department:</h3><p><span ng-repeat="department in Inspection.PrincipalInvestigator.Departments">{{department.Name}}<span ng-show="!$last">, </span></span></p>
+				<h3>Department<span ng-if="inspection.PrincipalInvestigator.Departments.length > 1">s</span>:</h3><p><span ng-repeat="department in inspection.PrincipalInvestigator.Departments">{{department.Name}}<span ng-show="!$last">, </span></span></p>
 			</span>
 
 			<span class="span3 pull-right">
@@ -61,7 +61,7 @@
 
 		<div class="row">
 			<span class="span6">
-				<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in Inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
+				<h3>Laboratory Room(s):</h3><p><span ng-repeat="room in inspection.PrincipalInvestigator.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
 			</span>
 			<span class="span3 pull-right">
 				<h3 style="width:177px;">EH&S Auditor(s):</h3>
@@ -103,10 +103,10 @@
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
 	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
-	<tr><td style="font-size:1.5em; text-align:center" valign="top">{{criteria}}</td><td valign="top">{{recommendation}}</td></tr>
+	<tr ng-repeat="rec in recommendations"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
-	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold">{{inspection.PrincipalInvestigator.User.Name}}</td></tr>
+	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold"><span ng-if="inspection.closed">{{inspection.PrincipalInvestigator.User.Name}}</span></td></tr>
 </table>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">

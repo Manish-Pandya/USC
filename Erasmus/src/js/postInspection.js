@@ -216,9 +216,24 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
                 var question = questions[j];
                 console.log(question);
                 if(question.Responses && question.Responses.Recommendations) {
+                  //now the time-wasting step of getting the question text for every recommendation.  this could be done by reference in the new orm framekwork
+
+                  var recLen = question.Responses.Recommendations.length;
+
+                  for(var k = 0; k < recLen; k++){
+                        question.Responses.Recommendations[k].Question = question.Text;
+                  }
+
                   this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
                 }
                 if(question.SupplementalRecommendations) {
+                  //now the time-wasting step of getting the question text for every recommendation.  this could be done by reference in the new orm framekwork
+                  var recLen = question.SupplementalRecommendations.length;
+
+                  for(var k = 0; k < recLen; k++){
+                        question.SupplementalRecommendations[k].Question = question.Text;
+                  }
+
                   this.recommendations = this.recommendations.concat(question.SupplementalRecommendations);
                 }
 
@@ -355,7 +370,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     $scope.sending = false;
     $scope.emailSent = 'success';
     
-    console.log($rootScope.Inspection);
+    console.log($rootScope.inspection);
     evaluateCloseInspection();
 
   }
@@ -369,7 +384,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
   function evaluateCloseInspection(){
     var setCompletedDate  = true;
-    $rootScope.Checklists = angular.copy($rootScope.Inspection.Checklists);
+    $rootScope.Checklists = angular.copy($rootScope.inspection.Checklists);
     angular.forEach($rootScope.Checklists, function(checklist, key){
         angular.forEach(checklist.Questions, function(question, key){
           if(question.Responses && question.Responses.DeficiencySelections){
@@ -384,7 +399,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function setInspectionClosed(){
-    var inspectionDto = angular.copy($rootScope.Inspection);
+    var inspectionDto = angular.copy($rootScope.inspection);
     inspectionDto.date_closed = new Date();
     console.log(inspectionDto);
     var url = "../../ajaxaction.php?action=saveInspection";
@@ -394,8 +409,9 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   function onSetInspectionClosed(data){
     console.log('saved')
     data.Checklists = angular.copy($rootScope.Checklists);
-    $rootScope.Inspection = data;
-    $scope.inspection = data;
+    $rootScope.inspection = data;
+    $rootScope.inspection.closed = true;
+    $scope.inspection = $rootScope.inspection;
   }
 
   function onFailSetInspecitonClosed(){
@@ -428,9 +444,10 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
                   function(){
                     console.log(postInspectionFactory.getRecommendations());
                     $scope.recommendations = postInspectionFactory.getRecommendations();
+                    console.log($scope.recommendations);
+
                   });
 
-            console.log($scope.recommendations);
 
             $scope.doneLoading = true;
             //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
