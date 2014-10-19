@@ -2130,8 +2130,6 @@ function resetChecklists( $id = NULL ){
 		$inspection->setEntityMaps($entityMaps);
 		$inspection->setChecklists($checklists);
 		return $inspection;
-
-		return $inspection;
 	}
 	else{
 		//error
