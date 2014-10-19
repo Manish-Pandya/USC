@@ -118,10 +118,10 @@ require_once '../top_view.php';
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-change="handleNotesAndRecommendations(question, recommendation)" />
 										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.isNew}">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-show="recommendation.isNew" ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
-									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
-										<textarea ng-show="!recommendation.edit" ng-model="recommendationCopy.Text" style="width:50%"></textarea><br>
-										<a ng-show="recommendation.edit" ng-click="saveEdit(question, recommendationCopy, recommendation)" class="btn btn-success">Save</a>
-										<a ng-show="recommendation.edit" ng-click="cancelEdit(recommendation)" class="btn btn-danger">Cancel</a>
+									<span ng-show="recommendation.edit" style="margin: 20px 0 ;display: block;">
+										<textarea ng-model="recommendationCopy.Text" style="width:50%"></textarea><br>
+										<a ng-click="saveEdit(question, recommendationCopy, recommendation)" class="btn btn-success">Save</a>
+										<a ng-click="cancelEdit(recommendation)" class="btn btn-danger">Cancel</a>
 									</span>
 								</li>
 								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
