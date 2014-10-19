@@ -656,25 +656,39 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// getActiveParcelsFromPIById
 	public function test_getActiveParcelsFromPIById_noId() {
 		$parcels = getActiveParcelsFromPIById();
-		$this->assertIsA( $parcels, 'ActionError' );
+
+		$this->assertInstanceOf( 'ActionError', $parcels );
+		$this->assertEquals( 201, $parcels->getStatusCode() );
 	}
 	
 	public function test_getActiveParcelsFromPIById_passId() {
-		$parcels = getActiveParcelsFromPIById( KEY_ID );
-		$this->checkArrayAndTypes( $parcels, 'Parcel' );
+		// create mock to return array of Parcels, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PrincipalInvestigator", "getActiveParcels", "Parcel", 5 );
+		$this->setGetByIdToReturn( $mock );
+		
+		$parcels = getActiveParcelsFromPIById( 0 );
+
+		$this->assertContainsOnlyInstancesOf( 'Parcel', $parcels );
+		$this->assertCount( 5, $parcels );
 	}
 	
 	public function test_getActiveParcelsFromPIById_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+        // create mock to return array of Parcels, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "PrincipalInvestigator", "getActiveParcels", "Parcel", 5 );
+		$this->setGetByIdToReturn( $mock );
+		
+		$_REQUEST["id"] = 0;
 		$parcels = getActiveParcelsFromPIById();
-		$this->checkArrayAndTypes( $parcels, 'Parcel' );
+
+		$this->assertContainsOnlyInstancesOf( 'Parcel', $parcels );
+		$this->assertCount( 5, $parcels );
 	}
 	
 	
+	/*
 	// Tests for "getAll" functions
 	
 	public function test_getAllCarboys() {

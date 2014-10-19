@@ -260,7 +260,7 @@ function getActiveParcelsFromPIById($id = NULL) {
 		return $selectedPi->getActiveParcels();
 	}
 	else {
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'id' was provided", 201);
 	}
 }
 
