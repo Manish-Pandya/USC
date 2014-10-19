@@ -245,7 +245,7 @@ function getParcelUsesByParcelId($id = NULL) {
 		return $selectedParcel->getUses();
 	}
 	else {
-		return new ActionError("No request parameter 'id' was provided");
+		return new ActionError("No request parameter 'id' was provided", 201);
 	}
 }
 

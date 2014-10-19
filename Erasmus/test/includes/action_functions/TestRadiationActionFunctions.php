@@ -623,25 +623,40 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// getParcelUsesByParcelId
 	public function test_getParcelUsesByParcelId_noId() {
 		$uses = getParcelUsesByParcelId();
-		$this->assertIsA( $uses, 'ActionError' );
+
+		// should have returned actionError with status code for missing error
+		$this->assertInstanceOf( 'ActionError', $uses );
+		$this->assertEquals( 201, $uses->getStatusCode() );
 	}
 	
 	public function test_getParcelUsesByParcelId_passId() {
-		$uses = getParcelUsesByParcelId( KEY_ID );
-		$this->checkArrayAndTypes( $uses, 'ParcelUse' );
+		// create mock to return array of ParcelUses, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "Parcel", "getUses", "ParcelUse", 5 );
+		$this->setGetByIdToReturn( $mock );
+
+		$uses = getParcelUsesByParcelId( 0 );
+		
+		$this->assertContainsOnlyInstancesOf( 'ParcelUse', $uses );
+		$this->assertCount( 5, $uses );
 	}
 	
 	public function test_getParcelUsesByParcelId_requestId() {
-		$_REQUEST["id"] = KEY_ID;
+		// create mock to return array of ParcelUses, set Dao to use that mock
+		$mock = $this->prepareMockToReturnArray( "Parcel", "getUses", "ParcelUse", 5 );
+		$this->setGetByIdToReturn( $mock );
+
+		$_REQUEST["id"] = 0;
 		$uses = getParcelUsesByParcelId();
-		$this->checkArrayAndTypes( $uses, 'ParcelUse' );
+		
+		$this->assertContainsOnlyInstancesOf( 'ParcelUse', $uses );
+		$this->assertCount( 5, $uses );
 	}
 	
 	
+	/*
 	// getActiveParcelsFromPIById
 	public function test_getActiveParcelsFromPIById_noId() {
 		$parcels = getActiveParcelsFromPIById();
