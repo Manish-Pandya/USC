@@ -16,8 +16,6 @@ require_once(dirname(__FILE__) . '/../../../src/includes/action_functions.php');
 
 // TODO: check that getById was called with correct arguments
 
-// Note: Tests not yet converted to PHPUnit are commented out
-
 class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
@@ -69,11 +67,15 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 		setDaoFactory( $newFactory );
 	}
-	
 
-	// tests for basic getters
 	
-	// getIsotopeById
+	/*************************************************************************\
+	 *                         Basic Get Tests                               *
+	\*************************************************************************/
+
+	
+	/* getIsotopeById */
+
 	public function test_getIsotopeById_noId() {
 		$this->setGetByIdToReturn(new Isotope);
 		
@@ -95,7 +97,6 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $isotope->getKey_id() );
 	}
 	
-	
 	public function test_getIsotopeById_requestId() {
 		// set mock to return object with specific type and key_id
 		$returnedIsotope = new Isotope();
@@ -110,7 +111,9 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $isotope->getKey_id() );
 	}
 
-	// getCarboyById
+
+	/* getCarboyById */
+
 	public function test_getCarboyById_noId() {
 		$this->setGetByIdToReturn(new Carboy());
 
@@ -145,7 +148,9 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $carboy->getKey_id() );
 	}
 
-	// getCarboyUseCycleById
+	
+	/* getCarboyUseCycleById */
+
 	public function test_getCarboyUseCycleById_noId() {
 		$this->setGetByIdToReturn( new CarboyUseCycle() );
 
@@ -183,7 +188,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	// getDisposalLotById
+	/* getDisposalLotById */
+
 	public function test_getDisposalLotById_noId() {
 		$this->setGetByIdToReturn( new DisposalLot() );
 
@@ -220,7 +226,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	// getDrumById
+	/* getDrumById */
+
 	public function test_getDrumById_noId() {
 		$this->setGetByIdToReturn( new Drum() );
 
@@ -256,7 +263,9 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $drum->getKey_id() );
 	}
 	
-	// getParcelByid
+
+	/* getParcelByid */
+
 	public function test_getParcelById_noId() {
 		$this->setGetByIdToReturn( new Parcel() );
 
@@ -293,7 +302,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// getParcelUseById
+	/* getParcelUseById */
+
 	public function test_getParcelUseById_noId() {
 		$this->setGetByIdToReturn( new ParcelUse() );
 
@@ -331,7 +341,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	// getPickupById
+	/* getPickupById */
+
 	public function test_getPickupById_noId() {
 		$this->setGetByIdToReturn( new Pickup() );
 
@@ -369,7 +380,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// getPickupLotById
+	/* getPickupLotById */
+
 	public function test_getPickupLotById_noId() {
 		$this->setGetByIdToReturn( new PickupLot() );
 
@@ -407,7 +419,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 
-	// getPurchaseOrderById
+	/* getPurchaseOrderById */
+
 	public function test_getPurchaseOrderById_noId() {
 		$this->setGetByIdToReturn( new PurchaseOrder() );
 
@@ -445,7 +458,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// getWasteTypeById
+	/* getWasteTypeById */
+
 	public function test_getWasteTypeById_noId() {
 		$this->setGetByIdToReturn( new WasteType() );
 
@@ -482,10 +496,14 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $type->getKey_id() );
 	}
 	
+
+	/*************************************************************************\
+	 *                       Get By Relationship Tests                       *
+	\*************************************************************************/
 	
-	// tests for "get by relationship" functions
-	
-	// getAuthorizationsByPIId
+
+	/* getAuthorizationsByPIId */
+
 	public function test_getAuthorizationsByPIId_noId() {
 		
 		$auths = getAuthorizationsByPIId();
@@ -528,7 +546,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 
 	
-	// getPickupLotsByPickupId
+	/* getPickupLotsByPickupId */
+
 	public function test_getPickupLotsByPickupId_noId() {
 		$lots = getPickupLotsByPickupId();
 
@@ -565,7 +584,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 
 	
-	// getDisposalLotsByPickupLotId
+	/* getDisposalLotsByPickupLotId */
+	
 	public function test_getDisposalLotsByPickupLotId_noId() {
 		$lots = getDisposalLotsByPickupLotId();
 
@@ -601,7 +621,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 
 
-	// getDisposalLotsByDrumId
+	/* getDisposalLotsByDrumId */
+	
 	public function test_getDisposalLotsByDrumId_noId() {
 		$lots = getDisposalLotsByDrumId();
 
@@ -636,7 +657,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// getParcelUsesByParcelId
+	/* getParcelUsesByParcelId */
+	
 	public function test_getParcelUsesByParcelId_noId() {
 		$uses = getParcelUsesByParcelId();
 
@@ -669,7 +691,8 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// getActiveParcelsFromPIById
+	/* getActiveParcelsFromPIById */
+	
 	public function test_getActiveParcelsFromPIById_noId() {
 		$parcels = getActiveParcelsFromPIById();
 
@@ -701,8 +724,12 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	// Tests for "getAll" functions
+	/**************************************************************************\
+	 *                            GetAll Tests                                *
+	\**************************************************************************/
 	
+
+	/* getAllCarboys */
 	public function test_getAllCarboys() {
 		$this->setGetAllToReturn( 'Carboy', 5 );
 
@@ -712,6 +739,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $carboys );
 	}
 	
+	/* getAllDrums */
 	public function test_getAllDrums() {
 		$this->setGetAllToReturn( 'Drum', 5 );
 		
@@ -721,6 +749,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $drums );
 	}
 	
+	/* getAllIsotopes */
 	public function test_getAllIsotopes() {
 		$this->setGetAllToReturn( 'Isotope', 5 );
 
@@ -730,6 +759,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $isotopes );
 	}
 	
+	/* getAllWasteTypes */
 	public function test_getAllWasteTypes() {
 		$this->setGetAllToReturn( 'WasteType', 5 );
 		
