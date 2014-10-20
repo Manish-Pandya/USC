@@ -36,6 +36,19 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 
 	}
 	
+	//WARNING: setGetById and setGetAll will overwrite each other if used in the same test method
+	
+	// sets mock for GenericDAO to return array of objects of specified type when getAll is called
+	function setGetAllToReturn( $itemType, $itemCount = 3 ) {
+		
+		$itemArray = array_fill( 0, $itemCount, new $itemType );
+		
+		$mockDao = $this->getMock( 'GenericDao' );
+		$mockDao->method( 'getAll' )->willReturn( $itemArray );
+		$this->setMockDao( $mockDao );
+
+	}
+	
 	// returns mock of type $mockType that will return an array of $itemType with
 	// length $itemCount when $methodName is called
 	function prepareMockToReturnArray( $mockType, $methodName, $itemType, $itemCount = 3 ) {
@@ -688,14 +701,18 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	/*
 	// Tests for "getAll" functions
 	
 	public function test_getAllCarboys() {
+		$this->setGetAllToReturn( 'Carboy', 5 );
+
 		$carboys = getAllCarboys();
-		$this->checkArrayAndTypes( $carboys, 'Carboy' );
+
+		$this->assertContainsOnlyInstancesOf( 'Carboy', $carboys );
+		$this->assertCount( 5, $carboys );
 	}
 	
+	/*
 	public function test_getAllDrums() {
 		$drums = getAllDrums();
 		$this->checkArrayAndTypes( $drums, 'Drum' );
