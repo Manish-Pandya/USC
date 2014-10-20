@@ -271,22 +271,22 @@ function getActiveParcelsFromPIById($id = NULL) {
 
 
 function getAllCarboys() {
-	$carboyDao = new GenericDAO(new Carboy());
+	$carboyDao = getDao(new Carboy());
 	return $carboyDao->getAll();
 }
 
 function getAllDrums() {
-	$drumDao = new GenericDAO(new Drum());
+	$drumDao = getDao(new Drum());
 	return $drumDao->getAll();
 }
 
 function getAllIsotopes() {
-	$isotopeDao = new GenericDAO(new Isotope());
+	$isotopeDao = getDao(new Isotope());
 	return $isotopeDao->getAll();
 }
 
 function getAllWasteTypes() {
-	$typeDao = new GenericDAO(new WasteType());
+	$typeDao = getDao(new WasteType());
 	return $typeDao->getAll();
 }
 
