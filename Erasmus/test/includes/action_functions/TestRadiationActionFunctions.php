@@ -712,12 +712,16 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $carboys );
 	}
 	
-	/*
 	public function test_getAllDrums() {
+		$this->setGetAllToReturn( 'Drum', 5 );
+		
 		$drums = getAllDrums();
-		$this->checkArrayAndTypes( $drums, 'Drum' );
+
+		$this->assertContainsOnlyInstancesOf( 'Drum', $drums );
+		$this->assertCount( 5, $drums );
 	}
 	
+	/*
 	public function test_getAllIsotopes() {
 		$isotopes = getAllIsotopes();
 		$this->checkArrayAndTypes( $isotopes, 'Isotope' );
