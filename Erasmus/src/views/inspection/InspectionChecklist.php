@@ -136,7 +136,7 @@ require_once '../top_view.php';
 									</span>
 								</li><!--editItem = function(item, question)-->
 								<li>
-									 <form>
+									 <form ng-if="!recommendationCopy">
 									 	<input type="hidden" value="recommendation" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
 							        	<textarea ng-model="question.recommendationText" rows="2" style="width:100%;"></textarea>
 								        <input  class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="createNewNoteOrRec(question,question.Responses,false,'recommendation')"/>
@@ -173,7 +173,7 @@ require_once '../top_view.php';
 									</span>
 								</li>
 								<li>		
-									<form>
+									<form ng-if="!noteCopy">
 									 	<input type="hidden" value="note" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
 							        	<textarea ng-model="question.noteText" rows="2" style="width:100%;"></textarea>
 								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="createNewNoteOrRec(question,question.Responses,false,'observation')"/>
