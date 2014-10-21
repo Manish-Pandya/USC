@@ -58,14 +58,13 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
       controller: inspectionReviewController 
     }
   )
-  /*
+  
   .when('/details', 
     {
       templateUrl: 'post-inspection-templates/inspectionDetails.html', 
       controller: inspectionDetailsController 
     }
   )
-*/
   .otherwise(
     {redirectTo: '/report'}
   );
@@ -214,7 +213,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
             for(var j = 0; j < qLength; j++){
 
                 var question = questions[j];
-                console.log(question);
                 if(question.Responses && question.Responses.Recommendations) {
                   //now the time-wasting step of getting the question text for every recommendation.  this could be done by reference in the new orm framekwork
 
@@ -226,22 +224,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
                   this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
                 }
-                if(question.SupplementalRecommendations) {
+                if(question.Responses && question.Responses.SupplementalRecommendations) {
                   //now the time-wasting step of getting the question text for every recommendation.  this could be done by reference in the new orm framekwork
-                  var recLen = question.SupplementalRecommendations.length;
+                  var recLen = question.Responses.SupplementalRecommendations.length;
 
                   for(var k = 0; k < recLen; k++){
-                        question.SupplementalRecommendations[k].Question = question.Text;
+                        question.Responses.SupplementalRecommendations[k].Question = question.Text;
                   }
 
-                  this.recommendations = this.recommendations.concat(question.SupplementalRecommendations);
+                  this.recommendations = this.recommendations.concat(question.Responses.SupplementalRecommendations);
                 }
 
                 if(question.Responses && question.Responses.Observations) {
                   this.observations = this.observations.concat(question.Responses.Observations);
                 }
-                if(question.SupplementalObservations) {
-                  this.observations = this.observations.concat(question.SupplementalObservations);
+                if(question.Responses && question.Responses.SupplementalObservations) {
+                  this.observations = this.observations.concat(question.Responses.SupplementalObservations);
                 }
 
             }
@@ -283,8 +281,11 @@ mainController = function($scope, $location, postInspectionFactory,convenienceMe
   }
   */
 }
+inspectionDetailsController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
+  $scope.inspection = postInspectionFactory.getInspection();
+}
 
-inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory){
+inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
   if($location.search().inspection){
     var id = $location.search().inspection;
 
@@ -384,12 +385,12 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
   function evaluateCloseInspection(){
     var setCompletedDate  = true;
-    $rootScope.Checklists = angular.copy($rootScope.inspection.Checklists);
+    $rootScope.inspection = $scope.inspection;
+    //$rootScope.Checklists = angular.copy($rootScope.inspection.Checklists);
     angular.forEach($rootScope.Checklists, function(checklist, key){
         angular.forEach(checklist.Questions, function(question, key){
           if(question.Responses && question.Responses.DeficiencySelections){
             angular.forEach(question.Responses.DeficiencySelections, function(defSel, key){
-              console.log('here');
               if(!defSel.Corrected_in_inspection)setCompletedDate = false;
             });
           }
@@ -407,11 +408,12 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function onSetInspectionClosed(data){
-    console.log('saved')
+    console.log('saved');
     data.Checklists = angular.copy($rootScope.Checklists);
     $rootScope.inspection = data;
     $rootScope.inspection.closed = true;
     $scope.inspection = $rootScope.inspection;
+    console.log($rootScope.inspection);
   }
 
   function onFailSetInspecitonClosed(){
@@ -420,7 +422,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
 }
 
-inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory){
+inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory,$rootScope){
   
   function init(){
     if($location.search().inspection){
@@ -442,10 +444,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             postInspectionFactory.setRecommendationsAndObservations()
                 .then(
                   function(){
-                    console.log(postInspectionFactory.getRecommendations());
                     $scope.recommendations = postInspectionFactory.getRecommendations();
-                    console.log($scope.recommendations);
-
                   });
 
 
