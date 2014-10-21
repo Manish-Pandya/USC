@@ -35,7 +35,9 @@
 			</span>
 
 			<span class="span3 pull-right">
-				<h3>Response Date:</h3><p style="color:#f00">OPEN</p>
+				<h3>Response Date:</h3>
+				<p ng-if="!inspection.Date_closed"style="color:#f00">OPEN</p>
+				<p ng-if="inspection.Date_closed">{{inspection.Date_closed | date:'MM/dd/yyyy'}}</p>
 			</span>
 
 		</div>
@@ -99,14 +101,13 @@
 	
 	<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
-<!--<pre>{{inspection|json}}</pre>-->
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
 	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
-	<tr ng-repeat="rec in recommendations"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
+	<tr ng-repeat="rec in recommendations" ng-if="rec.Is_active"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
-	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold"><span ng-if="inspection.closed">{{inspection.PrincipalInvestigator.User.Name}}</span></td></tr>
+	<tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold"><span ng-if="inspection.Date_closed">{{inspection.PrincipalInvestigator.User.Name}}</span></td></tr>
 </table>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">
