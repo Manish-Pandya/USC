@@ -595,6 +595,8 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
   $scope.cancelEdit = function(item){
     item.edit = false;
+    $scope.recommendationCopy = false;
+    $scope.noteCopy = false;
   }
 
   $scope.setNoteOrObsActiveOrInactive = function(question, item){

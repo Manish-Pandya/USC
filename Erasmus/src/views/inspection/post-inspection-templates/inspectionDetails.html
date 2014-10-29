@@ -1,9 +1,9 @@
-<div class="loading" ng-show='!doneLoading' >
+<div class="loading" ng-show='!inspection' >
 	  <img class="" src="../../img/loading.gif"/>
 	 Getting Inspection Information...
 	</div>
 	<!--<pre>{{Inspection | json}}</pre>-->
-<span  ng-show='doneLoading'>
+<span  ng-show='inspection'>
 <div class="checklistDetails">
 	<h1 class="row" style="font-weight:bold; margin-bottom:25px;">Inspection Details:</h1>
 	<ul class="key">
@@ -12,21 +12,21 @@
 		<li class="recommendations">Recommendations <!--<span></span>--></li>
 		<li class="observations">Observations <!--<span></span>--></li>
 	</ul>
-	<div ng-repeat="checklist in checklists" class="row detail">
+	<div ng-repeat="checklist in inspection.Checklists" class="row detail">
 		<!--<pre>{{checklist|json}}</pre>-->
 		<h2>{{checklist.label}}</h2>
-		<div class="row-fluid {{question.Response}} checklistDetailsQuestion" ng-repeat="question in checklist.Questions" ng-class="">
+		<div class="row-fluid {{question.Responses.Answer}} checklistDetailsQuestion" ng-repeat="question in checklist.Questions" ng-class="">
 		<div class="span12">
 			<h3 class="span9">{{question.Text}}</h3>
-			<i ng-show="question.Response == 'Yes'"  class="span3 icon-checkmark"></i>
-			<i ng-show="question.Response == 'No'"  class="span3 icon-cancel-2"></i>
-			<i ng-show="question.Response == 'N/A'" class="span3">N/A</i>
+			<i ng-show="question.Responses.Answer == 'Yes'"  class="span3 icon-checkmark"></i>
+			<i ng-show="question.Responses.Answer == 'No'"  class="span3 icon-cancel-2"></i>
+			<i ng-show="question.Responses.Answer == 'N/A'" class="span3">N/A</i>
 		</div>
 		<div style="clear:both; height:0">&nbsp;</div>
-			<span ng-hide="question.Response != 'No'">
+			<span ng-hide="question.Responses.Answer != 'No'">
 				<ul class="deficiencies">
 					<li><h5>Deficiencies:</h5></li>
-					<li ng-repeat="deficiency in question.Deficiencies">
+					<li ng-repeat="deficiency in question.Reponses.Deficiencies">
 						{{deficiency.Text}}
 						<p class="rootCause">Root Cause:  {{deficiency.RootCause.Text}}</p>
 						<!--

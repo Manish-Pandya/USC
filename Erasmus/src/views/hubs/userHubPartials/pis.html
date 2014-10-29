@@ -162,7 +162,7 @@
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				   		
 				    <ul style="margin-top:3px;">
-				    	<li ng-repeat="role in piCopy.User.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+				    	<li ng-repeat="role in piCopy.User.Roles" ng-if="role.Name"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 						</li>
 				    </ul>
 				   </div>
@@ -176,7 +176,7 @@
 						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="piCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || piCopy.User.Username">
 					<ul>
 				    	<li ng-repeat="department in piCopy.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<img ng-show="department.IsDirty" class="smallLoading" src="../../img/loading.gif"/>			         </div>
-</li>
+						</li>
 				    </ul>
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				    </div>
