@@ -11,6 +11,21 @@
 
 class ActionManager {
 
+	private $daoFactory;
+	
+	// during construction, can change daoFactory, for example for testing purposes
+	public function __construct( $daoFactory ) {
+		// default to factory providing GenericDao, required for normal operation
+		if( is_null($daoFactory) ) {
+			$daoFactory = new DaoFactory(new GenericDAO());
+		}
+		$this->daoFactory = $daoFactory;
+	}
+	
+	public function setDaoFactory( $newFactory ) {
+		$this->daoFactory = $newFactory;
+	}
+
 	/**
 	 * Chooses a return value based on the parameters. If $paramValue
 	 * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.
@@ -62,7 +77,7 @@ class ActionManager {
 			return new MockDAO();
 		}
 		else{
-			return new GenericDAO( $modelObject );
+			return $this->daoFactory->createDao($modelObject);
 		}
 	}
 	

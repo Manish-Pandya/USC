@@ -7,6 +7,7 @@
  * GenericDao in constructor for unit testing action functions sepparate from
  * the real GenericDao
  */
+// TODO create interface for Dao Factories
 class DaoFactory {
 
 	public $modelDao;
