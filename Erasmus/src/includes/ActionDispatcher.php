@@ -227,13 +227,12 @@ class ActionDispatcher {
 	 */
 	public function doAction( ActionMapping $actionMapping ){
 		$action_function = $actionMapping->actionFunctionName;
+		$actions = new ActionManager();
 		
-		if( function_exists( $action_function ) ){
+		if( method_exists( $actions, $action_function ) ){
 			//call the specified action function
 			$this->LOG->debug("Executing action function '$action_function'");
-			
-			// Action functions are expected to return the desired data
-			$functionResult = $action_function();
+			$functionResult = $actions->$action_function();
 			
 			return $functionResult;
 		}
