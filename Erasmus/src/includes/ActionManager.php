@@ -301,7 +301,7 @@ class ActionManager {
 		foreach($checklists as $checklist){
 			//if this checklist has a hazard_id, call the saveChecklist public function, which will find and set the master hazard and save the checklist
 			if ($checklist->getHazard_id() != null) {
-				saveChecklist($checklist);
+				$this->saveChecklist($checklist);
 			}
 
 			$dao->save($checklist);
@@ -526,7 +526,7 @@ class ActionManager {
 			$dao = $this->getDao(new Hazard());
 
 			// get Hazard by ID
-			$hazard = getHazardById( $hazardId );
+			$hazard = $this->getHazardById( $hazardId );
 			$LOG->trace("Loaded Hazard to move: $hazard");
 
 			$hazard->setParent_hazard_id=$parentHazardId;
@@ -734,7 +734,7 @@ class ActionManager {
 		if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 
 			// Find the deficiencySelection
-			$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 			if ($ds == null){
 				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -764,7 +764,7 @@ class ActionManager {
 		if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 
 			// Find the deficiencySelection
-			$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
 
 			if ($ds == null){
 				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -1110,9 +1110,9 @@ class ActionManager {
 			$deptId = $decodedObject->getRelation_id();
 			$add = $decodedObject->getAdd();
 
-			$pi = getPIById($PIId);
+			$pi = $this->getPIById($PIId);
 			$departments = $pi->getDepartments();
-			$departmentToAdd = getDepartmentById($deptId);
+			$departmentToAdd = $this->getDepartmentById($deptId);
 
 			if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
 
@@ -1157,9 +1157,9 @@ class ActionManager {
 			$add = $decodedObject->getAdd();
 
 			if( $userID !== NULL && $roleId !== NULL && $add !== null ){
-				$user = getUserById($userID);
+				$user = $this->getUserById($userID);
 				$roles = $user->getRoles();
-				$roleToAdd = getRoleById($roleId);
+				$roleToAdd = $this->getRoleById($roleId);
 
 				// Get a DAO
 				$dao = $this->getDao(new User());
@@ -1386,7 +1386,7 @@ class ActionManager {
 			removeAllInspectionRooms($inspectionDao);
 
 			foreach($roomIds as $id){
-				saveInspectionRoomRelation( $id, $inspectionId, true );
+				$this->saveInspectionRoomRelation( $id, $inspectionId, true );
 			}
 
 		} else {
@@ -1394,7 +1394,7 @@ class ActionManager {
 		}
 
 
-		return getHazardRoomMappingsAsTree( $roomIds );
+		return $this->getHazardRoomMappingsAsTree( $roomIds );
 
 	}
 
@@ -1404,7 +1404,7 @@ class ActionManager {
 		$inspectionId = $inspectionDao->getKey_id();
 
 		foreach($inspectionDao->getRooms() as $room){
-			saveInspectionRoomRelation( $room->getKey_id(), $inspectionId, false );
+			$this->saveInspectionRoomRelation( $room->getKey_id(), $inspectionId, false );
 		}
 
 	}
@@ -1511,7 +1511,7 @@ class ActionManager {
 			if($hazard != null){
 			  $allHazards = $hazard;
 			}else{
-			  $allHazards = getAllHazardsAsTree();
+			  $allHazards = $this->getAllHazardsAsTree();
 			}
 
 			$entityMaps = array();
@@ -1544,7 +1544,7 @@ class ActionManager {
 				$entityMaps[] = new EntityMap("eager","getHasChildren");
 				$entityMaps[] = new EntityMap("lazy","getParentIds");
 				$subhazard->setEntityMaps($entityMaps);
-				filterHazards($subhazard,$rooms);
+				$this->filterHazards($subhazard,$rooms);
 			}
 			return $allHazards;
 		}
@@ -1601,7 +1601,7 @@ class ActionManager {
 				$entityMaps[] = new EntityMap("eager","getHasChildren");
 				$entityMaps[] = new EntityMap("lazy","getParentIds");
 				$subhazard->setEntityMaps($entityMaps);
-				filterHazards($subhazard, $rooms);
+				$this->filterHazards($subhazard, $rooms);
 			}else{
 				$entityMaps = array();
 				$entityMaps[] = new EntityMap("lazy","getSubHazards");
@@ -1734,7 +1734,7 @@ class ActionManager {
 
 			//get the rooms
 			foreach( $roomIdsCsv as $roomId ){
-				$roomDao = getDao( new Room() );
+				$roomDao = getDao( new Room() );.
 				$room = $roomDao->getById( $roomId );
 				$hazardRoomRelations = array_merge($hazardRoomRelations, $room->getHazardRoomRelations());
 			}
@@ -1794,12 +1794,12 @@ class ActionManager {
 
 					if( !in_array($parent->getKey_id(), $parentsToSkip) ){
 						if($parentRooms[$i]->getContainsHazard() == true){
-							saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+							$this->saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 							$room->setContainsHazard(true);
 						}
 					}else{
 						$LOG->debug('hazard was a child of root');
-						saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
+						$this->saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),true);
 						$room->setContainsHazard(true);
 					}
 
@@ -1819,10 +1819,10 @@ class ActionManager {
 
 				}else{
 					//delete room relations
-					saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
+					$this->saveHazardRelation($room->getKey_id(),$hazard->getKey_id(),false);
 					//we must also remove the relationships for any subhazards, so we call recursively
 					foreach($hazard->getActiveSubHazards() as $subhazard){
-						saveHazardRelation($room->getKey_id(),$subhazard->getKey_id(),false);
+						$this->saveHazardRelation($room->getKey_id(),$subhazard->getKey_id(),false);
 						$subhazard->filterRooms();
 					}
 				}
@@ -1865,7 +1865,7 @@ class ActionManager {
 				if($recurse == true){
 					$subs = $hazard->getActiveSubHazards();
 					foreach ($subs as $sub){
-						saveHazardRelation($roomId,$sub->getKey_id(),false,true);
+						$this->saveHazardRelation($roomId,$sub->getKey_id(),false,true);
 					}
 				}
 
@@ -1905,7 +1905,7 @@ class ActionManager {
 			$hazard->setEntityMaps($entityMaps);
 			$hazard->filterRooms();
 
-			filterHazards($hazard, $hazard->getInspectionRooms());
+			$this->filterHazards($hazard, $hazard->getInspectionRooms());
 			return $hazard->getActiveSubHazards();
 		}
 	}
@@ -2188,7 +2188,7 @@ class ActionManager {
 			$selections = array();
 
 			for( $i = 0; $i < 2; $i++ ){
-				$selection = getDeficiencySelectionById($i);
+				$selection = $this->getDeficiencySelectionById($i);
 				//TODO: set response ID?
 				$selections[] = $selection;
 			}
@@ -2227,7 +2227,7 @@ class ActionManager {
 			$recommendations = array();
 
 			for( $i = 0; $i < 2; $i++ ){
-				$recommendation = getRecommendationById($i);
+				$recommendation = $this->getRecommendationById($i);
 				//TODO: set response?
 				$recommendations[] = $recommendation;
 			}
@@ -2314,7 +2314,7 @@ class ActionManager {
 			//TODO: query for Responses with the specified Inspection ID
 			$responses = array();
 			for( $i = 0; $i < 5; $i++ ){
-				$response = getResponseById($i, $keyid);
+				$response = $this->getResponseById($i, $keyid);
 				//TODO: set Inspection?
 				$responses[] = $response;
 			}
@@ -2464,9 +2464,9 @@ class ActionManager {
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 		$hazards = getHazardTreeNode(10000);
 		foreach($hazards as $hazard){
-			setOrderIndicesForSubHazards( $hazard );
+			$this->setOrderIndicesForSubHazards( $hazard );
 		}
-		return getAllHazards();
+		return $this->getAllHazards();
 	}
 
 	public function setOrderIndicesForSubHazards( $hazard = NULL ){
@@ -2539,7 +2539,7 @@ class ActionManager {
 			$dao->save($hazard);
 
 			//we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view
-			return getHazardTreeNode($hazard->getParent_hazard_id());
+			return $this->getHazardTreeNode($hazard->getParent_hazard_id());
 		}
 		else{
 			//error
