@@ -563,7 +563,7 @@ class ActionManager {
 					$siblings = $parentHazard->getSubHazards();
 					$count = count( $siblings );
 
-					if( $this->getIsAlphabetized( $siblings ) ){
+					if( getIsAlphabetized( $siblings ) ){
 
 						//the list is in alphabetical order.  Find the right spot for the new hazard
 						for($i = 0; $i < count( $siblings ); ++$i) {
@@ -1554,7 +1554,7 @@ class ActionManager {
 		}
 	}
 
-	public function filterHazards (&$hazard, $rooms, $generalHazard = null){
+	public function filterHazards (&$hazard, $rooms){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 		$LOG->debug($hazard->getName());
 		$entityMaps = array();
@@ -1567,13 +1567,6 @@ class ActionManager {
 
 		$hazard->setInspectionRooms($rooms);
 		$hazard->filterRooms();
-
-		if(stristr($hazard->getName, 'general hazard') || $generalHazard){
-			$generalHazard = true;
-			if($hazard->getIsPresent() != true){
-				$this->saveHazardRoomRelations( $hazard, $rooms );
-			}
-		}
 
 		if($hazard->getIsPresent() || $hazard->getParent_hazard_id() != 1000){
 			$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
@@ -1594,7 +1587,7 @@ class ActionManager {
 
 			$subhazard->setInspectionRooms($rooms);
 			$subhazard->filterRooms();
-			if($generalHazard)$subhazard->setIsPresent(true);
+
 
 			if($subhazard->getIsPresent() == true){
 				$LOG->debug($subhazard->getName()." is Present? ". $subhazard->getIsPresent());
@@ -1608,7 +1601,7 @@ class ActionManager {
 				$entityMaps[] = new EntityMap("eager","getHasChildren");
 				$entityMaps[] = new EntityMap("lazy","getParentIds");
 				$subhazard->setEntityMaps($entityMaps);
-				$this->filterHazards($subhazard, $rooms, $generalHazard);
+				$this->filterHazards($subhazard, $rooms);
 			}else{
 				$entityMaps = array();
 				$entityMaps[] = new EntityMap("lazy","getSubHazards");
@@ -1752,7 +1745,7 @@ class ActionManager {
 
 
 
-	public function saveHazardRoomRelations( $hazard = null, $rooms = null ){
+	public function saveHazardRoomRelations( $hazard = null ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
@@ -1778,13 +1771,6 @@ class ActionManager {
 			$hazard->setEntityMaps($entityMaps);
 
 			$LOG->debug($hazard);
-
-			//if we are pulling general hazards for an inspection, we need to make sure that they are all in every room
-			//we pass rooms to saveHazardRoomRelations so that we can set the relationships
-			if($rooms){
-				$hazard->setIsPresent(true);
-				$hazard->setInspectionRooms($rooms);
-			}
 
 			//make sure we send back the child hazards with a collection of inspection rooms, and that those rooms do not contain the child hazard
 			$inspectionRooms = $hazard->getInspectionRooms();

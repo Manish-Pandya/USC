@@ -114,6 +114,20 @@ class Room extends GenericCrud {
 		if($this->hazards == null) {
 			$thisDAO = new GenericDAO($this);
 			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP));
+			$LOG = Logger::getLogger(__CLASS__);
+			//General Hazards are present in every room
+			//In addition to the Hazards this room is related to, we also get all hazards that are either the General Hazard or it's SubHazards
+
+			// Get the db connection
+			global $db;
+
+			$queryString = "SELECT * FROM hazard WHERE key_id = 9999 OR parent_hazard_id = 9999";
+			$LOG->debug("query: " . $queryString);
+			$stmt = $db->prepare($queryString);
+			$stmt->execute();
+			$generalHazards = $stmt->fetchAll(PDO::FETCH_CLASS, "Hazard");
+			$this->hazards = array_merge($this->hazards, $generalHazards);
+
 		}
 		return $this->hazards;
 	}
