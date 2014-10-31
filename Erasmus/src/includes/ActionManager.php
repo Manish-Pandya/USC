@@ -1532,19 +1532,26 @@ class ActionManager {
 			foreach($roomIdsCsv as $roomId) {
 				array_push($rooms,$roomDao->getById($roomId));
 			}
+			$subs = $allHazards->getActiveSubHazards();
 
 			// filter by room
-			foreach ($allHazards->getActiveSubHazards() as $subhazard){
-				$entityMaps = array();
-				$entityMaps[] = new EntityMap("lazy","getSubHazards");
-				$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
-				$entityMaps[] = new EntityMap("lazy","getChecklist");
-				$entityMaps[] = new EntityMap("lazy","getRooms");
-				$entityMaps[] = new EntityMap("eager","getInspectionRooms");
-				$entityMaps[] = new EntityMap("eager","getHasChildren");
-				$entityMaps[] = new EntityMap("lazy","getParentIds");
-				$subhazard->setEntityMaps($entityMaps);
-				$this->filterHazards($subhazard,$rooms);
+			foreach ($subs as $subhazard){
+				if($subhazard->getKey_id() != 9999){
+					$entityMaps = array();
+					$entityMaps[] = new EntityMap("lazy","getSubHazards");
+					$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+					$entityMaps[] = new EntityMap("lazy","getChecklist");
+					$entityMaps[] = new EntityMap("lazy","getRooms");
+					$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+					$entityMaps[] = new EntityMap("eager","getHasChildren");
+					$entityMaps[] = new EntityMap("lazy","getParentIds");
+					$subhazard->setEntityMaps($entityMaps);
+					//Skip General Hazards
+					$this->filterHazards($subhazard,$rooms);
+				}else{
+					$subs = $this->unsetValue( $subs, $subhazard );
+					$allHazards->setSubHazards($subs);
+				}
 			}
 			return $allHazards;
 		}
@@ -1552,6 +1559,13 @@ class ActionManager {
 			//error
 			return new ActionError("No request parameter 'roomIds' was provided");
 		}
+	}
+	private function unsetValue(array $array, $value, $strict = TRUE)
+	{
+	    if(($key = array_search($value, $array, $strict)) !== FALSE) {
+	        unset($array[$key]);
+	    }
+	    return $array;
 	}
 
 	public function filterHazards (&$hazard, $rooms){
@@ -1587,7 +1601,6 @@ class ActionManager {
 
 			$subhazard->setInspectionRooms($rooms);
 			$subhazard->filterRooms();
-
 
 			if($subhazard->getIsPresent() == true){
 				$LOG->debug($subhazard->getName()." is Present? ". $subhazard->getIsPresent());
