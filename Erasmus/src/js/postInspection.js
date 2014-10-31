@@ -282,7 +282,55 @@ mainController = function($scope, $location, postInspectionFactory,convenienceMe
   */
 }
 inspectionDetailsController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
-  $scope.inspection = postInspectionFactory.getInspection();
+    function init(){
+     if($location.search().inspection){
+        var id = $location.search().inspection;
+        if(!postInspectionFactory.getInspection()){
+          $scope.doneLoading = false;
+          convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+            .then(function(promise){
+              console.log(promise.data);
+
+              //set the inspection date as a javascript date object
+              if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
+              $scope.inspection = promise.data;
+              $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
+              $scope.doneLoading = true;
+              // call the manager's setter to store the inspection in the local model
+              postInspectionFactory.setInspection($scope.inspection);
+              postInspectionFactory.setRecommendationsAndObservations()
+                  .then(
+                    function(){
+                      $scope.recommendations = postInspectionFactory.getRecommendations();
+                    });
+
+
+              $scope.doneLoading = true;
+              //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
+              //organized by parent hazard
+              //each group of checklists will have a Questions property containing all questions for each checklist in a given category
+              $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+            });
+        }else{
+          $scope.inspection = postInspectionFactory.getInspection();
+          $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
+          $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+          $scope.doneLoading = true;
+        }
+        $scope.options = ['Incomplete','Pending','Complete'];
+      }else{
+        $scope.error = 'No inspection has been specified';
+      }
+  }
+  init();
+
+  
+  function onFailGetInspeciton(){
+    $scope.doneLoading = true;
+    $scope.error="The system couldn't find the inspection.  Check your internet connection."
+  }
+
+
 }
 
 inspectionConfirmationController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
