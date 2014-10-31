@@ -22,8 +22,6 @@ class Deficiency extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"description" => "text",
-		"reference" => "text",
 		"created_user_id"	=> "integer"
 	);
 

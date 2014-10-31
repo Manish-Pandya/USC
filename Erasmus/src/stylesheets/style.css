@@ -1020,7 +1020,6 @@ html[xmlns] .clearfix {
 .subRooms li:after {
   margin-top: -19px;
   height: auto;
-  float: right;
   content: ", ";
   visibility: visible;
 }
@@ -1213,8 +1212,8 @@ div.question, li.question {
 /* line 450, ../sass/style.scss */
 /* line 1038, ../sass/style.scss */
 .questionControls {
-  margin: 10px 0 5px;
-  display: block;
+  padding: 8px 0;
+  display: inline-block;
 }
 
 /* line 454, ../sass/style.scss */
@@ -1222,7 +1221,21 @@ div.question, li.question {
 .deficiencies, .recommendations {
   padding: 15px 0;
 }
-
+a.checklistNav{
+  border-radius: 6px !important;
+  border:none !important;
+}
+a.checklistNav:not(#chemicalSafetyHeader){
+  color:white !Important;
+}
+a.checklistNav img{
+  padding:0;
+  width: 30px !important;
+}
+a.checklistNav span{
+  padding: 8px 0;
+  display: inline-block;
+}
 /*rotate hide/reveal text for sidenav on checklist*/
 /* line 458, ../sass/style.scss */
 /* line 1050, ../sass/style.scss */
@@ -1383,19 +1396,19 @@ td.reviewHeader {
 }
 
 /* line 1182, ../sass/style.scss */
-#biologicalMaterialsHeader {
+#biologicalMaterialsHeader,.biologicalHazardsHeader {
   background-color: #d00;
 }
 
 /* line 1186, ../sass/style.scss */
-#chemicalSafetyHeader {
+#chemicalSafetyHeader,.chemicalHazardsHeader {
   background-color: #F3F306;
   color: black;
   background-size: 38px;
 }
 
 /* line 1192, ../sass/style.scss */
-#radiationSafetyHeader {
+#radiationSafetyHeader,.radiationHazardsHeader {
   background-color: #6600cc;
   background-size: 40px 40px;
 }
@@ -1405,8 +1418,8 @@ td.reviewHeader {
 }
 
 /* line 1200, ../sass/style.scss */
-#generalSafetyHeader {
-  background-color: #006600;
+#generalSafetyHeader, .generalHazardsHeader {
+  background-color: #009900;
 }
 
 /* line 1203, ../sass/style.scss */
@@ -1522,6 +1535,8 @@ td.reviewHeader {
   color: #781096;
 }
 
+
+
 /* line 1299, ../sass/style.scss */
 ul.key {
   margin-top: -70px;
@@ -1589,6 +1604,50 @@ ul.key li.deficiencies span {
 /* line 1343, ../sass/style.scss */
 .No {
   color: #c00;
+}
+
+
+
+/* inspection details report */
+.detailsReportTable{
+  margin-top:0;
+  margin-bottom:0;
+}
+
+.detailsReportTable th.bioHeader{
+  background: #eed3cf !important;
+}
+
+.detailsReportTable th.chemHeader{
+  background: papayawhip !important;
+}
+
+.detailsReportTable th.radHeader{
+  background: #A0A0DC !important;
+}
+
+.detailsReportTable th.genHeader{
+  background: #9FE89F !important;
+}
+
+.detailsReportTable tr td ul li .span11 span:nth-child(odd){
+  width:50px;
+  float:left;
+}
+
+.questionText{
+  font-size: 21px;
+  font-weight: bold;
+}
+.detailsReportTable tr td ul{
+  margin-top:0;
+  margin-bottom:0;
+  padding-top:0;
+  padding-bottom:0;
+}
+.detailsReportTable tr td ul li{
+  margin-top:5px;
+  margin-bottom:5px;
 }
 
 /****************************************************************
@@ -2009,11 +2068,12 @@ li.active a {
 
 /* line 663, ../sass/style.scss */
 /* line 1705, ../sass/style.scss */
-#sp-nav ul li a {
+#sp-nav ul li ul li a {
+  display: block;
   line-height: normal;
   color: black;
   margin: 0;
-  border-bottom: 1px solid #c0c0c0;
+  border-top: 1px solid #c0c0c0;
   font-size: 17px;
   padding: 24px 10px 37px 30px;
   text-shadow: none;
@@ -2022,17 +2082,35 @@ li.active a {
 
 /* line 674, ../sass/style.scss */
 /* line 1717, ../sass/style.scss */
-#sp-nav ul {
+#sp-nav ul li ul{
   padding: 0;
+  margin-top: 0;
+  list-style:none;
 }
 
 /* line 678, ../sass/style.scss */
 /* line 1722, ../sass/style.scss */
-#sp-nav ul li a.active {
+#sp-nav ul li ul li a.active {
   background: white;
   color: black;
 }
-
+.checklistListNavHeader{
+  padding-top:20px !important;
+  height:40px;
+}
+.checklistListNavHeader span{
+  font-weight: bold;
+  font-size:22px;
+  margin-left:5px;
+  margin-top: 6px;
+}
+.checklistListNavHeader img{
+  width: 30px;
+  float: left;
+}
+.checklistListNavHeader:not(.chemicalHazardsHeader){
+   color:white !important;
+}
 /* line 683, ../sass/style.scss */
 /* line 1728, ../sass/style.scss */
 .accordion-toggle h2 {

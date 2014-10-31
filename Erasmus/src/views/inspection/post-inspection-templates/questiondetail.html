@@ -1,0 +1,40 @@
+<td>
+	<div class="span1">
+		<i ng-if="question.Responses.Answer == 'yes'" class="span3 icon-checkmark" style="color:#0c0;"></i>
+		<i ng-if="question.Responses.Answer == 'no'"  class="span3 icon-cancel-2" style="color:#900;"></i>
+		<span ng-if="question.Responses.Answer == 'n/a'" class="span3 bold">N/A</span>
+	</div>
+	<div class="span11">
+	<span once-text="question.Text" class="questionText"></span>
+		<ul>
+			<li ng-repeat="def in question.Responses.DeficiencySelections">
+				<span style="color:#cc0000;">Deficiency:</span><span once-text="def.Deficiency.Text"></span>
+			</li>
+		</ul>
+
+		<ul>
+			<li ng-repeat="rec in question.Responses.Recommendations">
+				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
+			</li>
+		</ul>
+
+		<ul>
+			<li ng-repeat="rec in question.Responses.SupplementalRecommendations">
+				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
+			</li>
+		</ul>
+
+		<ul>
+			<li ng-repeat="note in question.Responses.SupplementalRecommendations">
+				<span style="color:#781096;">Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
+			</li>
+		</ul>
+
+		<ul>
+			<li ng-repeat="note in question.Responses.SupplementalObservations">
+				<span style="color:#781096;" >Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
+			</li>
+		</ul>
+
+	</div>
+</td>

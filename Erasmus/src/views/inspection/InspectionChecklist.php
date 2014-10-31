@@ -1,13 +1,27 @@
 <?php
 require_once '../top_view.php';
 ?>
-
 <div ng-app="inspectionChecklist" ng-controller="ChecklistController">
 	<div id="sp-nav" class="span3">
 		<a class="menuIcon" ng-click="$spMenu.toggle()">&#9776;</a>
         <ul class="nav nav-list nav nav-pills nav-stacked" id="sideNav">
-          <li class="nav-header" style="font-size: 30px;padding: 7px 45px;">Checklists</li>
-          <li ng-repeat="checklist in checklists" ><a ng-class="{active:checklist.currentlyOpen}" ng-click="change(checklist.key_id,checklist)" href="#{{checklist.key_id}}"><span style="display:inline-block; width:75%; margin-right:10%;">{{checklist.Name}}</span><span ng-class="checklist.countClass" style="width: 15%;float:right; text-align:right;">{{checklist.AnsweredQuestions}}/{{checklist.Questions.length}}</span></a></li>
+          <li class="nav-header" style="font-size: 30px;padding: 20px 14px;">Checklists</li>
+          	<li ng-repeat="checklist in checklists" ng-if="checklist.checklists.length">
+
+          	<a ng-click="selectChecklistCategory(checklist.uid)" class="{{checklist.uid}}Header checklistListNavHeader">
+          		<img ng-if="!checklist.altImg && checklist.img" src="../../img/{{checklist.img}}"/>
+          		<img ng-if="checklist.altImg" src="../../img/{{checklist.altImg}}"/>
+          		<span style="display:inline-block;">{{checklist.Name}}</span>
+          	</a>
+          	<ul ng-if="selectedChecklists.checklists[0].Key_id == checklist.checklists[0].Key_id">
+          		<li ng-repeat="list in checklist.checklists">
+	          		<a ng-class="{active:list.currentlyOpen}" ng-click="change(list.Key_id,list)" href="#{{list.Key_id}}">
+	          			<span style="display:inline-block; width:75%; margin-right:10%;">{{list.Name}}</span>
+	          			<span ng-class="checklist.countClass" style="width: 15%;float:right; text-align:right;">{{list.AnsweredQuestions}}/{{list.Questions.length}}</span>
+	          		</a>
+          		</li>
+          	</ul>
+          </li>
         </ul>
     </div><!--/span-->
 <div class="tst">
@@ -22,7 +36,7 @@ require_once '../top_view.php';
 		<li class="">
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist
-			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
 			</h2>	
 		</li>
 	</ul>
@@ -38,14 +52,20 @@ require_once '../top_view.php';
 	<div class="alert alert-error" ng-if="error" style="margin-top:10px;">
 		<h2>{{error}}</h2>
 	</div>
-
+	<ul class="postInspectionNav row" style="margin-left:11px;">
+		<li ng-if="checklists.biologicalHazards.checklists.length"><a ng-click="selectChecklistCategory('biologicalHazards')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: route==confirmation}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
+		<li ng-if="checklists.chemicalHazards.checklists.length"><a ng-click="selectChecklistCategory('chemicalHazards')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
+		<li ng-if="checklists.generalHazards.checklists.length"><a ng-click="selectChecklistCategory('generalHazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: route==confirmation}"><span>GENERAL SAFETY</span></a></li>
+		<li ng-if="checklists.radiationHazards.checklists.length"><a ng-click="selectChecklistCategory('radiationHazards')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
+	</ul>
+	<h2 style="margin-left:11px"><img style="margin: -6px 5px 4px 0; max-width:50px;" ng-if="selectedChecklists.img" src="../../img/{{selectedChecklists.img}}"/><span>{{selectedChecklists.Name}}</span></h2>
     <!-- begin checklist for this inspection -->
 		<accordion close-others="true">
-			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in checklists" is-open="checklist.currentlyOpen">
+			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in selectedChecklists.checklists" is-open="checklist.currentlyOpen">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
-					<h2>{{checklist.Name}}<span style="float:right" ng-class="checklist.countClass">{{checklist.AnsweredQuestions}}/{{checklist.Questions.length}}</span></h2>
+					<h2>{{checklist.Name}}<span style="float:right" class="checklist.countClass">{{checklist.AnsweredQuestions}}/{{checklist.Questions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
 		     		<li class="question" ng-repeat="question in checklist.Questions">
@@ -187,7 +207,7 @@ require_once '../top_view.php';
 		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-		    <a class="btn btn-large btn-success" ng-if="checklists.length" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-success" ng-if="checklists" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
 	</div>
 	</div>
