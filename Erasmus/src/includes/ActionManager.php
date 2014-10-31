@@ -562,9 +562,9 @@ class ActionManager {
 					$parentHazard = $parentDao->getById( $hazard->getParent_hazard_id() );
 					$siblings = $parentHazard->getSubHazards();
 					$count = count( $siblings );
-
-					if( getIsAlphabetized( $siblings ) ){
-
+	
+					if( $this->getIsAlphabetized( $siblings ) ){
+	
 						//the list is in alphabetical order.  Find the right spot for the new hazard
 						for($i = 0; $i < count( $siblings ); ++$i) {
 
@@ -692,12 +692,12 @@ class ActionManager {
 
 		$inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
 		$deficiencyId = $this->getValueFromRequest('deficiencyId', $deficiencyId);
-
-		if( $inspectionId !== NULL  && $deficiencyId!== NULL){
-
+	
+		if( $inspectionId !== NULL  && $deficiencyId !== NULL){
+	
 			// Find the deficiencySelection
-			$ds = getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
-
+			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+	
 			if ($ds == null){
 				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 			}
@@ -735,7 +735,7 @@ class ActionManager {
 
 			// Find the deficiencySelection
 			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
-
+	
 			if ($ds == null){
 				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 			}
@@ -1109,11 +1109,11 @@ class ActionManager {
 			$PIId = $decodedObject->getMaster_id();
 			$deptId = $decodedObject->getRelation_id();
 			$add = $decodedObject->getAdd();
-
+	
 			$pi = $this->getPIById($PIId);
 			$departments = $pi->getDepartments();
 			$departmentToAdd = $this->getDepartmentById($deptId);
-
+	
 			if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
 
 				// Get a DAO
@@ -1160,7 +1160,7 @@ class ActionManager {
 				$user = $this->getUserById($userID);
 				$roles = $user->getRoles();
 				$roleToAdd = $this->getRoleById($roleId);
-
+	
 				// Get a DAO
 				$dao = $this->getDao(new User());
 				// if add is true, add this role to this PI
@@ -1382,9 +1382,9 @@ class ActionManager {
 			$inspectionDao = $dao->getById($inspectionId);
 
 			$LOG->debug($inspectionDao);
-
-			removeAllInspectionRooms($inspectionDao);
-
+	
+			$this->removeAllInspectionRooms($inspectionDao);
+	
 			foreach($roomIds as $id){
 				$this->saveInspectionRoomRelation( $id, $inspectionId, true );
 			}
@@ -1392,10 +1392,9 @@ class ActionManager {
 		} else {
 			return new ActionError("No Inspection or room IDs provided");
 		}
-
-
+	
 		return $this->getHazardRoomMappingsAsTree( $roomIds );
-
+	
 	}
 
 	public function removeAllInspectionRooms(&$inspectionDao){
@@ -1667,8 +1666,8 @@ class ActionManager {
 		$subHazardNodeDtos = array();
 		$LOG->trace("Getting mappings for sub-hazards");
 		foreach( $hazard->getActiveSubHazards() as $subHazard ){
-
-			$node = getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
+	
+			$node = $this->getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
 			$subHazardNodeDtos[$node->getKey_Id()] = $node;
 		}
 
@@ -1844,7 +1843,7 @@ class ActionManager {
 
 			$hazard->filterRooms();
 			$LOG->debug($hazard);
-			//filterHazards($hazard, $hazard->getInspectionRooms());
+			//$this->filterHazards($hazard, $hazard->getInspectionRooms());
 			return $hazard;
 
 		}
@@ -1917,7 +1916,7 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("lazy","getParentIds");
 			$hazard->setEntityMaps($entityMaps);
 			$hazard->filterRooms();
-
+	
 			$this->filterHazards($hazard, $hazard->getInspectionRooms());
 			return $hazard->getActiveSubHazards();
 		}
@@ -2120,9 +2119,9 @@ class ActionManager {
 		$piId = $this->getValueFromRequest('piId', $piId);
 
 		if( $piId !== NULL ){
-
-			$pi = getPIById($piId);
-
+	
+			$pi = $this->getPIById($piId);
+	
 			$inspections = $pi->getInspections();
 
 			return $inspections;
@@ -2276,8 +2275,8 @@ class ActionManager {
 
 		if( $responseId !== NULL ){
 			$LOG->debug("Generating Observations for response #$responseId");
-
-			$response = getResponseById($id);
+	
+			$response = $this->getResponseById($id);
 			if (!empty($response)) {
 				return $response->getObservations;
 			} else {
@@ -2475,7 +2474,7 @@ class ActionManager {
 
 	public function createOrderIndicesForHazards(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
-		$hazards = getHazardTreeNode(10000);
+		$hazards = $this->getHazardTreeNode(10000);
 		foreach($hazards as $hazard){
 			$this->setOrderIndicesForSubHazards( $hazard );
 		}
@@ -2505,7 +2504,7 @@ class ActionManager {
 				$dao = $this->getDao( new Hazard() );
 				$LOG->debug($sub->getName()."'s order index is ".$sub->getOrder_index());
 				$sub = $dao->save( $sub );
-				if($sub->getSubHazards() != null)setOrderIndicesForSubHazards( $sub );
+				if($sub->getSubHazards() != null) $this->setOrderIndicesForSubHazards( $sub );
 			}
 		}
 
