@@ -101,17 +101,17 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
     $scope.handleActive = function(department){
     	$scope.departmentCopy = angular.copy(department);
     	$scope.departmentCopy.Is_active=!$scope.departmentCopy.Is_active;
-    	$scope.saveDepartment(department);
+    	$scope.saveDepartment(department, true);
     	department.setActive = true;
     }
 
     // overwrites department with modified $scope.departmentCopy
     // note that the department parameter is the department to be overwritten.
-    $scope.saveDepartment = function(department){
+    $scope.saveDepartment = function(department, isEdited){
     	console.log(department);
 
         // prevent user from changing name to an already existing department
-        if(convenienceMethods.arrayContainsObject($scope.departments, $scope.departmentCopy, ['Name', 'Name'])) {
+        if(!isEdited && convenienceMethods.arrayContainsObject($scope.departments, $scope.departmentCopy, ['Name', 'Name'])) {
             $scope.error = "Department with name " + $scope.departmentCopy.Name + " already exists!";
             // TODO: sort out department vs $scope.departmentCopy (ie department passed in, but still has to use departmentCopy, a scope variable)
             // Mixed up here, later in this method, and in departmentHub.php itself.

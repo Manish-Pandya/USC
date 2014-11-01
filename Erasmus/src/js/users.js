@@ -135,6 +135,7 @@ var MainUserListController = function(userHubFactory,$scope, $modal, $routeParam
     });
 
     $scope.pis = data;
+    console.log($scope.pis);
     //do this only if we have not yet looped through our users, otherwise we will append the list of users to itself when we switch routes
     if(!$scope.run){
       $scope.setUsers();
@@ -974,6 +975,11 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
   $scope.failFindUser = false;
   //console.log(items[0]);
 
+  $scope.formError = function(error){
+    console.log(error);
+    $scope.frmError = error;
+  }
+
   $scope.getAuthUser = function(){
     //console.log('lookingForUser');
     $scope.lookingForUser = true;
@@ -988,6 +994,7 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
     //console.log(data);
     $scope.piCopy.User = data;
     $scope.failFindUser = false;
+    $scope.frmError = false;
   }
 
   function onFailFindUser(){
@@ -1008,6 +1015,7 @@ var piModalInstanceController = function ($scope, $modalInstance, items, conveni
   $scope.departments = items[4];
 
   $scope.savePi = function(){
+    $scope.frmError = false;
     console.log( $scope.piCopy.User);
     $scope.piCopy.IsDirty = true;
     //save the user record

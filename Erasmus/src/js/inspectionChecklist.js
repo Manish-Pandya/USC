@@ -4,10 +4,55 @@ inspectionChecklist.run(function($rootScope, $templateCache) {
    $rootScope.$on('$viewContentLoaded', function() {
       $templateCache.removeAll();
    });
+})
+
+.factory('checklistFactory', function(convenienceMethods,$q){
+
+    var factory = {};
+
+    factory.organizeChecklists = function(checklists){
+        //object with array properties to contain the checklists
+        checklistHolder = {};
+        checklistHolder.biologicalHazards = {uid:'biologicalHazards', Name: "BIOLOGICAL SAFETY",img:'biohazard-largeicon.png', checklists:[], altImg:"biohazard-white-con.png"};
+        checklistHolder.chemicalHazards = {uid:'chemicalHazards', Name: "CHEMICAL SAFETY", img:'chemical-safety-large-icon.png', checklists:[]};
+        checklistHolder.radiationHazards = {uid:'radiationHazards', Name: "RADIATION SAFETY", img:'radiation-large-icon.png', checklists:[]};
+        checklistHolder.generalHazards = {uid:'generalHazards', Name: "GENERAL SAFETY", checklists:[]};
+
+        //group the checklists by parent hazard
+        //get the questions for each checklist and store them in a property that the view can access easily
+        for(i=0;i<checklists.length;i++){
+          var checklist = checklists[i];
+
+          if(checklist.Master_hazard.toLowerCase().indexOf('biological') > -1){
+            if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
+            checklistHolder.biologicalHazards.checklists.push(checklist);
+          }
+          else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
+            if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
+            checklistHolder.chemicalHazards.checklists.push(checklist);
+          }
+          else if(checklist.Master_hazard.toLowerCase().indexOf('radiation') > -1){
+            if(!checklistHolder.radiationHazards.Questions)checklistHolder.radiationHazards.Questions = [];
+            checklistHolder.radiationHazards.checklists.push(checklist);
+          }
+          else if(checklist.Master_hazard.toLowerCase().indexOf('general') > -1){
+            if(!checklistHolder.generalHazards.Questions)checklistHolder.generalHazards.Questions = [];
+            checklistHolder.generalHazards.checklists.push(checklist);
+          }
+        }
+        return checklistHolder;
+      };
+
+      factory.getQuestionsByChecklist = function(checklist){
+        return checklist.Questions;
+      }
+
+    return factory;
+
 });
 
 //called on page load, gets initial user data to list users
-function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window) {
+function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory) {
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
@@ -17,13 +62,18 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       $scope.inspId = $location.search().inspection;
       convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+$scope.inspId+'&callback=JSON_CALLBACK', onFailGetInsp)
       .then(function(data){
-        $scope.inspection = data.data;
-        $scope.checklists = data.data.Checklists;
+         $scope.inspection = data.data;
+         $scope.checklists = checklistFactory.organizeChecklists(data.data.Checklists);
+         $scope.selectChecklistCategory("biologicalHazards");
+         angular.forEach($scope.checklists, function(checklist, key) {
+             onGetChecklists(checklist);
+         });
       })
     }else{
       $scope.error="No inspection has been specifed.";
       $scope.checklists = true;
     }
+
   }
 
   function onGetUser(data){
@@ -35,11 +85,11 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   
   //grab set user list data into the $scope object
   var onGetChecklists = function(checklists){
-
-    var len = checklists.length;
+    var len = checklists.checklists.length;
     //We loop through each checklist, and each checklist's questions, to see if questions have already been answered
     for(i=0;i<len;i++){
-      var checklist = checklists[i];
+      var checklist = checklists.checklists[i];
+      console.log(checklist);
       checklist.isNew = true;
       var questions = checklist.Questions;
       var qLen = questions.length;
@@ -491,7 +541,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   //
   var unwatch = $scope.$watch('checklists', function(loadedChecklists, promisedChecklists, scope) {
     if(loadedChecklists && loadedChecklists.length){
-      onGetChecklists($scope.checklists);
+      onGetChecklists($scope.selectedChecklists);
       unwatch();
     }
   });
@@ -603,6 +653,10 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     item.IsDirty = true;
     copy = angular.copy(item);
     $scope.saveEdit(question, copy, item)
+  }
+
+  $scope.selectChecklistCategory = function(category){
+      $scope.selectedChecklists = $scope.checklists[category];
   }
 
 };

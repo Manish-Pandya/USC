@@ -62,6 +62,10 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 		alert('There was a problem getting the list of hazards.');
 	}
 
+	$scope.editChecklist = function(){
+		$scope.edit = true;
+	}
+
 	$scope.saveChecklist = function(dto, checklist){
 		$scope.checklistCopy.IsDirty = true;
 		var url = '../../ajaxaction.php?action=saveChecklist';		
