@@ -511,11 +511,6 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	 *                       Get By Relationship Tests                       *
 	\*************************************************************************/
 	
-	/* NOTE:
-	 * These pose a problem because whatever the fake dao returns needs to then
-	 * return a mock as well. TODO meditate on it, then come up with a solution.
-	 * In the meantime, commented out so as to not trigger an error when phpunit is run
-	 */
 
 	/* getAuthorizationsByPIId */
 
