@@ -63,8 +63,8 @@ class GenericDaoSpy {
 
 	public function getById($id) {
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('getAll', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['getAll'];
+		if( array_key_exists('getById', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['getById'];
 		}
 
 		// indicate method was called
