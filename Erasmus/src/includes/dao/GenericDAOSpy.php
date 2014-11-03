@@ -19,6 +19,9 @@ class GenericDaoSpy {
 	
 	// associative array, keeps track of how many times methods were called.
 	private $callCount;
+	
+	// keeps track of methods that need to return specific object
+	private $methodsToOverride;
 
 	
 	/* Helpful functions to give extra info during tests */
@@ -35,6 +38,10 @@ class GenericDaoSpy {
 	
 	public function getModelObject() {
 		return $this->modelObject;
+	}
+	
+	public function overrideMethod($methodName, $thingToReturn) {
+		$this->methodsToOverride[$methodName] = $thingToReturn;
 	}
 	
 
@@ -55,6 +62,11 @@ class GenericDaoSpy {
 	}
 
 	public function getById($id) {
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('getAll', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['getAll'];
+		}
+
 		// indicate method was called
 		$this->callCount['getById'] ++;
 
@@ -66,6 +78,11 @@ class GenericDaoSpy {
 	}
 	
 	public function getAll() {
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('getAll', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['getAll'];
+		}
+
 		// indicate method was called
 		$this->callCount['getAll'] ++;
 
