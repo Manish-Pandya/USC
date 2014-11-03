@@ -25,7 +25,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -39,7 +39,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -53,7 +53,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -67,7 +67,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -81,7 +81,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -95,7 +95,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request Parameter 'id' was provided");
+			return new ActionError("No request Parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -109,7 +109,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -123,7 +123,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -137,7 +137,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -151,7 +151,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
@@ -165,7 +165,7 @@ class Rad_ActionManager extends ActionManager {
 			return $dao->getById($id);
 		}
 		else {
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
