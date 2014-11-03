@@ -36,7 +36,7 @@ class ActionManager {
 	 * @param string $paramValue
 	 * @return string|unknown|NULL
 	 */
-	private function getValueFromRequest( $valueName, $paramValue = NULL ){
+	public function getValueFromRequest( $valueName, $paramValue = NULL ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 
 		if( $paramValue !== NULL ){
@@ -55,7 +55,7 @@ class ActionManager {
 		}
 	}
 
-	private function convertInputJson(){
+	public function convertInputJson(){
 		try{
 			$decodedObject = JsonManager::decodeInputStream();
 
@@ -71,7 +71,7 @@ class ActionManager {
 	}
 
 
-	private function getDao( $modelObject = NULL ){
+	public function getDao( $modelObject = NULL ){
 		//FIXME: Remove MockDAO
 		if( $modelObject === NULL ){
 			return new MockDAO();

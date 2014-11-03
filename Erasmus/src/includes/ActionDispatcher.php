@@ -12,6 +12,9 @@ class ActionDispatcher {
 	//TODO: Revisit default error code
 	private $defaultErrorCode = 500;
 	
+	// name of actionManager class to use; depends on whether radiation is enabled.
+	private $actionManager;
+	
 	private $LOG;
 	
 	private $destinationPage;
@@ -29,6 +32,15 @@ class ActionDispatcher {
 		$this->actionMappingFactory = $actionMappingFactory;
 		
 		$this->LOG = Logger::getLogger(__CLASS__);
+		
+		// Which "ActionManager" class is used depends on whether the radiation
+		// module is enabled.
+		if( isRadiationEnabled() ) {
+			$this->actionManager = "Rad_ActionManager";
+		}
+		else {
+			$this->actionManager = "ActionManager";
+		}
 	}
 	
 	public function setDefaultErrorPage($errorPage){
@@ -237,7 +249,7 @@ class ActionDispatcher {
 	 */
 	public function doAction( ActionMapping $actionMapping ){
 		$action_function = $actionMapping->actionFunctionName;
-		$actions = new ActionManager();
+		$actions = new $this->actionManager();
 		
 		if( method_exists( $actions, $action_function ) ){
 			//call the specified action function
