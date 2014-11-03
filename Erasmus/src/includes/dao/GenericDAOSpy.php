@@ -70,7 +70,7 @@ class GenericDaoSpy {
 		$this->callCount['getAll'] ++;
 
 		$testArray = array_fill( 0, $this->itemCount, $this->getById(1) );
-		return $testArary;
+		return $testArray;
 	}
 }
 ?>
