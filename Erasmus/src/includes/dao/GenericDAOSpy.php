@@ -69,7 +69,7 @@ class GenericDaoSpy {
 		// indicate method was called
 		$this->callCount['getAll'] ++;
 
-		$testArray = array_fill( 0, $this->itemCount, getById(1) );
+		$testArray = array_fill( 0, $this->itemCount, $this->getById(1) );
 		return $testArary;
 	}
 }
