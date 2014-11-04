@@ -858,15 +858,6 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	 *                            Save Tests                                 *
 	\*************************************************************************/
 	
-	/*
-	 * NOTE TO SELF: things to test in save functions:
-	*
-	* + returns actionError when no input recieved
-	    --- two sepparate test methods --
-	* + $dao->save is called
-	* + returns object that was initially saved.
-	*/
-	
 	
 	/* saveAuthorization */
 	
