@@ -89,5 +89,16 @@ class GenericDaoSpy {
 		$testArray = array_fill( 0, $this->itemCount, $this->getById(1) );
 		return $testArray;
 	}
+	
+	public function save($objToSave) {
+		$this->callCount['save'] ++;
+		
+		// ActionManager expects object back with key id
+		if( $objToSave->getKey_id() === null ) {
+			$objToSave->setKey_id(1);
+		}
+		
+		return $objToSave;
+	}
 }
 ?>
