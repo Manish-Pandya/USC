@@ -22,6 +22,7 @@ require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php')
 class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
 	private $actionManager;
+	private $daoSpy;
 	
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
 	function tearDown() {
@@ -36,8 +37,13 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// set up a factory that can inject the spy into ActionManager
 		$daoSpyInjector = new DaoFactory($daoSpy);
 		
+		$this->daoSpy = $daoSpy;
+		
 		// give our dao injector to ActionManager to substitute daoSpy for GenericDao
 		$this->actionManager = new Rad_ActionManager($daoSpyInjector);
+		
+		// set actionManager to read from $_REQUEST['testInput'] instead of JsonManager
+		$this->actionManager->setTestMode(true);
 	}
 	
 	function setGetByIdToReturn($objToReturn) {
@@ -846,4 +852,393 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertContainsOnlyInstancesOf( 'WasteType', $types );
 		$this->assertCount( 5, $types );
 	}
+
+
+	/*************************************************************************\
+	 *                            Save Tests                                 *
+	\*************************************************************************/
+	
+	/*
+	 * NOTE TO SELF: things to test in save functions:
+	*
+	* + returns actionError when no input recieved
+	    --- two sepparate test methods --
+	* + $dao->save is called
+	* + returns object that was initially saved.
+	*/
+	
+	
+	/* saveAuthorization */
+	
+	/**
+	 * @group save
+	 */
+	public function test_saveAuthorization_noObject() {
+		$result = $this->actionManager->saveAuthorization();
+	
+		// should have returned actionError, no input given
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 202, $result->getStatusCode() );
+	}
+	
+	/**
+	 * @group save
+	 */
+	public function test_saveAuthorization() {
+
+		$testData = new Authorization();
+		$_REQUEST["testInput"] = $testData;
+
+		$result = $this->actionManager->saveAuthorization(); 
+		
+		// should have returned Authorization with a newly-assigned key id
+		$this->assertInstanceOf('Authorization', $result);
+		$this->assertEquals( 1, $result->getKey_id() );
+		
+		// genericDao->save should have been called
+		$this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+	}
+	
+	
+	/* saveIsotope */
+	
+	/**
+	 * @group save
+	 */
+	public function test_saveIsotope_noObject() {
+		$result = $this->actionManager->saveIsotope();
+		
+		// should have returned actionError, no input given
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 202, $result->getStatusCode() );
+	}
+
+	/**
+	 * @group save
+	 */
+	public function test_saveIsotope() {
+		$testData = new Isotope();
+		$_REQUEST['testInput'] = $testData;
+		
+		$result = $this->actionManager->saveAuthorization();
+		
+		// should have returned Isotope with newly-assigned key id
+		$this->assertInstanceOf( 'Isotope', $result );
+		$this->assertEquals( 1, $result->getKey_id() );
+		
+		// genericDao->save should have been called
+		$this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+	}
+	
+
+    /* saveCarboy */
+	
+	/**
+	 * @group save
+	 */
+	public function test_saveCarboy_noObject() {
+		$result = $this->actionManager->saveCarboy();
+		
+		// should have returned actionError, no input given
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 202, $result->getStatusCode() );
+	}
+
+    /**
+     * @group save
+     */
+    public function test_saveCarboy() {
+        $testData = new Carboy();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->saveCarboy();
+
+        // should have returned Carboy with newly-assigned key id
+        $this->assertInstanceOf( 'Carboy', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveCarboyUseCycle */
+
+    /**
+     * @group save
+     */
+    public function test_saveCarboyUseCycle_noObject() {
+        $result = $this->actionManager->saveCarboyUseCycle();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveCarboyUseCycle() {
+        $testData = new CarboyUseCycle();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->saveCarboyUseCycle();
+
+        // should have returned CarboyUseCycle with newly-assigned key id
+        $this->assertInstanceOf( 'CarboyUseCycle', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveDisposalLot */
+
+    /**
+     * @group save
+     */
+    public function test_saveDisposalLot_noObject() {
+        $result = $this->actionManager->saveDisposalLot();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveDisposalLot() {
+        $testData = new DisposalLot();
+        $_REQUEST['testInput'] = $testData;
+        
+        $result = $this->actionManager->saveDisposalLot();
+
+        // should have returned Disposallot with newly assigned key id
+        $this->assertInstanceOf( 'DisposalLot', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveDrum */
+
+    /**
+     * @group save
+     */
+    public function test_saveDrum_noObject() {
+        $result = $this->actionManager->saveDrum();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveDrum() {
+        $testData = new Drum();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->saveDrum();
+
+        // should have returned Drum with newly assigned key id
+        $this->assertInstanceOf( 'Drum', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveParcel */
+
+    /**
+     * @group save
+     */
+    public function test_saveParcel_noObject() {
+        $result = $this->actionManager->saveParcel();
+        
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveParcel() {
+        $testData = new Parcel();
+        $_REQUEST['testInput'] = $testData;
+        
+        $result = $this->actionManager->saveParcel();
+
+        // should ahve returned Parcel with newly assigned key id
+        $this->assertInstanceOf( 'Parcel', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveParcelUse */
+
+    /**
+     * @group save
+     */
+    public function test_saveParcelUse_noObject() {
+        $result = $this->actionManager->saveParcelUse();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveParcelUse() {
+
+        $testData = new ParcelUse();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->saveParcelUse();
+
+        // should have returned ParcelUse with newly assigned key id
+        $this->assertInstanceOf( 'ParcelUse', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* savePickup */
+
+    /**
+     * @group save
+     */
+    public function test_savePickup_noObject() {
+        $result = $this->actionManager->savePickup();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_savePickup() {
+        $testData = new Pickup();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->savePickup();
+
+        // should have returned Pickup with newly assigned key id
+        $this->assertInstanceOf( 'Pickup', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* savePickupLot */
+
+    /**
+     * @group save
+     */
+    public function test_savePickupLot_noObject() {
+        $result = $this->actionManager->savePickupLot();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_savePickupLot() {
+        $testData = new PickupLot();
+        $_REQUEST['testInput'] = $testData;
+
+        $result = $this->actionManager->savePickupLot();
+
+        // should have returned PickupLot with newly assigned key id
+        $this->assertInstanceOf( 'PickupLot', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* savePurchaseOrder */
+
+    /**
+     * @group save
+     */
+    public function test_savePurchaseOrder_noObject() {
+        $result = $this->actionManager->savePurchaseOrder();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_savePurchaseOrder() {
+        $testData = new PurchaseOrder();
+        $_REQUEST['testInput'] = $testData;
+        
+        $result = $this->actionManager->savePurchaseOrder();
+
+        // should have returned PurchaseOrder with newly assigned key id
+        $this->assertInstanceOf( 'PurchaseOrder', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
+
+
+    /* saveWasteType */
+
+    /**
+     * @group save
+     */
+    public function test_saveWasteType_noObject() {
+        $result = $this->actionManager->saveWasteType();
+
+        // should have returned ActionError, no input given
+        $this->assertInstanceOf( 'ActionError', $result );
+        $this->assertEquals( 202, $result->getStatusCode() );
+    }
+
+    /**
+     * @group save
+     */
+    public function test_saveWasteType() {
+        $testData = new WasteType();
+        $_REQUEST['testInput'] = $testData;
+        
+        $result = $this->actionManager->saveWasteType();
+
+        // should have returned WasteType with newly assigned key id
+        $this->assertInstanceOf( 'WasteType', $result );
+        $this->assertEquals( 1, $result->getKey_id() );
+
+        // genericDao->save should have been called
+        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+    }
 }

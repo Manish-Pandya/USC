@@ -302,7 +302,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Authorziation');
+			return new ActionError('Error converting input stream to Authorization', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -318,7 +318,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Isotope');
+			return new ActionError('Error converting input stream to Isotope', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -334,7 +334,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Carboy');
+			return new ActionError('Error converting input stream to Carboy', 202);
 		}
 		else if ( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -350,7 +350,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to CarboyUseCycle');
+			return new ActionError('Error converting input stream to CarboyUseCycle', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -366,7 +366,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to DisposalLot');
+			return new ActionError('Error converting input stream to DisposalLot', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -382,7 +382,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Drum');
+			return new ActionError('Error converting input stream to Drum', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -398,7 +398,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Parcel');
+			return new ActionError('Error converting input stream to Parcel', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -422,7 +422,7 @@ class Rad_ActionManager extends ActionManager {
 			$decodedObject = $parcel;
 		}
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to ParcelUse');
+			return new ActionError('Error converting input stream to ParcelUse', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -438,7 +438,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to Pickup');
+			return new ActionError('Error converting input stream to Pickup', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -454,7 +454,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to PickupLot');
+			return new ActionError('Error converting input stream to PickupLot', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -470,7 +470,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to PurchaseOrder');
+			return new ActionError('Error converting input stream to PurchaseOrder', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
@@ -486,7 +486,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to WasteType');
+			return new ActionError('Error converting input stream to WasteType', 202);
 		}
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;

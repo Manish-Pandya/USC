@@ -22,8 +22,7 @@ class DaoFactory {
 	}
 
 	public function createDao( $modelObject ) {
-		// prevents returned dao from affecting modelDao inadvertently
-		$dao = clone $this->modelDao;
+		$dao = $this->modelDao;
 		$dao->setModelObject($modelObject);
 
 		return $dao;
