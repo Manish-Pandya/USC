@@ -28,7 +28,7 @@ class GenericDaoSpy {
 	
 	// get number of times a method has been called
 	public function getCallCount($methodName) {
-		return $callCount[$methodName];
+		return $this->callCount[$methodName];
 	}
 	
 	// determine whether a method has been called
