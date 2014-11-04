@@ -12,6 +12,7 @@
 class ActionManager {
 
 	private $daoFactory;
+	private $isTestModeEnabled;
 	
 	// during construction, can change daoFactory, for example for testing purposes
 	public function __construct( $daoFactory ) {
@@ -24,6 +25,15 @@ class ActionManager {
 	
 	public function setDaoFactory( $newFactory ) {
 		$this->daoFactory = $newFactory;
+	}
+	
+	// will determine whether ActionManager actually uses JsonManager or not.
+	public function setTestMode( $newValue ) {
+		$this->isTestModeEnabled = $newValue;
+	}
+	
+	public function isTestModeEnabled() {
+		return $this->isTestModeEnabled;
 	}
 
 	/**
@@ -56,11 +66,17 @@ class ActionManager {
 	}
 
 	public function convertInputJson(){
+
+		// if being tested, cannot use JsonManager since php://input is read-only
+		if( $this->isTestModeEnabled() ) {
+			return $_REQUEST["testInput"];
+		}
+		
 		try{
 			$decodedObject = JsonManager::decodeInputStream();
 
 			if( $decodedObject === NULL ){
-				return new ActionError('No data read from input stream');
+				return new ActionError('No data read from input stream', 202);
 			}
 
 			return $decodedObject;
