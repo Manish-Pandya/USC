@@ -2208,21 +2208,6 @@ class ActionManager {
 	}
 
 
-	public function getDeficiencySelectionById( $id = NULL ){
-		$LOG = Logger::getLogger( 'Action:' . __function__ );
-
-		$id = $this->getValueFromRequest('id', $id);
-
-		if( $id !== NULL ){
-			$dao = $this->getDao();
-			return $dao->getDeficiencySelectionById($id);
-		}
-		else{
-			//error
-			return new ActionError("No request parameter 'id' was provided");
-		}
-	}
-
 	// Inspection, step 4 (Review, deficiency report)
 	public function getDeficiencySelectionsForResponse( $responseId = NULL){
 		$responseId = $this->getValueFromRequest('responseId', $responseId);
