@@ -635,13 +635,14 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
   hazardDisplayModalInstanceController = function( $scope, $modalInstance, room, convenienceMethods ){
   	
   	$scope.room = room;
-
-  	var url = '../../ajaxaction.php?action=getHazardsInRoom&roomId='+room.Key_id+'&subHazards=false&callback=JSON_CALLBACK';
+    //the server expects an array of roomIds, but we are only going to send one, so wrap it in an array;
+    var rooms = [room.Key_id];
+  	var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
     convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
 
     function onGetHazards(data){
-    	console.log('here');
-    	$scope.hazards = data;
+    	console.log(data);
+    	$scope.hazards = data.ActiveSubHazards;
     }
 
     function onFailGetHazards(){
