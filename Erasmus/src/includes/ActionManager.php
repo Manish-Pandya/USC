@@ -157,7 +157,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -186,7 +186,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -201,7 +201,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -209,7 +209,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to User');
+			return new ActionError('Error converting input stream to User', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -239,7 +239,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -259,7 +259,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -285,7 +285,7 @@ class ActionManager {
 		}
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Checklist');
+			return new ActionError('Error converting input stream to Checklist', 202);
 		}
 		else{
 			$dao = $this->getDao(new Checklist());
@@ -344,7 +344,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Question');
+			return new ActionError('Error converting input stream to Question', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -360,7 +360,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Deficiency');
+			return new ActionError('Error converting input stream to Deficiency', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -376,7 +376,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation');
+			return new ActionError('Error converting input stream to Observation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -392,7 +392,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Recommendation');
+			return new ActionError('Error converting input stream to Recommendation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -408,7 +408,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to SupplementalObservation');
+			return new ActionError('Error converting input stream to SupplementalObservation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -424,7 +424,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to SupplementalRecommendation');
+			return new ActionError('Error converting input stream to SupplementalRecommendation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -533,7 +533,7 @@ class ActionManager {
 			return $hazard;
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -576,7 +576,7 @@ class ActionManager {
 		$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Hazard');
+			return new ActionError('Error converting input stream to Hazard', 202);
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -658,7 +658,7 @@ class ActionManager {
 		$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Hazard');
+			return new ActionError('Error converting input stream to Hazard', 202);
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -714,7 +714,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -841,7 +841,7 @@ class ActionManager {
 		$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Building');
+			return new ActionError('Error converting input stream to Building', 202);
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -865,7 +865,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -958,7 +958,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -981,7 +981,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1012,7 +1012,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1020,7 +1020,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation');
+			return new ActionError('Error converting input stream to Observation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1036,7 +1036,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation');
+			return new ActionError('Error converting input stream to Observation', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1230,7 +1230,7 @@ class ActionManager {
 			return $roomDto;
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1259,7 +1259,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1272,7 +1272,7 @@ class ActionManager {
 		}
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Hazard');
+			return new ActionError('Error converting input stream to Hazard', 202);
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -1329,7 +1329,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1471,7 +1471,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Inspection');
+			return new ActionError('Error converting input stream to Inspection', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1496,7 +1496,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Inspection');
+			return new ActionError('Error converting input stream to Inspection', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1756,7 +1756,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	public function getHazardRoomRelations( $roomIds = NULL ){
@@ -1974,7 +1974,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -1982,7 +1982,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Response');
+			return new ActionError('Error converting input stream to Response', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1998,7 +1998,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to DeficiencySelection');
+			return new ActionError('Error converting input stream to DeficiencySelection', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2037,7 +2037,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to RootCause');
+			return new ActionError('Error converting input stream to RootCause', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2053,7 +2053,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to CorrectiveAction');
+			return new ActionError('Error converting input stream to CorrectiveAction', 202);
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2139,7 +2139,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2203,7 +2203,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2225,7 +2225,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2242,7 +2242,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2264,7 +2264,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2279,7 +2279,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2306,7 +2306,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
@@ -2325,7 +2325,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided");
+			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 
