@@ -18,10 +18,12 @@ require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php')
 
 
 // TODO: check that getById was called with correct arguments
+// TODO: put internal methods and fields in ActionManager test class - the only reason
+// they're here is that this file was created first.
 
 class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 	
-	private $actionManager;
+	public $actionManager;
 	private $daoSpy;
 	
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
@@ -63,13 +65,22 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		// create array filled with type $itemType
 		$array = array_fill( 0, $itemCount, new $itemType() );
 	
-		// create a mock that returns array of itemType when methodName is called
-		$mock = $this->getMock( $mockType );
-		$mock->method( $methodName )->willReturn( $array );
-	
+		$mock = $this->prepareMockToReturn( $mockType, $methodName, $array );
+
 		return $mock;
 	}
-	
+
+	function prepareMockToReturn( $mockType, $methodName, $objToReturn ) {
+		$mock = $this->getMock( $mockType );
+		$mock->method( $methodName )->willReturn( $objToReturn );
+
+		return $mock;
+	}
+
+	function getDaoSpy() {
+		return $this->daoSpy;
+	}
+
 	
 	/*************************************************************************\
 	 *                         Basic Get Tests                               *
