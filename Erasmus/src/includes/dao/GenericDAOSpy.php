@@ -6,6 +6,8 @@
  * @author GraySail LLC
  * @author Perry
  */
+require_once(dirname(__FILE__) . '/../../../test/includes/action_functions/MethodCall.php');
+
 
 /* Not extending GenericDAO because if I unintentionally call a method of the real
 GenericDao that has not been mocked, I'd rather get an error so I'll know. */
@@ -17,18 +19,26 @@ class GenericDaoSpy {
 	// number of "modelObjects" to return in getAll()
 	public $itemCount;
 	
-	// associative array, keeps track of how many times methods were called.
-	private $callCount;
-	
 	// keeps track of methods that need to return specific object
 	private $methodsToOverride;
-
+	
+	// list of method calls including method name, argument, and time called
+	private $calls;
+	
 	
 	/* Helpful functions to give extra info during tests */
 	
 	// get number of times a method has been called
 	public function getCallCount($methodName) {
-		return $this->callCount[$methodName];
+		$callCount = 0;
+		$calls = $this->getCalls();
+		
+		foreach($calls as $call) {
+			if($call->getMethod() == $methodName) {
+				$callCount ++;
+			}
+		}
+		return $callCount;
 	}
 	
 	// determine whether a method has been called
@@ -44,17 +54,20 @@ class GenericDaoSpy {
 		$this->methodsToOverride[$methodName] = $thingToReturn;
 	}
 	
-
-	/* fake methods to be used by action functions, */
+	public function getCalls() { return $this->calls; }
+	
+	public function addCall($method, $args) {
+		$this->calls[] = new MethodCall($method, $args);
+	}
+	
 
 	public function __construct( GenericCrud $model_object, $itemCount = 5 ) {
 		$this->setModelObject($model_object);
 		$this->itemCount = $itemCount;
-		
-		foreach( get_class_methods('GenericDaoSpy') as $methodName ) {
-			$this->callCount[$methodName] = 0;
-		}
+		$this->calls = array();
 	}
+
+	/* fake methods to be used by action functions, */
 
 
 	public function setModelObject($model) {
@@ -62,13 +75,12 @@ class GenericDaoSpy {
 	}
 
 	public function getById($id) {
+		$this->addCall('getById', [$id]);
+		
 		// this method can return a specific object if necessary - check.
 		if( array_key_exists('getById', $this->methodsToOverride) ) {
 			return $this->methodsToOverride['getById'];
 		}
-
-		// indicate method was called
-		$this->callCount['getById'] ++;
 
 		//$testObject = new $this->modelObjectClass;
 		$testObject = $this->modelObject;
@@ -78,20 +90,19 @@ class GenericDaoSpy {
 	}
 	
 	public function getAll() {
+		$this->addCall('getAll', []);
+		
 		// this method can return a specific object if necessary - check.
 		if( array_key_exists('getAll', $this->methodsToOverride) ) {
 			return $this->methodsToOverride['getAll'];
 		}
-
-		// indicate method was called
-		$this->callCount['getAll'] ++;
 
 		$testArray = array_fill( 0, $this->itemCount, $this->getById(1) );
 		return $testArray;
 	}
 	
 	public function save($objToSave) {
-		$this->callCount['save'] ++;
+		$this->addCall('save', $objToSave);
 		
 		// ActionManager expects object back with key id
 		if( $objToSave->getKey_id() === null ) {

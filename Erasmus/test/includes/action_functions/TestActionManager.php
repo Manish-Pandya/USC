@@ -1110,6 +1110,14 @@ class TestActionManager extends TestRadiationActionFunctions {
 	 * @group save
 	 */
 	/* TODO likely needs more checks
+	
+	Note to self: yep. Have third sepparate test (maybe two more) for checking 
+	orderindex assignment. Should:
+	
+	~ set up fake tree-like structure with parent and siblings to check sibling order index
+	~ check that it goes in the right place
+	~ etc.
+	*/
 	public function test_saveHazard() {
 	
 		$testData = new Hazard();
