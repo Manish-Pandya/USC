@@ -865,7 +865,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -897,7 +897,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -929,7 +929,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -961,7 +961,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -993,7 +993,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1025,7 +1025,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1057,7 +1057,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1089,7 +1089,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1130,7 +1130,8 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		//$this->assertTrue( $this->getDapSpy)
 	}
 	
 	
@@ -1162,7 +1163,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1194,7 +1195,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1226,7 +1227,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1258,7 +1259,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1290,7 +1291,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1323,7 +1324,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1358,7 +1359,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1390,7 +1391,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1424,7 +1425,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1458,7 +1459,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -1490,7 +1491,7 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
