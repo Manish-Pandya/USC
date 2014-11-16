@@ -135,6 +135,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 					deferred.resolve(data);
 	            })
 	            .error(function(data, status, headers, config){
+	            	console.log(headers());
 	            	console.log(status);
 		        	deferred.reject(data);
 	            });
@@ -197,7 +198,8 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 		**/
 		arrayContainsObject: function(array, obj, props, returnIdx) {
 	      if(!props) {var props = ["Key_id","Key_id"];}
-	      for (localI=0;localI<array.length;localI++) {
+
+	      for (var localI=0;localI<array.length;localI++) {
 	      	if (array[localI][props[0]] === obj[props[1]]) {
 	      		console.log(array[localI][props[0]]+' | '+obj[props[1]]);
 				if(returnIdx)return localI;
@@ -348,6 +350,12 @@ angular.module('convenienceMethodModule', ['ngRoute'])
                 child = child.$$nextSibling;
             }
             return watchers;
-        }
+        },
+
+        //copy an object, not by reference
+        copyObject: function(obj) {
+		    var newObject = JSON.parse(JSON.stringify(obj));
+		    return newObject;
+		}
 	};
 });
