@@ -689,39 +689,54 @@ class ActionManager {
 
 	public function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL ){
 		$LOG = Logger::getLogger('Action:' . __function__);
+		$decodedObject = $this->convertInputJson();
+		$LOG->debug($decodedObject);
 
-		$inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
-		$deficiencyId = $this->getValueFromRequest('deficiencyId', $deficiencyId);
-
-		if( $inspectionId !== NULL  && $deficiencyId !== NULL){
-
-			// Find the deficiencySelection
-			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
-
-			if ($ds == null){
-				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
-			}
-
-			$LOG->debug("DeficiencySelection is: $ds->getKey_id()".$ds);
-
-			$dao = $this->getDao($ds);
-
-			// Remove all its child data before deleting the deficiencyselection itself
-			foreach ($ds->getCorrectiveActions() as $child){
-				$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$CORRECTIVE_ACTIONS_RELATIONSHIP));
-			}
-
-			foreach ($ds->getRooms() as $child){
-				$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
-			}
-
-			$dao->deleteById($ds->getKey_id());
-
-			return true;
+		if( $decodedObject === NULL  && $deficiencyId == NULL && $inspectionId == NULL ){
+			return new ActionError('Error converting input stream to DeficiencySelection');
+		}
+		else if( $decodedObject instanceof ActionError){
+			return $decodedObject;
 		}
 		else{
-			//error
-			return new ActionError("Must provide parameters deficiencyId and inspectionId");
+
+			if( $decodedObject === NULL  ){
+				$dao = $this->getDao(new DeficiencySelection());
+				$ds = $dao->getById( $deficiencyId );
+				$roomIds = array();
+				foreach( $ds->getRooms() as $room ){
+					array_push($roomIds, $room->getKey_id());
+				}
+
+			}else{
+				// check to see if the roomIds array is populated
+				$roomIds = $decodedObject->getRoomIds();
+			}
+
+
+			// start by saving or updating the object.
+			$dao = $this->getDao(new DeficiencySelection());
+			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($decodedObjectgetInspection_id(),$decodedObject->getDeficiency_id());
+
+
+			foreach ( $ds->getCorrectiveActions() as $action ){
+				$dao->removeRelatedItems($action->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$CORRECTIVE_ACTIONS_RELATIONSHIP));
+			}
+
+			// if roomIds were provided then delete them
+			if (!empty($roomIds)){
+				foreach ($roomIds as $id){
+					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+				}
+
+			// else if no roomIds were provided, then just delete this DeficiencySelection
+			} else {
+				$dao->deleteById($ds->getKey_id());
+				return true;
+			}
+
+			return true;
+
 		}
 	}
 
@@ -2189,13 +2204,6 @@ class ActionManager {
 				}
 			}
 
-			// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-			$checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-			// add the checklists to this inspection
-			foreach ($checklists as &$checklist){
-				$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-				$checklist->setInspectionId($inspection->getKey_id());
-			}
 
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("eager","getInspectors");
@@ -2204,6 +2212,25 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 			$entityMaps[] = new EntityMap("eager","getChecklists");
 			$inspection->setEntityMaps($entityMaps);
+
+			// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+			$checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+			// add the checklists to this inspection
+			foreach ($checklists as $checklist){
+
+				$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+				$checklist->setInspectionId($inspection->getKey_id());
+				$checklist->setRooms($inspection->getRooms());
+				$checklist->filterRooms();
+
+				$entityMaps = array();
+				$entityMaps[] = new EntityMap("lazy","getHazard");
+				$entityMaps[] = new EntityMap("lazy","getRooms");
+				$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+				$entityMaps[] = new EntityMap("eager","getQuestions");
+				$checklist->setEntityMaps($entityMaps);
+
+			}
 			$inspection->setChecklists($checklists);
 			return $inspection;
 		}
