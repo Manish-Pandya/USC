@@ -55,7 +55,7 @@ require_once '../top_view.php';
 	<ul class="postInspectionNav row" style="margin-left:11px;">
 		<li ng-if="checklists.biologicalHazards.checklists.length"><a ng-click="selectChecklistCategory('biologicalHazards')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: route==confirmation}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
 		<li ng-if="checklists.chemicalHazards.checklists.length"><a ng-click="selectChecklistCategory('chemicalHazards')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
-		<li ng-if="checklists.generalHazards.checklists.length"><a ng-click="selectChecklistCategory('generalHazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: route==confirmation}"><span>GENERAL SAFETY</span></a></li>
+		<li ng-if="checklists.generalHazards.checklists.length"><a ng-click="selectChecklistCategory('generalHazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
 		<li ng-if="checklists.radiationHazards.checklists.length"><a ng-click="selectChecklistCategory('radiationHazards')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
 	</ul>
 	<h2 style="margin-left:11px"><img style="margin: -6px 5px 4px 0; max-width:50px;" ng-if="selectedChecklists.img" src="../../img/{{selectedChecklists.img}}"/><span>{{selectedChecklists.Name}}</span></h2>
@@ -99,20 +99,20 @@ require_once '../top_view.php';
 								<li ng-repeat="deficiency in question.Deficiencies">
 									<label class="checkbox inline">
 										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, deficiency.rooms, checklist)" />
-										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="deficiency.Text"></span></span>
+										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span style="margin-top:0" once-text="deficiency.Text"></span></span>
 									</label>
-
+									<pre>{{deficiency.InspectionRooms | json}}</pre>
 									<span ng-show="deficiency.selected">
-											<i class="icon-enter" ng-click="showRooms($event, deficiency, $element)"></i>
+											<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist)"></i>
 									</span>
 
-									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.rooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;">
-										<i class="icon-cancel-2" style="margin:5px;" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i>
-										<ul>
-											<li ng-repeat="room in deficiency.rooms">
+									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
+										<div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
+										<ul style="margin-left:13px;">
+											<li ng-repeat="room in deficiency.InspectionRooms">
 												<label class="checkbox inline">
 													<input type="checkbox" ng-change="selectRoom(question, deficiency, room, checklist)" ng-model="room.checked"/>
-													<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="" src="../../img/loading.gif"/></span>
+													<span class="metro-checkbox"><span once-text="room.Name"></span><img ng-if="room.IsDirty" class="" src="../../img/loading.gif"/></span>
 												</label>
 											</li>
 										</ul>
@@ -130,13 +130,13 @@ require_once '../top_view.php';
 							</ul>
 						</span>
 
-						<span ng-hide="!question.Responses.Answer" ng-switch on="question.showRecommendations">
-							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;">
+						<span ng-if="question.Responses.Answer">
+							<ul ng-if="question.showRecommendations"style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;">
 								<h3>Recommendations:</h3>
 								<li ng-repeat="recommendation in question.Recommendations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-show="!recommendation.edit">
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-change="handleNotesAndRecommendations(question, recommendation)" />
-										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.isNew}">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-show="recommendation.isNew" ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.isNew}"><span once-text="recommendation.Text"></span><img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-show="recommendation.isNew" ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
 									<span ng-show="recommendation.edit" style="margin: 20px 0 ;display: block;">
 										<textarea ng-model="recommendationCopy.Text" style="width:50%"></textarea><br>
@@ -145,7 +145,7 @@ require_once '../top_view.php';
 									</span>
 								</li>
 								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
-									<label class="checkbox inline" ng-show="!recommendation.edit" >
+									<label class="checkbox inline" ng-if="!recommendation.edit" >
 										<input type="checkbox" value="true" ng-model="recommendation.Is_active" ng-change="setNoteOrObsActiveOrInactive(question, recommendation)" />
 										<span class="metro-checkbox labSpecific" ng-class="{edit:recommendation.edit}">{{recommendation.Text}}<img ng-show="recommendation.IsDirty" class="smallLoading" src="../../img/loading.gif"/><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="editItem (question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
@@ -207,7 +207,7 @@ require_once '../top_view.php';
 		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-		    <a class="btn btn-large btn-success" ng-if="checklists" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-success" ng-if="selectedChecklists" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
 	</div>
 	</div>

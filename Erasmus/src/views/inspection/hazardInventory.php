@@ -271,15 +271,15 @@ require_once '../top_view.php';
 				<th style="width:216px;">Inspector(s)</th>
 				<th style="width:120px;">Hazards</th>
 				<th style="width:160px">Inspection Report</th>
-				<th style="width:204px">Close Out Date</th>
+				<th style="width:209px">Close Out Date</th>
 			</thead>
 			<tbody class="scrollContent">
 				<tr ng-repeat="(key, inspection) in previousInspections">
 					<td style="width:61px;">{{inspection.year}}</td>
-					<td style="width:167px;">{{inspection.startDate}}</td>
-					<td  style="width:218px;">{{inspection.Inspectors[0].User.Name}}</td>
-					<td style="width:119px;">hazards</td>
-					<td style="width:156px;"><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
+					<td style="width:173px;">{{inspection.startDate}}</td>
+					<td  style="width:220px;">{{inspection.Inspectors[0].User.Name}}</td>
+					<td style="width:121px;">hazards</td>
+					<td style="width:163px;"><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
 					<td style="width:197px;">{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
 				</tr>
 			</tbody>	

@@ -1,26 +1,144 @@
-var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenienceMethodModule']);
+var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenienceMethodModule'])
 
+.factory('emergencyInfoFactory', function( convenienceMethods, $q, $rootScope ){
+
+    var factory = {};
+
+    factory.getAllPIs = function()
+    {
+        //if we don't have a the list of pis, get it from the server
+        //var deferred = $q.defer();
+        var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+        return convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+              return promise;
+            },
+            function(promise){
+            }
+        );
+    }
+
+    factory.getAllBuildings = function()
+    {
+
+        var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
+        return convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+              return promise;
+            },
+            function(promise){
+            }
+        );
+    }
+
+    factory.getHazards = function(room)
+    {
+
+        //the server expects an array of roomIds, but we are only going to send one, so wrap it in an array;
+        var rooms = [room.Key_id];
+        var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
+        return convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+              return promise;
+            },
+            function(promise){
+            }
+        );
+
+    }
+
+    factory.onSelectPIOrBuilding = function( object )
+    {
+        console.log(object);
+        var len = object.Rooms.length;
+        var displayRooms = [];
+        
+        while( len-- ){
+            var room = object.Rooms[len];
+
+            room.roomText = 'Room: '+room.Name;
+
+            if(room.Building){
+              room.roomText = room.roomText + ' | ' + room.Building.Name;
+              if(room.Building.Physical_address) room.roomText = room.roomText + ' | ' + room.Building.Physical_address;
+            }
+
+        }
+
+        $rootScope.rooms = object.Rooms;
+
+    }
+
+    factory.getPIsByRoom = function( room )
+    {
+      
+        var url = '../../ajaxaction.php?action=getPIsByRoomId&id='+room.Key_id+'&callback=JSON_CALLBACK';
+        return convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+              return promise;
+            },
+            function(promise){
+            }
+        );
+    }
+
+    factory.noSubHazardsPresent = function( hazard )
+    {
+        if(hazard.ActiveSubHazards.every(this.hazardIsNotPresent))return true;
+        return false;
+    }
+
+    factory.hazardIsNotPresent = function( hazard )
+    {   
+        console.log(hazard);
+        if(!hazard.IsPresent)return true;
+        return false;
+    }
+
+    return factory;
+});
 
 //called on page load, gets initial user data to list users
-function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootElement,$location, convenienceMethods, $location) {
+function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emergencyInfoFactory ) {
   $scope.users = [];
-  
+  var eif = emergencyInfoFactory;
+  $scope.eif = eif;
+
   init();
   
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
   //
   function init(){
-    //get a building list
-	  convenienceMethods.getData('../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
+      //get a building list
+      eif.getAllBuildings()
+        .then(
+            function(buildings){
+                $scope.buildings = buildings;
+                return buildings;
+            },
+            function(e){
+                $scope.error = 'The system couldn\'t load the list of Buildings.  Please check your internet connection and try again.'
+            }
+        );
+
+      //get a PI list
+      eif.getAllPIs()
+        .then(
+            function(pis){
+                $scope.pis = pis;
+                return pis;
+            },
+            function(e){
+                $scope.error = 'The system couldn\'t load the list of Principal Investigators.  Please check your internet connection and try again.'
+            }
+        );
   };
 
   //grab set user list data into the $scrope object
   function onGetBuildings(data) {
-    console.log(data);
-	  $scope.Buildings = data;
+    $scope.Buildings = data;
     $scope.error = '';
-    console.log($location.search());
 
     if($location.search().building){
       angular.forEach($scope.Buildings, function(building, key){
@@ -37,73 +155,37 @@ function emergencyInfoController($scope, $routeParams,$browser,$sniffer,$rootEle
    $scope.error = 'Something went wrong when we tried to build the list of buildings.';
   }
 
-  $scope.onSelectBuilding = function(building, $model, $label){
-    $scope.building = building;
+  $scope.onSelectRoom = function( room )
+  {
+        $scope.loading = true;
+        $scope.selectedRoom = room;
+        eif.getHazards( room ).
+          then(
+            function(rootHazard){
+              $scope.hazards = rootHazard.ActiveSubHazards;
+
+              eif.getPIsByRoom(room)
+                .then(
+                    function(pis){
+                      $scope.pisByRoom = pis;
+                      $scope.personnel = [];
+                      var len = pis.length;
+                      while(len--){
+                          $scope.personnel = $scope.personnel.concat(pis[len].LabPersonnel);
+                      }
+                      $scope.loading = false;
+                    }
+                )
+
+
+            },
+            function(){
+
+            }
+
+          )
+
   }
 
-  $scope.onSelectRoom = function(room, $model, $label){
-    $scope.gettingHazards = true;
-    $scope.room = room;
-    var rooms = []
-    rooms.push(room.Key_id);
-
-    var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
-
-    convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
-
-  }
-
-  function onGetHazards(data){
-    $scope.gettingHazards = false;
-
-    var numberOfHazardsPresent = 0;
-
-    $scope.numberOfHazardsPresent = countPresentSubHazards(data);
-    $scope.hazards = data.ActiveSubHazards;
-/*
-    angular.forEach(data, function(hazard, key){
-      console.log(hazard.ParentIds)
-      if(hazard.ParentIds.indexOf("1") > -1){
-        console.log(hazard)
-        $scope.bioHazards.push(hazard);
-      }
-    });
-*/
-  }
-
-  function countPresentSubHazards(hazard) {
-    var numberOfHazards = 0;
-
-    angular.forEach(hazard.ActiveSubHazards, function(subHazard, key){
-      hazard.cssId = camelCase(subHazard.Name);
-
-      if(subHazard.IsPresent) {
-        numberOfHazards ++;
-      }
-
-      if(subHazard.ActiveSubHazards) {
-        numberOfHazards += countPresentSubHazards(subHazard);
-      }
-    });
-    return numberOfHazards;
-  }
-
-  function onFailGetHazards(){
-    $scope.error = 'There was a problem getting the hazards.  Please check your internet connection and try again.'
-  }
-
-  function getBuilding(id){
-    convenienceMethods.getData('../../ajaxaction.php?action=getBuildingById&id='+id+'&callback=JSON_CALLBACK',onGetBuilding,onFailGet);
-  }
-
-  function onGetBuilding(data){
-    console.log(data);
-  }
-
-  function camelCase(input) {
-    return input.toLowerCase().replace(/ (.)/g, function(match, group1) {
-      return group1.toUpperCase();
-    });
-  }
 
 };

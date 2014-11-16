@@ -68,6 +68,7 @@ class ActionMappingFactory {
 
 				// PI Hub
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
+				"getRoomsByPI"=>new ActionMapping("getRoomsByPI", "", ""),
 				"getPIById"=>new ActionMapping("getPIById", "", ""),
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
 				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
@@ -167,6 +168,10 @@ class ActionMappingFactory {
 
 				"getInspectionById"=>new ActionMapping("getInspectionById", "", ""),
 				"getResponseById"=>new ActionMapping("getResponseById", "", ""),
+
+				// EMERGENCY INFO HUB
+				"getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
+
 		);
 	}
 }
