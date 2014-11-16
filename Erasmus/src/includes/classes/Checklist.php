@@ -35,6 +35,13 @@ class Checklist extends GenericCrud {
 			"foreignKeyName"	=>	"checklist_id"
 	);
 
+	protected static $ROOMS_RELATIONSHIP = array(
+			"className"	=>	"Room",
+			"tableName"	=>	"hazard_room",
+			"keyName"	=>	"room_id",
+			"foreignKeyName"	=>	"hazard_id"
+	);
+
 	/** Name of this Checklist */
 	private $name;
 
@@ -52,11 +59,19 @@ class Checklist extends GenericCrud {
 	/** Non-persisted value used to filter Responses for a particular inspection */
 	private $inspectionId;
 
+	/** Array of Room entities in which this Checklist's Hazard is contained */
+	private $rooms;
+
+	/** Array of Room entities relevant to a particular inspection */
+	private $inspectionRooms;
+
 	public function __construct(){
 
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getHazard");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 		$entityMaps[] = new EntityMap("eager","getQuestions");
 		$this->setEntityMaps($entityMaps);
 
@@ -122,6 +137,72 @@ class Checklist extends GenericCrud {
 			}
 		}
 		return $questions;
+	}
+
+	public function getRooms(){
+		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+		}
+		return $this->rooms;
+	}
+	public function setRooms($rooms){ $this->rooms = $rooms; }
+
+	public function getInspectionRooms() { return $this->inspectionRooms; }
+	public function setInspectionRooms($inspectionRooms){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+		$this->inspectionRooms = array();
+		$roomDao = new GenericDAO(new Room());
+		//$LOG->debug($roomDao);
+
+		foreach ($inspectionRooms as $rm){
+			//if the hazard has been received from an API call, each of its inpsection rooms will be an array instead of an object, because PHP\
+			//If so, we set the key id by index instead of calling the getter
+			if(!is_object($rm)){
+				$key_id = $rm['Key_id'];
+			}else{
+				$key_id = $rm->getKey_id();
+			}
+			$this->inspectionRooms[] = $roomDao->getById($key_id);
+		}
+	}
+
+	public function filterRooms(){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->debug("Filtering rooms for checklist: " . $this->getName() . ", key_id " . $this->getKey_id());
+
+		// Get the db connection
+		global $db;
+
+		foreach($this->rooms as $room){
+			$rooms[] = $room->getKey_id();
+		}
+		foreach($rooms as $room){
+			$LOG->debug("the room is: ".$room);
+		}
+		$roomIds = implode (',',$rooms);
+
+		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->hazard_id AND room_id IN ( $roomIds )";
+		$LOG->debug("query: " . $queryString);
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		$roomIdsToEval = array();
+		while($roomId = $stmt->fetchColumn()){
+			$this->isPresent = true;
+			array_push($roomIdsToEval,$roomId);
+		}
+
+		$inspectionRooms = array();
+
+		foreach ($this->rooms as $room){
+			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
+			$LOG->debug('roomId:  '.$roomId);
+			$LOG->debug($rooms);
+		    if( in_array ( $room->getKey_id() , $roomIdsToEval ) )array_push($inspectionRooms, $room);
+		}
+
+		$this->inspectionRooms = $inspectionRooms;
 	}
 
 }
