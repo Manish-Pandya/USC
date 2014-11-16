@@ -16,7 +16,7 @@ inspectionChecklist.run(function($rootScope, $templateCache) {
         checklistHolder.biologicalHazards = {uid:'biologicalHazards', Name: "BIOLOGICAL SAFETY",img:'biohazard-largeicon.png', checklists:[], altImg:"biohazard-white-con.png"};
         checklistHolder.chemicalHazards = {uid:'chemicalHazards', Name: "CHEMICAL SAFETY", img:'chemical-safety-large-icon.png', checklists:[]};
         checklistHolder.radiationHazards = {uid:'radiationHazards', Name: "RADIATION SAFETY", img:'radiation-large-icon.png', checklists:[]};
-        checklistHolder.generalHazards = {uid:'generalHazards', Name: "GENERAL SAFETY", checklists:[]};
+        checklistHolder.generalHazards = {uid:'generalHazards', Name: "GENERAL SAFETY", img:'gen-hazard-large-icon.png' ,checklists:[]};
 
         //group the checklists by parent hazard
         //get the questions for each checklist and store them in a property that the view can access easily
@@ -53,8 +53,11 @@ inspectionChecklist.run(function($rootScope, $templateCache) {
 
 //called on page load, gets initial user data to list users
 function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory) {
+
+  //grab a copy of convenienceMethods copyObject method so we can call it from the view
+  $scope.copyObject = convenienceMethods.copyObject;
+
   init();
-  
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
   function init(){
@@ -62,6 +65,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       $scope.inspId = $location.search().inspection;
       convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+$scope.inspId+'&callback=JSON_CALLBACK', onFailGetInsp)
       .then(function(data){
+        console.log(data.data);
          $scope.inspection = data.data;
          $scope.checklists = checklistFactory.organizeChecklists(data.data.Checklists);
          $scope.selectChecklistCategory("biologicalHazards");
@@ -89,7 +93,6 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     //We loop through each checklist, and each checklist's questions, to see if questions have already been answered
     for(i=0;i<len;i++){
       var checklist = checklists.checklists[i];
-      console.log(checklist);
       checklist.isNew = true;
       var questions = checklist.Questions;
       var qLen = questions.length;
@@ -387,26 +390,41 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
   $scope.selectRoom = function(response, deficiency, room, checklist){
     room.IsDirty = true;
-    $scope.deficiencySelected(response, deficiency);
+    $scope.deficiencySelected(response, deficiency, room, checklist, true);
   }
 
-  $scope.deficiencySelected = function(question, deficiency, rooms, checklist){
-    console.log(rooms);
-    console.log(deficiency);
+
+  $scope.deficiencySelected = function(question, deficiency, rooms, checklist, roomSelected){
+    console.log(checklist);
+
     response = question.Responses;
     response.IsDirty = true;
 
-    //the deficieny has been switched from an uncheked to a checked state
-    if(deficiency.selected){
+    if(!roomSelected){
+        var adding = deficiency.selected
+    }else{
+        var adding = rooms.checked;
+    }
+
+    defDto = {
+      Class: "DeficiencySelection",
+      RoomIds: RoomIds,
+      Deficiency_id:  deficiency.Key_id,
+      Response_id: response.Key_id,
+      Inspection_id: $scope.inspection.Key_id
+    }
+
+
+    //the deficieny or room has been switched from an uncheked to a checked state
+    if( adding ){
 
       //if this deficiency doesn't have a rooms collection, make one
-      if(!deficiency.rooms){
-        var rooms = angular.copy($scope.inspection.Rooms);
-        deficiency.rooms = angular.copy($scope.inspection.Rooms);
+      if(!deficiency.InspectionRooms){
+          var rooms = convenienceMethods.copyObject(checklist.InspectionRooms);
+          deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
       }else{
-        rooms = deficiency.rooms;
+          var rooms = deficiency.InspectionRooms;
       }
-
 
       var RoomIds = [];
       var atLeastOneChecked = true;
@@ -417,27 +435,67 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         RoomIds.push(rooms[i].Key_id);
       }
 
-
-      defDto = {
-        Class: "DeficiencySelection",
-        RoomIds: RoomIds,
-        Deficiency_id:  deficiency.Key_id,
-        Response_id: response.Key_id,
-        Key_id:      null
-      }
-
       console.log( RoomIds );
 
       //set checked property to false.  we set it to true only on success, in the callback
       deficiency.checked = false;
       var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-      convenienceMethods.updateObject( defDto, question, onSaveDefSelect, onFailSaveDefSelect, url, null, checklist, deficiency);
+      //convenienceMethods.updateObject( defDto, question, onSaveDefSelect, onFailSaveDefSelect, url, null, checklist, deficiency);
+
+      convenienceMethods.saveDataAndDefer( url, defDto ).then(
+          function(promise){
+             console.log(promise);
+              //push the def selections deficiency_id into the inspections array of deficiency Key_ids
+              //$scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
+              var atLeastOneChecked = false;
+              if(!deficiency.InspectionRooms)deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+             
+              var i = deficiency.InspectionRooms.length
+
+              while(i--){
+                var room = deficiency.InspectionRooms[i];
+                room.IsDirty = false;
+                if(room.checked)atLeastOneChecked = true;
+              }
+
+              deficiency.IsDirty = false;
+              deficiency.selected = true;
+              //question.Responses.DeficiencySelections.push(returnedDeficiencySelection);
+              evaluateQuestionComplete(question);
+              countAnswers(checklist);
+          },
+          function(promise){
+            deferred.reject(promise);
+          }
+      );
+
+
+
     }else{
-      //console.log('here');  
-      deficiency.checked = true;
-      def_id = deficiency.Key_id;
-      var url = '../../ajaxaction.php?action=removeDeficiencySelection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
-      convenienceMethods.deleteObject( onRemoveDefSelect, onFailRemoveDefSelect, url, deficiency, question, checklist  );
+
+      var url = '../../ajaxaction.php?action=removeDeficiencySelection';
+      convenienceMethods.saveDataAndDefer( url, defDto ).then(
+          function(promise){
+             console.log(checklist);
+              //push the def selections deficiency_id into the inspections array of deficiency Key_ids
+              //$scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
+              var atLeastOneChecked = false;             
+              var i = deficiency.InspectionRooms.length
+              while(i--){
+                var room = deficiency.InspectionRooms[i];
+                room.IsDirty = false;
+                if(room.checked)atLeastOneChecked = true;
+              }
+
+              deficiency.IsDirty = false;
+              if(atLeastOneChecked)deficiency.selected = true;
+              evaluateQuestionComplete(question);
+              countAnswers(checklist);
+          },
+          function(promise){
+            deferred.reject(promise);
+          }
+      );
     }
   }
 
@@ -496,12 +554,23 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     alert("There was an error when the system tried to update the Deficiency Selection.");
   }
 
-  $scope.showRooms = function(event, deficiency, element){
-    if(!deficiency.rooms)deficiency.rooms = angular.copy($scope.inspection.Rooms);
-    event.stopPropagation();
+  $scope.showRooms = function(event, deficiency, element, checklist){
 
+    if(!deficiency.InspectionRooms){
+        //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms, and then set all of them to checked
+        deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+        var i = deficiency.InspectionRooms.length;
+        while(i--){
+            deficiency.InspectionRooms[i].checked = true; 
+        }
+    }
+
+    event.stopPropagation();
     calculateClickPosition(event,deficiency,element);
     deficiency.showRoomsModal = !deficiency.showRoomsModal;
+
+
+
   }
 
   //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
@@ -516,22 +585,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   } 
 
   function onSaveDefSelect(returnedDeficiencySelection, question, checklist, deficiency){
-    console.log(checklist);
-    //push the def selections deficiency_id into the inspections array of deficiency Key_ids
-    $scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
-
-    var atLeastOneChecked = false;
-    if(!deficiency.rooms)deficiency.rooms = $scope.inspection.Rooms;
-    angular.forEach(deficiency.rooms, function(room, key){
-      room.IsDirty = false;
-      if(room.checked)atLeastOneChecked = true;
-    });
-
-    deficiency.IsDirty = false;
-    deficiency.selected = true;
-    question.Responses.DeficiencySelections.push(returnedDeficiencySelection);
-    evaluateQuestionComplete(question);
-    countAnswers(checklist);
+   
   }
 
   function onFailSaveDefSelect(){
