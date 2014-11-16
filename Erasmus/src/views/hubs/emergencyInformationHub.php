@@ -53,7 +53,7 @@ require_once '../top_view.php';
 					  Loading...
 					</span>
 
-				<table ng-if="hazards && pisByRoom" class="table table-striped pisTable">
+				<table ng-if="hazards && pisByRoom" class="table table-striped pisTable table-bordered">
 					<tr class="blue-tr">
 						<th>Principal Investigator</th>
 						<th>Emergency Phone</th>
@@ -69,7 +69,7 @@ require_once '../top_view.php';
 						</td>
 					</tr>
 				</table>
-				<table ng-if="hazards && pisByRoom" class="table table-striped pisTable" style="max-width:700px;">
+				<table ng-if="hazards && pisByRoom" class="table table-striped pisTable table-bordered" style="max-width:700px;">
 					<tr class="blue-tr">
 						<th>Lab Personnel Contacts</th>
 						<th>Emergency Phone</th>
@@ -82,10 +82,12 @@ require_once '../top_view.php';
 
 			</div>
 		</div>
-		<h1 class="hazardHeader" ng-if="hazards && pisByRoom">LABORATORY HAZARDS</h1>
+		
+		<h1 class="hazardHeader" ng-if="hazards">LABORATORY HAZARDS</h1>
 		<ul class="modalHazardList">
-			<li ng-if="hazards && pisByRoom" data-ng-repeat="hazard in hazards" class="modalHazard{{hazard.Key_id}}">
+			<li ng-if="hazards" data-ng-repeat="hazard in hazards" class="modalHazard{{hazard.Key_id}}">
 				<h1>{{hazard.Name}}</h1>
+				<h3 style="margin-left:32px" ng-if="eif.noSubHazardsPresent(hazard)">No {{hazard.Name}} hazards.</h3>
 				<ul ng-if="hazard.ActiveSubHazards">
 					<div ng-include="'EmergencyInfoList.php'" ng-init="SubHazards = hazard.ActiveSubHazards"></div>
 	    		</ul>
