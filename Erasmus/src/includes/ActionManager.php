@@ -716,7 +716,7 @@ class ActionManager {
 
 			// start by saving or updating the object.
 			$dao = $this->getDao(new DeficiencySelection());
-			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($decodedObjectgetInspection_id(),$decodedObject->getDeficiency_id());
+			$ds = $dao->getByid($decodedObject->getKey_id());
 
 
 			foreach ( $ds->getCorrectiveActions() as $action ){
@@ -728,7 +728,17 @@ class ActionManager {
 				foreach ($roomIds as $id){
 					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 				}
+				
+				//if we have removed all the rooms, delete this DeficiencySelection
+				
+				//clear out our rooms
+				$ds->setRooms(null);
+				//get a new collection from the db
+				if($ds->getRooms() == NULL){
+					$dao->deleteById($ds->getKey_id());
+				}
 
+   				
 			// else if no roomIds were provided, then just delete this DeficiencySelection
 			} else {
 				$dao->deleteById($ds->getKey_id());
