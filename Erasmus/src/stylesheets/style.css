@@ -327,6 +327,7 @@ div.rsmsCenterIconContainer a p {
   /* line 286, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a p {
     font-size: 25px;
+    text-align: center;
   }
   /* line 292, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a img {
@@ -359,6 +360,7 @@ div.rsmsCenterIconContainer a p {
   }
   /* line 315, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a p {
+        text-align: center;
     font-size: 17px;
   }
 }
@@ -390,7 +392,7 @@ div.rsmsCenterIconContainer a p {
 
 .modalHazardList{
   width:100%;
-  max-width: 1200px;
+  max-width: 1366px;
   margin:30px auto !important;
   text-align: left;
   font-weight: bold;
@@ -427,11 +429,15 @@ div.rsmsCenterIconContainer a p {
   font-size: 1.4em;
   text-decoration: underline;
   font-weight: bold;
+  line-height: 21px;
 }
-
+.modalHazardList > li ul li{
+}
 .modalHazardList > li ul li ul{
   list-style: inside !important;
+  margin-left:25px;
 }
+
 
 
 .modalHazardList > li ul li ul li h2{
@@ -440,8 +446,8 @@ div.rsmsCenterIconContainer a p {
 }
 
 .pisTable td, .pisTable th{
-  border-right:3px solid white;
-  border-bottom:3px solid white;
+  //border-right:3px solid white;
+  //border-bottom:3px solid white;
 }
 .pisTable td ul{
   margin-left: 0;
@@ -1290,6 +1296,14 @@ a.checklistNav span{
   padding: 8px 0;
   display: inline-block;
 }
+
+.checklistRoomIcon{
+  margin: 5px 0 0 3px;
+}
+
+.checkbox.inline .metro-checkbox{
+  margin-right: 0px !important;
+}
 /*rotate hide/reveal text for sidenav on checklist*/
 /* line 458, ../sass/style.scss */
 /* line 1050, ../sass/style.scss */
@@ -1399,6 +1413,7 @@ td.reviewHeader {
   height: 38px;
   background-position: 5px 7px;
   background-repeat: no-repeat;
+  border: 3px solid #000;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1664,8 +1679,8 @@ ul.key li.deficiencies span {
 
 /* inspection details report */
 .detailsReportTable{
-  margin-top:0;
-  margin-bottom:0;
+  margin-top:6px;
+  margin-bottom:6px;
 }
 
 .detailsReportTable th.bioHeader{
@@ -2802,4 +2817,20 @@ table.large tr th{
   padding-top:20px !important;
   padding-bottom:20px !important;
   font-size:30px !important;
+}
+
+.tempTable{
+  width:90% !important;
+  max-width: 9999px;
+  margin:0 auto;
+
+}
+.tempTable th{
+  vertical-align: bottom;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.tempTable th input{
+  width: 100%;
+  margin-top: 3px;
 }
