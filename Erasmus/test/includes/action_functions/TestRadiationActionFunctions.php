@@ -17,6 +17,7 @@ require_once(dirname(__FILE__) . '/../../../src/includes/ActionManager.php');
 require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php');
 
 
+// TODO: remove requir_once for autoloader - makes tests dependent on database running.
 // TODO: check that getById was called with correct arguments
 // TODO: put internal methods and fields in ActionManager test class - the only reason
 // they're here is that this file was created first.
