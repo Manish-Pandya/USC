@@ -406,6 +406,24 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         var adding = rooms.checked;
     }
 
+    //if this deficiency doesn't have a rooms collection, make one
+    if(!deficiency.InspectionRooms){
+        var rooms = convenienceMethods.copyObject(checklist.InspectionRooms);
+        deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
+    
+    }
+    var rooms = deficiency.InspectionRooms;
+    var RoomIds = [];
+    var atLeastOneChecked = true;
+
+    //build out an array of Room key_ids for the server request
+    for(i=0;i<rooms.length;i++){
+      rooms[i].checked = true;
+      RoomIds.push(rooms[i].Key_id);
+    }
+
+    console.log( RoomIds );
+
     defDto = {
       Class: "DeficiencySelection",
       RoomIds: RoomIds,
@@ -418,33 +436,14 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     //the deficieny or room has been switched from an uncheked to a checked state
     if( adding ){
 
-      //if this deficiency doesn't have a rooms collection, make one
-      if(!deficiency.InspectionRooms){
-          var rooms = convenienceMethods.copyObject(checklist.InspectionRooms);
-          deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
-      }else{
-          var rooms = deficiency.InspectionRooms;
-      }
-
-      var RoomIds = [];
-      var atLeastOneChecked = true;
-
-      //build out an array of Room key_ids for the server request
-      for(i=0;i<rooms.length;i++){
-        rooms[i].checked = true;
-        RoomIds.push(rooms[i].Key_id);
-      }
-
-      console.log( RoomIds );
-
       //set checked property to false.  we set it to true only on success, in the callback
       deficiency.checked = false;
       var url = '../../ajaxaction.php?action=saveDeficiencySelection';
       //convenienceMethods.updateObject( defDto, question, onSaveDefSelect, onFailSaveDefSelect, url, null, checklist, deficiency);
 
       convenienceMethods.saveDataAndDefer( url, defDto ).then(
-          function(promise){
-             console.log(promise);
+          function(returnedDeficiencySelection){
+             console.log(returnedDeficiencySelection);
               //push the def selections deficiency_id into the inspections array of deficiency Key_ids
               //$scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
               var atLeastOneChecked = false;
@@ -460,7 +459,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
               deficiency.IsDirty = false;
               deficiency.selected = true;
-              //question.Responses.DeficiencySelections.push(returnedDeficiencySelection);
+              question.Responses.DeficiencySelections.push(returnedDeficiencySelection);
               evaluateQuestionComplete(question);
               countAnswers(checklist);
           },
@@ -473,6 +472,18 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
     }else{
 
+
+      var i = question.Responses.DeficiencySelections.length;
+      console.log(defDto.Deficiency_id);
+      console.log(question.Responses.DeficiencySelections);
+      //get the key_id for our DeficiencySelection
+      while(i--){
+        if( question.Responses.DeficiencySelections[i].Deficiency_id == defDto.Deficiency_id ){
+          defDto.Key_id = question.Responses.DeficiencySelections[i].Key_id;
+          var defSelectIdx = i;
+        } 
+      }
+
       var url = '../../ajaxaction.php?action=removeDeficiencySelection';
       convenienceMethods.saveDataAndDefer( url, defDto ).then(
           function(promise){
@@ -484,9 +495,20 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
               while(i--){
                 var room = deficiency.InspectionRooms[i];
                 room.IsDirty = false;
-                if(room.checked)atLeastOneChecked = true;
+                //are any rooms checked?
+                if(room.checked){
+                  //did we get here by checking a room or a deficiency?
+                  if(!roomSelected){
+                    atLeastOneChecked = true;
+                  }else{
+                    console.log('here');
+                    //we got here by checking a deficiency, so all rooms should be unchecked
+                    room.checked = false;
+                  }
+                }
               }
 
+              question.Responses.DeficiencySelections.splice( defSelectIdx, 1 );
               deficiency.IsDirty = false;
               if(atLeastOneChecked)deficiency.selected = true;
               evaluateQuestionComplete(question);

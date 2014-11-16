@@ -101,7 +101,7 @@ require_once '../top_view.php';
 										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, deficiency.rooms, checklist)" />
 										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span style="margin-top:0" once-text="deficiency.Text"></span></span>
 									</label>
-
+									<pre>{{deficiency.InspectionRooms | json}}</pre>
 									<span ng-show="deficiency.selected">
 											<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist)"></i>
 									</span>
