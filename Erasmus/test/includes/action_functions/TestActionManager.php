@@ -1561,7 +1561,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	/**
 	 * @group save
 	 */
-	public function test_saveDeficiencySelection_noObject() {
+	public function test_saveDeficiencySelection_noInput() {
 		$result = $this->actionManager->saveDeficiencySelection();
 	
 		// should have returned actionError, no input given
@@ -1572,24 +1572,60 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	/**
 	 * @group save
 	 */
-	/* TODO fix this
-	
-	public function test_saveDeficiencySelection() {
+	public function test_saveDeficiencySelection_noRooms() {
 	
 		$testData = new DeficiencySelection();
 		$_REQUEST["testInput"] = $testData;
-	
+
 		$result = $this->actionManager->saveDeficiencySelection();
+		$calls = $this->getDaoSpy()->getCalls();
 	
-		// should have returned DeficiencySelection with a newly-assigned key id
-		$this->assertInstanceOf('DeficiencySelection', $result);
-		$this->assertEquals( 1, $result->getKey_id() );
-	
-		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		// if deficiencySelection has no rooms, saveDeficiencySelction should delete it
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('deleteById') );
+		
+		// should have passed DeficiencySelection to deleteById 
+		$lastCall = $calls[count(calls) - 1];
+		$this->assertEquals( $testData, $lastCall->getArg(0) );
 	}
 	
+	/**
+	 * @group save
+	 */
+	public function test_saveDeficiencySelection_withRooms() {
+
+		// set up test deficiencySelection with room children to save
+		$testRoom1 = new Room();
+		$testRoom1->setKey_id(42);
+		
+		$testRoom2 = new Room();
+		$testRoom2->setKey_id(3);
+
+		$roomIds = array($testRoom1->getKey_id(), $testRoom2->getKey_id());
+		$roomsArray = array($testRoom1, $testRoom2);
+		
+		$testData = new DeficiencySelection();
+		$testData->setRooms($roomsArray);
+		$testData->setRoomIds($roomIds);
+		
+		$_REQUEST["testInput"] = $testData;
+		$dao = $this->getDaoSpy();
 	
+		$result = $this->actionManager->saveDeficiencySelection();
+		$calls = $dao->getCalls();
+	
+		// since deficiencySelection has rooms, saveDeficiencySelction should not delete it
+		$this->assertFalse( $dao->wasItCalled('deleteById') );
+		
+		// addRelatedItems should have been called
+		$this->assertTrue( $dao->wasItCalled('addRelatedItems') );
+		
+		// testRoom's key id should have been passed to addRelatedItems
+		$lastAddedId = $dao->getLastCall('addRelatedItems')->getArg(0);
+		$this->assertEquals( $testRoom2->getKey_id(), $lastAddedId );
+		
+	}
+	
+
 	/* saveRootCause */
 	
 	/**
