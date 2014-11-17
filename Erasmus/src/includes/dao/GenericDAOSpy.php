@@ -131,5 +131,32 @@ class GenericDaoSpy {
         	return true;
 		}
 	}
+	
+	public function removeRelatedItems($key_id, $foreignKey_id, $relationship) {
+		$args = array($key_id, $foreignKey_id, $relationship);
+		$this->addCall('removeRelatedItems', $args);
+		
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('removeRelatedItems', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['removeRelatedItems'];
+		}
+		else {
+			return true;
+		}
+		
+	}
+
+	public function addRelatedItems($key_id, $foreignKey_id, $relationship) {
+		$args = array($key_id, $foreignKey_id, $relationship);
+		$this->addCall('addRelatedItems', $args);
+		
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('addRelatedItems', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['addRelatedItems'];
+		}
+		else {
+			return true;
+		}
+	}
 }
 ?>
