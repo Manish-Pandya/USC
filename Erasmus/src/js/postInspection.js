@@ -113,6 +113,10 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   };
 
   factory.organizeChecklists = function(checklists){
+
+    //set a checklists object that we can use elsewhere
+    this.checklists = checklists;
+
     //object with array properties to contain the checklists
     checklistHolder = {};
     checklistHolder.biologicalHazards = {name: "Biological Saftey", checklists:[]};
@@ -306,6 +310,15 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
           return this.observations;
   }
 
+  factory.getNumberOfRoomsForQuestionByChecklist = function( question )
+  {
+          var i = this.inspection.Checklists.length;
+          while(i--){
+            if(question.Checklist_id == this.inspection.Checklists[i].Key_id)return this.inspection.Checklists[i].InspectionRooms.length;
+          }
+          return false;
+  }
+
   return factory;
 });
 
@@ -329,6 +342,7 @@ mainController = function($scope, $location, postInspectionFactory,convenienceMe
   */
 }
 inspectionDetailsController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
+  $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
     function init(){
      if($location.search().inspection){
         var id = $location.search().inspection;
@@ -530,7 +544,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 }
 
 inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory,$rootScope){
-  
+  $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
   function init(){
     if($location.search().inspection){
       var id = $location.search().inspection;
