@@ -2059,7 +2059,10 @@ class ActionManager {
 				return true;
 			}
 
-			return $ds;
+			$selection = $dao->getById($ds->getKey_id());	
+			$LOG->debug($selection);
+			
+			return $selection;
 
 		}
 	}

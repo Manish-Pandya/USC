@@ -69,6 +69,7 @@ require_once '../top_view.php';
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
 		     		<li class="question" ng-repeat="question in checklist.Questions">
+		     			<!--call evaluateDeficiecnyRooms -->
 		     			<h3 style="width:45%; float:left;"><img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span once-text="question.Text"></span></h3>
 		     			<div class="questionAnswerInputs">
 	     					<label class="radio inline">
@@ -98,12 +99,11 @@ require_once '../top_view.php';
 								<h3>Deficiencies:</h3>
 								<li ng-repeat="deficiency in question.Deficiencies">
 									<label class="checkbox inline">
-										<input type="checkbox" value="true" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, deficiency.rooms, checklist)" />
+										<input type="checkbox" ng-model="deficiency.selected" ng-change="deficiencySelected(question, deficiency, deficiency.rooms, checklist)" />
 										<span class="metro-checkbox"><img ng-show="deficiency.IsDirty" class="smallLoading" src="../../img/loading.gif"/><span style="margin-top:0" once-text="deficiency.Text"></span></span>
 									</label>
-									<pre>{{deficiency.InspectionRooms | json}}</pre>
 									<span ng-show="deficiency.selected">
-											<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist)"></i>
+											<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
 									</span>
 
 									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
