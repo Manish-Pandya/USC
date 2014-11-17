@@ -78,8 +78,11 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		return $this->daoSpy;
 	}
 
-	/* getAll tests */
-	
+
+	/*************************************************************************\
+	 *                            GetAll Tests                               *
+	\*************************************************************************/
+
 	
 	/* getAllUsers */
 	/**
@@ -232,6 +235,10 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertCount( 5, $result );
 	}
 	
+	/*************************************************************************\
+	 *                         Basic Get Tests                               *
+	\*************************************************************************/
+
 
 	/* getUserById */
 	
@@ -794,10 +801,9 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	}
 	
-	
-	// get by relationship
-	// TODO add fancy divider here
-	
+	/*************************************************************************\
+	 *                         Get By Relationship                           *
+	\*************************************************************************/
 	
 	/* getSupervisorByUserId */
 
@@ -888,9 +894,9 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf( "Checklist", $results );
 	}
 	
-	
-	
-	
+	/*************************************************************************\
+	 *                              Save Tests                               *
+	\*************************************************************************/
 
 	/* saveUser */
 	
