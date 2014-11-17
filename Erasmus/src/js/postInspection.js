@@ -113,12 +113,16 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   };
 
   factory.organizeChecklists = function(checklists){
+
+    //set a checklists object that we can use elsewhere
+    this.checklists = checklists;
+
     //object with array properties to contain the checklists
     checklistHolder = {};
-    checklistHolder.biologicalHazards = [];
-    checklistHolder.chemicalHazards = [];
-    checklistHolder.radiationHazards = [];
-    checklistHolder.generalHazards = [];
+    checklistHolder.biologicalHazards = {name: "Biological Saftey", checklists:[]};
+    checklistHolder.chemicalHazards = {name: "Chemical Saftey", checklists:[]};
+    checklistHolder.radiationHazards = {name: "Radiation Safety", checklists:[]};
+    checklistHolder.generalHazards = {name: "General Safety", checklists:[] };
 
     //group the checklists by parent hazard
     //get the questions for each checklist and store them in a property that the view can access easily
@@ -127,30 +131,77 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
       if(checklist.Master_hazard.toLowerCase().indexOf('biological') > -1){
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
-        checklistHolder.biologicalHazards.push(checklist);
+        checklistHolder.biologicalHazards.checklists.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
-        checklistHolder.chemicalHazards.push(checklist);
+        checklistHolder.chemicalHazards.checklists.push(checklist);
         checklistHolder.chemicalHazards.Questions = checklistHolder.chemicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('radiation') > -1){
         if(!checklistHolder.radiationHazards.Questions)checklistHolder.radiationHazards.Questions = [];
-        checklistHolder.radiationHazards.push(checklist);
+        checklistHolder.radiationHazards.checklists.push(checklist);
         checklistHolder.radiationHazards.Questions = checklistHolder.radiationHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('general') > -1){
         if(!checklistHolder.generalHazards.Questions)checklistHolder.generalHazards.Questions = [];
-        checklistHolder.generalHazards.push(checklist);
+        checklistHolder.generalHazards.checklists.push(checklist);
         checklistHolder.generalHazards.Questions = checklistHolder.generalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
     }
+    this.evaluateChecklistCategory( checklistHolder.biologicalHazards );
+    this.evaluateChecklistCategory( checklistHolder.chemicalHazards );
+    this.evaluateChecklistCategory( checklistHolder.radiationHazards );
+    this.evaluateChecklistCategory( checklistHolder.generalHazards );
+
     return checklistHolder;
   };
 
   factory.getQuestionsByChecklist = function(checklist){
     return checklist.Questions;
+  }
+
+  factory.evaluateChecklistCategory = function( category )
+  {
+      if(!category.Questions){
+        //there weren't any hazards in this category
+        //hide the whole category
+        console.log(category.name+' had no hazards in these labs');
+        category.message = false;
+        category.show = false
+      }else if( category.Questions.some(this.isAnsweredNo) ){
+        console.log(category.name+' some questions were no');
+        //some questions are answered no
+        //display as normal
+        category.show = true;
+        category.message = false;
+      }else if( category.Questions.every(this.notAnswered) ){
+        console.log(category.name+' no questions were answered');
+        //there were checklists but no questions were answered
+        category.show = true;
+        category.message = category.name+' hazards were not evaluated during this laboratory safety inspection.';
+        console.log(category);
+
+      }else{
+        console.log(category.name+' there were no deficiencies');
+        //there were no deficiencies
+        category.show = true;
+        category.message = 'No '+category.name+' deficiencies were identified during this laboratory safety inspection.';
+      }
+
+  }
+
+  factory.isAnsweredNo = function(question)
+  {
+      if(question.Responses && question.Responses.Answer == 'no')return true;
+      return false;
+  }
+
+  factory.notAnswered = function(question)
+  {
+      if(question.Responses && !question.Responses.Answer)return true
+      return false;
   }
 
   //set a matching view property for a mysql datetime property of an object
@@ -259,6 +310,15 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
           return this.observations;
   }
 
+  factory.getNumberOfRoomsForQuestionByChecklist = function( question )
+  {
+          var i = this.inspection.Checklists.length;
+          while(i--){
+            if(question.Checklist_id == this.inspection.Checklists[i].Key_id)return this.inspection.Checklists[i].InspectionRooms.length;
+          }
+          return false;
+  }
+
   return factory;
 });
 
@@ -282,6 +342,7 @@ mainController = function($scope, $location, postInspectionFactory,convenienceMe
   */
 }
 inspectionDetailsController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
+  $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
     function init(){
      if($location.search().inspection){
         var id = $location.search().inspection;
@@ -310,6 +371,8 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
               //organized by parent hazard
               //each group of checklists will have a Questions property containing all questions for each checklist in a given category
               $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+
+              console.log($scope.questionsByChecklist);
             });
         }else{
           $scope.inspection = postInspectionFactory.getInspection();
@@ -328,6 +391,16 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
   function onFailGetInspeciton(){
     $scope.doneLoading = true;
     $scope.error="The system couldn't find the inspection.  Check your internet connection."
+  }
+
+  $scope.someAnswers = function(checklist){
+    if(checklist.Questions.some(isAnswered)) return true;
+    return false;
+  }
+
+  function isAnswered(question){
+    if(question.Responses && question.Responses.Answer)return true;
+    return false;
   }
 
 
@@ -471,7 +544,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 }
 
 inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory,$rootScope){
-  
+  $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
   function init(){
     if($location.search().inspection){
       var id = $location.search().inspection;
@@ -575,4 +648,11 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     console.log(date);
     return convenienceMethods.getDate(date).formattedString;
   }
+
+  function answerIsNotNo(answer){
+      if(answer!=no)return true;
+      return false;
+  }
+
+
 }

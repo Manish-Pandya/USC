@@ -562,9 +562,9 @@ class ActionManager {
 					$parentHazard = $parentDao->getById( $hazard->getParent_hazard_id() );
 					$siblings = $parentHazard->getSubHazards();
 					$count = count( $siblings );
-	
+
 					if( $this->getIsAlphabetized( $siblings ) ){
-	
+
 						//the list is in alphabetical order.  Find the right spot for the new hazard
 						for($i = 0; $i < count( $siblings ); ++$i) {
 
@@ -689,39 +689,64 @@ class ActionManager {
 
 	public function removeDeficiencySelection( $deficiencyId = NULL, $inspectionId = NULL ){
 		$LOG = Logger::getLogger('Action:' . __function__);
+		$decodedObject = $this->convertInputJson();
+		$LOG->debug($decodedObject);
 
-		$inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
-		$deficiencyId = $this->getValueFromRequest('deficiencyId', $deficiencyId);
-	
-		if( $inspectionId !== NULL  && $deficiencyId !== NULL){
-	
-			// Find the deficiencySelection
-			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
-	
-			if ($ds == null){
-				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
-			}
-
-			$LOG->debug("DeficiencySelection is: $ds->getKey_id()".$ds);
-
-			$dao = $this->getDao($ds);
-
-			// Remove all its child data before deleting the deficiencyselection itself
-			foreach ($ds->getCorrectiveActions() as $child){
-				$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$CORRECTIVE_ACTIONS_RELATIONSHIP));
-			}
-
-			foreach ($ds->getRooms() as $child){
-				$dao->removeRelatedItems($child->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
-			}
-
-			$dao->deleteById($ds->getKey_id());
-
-			return true;
+		if( $decodedObject === NULL  && $deficiencyId == NULL && $inspectionId == NULL ){
+			return new ActionError('Error converting input stream to DeficiencySelection');
+		}
+		else if( $decodedObject instanceof ActionError){
+			return $decodedObject;
 		}
 		else{
-			//error
-			return new ActionError("Must provide parameters deficiencyId and inspectionId");
+
+			if( $decodedObject === NULL  ){
+				$dao = $this->getDao(new DeficiencySelection());
+				$ds = $dao->getById( $deficiencyId );
+				$roomIds = array();
+				foreach( $ds->getRooms() as $room ){
+					array_push($roomIds, $room->getKey_id());
+				}
+
+			}else{
+				// check to see if the roomIds array is populated
+				$roomIds = $decodedObject->getRoomIds();
+			}
+
+
+			// start by saving or updating the object.
+			$dao = $this->getDao(new DeficiencySelection());
+			$ds = $dao->getByid($decodedObject->getKey_id());
+
+
+			foreach ( $ds->getCorrectiveActions() as $action ){
+				$dao->removeRelatedItems($action->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$CORRECTIVE_ACTIONS_RELATIONSHIP));
+			}
+
+			// if roomIds were provided then delete them
+			if (!empty($roomIds)){
+				foreach ($roomIds as $id){
+					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+				}
+				
+				//if we have removed all the rooms, delete this DeficiencySelection
+				
+				//clear out our rooms
+				$ds->setRooms(null);
+				//get a new collection from the db
+				if($ds->getRooms() == NULL){
+					$dao->deleteById($ds->getKey_id());
+				}
+
+   				
+			// else if no roomIds were provided, then just delete this DeficiencySelection
+			} else {
+				$dao->deleteById($ds->getKey_id());
+				return true;
+			}
+
+			return true;
+
 		}
 	}
 
@@ -735,7 +760,7 @@ class ActionManager {
 
 			// Find the deficiencySelection
 			$ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
-	
+
 			if ($ds == null){
 				return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
 			}
@@ -970,6 +995,26 @@ class ActionManager {
 		return $dao->getAll();
 	}
 
+	public function getRoomsByPIId( $id = NULL ){
+		//Get responses for Inspection
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$piId = $this->getValueFromRequest('piId', $piId);
+
+		if( $piId !== NULL ){
+
+			$pi = $this->getPIById($piId);
+
+			$rooms = $pi->getRooms();
+
+			return $rooms;
+		}
+		else{
+			//error
+			return new ActionError("No request parameter 'inspectionId' was provided");
+		}
+	}
+
 	public function getRoomById( $id = NULL ){
 		$id = $this->getValueFromRequest('id', $id);
 
@@ -979,6 +1024,23 @@ class ActionManager {
 		if( $id !== NULL ){
 			$dao = $this->getDao(new Room());
 			return $dao->getById($id);
+		}
+		else{
+			return new ActionError("No request parameter 'id' was provided");
+		}
+	}
+
+	public function getPIsByRoomId( $id = NULL ){
+
+		$id = $this->getValueFromRequest('id', $id);
+
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		$LOG->trace('getting room');
+
+		if( $id !== NULL ){
+			$dao = $this->getDao(new Room());
+			$room =  $dao->getById($id);
+			return $room->getPrincipalInvestigators();
 		}
 		else{
 			return new ActionError("No request parameter 'id' was provided");
@@ -1109,11 +1171,11 @@ class ActionManager {
 			$PIId = $decodedObject->getMaster_id();
 			$deptId = $decodedObject->getRelation_id();
 			$add = $decodedObject->getAdd();
-	
+
 			$pi = $this->getPIById($PIId);
 			$departments = $pi->getDepartments();
 			$departmentToAdd = $this->getDepartmentById($deptId);
-	
+
 			if( $PIId !== NULL && $deptId !== NULL && $add !== null ){
 
 				// Get a DAO
@@ -1160,7 +1222,7 @@ class ActionManager {
 				$user = $this->getUserById($userID);
 				$roles = $user->getRoles();
 				$roleToAdd = $this->getRoleById($roleId);
-	
+
 				// Get a DAO
 				$dao = $this->getDao(new User());
 				// if add is true, add this role to this PI
@@ -1382,9 +1444,9 @@ class ActionManager {
 			$inspectionDao = $dao->getById($inspectionId);
 
 			$LOG->debug($inspectionDao);
-	
+
 			$this->removeAllInspectionRooms($inspectionDao);
-	
+
 			foreach($roomIds as $id){
 				$this->saveInspectionRoomRelation( $id, $inspectionId, true );
 			}
@@ -1392,9 +1454,9 @@ class ActionManager {
 		} else {
 			return new ActionError("No Inspection or room IDs provided");
 		}
-	
+
 		return $this->getHazardRoomMappingsAsTree( $roomIds );
-	
+
 	}
 
 	public function removeAllInspectionRooms(&$inspectionDao){
@@ -1666,7 +1728,7 @@ class ActionManager {
 		$subHazardNodeDtos = array();
 		$LOG->trace("Getting mappings for sub-hazards");
 		foreach( $hazard->getActiveSubHazards() as $subHazard ){
-	
+
 			$node = $this->getHazardRoomMappings($subHazard, $rooms, $searchRoomIds, $parentIds);
 			$subHazardNodeDtos[$node->getKey_Id()] = $node;
 		}
@@ -1916,7 +1978,7 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("lazy","getParentIds");
 			$hazard->setEntityMaps($entityMaps);
 			$hazard->filterRooms();
-	
+
 			$this->filterHazards($hazard, $hazard->getInspectionRooms());
 			return $hazard->getActiveSubHazards();
 		}
@@ -1997,7 +2059,10 @@ class ActionManager {
 				return true;
 			}
 
-			return $ds;
+			$selection = $dao->getById($ds->getKey_id());	
+			$LOG->debug($selection);
+			
+			return $selection;
 
 		}
 	}
@@ -2119,9 +2184,9 @@ class ActionManager {
 		$piId = $this->getValueFromRequest('piId', $piId);
 
 		if( $piId !== NULL ){
-	
+
 			$pi = $this->getPIById($piId);
-	
+
 			$inspections = $pi->getInspections();
 
 			return $inspections;
@@ -2152,13 +2217,6 @@ class ActionManager {
 				}
 			}
 
-			// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-			$checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-			// add the checklists to this inspection
-			foreach ($checklists as &$checklist){
-				$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-				$checklist->setInspectionId($inspection->getKey_id());
-			}
 
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("eager","getInspectors");
@@ -2167,6 +2225,25 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 			$entityMaps[] = new EntityMap("eager","getChecklists");
 			$inspection->setEntityMaps($entityMaps);
+
+			// Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+			$checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+			// add the checklists to this inspection
+			foreach ($checklists as $checklist){
+
+				$dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+				$checklist->setInspectionId($inspection->getKey_id());
+				$checklist->setRooms($inspection->getRooms());
+				$checklist->filterRooms();
+
+				$entityMaps = array();
+				$entityMaps[] = new EntityMap("lazy","getHazard");
+				$entityMaps[] = new EntityMap("lazy","getRooms");
+				$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+				$entityMaps[] = new EntityMap("eager","getQuestions");
+				$checklist->setEntityMaps($entityMaps);
+
+			}
 			$inspection->setChecklists($checklists);
 			return $inspection;
 		}
@@ -2275,7 +2352,7 @@ class ActionManager {
 
 		if( $responseId !== NULL ){
 			$LOG->debug("Generating Observations for response #$responseId");
-	
+
 			$response = $this->getResponseById($id);
 			if (!empty($response)) {
 				return $response->getObservations;
@@ -2347,7 +2424,7 @@ class ActionManager {
 		$username = $this->getValueFromRequest('username', $username);
 		$password = $this->getValueFromRequest('password', $password);
 
-		
+
 		// Hardcoded username and password for "emergency accounts"
 		if($username === "EmergencyUser" && $password === "RSMS911") {
 			$emergencyAccount = true;

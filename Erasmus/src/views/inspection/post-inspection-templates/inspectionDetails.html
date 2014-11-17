@@ -12,47 +12,58 @@
 		<li class="recommendations">Recommendations <!--<span></span>--></li>
 		<li class="observations">Notes <!--<span></span>--></li>
 	</ul>
-<!--{{questionsByChecklist}}-->
+	<!--<pre>{{questionsByChecklist.chemicalHazards.checklists | json}}</pre>-->
 
-	<table class="table detailsReportTable">
+	<table class="table detailsReportTable" ng-if="questionsByChecklist.biologicalHazards.show">
 		<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td></tr>
+		<tr ng-if="questionsByChecklist.biologicalHazards.message && questionsByChecklist.biologicalHazards.message.indexOf('deficiencies') < 0">
+			<td colspan="5">{{questionsByChecklist.biologicalHazards.message}}</td>
+		</tr>
 	</table>
-	<table ng-repeat="checklist in questionsByChecklist.biologicalHazards" class="table table-hover table-striped detailsReportTable">
-		<tr>
+	<table ng-repeat="checklist in questionsByChecklist.biologicalHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered">
+		<tr ng-if="someAnswers(checklist)"> 
 			<th colspan="2" class="bioHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
-	<table class="table detailsReportTable">
-		<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY </td></tr>
+	<table class="table detailsReportTable"  ng-if="questionsByChecklist.chemicalHazards.show">
+		<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
+		<tr ng-if="questionsByChecklist.chemicalHazards.message && questionsByChecklist.chemicalHazards.message.indexOf('deficiencies') < 0">
+			<td colspan="5">{{questionsByChecklist.chemicalHazards.message}}</td>
+		</tr>
 	</table>
-	<table ng-repeat="checklist in questionsByChecklist.chemicalHazards"  class="table table-hover table-striped detailsReportTable">
+	<table ng-repeat="checklist in questionsByChecklist.chemicalHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered">
 		<tr>
 			<th colspan="2" class="chemHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
-
-	<table class="table detailsReportTable">
-		<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/chemical-safety-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
+	<table class="table detailsReportTable"  ng-if="questionsByChecklist.generalHazards.show">
+		<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
+		<tr ng-if="questionsByChecklist.generalHazards.message && questionsByChecklist.generalHazards.message.indexOf('deficiencies') < 0">
+			<td colspan="5">{{questionsByChecklist.generalHazards.message}}</td>
+		</tr>
 	</table>
-	<table ng-repeat="checklist in questionsByChecklist.generalHazards"  class="table table-hover table-striped detailsReportTable">
+	<table ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" ng-if="someAnswers(checklist)"  class="table table-hover table-striped detailsReportTable table-bordered">
 		<tr>
 			<th colspan="2" class="genHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 	<table class="table detailsReportTable">
 		<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
-	</table>
-	<table ng-repeat="checklist in questionsByChecklist.radiationHazards"  class="table table-hover table-striped detailsReportTable">
-		<tr>
-			<th colspan="2" class="radHeader"><h3>{{checklist.Name}} | {{checklist.Master_hazard}}</h3></th>
+		<tr ng-if="questionsByChecklist.radiationHazards.message && questionsByChecklist.radiationHazards.message.indexOf('deficiencies') < 0">
+			<td colspan="5">{{questionsByChecklist.radiationHazards.message}}</td>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+	</table>
+	<table ng-repeat="checklist in questionsByChecklist.radiationHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered">
+		<tr>
+			<th colspan="2" class="radHeader"><h3>{{checklist.Name}}</h3></th>
+		</tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 </div>

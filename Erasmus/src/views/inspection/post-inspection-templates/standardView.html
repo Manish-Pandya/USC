@@ -90,16 +90,26 @@
 	<!-- init filter to hide all questions with responses other than 'no'-->
 	<input type="hidden" ng-model="filterForNo.Responses.Answer" ng-init="filterForNo.Responses.Answer = 'no'"/>
 
-	<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td></tr>
+	<tr ng-if="questionsByChecklist.biologicalHazards.show">
+		<td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td>
+	</tr>
+	<tr ng-if="questionsByChecklist.biologicalHazards.message"><td colspan="5">{{questionsByChecklist.biologicalHazards.message}}</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
-	<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
+	<tr ng-if="questionsByChecklist.chemicalHazards.show">
+		<td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td>
+	</tr>
+	<tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="5">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 
-	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><!--<img src="../../img/radiation-large-icon.png"/>-->GENERAL LABORATORY SAFETY</td></tr>
+	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
+	<tr ng-if="questionsByChecklist.generalHazards.message">
+		<td colspan="5">{{questionsByChecklist.generalHazards.message}}</td>
+	</tr>
 	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 	
-	<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
+	<tr ng-if="questionsByChecklist.radiationHazards.show"><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
+	<tr ng-if="questionsByChecklist.radiationHazards.message"><td colspan="5">{{questionsByChecklist.radiationHazards.message}}</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">

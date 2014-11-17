@@ -327,6 +327,7 @@ div.rsmsCenterIconContainer a p {
   /* line 286, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a p {
     font-size: 25px;
+    text-align: center;
   }
   /* line 292, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a img {
@@ -359,46 +360,105 @@ div.rsmsCenterIconContainer a p {
   }
   /* line 315, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a p {
+        text-align: center;
     font-size: 17px;
   }
 }
 /******************************************************
 * Emergency Info HUB STYLES
 *******************************************************/
-/* line 329, ../sass/style.scss */
-#emergency-info .dropdown-menu li {
-  text-align: left;
-}
-/* line 333, ../sass/style.scss */
 #emergency-info > div {
   margin: inherit auto !important;
   text-align: center;
 }
-/* line 338, ../sass/style.scss */
-#emergency-info > div ul.allHazardList li {
+#emergency-info .dropdown-menu li {
   text-align: left;
 }
-/* line 344, ../sass/style.scss */
-#emergency-info > div li.lefterizer span {
-  font-size: 15px;
-  font-weight: bold;
-  text-align: left;
-}
-/* line 348, ../sass/style.scss */
-#emergency-info > div li.lefterizer span li {
-  width: 400px;
-  padding-left: 8px;
-  font-weight: bold;
-}
-/* line 356, ../sass/style.scss */
-#emergency-info #biologicalMaterials {
-  color: red;
-}
-/* line 359, ../sass/style.scss */
-#emergency-info #biologicalMaterials ul li {
-  color: red;
+#emergency-info input{
+  padding:20px 5px;
+  margin: 5px;
 }
 
+#emergency-info label{
+  font-size:17px;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.pisTable{
+  max-width:800px;
+  margin:25px auto;
+}
+
+.modalHazardList{
+  width:100%;
+  max-width: 1366px;
+  margin:30px auto !important;
+  text-align: left;
+  font-weight: bold;
+}
+.modalHazardList > li h1{
+  font-size: 28px;
+  background-size: 30px;
+  background-repeat: no-repeat;
+  padding-left: 35px;
+  background-position: left 61%;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.modalHazard1 h1{
+  color:#f00;
+  background: url(../img/biohazard-largeicon.png);
+}
+.modalHazard10009 h1{
+  color:#068846;
+  background: url(../img/chemical-safety-large-icon.png);
+}
+
+.modalHazard10010 h1{
+  color:#7803bc;
+  background: url(../img/radiation-large-icon.png);
+}
+
+.modalHazardList > li{
+  width:30%;
+  margin:10px 1.5%;
+  float:left;
+}
+.modalHazardList > li ul li h2{
+  font-size: 1.4em;
+  text-decoration: underline;
+  font-weight: bold;
+  line-height: 21px;
+}
+.modalHazardList > li ul li{
+}
+.modalHazardList > li ul li ul{
+  list-style: inside !important;
+  margin-left:25px;
+}
+
+
+
+.modalHazardList > li ul li ul li h2{
+  font-size: 1.3em;
+  text-decoration: none;
+}
+
+.pisTable td, .pisTable th{
+  //border-right:3px solid white;
+  //border-bottom:3px solid white;
+}
+.pisTable td ul{
+  margin-left: 0;
+}
+.hazardHeader{
+  text-decoration: underline;
+  font-size: 32px;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: -20px;
+}
 /*******************************************************
 *	USER HUB STYLES
 *******************************************************/
@@ -1236,6 +1296,14 @@ a.checklistNav span{
   padding: 8px 0;
   display: inline-block;
 }
+
+.checklistRoomIcon{
+  margin: 2px 0 0 3px;
+}
+
+.checkbox.inline .metro-checkbox{
+  margin-right: 0px !important;
+}
 /*rotate hide/reveal text for sidenav on checklist*/
 /* line 458, ../sass/style.scss */
 /* line 1050, ../sass/style.scss */
@@ -1345,6 +1413,7 @@ td.reviewHeader {
   height: 38px;
   background-position: 5px 7px;
   background-repeat: no-repeat;
+  border: 3px solid #000;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1610,8 +1679,8 @@ ul.key li.deficiencies span {
 
 /* inspection details report */
 .detailsReportTable{
-  margin-top:0;
-  margin-bottom:0;
+  margin-top:6px;
+  margin-bottom:6px;
 }
 
 .detailsReportTable th.bioHeader{
@@ -1619,7 +1688,7 @@ ul.key li.deficiencies span {
 }
 
 .detailsReportTable th.chemHeader{
-  background: papayawhip !important;
+  background: rgb(255, 254, 166) !important;
 }
 
 .detailsReportTable th.radHeader{
@@ -1647,6 +1716,7 @@ ul.key li.deficiencies span {
 }
 .detailsReportTable tr td ul li{
   margin-top:5px;
+  font-weight: bold;
   margin-bottom:5px;
 }
 
@@ -2075,7 +2145,7 @@ li.active a {
   margin: 0;
   border-top: 1px solid #c0c0c0;
   font-size: 17px;
-  padding: 24px 10px 37px 30px;
+  padding: 15px 10px 15px 30px;
   text-shadow: none;
   box-shadow: none !important;
 }
@@ -2740,11 +2810,27 @@ table.roomList h2 {
 }
 
 tr.blue-tr td, tr.blue-tr th{
-  background: #003399 !important;
+  background: #0070c0 !important;
   color:white !important;
 }
 table.large tr th{
   padding-top:20px !important;
   padding-bottom:20px !important;
   font-size:30px !important;
+}
+
+.tempTable{
+  width:90% !important;
+  max-width: 9999px;
+  margin:0 auto;
+
+}
+.tempTable th{
+  vertical-align: bottom;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.tempTable th input{
+  width: 100%;
+  margin-top: 3px;
 }

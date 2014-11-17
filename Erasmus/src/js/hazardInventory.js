@@ -376,7 +376,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                     resetInspectionDefer.reject();
                 });
       return resetInspectionDefer.promise;
-  }
+  },
   getHazards = function(rooms)
   {     
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
@@ -438,7 +438,6 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     );
 
   }
-
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
@@ -759,7 +758,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $location, $filter,convenienceMethods,hazardInventoryFactory){
+controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope){
   
   init();
 
@@ -863,7 +862,7 @@ controllers.footerController = function($scope, $location, $filter,convenienceMe
       }
         
       if(inspection.Date_closed){
-        inspection.endDate = convenienceMethods.getDate(inspection.Date_closed);
+        inspection.endDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
       }
     });
   });

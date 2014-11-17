@@ -12,6 +12,13 @@ angular.module('modalPosition', [])
                 $(element[0]).css({top: topMargin/2, marginTop:-10});
                 $(element[0]).find('.modal-body').css({overflowY:'auto', maxHeight:$window.innerHeight*.85-50});
                 $(element[0]).find('.modal-body ul').css({ maxHeight:$window.innerHeight*.85-210});
+
+                if( $('.piHazards').length ){
+                    console.log($window.innerWidth);
+                    $(element[0]).width($window.innerWidth * .8);
+
+                    $(element[0]).css({'left':$window.innerWidth * .1+'px', 'marginLeft': 0});
+                }
         	}
         	scope.onResize();
 
