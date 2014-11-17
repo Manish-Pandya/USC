@@ -1109,31 +1109,126 @@ class TestActionManager extends TestRadiationActionFunctions {
 	/**
 	 * @group save
 	 */
-	/* TODO likely needs more checks
-	
-	Note to self: yep. Have third sepparate test (maybe two more) for checking 
-	orderindex assignment. Should:
-	
-	~ set up fake tree-like structure with parent and siblings to check sibling order index
-	~ check that it goes in the right place
-	~ etc.
-	*/
-	public function test_saveHazard() {
+	public function test_saveHazard_noSiblings() {
 	
 		$testData = new Hazard();
 		$_REQUEST["testInput"] = $testData;
 	
 		$result = $this->actionManager->saveHazard();
 	
+		// genericDao->save should have been called
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+
+		// last method of genericDao called should've been called with $testData
+		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
+
 		// should have returned Hazard with a newly-assigned key id
 		$this->assertInstanceOf('Hazard', $result);
 		$this->assertEquals( 1, $result->getKey_id() );
+	}
+
+	public function test_saveHazard_unorderedSiblings() {
+
+		// set up tree structure of subhazards belonging to parent
+		$parentId = 10;
+		$parentHazard = new Hazard();
+		$parentHazard->setKey_id($parentId);
+		
+		// hazards in no particular order
+		$child1 = new Hazard();
+		$child1->setName("Bio Hazards");
+		$child1->setOrder_index(1.0);
+
+		$child2 = new Hazard();
+		$child2->setName("Meaningless hazard");
+		$child2->setOrder_index(1.4);
+		
+		$child3 = new Hazard();
+		$child3->setName("A non-alphabetical name");
+		$child3->setOrder_index(2.1);
+
+		$testData = new Hazard();
+		$testData->setParent_hazard_id($parentId);
+		$testData->setName("John Doe Hazard");
+		
+		$subHazards = array( $child1, $child2, $child3 );
+		$parentHazard->setSubHazards($subHazards);
+		
+		$_REQUEST["testInput"] = $testData;
+		
+		// saveHazard makes a call to GenericDao->getById to get the parent hazard
+		// make sure it returns the proper parent instead of a generic hazard
+		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		
+		$result = $this->actionManager->saveHazard();
 	
 		// genericDao->save should have been called
 		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
-		//$this->assertTrue( $this->getDapSpy)
+
+		// last method of genericDao called should've been called with $testData
+		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
+
+		// should have returned Hazard with a newly-assigned key id
+		$this->assertInstanceOf('Hazard', $result);
+		$this->assertEquals( 1, $result->getKey_id() );
+		
+		// returned hazard should have new orderIndex at end of list
+		$this->assertGreaterThan($child3->getOrder_index(), $result->getOrder_index());
 	}
 	
+	function test_saveHazard_alphabeticalSiblings() {
+	
+		// set up tree structure of subhazards belonging to parent
+		$parentId = 10;
+		$parentHazard = new Hazard();
+		$parentHazard->setKey_id($parentId);
+		
+		// hazards organized alphabetically
+		$child1 = new Hazard();
+		$child1->setName("A first listed hazard");
+		$child1->setOrder_index(1.0);
+
+		$child2 = new Hazard();
+		$child2->setName("Second in alphabetical");
+		$child2->setOrder_index(1.4);
+		
+		$child3 = new Hazard();
+		$child3->setName("Ze last item");
+		$child3->setOrder_index(2.1);
+
+		$testData = new Hazard();
+		$testData->setParent_hazard_id($parentId);
+		$testData->setName("Should be second to last");
+		
+		$subHazards = array( $child1, $child2, $child3 );
+		$parentHazard->setSubHazards($subHazards);
+		
+		$_REQUEST["testInput"] = $testData;
+		
+		// saveHazard makes a call to GenericDao->getById to get the parent hazard
+		// make sure it returns the proper parent instead of a generic hazard
+		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		
+		$result = $this->actionManager->saveHazard();
+	
+		// genericDao->save should have been called
+		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+
+		// last method of genericDao called should've been called with $testData
+		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
+
+		// should have returned Hazard with a newly-assigned key id
+		$this->assertInstanceOf('Hazard', $result);
+		$this->assertEquals( 1, $result->getKey_id() );
+		
+		// result order index should be second to last
+		$this->assertLessThan($child3->getOrder_index(), $result->getOrder_index());	
+		$this->assertGreaterThan($child2->getOrder_index(), $result->getOrder_index());
+	}
+
 	
 	/* saveRoom */
 	
