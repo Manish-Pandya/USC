@@ -102,7 +102,7 @@ class GenericDaoSpy {
 	}
 	
 	public function save($objToSave) {
-		$this->addCall('save', $objToSave);
+		$this->addCall('save', [$objToSave]);
 		
 		// ActionManager expects object back with key id
 		if( $objToSave->getKey_id() === null ) {
