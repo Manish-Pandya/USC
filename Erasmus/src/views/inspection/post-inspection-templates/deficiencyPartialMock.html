@@ -1,12 +1,22 @@
 <td valign="top" once-text="question.Text"></td>
 <td colspan="2" style="padding:0;">
+<!--<pre>{{question | json}}</pre>-->
 	<div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unkown Deficiency</div>
 	<div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections">
+
 		<span class="span6" ng-if="def.Deficiency.Text">
 			<span once-text="def.Deficiency.Text"></span>
+			<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
+				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
+				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
+			</ul>
 		</span>
 		<span class="span6" ng-if="!def.Deficiency.Text">
 			Unkown Deficiency
+			<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
+				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
+				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
+			</ul>
 		</span>			
 
 		<span class="span6" valign="top">
@@ -58,15 +68,17 @@
 					</span>
 				</span>
 			</span>
+	
+			</span>
+
+		</div>
 
 			<h3 ng-if="def.Corrected_in_inspection > 0">
 				Corrected during inspection
 			</h3>
+		
+
 		</span>
 </td>
 <td valign="top" once-text="question.Description"></td>
 <td valign="top" once-text="question.Reference"></td>
-
-
-
-and all appendices attached?
