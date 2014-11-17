@@ -19,5 +19,9 @@ class MethodCall {
 	
 	public function getMethod() { return $this->method; }
 	public function getTimeCalled() { return $this->timeCalled;	}
-	public function getArgs() { return $this->args; }
+	public function getAllArgs() { return $this->args; }
+	public function getArg($argNumber) {
+		$args = $this->getAllArgs();
+		return $args[$argNumber];
+	}
 }
