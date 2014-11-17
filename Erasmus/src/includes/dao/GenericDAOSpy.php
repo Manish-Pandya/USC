@@ -56,6 +56,30 @@ class GenericDaoSpy {
 	
 	public function getCalls() { return $this->calls; }
 	
+	// returns last call record for method of that name
+	public function getLastCall($methodName) {
+		
+		$calls = $this->getCalls();
+		$length = count($calls);
+
+		// if $methodName left blank, defaults to returning last call overall
+		if($methodName === null) {
+			return $calls[$length - 1];
+		}
+
+		// otherwise, search for last entry in calls with given methodName
+		$selected = null;
+
+		for($i = 0; $i < $length; $i++ ) {
+			$currentCall = $calls[$i];
+			if( $currentCall->getMethod() === $methodName ) {
+				$selected = $currentCall;
+			}
+		}
+		
+		return $selected;
+	}
+	
 	public function addCall($method, $args) {
 		$this->calls[] = new MethodCall($method, $args);
 	}
