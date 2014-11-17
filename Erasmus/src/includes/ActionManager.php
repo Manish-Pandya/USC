@@ -1508,11 +1508,6 @@ class ActionManager {
 			return $decodedObject;
 		}
 		else{
-			$roomIds = $decodedObject->getRooms();
-			if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
-
-			$inspectorIds = $decodedObject->getInspectors();
-			if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
 
 			$dao = $this->getDao(new Inspection());
 
