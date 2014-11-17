@@ -4,84 +4,14 @@
  * @backupStaticAttributes disabled
  */
 
-require_once(dirname(__FILE__) . '/../../../src/Autoloader.php');
-Logger::configure( dirname(__FILE__) . "/../../../src/includes/conf/log4php-config.php");
+// include base tester class
+require_once(dirname(__FILE__) . '/TestActionManager.php');
 
 // Include action functions to test
 require_once(dirname(__FILE__) . '/../../../src/includes/Rad_ActionManager.php');
 
-// Radiation action functions depend on some standard action functions as well
-require_once(dirname(__FILE__) . '/../../../src/includes/ActionManager.php');
 
-// Unit double for GenericDao so we don't actually modify database
-require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php');
-
-
-// TODO: remove requir_once for autoloader - makes tests dependent on database running.
-// TODO: check that getById was called with correct arguments
-// TODO: put internal methods and fields in ActionManager test class - the only reason
-// they're here is that this file was created first.
-
-class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
-	
-	public $actionManager;
-	private $daoSpy;
-	
-	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
-	function tearDown() {
-		foreach( $_REQUEST as $key=>$value ) {
-			unset( $_REQUEST[$key] );
-		}
-	}
-	
-	function setUp() {
-		// create test double for GenericDao
-		$daoSpy = new GenericDaoSpy();
-		// set up a factory that can inject the spy into ActionManager
-		$daoSpyInjector = new DaoFactory($daoSpy);
-		
-		$this->daoSpy = $daoSpy;
-		
-		// give our dao injector to ActionManager to substitute daoSpy for GenericDao
-		$this->actionManager = new Rad_ActionManager($daoSpyInjector);
-		
-		// set actionManager to read from $_REQUEST['testInput'] instead of JsonManager
-		$this->actionManager->setTestMode(true);
-	}
-	
-	function setGetByIdToReturn($objToReturn) {
-		// create test double for GenericDao
-		$daoSpy = new GenericDAOSpy();
-		
-		// override $daoSpy's getById method to return specific obj
-		$daoSpy->overrideMethod('getById', $objToReturn);
-		
-		// new daoFactory will provide actionManager the modified GenericDaoSpy
-		$this->actionManager->setDaoFactory(new DaoFactory($daoSpy));
-	}
-	
-	// returns mock of type $mockType that will return an array of $itemType with
-	// length $itemCount when $methodName is called
-	function prepareMockToReturnArray( $mockType, $methodName, $itemType, $itemCount = 3 ) {
-		// create array filled with type $itemType
-		$array = array_fill( 0, $itemCount, new $itemType() );
-	
-		$mock = $this->prepareMockToReturn( $mockType, $methodName, $array );
-
-		return $mock;
-	}
-
-	function prepareMockToReturn( $mockType, $methodName, $objToReturn ) {
-		$mock = $this->getMock( $mockType );
-		$mock->method( $methodName )->willReturn( $objToReturn );
-
-		return $mock;
-	}
-
-	function getDaoSpy() {
-		return $this->daoSpy;
-	}
-
+class TestRadiationActionFunctions extends TestActionManager {
 	
 	/*************************************************************************\
 	 *                         Basic Get Tests                               *
@@ -899,7 +829,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 		
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 	
@@ -930,7 +860,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 		
 		// genericDao->save should have been called
-		$this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
 
@@ -961,7 +891,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -992,7 +922,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1023,7 +953,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1054,7 +984,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1086,7 +1016,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1118,7 +1048,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1149,7 +1079,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1180,7 +1110,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1211,7 +1141,7 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 
 
@@ -1242,6 +1172,6 @@ class TestRadiationActionFunctions extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
-        $this->assertEquals( true, $this->daoSpy->wasItCalled('save') );
+        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
 }

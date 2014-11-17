@@ -4,25 +4,80 @@
  * @backupStaticAttributes disabled
  */
 
+// here because other classes need to be included, like GenericCrud subclasses
+// TODO include those without going through autoloader - autoloader requires database to be running
 require_once(dirname(__FILE__) . '/../../../src/Autoloader.php');
 Logger::configure( dirname(__FILE__) . "/../../../src/includes/conf/log4php-config.php");
 
 // Include action functions to test
-require_once(dirname(__FILE__) . '/../../../src/includes/Rad_ActionManager.php');
-
-// Radiation action functions depend on some standard action functions as well
 require_once(dirname(__FILE__) . '/../../../src/includes/ActionManager.php');
 
 // Unit double for GenericDao so we don't actually modify database
 require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php');
 
-require_once(dirname(__FILE__) . '/TestRadiationActionFunctions.php');
 
-// TODO reverse relationship - TestRadiationActionFunctions should extend this, not the other way around
-// (it's just like that because TestRadiationActionFunctions was written first)
+// TODO: check that getById was called with correct arguments
 
-class TestActionManager extends TestRadiationActionFunctions {
+class TestActionManager extends PHPUnit_Framework_TestCase {
+		
+	public $actionManager;
+	private $daoSpy;
 	
+	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
+	function tearDown() {
+		foreach( $_REQUEST as $key=>$value ) {
+			unset( $_REQUEST[$key] );
+		}
+	}
+	
+	function setUp() {
+		// create test double for GenericDao
+		$daoSpy = new GenericDaoSpy();
+		// set up a factory that can inject the spy into ActionManager
+		$daoSpyInjector = new DaoFactory($daoSpy);
+		
+		$this->daoSpy = $daoSpy;
+		
+		// give our dao injector to ActionManager to substitute daoSpy for GenericDao
+		$this->actionManager = new Rad_ActionManager($daoSpyInjector);
+		
+		// set actionManager to read from $_REQUEST['testInput'] instead of JsonManager
+		$this->actionManager->setTestMode(true);
+	}
+	
+	function setGetByIdToReturn($objToReturn) {
+		// create test double for GenericDao
+		$daoSpy = new GenericDAOSpy();
+		
+		// override $daoSpy's getById method to return specific obj
+		$daoSpy->overrideMethod('getById', $objToReturn);
+		
+		// new daoFactory will provide actionManager the modified GenericDaoSpy
+		$this->actionManager->setDaoFactory(new DaoFactory($daoSpy));
+	}
+	
+	// returns mock of type $mockType that will return an array of $itemType with
+	// length $itemCount when $methodName is called
+	function prepareMockToReturnArray( $mockType, $methodName, $itemType, $itemCount = 3 ) {
+		// create array filled with type $itemType
+		$array = array_fill( 0, $itemCount, new $itemType() );
+	
+		$mock = $this->prepareMockToReturn( $mockType, $methodName, $array );
+
+		return $mock;
+	}
+
+	function prepareMockToReturn( $mockType, $methodName, $objToReturn ) {
+		$mock = $this->getMock( $mockType );
+		$mock->method( $methodName )->willReturn( $objToReturn );
+
+		return $mock;
+	}
+
+	function getDaoSpy() {
+		return $this->daoSpy;
+	}
+
 	/* getAll tests */
 	
 	
