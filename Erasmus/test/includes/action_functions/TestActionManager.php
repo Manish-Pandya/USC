@@ -1128,6 +1128,9 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertEquals( 1, $result->getKey_id() );
 	}
 
+	/**
+	 * @group save
+	 */
 	public function test_saveHazard_unorderedSiblings() {
 
 		// set up tree structure of subhazards belonging to parent
@@ -1178,6 +1181,9 @@ class TestActionManager extends TestRadiationActionFunctions {
 		$this->assertGreaterThan($child3->getOrder_index(), $result->getOrder_index());
 	}
 	
+	/*
+	 * @group save
+	 */
 	function test_saveHazard_alphabeticalSiblings() {
 	
 		// set up tree structure of subhazards belonging to parent
@@ -1406,7 +1412,6 @@ class TestActionManager extends TestRadiationActionFunctions {
 	/**
 	 * @group save
 	 */
-	/* TODO more checks?
 	public function test_saveInspection() {
 	
 		$testData = new Inspection();
