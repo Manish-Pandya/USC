@@ -75,7 +75,8 @@ class GenericDaoSpy {
 	}
 
 	public function getById($id) {
-		$this->addCall('getById', [$id]);
+		$args = array($id);
+		$this->addCall('getById', $args);
 		
 		// this method can return a specific object if necessary - check.
 		if( array_key_exists('getById', $this->methodsToOverride) ) {
@@ -90,7 +91,7 @@ class GenericDaoSpy {
 	}
 	
 	public function getAll() {
-		$this->addCall('getAll', []);
+		$this->addCall('getAll', array());
 		
 		// this method can return a specific object if necessary - check.
 		if( array_key_exists('getAll', $this->methodsToOverride) ) {
@@ -102,7 +103,8 @@ class GenericDaoSpy {
 	}
 	
 	public function save($objToSave) {
-		$this->addCall('save', [$objToSave]);
+		$args = array($objToSave);
+		$this->addCall('save', $args);
 		
 		// ActionManager expects object back with key id
 		if( $objToSave->getKey_id() === null ) {
