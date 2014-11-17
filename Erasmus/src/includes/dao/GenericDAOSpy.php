@@ -106,12 +106,30 @@ class GenericDaoSpy {
 		$args = array($objToSave);
 		$this->addCall('save', $args);
 		
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('save', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['save'];
+		}
+
 		// ActionManager expects object back with key id
 		if( $objToSave->getKey_id() === null ) {
 			$objToSave->setKey_id(1);
 		}
 		
 		return $objToSave;
+	}
+	
+	public function deleteById($keyId) {
+		$args = array($keyId);
+		$this->addCall('deleteById', $args);
+
+		// this method can return a specific object if necessary - check.
+		if( array_key_exists('deleteById', $this->methodsToOverride) ) {
+			return $this->methodsToOverride['deleteById'];
+		}
+		else {
+        	return true;
+		}
 	}
 }
 ?>
