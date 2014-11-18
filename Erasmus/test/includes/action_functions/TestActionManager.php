@@ -5,7 +5,7 @@
  */
 
 // here because other classes need to be included, like GenericCrud subclasses
-// TODO include those without going through autoloader - autoloader requires database to be running
+// TODO remove dependency on autoloader - autoloader requires database to be running
 require_once(dirname(__FILE__) . '/../../../src/Autoloader.php');
 Logger::configure( dirname(__FILE__) . "/../../../src/includes/conf/log4php-config.php");
 
@@ -17,6 +17,18 @@ require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php')
 
 
 // TODO: check that getById was called with correct arguments
+/* 
+ * TODO: Add more descriptive custom error messages
+ * 
+ * I didn't realize at first that this was a thing, but look!
+ * 
+ * $this->assertSomething(answer, somethingToCheck, "Explanation of what broke if this assertion fails");
+ * logs the last parameter if the assertion fails to give more detailed errors than
+ * "expected somethingToCheck to equal answer" etc.
+ * 
+ * TODO do this for all new tests, add to old tests as well at some point
+ * 
+ */
 
 class TestActionManager extends PHPUnit_Framework_TestCase {
 		
