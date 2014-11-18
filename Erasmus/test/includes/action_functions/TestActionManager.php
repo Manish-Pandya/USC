@@ -1625,41 +1625,6 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 	}
 	
-
-	/* saveRootCause */
-	
-	/**
-	 * @group save
-	 */
-	public function test_saveRootCause_noObject() {
-		$result = $this->actionManager->saveRootCause();
-	
-		// should have returned actionError, no input given
-		$this->assertInstanceOf( 'ActionError', $result );
-		$this->assertEquals( 202, $result->getStatusCode() );
-	}
-	
-	/**
-	 * @group save
-	 */
-
-	/* TODO fix
-	public function test_saveRootCause() {
-	
-		$testData = new RootCause();
-		$_REQUEST["testInput"] = $testData;
-	
-		$result = $this->actionManager->saveRootCause();
-	
-		// should have returned RootCause with a newly-assigned key id
-		$this->assertInstanceOf('RootCause', $result);
-		$this->assertEquals( 1, $result->getKey_id() );
-	
-		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
-	}
-	
-	
 	/* saveCorrectiveAction */
 	
 	/**
