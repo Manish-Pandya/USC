@@ -2062,22 +2062,6 @@ class ActionManager {
 		}
 	}
 
-	public function saveRootCause(){
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to RootCause');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-
 	public function saveCorrectiveAction(){
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
