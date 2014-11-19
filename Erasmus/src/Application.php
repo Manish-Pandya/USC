@@ -75,7 +75,7 @@ return true;
 }
 }
 
-// DEPRECATED - use login2 in ActionManager
+/** DEPRECATED - use login2 in ActionManager */
 function login($username,$password) {
 //TODO: actually authenticate user
 $user = new User();

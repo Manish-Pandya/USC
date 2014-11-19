@@ -114,7 +114,7 @@ class GenericDAO {
 				$error = $stmt->errorInfo();
 				die($error[2]);
 			}
-			return $true;
+			return true;
 	}
 
 	/**

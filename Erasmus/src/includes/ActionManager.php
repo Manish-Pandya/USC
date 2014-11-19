@@ -1508,11 +1508,6 @@ class ActionManager {
 			return $decodedObject;
 		}
 		else{
-			$roomIds = $decodedObject->getRooms();
-			if (!empty($roomIds)) { $saveRooms = true; } else { $saveRooms = false;}
-
-			$inspectorIds = $decodedObject->getInspectors();
-			if (!empty($inspectorIds)) { $saveInspectors = true; } else { $saveInspectors = false;}
 
 			$dao = $this->getDao(new Inspection());
 
@@ -2079,22 +2074,6 @@ class ActionManager {
 			
 			return $selection;
 
-		}
-	}
-
-	public function saveRootCause(){
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to RootCause');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
 		}
 	}
 
