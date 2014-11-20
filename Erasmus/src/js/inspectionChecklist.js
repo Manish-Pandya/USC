@@ -194,6 +194,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   $scope.questionAnswered = function(checklist, response, question){
+    console.log(response);
     question.IsDirty = true;
     //this question has already been answered
     if(response.previous){
@@ -221,6 +222,8 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         Question_text:  question.Text,
         Answer:         response.Answer,
       }
+      //if the question has an answer that is the same as it's previos answer, we let the click handler setUnchecked handle it instead
+      if(response.Key_id)responseDTO.Key_id = response.Key_id;
       handleResponse(responseDTO, response, question, checklist);
     }
   }
@@ -240,7 +243,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
           Question_id:    question.Key_id,
           Question_text:  question.Text,
           Answer:         false,
-          Key_id:         question.Responses.Key_id
+          Key_id:         response.Key_id
         }
         handleResponse(responseDTO, response, question, checklist);
       }
@@ -249,6 +252,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
 
   function handleResponse(responseDTO, response, question, checklist){
+    console.log(responseDTO);
     if(responseDTO.Answer){
       var url = '../../ajaxaction.php?action=saveResponse';
       convenienceMethods.updateObject( responseDTO, question, onSaveResponse, onFailSaveResponse, url, 'test', checklist, response.previous);
@@ -269,6 +273,21 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     if(!question.Responses.previous)question.Responses.previous;
     question.Responses.previous = previous;
     question.Responses = response;
+    question.Responses.DeficiencySelections = response.DeficiencySelections;
+
+    if(question.Responses.Answer != 'no'){
+      var i = question.Deficiencies.length;
+      var j = question.Responses.DeficiencySelections.length;
+      while(i--){
+          var def = question.Deficiencies[i];
+          def.selected = false;
+          while(j--){
+              if(def.Key_id == question.Responses.Deficiencies[j].Key_id)def.selected = true; 
+          }
+
+      }
+    }
+
     question.showChecks = true;
     question.IsDirty = false;
     evaluateQuestionComplete(question);
