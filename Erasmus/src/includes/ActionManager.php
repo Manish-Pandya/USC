@@ -728,9 +728,9 @@ class ActionManager {
 				foreach ($roomIds as $id){
 					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 				}
-				
+
 				//if we have removed all the rooms, delete this DeficiencySelection
-				
+
 				//clear out our rooms
 				$ds->setRooms(null);
 				//get a new collection from the db
@@ -738,7 +738,7 @@ class ActionManager {
 					$dao->deleteById($ds->getKey_id());
 				}
 
-   				
+
 			// else if no roomIds were provided, then just delete this DeficiencySelection
 			} else {
 				$dao->deleteById($ds->getKey_id());
@@ -2054,9 +2054,9 @@ class ActionManager {
 				return true;
 			}
 
-			$selection = $dao->getById($ds->getKey_id());	
+			$selection = $dao->getById($ds->getKey_id());
 			$LOG->debug($selection);
-			
+
 			return $selection;
 
 		}
