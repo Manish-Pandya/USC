@@ -34,7 +34,21 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 	public $actionManager;
 	private $daoSpy;
+
+	// here because tests extending this class will need to specify what (if any)
+	// subclasses of ActionManager they need to instantiate.
+	private $actionManagerClassName;
 	
+	function __construct($classToTest = "ActionManager") {
+		parent::__construct();
+		$this->setTestedClassName($classToTest);
+	}	
+	
+	public function getTestedClassName() { return $this->actionManagerClassName; }
+	public function setTestedClassName($newName) {
+		$this->actionManagerClassName = $newName;
+	}
+
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
 	function tearDown() {
 		foreach( $_REQUEST as $key=>$value ) {
@@ -51,7 +65,8 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->daoSpy = $daoSpy;
 		
 		// give our dao injector to ActionManager to substitute daoSpy for GenericDao
-		$this->actionManager = new Rad_ActionManager($daoSpyInjector);
+		$actionManagerClass = $this->getTestedClassName();
+		$this->actionManager = new $actionManagerClass($daoSpyInjector);
 		
 		// set actionManager to read from $_REQUEST['testInput'] instead of JsonManager
 		$this->actionManager->setTestMode(true);

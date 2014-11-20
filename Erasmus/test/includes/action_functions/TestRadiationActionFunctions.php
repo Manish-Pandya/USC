@@ -13,6 +13,10 @@ require_once(dirname(__FILE__) . '/../../../src/includes/Rad_ActionManager.php')
 
 class TestRadiationActionFunctions extends TestActionManager {
 	
+	function __construct($classToTest = "Rad_ActionManager") {
+		parent::__construct($classToTest);
+	}
+
 	/*************************************************************************\
 	 *                         Basic Get Tests                               *
 	\*************************************************************************/
