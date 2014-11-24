@@ -27,9 +27,70 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 		);
 })
 .filter('genericFilter', function () {
-	return function (input) {
-		console.log(input);
-		return input;
+	return function (items,search) {
+		if(search){
+			var i = 0;
+			if(items)i = items.length;
+			var filtered = [];
+
+			var isMatched = function(input, item){
+				if(item.Name == input)return true;
+				return false;
+			}
+
+			while(i--){
+
+				//we filter for every set search filter, looping through the collection only once
+
+				var item=items[i];
+				item.matched = true;
+
+				if(search.building){
+					if( item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
+						item.matched = false;
+					}
+				}
+
+				if(search.room){
+					if( item.Name && item.Name.toLowerCase().indexOf(search.room) < 0 )  item.matched = false;
+				}
+
+
+				if(search.pi || search.department){
+					if(!item.PrincipalInvestigators.length){
+						item.PrincipalInvestigators = [{User:{Name: 'Unassigned'}}]; 
+					}
+
+					var j = item.PrincipalInvestigators.length
+
+					while(j--){
+						var pi = item.PrincipalInvestigators[j];
+						if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi) < 0 ) item.matched = false;
+
+						if(search.department){
+							if(!pi.Departments){
+								item.matched = false;
+							}else{
+								var k = pi.Departments.length;
+								while(k--){
+									if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department) < 0 ) item.matched = false;
+								}
+							}
+
+						} 
+					}
+
+				}
+
+
+				if(item.matched == true)filtered.push(item);
+
+			}
+			filtered.reverse();
+			return filtered;
+		}else{
+			return items;
+		}
 	};
 })
 .factory('locationHubFactory', function(convenienceMethods,$q){
@@ -40,7 +101,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 	factory.modalData;
 
 	factory.getRooms = function(){
-		console.log('getting rooms');
 		//if we don't have a the list of pis, get it from the server
 		var deferred = $q.defer();
 		//lazy load
@@ -71,7 +131,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
 	factory.getBuildings = function()
 	{
-		console.log('getting buildings');
 		//if we don't have a the list of pis, get it from the server
 		var deferred = $q.defer();
 				//lazy load
@@ -177,6 +236,30 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 		return this.modalData;
 	}
 
+	factory.handleObjectActive = function(object)
+	{
+		var copy = convenienceMethods.copyObject( object );
+		console.log(copy);
+		copy.Is_active = !copy.Is_active;
+
+		this['save'+object.Class](copy)
+			.then(
+				function(returned){
+					object = returned;
+					//TODO:  change factory's properties to uppercase, remove stupid toLowercase() calls
+					var i = factory[object.Class.toLowerCase()+'s'].length
+
+					while(i--){
+						if( factory[object.Class.toLowerCase()+'s'][i].Key_id ==  copy.Key_id) factory[object.Class.toLowerCase()+'s'][i] = copy;
+					}
+
+				},
+				function(){
+    				$scope.error = 'The' + object.Class + ' could not be saved.  Please check your internet connection and try again.'
+				}
+			)
+
+	}	
 
 	return factory;
 });
@@ -197,11 +280,9 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
 	locationHubFactory.getBuildings()
 		.then(
 			function(buildings){
-				console.log(buildings);
 				locationHubFactory.getRooms()
 				.then(
 					function(rooms){
-						console.log('got rooms');
 						$scope.rooms = rooms;
 						$scope.loading = false;
 					}
@@ -209,7 +290,31 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
 			}
 		)
 
-	
+	$scope.openRoomModal = function(room){
+
+		if(!room)room = {Is_active: true, Class:'Room', Name:'', Building:{}};
+
+		locationHubFactory.setModalData(room);
+
+	    var modalInstance = $modal.open({
+	      templateUrl: 'rooms-modal.html',
+	      controller: modalCtrl
+	    });
+
+
+        modalInstance.result.then(function () {
+	       locationHubFactory.getRooms()
+				.then(
+					function(rooms){
+						console.log('got rooms');
+						$scope.rooms = rooms;
+						$scope.loading = false;
+					}
+				)
+	    });
+
+	}
+
 
 }
 
@@ -220,5 +325,59 @@ var buildingsCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, lo
 
 campusesCtrl = function($scope, $location, convenienceMethods, $modal, locationHubFactory){
 
+
+}
+
+modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMethods){
+
+	//make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
+	$scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
+	$scope.buildings = locationHubFactory.getBuildings();
+	$scope.campuses = locationHubFactory.getCampuses();
+
+	$scope.cancel = function () {
+      $modalInstance.dismiss();
+    };
+
+
+    $scope.onSelectBuilding = function(building){
+    	$scope.modalData.Building_id = building.Key_id;
+    }
+
+    $scope.save = function(obj){
+    	//unset global error, if it exists.
+    	$scope.error = null;
+
+    	locationHubFactory['get'+obj.Class+'s']().then(
+    		function(stuff){
+    			var collection = stuff;
+    			locationHubFactory['save'+obj.Class]( obj ).then(
+	    			function(returned){
+	    				if( obj.Key_id ){
+	    					//we are editing an old object
+	    					var i = collection.length;
+	    					while(i--){
+	    						//var objectInCollection = collection[i];
+	    						if(collection[i].Key_id == returned.Key_id){
+	    							collection[i] = returned;
+	    							break;
+	    						}
+	    					}
+	    				}else{
+	    					//we are creating an new object
+	    					collection.push(returned);
+	    				}
+				        $modalInstance.close();
+	    			},
+	    			function(){
+	    				$scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.'
+	    				$modalInstance.dismiss();
+	    			}
+    			)
+    		}
+    		
+    	);
+
+    }
 
 }
