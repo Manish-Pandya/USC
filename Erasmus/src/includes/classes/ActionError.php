@@ -5,7 +5,7 @@ class ActionError {
 	protected $statusCode;
 	private $LOG;
 
-	public function __construct( $message, $statusCode ) {
+	public function __construct( $message, $statusCode = 000) {
 		$this->message = $message;
 		$this->statusCode = $statusCode;
 		$this->LOG = Logger::getLogger( __CLASS__ );
