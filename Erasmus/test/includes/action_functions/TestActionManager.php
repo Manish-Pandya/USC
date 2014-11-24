@@ -122,15 +122,13 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	public function test_fullCoverage() {
 	
 		// get just the public methods present in the class we're testing
-		$manager = new ReflectionClass('ActionManager');
+		$manager = new ReflectionClass( $this->getTestedClassName() );
 		$reflectedMethods = $manager->getMethods(ReflectionMethod::IS_PUBLIC);
 		$actionMethods = array();
 		foreach($reflectedMethods as $method) {
 			$actionMethods[] = $method->name;
 		}
 		
-		
-	
 		// get list of methods in this tester class
 		$classMethods = get_class_methods($this);
 	
