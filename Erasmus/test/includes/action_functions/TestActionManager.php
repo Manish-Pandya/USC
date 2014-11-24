@@ -106,6 +106,72 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	}
 
 
+
+	/**
+	 * Used by test_FullCoverage to filter tests from other methods in this class
+	 */
+	function isATest($name) {
+		// all tests start with "test_", so if it contains this, it is a test method
+		return strpos($name, "test_") !== false;
+	}
+	
+	
+	/**
+	 * Verify that every method in ActionManager is being tested
+	 */
+	public function test_fullCoverage() {
+	
+		// get just the public methods present in the class we're testing
+		$manager = new ReflectionClass('ActionManager');
+		$reflectedMethods = $manager->getMethods(ReflectionMethod::IS_PUBLIC);
+		$actionMethods = array();
+		foreach($reflectedMethods as $method) {
+			$actionMethods[] = $method->name;
+		}
+		
+		
+	
+		// get list of methods in this tester class
+		$classMethods = get_class_methods($this);
+	
+		// since the isATest filter function is declared inside a class, must
+		// wrap in array for array_filter to use it. PHP is weird.
+		$isATest = array($this, "isATest");
+	
+		// remove irrelevant methods that aren't directly testing things
+		$relevantMethods = array_filter($classMethods, $isATest);
+	
+		// strip irrelevant 'test_' and _details from each method name
+		$methodNames = array();
+		foreach($relevantMethods as $method) {
+			// split method name into array of strings sepparated by '_'s
+			$method = explode('_', $method);
+			// since all relevantMethods start with test_, method name is second item
+			$methodNames[] = $method[1];
+		}
+	
+		// remove duplicate method names
+		$testedMethods = array_unique($methodNames);
+	
+		// check for actionMethods without corresponding tests.
+		$missingTestCount = 0;
+		$untestedMethods = array();
+		foreach($actionMethods as $method) {
+			if(!in_array($method, $testedMethods)) {
+				$missingTestCount++;
+				$untestedMethods[] = $method;
+            }
+		}
+
+		
+		$missingTests = print_r($untestedMethods, true);
+
+		// TODO: Better way to format list of untested methods?
+		$this->assertEquals(0, $missingTestCount, "The following methods are not tested: $missingTests");
+
+	}
+	
+
 	/*************************************************************************\
 	 *                            GetAll Tests                               *
 	\*************************************************************************/
