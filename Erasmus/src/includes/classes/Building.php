@@ -49,7 +49,7 @@ class Building extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRooms");
-		$entityMaps[] = new EntityMap("eater","getCampuses");
+		$entityMaps[] = new EntityMap("eager","getCampus");
 		$this->setEntityMaps($entityMaps);
 	}
 
