@@ -53,8 +53,9 @@ class ActionManager {
 			return $paramValue;
 		}
 		else if( array_key_exists($valueName, $_REQUEST)){
-			if(stristr($_REQUEST[ $valueName ], "null"))return null;
-			if(stristr($_REQUEST[ $valueName ], "false")){
+			$request = $_REQUEST[$valueName];
+			if(!is_array($request) && stristr($request, "null")) return null;
+			if(!is_array($request) && stristr($request, "false")){
 				$LOG->debug('value: '.$paramValue);
 				return false;
 			}
@@ -633,7 +634,6 @@ class ActionManager {
 					}
 				}
 			}
-			$LOG->debug($hazard);
 			$dao->save($decodedObject);
 
 			return $decodedObject;
@@ -1589,7 +1589,8 @@ class ActionManager {
 		$roomIdsCsv = $this->getValueFromRequest('roomIds', $roomIds);
 
 		if( $roomIdsCsv !== NULL ){
-			$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
+			$roomIdsString = implode(', ', $roomIdsCsv);
+			$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsString");
 
 
 			$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
