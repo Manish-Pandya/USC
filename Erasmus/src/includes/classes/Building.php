@@ -14,6 +14,7 @@ class Building extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"				=> "text",
 		"campus_id"			=> 'integer',
+		"physical_address"  => "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -22,7 +23,7 @@ class Building extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"   => "integer"
-													);
+		);
 
 	/** Relationships */
 	protected static $ROOMS_RELATIONSHIP = array(
@@ -44,12 +45,17 @@ class Building extends GenericCrud {
 	/** This Building's Campus  **/
 	private $campus;
 
+	/** This Building's Address  **/
+	private $physical_address;
+
 	public function __construct(){
 
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("eager","getCampus");
+		$entityMaps[] = new EntityMap("eager","getCampus_id");
+		$entityMaps[] = new EntityMap("eager","getPhysical_address");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -82,5 +88,30 @@ class Building extends GenericCrud {
 		return $this->campus;
 	}
 
+
+	public function getCampus_id()
+	{
+	    return $this->campus_id;
+	}
+
+	public function setCampus_id($campus_id)
+	{
+	    $this->campus_id = $campus_id;
+	}
+
+	public function setCampus($campus)
+	{
+	    $this->campus = $campus;
+	}
+
+	public function getPhysical_address()
+	{
+	    return $this->physical_address;
+	}
+
+	public function setPhysical_address($physical_address)
+	{
+	    $this->physical_address = $physical_address;
+	}
 }
 ?>
