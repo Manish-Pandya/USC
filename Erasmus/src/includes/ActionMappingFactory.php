@@ -110,10 +110,11 @@ class ActionMappingFactory {
 				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
 				"getAllActiveDepartments"=>new ActionMapping("getAllActiveDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
+				"getAllCampuses"=>new ActionMapping("getAllCampuses", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
 				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
-				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
+				"saveCampus"=>new ActionMapping("saveCampus", "", ""),
 
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),

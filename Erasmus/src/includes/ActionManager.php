@@ -846,6 +846,25 @@ class ActionManager {
 			return $decodedObject;
 		}
 	}
+
+	public function saveCampus(){
+		$LOG = Logger::getLogger('Action:' . __function__);
+		$decodedObject = $this->convertInputJson();
+
+		if( $decodedObject === NULL ){
+			return new ActionError('Error converting input stream to Building');
+		}
+		else if( $decodedObject instanceof ActionError ){
+			return $decodedObject;
+		}
+		else{
+			$dao = $this->getDao(new Campus());
+			$dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+
+
 	//public function saveChecklist(){ }	//DUPLICATE public function
 
 	// Question Hub
@@ -992,7 +1011,34 @@ class ActionManager {
 
 		$dao = $this->getDao(new Room());
 
-		return $dao->getAll();
+		$rooms = $dao->getAll();
+
+		foreach($rooms as $room){
+			// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
+			// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
+			$roomMaps = array();
+			$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+			$roomMaps[] = new EntityMap("lazy","getHazards");
+			$roomMaps[] = new EntityMap("lazy","getBuilding");
+			$roomMaps[] = new EntityMap('eager', 'getBuilding_id');
+			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+
+			$piMaps = array();
+			$piMaps[] = new EntityMap("lazy","getLabPersonnel");
+			$piMaps[] = new EntityMap("lazy","getRooms");
+			$piMaps[] = new EntityMap("eager","getDepartments");
+			$piMaps[] = new EntityMap("eager","getUser");
+			$piMaps[] = new EntityMap("lazy","getInspections");
+
+			foreach($room->getPrincipalInvestigators() as $pi){
+				$pi->setEntityMaps($piMaps);
+			}
+
+			$room->setEntityMaps($roomMaps);
+
+		}
+
+		return $rooms;
 	}
 
 	public function getRoomsByPIId( $id = NULL ){
@@ -1315,41 +1361,48 @@ class ActionManager {
 		}
 	}
 
-	public function getAllBuildings( $id = NULL ){
+
+	public function getAllBuildings( $id = NULL, $skipRooms = null ){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		$skipRooms = $this->getValueFromRequest('skipRooms', $skipRooms);
 
 		$dao = $this->getDao(new Building());
 
 		// get all buildings
 		$buildings = $dao->getAll();
 
-		// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
-		// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-		$roomMaps = array();
-		$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
-		$roomMaps[] = new EntityMap("lazy","getHazards");
-		$roomMaps[] = new EntityMap("lazy","getBuilding");
-
 		$bldgMaps = array();
-		$bldgMaps[] = new EntityMap("eager","getRooms");
-
-
-		///iterate the buildings
-		foreach ($buildings as &$building){
-			// get this building's rooms
-			$rooms = $building->getRooms();
-			// iterate this building's rooms and make then lazy loading
-			foreach ($rooms as &$room){
-				$room->setEntityMaps($roomMaps);
+		if($skipRooms == NULL){
+			// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
+			// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
+			$roomMaps = array();
+			$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+			$roomMaps[] = new EntityMap("lazy","getHazards");
+			$roomMaps[] = new EntityMap("lazy","getBuilding");
+			$bldgMaps[] = new EntityMap("eager","getRooms");
+			///iterate the buildings
+			foreach ($buildings as &$building){
+				// get this building's rooms
+				$rooms = $building->getRooms();
+				// iterate this building's rooms and make then lazy loading
+				foreach ($rooms as &$room){
+					$room->setEntityMaps($roomMaps);
+				}
+				// make sure this building is loaded with the lazy loading rooms
+				$building->setRooms($rooms);
+				// ... and make sure that the rooms themselves are loaded eagerly
+				$building->setEntityMaps($bldgMaps);
 			}
-			// make sure this building is loaded with the lazy loading rooms
-			$building->setRooms($rooms);
-			// ... and make sure that the rooms themselves are loaded eagerly
-			$building->setEntityMaps($bldgMaps);
 		}
-
 		return $buildings;
 
+	}
+
+	public function getAllCampuses(){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$dao = $this->getDao(new Campus());
+		return $dao->getAll();
 	}
 
 	public function getBuildingById( $id = NULL ){
@@ -2016,22 +2069,7 @@ class ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new Response());
-			//If this question was previously answered no, and then the answer was changed, we need to break deficiency relationships
-			if($decodedObject->getKey_id() != null){
-				$oldResponse = $dao->getById( $decodedObject->getKey_id() );
-				//if the response's answer is not no, we should break any deficiency relationships
-				if( !stristr( $decodedObject->getAnswer,'no' ) ){
-					foreach( $oldResponse->getDeficiencySelections() as $selection ){
-						$LOG->debug($selection);
-						$dao->removeRelatedItems($selection->getKey_id(),$oldResponse->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
-					} 
-				}
-			}
-			
-			
-			
 			$dao->save($decodedObject);
-			
 			return $decodedObject;
 		}
 	}
