@@ -1,7 +1,7 @@
 <?php
 
 include_once 'GenericCrud.php';
-include_once 'Hazard.php';
+include_once 'Building.php';
 
 /**
  *
@@ -38,30 +38,13 @@ class Campus extends GenericCrud {
 
 	private $name;
 
-	/** Reference to the Building entity that contains this Room */
-	private $building_id;
-	private $building;
-
-	/** Array of PricipalInvestigator entities that manage this Room */
-	private $principalInvestigators;
-
-	/** Array of Hazard entities contained in this Room */
-	private $hazards;
-
-	/** String containing emergency contact information */
-	private $safety_contact_information;
-
-	/** String containing emergency contact information */
-	private $containsHazard;
-
-	/** A collection of hazard_room_relations this room has a relationship to **/
-	private $hazard_room_relations;
+	private $buildings;
 
 	public function __construct(){
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getBuilding");
+		$entityMaps[] = new EntityMap("lazy","getBuildings");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -84,17 +67,10 @@ class Campus extends GenericCrud {
 			$thisDAO = new GenericDAO($this);
 			$this->buildings = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$BUILDINGS_RELATIONSHIP));
 		}
-		return $this->building;
+		return $this->buildings;
 	}
-	public function setBuilding($buildings){
+	public function setBuildings($buildings){
 		$this->buildings = $buildings;
-	}
-
-	public function getHazard_room_relations(){
-	if($this->hazard_room_relations == null) {
-
-		}
-		return $this->hazard_room_relations;
 	}
 
 
