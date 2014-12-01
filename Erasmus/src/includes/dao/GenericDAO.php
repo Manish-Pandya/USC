@@ -418,12 +418,9 @@ class GenericDAO {
 			$getter = "get" . $key2;
 
 			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
-			
-			// passing the result of $obj->$getter() directly to bindParam can cause errors in log
-			$objProperty = $object->$getter();
 
 			// build the binding statement.
-			$stmt->bindParam(":" . $key, $objProperty ,$type);
+			$stmt->bindParam(":" . $key,$object->$getter(),$type);
 			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
 		}
 		return $stmt;
