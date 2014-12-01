@@ -32,6 +32,9 @@ require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php')
 
 class TestActionManager extends PHPUnit_Framework_TestCase {
 		
+	// certain methods added just for testing do not need to be tested
+	protected static $IGNORED_METHODS = array("__construct", "setDaoFactory", "setTestMode", "isTestModeEnabled");
+
 	public $actionManager;
 	private $daoSpy;
 
@@ -48,7 +51,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	public function setTestedClassName($newName) {
 		$this->actionManagerClassName = $newName;
 	}
-
+	
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
 	function tearDown() {
 		foreach( $_REQUEST as $key=>$value ) {
@@ -137,14 +140,14 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$isATest = array($this, "isATest");
 	
 		// remove irrelevant methods that aren't directly testing things
-		$relevantMethods = array_filter($classMethods, $isATest);
+		$testedMethods = array_filter($classMethods, $isATest);
 	
 		// strip irrelevant 'test_' and _details from each method name
 		$methodNames = array();
-		foreach($relevantMethods as $method) {
+		foreach($testedMethods as $method) {
 			// split method name into array of strings sepparated by '_'s
 			$method = explode('_', $method);
-			// since all relevantMethods start with test_, method name is second item
+			// since all testedMethods start with test_, method name is second item
 			$methodNames[] = $method[1];
 		}
 	
@@ -155,7 +158,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$missingTestCount = 0;
 		$untestedMethods = array();
 		foreach($actionMethods as $method) {
-			if(!in_array($method, $testedMethods)) {
+			if( !in_array($method, $testedMethods) && !in_array($method, self::$IGNORED_METHODS) ) {
 				$missingTestCount++;
 				$untestedMethods[] = $method;
             }
