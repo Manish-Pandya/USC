@@ -101,42 +101,6 @@ class ActionManager {
 	public function loginAction(){ }
 	public function logoutAction(){ }
 
-	public function activate(){
-		//Get the user
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to GenericCrud');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$decodedObject->setIsActive(TRUE);
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-
-	public function deactivate(){
-		//Get the user
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to GenericCrud');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$decodedObject->setIsActive(FALSE);
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-
 	// Users Hub
 	public function getAllUsers(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
