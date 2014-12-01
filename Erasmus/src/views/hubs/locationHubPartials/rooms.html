@@ -1,4 +1,9 @@
-<table class="userList table table-striped table-hover piTable table-bordered locationTable">
+<h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
+<div class="container loading" ng-if="loading">
+  <i class="icon-spinnery-dealie spinner large"></i>
+  <span>Getting Lab Locations...</span>
+</div>
+<table class="userList table table-striped table-hover piTable table-bordered locationTable" ng-if="rooms && !loading">
 	<thead>
 		<tr class="blueBg">
 			<th colspan="8" class="blueBg">
@@ -10,7 +15,6 @@
 		</tr>
 		<tr>
 			<th clas="temp">Edit</th>
-			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
 			<th>
 				<a ng-click="order = 'Last_name'; reverse=!reverse">Building<br>
 				<input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
@@ -33,13 +37,12 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="room in rooms |  orderBy:['Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search">
+		<tr ng-repeat="room in rooms |  orderBy:['Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search" ng-class="{inactive: !room.Is_active}">
 			<td style="width:6%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"><i class="icon-remove"></i></a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></a>
-				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px; " ng-show="room.IsDirty"/>
-				{{room.Is_active}}
+				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
 			</td>
 
 			<td style="width:15%"> 
@@ -84,14 +87,14 @@
 				    <div  class="control-group">
 			         <label class="control-label" for="inputEmail">Building</label>
 			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
+						<input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
 				  	 </div>
 			    </div>
 
         	</form>
         </div>
         <div class="modal-footer">
-        	<img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+			<i class="icon-spinnery-dealie spinner small" ng-if="modalData.IsDirty"></i>
             <a class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
