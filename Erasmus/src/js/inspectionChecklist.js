@@ -171,8 +171,18 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         //at least one Deficiency has been selected for this question, so the question is complete
         question.isComplete = true;
         question.Deficiencies[z].selected = true;
+
+        //Is Show_rooms true for this deficiency?
+        if(($scope.inspection.Deficiency_selections[2].indexOf(defID)>-1)){
+          question.Deficiencies[z].Show_rooms = true;
+        }else{
+          question.Deficiencies[z].Show_rooms = false;
+        }
+
         //was this deficiency Corrected durring the inspection?
         if(($scope.inspection.Deficiency_selections[1].indexOf(defID)>-1))question.Deficiencies[z].correctedDuringInspection = true;
+
+
       }
     }
     return question;
@@ -406,6 +416,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onSaveObs(obsDto,question){
+    question.noteText = '';
     question.savingNew = false;
     obsDto.checked = true;
     obsDto.isNew = true;
@@ -422,9 +433,10 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   }
 
   function onSaveRec(obsDto,question){
-    question.savingNew = true;
     obsDto.checked = true;
     obsDto.isNew = true;
+    question.savingNew = false;
+    question.recommendationText = '';
     if(obsDto.Class.indexOf("Supplemental") == -1){
       question.Recommendations.push(obsDto);
       $scope.handleNotesAndRecommendations(question,obsDto);
@@ -441,6 +453,69 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   $scope.selectRoom = function(response, deficiency, room, checklist){
     room.IsDirty = true;
     $scope.deficiencySelected(response, deficiency, room, checklist, true);
+  }
+
+  $scope.setShowRooms = function(question, deficiency, checklist){
+      $scope.error = false;
+      deficiency.showRoomsSaving = true;
+
+      if(!deficiency.InspectionRooms)deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
+
+      var i = deficiency.InspectionRooms.length;
+      var roomIds = [];
+      while(i--){
+        roomIds.push( deficiency.InspectionRooms[i].Key_id );
+      }
+
+      defDto = {
+        Class: "DeficiencySelection",
+        Show_rooms: deficiency.Show_rooms,
+        Deficiency_id:  deficiency.Key_id,
+        Response_id: question.Responses.Key_id,
+        Inspection_id: $scope.inspection.Key_id,
+        RoomIds: roomIds
+      }
+
+      var j = question.Responses.DeficiencySelections.length;
+      while(j--){
+          if( deficiency.Key_id == question.Responses.DeficiencySelections[j].Deficiency_id )defDto.Key_id = question.Responses.DeficiencySelections[j].Key_id;
+      }
+
+      console.log(defDto);
+      var url = '../../ajaxaction.php?action=saveDeficiencySelection';
+
+      convenienceMethods.saveDataAndDefer( url, defDto ).then(
+        function(returnedDeficiencySelection){
+            console.log(checklist);
+            deficiency.showRoomsSaving = false;
+
+            if(!defDto.Show_rooms){
+
+              var k = $scope.inspection.Deficiency_selections[2].length;
+              console.log($scope.inspection.Deficiency_selections[2]);
+              while(k--){
+                console.log($scope.inspection.Deficiency_selections[2][k] + ' | ' + defDto.Deficiency_id);
+                 if(defDto.Deficiency_id == $scope.inspection.Deficiency_selections[2][k])$scope.inspection.Deficiency_selections[2].splice(k,1);
+              }
+
+            }else{
+                console.log($scope.inspection.Deficiency_selections[2]);
+                while(k--){
+                console.log($scope.inspection.Deficiency_selections[2][k] + ' | ' + defDto.Key_id);
+                 if(defDto.Deficiency_id == $scope.inspection.Deficiency_selections[2][k])$scope.inspection.Deficiency_selections[2].splice(k,1);
+              }
+              if( $scope.inspection.Deficiency_selections[2].indexOf( defDto.Deficiency_id ) < 0 )$scope.inspection.Deficiency_selections[2].push( defDto.Deficiency_id )
+            }
+
+            evaluateQuestionComplete(question);
+            countAnswers(checklist);
+        },
+        function(promise){
+            deficiency.showRoomsSaving = false;
+            $scope.error = 'The deficiency selection could not be updated.  Please check your internet connection and try again.'
+        }
+    );
+
   }
 
 
@@ -460,17 +535,14 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     if(!deficiency.InspectionRooms){
         var rooms = convenienceMethods.copyObject(checklist.InspectionRooms);
         deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
-    
+    }else{
+        var rooms = deficiency.InspectionRooms;
     }
     var RoomIds = [];
     var atLeastOneChecked = true;
 
     //build out an array of Room key_ids for the server request
     if( !roomSelected || typeof roomSelected == 'undefined' ){
-      if(!rooms){
-        if(!deficiency.InspectionRooms)deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
-        var rooms = deficiency.InspectionRooms;
-      }
       for(i=0;i<rooms.length;i++){
         console.log('heere');
         rooms[i].checked = true;
@@ -592,7 +664,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       );
     }
   }
-
+  
   function onRemoveDefSelect(bool, deficiency, question, checklist){
     //get the index of the deficiency selection for the question
     var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections, deficiency, null, true);
