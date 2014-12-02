@@ -1089,15 +1089,34 @@ img.smallLoading {
   max-height: 300px;
   overflow: auto;
   overflow-x: hidden;
-  padding: 14px 1px;
+  padding: 0px 1px 14px;
   width: 100%;
 }
 /* line 942, ../sass/style.scss */
-.subHazardModal ul li, .roomsModal ul li {
+.subHazardModal ul li{
   width: 100%;
   padding: 5px 0;
   display: block;
   clear: both;
+}
+.roomsModal ul li {
+  font-weight: bold; */
+  margin-left: -1px;
+  width: 98%;
+  padding: 5px 0;
+  display: block;
+  clear: both;
+  margin-left:28px;
+}
+.show-rooms{
+  margin-bottom:3px;
+  padding: 5px 0px 7px 4px !important;
+  background: #9d9d9d;
+  margin-left: -1px !important;
+  color: white;
+}
+.show-rooms label{
+  font-weight: bold;
 }
 /* line 949, ../sass/style.scss */
 .subHazardModal ul li label span.metro-checkbox, .roomsModal ul li label span.metro-checkbox {
