@@ -169,6 +169,7 @@ class Inspection extends GenericCrud {
 	public function getDeficiency_selections(){
 		$deficiencySelections = array();
 		$correctedSelections = array();
+		$showRooms = array();
 		$responses = $this->getResponses();
 		foreach ($responses as $response){
 			$selections = $response->getDeficiencySelections();
@@ -178,11 +179,16 @@ class Inspection extends GenericCrud {
 				if($selection->getCorrected_in_inspection() == true){
 					$correctedSelections[] = $id;
 				}
+				if($selection->getShow_rooms() == true){
+					$showRooms[] = $id;
+				}
 			}
 		}
 		$this->deficiency_selections = array();
 		$this->deficiency_selections['deficiencySelections'] = $deficiencySelections;
 		$this->deficiency_selections['correctedSelections'] = $correctedSelections;
+		$this->deficiency_selections['showRooms'] = $showRooms;
+
 		return $this->deficiency_selections;
 	}
 }
