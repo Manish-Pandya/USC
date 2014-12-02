@@ -6,15 +6,16 @@
  * @author Mitch Martin, GraySail LLC
  */
 class DeficiencySelection extends GenericCrud {
-	
+
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "deficiency_selection";
-	
+
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		
+
 		//response is a relationship
 		"response_id"	=>	"integer",
+		"show_rooms"    =>  "boolean",
 		//rooms is a relationship
 		//deficiency is a relationship
 		"deficiency_id"	=>	"integer",
@@ -30,7 +31,7 @@ class DeficiencySelection extends GenericCrud {
 		"corrected_in_inspection"	=> "boolean",
 		"created_user_id"	=> "integer"
 	);
-	
+
 		/** Relationships */
 	public static $ROOMS_RELATIONSHIP = array(
 			"className"	=>	"Room",
@@ -38,32 +39,36 @@ class DeficiencySelection extends GenericCrud {
 			"keyName"	=>	"room_id",
 			"foreignKeyName"	=>	"deficiency_selection_id"
 	);
-	
+
 	public static $CORRECTIVE_ACTIONS_RELATIONSHIP = array(
 			"className"	=>	"CorrectiveAction",
 			"tableName"	=>	"corrective_action",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"deficiency_selection_id"
 	);
-	
+
 	/** Reference to the Response entity to which the associated Deficiency is applied */
 	private $response;
 	private $response_id;
-	
+
 	/** Reference to the Deficiency entity that was selected */
 	private $deficiency;
 	private $deficiency_id;
-	
+
 	/** Array of Room entities in which the associated Deficiency applies */
 	private $rooms;
-	
+
+
+	/** Boolean that indicates whether rooms for this Deficiency Selection should be shown in reports **/
+	private $show_rooms;
+
 	/** Array of CorrectiveAction entities describing this Deficiency's resolution */
 	private $correctiveActions;
-	
+
 	private $roomIds;
-	
+
 	private $corrected_in_inspection;
-	
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -73,18 +78,18 @@ class DeficiencySelection extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getResponse");
 		$entityMaps[] = new EntityMap("eager","getDeficiency");
 		$this->setEntityMaps($entityMaps);
-		
+
 	}
-		
+
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
 	}
-	
+
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
-	
+
 	public function getResponse(){
 		if($this->response == null) {
 			$responseDAO = new GenericDAO(new Response());
@@ -93,13 +98,13 @@ class DeficiencySelection extends GenericCrud {
 		return $this->inspection;
 	}
 	public function setResponse($response){
-		$this->response = $response; 
+		$this->response = $response;
 	}
-	
+
 	public function getResponse_id() { return $this->response_id;	}
 	public function setResponse_id($response_id) {$this->response_id = $response_id;}
-	
-	public function getRooms(){ 
+
+	public function getRooms(){
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
@@ -107,22 +112,22 @@ class DeficiencySelection extends GenericCrud {
 		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
-	
+
 	public function getDeficiency(){
 		if($this->deficiency == null) {
 			$deficiencyDAO = new GenericDAO(new Deficiency());
 			$this->deficiency = $deficiencyDAO->getById($this->deficiency_id);
 		}
-		return $this->deficiency; 
+		return $this->deficiency;
 	}
 	public function setDeficiency($deficiency){
-		$this->deficiency = $deficiency; 
+		$this->deficiency = $deficiency;
 	}
 
 	public function getDeficiency_id() { return $this->deficiency_id;	}
 	public function setDeficiency_id($deficiency_id) {$this->deficiency_id = $deficiency_id;}
-	
-	public function getCorrectiveActions(){ 
+
+	public function getCorrectiveActions(){
 		if($this->correctiveActions === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->correctiveActions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CORRECTIVE_ACTIONS_RELATIONSHIP));
@@ -130,11 +135,18 @@ class DeficiencySelection extends GenericCrud {
 		return $this->correctiveActions;
 	}
 	public function setCorrectiveActions($correctiveActions){ $this->correctiveActions = $correctiveActions; }
-	
+
 	public function getRoomIds() {return $this->roomIds;}
 	public function setRoomIds($roomIds){ $this->roomIds = $roomIds;}
-	
+
 	public function getCorrected_in_inspection() {return $this->corrected_in_inspection;}
 	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = $corrected; }
+
+	public function getShow_rooms(){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->debug('yo, dawg.  I heard you like getShowRooms, which is ' . $this->show_rooms);
+		return $this->show_rooms;
+	}
+	public function setShow_rooms($show_rooms){$this->show_rooms = $show_rooms;}
 }
 ?>
