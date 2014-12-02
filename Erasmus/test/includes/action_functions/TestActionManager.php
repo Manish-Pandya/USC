@@ -107,6 +107,22 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	function getDaoSpy() {
 		return $this->daoSpy;
 	}
+	
+	/**
+	 * Converts array of entityMaps to associative key_value pairs,
+	 * [methodName] => loadingType
+	 * 
+	 * helpful when tests need to check a specific entity map's property
+	 * 
+	 * @param array [of EntityMaps] $map
+	 */
+	protected function convertEntityMapsToAssociativeArray($maps) {
+		$mapArray = array();
+		foreach($maps as $entityMap) {
+			$mapArray[$entityMap->getEntityAccessor()] = $entityMap->getLoadingType();
+		}
+		return $mapArray;
+	}
 
 
 
@@ -228,13 +244,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertContainsOnlyInstancesOf( 'EntityMap', $entityMaps );
 		
 		// rearrange entity maps into associative array for easier testability.
-		$maps = array();
-		foreach($entityMaps as $map) {
-			$accessorName = $map->getEntityAccessor();
-			$accessorStatus = $map->getLoadingType();
-
-			$maps[$accessorName] = $accessorStatus;
-		}
+		$maps = $this->convertEntityMapsToAssociativeArray($entityMaps);
 		
 		// check specific entity maps for correct setting
 		$this->assertEquals( "lazy", $maps["getSubhazards"] );
@@ -1750,5 +1760,69 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
+
+	/*************************************************************************\
+	 *                        Other Assorted Tests                           *
+	\*************************************************************************/
+	
+	/* getHazardTreeNode */
+	
+	/**
+	 * @group other
+	 */
+	public function test_getHazardTreeNode() {
+		// construct fake hazard with subHazards to use
+		$parentHazard = new Hazard();
+		$parentHazard->setKey_id(1);
+		
+		// children subHazards that the method will act on
+		$subHazard1 = new Hazard();
+		$subHazard1->setKey_id(2);
+		
+		$subHazard2 = new Hazard();
+		$subHazard2->setKey_id(3);
+		$subHazard2->setChecklist(new Checklist());
+		
+		// set subHazards as children of parent, set getById to return parent when getHazardById is called.
+		$parentHazard->setSubHazards( array($subHazard1, $subHazard2) );
+		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		
+
+		$result = $this->actionManager->getHazardTreeNode(1);
+		
+		// should return array of 2 items, subHazard1 and subHazard2
+		$this->assertCount( 2, $result, "Expected array of 2 items" );
+		$this->assertContainsOnlyInstancesOf( "Hazard", $result, "Array should contain only hazards" );
+
+		// extract relevant entityMaps to check
+		$firstItem = $result[0];
+		$firstMaps = $firstItem->getEntityMaps();
+		$firstMaps = $this->convertEntityMapsToAssociativeArray($firstMaps);
+		$secondItem = $result[1];
+		$secondMaps = $secondItem->getEntityMaps();
+		$secondMaps = $this->convertEntityMapsToAssociativeArray($secondMaps);
+		
+		// getChecklist and getHasChildren should be eager for each returned hazard...
+		$this->assertEquals( "eager", $firstMaps["getChecklist"], "getChecklist should be eagerly loaded" );
+		$this->assertEquals( "eager", $firstMaps["getHasChildren"], "getHasChildren should be eagerly loaded");
+
+		$this->assertEquals( "eager", $secondMaps["getChecklist"], "getChecklist should be eagerly loaded" );
+		$this->assertEquals( "eager", $secondMaps["getHasChildren"], "getHasChildren should be eagerly loaded" );
+		
+		//... but not getSubHazards
+		$this->assertEquals( "lazy", $firstMaps["getSubHazards"], "getSubHazards should be lazy loaded" );
+		$this->assertEquals( "lazy", $secondMaps["getSubHazards"], "getSubHazards should be lazy loaded" );
+
+		//NOTE: Not testing other entityMaps since those could change later,
+		// getSubhazards =lazy and getChecklist=eager is the only thing that MUST be set
+		// to avoid breakage
+		
+		// checklists in returned hazards should have everything lazy loaded
+		$checklistMaps = $secondItem->getChecklist()->getEntityMaps();
+		foreach($checklistMaps as $map) {
+			$this->assertEquals( "lazy", $map->getLoadingType(), "entityMaps in checklist's maps should be lazy" );
+		}
+
+	}
 	
 }
