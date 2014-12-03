@@ -1,4 +1,4 @@
-<td>
+<td vertical-align="middle">
 	<div class="span1">
 		<i ng-if="question.Responses.Answer == 'yes'" class="span3 icon-checkmark" style="color:#0c0;"></i>
 		<i ng-if="question.Responses.Answer == 'no'"  class="span3 icon-cancel-2" style="color:#900;"></i>
@@ -9,7 +9,7 @@
 		<ul>
 			<li ng-repeat="def in question.Responses.DeficiencySelections">
 				<span style="color:#cc0000;">Deficiency:</span><span once-text="def.Deficiency.Text"></span>
-				<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
+				<ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0; height:25px;">
 					<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
 					<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
 				</ul>

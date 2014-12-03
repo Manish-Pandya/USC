@@ -1,12 +1,12 @@
-<td valign="top" once-text="question.Text"></td>
-<td colspan="2" style="padding:0;">
+<td once-text="question.Text" valign="middle"></td>
+<td colspan="2" style="padding:0;" valign="middle">
 <!--<pre>{{question | json}}</pre>-->
 	<div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unkown Deficiency</div>
-	<div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections">
+	<div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections" class="def-table-cell">
 
-		<span class="span6" ng-if="def.Deficiency.Text">
+		<span class="span6" ng-if="def.Deficiency.Text" style="display: table-cell !important;float: none !important;vertical-align: middle !important;width: 50% !important;">
 			<span once-text="def.Deficiency.Text"></span>
-			<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
+			<ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0">
 				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
 				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
 			</ul>
@@ -19,7 +19,7 @@
 			</ul>
 		</span>			
 
-		<span class="span6" valign="top">
+		<span class="span6" style="display: table-cell !important;float: none !important;vertical-align: middle !important;width: 50% !important;">
 			<span ng-if="!def.Deficiency.Text">
 				Unkown Deficiency
 			</span>
@@ -80,5 +80,5 @@
 
 		</span>
 </td>
-<td valign="top" once-text="question.Description"></td>
-<td valign="top" once-text="question.Reference"></td>
+<td valign="middle" once-text="question.Description"></td>
+<td valign="middle" once-text="question.Reference"></td>

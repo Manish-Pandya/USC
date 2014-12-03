@@ -1,10 +1,10 @@
 	<div class="alert alert-error" ng-if="error" style="margin-top:10px;">
 		<h2>{{error}}</h2>
 	</div>
-
-	<div class="loading" ng-show='!doneLoading' >
-	  <img class="" src="../../img/loading.gif"/>
-	  Getting Inspection Information...
+ 
+	<div class="loading" ng-show='!doneLoading' style="margin-left:24px;">
+	  <i class="icon-spinnery-dealie spinner large"></i>  
+	  <span>Getting Inspection Information...</span>
 	</div>
 
 	<span ng-if='doneLoading && !error'>
@@ -75,7 +75,7 @@
 			</span>
 		</div>
 	</div>
-<table class="table table-bordered table-striped table-responsive inspectionReportTable">
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
 	<th style="width:10%">AUDIT CRITERIA</th>
 	<th colspan="2" style="width:34%;">
 		<div class="row-fluid">
