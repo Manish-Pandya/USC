@@ -168,11 +168,12 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 	}
 	factory.getCampuses = function()
 	{
+		console.log(this);
 		//if we don't have a the list of pis, get it from the server
 		var deferred = $q.defer();
 		//lazy load
 		if(this.campuss.length){
-			deferred.resolve(this.campuses);
+			deferred.resolve(this.campuss);
 		}else{
 			var url = '../../ajaxaction.php?action=getAllCampuses&callback=JSON_CALLBACK';
 	    	convenienceMethods.getDataAsDeferredPromise(url).then(
