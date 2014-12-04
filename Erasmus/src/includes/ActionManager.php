@@ -514,7 +514,7 @@ class ActionManager {
 
 		//validate values
 		if( $hazardId === NULL || $parentHazardId === NULL ){
-			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
+			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId", 201);
 		}
 		else{
 			$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
@@ -525,7 +525,7 @@ class ActionManager {
 			$hazard = $this->getHazardById( $hazardId );
 			$LOG->trace("Loaded Hazard to move: $hazard");
 
-			$hazard->setParent_hazard_id=$parentHazardId;
+			$hazard->setParent_hazard_id($parentHazardId);
 			// Save
 
 			$dao->save($hazard);
