@@ -1825,4 +1825,74 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 
 	}
 	
+	/* moveHazardToParent */
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_noId() {
+		$result = $this->actionManager->moveHazardToParent();
+		
+		$this->assertInstanceOf( "ActionError", $result, "No input - should have returned error.");
+		$this->assertEquals( 201, $result->getStatusCode(), "ActionError should have error code 201" );
+	}
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_passId() {
+		// fake hazard to be used
+		$fakeHazard = new Hazard();
+		$fakeHazard->setKey_id(1);
+		$fakeHazard->setParent_hazard_id(2);
+		
+		// set genericDao to return fake hazard instead of changing a real one
+		$this->getDaoSpy()->overrideMethod("getById", $fakeHazard);
+		
+		$result = $this->actionManager->moveHazardToParent(1, 3);
+		// NOTE: as yet, moveHazard does not return anything after success,
+		// only an empty string. Change as necessary later if method changes.
+
+		// get methods of GenericDaoSpy that were called
+		$calledMethods = $this->getDaoSpy()->getCalls();
+		$length = count($calledMethods);
+		
+		// last method called should've been GenericDao->save
+		$result = $calledMethods[$length - 1]->getArg(0);
+		
+		$this->assertInstanceOf( "Hazard", $result, "Method should have saved a hazard." );
+		$this->assertEquals( 1, $result->getKey_id(), "Saved hazard should have the same key id as passed in." );
+		$this->assertEquals( 3, $result->getParent_hazard_id(), "Saved hazard's parent id should have changed to passed in argument" );
+	}
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_requestId() {
+		$_REQUEST["hazardId"] = 1;
+		$_REQUEST["parentHazardId"] = 3;
+		
+		// fake hazard to be used
+		$fakeHazard = new Hazard();
+		$fakeHazard->setKey_id(1);
+		$fakeHazard->setParent_hazard_id(2);
+		
+		// set genericDao to return fake hazard instead of changing a real one
+		$this->getDaoSpy()->overrideMethod("getById", $fakeHazard);
+		
+		$result = $this->actionManager->moveHazardToParent();
+		// NOTE: as yet, moveHazard does not return anything after success,
+		// only an empty string. Change as necessary later if method changes.
+		
+		// get methods of GenericDaoSpy that were called
+		$calledMethods = $this->getDaoSpy()->getCalls();
+		$length = count($calledMethods);
+		
+		// last method called should've been GenericDao->save
+		$result = $calledMethods[$length - 1]->getArg(0);
+		
+		$this->assertInstanceOf( "Hazard", $result, "Method should have saved a hazard." );
+		$this->assertEquals( 1, $result->getKey_id(), "Saved hazard should have the same key id as passed in." );
+		$this->assertEquals( 3, $result->getParent_hazard_id(), "Saved hazard's parent id should have changed to passed in argument" );
+	}
 }
