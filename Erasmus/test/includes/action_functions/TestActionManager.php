@@ -1895,4 +1895,17 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id(), "Saved hazard should have the same key id as passed in." );
 		$this->assertEquals( 3, $result->getParent_hazard_id(), "Saved hazard's parent id should have changed to passed in argument" );
 	}
+	
+
+	/* getIsAlphabetized */
+	
+	/**
+	 * @group other
+	 */
+	public function test_getIsAlphabetized() {
+		$this->markTestIncomplete();
+
+		$result = $this->actionManager->getIsAlphabetized( array("goose", "anchovies", "meh") );
+		$this->assertFalse( $result, "getIsAlphabetized returned false positive" );
+	}
 }
