@@ -53,7 +53,7 @@
     <div ng-if="child.loadingChildren">
        <div class="container loading" style="margin-left:50px; margin-top:15px;">
         <img class="" src="../../img/loading.gif"/>
-         Loading Subhazards for <span once-text="child.Name"></span>
+         Loading Subhazards...</span>
       </div>                  
     </div>
      
@@ -68,7 +68,7 @@
 <ul class="nav pageMenu" style="background: #e67e1d;">
 	<li class="">
 		<img src="../../img/hazard-icon.png" class="pull-left" style="height:50px" />
-		<h2  style="padding: 11px 0 5px 85px;">Hazard Hub
+		<h2  style="padding: 11px 0 5px 30px;">Hazard Hub
 			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
 		</h2>	
 	</li>
