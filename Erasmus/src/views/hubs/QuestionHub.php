@@ -155,7 +155,7 @@ require_once '../top_view.php';
 				
 			</li>
 		</ul>
-
+		<hr>
 		<h2 style="margin-top:50px;" class="bold">Notes
 			<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs" ng-show="question.Observations.length">
 				<i ng-class="{'icon-plus': !addObvs, 'icon-cancel': addObvs}"></i>
