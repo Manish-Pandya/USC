@@ -561,6 +561,10 @@ tr.updated {
 
 /* line 199, ../sass/style.scss */
 /* line 447, ../sass/style.scss */
+tr.new td{
+  background: rgba(91, 183, 91, .9) !important;
+  color:white;
+}
 tr.inactive td {
   background: pink !important;
 }
@@ -2754,6 +2758,14 @@ table.roomList h2 {
 
 a.btn i {
 margin: 1px 2px;
+}
+
+a.btn.left i{
+  margin: 2px 6px 1px 2px;
+}
+
+a.btn.right i{
+  margin: 2px 2px 1px 6px;
 }
 
 .spacer{
