@@ -6,11 +6,11 @@ require_once '../top_view.php';
 <span id="buildingHub"  ng-app="emergencyInfo" ng-controller="emergencyInfoController">
 	<div class="navbar">
 		<ul class="nav pageMenu row-fluid" style="background:#002060;">
-			<li class="span12">			
+			<li class="span12">
 				<h2 style="padding: 11px 0 5px 0; font-weight:bold;">
 					<img src="../../img/hazard-icon.png"  style="height:50px" />
 					Emergency Information
-					<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
+					<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
 				</h2>
 			</li>
 		</ul>
@@ -41,7 +41,7 @@ require_once '../top_view.php';
 						<input ng-if="pis" style="width:280px" type="text" typeahead-on-select='eif.onSelectPIOrBuilding($item)' ng-model="selectedPi" placeholder="Select a Principal Investigator" typeahead="pi as (pi.User.Name) for pi in pis | filter:$viewValue">
 						<input ng-if="!pis" style="width:280px" type="text" disabled="disabled" placeholder="Getting Principal Investigators...">
 				       	<img ng-if="!pis" class="" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-					
+
 						<label>Location:</label>
 						<input ng-if="rooms" style="width:350px" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:$viewValue">
 						<input ng-if="!rooms" style="width:350px" placeholder="Select a Principal Investigator" disabled="disabled">
@@ -61,9 +61,9 @@ require_once '../top_view.php';
 					</tr>
 					<tr ng-repeat="pi in pisByRoom">
 						<td>{{pi.User.Name}}</td>
-						<td><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone}}</span><span !ng-if="pi.User.Emergency_phone">N/A</span></td>
+						<td><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
 						<td>
-							<ul>
+							<ul style="list-style: none;">
 								<li ng-repeat="dept in pi.Departments">{{dept.Name}}</li>
 							</ul>
 						</td>
@@ -76,13 +76,13 @@ require_once '../top_view.php';
 					</tr>
 					<tr ng-repeat="contact in personnel">
 						<td>{{contact.Name}}</td>
-						<td>{{contact.Emergency_phone}}<span !ng-if="contact.Emergency_phone">N/A</span></td>
+						<td>{{contact.Emergency_phone}}<span ng-if="!contact.Emergency_phone">Unknown</span></td>
 					</tr>
 				</table>
 
 			</div>
 		</div>
-		
+
 		<h1 class="hazardHeader" ng-if="hazards">LABORATORY HAZARDS</h1>
 		<ul class="modalHazardList">
 			<li ng-if="hazards" data-ng-repeat="hazard in hazards" class="modalHazard{{hazard.Key_id}}">
@@ -93,7 +93,7 @@ require_once '../top_view.php';
 	    		</ul>
 			</li>
 			<div style='clear:both'>&nbsp;</div>
-		</ul>				
-		
+		</ul>
+
 	</span>
 </span>
