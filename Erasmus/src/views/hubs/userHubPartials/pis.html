@@ -1,4 +1,4 @@
-<table class="userList table table-striped table-hover piTable">
+<table class="userList table table-striped table-hover piTable table-bordered">
 	<thead>
 		<tr>
 			<th colspan="9" class="blueBg">
@@ -35,10 +35,10 @@
 	<tbody>
 		<tr ng-repeat="pi in pis | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse " ng-if="pi.Is_active != showInactive">
 
-			<td style="width:12%;">
+			<td style="width:8%;">
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="addPi(pi)"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active">Deactivate</a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="!pi.Is_active">Activate</a>
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active"><i class="icon-remove"></i></a>
+				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="!pi.Is_active"><i class="icon-checkmark"></i></a>
 				<img class="smallLoading" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position:absolute;" ng-show="pi.IsDirty"/>
 			</td>
 			
