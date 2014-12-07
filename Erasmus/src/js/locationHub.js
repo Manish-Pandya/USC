@@ -59,8 +59,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 				}
 
 				if( search.campus ) {
-					if( !item.Campus ) item.matched = false;
-					if( item.Campus && item.Campus.Name.toLowerCase().indexOf( search.campus ) < 0 ) item.matched = false;
+					if(item.Class == "Building"){
+						if( !item.Campus ) item.matched = false;
+						if( item.Campus && item.Campus.Name.toLowerCase().indexOf( search.campus ) < 0 ) item.matched = false;
+					}else{
+						if( !item.Building ) item.matched = false;
+						if( item.Building && !item.Building.Campus ) item.matched = false;
+						if( item.Building && item.Building.Campus && item.Building.Campus.Name.toLowerCase().indexOf( search.campus ) < 0 ) item.matched = false;
+					}
+					
 				}
 
 				if(search.pi || search.department && item.PrincipalInvestigators){
@@ -399,11 +406,25 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory) {
 		)
 
 	$scope.saveBuilding = function(building){
-			building.index = false;
-			console.log(building);
+			$scope.error = null;
 			building.IsDirty = true;
 			if(!$rootScope.copy.Is_active)$rootScope.copy.Is_active = true;
 			if(building.Campus)$rootScope.copy.Campus_id = building.Campus.Key_id;
+
+			//form validation
+			var i = $scope.buildings.length;
+			var buildingNames = [];
+
+			while(i--){
+				if($scope.buildings[i].Campus_id == building.Campus_id && building.Key_id != $scope.buildings[i].Key_id) buildingNames.push( $scope.buildings[i].Name );
+			}
+
+			if( buildingNames.indexOf(building.Name) > -1 ){
+				$scope.error = 'There is already a building called ' + building.Name + ' on the ' + building.Campus.Name + ' campus';
+				building.IsDirty = false;
+				return false;
+			}
+
 			locationHubFactory.saveBuilding($rootScope.copy)
 				.then(
 					function( returned ){
@@ -413,8 +434,10 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory) {
 						angular.extend(building, returned)
 					},
 					function(error){
+						building.isNew = true;
 						building.IsDirty = false;
 						building.edit = false;
+						building.index = 0;
 						$scope.error = 'The building could not be saved.  Please check your internet connection and try again.';
 					}
 				)
@@ -457,10 +480,10 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory){
 						campus.IsDirty = false;
 						campus.edit = false;
 						campus.isNew = true;
-						campus.index = false;
-						angular.extend(campus, returned)
+						angular.extend(campus, returned);
 					},
 					function(error){
+						campus.isNew = truel
 						campus.IsDirty = false;
 						campus.edit = false;
 						$scope.error = 'The building could not be saved.  Please check your internet connection and try again.';
@@ -480,12 +503,21 @@ modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMeth
 
 	//make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
 	$scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
+
+	//make another copy that we won't mutate for displaying the name of the object we're editing;
+	$scope.nonEditable = locationHubFactory.getModalData();
+
 	locationHubFactory.getBuildings().then(
 		function(buildings){
 			$scope.buildings = buildings;
 		}
 	);
 
+	locationHubFactory.getRooms().then(
+		function(rooms){
+			$scope.rooms =  rooms
+		}
+	);
 
 	$scope.cancel = function () {
       $modalInstance.dismiss();
@@ -496,19 +528,48 @@ modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMeth
     	$scope.modalData.Building_id = building.Key_id;
     }
 
-    $scope.save = function(obj){
+    $scope.save = function(obj, confirm){
     	obj.IsDirty=true;
     	//unset global error, if it exists.
     	$scope.error = null;
+    	$scope.validationError = null;
+    	//form validation
+    	if(obj.Class == 'Room'){
+
+    		if( obj.Has_hazards && !confirm ){
+    			$scope.validationError = "Room " + obj.Name + " in " + obj.Building.Name + " currently contains hazards.  Are you sure you want to edit it?";
+    			obj.needsConfirmation = true;
+    			obj.IsDirty = false;
+    			return false;
+    		}
+
+			var roomNames = [];
+    		var id = obj.Building_id;
+    		var i = $scope.rooms.length;
+    		while(i--){
+    			if( $scope.rooms[i].Building_id == obj.Building_id && $scope.rooms[i].Key_id != obj.Key_id ) roomNames.push( $scope.rooms[i].Name );
+    		}
+
+    		if( roomNames.indexOf( obj.Name ) > -1 ){
+    			$scope.validationError = "There is already a room " + obj.Name + " in " + obj.Building.Name;
+    			obj.IsDirty = false;
+    			return false;
+    		}
+
+    	}
 
     	locationHubFactory['get'+obj.Class+'s']().then(
 	    		function(stuff){
+
 	    			var collection = stuff;
 	    			locationHubFactory['save'+obj.Class]( obj ).then(
 		    			function(returned){
+						returned.isNew = true;
+
 	    				if( obj.Key_id ){
 	    					//we are editing an old object
 	    					var i = collection.length;
+
 	    					while(i--){
 	    						//var objectInCollection = collection[i];
 	    						if(collection[i].Key_id == returned.Key_id){
@@ -519,13 +580,15 @@ modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMeth
 	    					obj.IsDirty=false;
 	    				}else{
 	    					//we are creating an new object
-	    					collection.push(returned);
+	    					returned.index=0;
 	    					obj.IsDirty=false;
+	    					collection.push(returned);
+
 	    				}
 				        $modalInstance.close();
 	    			},
 	    			function(){
-	    				$scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
+	    				$scope.validationError = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
 	    				obj.IsDirty=false;
 	    				$modalInstance.dismiss();
 	    			}

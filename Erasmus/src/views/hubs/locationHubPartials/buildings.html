@@ -30,7 +30,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="building in buildings |  orderBy:['index', 'Campus.Name', 'Name'] | genericFilter:search" ng-class="{inactive: !building.Is_active}">
+		<tr ng-repeat="building in buildings |  orderBy:['index', 'Campus.Name', 'Name'] | genericFilter:search" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
 			<td style="width:6%;">
 				<a ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)"><i class="icon-pencil"></i></a>
 				<a ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>
@@ -59,8 +59,9 @@
 				<span ng-if="building.edit">
 					<input style="" class="span4" placeholder="Select A Campus" typeahead-on-select='onSelectCampus($item,building)' type="text" ng-model="copy.Campus" typeahead="campus as campus.Name for campus in campuses | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">					
 					<span class="absoluteBtns" style="margin-top:0">
-						<a class="btn-success btn" ng-click="saveBuilding(building)"><i class="icon-checkmark"></i>Save</a>
-						<a class="btn-danger btn" ng-click="lhf.cancelEdit(building, buildings)"><i class="icon-cancel"></i>Cancel</a>
+						<a ng-if="copy.Name && copy.Campus.Name" class="btn-success btn left" ng-click="saveBuilding(building)"><i class="icon-checkmark"></i>Save</a>
+						<a ng-if="!copy.Name || !copy.Campus.Name" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+						<a class="btn-danger btn left" ng-click="lhf.cancelEdit(building, buildings)"><i class="icon-cancel-2"></i>Cancel</a>
 						<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
 					</span>
 				</span>
@@ -96,7 +97,8 @@
         </div>
         <div class="modal-footer">
         	<img ng-show="modalData.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-            <a class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="modalData.Name && modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!modalData.Name || !modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>
