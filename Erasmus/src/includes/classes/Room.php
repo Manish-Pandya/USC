@@ -72,6 +72,8 @@ class Room extends GenericCrud {
 	/** A collection of hazard_room_relations this room has a relationship to **/
 	private $hazard_room_relations;
 
+	private $has_hazards;
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -150,11 +152,28 @@ class Room extends GenericCrud {
 	public function setContainsHazard($containsHazard){ $this->containsHazard = $containsHazard; }
 
 	public function getHazard_room_relations(){
-	if($this->hazard_room_relations == null) {
+		if($this->hazard_room_relations == null) {
 			$thisDAO = new GenericDAO($this);
 			$this->hazard_room_relations = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARD_ROOMS_RELATIONSHIP));
 		}
 		return $this->hazard_room_relations;
+	}
+
+	public function getHas_hazards(){
+		$LOG = Logger::getLogger(__CLASS__);
+
+		$this->has_hazards = false;
+		// Get the db connection
+		global $db;
+
+		$queryString = "SELECT COUNT(*) FROM hazard_room WHERE room_id = " . $this->key_id;
+		$LOG->debug("query: " . $queryString . " " . $this->key_id);
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		$number_of_rows = $stmt->fetchColumn();
+		$LOG->debug($number_of_rows);
+		if($number_of_rows > 0) $this->has_hazards =  true;
+		return $this->has_hazards;
 	}
 
 
