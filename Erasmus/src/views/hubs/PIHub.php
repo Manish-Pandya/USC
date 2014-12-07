@@ -6,7 +6,7 @@ require_once '../top_view.php';
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
 	<li class="span3" style="margin-left:0">
-		<img src="<?php echo WEB_ROOT?>img/pi-icon.png" class="pull-left" style="height:50px" />
+		<img src="<?php echo WEB_ROOT?>img/pi-icon.png" class="pull-left" style="height: 67px;margin-top: -11px;" />
 			<h2 style="padding: 11px 0 5px 15px; margin-left:63px;">PI Hub
 			<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
 		</h2>	
@@ -35,9 +35,7 @@ require_once '../top_view.php';
 			<a href="UserHub.php#/pis?pi={{PI.User.Last_name}}piId={{PI.Key_id}}" id="editPI" class="btn btn-large btn-primary" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success"><i class="icon-user-2"></i>Manage Lab Personnel</a>
-			<!--<a ng-click="setRoute('departments')" class="btn btn-large btn-primary"><i class="icon-tree-view"></i>Manage Deparments</a>-->
 			<a ng-if="inspectionId" class="btn btn-large btn-danger" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
-			<!--<a ng-click="setRoute('safetyContacts')" class="btn btn-large btn-success"><i class="icon-phone"></i>Manage Safety Contacts</a><!--<a href="#specialHazards" id="editPI" class="btn btn-large btn-warning">Manage Special Haz-->
 		</div>
 	</span>
 	<h3 ng-hide="!PI" class="piHeader">Principle Investigator:  {{PI.User.Name}}</h3>
