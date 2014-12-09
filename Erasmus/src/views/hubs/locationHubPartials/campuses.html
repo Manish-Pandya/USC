@@ -1,0 +1,57 @@
+<h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
+<div class="container loading" ng-if="loading">
+	<i class="icon-spinnery-dealie spinner large"></i>  
+	<span>Getting Campuses...</span>
+</div>
+
+<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="campuses && !loading" style="max-width:1300px;">
+	<thead>
+		<tr class="purpleBg">
+			<th colspan="4" class="purpleBg">
+				<h1 class="purpleBg">Campuses</h1>
+				<div class="btn-group" style="margin:-22px 0 0 30px">
+			     <a class="btn-large btn" ng-click="addCampus()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Campus</a>
+			   </div>
+			</th>
+		</tr>
+		<tr>
+			<th>Edit</th>
+			<th>
+				Campus
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr ng-repeat="campus in campuses |  orderBy:['index', 'Name']" ng-class="{inactive: !campus.Is_active, 'new': campus.isNew}">
+			<td style="width:11%;">
+				<a ng-if="!campus.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses)"><i class="icon-pencil"></i></a>
+				<a ng-if="campus.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>
+				<span ng-if="!campus.edit">
+					<a class="btn btn-danger btn" ng-click="lhf.handleObjectActive(campus)" ng-if="campus.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn" ng-click="lhf.handleObjectActive(campus)" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></a>
+					<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
+				</span>
+
+				<span ng-if="campus.edit">
+					<a class="btn btn-danger btn DeactivateeRow" disabled="disabled" ng-if="campus.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn DeactivateeRow" disabled="disabled" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></a>
+				</span>
+
+			</td>
+
+			<td style="width:89%" >
+				<span ng-if="campus.edit">
+					<input ng-if="campus.edit" ng-model="copy.Name">
+					<span class="absoluteBtns" style="margin-top:0">
+						<a class="btn-success btn left" ng-click="saveCampus(campus)" ng-if="copy.Name"><i class="icon-checkmark"></i>Save</a>
+						<a class="btn-success btn left" ng-if="!copy.Name" disable="disabled"><i class="icon-checkmark" disabled="disabled"></i>Save</a>
+						<a class="btn-danger btn left" ng-click="lhf.cancelEdit(campus, campuses)"><i class="icon-cancel-2"></i>Cancel</a>
+						<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
+					</span>
+				</span>
+				<span ng-if="!campus.edit" once-text="campus.Name"></span>
+			</td>
+		</tr>
+	</tbody>
+</table>

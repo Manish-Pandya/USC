@@ -46,19 +46,19 @@ require_once '../top_view.php';
 <!--<a ng-click="$spMenu.toggle()" .icon-menu-2 style="background:blue;font-size: 27px !important; color: black; text-decoration:none!important" class="toggles toggledIn"><p class="rotate">Show/Hide Menu<i style="margin-top: 16px; font-size: 50px !important;" class="icon-arrow-down"></i></p></a>  
 -->	
 	<div class="loading" ng-show='!checklists' >
-	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+	  <i class="icon-spinnery-dealie spinner large"></i>  
 	  Getting Checklists...
 	</div>
 	<div class="alert alert-error" ng-if="error" style="margin-top:10px;">
 		<h2>{{error}}</h2>
 	</div>
 	<ul class="postInspectionNav row" style="margin-left:11px;">
-		<li ng-if="checklists.biologicalHazards.checklists.length"><a ng-click="selectChecklistCategory('biologicalHazards')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: route==confirmation}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
-		<li ng-if="checklists.chemicalHazards.checklists.length"><a ng-click="selectChecklistCategory('chemicalHazards')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
-		<li ng-if="checklists.generalHazards.checklists.length"><a ng-click="selectChecklistCategory('generalHazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
-		<li ng-if="checklists.radiationHazards.checklists.length"><a ng-click="selectChecklistCategory('radiationHazards')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: route==confirmation}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
+		<li ng-if="checklists.biologicalHazards.checklists.length"><a ng-click="selectChecklistCategory('biologicalHazards')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: selectedChecklists.Name=='BIOLOGICAL SAFETY'}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
+		<li ng-if="checklists.chemicalHazards.checklists.length"><a ng-click="selectChecklistCategory('chemicalHazards')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: selectedChecklists.Name=='CHEMICAL SAFETY'}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
+		<li ng-if="checklists.generalHazards.checklists.length"><a ng-click="selectChecklistCategory('generalHazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: selectedChecklists.Name=='GENERAL SAFETY'}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
+		<li ng-if="checklists.radiationHazards.checklists.length"><a ng-click="selectChecklistCategory('radiationHazards')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: selectedChecklists.Name=='RADIATION SAFETY'}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
 	</ul>
-	<h2 style="margin-left:11px"><img style="margin: -6px 5px 4px 0; max-width:50px;" ng-if="selectedChecklists.img" src="../../img/{{selectedChecklists.img}}"/><span>{{selectedChecklists.Name}}</span></h2>
+	<h2 style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" ng-if="selectedChecklists.img" src="../../img/{{selectedChecklists.img}}"/><span>{{selectedChecklists.Name}}</span></h2>
     <!-- begin checklist for this inspection -->
 		<accordion close-others="true">
 			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in selectedChecklists.checklists" is-open="checklist.currentlyOpen">
@@ -108,7 +108,13 @@ require_once '../top_view.php';
 
 									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
 										<div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
-										<ul style="margin-left:13px;">
+										<ul>
+											<li class="show-rooms">
+												<label class="checkbox inline">
+													<input type="checkbox" ng-change="setShowRooms(question, deficiency, checklist)" ng-model="deficiency.Show_rooms"/>
+													<span class="metro-checkbox">Show rooms in report<img ng-if="room.IsDirty" class="" src="../../img/loading.gif"/></span>
+												</label>
+											</li>
 											<li ng-repeat="room in deficiency.InspectionRooms">
 												<label class="checkbox inline">
 													<input type="checkbox" ng-change="selectRoom(question, deficiency, room, checklist)" ng-model="room.checked"/>
@@ -130,7 +136,7 @@ require_once '../top_view.php';
 							</ul>
 						</span>
 
-						<span ng-if="question.Responses.Answer">
+						<span ng-if="question.Responses.Answer.length">
 							<ul ng-if="question.showRecommendations"style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;">
 								<h3>Recommendations:</h3>
 								<li ng-repeat="recommendation in question.Recommendations" style="margin-bottom:3px;">
@@ -157,7 +163,7 @@ require_once '../top_view.php';
 								</li><!--editItem = function(item, question)-->
 								<li>
 									 <form ng-if="!recommendationCopy">
-									 	<input type="hidden" value="recommendation" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
+									 	<input type="hidden" value="recommendation" name="question.TextType" ng-model="question.TextType"/>
 							        	<textarea ng-model="question.recommendationText" rows="2" style="width:100%;"></textarea>
 								        <input  class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="createNewNoteOrRec(question,question.Responses,false,'recommendation')"/>
 								        <input  class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'recommendation')"/>

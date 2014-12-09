@@ -54,7 +54,7 @@ class ActionMappingFactory {
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
 				"getUserById"=>new ActionMapping("getUserById", "", ""),
-				"saveUser"=>new ActionMapping("saveUser", "", ""),
+				"saveUser"=>new ActionMapping("saveUser", "", "", ""),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
@@ -125,10 +125,11 @@ class ActionMappingFactory {
 				"getAllDepartments"=>new ActionMapping("getAllDepartments", "", ""),
 				"getAllActiveDepartments"=>new ActionMapping("getAllActiveDepartments", "", ""),
 				"getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
+				"getAllCampuses"=>new ActionMapping("getAllCampuses", "", ""),
 				"getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
 				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
-				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
+				"saveCampus"=>new ActionMapping("saveCampus", "", ""),
 
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
@@ -141,7 +142,7 @@ class ActionMappingFactory {
 				"resetChecklists"=>new ActionMapping("resetChecklists","",""),
 				"getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", ""),
 				"saveResponse"=>new ActionMapping("saveResponse", "", ""),
-				"removeResponse"=>new ActionMapping("removeResponse", "", "", array(), "200","404"),
+				"removeResponse"=>new ActionMapping("removeResponse", "", "","","200","404"),
 				"saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", ""),
 				"removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", ""),
 				"addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", ""),

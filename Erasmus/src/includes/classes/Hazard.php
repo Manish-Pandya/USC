@@ -116,18 +116,17 @@ class Hazard extends GenericCrud {
 
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
+		//$LOG->debug($roomDao);
 
-		if($inspectionRooms !== null) {
-            foreach ($inspectionRooms as $rm){
-                //if the hazard has been received from an API call, each of its inpsection rooms will be an array instead of an object, because PHP\
-                //If so, we set the key id by index instead of calling the getter
-                if(!is_object($rm)){
-                    $key_id = $rm['Key_id'];
-                }else{
-                    $key_id = $rm->getKey_id();
-                }
-                $this->inspectionRooms[] = $roomDao->getById($key_id);
-            }
+		foreach ($inspectionRooms as $rm){
+			//if the hazard has been received from an API call, each of its inpsection rooms will be an array instead of an object, because PHP\
+			//If so, we set the key id by index instead of calling the getter
+			if(!is_object($rm)){
+				$key_id = $rm['Key_id'];
+			}else{
+				$key_id = $rm->getKey_id();
+			}
+			$this->inspectionRooms[] = $roomDao->getById($key_id);
 		}
 	}
 
@@ -224,7 +223,7 @@ class Hazard extends GenericCrud {
 		foreach ($this->inspectionRooms as $room){
 			$room->setContainsHazard(false);
 			$LOG->debug('roomId:  '.$roomId);
-			$LOG->debug('rooms: '. implode(', ', $rooms) );
+			$LOG->debug('rooms: '. $rooms);
 			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
 			if(in_array ( $room->getKey_id() , $roomIdsToEval )){
 				$room->setContainsHazard(true);

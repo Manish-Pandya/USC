@@ -42,7 +42,7 @@ html[xmlns] .clearfix {
    padding-left: 70px;
    padding-right: 70px;
 }
-@media(max-width: 1499px) {
+@media(max-width: 1365px) {
    .container-fluid {
       padding-left: 10px;
       padding-right: 10px;

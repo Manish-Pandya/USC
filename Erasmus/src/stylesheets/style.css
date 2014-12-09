@@ -561,6 +561,10 @@ tr.updated {
 
 /* line 199, ../sass/style.scss */
 /* line 447, ../sass/style.scss */
+tr.new td{
+  background: rgba(91, 183, 91, .9) !important;
+  color:white;
+}
 tr.inactive td {
   background: pink !important;
 }
@@ -701,7 +705,7 @@ tr.notedit, tr.notedit td {
 
 /* line 564, ../sass/style.scss */
 .hazardBtn i {
-  margin: 5px !important;
+  margin: 8px 4px 0 !important;
   font-size: 25px;
 }
 
@@ -775,133 +779,52 @@ li.minimized ol {
 }
 
 /*****************************************************************
-*******           BUILDING HUB               ***************************
+*   LOCATION HUB             
 ******************************************************************/
-/* line 624, ../sass/style.scss */
-#buildingHub ul {
-  list-style: none;
+a.selected{
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
+}
+a.selected:hover{
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
+}
+.locationTable td{
+  overflow:hidden;
+}
+.locationTable td > ul{
+  margin:-4px -8px -1px !important;
 }
 
-/* line 628, ../sass/style.scss */
-div#buildings {
-  padding: 10px;
-  margin: 10px;
+.locationTable td > ul li{
+  padding: 10px 8px 3px;
+  border-bottom: 1px solid #d7d7d7 !important;
 }
 
-/* line 633, ../sass/style.scss */
-div#buildings div.building {
-  margin: 10px;
-  padding: 20px;
-  border: 3px solid #999;
-  background: #e7e7e7;
+.locationTable td > ul li ul li{
+  border:none;
 }
 
-/* line 640, ../sass/style.scss */
-div.selected h3, div.selected h4 {
-  margin: 10px 0;
-  font-weight: bold;
+.locationTable td > ul li:last-child{
+  padding-bottom:0;
+  border-bottom:none !important;
+}
+.locationTable ul li:first-child{
+  padding-top:5px;
+}
+.locationTable ul li > span{
+    width:45%;
 }
 
-/* line 645, ../sass/style.scss */
-div#buildings div.selected {
-  border: 3px solid #49afcd;
-  background: #fff;
+.locationTable ul li ul{
+    border-left: 1px solid #d7d7d7;
+    margin-left: 45%;
+    margin-top: -35px;
+    margin-bottom: -15px;
+    padding: 10px 5px 20px;
+}
+.locationTable th input{
+  width:90%;
 }
 
-/* line 649, ../sass/style.scss */
-div#buildings div.selected h2 {
-  color: #49afcd;
-  font-weight: bold;
-}
-
-@media all and (min-width: 1200px) {
-  /* line 654, ../sass/style.scss */
-  #buildingHub .hazards, #buildingHub .contacts {
-    width: 45%;
-  }
-}
-@media all and (max-width: 1199px) {
-  /* line 659, ../sass/style.scss */
-  #buildingHub .hazards, #buildingHub .contacts {
-    width: 100%;
-  }
-}
-/* line 663, ../sass/style.scss */
-div#buildings div.building .PI {
-  padding: 21px 0 0px;
-  border-top: 1px solid #d7d7d7;
-  width: 100%;
-  margin: 20px 0;
-}
-
-/* line 669, ../sass/style.scss */
-div#buildings ul.row {
-  margin-left: 0 !important;
-}
-
-/* line 672, ../sass/style.scss */
-div#buildings li.row {
-  margin-left: 0;
-}
-
-/* line 675, ../sass/style.scss */
-div.building ul.well {
-  margin-left: 0;
-}
-
-/* line 678, ../sass/style.scss */
-div.building .room {
-  margin-top: 10px;
-}
-
-/* line 681, ../sass/style.scss */
-a.btn i {
-  text-align: center;
-  margin: 2px 0 0 0;
-  color: white;
-  margin: 4px 15px 5px 0 !important;
-  font-size: 25px;
-}
-
-/* line 688, ../sass/style.scss */
-a i {
-  //margin: 7px 3px 0px 3px !important;
-}
-/* line 690, ../sass/style.scss */
-a i.icon-plus-2 {
-  margin: 7px 8px 0px 8px !important;
-}
-
-/* line 694, ../sass/style.scss */
-.small a.hazardBtn i {
-  margin: 7px 13px 2px 5px !important;
-}
-/* line 696, ../sass/style.scss */
-.small a.hazardBtn i.icon-checkmark {
-  margin: 7px 2px 2px 5px !important;
-}
-
-/* line 700, ../sass/style.scss */
-a.btn-mini i {
-  margin: 1px 1px 3px 0 !important;
-  font-size: 15px !important;
-}
-
-/* line 704, ../sass/style.scss */
-#buildingHub a.btn-mini {
-  margin: 5px;
-}
-
-/* line 707, ../sass/style.scss */
-#buildingHub a.btn {
-  color: white;
-}
-
-/* line 710, ../sass/style.scss */
-.building .buttons {
-  float: right;
-  margin-top: -8px;
-}
 
 /*******************************************************
 *	Checklist Hub Styles
@@ -1130,7 +1053,7 @@ html[xmlns] .clearfix {
 /* line 913, ../sass/style.scss */
 img.smallLoading {
   margin: -3px 0 0 4px;
-  width: 17px;
+  width: 26px;
 }
 
 /* line 917, ../sass/style.scss */
@@ -1162,15 +1085,34 @@ img.smallLoading {
   max-height: 300px;
   overflow: auto;
   overflow-x: hidden;
-  padding: 14px 1px;
+  padding: 0px 1px 14px;
   width: 100%;
 }
 /* line 942, ../sass/style.scss */
-.subHazardModal ul li, .roomsModal ul li {
+.subHazardModal ul li{
   width: 100%;
   padding: 5px 0;
   display: block;
   clear: both;
+}
+.roomsModal ul li {
+  font-weight: bold; */
+  margin-left: -1px;
+  width: 98%;
+  padding: 5px 0;
+  display: block;
+  clear: both;
+  margin-left:28px;
+}
+.show-rooms{
+  margin-bottom:3px;
+  padding: 5px 0px 7px 4px !important;
+  background: #9d9d9d;
+  margin-left: -1px !important;
+  color: white;
+}
+.show-rooms label{
+  font-weight: bold;
 }
 /* line 949, ../sass/style.scss */
 .subHazardModal ul li label span.metro-checkbox, .roomsModal ul li label span.metro-checkbox {
@@ -1387,6 +1329,18 @@ a.checklistNav span{
   font-weight: bold;
   font-size: 1.8em;
 }
+
+.inspectionReportTable td{
+  vertical-align: middle;
+}
+
+.def-table-cell{
+  display:table !important;
+}
+.def-table-cell > span{
+
+}
+
 /* line 1117, ../sass/style.scss */
 .inspectionReportTable td .row-fluid {
   border-bottom: 1px solid #dddddd;
@@ -1414,6 +1368,8 @@ td.reviewHeader {
   background-position: 5px 7px;
   background-repeat: no-repeat;
   border: 3px solid #000;
+  border-left:none;
+  border-right:none;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1769,7 +1725,7 @@ ul.key li.deficiencies span {
 }
 /* line 1385, ../sass/style.scss */
 .hazardList i, .hazardList ul i {
-  margin: 5px 2px 0;
+  //margin: 5px 2px 0;
   font-size: 17px;
 }
 /* line 1388, ../sass/style.scss */
@@ -2761,6 +2717,7 @@ table.roomList h2 {
 /* line 2142, ../sass/style.scss */
 .editTable td {
   position: relative;
+  overflow:visible;
 }
 
 /* line 2145, ../sass/style.scss */
@@ -2786,6 +2743,7 @@ table.roomList h2 {
 /* line 2161, ../sass/style.scss */
 .btn {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
+  color:#f7f7f7;
 }
 
 /* line 2165, ../sass/style.scss */
@@ -2796,6 +2754,18 @@ table.roomList h2 {
 /* line 2170, ../sass/style.scss */
 .btn:active {
   box-shadow: none !important;
+}
+
+a.btn i {
+margin: 1px 2px;
+}
+
+a.btn.left i{
+  margin: 2px 6px 1px 2px;
+}
+
+a.btn.right i{
+  margin: 2px 2px 1px 6px;
 }
 
 .spacer{
@@ -2833,4 +2803,100 @@ table.large tr th{
 .tempTable th input{
   width: 100%;
   margin-top: 3px;
+}/*
+@font-face {
+  font-family: 'icomoon';
+  src:url('http://s3.amazonaws.com/icomoon.io/4/Loading/icomoon.eot?-9haulc');
+  src:url('http://s3.amazonaws.com/icomoon.io/4/Loading/icomoon.eot?#iefix-9haulc') format('embedded-opentype'),
+    url('http://s3.amazonaws.com/icomoon.io/4/Loading/icomoon.woff?-9haulc') format('woff'),
+    url('http://s3.amazonaws.com/icomoon.io/4/Loading/icomoon.ttf?-9haulc') format('truetype'),
+    url('http://s3.amazonaws.com/icomoon.io/4/Loading/icomoon.svg?-9haulc#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}*/
+@keyframes anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-ms-anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spinner {  
+  -webkit-animation: anim-rotate 1s infinite steps(10);
+  -moz-animation: anim-rotate 1s infinite steps(9);
+  -ms-animation: anim-rotate 1s infinite steps(9);
+  -o-animation: anim-rotate 1s infinite steps(9);
+  animation: anim-rotate 1s infinite steps(9);
+  text-shadow: 0 0 .25em rgba(0,0,0, .1);
+  color: rgba(0,0,0,0.5);
+
+}
+.icon-spinnery-dealie{
+  speak: none;
+  font-style: normal;
+  font-weight: bold;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-spinnery-dealie:before {
+  content: "\0064";
+}
+.spinner.small{
+  font-size: 23px;
+  height:23px;
+  width:23px;
+}
+.spinner.large{
+  height:50px;
+  width:50px;
+  font-size: 50px;
+}
+.loading span{
+  display: block;
+  margin-top: -34px;
+  margin-bottom: 28px;
+  margin-left: 60px;
+  font-size: 30px;
+}
+
+a.modalBtn i, .modal-footer a.btn i {
+  margin: 4px 16px 0 3px !important;
 }

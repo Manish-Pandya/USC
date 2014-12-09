@@ -1,0 +1,104 @@
+<h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
+<div class="container loading" ng-if="loading">
+	<i class="icon-spinnery-dealie spinner large"></i>  
+	<span>Getting Buildings...</span>
+</div>
+<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="buildings && !loading" style="max-width:1300px;">
+	<thead>
+		<tr class="greenBg">
+			<th colspan="4" class="greenBg">
+				<h1 class="greenBg">Buildings</h1>
+				<div class="btn-group" style="margin:-22px 0 0 30px">
+			     <a class="btn-large btn" ng-click="addBuilding()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Building</a>
+			   </div>
+			</th>
+		</tr>
+		<tr>
+			<th clas="temp">Edit</th>
+			<th>
+				<a>Building<br>
+				<input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
+			</th>
+			<th>
+				Physical Address
+			</th>
+			<th style="width:15.4%;">
+				<a>Campus<br>
+				<input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr ng-repeat="building in buildings |  orderBy:['index', 'Campus.Name', 'Name'] | genericFilter:search" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
+			<td style="width:6%;">
+				<a ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)"><i class="icon-pencil"></i></a>
+				<a ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>
+				<span ng-if="!building.edit">
+					<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="building.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="!building.Is_active"><i class="icon-checkmark"></i></a>
+					<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
+				</span>
+
+				<span ng-if="building.edit">
+					<a class="btn btn-danger btn DeactivateeRow" disabled="disabled" ng-if="building.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-success btn DeactivateeRow" disabled="disabled" ng-if="!building.Is_active"><i class="icon-checkmark"></i></a>
+				</span>
+
+			</td>
+
+			<td style="width:15%" >
+				<span ng-if="!building.edit" once-text="building.Name"></span>
+				<input ng-if="building.edit" ng-model="copy.Name">
+			</td>
+			<td style="width:15%">
+				<span ng-if="!building.edit" once-text="building.Physical_address"></span>
+				<input ng-if="building.edit" ng-model="copy.Physical_address">
+			</td>
+			<td style="width:15%">
+				<span ng-if="building.edit">
+					<input style="" class="span4" placeholder="Select A Campus" typeahead-on-select='onSelectCampus($item,building)' type="text" ng-model="copy.Campus" typeahead="campus as campus.Name for campus in campuses | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">					
+					<span class="absoluteBtns" style="margin-top:0">
+						<a ng-if="copy.Name && copy.Campus.Name" class="btn-success btn left" ng-click="saveBuilding(building)"><i class="icon-checkmark"></i>Save</a>
+						<a ng-if="!copy.Name || !copy.Campus.Name" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+						<a class="btn-danger btn left" ng-click="lhf.cancelEdit(building, buildings)"><i class="icon-cancel-2"></i>Cancel</a>
+						<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
+					</span>
+				</span>
+				<span ng-if="!building.edit" once-text="building.Campus.Name"></span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script type="text/ng-template" id="buildings-modal.html">
+        <div class="modal-header" style="padding:0;" class="">
+            <h2 style="padding:5px" ng-if="modalData.Key_id" class="greenBg">Editing {{modalData.Name}}<span ng-if="!modalData.Name">Unnamed Room</span></h2>
+        	<h2 style="padding:5px" ng-if="!modalData.Key_id" class="greenBg">Create a New Room</h2>
+        </div>
+        <div class="modal-body">
+        	<form class="form-horizontal form">
+			    <div class="control-group">
+		         <label class="control-label" for="inputEmail">Room Number</label>
+		         <div class="controls">
+		         	<input type="text" id="inputEmail" ng-model="modalData.Name" placeholder="Room Number">
+		         </div>
+			    </div>
+
+			    <div class="" style="padding:3px 0;">
+				    <div  class="control-group">
+			         <label class="control-label" for="inputEmail">Building</label>
+			         <div class="controls">
+						<input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
+				  	 </div>
+			    </div>
+
+        	</form>
+        </div>
+        <div class="modal-footer">
+        	<img ng-show="modalData.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+            <a ng-if="modalData.Name && modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!modalData.Name || !modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+        </div>
+     </script>
