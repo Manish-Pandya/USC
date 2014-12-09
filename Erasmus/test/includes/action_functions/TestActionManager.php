@@ -32,6 +32,9 @@ require_once(dirname(__FILE__) . '/../../../src/includes/dao/GenericDAOSpy.php')
 
 class TestActionManager extends PHPUnit_Framework_TestCase {
 		
+	// certain methods added just for testing do not need to be tested
+	protected static $IGNORED_METHODS = array("__construct", "setDaoFactory", "setTestMode", "isTestModeEnabled");
+
 	public $actionManager;
 	private $daoSpy;
 
@@ -104,6 +107,22 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	function getDaoSpy() {
 		return $this->daoSpy;
 	}
+	
+	/**
+	 * Converts array of entityMaps to associative key_value pairs,
+	 * [methodName] => loadingType
+	 * 
+	 * helpful when tests need to check a specific entity map's property
+	 * 
+	 * @param array [of EntityMaps] $map
+	 */
+	protected function convertEntityMapsToAssociativeArray($maps) {
+		$mapArray = array();
+		foreach($maps as $entityMap) {
+			$mapArray[$entityMap->getEntityAccessor()] = $entityMap->getLoadingType();
+		}
+		return $mapArray;
+	}
 
 
 
@@ -137,14 +156,14 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$isATest = array($this, "isATest");
 	
 		// remove irrelevant methods that aren't directly testing things
-		$relevantMethods = array_filter($classMethods, $isATest);
+		$testedMethods = array_filter($classMethods, $isATest);
 	
 		// strip irrelevant 'test_' and _details from each method name
 		$methodNames = array();
-		foreach($relevantMethods as $method) {
+		foreach($testedMethods as $method) {
 			// split method name into array of strings sepparated by '_'s
 			$method = explode('_', $method);
-			// since all relevantMethods start with test_, method name is second item
+			// since all testedMethods start with test_, method name is second item
 			$methodNames[] = $method[1];
 		}
 	
@@ -155,7 +174,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$missingTestCount = 0;
 		$untestedMethods = array();
 		foreach($actionMethods as $method) {
-			if(!in_array($method, $testedMethods)) {
+			if( !in_array($method, $testedMethods) && !in_array($method, self::$IGNORED_METHODS) ) {
 				$missingTestCount++;
 				$untestedMethods[] = $method;
             }
@@ -225,13 +244,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertContainsOnlyInstancesOf( 'EntityMap', $entityMaps );
 		
 		// rearrange entity maps into associative array for easier testability.
-		$maps = array();
-		foreach($entityMaps as $map) {
-			$accessorName = $map->getEntityAccessor();
-			$accessorStatus = $map->getLoadingType();
-
-			$maps[$accessorName] = $accessorStatus;
-		}
+		$maps = $this->convertEntityMapsToAssociativeArray($entityMaps);
 		
 		// check specific entity maps for correct setting
 		$this->assertEquals( "lazy", $maps["getSubhazards"] );
@@ -1747,5 +1760,152 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
 	}
 	
+
+	/*************************************************************************\
+	 *                        Other Assorted Tests                           *
+	\*************************************************************************/
 	
+	/* getHazardTreeNode */
+	
+	/**
+	 * @group other
+	 */
+	public function test_getHazardTreeNode() {
+		// construct fake hazard with subHazards to use
+		$parentHazard = new Hazard();
+		$parentHazard->setKey_id(1);
+		
+		// children subHazards that the method will act on
+		$subHazard1 = new Hazard();
+		$subHazard1->setKey_id(2);
+		
+		$subHazard2 = new Hazard();
+		$subHazard2->setKey_id(3);
+		$subHazard2->setChecklist(new Checklist());
+		
+		// set subHazards as children of parent, set getById to return parent when getHazardById is called.
+		$parentHazard->setSubHazards( array($subHazard1, $subHazard2) );
+		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		
+
+		$result = $this->actionManager->getHazardTreeNode(1);
+		
+		// should return array of 2 items, subHazard1 and subHazard2
+		$this->assertCount( 2, $result, "Expected array of 2 items" );
+		$this->assertContainsOnlyInstancesOf( "Hazard", $result, "Array should contain only hazards" );
+
+		// extract relevant entityMaps to check
+		$firstItem = $result[0];
+		$firstMaps = $firstItem->getEntityMaps();
+		$firstMaps = $this->convertEntityMapsToAssociativeArray($firstMaps);
+		$secondItem = $result[1];
+		$secondMaps = $secondItem->getEntityMaps();
+		$secondMaps = $this->convertEntityMapsToAssociativeArray($secondMaps);
+		
+		// getChecklist and getHasChildren should be eager for each returned hazard...
+		$this->assertEquals( "eager", $firstMaps["getChecklist"], "getChecklist should be eagerly loaded" );
+		$this->assertEquals( "eager", $firstMaps["getHasChildren"], "getHasChildren should be eagerly loaded");
+
+		$this->assertEquals( "eager", $secondMaps["getChecklist"], "getChecklist should be eagerly loaded" );
+		$this->assertEquals( "eager", $secondMaps["getHasChildren"], "getHasChildren should be eagerly loaded" );
+		
+		//... but not getSubHazards
+		$this->assertEquals( "lazy", $firstMaps["getSubHazards"], "getSubHazards should be lazy loaded" );
+		$this->assertEquals( "lazy", $secondMaps["getSubHazards"], "getSubHazards should be lazy loaded" );
+
+		//NOTE: Not testing other entityMaps since those could change later,
+		// getSubhazards =lazy and getChecklist=eager is the only thing that MUST be set
+		// to avoid breakage
+		
+		// checklists in returned hazards should have everything lazy loaded
+		$checklistMaps = $secondItem->getChecklist()->getEntityMaps();
+		foreach($checklistMaps as $map) {
+			$this->assertEquals( "lazy", $map->getLoadingType(), "entityMaps in checklist's maps should be lazy" );
+		}
+
+	}
+	
+	/* moveHazardToParent */
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_noId() {
+		$result = $this->actionManager->moveHazardToParent();
+		
+		$this->assertInstanceOf( "ActionError", $result, "No input - should have returned error.");
+		$this->assertEquals( 201, $result->getStatusCode(), "ActionError should have error code 201" );
+	}
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_passId() {
+		// fake hazard to be used
+		$fakeHazard = new Hazard();
+		$fakeHazard->setKey_id(1);
+		$fakeHazard->setParent_hazard_id(2);
+		
+		// set genericDao to return fake hazard instead of changing a real one
+		$this->getDaoSpy()->overrideMethod("getById", $fakeHazard);
+		
+		$result = $this->actionManager->moveHazardToParent(1, 3);
+		// NOTE: as yet, moveHazard does not return anything after success,
+		// only an empty string. Change as necessary later if method changes.
+
+		// get methods of GenericDaoSpy that were called
+		$calledMethods = $this->getDaoSpy()->getCalls();
+		$length = count($calledMethods);
+		
+		// last method called should've been GenericDao->save
+		$result = $calledMethods[$length - 1]->getArg(0);
+		
+		$this->assertInstanceOf( "Hazard", $result, "Method should have saved a hazard." );
+		$this->assertEquals( 1, $result->getKey_id(), "Saved hazard should have the same key id as passed in." );
+		$this->assertEquals( 3, $result->getParent_hazard_id(), "Saved hazard's parent id should have changed to passed in argument" );
+	}
+	
+	/**
+	 * @group other
+	 */
+	public function test_moveHazardToParent_requestId() {
+		$_REQUEST["hazardId"] = 1;
+		$_REQUEST["parentHazardId"] = 3;
+		
+		// fake hazard to be used
+		$fakeHazard = new Hazard();
+		$fakeHazard->setKey_id(1);
+		$fakeHazard->setParent_hazard_id(2);
+		
+		// set genericDao to return fake hazard instead of changing a real one
+		$this->getDaoSpy()->overrideMethod("getById", $fakeHazard);
+		
+		$result = $this->actionManager->moveHazardToParent();
+		// NOTE: as yet, moveHazard does not return anything after success,
+		// only an empty string. Change as necessary later if method changes.
+		
+		// get methods of GenericDaoSpy that were called
+		$calledMethods = $this->getDaoSpy()->getCalls();
+		$length = count($calledMethods);
+		
+		// last method called should've been GenericDao->save
+		$result = $calledMethods[$length - 1]->getArg(0);
+		
+		$this->assertInstanceOf( "Hazard", $result, "Method should have saved a hazard." );
+		$this->assertEquals( 1, $result->getKey_id(), "Saved hazard should have the same key id as passed in." );
+		$this->assertEquals( 3, $result->getParent_hazard_id(), "Saved hazard's parent id should have changed to passed in argument" );
+	}
+	
+
+	/* getIsAlphabetized */
+	
+	/**
+	 * @group other
+	 */
+	public function test_getIsAlphabetized() {
+		$this->markTestIncomplete();
+
+		$result = $this->actionManager->getIsAlphabetized( array("goose", "anchovies", "meh") );
+		$this->assertFalse( $result, "getIsAlphabetized returned false positive" );
+	}
 }

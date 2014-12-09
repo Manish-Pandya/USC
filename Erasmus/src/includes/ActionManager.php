@@ -101,42 +101,6 @@ class ActionManager {
 	public function loginAction(){ }
 	public function logoutAction(){ }
 
-	public function activate(){
-		//Get the user
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to GenericCrud');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$decodedObject->setIsActive(TRUE);
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-
-	public function deactivate(){
-		//Get the user
-		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to GenericCrud');
-		}
-		else if( $decodedObject instanceof ActionError){
-			return $decodedObject;
-		}
-		else{
-			$decodedObject->setIsActive(FALSE);
-			$dao = $this->getDao();
-			$dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-
 	// Users Hub
 	public function getAllUsers(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -550,7 +514,7 @@ class ActionManager {
 
 		//validate values
 		if( $hazardId === NULL || $parentHazardId === NULL ){
-			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
+			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId", 201);
 		}
 		else{
 			$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
@@ -561,7 +525,7 @@ class ActionManager {
 			$hazard = $this->getHazardById( $hazardId );
 			$LOG->trace("Loaded Hazard to move: $hazard");
 
-			$hazard->setParent_hazard_id=$parentHazardId;
+			$hazard->setParent_hazard_id($parentHazardId);
 			// Save
 
 			$dao->save($hazard);
@@ -759,9 +723,9 @@ class ActionManager {
 				foreach ($roomIds as $id){
 					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 				}
-
+				
 				//if we have removed all the rooms, delete this DeficiencySelection
-
+				
 				//clear out our rooms
 				$ds->setRooms(null);
 				//get a new collection from the db
@@ -769,7 +733,7 @@ class ActionManager {
 					$dao->deleteById($ds->getKey_id());
 				}
 
-
+   				
 			// else if no roomIds were provided, then just delete this DeficiencySelection
 			} else {
 				$dao->deleteById($ds->getKey_id());
@@ -2047,22 +2011,7 @@ class ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new Response());
-			//If this question was previously answered no, and then the answer was changed, we need to break deficiency relationships
-			if($decodedObject->getKey_id() != null){
-				$oldResponse = $dao->getById( $decodedObject->getKey_id() );
-				//if the response's answer is not no, we should break any deficiency relationships
-				if( !stristr( $decodedObject->getAnswer,'no' ) ){
-					foreach( $oldResponse->getDeficiencySelections() as $selection ){
-						$LOG->debug($selection);
-						$dao->removeRelatedItems($selection->getKey_id(),$oldResponse->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
-					} 
-				}
-			}
-			
-			
-			
 			$dao->save($decodedObject);
-			
 			return $decodedObject;
 		}
 	}
@@ -2101,9 +2050,9 @@ class ActionManager {
 				return true;
 			}
 
-			$selection = $dao->getById($ds->getKey_id());
+			$selection = $dao->getById($ds->getKey_id());	
 			$LOG->debug($selection);
-
+			
 			return $selection;
 
 		}
