@@ -202,6 +202,8 @@ class Checklist extends GenericCrud {
 		    if( in_array ( $room->getKey_id() , $roomIdsToEval ) )array_push($inspectionRooms, $room);
 		}
 
+		$LOG->debug($inspectionRooms);
+		
 		$this->inspectionRooms = $inspectionRooms;
 	}
 

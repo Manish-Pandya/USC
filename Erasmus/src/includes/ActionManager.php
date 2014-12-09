@@ -53,8 +53,9 @@ class ActionManager {
 			return $paramValue;
 		}
 		else if( array_key_exists($valueName, $_REQUEST)){
-			if(stristr($_REQUEST[ $valueName ], "null"))return null;
-			if(stristr($_REQUEST[ $valueName ], "false")){
+			$request = $_REQUEST[$valueName];
+			if(!is_array($request) && stristr($request, "null")) return null;
+			if(!is_array($request) && stristr($request, "false")){
 				$LOG->debug('value: '.$paramValue);
 				return false;
 			}
@@ -633,7 +634,6 @@ class ActionManager {
 					}
 				}
 			}
-			$LOG->debug($hazard);
 			$dao->save($decodedObject);
 
 			return $decodedObject;
@@ -759,9 +759,9 @@ class ActionManager {
 				foreach ($roomIds as $id){
 					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 				}
-				
+
 				//if we have removed all the rooms, delete this DeficiencySelection
-				
+
 				//clear out our rooms
 				$ds->setRooms(null);
 				//get a new collection from the db
@@ -769,7 +769,7 @@ class ActionManager {
 					$dao->deleteById($ds->getKey_id());
 				}
 
-   				
+
 			// else if no roomIds were provided, then just delete this DeficiencySelection
 			} else {
 				$dao->deleteById($ds->getKey_id());
@@ -1589,7 +1589,8 @@ class ActionManager {
 		$roomIdsCsv = $this->getValueFromRequest('roomIds', $roomIds);
 
 		if( $roomIdsCsv !== NULL ){
-			$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
+			$roomIdsString = implode(', ', $roomIdsCsv);
+			$LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsString");
 
 
 			$LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
@@ -2046,7 +2047,22 @@ class ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new Response());
+			//If this question was previously answered no, and then the answer was changed, we need to break deficiency relationships
+			if($decodedObject->getKey_id() != null){
+				$oldResponse = $dao->getById( $decodedObject->getKey_id() );
+				//if the response's answer is not no, we should break any deficiency relationships
+				if( !stristr( $decodedObject->getAnswer,'no' ) ){
+					foreach( $oldResponse->getDeficiencySelections() as $selection ){
+						$LOG->debug($selection);
+						$dao->removeRelatedItems($selection->getKey_id(),$oldResponse->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));
+					} 
+				}
+			}
+			
+			
+			
 			$dao->save($decodedObject);
+			
 			return $decodedObject;
 		}
 	}
@@ -2085,9 +2101,9 @@ class ActionManager {
 				return true;
 			}
 
-			$selection = $dao->getById($ds->getKey_id());	
+			$selection = $dao->getById($ds->getKey_id());
 			$LOG->debug($selection);
-			
+
 			return $selection;
 
 		}
