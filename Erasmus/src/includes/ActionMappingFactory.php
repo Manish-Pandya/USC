@@ -159,6 +159,9 @@ class ActionMappingFactory {
 				"getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
 				"getRoomsByBuildingId"=>new ActionMapping("getRoomsByBuildingId", "", ""),
 
+				//INSPECTION MANAGEMENT HUB
+				"getCurrentYear"=>new ActionMapping("getCurrentYear", "", ""),
+
 		);
 	}
 }
