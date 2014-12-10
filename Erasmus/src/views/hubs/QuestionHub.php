@@ -15,24 +15,25 @@ require_once '../top_view.php';
 </div>
 <div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController"><br>
 	<div class="loading" ng-if="!question && !noQuestion || !checklist" >
-	  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-	  Loading...
+	  <i class="icon-spinnery-dealie spinner large"></i> 
+	  <span>Loading...</span>
 	</div>
 	<span ng-if="checklist">
 		<h1 ng-if="checklist" id="currentChecklist"><span class="underline">Checklist Title:</span> 
 			 {{checklist.Name}}
-			 <a class="btn btn-info" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}"><i class="icon-checkmark">	
+			 <a class="btn btn-info left" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}"><i class="icon-checkmark">	
 			 </i>View Checklist</a>
 		</h1>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
-		<a ng-if="!question.beingEdited && !noQuestion" class="btn btn-primary" ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question, Compliance Reference or Description</a>
+		<a ng-if="!question.beingEdited && !noQuestion" class="btn btn-primary left" ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question, Compliance Reference or Description</a>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
-		<h2 class="row" ng-if="question" ng-hide="!question" id="currentQuestion"><span class="span3 bold">Question:</span><span class="span9" id="questionText">{{question.Text}}</span>
+
+		<h2 class="row" ng-if="!question.beingEdited && !noQuestion" ng-hide="!question" id="currentQuestion"><span class="span3 bold">Question:</span><span class="span9" id="questionText">{{question.Text}}</span>
 		</h2>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>
-		<h3 class="row" ><span ng-if="question" class="bold span3">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h3>
+		<h3 class="row" ><span ng-if="!question.beingEdited && !noQuestion" class="bold span3">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h3>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
-		<h3 class="row"><span ng-if="question" class="bold span3">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h3>
+		<h3 class="row"><span ng-if="!question.beingEdited && !noQuestion" class="bold span3">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h3>
 
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>
 
@@ -50,7 +51,7 @@ require_once '../top_view.php';
 			    <label ng-if="question" class="control-label" for="email">EDIT COMPLIANCE REFERENCE:</label>
 			    <label ng-if="!question" class="control-label" for="email">ENTER COMPLIANCE REFERENCE:</label>
 			    <div class="controls">
-				 	<input type="text" placeholder="Compliance Reference" ng-model="questionCopy.Reference"/>
+				 	<input type="text" class="span9" placeholder="Compliance Reference" ng-model="questionCopy.Reference"/>
 				</div>
 			</div>
 
@@ -66,10 +67,12 @@ require_once '../top_view.php';
 			<a ng-show="question" style="margin:-10px 0 0 3px;" class="btn btn-danger" ng-click="cancelEdit( question )"><i class="icon-cancel"></i>Cancel</a>
 			<img ng-if="questionCopy.IsDirty || question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 		</form>
+
+
 		<span ng-hide="!question">
-		<h2 style="margin-top:30px;" class="bold">Deficiencies
+		<h2 style="margin-bottom:10px; margin-top:30px;" class="bold">Deficiencies
 			<a ng-show="question.Deficiencies.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addDef, 'btn-danger': addDef}" ng-click="addDef = !addDef">
-				<i ng-class="{'icon-plus': !addDef, 'icon-cancel': addDef}"></i>
+				<i ng-class="{'icon-plus-2': !addDef, 'icon-cancel': addDef}"></i>
 			</a>
 		</h2>
 		<form class="form" ng-if="!question.Deficiencies.length || addDef"  style="margin-top:10px;">
@@ -83,40 +86,40 @@ require_once '../top_view.php';
 		</form>
 
 		<span ng-hide="!question">
-		<hr>
-		<ul class="deficiencyList questionList">
-			<li ng-repeat="def in question.Deficiencies" ng-class="{inactive: !def.Is_active}">
-				<span ng-show="!def.edit">
-					<h3><span class="bold">{{def.Text}}</span>
-						<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(def,question)" ng-if="def.Is_active"><i class="icon-remove"></i></a>
-						<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(def,question)" ng-if="!def.Is_active"><i class="icon-checkmark"></i></a>
-						<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editDef(def,question)"><i class="icon-pencil"></i></a>
-						<img ng-show="def.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-			     	</h3>
-		     	</span>
-		     	<span ng-show="def.edit">
-			     	<form class="form" style="margin-top:10px;">
-				    	<div class="control-group">
-					    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
-					    <div class="controls">
-					      <label>DEFICIENCY DESCRIPTION</label>
-					      <textarea rows="2" id="newDeficiency" ng-model="question.newDeficiency.Text" cols="500" style="width:50%"></textarea>
-					 	</div>
-					 </div>
-					 <a class="btn  btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
-					 <a class="btn  btn-danger addDeficiency" ng-click="cancelEdit(def)"><i class="icon-cancel"></i>Cancel</a>
-					 <img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
-					</form>
-				</span>
-	     	</li>
-		</ul>
 
-		<h2 style="margin-top:50px;" class="bold">Recommendations
+		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Deficiencies.length" ng-class="{inactive: !def.Is_active}">
+			<tr>
+				<th>Edit</th>
+				<th>Deficiency</th>
+			</tr>		
+			<tr ng-repeat="def in question.Deficiencies">
+				<td style="width:8%;">
+					<a class="btn btn-success btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="!def.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="def.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editDef(def,question)" ng-disabled="def.edit"><i class="icon-pencil"></i></a>
+				</td>
+				<td>
+					<h3 once-text="def.Text" ng-if="!def.edit"></h3>
+					<span ng-if="def.edit">
+							<textarea rows="2" id="newDeficiency" ng-model="question.newDeficiency.Text" style="width:100%"></textarea>					
+							<span class="absoluteBtns" style="margin-top:-60px">
+								<a ng-if="question.newDeficiency.Text" class="btn-success btn left" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save</a>
+								<a ng-if="!question.newDeficiency.Text" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+								<a class="btn-danger btn left" ng-click="cancelEdit(def)" ><i class="icon-cancel-2"></i>Cancel</a>
+								<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="question.IsDirty"></i>
+							</span>
+					</span>
+				</td>
+			</tr>	
+		</table>
+		<hr>
+
+		<h2 style="margin-bottom:10px; margin-top:25px;" class="bold">Recommendations
 			<a ng-show="question.Recommendations.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec">
-				<i ng-class="{'icon-plus': !addRec, 'icon-cancel': addRec}"></i>
+				<i ng-class="{'icon-plus-2': !addRec, 'icon-cancel': addRec}"></i>
 			</a>
 		</h2>
-		<hr>
+
 		<form class="form" style="margin-top:10px;" ng-if="addRec || !question.Recommendations.length">
 		    <div class="control-group">
 			    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
@@ -126,39 +129,37 @@ require_once '../top_view.php';
 			 </div>
 			 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
 		</form>
+		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
+			<tr>
+				<th>Edit</th>
+				<th>Recommendation</th>
+			</tr>		
+			<tr ng-repeat="rec in question.Recommendations" ng-class="{inactive: !rec.Is_active}">
+				<td style="width:8%;">
+					<a class="btn btn-success btn-mini" ng-click="handleObjActive(rec,question)" ng-disabled="rec.edit" ng-if="!rec.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(rec,question)" ng-disabled="rec.edit" ng-if="rec.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editRec(rec,question)" ng-disabled="rec.edit"><i class="icon-pencil"></i></a>
+				</td>
+				<td>
+					<h3 once-text="rec.Text" ng-if="!rec.edit"></h3>
+					<span ng-if="rec.edit">
+							<textarea rows="2" id="newRecommendation" ng-model="question.newRecommendation.Text" style="width:100%"></textarea>					
+							<span class="absoluteBtns" style="margin-top:-60px">
+								<a ng-if="question.newRecommendation.Text" class="btn-success btn left"  ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save</a>
+								<a ng-if="!question.newRecommendation.Text" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+								<a class="btn-danger btn left" ng-click="cancelEdit(rec)" ><i class="icon-cancel-2"></i>Cancel</a>
+								<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="question.IsDirty"></i>
+							</span>
+					</span>
 
-		
-		<ul class="questionList sortable" id="sortable">
-			<li ng-repeat="rec in question.Recommendations" ng-class="{inactive: !rec.Is_active}">
-				<span ng-show="rec.edit">
-					<form class="form" style="margin-top:10px;">
-					    <div class="control-group">
-						    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
-						    <div class="controls">
-						      <textarea rows="2" id="newRecommendation" ng-model="question.newRecommendation.Text" cols="500" style="width:50%"></textarea>
-						    </div>
-						 </div>
-						 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save</a>
-						 <a class="btn  btn-danger" ng-click="cancelEdit(rec)"><i class="icon-cancel"></i>Cancel</a>
-						 <img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
-					</form>
-				</span>	
-				
-				<span ng-show="!rec.edit">
-					<h3><span class="bold">{{rec.Text}}</span>
-						<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(rec,question)" ng-if="rec.Is_active"><i class="icon-remove"></i></a>
-						<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(rec,question)" ng-if="!rec.Is_active"><i class="icon-checkmark"></i></a>
-						<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editRec(rec,question)"><i class="icon-pencil"></i></a>
-						<img ng-show="rec.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-			     	</h3>
-				</span>
-				
-			</li>
-		</ul>
+				</td>
+			</tr>	
+		</table>
 		<hr>
-		<h2 style="margin-top:50px;" class="bold">Notes
+		<h2 style="margin-bottom:10px; margin-top:25px;" class="bold">
+			Notes
 			<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs" ng-show="question.Observations.length">
-				<i ng-class="{'icon-plus': !addObvs, 'icon-cancel': addObvs}"></i>
+				<i ng-class="{'icon-plus-2': !addObvs, 'icon-cancel': addObvs}"></i>
 			</a>
 		</h2>
 		
@@ -171,35 +172,32 @@ require_once '../top_view.php';
 			 </div>
 			 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 		</form>
+		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
+			<tr>
+				<th>Edit</th>
+				<th>Note</th>
+			</tr>		
+			<tr ng-repeat="obs in question.Observations" ng-class="{inactive: !obs.Is_active}">
+				<td style="width:8%;">
+					<a class="btn btn-success btn-mini" ng-click="handleObjActive(obs,question)" ng-disabled="obs.edit" ng-if="!obs.Is_active"><i class="icon-checkmark"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(obs,question)" ng-disabled="obs.edit" ng-if="obs.Is_active"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editObs(obs,question)" ng-disabled="obs.edit"><i class="icon-pencil"></i></a>
+				</td>
+				<td>
+					<h3 once-text="obs.Text" ng-if="!obs.edit"></h3>
+					<span ng-if="obs.edit">
+							<textarea rows="2" id="newObservation" ng-model="question.newObservation.Text" style="width:100%"></textarea>					
+							<span class="absoluteBtns" style="margin-top:-60px">
+								<a ng-if="question.newObservation.Text" class="btn-success btn left"  ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save</a>
+								<a ng-if="!question.newObservation.Text" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+								<a class="btn-danger btn left" ng-click="cancelEdit(obs)" ><i class="icon-cancel-2"></i>Cancel</a>
+								<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="question.IsDirty"></i>
+							</span>
+					</span>
 
-		
-		<ul class="questionList sortable" id="sortable">
-			<li ng-repeat="obs in question.Observations" ng-class="{inactive: !obs.Is_active}">
-				<span ng-show="obs.edit">
-					<form class="form" style="margin-top:10px;">
-					    <div class="control-group">
-						    <label class="control-label" for="observation">Add a Note or Comment for this Question:</label>
-						    <div class="controls">
-						      <textarea rows="2" id="newObservation" ng-model="question.newObservation.Text" cols="500" style="width:50%"></textarea>
-						    </div>
-						 </div>
-						 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save</a>
-						 <a class="btn  btn-danger" ng-click="cancelEdit(obs)"><i class="icon-cancel"></i>Cancel</a>
-						 <img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
-					</form>
-				</span>	
-				
-				<span ng-show="!obs.edit">
-					<h3><span class="bold">{{obs.Text}}</span>
-						<a class="btn btn-danger btn-mini DeactivateeRow" ng-click="handleObjActive(obs,question)" ng-if="obs.Is_active"><i class="icon-remove"></i></a>
-						<a class="btn btn-success btn-mini DeactivateeRow" ng-click="handleObjActive(obs,question)" ng-if="!obs.Is_active"><i class="icon-checkmark"></i></a>
-						<a class="btn btn-primary btn-mini DeactivateeRow" ng-click="editObs(obs,question)"><i class="icon-pencil"></i></a>
-						<img ng-show="obs.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-			     	</h3>
-				</span>
-				
-			</li>
-		</ul>
+				</td>
+			</tr>	
+		</table>
 		</span>
 	</span>
 </div>

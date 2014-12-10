@@ -735,6 +735,7 @@ class ActionManager {
 				$ds->setRooms(null);
 				//get a new collection from the db
 				if($ds->getRooms() == NULL){
+					$LOG->debug('about to delete def select');
 					$dao->deleteById($ds->getKey_id());
 				}
 
@@ -1360,9 +1361,10 @@ class ActionManager {
 		}
 	}
 
-	public function getAllBuildings( $id = NULL, $skipRooms = null ){
+	public function getAllBuildings( $id = NULL, $skipRooms = null, $skipPis = null ){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 		$skipRooms = $this->getValueFromRequest('skipRooms', $skipRooms);
+		$skipPis = $this->getValueFromRequest('skipPis', $skipPis);
 
 		$dao = $this->getDao(new Building());
 
@@ -1374,10 +1376,19 @@ class ActionManager {
 			// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
 			// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
 			$roomMaps = array();
-			$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+			
+			if($skipPis != null){
+				$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+			}else{
+				$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+			}
+			
 			$roomMaps[] = new EntityMap("lazy","getHazards");
+			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+			$roomMaps[] = new EntityMap("lazy","getHas_hazards");
 			$roomMaps[] = new EntityMap("lazy","getBuilding");
 			$bldgMaps[] = new EntityMap("eager","getRooms");
+				
 			///iterate the buildings
 			foreach ($buildings as &$building){
 				// get this building's rooms
@@ -1409,6 +1420,34 @@ class ActionManager {
 		if( $id !== NULL ){
 			$dao = $this->getDao(new Building());
 			return $dao->getById($id);
+		}
+		else{
+			return new ActionError("No request parameter 'id' was provided");
+		}
+	}
+	
+	public function getRoomsByBuildingId( $id=null ){
+		if($id == null)$id = $this->getValueFromRequest('id', $id);
+		
+		if( $id !== NULL ){
+			$dao = $this->getDao(new Building());
+			$building = $dao->getById($id);
+			
+			$roomMaps[] = new EntityMap("lazy","getHazards");
+			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+			$roomMaps[] = new EntityMap("lazy","getHas_hazards");
+			$roomMaps[] = new EntityMap("lazy","getBuilding");			
+			// get this building's rooms
+			$rooms = $building->getRooms();
+			// iterate this building's rooms and make then lazy loading
+			foreach ($rooms as &$room){
+				$room->setEntityMaps($roomMaps);
+			}
+			// make sure this building is loaded with the lazy loading rooms
+			// ... and make sure that the rooms themselves are loaded eagerly
+			$building->setEntityMaps($bldgMaps);
+			
+			return $rooms;
 		}
 		else{
 			return new ActionError("No request parameter 'id' was provided");
@@ -2078,11 +2117,9 @@ class ActionManager {
 				}
 			}
 
+			$response = $dao->save($decodedObject);
 
-
-			$dao->save($decodedObject);
-
-			return $decodedObject;
+			return $response;
 		}
 	}
 

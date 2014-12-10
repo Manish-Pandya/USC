@@ -157,6 +157,7 @@ class ActionMappingFactory {
 
 				// EMERGENCY INFO HUB
 				"getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
+				"getRoomsByBuildingId"=>new ActionMapping("getRoomsByBuildingId", "", ""),
 
 		);
 	}

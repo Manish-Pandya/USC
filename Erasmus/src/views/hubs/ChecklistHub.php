@@ -15,8 +15,8 @@ require_once '../top_view.php';
 <div class="container-fluid whitebg" ng-app='checklistHub' ng-controller="ChecklistHubController">
 <span class="spacer"></span>
 <span ng-if="!checklist && !noChecklist" class="loading">
-   <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
-  Loading Checklist
+  <i class="icon-spinnery-dealie spinner large"></i>
+  <span>Loading Checklist</span>
 </span>
 
 	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit"><i class="icon-pencil"></i>Edit</a></h1>
@@ -30,8 +30,8 @@ require_once '../top_view.php';
     </form>
     <span ng-hide="!checklist">
         <span class="spacer"></span>
-        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success hazardBtn">
-         <i class="icon-plus"></i>Add Question
+        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left">
+         <i class="icon-plus-2"></i>Add Question
         </a>
         <Input type="hidden" ng-model="showInactive.Is_active" ng-init="showInactive.Is_active = true">
         <a class="btn" ng-click="showInactive.Is_active = !showInactive.Is_active">
@@ -45,19 +45,16 @@ require_once '../top_view.php';
         <tr class="blue-tr">
           <th>Checklist Questions</th>
           <th>Edit</th>
-          <th>Deactivate/Activate</th>
         </tr>
 
         <tr ng-repeat="question in checklist.Questions | filter: showInactive"  ng-class="{inactive: question.Is_active == false}">
           <td>
-            <h2>{{question.Text}}</h2>
+            <h2 once-text="question.Text"></h2>
           </td>
 
           <td>
               <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary"><i class="icon-pencil"></i></a>
-          </td>
-          <td>
-            <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
+              <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
               <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"><i class="icon-remove"></i></a>
               <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
               <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->

@@ -17,9 +17,9 @@ require_once '../top_view.php';
 
 <div class="container-fluid whitebg" style="padding-top:80px; padding-bottom:30px;">
 	<ul class="postInspectionNav row">
-		<li><a ng-click="setRoute('confirmation')" class="btn btn-large btn-success" ng-class="{selected: route==confirmation}">Finalize Inspection</a></li>
-		<li><a ng-click="setRoute('report')" class="btn btn-large btn-info" ng-class="{selected: route==confirmation}" ng-class="{selected: route==report}">Inspection Report</a></li>
-		<li><a ng-click="setRoute('details')" class="btn btn-large btn-primary" ng-class="{selected: route==details}">Inspection Details</a></li>
+		<li><a ng-click="setRoute('/confirmation')" class="btn btn-large btn-success" ng-class="{selected: route=='/confirmation'}">Finalize Inspection</a></li>
+		<li><a ng-click="setRoute('/report')" class="btn btn-large btn-info" ng-class="{selected: route=='/report'}">Inspection Report</a></li>
+		<li><a ng-click="setRoute('/details')" class="btn btn-large btn-primary" ng-class="{selected: route=='/details'}">Inspection Details</a></li>
 	</ul>
 	<ng-view></ng-view>
 </div>

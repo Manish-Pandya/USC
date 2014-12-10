@@ -323,9 +323,10 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 });
 
 mainController = function($scope, $location, postInspectionFactory,convenienceMethods){
-
+  $scope.route = $location.path();
   $scope.setRoute = function(route){
     $location.path(route);
+    $scope.route = route;
   }
   /*
   if(!postInspectionFactory.getInspection()){
