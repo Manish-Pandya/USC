@@ -18,7 +18,6 @@ class Inspection_schedule_dto {
 	/* Array of Inspections that have been performed or scheduled on $this->inspection_rooms */
 	/* Each should include an array of Inspectors */
 	/* Lazy load all relationships, except Inspectors */
-
 	private $inspections;
 
 
