@@ -18,7 +18,6 @@ class Pickup extends GenericCrud {
 		"pickup_date"					=> "timestamp",
 		"room_id"						=> "integer",
 		"pickup_user_id"				=> "integer",
-		"principal_investigator_id"		=> "integer",
 		
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -30,11 +29,18 @@ class Pickup extends GenericCrud {
 	);
 	
 	/** Relationships */
-	public static $PICKUPLOTS_RELATIONSHIP = array(
-		"className" => "PickupLot",
-		"tableName" => "pickup_lot",
+	public static $CARBOYS_RELATIONSHIP = array(
+		"className" => "Carboy",
+		"tableName" => "carboy_use_cycle",
 		"keyName"   => "key_id",
-		"foreignKeyName"	=> "pickup_id"
+		"foreignKeyName" => "pickup_id"
+	);
+	
+	public static $WASTEBAGS_RELATIONSHIP = array(
+		"className" => "WasteBag",
+		"tableName" => "waste_bag",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "pickup_id"	
 	);
 	
 	//access information
@@ -49,22 +55,21 @@ class Pickup extends GenericCrud {
 	
 	/** Integer id of the user who picked up the materials. */
 	private $pickup_user_id;
+	
+	/** Array of Carboys picked up */
+	private $carboys;
+	
+	/** Array of Waste Bags picked up */
+	private $wastebags;
+	
 
-	/** Reference to the principal investigator who requested this pickup. */
-	private $principal_investigator;
-	/** Integer id of the principal investigator who requested this pickup. */
-	private $principal_investigator_id;
-	
-	/** Array of pickup lots this pickup consists of. */
-	private $pickupLots;
-	
 	public function __construct() {
 		
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getRooms");
-		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
-		$entityMaps[] = new EntityMap("lazy", "getPickupLots");
+		$entityMaps[] = new EntityMap("lazy", "getRoom");
+		$entityMaps[] = new EntityMap("eager", "getCarboys");
+		$entityMaps[] = new EntityMap("eager", "getWasteBags")
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -98,29 +103,29 @@ class Pickup extends GenericCrud {
 	public function getPickup_user_id() { return $this->pickup_user_id; }
 	public function setPickup_user_id($newId) { $this->pickup_user_id = $newId; }
 	
-	public function getPrincipal_investigator() {
-		if($this->principal_investigator == null) {
-			$piDAO = new GenericDAO(new PrincipalInvestigator());
-			$this->principal_investigator = $piDAO->getById($this->getPrincipal_investigator_id());
+	public function getCarboys() {
+		if($this->carboys === null && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->carboys = $thisDao->getRelatedItemsById(
+					$this->getKey_id(), DataRelationship::fromArray(self::$CARBOYS_RELATIONSHIP));
 		}
-		return $this->principal_investigator;
+		return $this->carboys;
 	}
-	public function setPrincipal_investigator($newPi) {
-		$this->principal_investigator = $newPi;
+	public function setCarboys($newCarboys) {
+		$this->carboys = $newCarboys;
 	}
 	
-	public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
-	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
 	
-	public function getPickupLots() {
-		if($this->pickupLots === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->pickupLots = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PICKUPLOTS_RELATIONSHIP));
+	public function getWasteBags() {
+		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->wasteBags = $thisDao->getRelatedItemsById(
+				$this->getKey_id(), DataRelationship::fromArray(self::$WASTEBAGS_RELATIONSHIP));
 		}
-		return $this->pickupLots;
+		return $this->wasteBags;
 	}
-	public function setPickupLots($newLots) {
-		$this->pickupLots = $newLots;
+	public function setWasteBags($newBags) {
+		$this->wasteBags = $newBags;
 	}
 }
 ?>

@@ -33,9 +33,9 @@ class Drum extends GenericCrud {
 	);
 	
 	/** Relationships */
-	protected static $DISPOSALLOTS_RELATIONSHIP = array(
-			"className" => "DisposalLot",
-			"tableName" => "disposal_lot",
+	protected static $WASTEBAGS_RELATIONSHIP = array(
+			"className" => "WasteBag",
+			"tableName" => "waste_bag",
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "drum_id"
 	);
@@ -60,8 +60,8 @@ class Drum extends GenericCrud {
 	/** String of details about this drum's shipping. */
 	private $shipping_info;
 	
-	/** Array of disposal lots going into this drum. */
-	private $disposalLots;
+	/** Array of Waste Bags that filled this drum*/
+	private $wasteBags;
 	
 	
 	public function __construct() {
@@ -101,15 +101,15 @@ class Drum extends GenericCrud {
 	public function getShipping_info() { return $this->shipping_info; }
 	public function setShipping_info($newInfo) { $this->shipping_info = $newInfo; }
 	
-	public function getDisposalLots() {
-		if($this->DisposalLots === NULL) {
+	public function getWasteBags() {
+		if($this->wasteBags === NULL) {
 			$thisDao = new GenericDAO($this);
-			$this->disposalLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DISPOSALLOTS_RELATIONSHIP));
+			$this->wasteBags = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WASTEBAGS_RELATIONSHIP));
 		}
-		return $this->disposalLots;
+		return $this->wasteBags;
 	}
-	public function setDisposalLots($newLots) {
-		$this->disposalLots = $newLots;
+	public function setWasteBags($newBags) {
+		$this->wasteBags = $newBags;
 	}
 }
 ?>
