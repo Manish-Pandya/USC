@@ -53,8 +53,8 @@ class WasteBag extends GenericCrud {
 	
 	public function getContainer() {
 		if($this->container === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDAO($this);
-			$this->container = $thisDao->getById($this->getContainer_id());
+			$containerDao = new GenericDAO(new Container());
+			$this->container = $containerDao->getById($this->getContainer_id());
 		}
 		return $this->container;
 	}
@@ -71,8 +71,8 @@ class WasteBag extends GenericCrud {
 	
 	public function getIsotope() {
 		if($this->isotope === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDAO($this);
-			$this->isotope = $thisDao->getById( $this->getIsotope_id() );
+			$isotopeDao = new GenericDAO(new Isotope());
+			$this->isotope = $isotopeDao->getById( $this->getIsotope_id() );
 		}
 		return $this->isotope;
 	}
@@ -96,8 +96,8 @@ class WasteBag extends GenericCrud {
 	
 	public function getPickup() {
 		if($this->pickup === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDAO($this);
-			$this->pickup = $thisDao->getById( $this->getPickup_id() );
+			$pickupDao = new GenericDAO(new Pickup());
+			$this->pickup = $pickupDao->getById( $this->getPickup_id() );
 		}
 		return $this->pickup;
 	}
@@ -110,8 +110,8 @@ class WasteBag extends GenericCrud {
 	
 	public function getDrum() {
 		if($this->drum === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDao($this);
-			$this->drum = $thisDao->getById( $this->getDrum_id() );
+			$drumDao = new GenericDao(new Drum());
+			$this->drum = $drumDao->getById( $this->getDrum_id() );
 		}
 		return $this->drum;
 	}

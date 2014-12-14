@@ -60,8 +60,8 @@ class SolidsContainer extends GenericCrud {
 	
 	public function getPrincipal_investigator() {
 		if($this->principal_investigator === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDAO($this);
-			$this->principal_investigator = $thisDao->getById($this->getKey_id());
+			$piDao = new GenericDAO(new PrincipalInvestigator());
+			$this->principal_investigator = $piDao->getById($this->getKey_id());
 		}
 		return $this->principal_investigator;
 	}
@@ -74,8 +74,8 @@ class SolidsContainer extends GenericCrud {
 	
 	public function getRoom() {
 		if($this->room === null && $this->hasPrimaryKeyValue()) {
-			$thisDao = new GenericDAO($this);
-			$this->room = $thisDao->getById($this->getKey_id());
+			$roomDao = new GenericDAO(new Room());
+			$this->room = $roomDao->getById($this->getKey_id());
 		}
 		return $this->room;
 	}
