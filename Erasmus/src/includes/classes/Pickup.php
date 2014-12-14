@@ -69,7 +69,7 @@ class Pickup extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("eager", "getCarboys");
-		$entityMaps[] = new EntityMap("eager", "getWasteBags")
+		$entityMaps[] = new EntityMap("eager", "getWasteBags");
 		$this->setEntityMaps($entityMaps);
 
 	}
