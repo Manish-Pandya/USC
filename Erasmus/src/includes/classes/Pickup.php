@@ -16,7 +16,6 @@ class Pickup extends GenericCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"pickup_date"					=> "timestamp",
-		"room_id"						=> "integer",
 		"pickup_user_id"				=> "integer",
 		
 		//GenericCrud
@@ -48,11 +47,6 @@ class Pickup extends GenericCrud {
 	/** Date (timestamp) that this pickup occurred. */
 	private $pickup_date;
 	
-	/** Reference to the room this pickup was for. */
-	private $room;
-	/** Integer id of the room this pickup was for. */
-	private $room_id;
-	
 	/** Integer id of the user who picked up the materials. */
 	private $pickup_user_id;
 	
@@ -67,7 +61,6 @@ class Pickup extends GenericCrud {
 		
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("eager", "getCarboys");
 		$entityMaps[] = new EntityMap("eager", "getWasteBags");
 		$this->setEntityMaps($entityMaps);
@@ -86,19 +79,6 @@ class Pickup extends GenericCrud {
 	// Accessors / Mutators
 	public function getPickup_date() { return $this->pickup_date; }
 	public function setPickup_date($newDate) { $this->pickup_date = $newDate; }
-	
-	public function getRoom() {
-		if($this->room == null) {
-			$roomDAO = new GenericDAO(new Room());
-			$this->room = $roomDAO->getById($this->getRoom_id());
-		}
-	}
-	public function setRoom($newRoom) {
-		$this->room = $newRoom;
-	}
-	
-	public function getRoom_id() { return $this->room_id; }
-	public function setRoom_id($newId) { $this->room_id = $newId; }
 
 	public function getPickup_user_id() { return $this->pickup_user_id; }
 	public function setPickup_user_id($newId) { $this->pickup_user_id = $newId; }
