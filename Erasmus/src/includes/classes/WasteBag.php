@@ -35,7 +35,7 @@ class WasteBag extends GenericCrud {
 	
 	public function __construct() {
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getContainer");
+		$entityMaps[] = new EntityMap("eager", "getContainer");
 		$entityMaps[] = new EntityMap("eager", "getIsotope");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
@@ -53,7 +53,7 @@ class WasteBag extends GenericCrud {
 	
 	public function getContainer() {
 		if($this->container === null && $this->hasPrimaryKeyValue()) {
-			$containerDao = new GenericDAO(new Container());
+			$containerDao = new GenericDAO(new SolidsContainer());
 			$this->container = $containerDao->getById($this->getContainer_id());
 		}
 		return $this->container;
