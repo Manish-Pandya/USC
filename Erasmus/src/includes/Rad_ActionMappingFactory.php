@@ -24,24 +24,26 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getParcelById" 				=> new ActionMapping("getParcelById", "", ""),
 			"getParcelUseById" 				=> new ActionMapping("getParcelUseById", "", ""),
 			"getPickupById"    				=> new ActionMapping("getPickupById", "", ""),
-			"getPickupLotById" 				=> new ActionMapping("getPickupLotById", "", ""),
 			"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", ""),
 			"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", ""),
+			"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", ""),
+			"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", ""),
 			
 			// get entity by relationship functions
 			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
-			"getPickupLotsByPickupId"		=> new ActionMapping("getPickupLotsByPickupId", "", ""),
-			"getDisposalLotsByPickupLotId" 	=> new ActionMapping("getDisposalLotsByPickupLotId", "", ""),
-			"getDisposalLotsByDrumId"		=> new ActionMapping("getDisposalLotsByDrumId", "", ""),
+			"getWasteBagsByPickupId"		=> new ActionMapping("getWasteBagsByPickupId", "", ""),
+			"getResultingDrumsByPickupId" 	=> new ActionMapping("getResultingDrumsByPickupId", "", ""),
 			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
 			"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", ""),
 			"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", ""),
+			"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", ""),
 				
 			// getAll functions
 			"getAllCarboys"                 => new ActionMapping("getAllCarboys", "", ""),
 			"getAllDrums"					=> new ActionMapping("getAllDrums", "", ""),
 			"getAllIsotopes"				=> new ActionMapping("getAllIsotopes", "", ""),
 			"getAllWasteTypes"				=> new ActionMapping("getAllWasteTypes", "", ""),
+			"getAllSolidsContainers"		=> new ActionMapping("getAllSolidsContainers", "", ""),
 
 			// save functions
 			"saveAuthorization" => new ActionMapping("saveAuthorization", "", ""),
@@ -56,6 +58,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"savePickupLot"		=> new ActionMapping("savePickupLot", "", ""),
 			"savePurchaseOrder"	=> new ActionMapping("savePurchaseOrder", "", ""),
 			"saveWasteType"		=> new ActionMapping("saveWasteType", "", ""),
+			"saveWasteBag"		=> new ActionMapping("saveWasteBag", "", ""),
 
 			// other functions
 			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),

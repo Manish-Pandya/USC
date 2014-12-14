@@ -169,6 +169,34 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
+	function getWasteBagById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new WasteBag());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
+	function getSolidsContainerById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		
+		$id = $this->getValueFromRequest('id', $id);
+		
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new SolidsContainer());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}	
+	}
+	
 	
 	/*****************************************************************************\
 	 *                        Get By Relationships Functions                     *
@@ -191,7 +219,7 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
-	function getPickupLotsByPickupId($id = NULL) {
+	function getWasteBagsByPickupId($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__);
 		
 		$id = $this->getValueFromRequest('id', $id);
@@ -199,43 +227,48 @@ class Rad_ActionManager extends ActionManager {
 		if( $id !== NULL ) {
 			$pickupDao = $this->getDao(new Pickup());
 			$selectedPickup = $pickupDao->getById($id);
-			return $selectedPickup->getPickupLots();
+			return $selectedPickup->getWasteBags();
 		}
 		else {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
 	
-	function getDisposalLotsByPickupLotId($id = NULL) {
+	function getResultingDrumsByPickupId($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		
 		$id = $this->getValueFromRequest('id', $id);
 		
 		if( $id !== NULL ) {
-			$pickupLotDao = $this->getDao(new PickupLot());
-			$pickupLot = $pickupLotDao->getById($id);
-			return $pickupLot->getDisposalLots();
+			// get pickup
+			$pickupDao = $this->getDao(new Pickup());
+			$selectedPickup = $pickupDao->getById($id);
+			
+			// get waste bags picked up
+			$wasteBags = $selectedPickup->getWasteBags();
+			
+			// make list of drums these bags went into
+			$drumIds = array();
+			foreach($wasteBags as $bag) {
+				$drumId = $bag->getDrum_id();
+				if( !in_array($drumId, $drumIds) ) {
+					$drumIds[] = $drumId;
+				}
+			}
+			
+			$drumDao = $this->getDao(new Drum());
+			$drums = array();
+			foreach($drumIds as $id) {
+				$drums[] = $drumDao->getById($id);
+			}
+			
+			return $drums;
 		}
 		else {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
-	
-	function getDisposalLotsByDrumId($id = NULL) {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-	
-		$id = $this->getValueFromRequest('id', $id);
-	
-		if( $id !== NULL ) {
-			$drumDao = $this->getDao(new PickupLot());
-			$selectedDrum = $drumDao->getById($id);
-			return $selectedDrum->getDisposalLots();
-		}
-		else {
-			return new ActionError("No request parameter 'id' was provided", 201);
-		}
-	}
-	
+
 	function getParcelUsesByParcelId($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		
@@ -266,6 +299,21 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
+	function getSolidsContainersByRoomId($id = NULL) {
+		$LOG = Logger::getLogger('Action' . __FUNCTION__);
+		
+		$id = $this->getValueFromRequest('id', $id);
+		
+		if( $id !== NULL ) {
+			$roomDao = $this->getDao(new Room());
+			$selectedRoom = $roomDao->getById($id);
+			return $selectedRoom->getSolidsContainers();
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
 	
 	/*****************************************************************************\
 	 *                               getAll functions                            *
@@ -290,6 +338,11 @@ class Rad_ActionManager extends ActionManager {
 	function getAllWasteTypes() {
 		$typeDao = $this->getDao(new WasteType());
 		return $typeDao->getAll();
+	}
+	
+	function getAllSolidsContainers() {
+		$dao = $this->getDao(new SolidsContainer());
+		return $dao->getAll();
 	}
 	
 	 
@@ -493,6 +546,38 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new WasteType());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveWasteBag() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteBag', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new WasteBag());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveSolidsContainer() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new SolidsContainer());
 			$decodedObject = $dao->save($decodedObject);
 			return $decodedObject;
 		}
@@ -723,6 +808,7 @@ class Rad_ActionManager extends ActionManager {
 	
 		return $waste;
 	}
+	
 	
 	
 	/*****************************************************************************\
