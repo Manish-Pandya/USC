@@ -50,6 +50,13 @@ class Room extends GenericCrud {
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"room_id"
 	);
+	
+	public static $CONTAINERS_RELATIONSHIP = array(
+			"className" =>  "SolidsContainer",
+			"tableName" =>  "solids_container",
+			"keyName" 	=>  "key_id",
+			"foreignKeyName"	=>  "room_id"
+	);
 
 	private $name;
 
@@ -73,6 +80,9 @@ class Room extends GenericCrud {
 	private $hazard_room_relations;
 
 	private $has_hazards;
+	
+	/** Array of solid waste containers present in this room */
+	private $solidsContainers;
 
 	public function __construct(){
 
@@ -82,6 +92,7 @@ class Room extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getHazards");
 		$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
 		$entityMaps[] = new EntityMap("eager","getBuilding");
+		$entityMaps[] = new EntityMap("eager","getSolidsContainers");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -174,6 +185,20 @@ class Room extends GenericCrud {
 		$LOG->debug($number_of_rows);
 		if($number_of_rows > 0) $this->has_hazards =  true;
 		return $this->has_hazards;
+	}
+	
+	public function getSolidsContainers() {
+		if( $this->solidsContainers === NULL && $this->hasPrimaryKeyValue() ) {
+			$thisDao = new GenericDAO($this);
+			$this->solidsContainers = $thisDao->getRelatedItemsById(
+					$this->getKey_id(), DataRelationship::fromArray(self::$CONTAINERS_RELATIONSHIP));
+
+		}
+		return $this->solidsContainers;
+	}
+	
+	public function setSolidsContainers($newContainers) {
+		$this->solidsContainers = $newContainers;
 	}
 
 
