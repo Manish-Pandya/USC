@@ -43,6 +43,7 @@ class SolidsContainer extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
+		$this->setEntityMaps($entityMaps);
 	}
 	
 	// Required for GenericCrud
