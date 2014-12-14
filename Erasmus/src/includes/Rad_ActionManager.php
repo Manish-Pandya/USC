@@ -56,21 +56,7 @@ class Rad_ActionManager extends ActionManager {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
-	
-	function getDisposalLotById($id = NULL) {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-		
-		$id = $this->getValueFromRequest('id', $id);
-		
-		if( $id !== NULL ) {
-			$dao = $this->getDao(new DisposalLot());
-			return $dao->getById($id);
-		}
-		else {
-			return new ActionError("No request parameter 'id' was provided", 201);
-		}
-	}
-	
+
 	function getDrumById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		
@@ -126,21 +112,7 @@ class Rad_ActionManager extends ActionManager {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
-	
-	function getPickupLotById($id = NULL) {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-		
-		$id = $this->getValueFromRequest('id', $id);
-		
-		if( $id !== NULL ) {
-			$dao = $this->getDao(new PickupLot());
-			return $dao->getById($id);
-		}
-		else {
-			return new ActionError("No request parameter 'id' was provided", 201);
-		}
-	}
-	
+
 	function getPurchaseOrderById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 	
@@ -414,23 +386,7 @@ class Rad_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 	}
-	
-	function saveDisposalLot() {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to DisposalLot', 202);
-		}
-		else if( $decodedObject instanceof ActionError) {
-			return $decodedObject;
-		}
-		else {
-			$dao = $this->getDao(new DisposalLot());
-			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-	
+
 	function saveDrum() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
@@ -502,23 +458,7 @@ class Rad_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 	}
-	
-	function savePickupLot() {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-		$decodedObject = $this->convertInputJson();
-		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to PickupLot', 202);
-		}
-		else if( $decodedObject instanceof ActionError) {
-			return $decodedObject;
-		}
-		else {
-			$dao = $this->getDao(new PickupLot());
-			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
-		}
-	}
-	
+
 	function savePurchaseOrder() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
