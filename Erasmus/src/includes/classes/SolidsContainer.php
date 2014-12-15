@@ -27,6 +27,13 @@ class SolidsContainer extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);		
 	
+	protected static $WASTEBAG_RELATIONSHIP = array(
+		"className" => "WasteBag",
+		"tableName" => "waste_bag",
+		"keyName"	=> "key_id",
+		"foreignKeyName" => "container_id"
+	);
+	
 	//access information
 	
 	/** integer key id of the principal investigator this container belongs to. */
@@ -37,12 +44,20 @@ class SolidsContainer extends GenericCrud {
 	private $room_id;
 	private $room;
 	
+	/** array of all waste bags that have been in this container */
+	private $waste_bags;
+	
+	/** array of the waste bags currently in this container */
+	private $current_waste_bags;
+	
 	public function __construct() {
 		
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
+		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentWasteBags");
 		$this->setEntityMaps($entityMaps);
 	}
 	
@@ -82,6 +97,38 @@ class SolidsContainer extends GenericCrud {
 	}
 	public function setRoom($newRoom) {
 		$this->room = $newRoom;
+	}
+	
+	/** CAUTION:
+	 * 
+	 * This method will return all WasteBags that ever existed in this container!
+	 * To get just the bags currently existing in this container, call
+	 * getCurrentWasteBags instead.
+	 */
+	public function getWasteBags() {
+		if($this->waste_bags === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->waste_bags = $thisDao->getById(DataRelationship::fromArray(self::$WASTEBAG_RELATIONSHIP));
+		}
+		return $this->waste_bags;
+	}
+	public function setWAsteBags($newBags) {
+		$this->waste_bags = $newBags;
+	}
+	
+	public function getCurrentWasteBags() {
+		// get all waste bags
+		$wasteBags = $this->getWasteBags();
+		
+		// only select bags that have not been entered in drum
+		$currentBags = array();
+		foreach($wasteBags as $bag) {
+			$drumId = $bag->getDrum_id();
+			if($drumId !== NULL) {
+				$currentBags[] = $bag;
+			}
+		}
+		return $currentBags;
 	}
 	
 }
