@@ -749,6 +749,51 @@ class Rad_ActionManager extends ActionManager {
 		return $waste;
 	}
 	
+	/**
+	 * Creates, saves, and returns a new Pickup based on inputted user, date, 
+	 * and array of containers to empty.
+	 */
+	function createPickup() {
+		// get required info from info Dto
+		$decodedObject = $this->convertInputJson();
+
+		$userId = $decodedObject->getUser_id();
+		$date = $decodedObject->getDate();
+		$containers = $decodedObject->getContainers();
+		
+		if($decodedObject === null) {
+			return new ActionError("Error converting input stream to PickupDto", 202);
+		}
+		else if ($decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+
+		
+		// create pickup with user and date
+		$newPickup = new Pickup();
+		$newPickup->setPickup_user_id($userId);
+		$newPickup->setPickup_date($date);
+		
+		// save new pickup, get assigned key id to use later
+		$newPickup = $this->savePickup($newPickup);
+		$pickupKeyId = $newPickup->getKey_id();
+		
+		// get list of all WasteBags to be picked up
+		$wasteBags = array();
+		foreach($containers as $container) {
+			$wasteBags = array_merge( $wasteBags, $container->getCurrentWasteBags() );
+		}
+		
+		// mark waste bags to be picked up by pickup id
+		foreach($wasteBags as $bag) {
+			$bag->setPickup_id($pickupKeyId);
+			$this->saveWasteBag($bag);
+		}
+		
+		$newPickup->getWaste_bags();
+		return $newPickup;
+	}
+	
 	
 	
 	/*****************************************************************************\
