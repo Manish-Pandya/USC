@@ -96,7 +96,7 @@ class Pickup extends GenericCrud {
 	}
 	
 	
-	public function getWasteBags() {
+	public function getWaste_bags() {
 		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->wasteBags = $thisDao->getRelatedItemsById(
