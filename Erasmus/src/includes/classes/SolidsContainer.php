@@ -105,7 +105,7 @@ class SolidsContainer extends GenericCrud {
 	 * To get just the bags currently existing in this container, call
 	 * getCurrentWasteBags instead.
 	 */
-	public function getWaste_bags() {
+	public function getWasteBags() {
 		if($this->waste_bags === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->waste_bags = $thisDao->getById(DataRelationship::fromArray(self::$WASTEBAG_RELATIONSHIP));

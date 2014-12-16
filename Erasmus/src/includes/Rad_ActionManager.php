@@ -790,7 +790,7 @@ class Rad_ActionManager extends ActionManager {
 			$this->saveWasteBag($bag);
 		}
 		
-		$newPickup->getWaste_bags();
+		$newPickup->getWasteBags();
 		return $newPickup;
 	}
 	

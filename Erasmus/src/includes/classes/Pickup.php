@@ -54,7 +54,7 @@ class Pickup extends GenericCrud {
 	private $carboys;
 	
 	/** Array of Waste Bags picked up */
-	private $wastebags;
+	private $waste_bags;
 	
 
 	public function __construct() {
@@ -96,16 +96,16 @@ class Pickup extends GenericCrud {
 	}
 	
 	
-	public function getWaste_bags() {
-		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
+	public function getWasteBags() {
+		if($this->waste_bags === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->wasteBags = $thisDao->getRelatedItemsById(
+			$this->waste_bags = $thisDao->getRelatedItemsById(
 				$this->getKey_id(), DataRelationship::fromArray(self::$WASTEBAGS_RELATIONSHIP));
 		}
-		return $this->wasteBags;
+		return $this->waste_bags;
 	}
 	public function setWasteBags($newBags) {
-		$this->wasteBags = $newBags;
+		$this->waste_bags = $newBags;
 	}
 }
 ?>
