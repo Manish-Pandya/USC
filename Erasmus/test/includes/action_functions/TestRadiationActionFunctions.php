@@ -142,45 +142,6 @@ class TestRadiationActionFunctions extends TestActionManager {
 	}
 	
 
-	/* getDisposalLotById */
-
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getDisposalLotById_noId() {
-		$lot = $this->actionManager->getDisposalLotById();
-
-		$this->assertInstanceOf( 'ActionError', $lot );
-		$this->assertEquals( 201, $lot->getStatusCode() );
-	}
-
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getDisposalLotById_passId() {
-		$lot = $this->actionManager->getDisposalLotById( 1 );
-
-		// check that specific object returned correctly
-		$this->assertInstanceOf( 'DisposalLot', $lot );
-		$this->assertEquals( 1, $lot->getKey_id() );
-	}
-	
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getDisposalLotById_requestId() {
-		$_REQUEST["id"] = 1;
-		$lot = $this->actionManager->getDisposalLotById();
-
-		// check that specific object returned correctly
-		$this->assertInstanceOf( 'DisposalLot', $lot );
-		$this->assertEquals( 1, $lot->getKey_id() );
-	}
-	
-
 	/* getDrumById */
 
 	/**
@@ -338,46 +299,6 @@ class TestRadiationActionFunctions extends TestActionManager {
 		$this->assertEquals( 1, $pickup->getKey_id() );
 	}
 	
-	
-	/* getPickupLotById */
-
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getPickupLotById_noId() {
-		$lot = $this->actionManager->getPickupLotById();
-		
-		// should return actionError when no id is provided
-		$this->assertInstanceOf( 'ActionError', $lot );
-		$this->assertEquals( 201, $lot->getStatusCode() );
-	}
-	
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getPickupLotById_passId() {
-		$lot = $this->actionManager->getPickupLotById( 1 );
-
-		// check that specific object was returned correctly
-		$this->assertInstanceOf( 'PickupLot', $lot );
-		$this->assertEquals( 1, $lot->getKey_id() );
-	}
-	
-	/**
-	 * @group get
-	 * @group byId
-	 */
-	public function test_getPickupLotById_requestId() {
-		$_REQUEST["id"] = 1;
-		$lot = $this->actionManager->getPickupLotById();
-		
-		// check that specific object was returned correctly
-		$this->assertInstanceOf( 'PickupLot', $lot );
-		$this->assertEquals( 1, $lot->getKey_id() );
-	}
-	
 
 	/* getPurchaseOrderById */
 
@@ -459,6 +380,86 @@ class TestRadiationActionFunctions extends TestActionManager {
 	}
 	
 
+	/* getWasteBagById */
+	
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getWasteBagById_noId() {
+			$result = $this->actionManager->getWasteBagById();
+	
+			$this->assertInstanceOf( 'ActionError', $result );
+			$this->assertEquals( 201, $result->getStatusCode() );
+		}
+	
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getWasteBagById_passId() {
+
+		$result = $this->actionManager->getWasteBagById(1);
+
+		// make sure returned object has same type and key id
+		$this->assertInstanceOf( 'WasteBag', $result );
+		$this->assertEquals( 1, $result->getKey_id() );
+	}
+	
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getWasteBagById_requestId() {
+		$_REQUEST['id'] = 1;
+		$result = $this->actionManager->getWasteBagById();
+
+		// make sure returned object has same type and key id
+		$this->assertInstanceOf( 'WasteBag', $result );
+		$this->assertEquals( 1, $result->getKey_id() );
+	}
+	
+
+	/* getSolidsContainerById */
+
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getSolidsContainerById_noId() {
+		$result = $this->actionManager->getSolidsContainerById();
+
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 201, $result->getStatusCode() );
+	}
+
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getSolidsContainerById_passId() {
+
+		$result = $this->actionManager->getSolidsContainerById(1);
+
+		// make sure returned object has same type and key id
+		$this->assertInstanceOf( 'SolidsContainer', $result );
+		$this->assertEquals( 1, $result->getKey_id() );
+	}
+	
+	/**
+	 * @group get
+	 * @group byId
+	 */
+	public function test_getSolidsContainerById_requestId() {
+		$_REQUEST['id'] = 1;
+		$result = $this->actionManager->getSolidsContainerById();
+
+		// make sure returned object has same type and key id
+		$this->assertInstanceOf( 'SolidsContainer', $result );
+		$this->assertEquals( 1, $result->getKey_id() );
+	}
+		
+
 	/*************************************************************************\
 	 *                       Get By Relationship Tests                       *
 	\*************************************************************************/
@@ -511,147 +512,6 @@ class TestRadiationActionFunctions extends TestActionManager {
 		
 		$this->assertContainsOnlyInstancesOf( "Authorization", $auths );
 		$this->assertCount( 5, $auths );
-	}
-
-	
-	/* getPickupLotsByPickupId */
-
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getPickupLotsByPickupId_noId() {
-		$lots = $this->actionManager->getPickupLotsByPickupId();
-
-		//should return actionError when no id provided
-		$this->assertInstanceOf( 'ActionError', $lots );
-		
-		// ActionError should have code 201 if created due to lack of id
-		$this->assertEquals( 201, $lots->getStatusCode() );
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getPickupLotsByPickupId_passId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of PickupLots
-		$mock = $this->prepareMockToReturnArray( "Pickup", "getPickupLots", "PickupLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-
-		$lots = $this->actionManager->getPickupLotsByPickupId( 0 );
-
-		$this->assertContainsOnlyInstancesOf( 'PickupLot', $lots );
-		$this->assertCount( 5, $lots );
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getPickupLotsByPickupId_requestId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of PickupLots
-		$mock = $this->prepareMockToReturnArray( "Pickup", "getPickupLots", "PickupLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-
-		$_REQUEST["id"] = 0;
-		$lots = $this->actionManager->getPickupLotsByPickupId();
-
-		$this->assertContainsOnlyInstancesOf( 'PickupLot', $lots );
-		$this->assertCount( 5, $lots );
-	}
-
-	
-	/* getDisposalLotsByPickupLotId */
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByPickupLotId_noId() {
-		$lots = $this->actionManager->getDisposalLotsByPickupLotId();
-
-		// should have returned actionError with error code for missing parameter
-		$this->assertInstanceOf( 'ActionError', $lots );
-		$this->assertEquals( 201, $lots->getStatusCode() );
-
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByPickupLotId_passId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of DisposalLots
-		$mock = $this->prepareMockToReturnArray( "PickupLot", "getDisposalLots", "DisposalLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-		
-		$lots = $this->actionManager->getDisposalLotsByPickupLotId( 0 );
-
-		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
-		$this->assertCount( 5, $lots );
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByPickupLotId_requestId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of 
-		$mock = $this->prepareMockToReturnArray( "PickupLot", "getDisposalLots", "DisposalLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-
-		$_REQUEST["id"] = 0;
-		$lots = $this->actionManager->getDisposalLotsByPickupLotId();
-
-		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
-		$this->assertCount( 5, $lots );
-	}
-
-
-	/* getDisposalLotsByDrumId */
-
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByDrumId_noId() {
-		$lots = $this->actionManager->getDisposalLotsByDrumId();
-
-		// should have returned ActionError with status code for missing parameter
-		$this->assertInstanceOf('ActionError', $lots);
-		$this->assertEquals( 201, $lots->getStatusCode() );
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByDrumId_passId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of 
-		$mock = $this->prepareMockToReturnArray( "Drum", "getDisposalLots", "DisposalLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-		
-		$lots = $this->actionManager->getDisposalLotsByDrumId( 0 );
-
-		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
-		$this->assertCount( 5, $lots );
-	}
-	
-	/**
-	 * @group get
-	 * @group byRelation
-	 */
-	public function test_getDisposalLotsByDrumId_requestId() {
-		// GenericDao->getById should return a mock object which, in turn, returns a list of 
-		$mock = $this->prepareMockToReturnArray( "Drum", "getDisposalLots", "DisposalLot", 5 );
-		$this->setGetByIdToReturn( $mock );
-		
-		$_REQUEST["id"] = 0;
-		$lots = $this->actionManager->getDisposalLotsByDrumId();
-
-		$this->assertContainsOnlyInstancesOf( 'DisposalLot', $lots );
-		$this->assertCount( 5, $lots );
 	}
 	
 	
@@ -745,11 +605,147 @@ class TestRadiationActionFunctions extends TestActionManager {
 		$this->assertCount( 5, $parcels );
 	}
 	
+	/* getWasteBagsByPickupId */
 	
-	/**************************************************************************\
-	 *                            GetAll Tests                                *
-	\**************************************************************************/
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getWasteBagsByPickupId_noId() {
+		$result = $this->actionManager->getWasteBagsByPickupId();
 	
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 201, $result->getStatusCode() );
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getWasteBagsByPickupId_passId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of wasteBags
+		$mock = $this->prepareMockToReturnArray( "Pickup", "getWasteBags", "WasteBag", 5 );
+		$this->setGetByIdToReturn( $mock );
+	
+		$result = $this->actionManager->getWasteBagsByPickupId( 0 );
+	
+		$this->assertContainsOnlyInstancesOf( 'WasteBag', $result );
+		$this->assertCount( 5, $result );
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getWasteBagsByPickupId_requestId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of wasteBags
+		$mock = $this->prepareMockToReturnArray( "Pickup", "getWasteBags", "WasteBag", 5 );
+		$this->setGetByIdToReturn( $mock );
+		$_REQUEST["id"] = 0;
+	
+		$result = $this->actionManager->getWasteBagsByPickupId();
+	
+		$this->assertContainsOnlyInstancesOf( 'WasteBag', $result );
+		$this->assertCount( 5, $result );
+	}
+	
+	/* getResultingDrumsByPickupId */
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getResultingDrumsByPickupId_noId() {
+		$result = $this->actionManager->getResultingDrumsByPickupId();
+	
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 201, $result->getStatusCode() );
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getResultingDrumsByPickupId_passId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of
+		$mock = $this->prepareMockToReturnArray( "Pickup", "getWasteBags", "WasteBag", 5 );
+		$this->setGetByIdToReturn( $mock );
+	
+		$result = $this->actionManager->getResultingDrumsByPickupId( 0 );
+	
+		$this->markTestIncomplete("This test requires additional checks");
+		/*
+		$this->assertContainsOnlyInstancesOf( 'Drum', $result );
+		$this->assertCount( 5, $result );
+		*/
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getResultingDrumsByPickupId_requestId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of
+		$mock = $this->prepareMockToReturnArray( "Pickup", "getWasteBags", "WasteBag", 5 );
+		$this->setGetByIdToReturn( $mock );
+	
+		$_REQUEST["id"] = 0;
+		$result = $this->actionManager->getResultingDrumsByPickupId();
+	
+		$this->markTestIncomplete("This test requires additional checks");
+		/*
+		$this->assertContainsOnlyInstancesOf( 'Drum', $result );
+		$this->assertCount( 5, $result );
+		*/
+	}
+	
+	/* getSolidsContainersByRoomId */
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getSolidsContainersByRoomId_noId() {
+		$result = $this->actionManager->getSolidsContainersByRoomId();
+	
+		$this->assertInstanceOf( 'ActionError', $result );
+		$this->assertEquals( 201, $result->getStatusCode() );
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getSolidsContainersByRoomId_passId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of
+		$mock = $this->prepareMockToReturnArray( "Room", "getSolidsContainers", "SolidsContainer", 5 );
+		$this->setGetByIdToReturn( $mock );
+	
+		$result = $this->actionManager->getSolidsContainersByRoomId( 0 );
+	
+		$this->assertContainsOnlyInstancesOf( 'SolidsContainer', $result );
+		$this->assertCount( 5, $result );
+	}
+	
+	/**
+	 * @group get
+	 * @group byRelation
+	 */
+	public function test_getSolidsContainersByRoomId_requestId() {
+		// GenericDao->getById should return a mock object which, in turn, returns a list of
+		$mock = $this->prepareMockToReturnArray( "Room", "getSolidsContainers", "SolidsContainer", 5 );
+		$this->setGetByIdToReturn( $mock );
+	
+		$_REQUEST["id"] = 0;
+		$result = $this->actionManager->getSolidsContainersByRoomId();
+	
+		$this->assertContainsOnlyInstancesOf( 'SolidsContainer', $result );
+		$this->assertCount( 5, $result );
+	}
+	
+	/*************************************************************************\
+	 *                            GetAll Tests                               *
+	\*************************************************************************/
 
 	/* getAllCarboys */
 	/**
@@ -799,6 +795,17 @@ class TestRadiationActionFunctions extends TestActionManager {
 		$this->assertCount( 5, $types );
 	}
 
+	/* getAllSolidsContainers */
+	/**
+	 * @group get
+	 * @group getAll
+	 */
+	public function test_getAllSolidsContainers() {
+		$containers = $this->actionManager->getAllSolidsContainers();
+		
+		$this->assertContainsOnlyInstancesOf( 'SolidsContainer', $containers );
+		$this->assertCount( 5, $containers );
+	}
 
 	/*************************************************************************\
 	 *                            Save Tests                                 *
@@ -923,37 +930,6 @@ class TestRadiationActionFunctions extends TestActionManager {
 
         // should have returned CarboyUseCycle with newly-assigned key id
         $this->assertInstanceOf( 'CarboyUseCycle', $result );
-        $this->assertEquals( 1, $result->getKey_id() );
-
-        // genericDao->save should have been called
-        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
-    }
-
-
-    /* saveDisposalLot */
-
-    /**
-     * @group save
-     */
-    public function test_saveDisposalLot_noObject() {
-        $result = $this->actionManager->saveDisposalLot();
-
-        // should have returned ActionError, no input given
-        $this->assertInstanceOf( 'ActionError', $result );
-        $this->assertEquals( 202, $result->getStatusCode() );
-    }
-
-    /**
-     * @group save
-     */
-    public function test_saveDisposalLot() {
-        $testData = new DisposalLot();
-        $_REQUEST['testInput'] = $testData;
-        
-        $result = $this->actionManager->saveDisposalLot();
-
-        // should have returned Disposallot with newly assigned key id
-        $this->assertInstanceOf( 'DisposalLot', $result );
         $this->assertEquals( 1, $result->getKey_id() );
 
         // genericDao->save should have been called
@@ -1087,36 +1063,6 @@ class TestRadiationActionFunctions extends TestActionManager {
     }
 
 
-    /* savePickupLot */
-
-    /**
-     * @group save
-     */
-    public function test_savePickupLot_noObject() {
-        $result = $this->actionManager->savePickupLot();
-
-        // should have returned ActionError, no input given
-        $this->assertInstanceOf( 'ActionError', $result );
-        $this->assertEquals( 202, $result->getStatusCode() );
-    }
-
-    /**
-     * @group save
-     */
-    public function test_savePickupLot() {
-        $testData = new PickupLot();
-        $_REQUEST['testInput'] = $testData;
-
-        $result = $this->actionManager->savePickupLot();
-
-        // should have returned PickupLot with newly assigned key id
-        $this->assertInstanceOf( 'PickupLot', $result );
-        $this->assertEquals( 1, $result->getKey_id() );
-
-        // genericDao->save should have been called
-        $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
-    }
-
 
     /* savePurchaseOrder */
 
@@ -1178,4 +1124,67 @@ class TestRadiationActionFunctions extends TestActionManager {
         // genericDao->save should have been called
         $this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
     }
+
+    /* saveWasteBag */
+    
+    /**
+     * @group save
+     */
+    public function test_saveWasteBag_noObject() {
+    	$result = $this->actionManager->saveWasteBag();
+    	
+    	// should have returned actionError, no input given
+    	$this->assertInstanceOf( 'ActionError', $result );
+    	$this->assertEquals( 202, $result->getStatusCode() );
+    }
+    	
+    /**
+     * @group save
+     */
+    public function test_saveWasteBag() {
+    
+    	$testData = new WasteBag();
+    	$_REQUEST["testInput"] = $testData;
+   
+    	$result = $this->actionManager->saveWasteBag(); 
+    	
+    	// should have returned WasteBag with a newly-assigned key id
+    	$this->assertInstanceOf('WasteBag', $result);
+    	$this->assertEquals( 1, $result->getKey_id() );
+    	
+    	// genericDao->save should have been called
+    	$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+    }
+    
+
+    /* saveSolidsContainer */
+    
+    /**
+     * @group save
+     */
+    public function test_saveSolidsContainer_noObject() {
+   		$result = $this->actionManager->saveSolidsContainer();
+   	
+   		// should have returned actionError, no input given
+   		$this->assertInstanceOf( 'ActionError', $result );
+   		$this->assertEquals( 202, $result->getStatusCode() );
+   	}
+   	
+   	/**
+   	 * @group save
+   	 */
+   	public function test_saveSolidsContainer() {
+   
+   		$testData = new SolidsContainer();
+   		$_REQUEST["testInput"] = $testData;
+   
+   		$result = $this->actionManager->saveSolidsContainer(); 
+   		
+   		// should have returned SolidsContainer with a newly-assigned key id
+   		$this->assertInstanceOf('SolidsContainer', $result);
+   		$this->assertEquals( 1, $result->getKey_id() );
+   		
+   		// genericDao->save should have been called
+   		$this->assertEquals( true, $this->getDaoSpy()->wasItCalled('save') );
+   	}
 }
