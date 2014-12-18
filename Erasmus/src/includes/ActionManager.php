@@ -2761,9 +2761,10 @@ class ActionManager {
 					$pi_bldg_rooms[] = $room;
 				}
 			}
-			
-			
+			$is->setBuilding_rooms($pi_bldg_rooms);
 		}
+		
+		return $inspectionSchedules;
 	}
 	
 	//generate a random float
