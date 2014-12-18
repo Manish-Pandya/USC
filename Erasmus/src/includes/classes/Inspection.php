@@ -19,6 +19,8 @@ class Inspection extends GenericCrud {
 		"date_started"	=> "timestamp",
 		"date_closed"	=> "timestamp",
 		"notification_date"	=> "timestamp",
+		"schedule_month"	=> "text",
+		"schedule_year"		=> "text",
 		"note"			=> "text",
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -162,6 +164,12 @@ class Inspection extends GenericCrud {
 
 	public function getNotification_date() { return $this->notification_date;}
 	public function setNotification_date($notification_date) {$this->notification_date = $notification_date;}
+
+	public function getSchedule_month() { return $this->schedule_month;}
+	public function setSchedule_month($schedule_month) {$this->schedule_month = $schedule_month;}
+
+	public function getSchedule_year() { return $this->schedule_year;}
+	public function setSchedule_year($schedule_year) {$this->schedule_year = $schedule_year;}
 
 	public function getNote() { return $this->note;}
 	public function setNote($note) {$this->note = $note;}

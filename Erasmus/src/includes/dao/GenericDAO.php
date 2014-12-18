@@ -466,6 +466,31 @@ class GenericDAO {
 
 
 	}
+	
+	function getInspectionsByYear($year){
+		
+		$this->LOG->debug("$this->logprefix Looking up inspections for $year");
+
+		// Get the db connection
+		global $db;
+		$className = get_class( new InspectionScheduleDto());
+
+		//Prepare to query all from the table
+		$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name,pi_name');
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $classname);
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		return $result;
+					
+		
+	}
 
 
 }

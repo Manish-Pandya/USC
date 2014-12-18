@@ -2728,6 +2728,44 @@ class ActionManager {
 		}
 
 	}
+
+	public function getInspectionSchedule($year = NULL){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		// read the Year value from the request.
+		$year = $this->getValueFromRequest('year', $year);
+		
+		// If the year is null, choose the current year.
+		if ($year == null){
+			$year = $this->getCurrentYear();
+		}
+				// Call the database
+		
+		$dao = $this->getDao(new Inspection());
+		$inspectionSchedules = $dao->getInspectionsByYear($year);
+		
+		foreach ($inspectionSchedules as $is){
+			if ($is->getInspection_id() !== null){
+				$inspection = $dao->getById($is->getInspection_id());
+				$is->setInspection_rooms($inspection->getRooms());
+				$is->setInspections($inspection);
+			}
+			
+			$piDao = $this->getDao(new PrincipalInvestigator());
+			$pi = $piDao->getById($is->getPi_key_id());
+			$rooms = $pi->getRooms();
+			$pi_bldg_rooms = array();
+			foreach ($rooms as $room){
+				$bldg = $room->getBuilding();
+				if ($bldg->getKey_id() == $is->getBuilding_key_id()){
+					$pi_bldg_rooms[] = $room;
+				}
+			}
+			
+			
+		}
+	}
+	
 	//generate a random float
 	public function random_float ($min,$max) {
 		return ($min+lcg_value()*(abs($max-$min)));

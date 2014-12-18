@@ -161,7 +161,8 @@ class ActionMappingFactory {
 
 				//INSPECTION MANAGEMENT HUB
 				"getCurrentYear"=>new ActionMapping("getCurrentYear", "", ""),
-
+				"getInspectionSchedule"=>new ActionMapping("getInspectionSchedule", "", ""),
+				
 		);
 	}
 }
