@@ -99,6 +99,7 @@ class Inspection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getResponses");
 		$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getStatus");
 		$entityMaps[] = new EntityMap("lazy","getChecklists");
 
 		$this->setEntityMaps($entityMaps);
@@ -173,7 +174,7 @@ class Inspection extends GenericCrud {
 
 	public function getNote() { return $this->note;}
 	public function setNote($note) {$this->note = $note;}
-
+	
 	public function getDeficiency_selections(){
 		$deficiencySelections = array();
 		$correctedSelections = array();
@@ -218,21 +219,22 @@ class Inspection extends GenericCrud {
 		// Now we check to see if there are unresolved deficiencies.  Start by assuming all is good.
 		$accepted = true;
 
-		// iterate the deficiencies
-		foreach($this->getDeficiency_selections() as $def){
-			
-			// Get the corrective actions for this deficiency
-			$cas = $def->getCorrectiveActions();
-			// if there are no corrective actions, no es bueno
-			if ($cas == null) {
-				$accepted = false;
-				break;
-			}
-			// If there are corrective actions, we need to make sure they're all "Accepted". Otherwise, not good.
-			foreach($cas as $ca){
-				if($ca != "Accepted") {
+		// iterate the responses that have deficiencies
+		foreach($this->getResponses() as $response){
+			foreach($response->getDeficiencySelections() as $def){
+				// Get the corrective actions for this deficiency
+				$cas = $def->getCorrectiveActions();
+				// if there are no corrective actions, no es bueno
+				if ($cas == null) {
 					$accepted = false;
 					break 2;
+				}
+				// If there are corrective actions, we need to make sure they're all "Accepted". Otherwise, not good.
+				foreach($cas as $ca){
+					if($ca != "Accepted") {
+						$accepted = false;
+						break 3;
+					}
 				}
 			}
 		}

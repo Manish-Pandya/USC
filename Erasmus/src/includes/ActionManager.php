@@ -1517,6 +1517,8 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getResponses");
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("lazy","getChecklists");
+		$entityMaps[] = new EntityMap("lazy","getStatus");
+		
 		$inspection->setEntityMaps($entityMaps);
 
 		return $inspection;
@@ -2755,6 +2757,7 @@ class ActionManager {
 				$entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
 				$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
 				$entityMaps[] = new EntityMap("lazy","getChecklists");
+				$entityMaps[] = new EntityMap("eager","getStatus");
 				
 				$inspection->setEntityMaps($entityMaps);
 				
