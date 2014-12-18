@@ -240,7 +240,7 @@ class Inspection extends GenericCrud {
 		}
 		
 		// If there are unresolved deficiences, and the PI was notified > 30 days ago, we're overdue for corrective action
-		if ($accepted == false && notification_date != null && $then > $this->notification_date){
+		if ($accepted == false && $this->notification_date != null && $then > $this->notification_date){
 				return 'OVERDUE FOR CORRECTIVE ACTION';
 		}
 

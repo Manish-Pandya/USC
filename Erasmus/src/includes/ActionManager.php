@@ -2776,7 +2776,7 @@ class ActionManager {
 		$dao = $this->getDao(new Inspection());
 		$inspectionSchedules = $dao->getInspectionsByYear($year);
 
-		foreach ($inspectionSchedules as $is){
+		foreach ($inspectionSchedules as &$is){
 			if ($is->getInspection_id() !== null){
 				$inspection = $dao->getById($is->getInspection_id());
 
