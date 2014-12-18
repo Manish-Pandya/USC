@@ -2747,6 +2747,17 @@ class ActionManager {
 		foreach ($inspectionSchedules as $is){
 			if ($is->getInspection_id() !== null){
 				$inspection = $dao->getById($is->getInspection_id());
+				
+				$entityMaps = array();
+				$entityMaps[] = new EntityMap("eager","getInspectors");
+				$entityMaps[] = new EntityMap("lazy","getRooms");
+				$entityMaps[] = new EntityMap("lazy","getResponses");
+				$entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+				$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+				$entityMaps[] = new EntityMap("lazy","getChecklists");
+				
+				$inspection->setEntityMaps($entityMaps);
+				
 				$is->setInspection_rooms($inspection->getRooms());
 				$is->setInspections($inspection);
 			}
