@@ -195,22 +195,41 @@ class Inspection extends GenericCrud {
 	}
 	
 	public function getStatus() {
+		
+		// If there is a close date, it's closed.
 		if ($this->date_closed != null) { return 'CLOSED';}
 
+		// Create some reference dates for status checking
 		$now = new DateTime("now");
 		$then = new DateTime("now - 30 days");
 
+		// If it's been scheduled but not started...
 		if ($this->schedule_month != null && $this->date_started == null) {
+			// ... and it's not 30 days past the first day of the scheduled month
 			if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {		
+				// Then it's pending	
 				return 'PENDING';
 			} else {
+				// If it is 30 days past due, it's overdue for inspection
 				return 'OVERDUE FOR INSPECTION';
 			}
 		}
 		
+		// Now we check to see if there are unresolved deficiencies.  Start by assuming all is good.
 		$accepted = true;
+
+		// iterate the deficiencies
 		foreach($this->getDeficiency_selections() as $def){
-			foreach($def->getCorrectiveActions as $ca){
+			
+			// Get the corrective actions for this deficiency
+			$cas = $def->getCorrectiveActions();
+			// if there are no corrective actions, no es bueno
+			if ($cas == null) {
+				$accepted = false;
+				break;
+			}
+			// If there are corrective actions, we need to make sure they're all "Accepted". Otherwise, not good.
+			foreach($cas as $ca){
 				if($ca != "Accepted") {
 					$accepted = false;
 					break 2;
@@ -218,12 +237,12 @@ class Inspection extends GenericCrud {
 			}
 		}
 		
-		if ($accepted == false && notification_date != null){
-			if ($then > $this->notification_date) {
+		// If there are unresolved deficiences, and the PI was notified > 30 days ago, we're overdue for corrective action
+		if ($accepted == false && notification_date != null && $then > $this->notification_date){
 				return 'OVERDUE FOR CORRECTIVE ACTION';
-			}
 		}
-		
+
+		// If no other status applies, it's considered open.
 		return 'OPEN';
 	}
 }
