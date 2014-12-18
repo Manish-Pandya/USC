@@ -452,7 +452,7 @@ class GenericDAO {
 
 		//Prepare to query the user table by username
 		$stmt = $db->prepare('SELECT * FROM ' . $user->getTableName() . ' WHERE username = ?');
-		$stmt->bindParam(1,$username,PDO::PARAM_STRING);
+		$stmt->bindParam(1,$username,PDO::PARAM_STR);
 		$stmt->setFetchMode(PDO::FETCH_CLASS, "User");			// Query the db and return one user
 		if ($stmt->execute()) {
 			$result = $stmt->fetch();
@@ -477,7 +477,7 @@ class GenericDAO {
 
 		//Prepare to query all from the table
 		$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name,pi_name');
-		$stmt->bindParam(1,$year,PDO::PARAM_STRING);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
 		
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
