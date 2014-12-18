@@ -193,5 +193,38 @@ class Inspection extends GenericCrud {
 		$this->deficiency_selections['correctedSelections'] = $correctedSelections;
 		return $this->deficiency_selections;
 	}
+	
+	public function getStatus() {
+		if ($this->date_closed != null) { return 'CLOSED';}
+
+		$now = new DateTime("now");
+		$then = new DateTime("now - 30 days");
+
+		if ($this->schedule_month != null && $this->date_started == null) {
+			if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {		
+				return 'PENDING';
+			} else {
+				return 'OVERDUE FOR INSPECTION';
+			}
+		}
+		
+		$accepted = true;
+		foreach($this->getDeficiency_selections() as $def){
+			foreach($def->getCorrectiveActions as $ca){
+				if($ca != "Accepted") {
+					$accepted = false;
+					break 2;
+				}
+			}
+		}
+		
+		if ($accepted == false && notification_date != null){
+			if ($then > $this->notification_date) {
+				return 'OVERDUE FOR CORRECTIVE ACTION';
+			}
+		}
+		
+		return 'OPEN';
+	}
 }
 ?>
