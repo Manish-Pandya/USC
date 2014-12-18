@@ -477,7 +477,8 @@ class GenericDAO {
 
 		//Prepare to query all from the table
 		$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name,pi_name');
-
+		$stmt->bindParam(1,$year,PDO::PARAM_STRING);
+		
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $classname);
