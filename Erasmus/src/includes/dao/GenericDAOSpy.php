@@ -50,8 +50,27 @@ class GenericDaoSpy {
 		return $this->modelObject;
 	}
 	
-	public function overrideMethod($methodName, $thingToReturn) {
-		$this->methodsToOverride[$methodName] = $thingToReturn;
+	public function overrideMethod($modelToOverride, $methodName, $thingToReturn) {
+		$this->methodsToOverride[$methodName]["modelClass"] = $modelToOverride;
+		$this->methodsToOverride[$methodName]["result"] = $thingToReturn;
+	}
+	
+	private function isOverriden($methodName) {
+		// check if method is overriden
+		 if( array_key_exists($methodName, $this->methodsToOverride) ) {
+		 	// check if it's overridden for any model class, or just one particular model object.
+		 	if( $this->methodsToOverride[$methodName]["modelClass"] === "Any" ) {
+		 		return true;
+		 	}
+		 	else {
+		 		return $this->methodsToOverride[$methodName]["modelClass"] === $this->getModelObject();
+		 	}
+		 }
+	 	return false;
+	}
+	
+	private function getOverridenResult($methodName) {
+		return $this->methodsToOverride[$methodName]["result"];
 	}
 	
 	public function getCalls() { return $this->calls; }
@@ -103,8 +122,8 @@ class GenericDaoSpy {
 		$this->addCall('getById', $args);
 		
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('getById', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['getById'];
+		if( $this->isOverriden('getById') ) {
+			return $this->getOverridenResult('getById');
 		}
 
 		//$testObject = new $this->modelObjectClass;
@@ -118,8 +137,8 @@ class GenericDaoSpy {
 		$this->addCall('getAll', array());
 		
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('getAll', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['getAll'];
+		if( $this->isOverriden('getAll') ) {
+			return $this->getOverridenResult('getAll');
 		}
 
 		$testArray = array_fill( 0, $this->itemCount, $this->getById(1) );
@@ -131,8 +150,8 @@ class GenericDaoSpy {
 		$this->addCall('save', $args);
 		
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('save', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['save'];
+		if( $this->isOverriden('save') ) {
+			return $this->getOverridenResult('save');
 		}
 
 		// ActionManager expects object back with key id
@@ -148,8 +167,8 @@ class GenericDaoSpy {
 		$this->addCall('deleteById', $args);
 
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('deleteById', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['deleteById'];
+		if( $this->isOverriden('deleteById') ) {
+			return $this->getOverridenResult('deleteById');
 		}
 		else {
         	return true;
@@ -161,8 +180,8 @@ class GenericDaoSpy {
 		$this->addCall('removeRelatedItems', $args);
 		
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('removeRelatedItems', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['removeRelatedItems'];
+		if( $this->isOverriden('removeRelatedItems') ) {
+			return $this->getOverridenResult('removeRelatedItems');
 		}
 		else {
 			return true;
@@ -175,8 +194,8 @@ class GenericDaoSpy {
 		$this->addCall('addRelatedItems', $args);
 		
 		// this method can return a specific object if necessary - check.
-		if( array_key_exists('addRelatedItems', $this->methodsToOverride) ) {
-			return $this->methodsToOverride['addRelatedItems'];
+		if( $this->isOverriden('addRelatedItems') ) {
+			return $this->getOverridenResult('addRelatedItems');
 		}
 		else {
 			return true;

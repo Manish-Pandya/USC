@@ -15,7 +15,7 @@ class ActionManager {
 	private $isTestModeEnabled;
 	
 	// during construction, can change daoFactory, for example for testing purposes
-	public function __construct( $daoFactory ) {
+	public function __construct( &$daoFactory ) {
 		// default to factory providing GenericDao, required for normal operation
 		if( is_null($daoFactory) ) {
 			$daoFactory = new DaoFactory(new GenericDAO());
@@ -23,7 +23,7 @@ class ActionManager {
 		$this->daoFactory = $daoFactory;
 	}
 	
-	public function setDaoFactory( $newFactory ) {
+	public function setDaoFactory( &$newFactory ) {
 		$this->daoFactory = $newFactory;
 	}
 	
@@ -93,7 +93,7 @@ class ActionManager {
 			return new MockDAO();
 		}
 		else{
-			return $this->daoFactory->createDao($modelObject);
+			return $this->daoFactory->getDao($modelObject);
 		}
 	}
 

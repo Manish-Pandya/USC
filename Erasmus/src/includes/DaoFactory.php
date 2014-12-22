@@ -12,8 +12,19 @@ class DaoFactory {
 
 	public $modelDao;
 	
+	// only instantiates one of each GenericDao
+	private $daos;
+	
 	public function __construct( $dao ) {
 		$this->modelDao = $dao;
+	}
+	
+	public function getDaos() {
+		return $this->daos;
+	}
+	
+	public function addDao($name, $newDao) {
+		$this->daos[$name] = $newDao;
 	}
 	
 	public function setModelDao( $newDao ) {
@@ -21,11 +32,21 @@ class DaoFactory {
 
 	}
 
-	public function createDao( $modelObject ) {
-		$dao = $this->modelDao;
-		$dao->setModelObject($modelObject);
+	public function getDao( $modelObject ) {
+		$modelObjectName = get_class($modelObject);
+		$daos = $this->getDaos();
 
-		return $dao;
+		// GenericDao with this model object has already been created
+		if( array_key_exists($modelObjectName, $daos) ) {
+			return $daos[$modelObjectName];
+		}
+		else {
+			// no such GenericDao yet
+			$dao = clone $this->modelDao;
+			$dao->setModelObject($modelObject);
+			$this->addDao($modelObjectName, $dao);
+			return $dao;
+		}
 	}
 	
 }

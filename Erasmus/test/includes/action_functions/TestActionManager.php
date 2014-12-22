@@ -37,6 +37,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 
 	public $actionManager;
 	private $daoSpy;
+	private $spyFactory;
 
 	// here because tests extending this class will need to specify what (if any)
 	// subclasses of ActionManager they need to instantiate.
@@ -51,6 +52,9 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	public function setTestedClassName($newName) {
 		$this->actionManagerClassName = $newName;
 	}
+	
+	public function getSpyFactory() { return $this->spyFactory; }
+	public function setSpyFactory($factory) { $this->spyFactory = $factory; }
 
 	// Reset $_REQUEST between tests so that tests using $_REQUEST don't affect each other
 	function tearDown() {
@@ -63,27 +67,29 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		// create test double for GenericDao
 		$daoSpy = new GenericDaoSpy();
 		// set up a factory that can inject the spy into ActionManager
-		$daoSpyInjector = new DaoFactory($daoSpy);
+		$this->spyFactory = new DaoFactory($daoSpy);
 		
 		$this->daoSpy = $daoSpy;
 		
 		// give our dao injector to ActionManager to substitute daoSpy for GenericDao
 		$actionManagerClass = $this->getTestedClassName();
-		$this->actionManager = new $actionManagerClass($daoSpyInjector);
+		$this->actionManager = new $actionManagerClass($this->spyFactory);
 		
 		// set actionManager to read from $_REQUEST['testInput'] instead of JsonManager
 		$this->actionManager->setTestMode(true);
 	}
 	
-	function setGetByIdToReturn($objToReturn) {
+	function setGetByIdToReturn($objToReturn, $class = "Any") {
 		// create test double for GenericDao
 		$daoSpy = new GenericDAOSpy();
 		
-		// override $daoSpy's getById method to return specific obj
-		$daoSpy->overrideMethod('getById', $objToReturn);
+		// Override $daoSpy's getById method to return specific obj when
+		// GenericDao has model object instance of class. If class == Any,
+		// it overrides for all model objects.
+		$daoSpy->overrideMethod($class, 'getById', $objToReturn);
 		
 		// new daoFactory will provide actionManager the modified GenericDaoSpy
-		$this->actionManager->setDaoFactory(new DaoFactory($daoSpy));
+		$this->getSpyFactory()->setModelDao($daoSpy);
 	}
 	
 	// returns mock of type $mockType that will return an array of $itemType with
@@ -104,8 +110,8 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		return $mock;
 	}
 
-	function getDaoSpy() {
-		return $this->daoSpy;
+	function getDaoSpy($modelObject) {
+		return $this->getSpyFactory()->getDao($modelObject);
 	}
 	
 	/**
@@ -123,7 +129,6 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		}
 		return $mapArray;
 	}
-
 
 
 	/**
@@ -1030,7 +1035,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new User())->wasItCalled('save') );
 	}
 	
 	
@@ -1062,7 +1067,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Checklist())->wasItCalled('save') );
 	}
 	
 	
@@ -1094,7 +1099,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Question())->wasItCalled('save') );
 	}
 	
 	
@@ -1126,7 +1131,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Deficiency())->wasItCalled('save') );
 	}
 	
 	
@@ -1158,7 +1163,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Observation())->wasItCalled('save') );
 	}
 	
 	
@@ -1190,7 +1195,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Recommendation())->wasItCalled('save') );
 	}
 	
 	
@@ -1222,7 +1227,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new SupplementalObservation())->wasItCalled('save') );
 	}
 	
 	
@@ -1252,9 +1257,9 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		// should have returned SupplementalRecommendation with a newly-assigned key id
 		$this->assertInstanceOf('SupplementalRecommendation', $result);
 		$this->assertEquals( 1, $result->getKey_id() );
-	
+		
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new SupplementalRecommendation())->wasItCalled('save') );
 	}
 	
 	
@@ -1282,10 +1287,10 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$result = $this->actionManager->saveHazard();
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Hazard())->wasItCalled('save') );
 
 		// last method of genericDao called should've been called with $testData
-		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodCalls = $this->getDaoSpy(new Hazard())->getCalls();
 		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
 
 		// should have returned Hazard with a newly-assigned key id
@@ -1327,15 +1332,15 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 		// saveHazard makes a call to GenericDao->getById to get the parent hazard
 		// make sure it returns the proper parent instead of a generic hazard
-		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		$this->setGetByIdToReturn($parentHazard);
 		
 		$result = $this->actionManager->saveHazard();
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Hazard())->wasItCalled('save') );
 
 		// last method of genericDao called should've been called with $testData
-		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodCalls = $this->getDaoSpy(new Hazard())->getCalls();
 		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
 
 		// should have returned Hazard with a newly-assigned key id
@@ -1380,15 +1385,15 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 		// saveHazard makes a call to GenericDao->getById to get the parent hazard
 		// make sure it returns the proper parent instead of a generic hazard
-		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		$this->setGetByIdToReturn($parentHazard);
 		
 		$result = $this->actionManager->saveHazard();
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new hazard())->wasItCalled('save') );
 
 		// last method of genericDao called should've been called with $testData
-		$methodCalls = $this->getDaoSpy()->getCalls();
+		$methodCalls = $this->getDaoSpy(new Hazard())->getCalls();
 		$methodArgs = $methodCalls[count($methodCalls.length) -1]->getArg(0);
 
 		// should have returned Hazard with a newly-assigned key id
@@ -1429,7 +1434,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Room())->wasItCalled('save') );
 	}
 	
 	
@@ -1461,7 +1466,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Building())->wasItCalled('save') );
 	}
 	
 	
@@ -1493,7 +1498,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new PrincipalInvestigator())->wasItCalled('save') );
 	}
 	
 	
@@ -1525,7 +1530,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Inspector)->wasItCalled('save') );
 	}
 	
 	
@@ -1557,7 +1562,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Department())->wasItCalled('save') );
 	}
 	
 	
@@ -1589,7 +1594,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Inspection())->wasItCalled('save') );
 	}
 	
 	
@@ -1656,7 +1661,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new Response())->wasItCalled('save') );
 	}
 	
 	
@@ -1682,10 +1687,10 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$_REQUEST["testInput"] = $testData;
 
 		$result = $this->actionManager->saveDeficiencySelection();
-		$calls = $this->getDaoSpy()->getCalls();
+		$calls = $this->getDaoSpy(new DeficiencySelection())->getCalls();
 	
 		// if deficiencySelection has no rooms, saveDeficiencySelction should delete it
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('deleteById') );
+		$this->assertTrue( $this->getDaoSpy(new DeficiencySelection())->wasItCalled('deleteById') );
 		
 		// should have passed DeficiencySelection to deleteById 
 		$lastCall = $calls[count(calls) - 1];
@@ -1712,7 +1717,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$testData->setRoomIds($roomIds);
 		
 		$_REQUEST["testInput"] = $testData;
-		$dao = $this->getDaoSpy();
+		$dao = $this->getDaoSpy(new DeficiencySelection());
 	
 		$result = $this->actionManager->saveDeficiencySelection();
 		$calls = $dao->getCalls();
@@ -1757,7 +1762,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 1, $result->getKey_id() );
 	
 		// genericDao->save should have been called
-		$this->assertTrue( $this->getDaoSpy()->wasItCalled('save') );
+		$this->assertTrue( $this->getDaoSpy(new CorrectiveAction())->wasItCalled('save') );
 	}
 	
 
@@ -1785,7 +1790,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 		// set subHazards as children of parent, set getById to return parent when getHazardById is called.
 		$parentHazard->setSubHazards( array($subHazard1, $subHazard2) );
-		$this->getDaoSpy()->overrideMethod("getById", $parentHazard);
+		$this->getDaoSpy(new Hazard())->overrideMethod("getById", $parentHazard);
 		
 
 		$result = $this->actionManager->getHazardTreeNode(1);
@@ -1854,7 +1859,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		// only an empty string. Change as necessary later if method changes.
 
 		// get methods of GenericDaoSpy that were called
-		$calledMethods = $this->getDaoSpy()->getCalls();
+		$calledMethods = $this->getDaoSpy(new Hazard())->getCalls();
 		$length = count($calledMethods);
 		
 		// last method called should've been GenericDao->save
@@ -1878,14 +1883,14 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		$fakeHazard->setParent_hazard_id(2);
 		
 		// set genericDao to return fake hazard instead of changing a real one
-		$this->getDaoSpy()->overrideMethod("getById", $fakeHazard);
+		$this->getDaoSpy(new Hazard())->overrideMethod("getById", $fakeHazard);
 		
 		$result = $this->actionManager->moveHazardToParent();
 		// NOTE: as yet, moveHazard does not return anything after success,
 		// only an empty string. Change as necessary later if method changes.
 		
 		// get methods of GenericDaoSpy that were called
-		$calledMethods = $this->getDaoSpy()->getCalls();
+		$calledMethods = $this->getDaoSpy(new Hazard())->getCalls();
 		$length = count($calledMethods);
 		
 		// last method called should've been GenericDao->save
