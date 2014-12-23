@@ -1611,32 +1611,56 @@ class ActionManager {
 	}
 
 	public function scheduleInspection(){
-
+		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		$inspectionDao = $this->getDao( new Inspection() );
-
-		if( $decodedObject->Inspection_id != NULL ){
-			$inspection = $inspectionDao->getById( $decodedObject->Inspection_id );
+		if( $decodedObject->getInspections()->getKey_id() != NULL ){
+			$inspection = $inspectionDao->getById( $decodedObject->getInspections()->getKey_id() );
 		}else{
 			$inspection = new Inspection();
 		}
 
-		if($decodedObject->getSchedule_month())$inspection->setSchedule_month( $decodedObject->getSchedule_month() );
-		if($decodedObject->getSchedule_year())$inspection->setSchedule_year( $decodedObject->getSchedule_year() );
+		if($decodedObject->getInspections()->getSchedule_month())$inspection->setSchedule_month( $decodedObject->getInspections()->getSchedule_month() );
+		if($decodedObject->getInspections()->getSchedule_year())$inspection->setSchedule_year( $decodedObject->getInspections()->getSchedule_year() );
 
+		$inspection->setPrincipal_investigator_id($decodedObject->getPi_key_id());
 		$inspection = $inspectionDao->save( $inspection );
 
-		foreach($decodedObject->getRooms() as $room){
+		if($inspection->getRooms() != null){
+			foreach($inspection->getRooms() as $room){
+				//remove old room relationship
+				$this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKey_id(),false);
+			}
+		}
+
+		foreach($decodedObject->getBuilding_rooms() as $room){
 			//save room relationships
-			$this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKeyId(),true);
+			$this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
 		}
 
-		foreach($decodedObject->getInspector() as $inspector){
+		if($inspection->getInspectors() != null){
+			foreach($inspection->getInspectors() as $inspector){
+				//remove old inspector relationships
+				$LOG->debug($inspector);
+				$inspectionDao->removeRelatedItems($inspector->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			}
+		}
+
+		foreach($decodedObject->getInspections()->getInspectors() as $inspector){
 			//save inspector relationships
-			$inspectionDao->addRelatedItems($inspector->getKey_id(),$inspection->getKeyId(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
+			$inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
 		}
 
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getInspectors");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getResponses");
+		$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("eager","getStatus");
+		$entityMaps[] = new EntityMap("lazy","getChecklists");
 
+		$inspection->setEntityMaps($entityMaps);
 		return $inspection;
 	}
 
