@@ -1907,10 +1907,34 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 	/**
 	 * @group other
 	 */
-	public function test_getIsAlphabetized() {
-		$this->markTestIncomplete();
-
-		$result = $this->actionManager->getIsAlphabetized( array("goose", "anchovies", "meh") );
+	public function test_getIsAlphabetized_false() {
+		$hazard1 = new Hazard();
+		$hazard1->setName("goose");
+		
+		$hazard2 = new Hazard();
+		$hazard2->setName("anchovies");
+		
+		$hazard3 = new Hazard();
+		$hazard3->setName("meh");
+		
+		$result = $this->actionManager->getIsAlphabetized( array($hazard1, $hazard2, $hazard3) );
 		$this->assertFalse( $result, "getIsAlphabetized returned false positive" );
+	}
+
+	/**
+	 * @group other
+	 */
+	public function test_getIsAlphabetized_true() {
+		$hazard1 = new Hazard();
+		$hazard1->setName("Alpha");
+		
+		$hazard2 = new Hazard();
+		$hazard2->setName("beta");
+		
+		$hazard3 = new Hazard();
+		$hazard3->setName("qqqq");
+		
+		$result = $this->actionManager->getIsAlphabetized( array($hazard1, $hazard2, $hazard3) );
+		$this->assertTrue( $result, "getIsAlphabetized returned false instead of true" );
 	}
 }
