@@ -1,0 +1,14 @@
+INSPECTION STATUSES (or maybe stati)
+
+
+Inspections have the following possible statuses:
+
+Pending:  An inspection has been scheduled, but not yet started.  Inspector(s) have been assigned, and/or a date for the inspection has been assigned, but there are no responses.
+
+Overdue for Inspection:  An inspection has been assigned a start date and inspectors(s), but 30 days have passed since the assignment and there are no responses for the inspection.
+
+Open:  An inspection has been started or completed by the inspector(s), but some corrective actions have not been submitted by the PI and/or accepted.  Some, or all, of the questions for the inspection have responses.
+
+Overdue for Corrective Actions:  An inspection has been started or completed by the inspector(s),  some corrective actions have not been submitted and/or accepted 30 days after the inspection was performed.
+
+Closed:  An inspection has been performed and all corrective actions have been submitted and accepted.  The inspection has a date_closed in the database.

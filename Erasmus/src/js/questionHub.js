@@ -1,4 +1,4 @@
-var questionHub = angular.module('questionHub', ['convenienceMethodModule']);
+var questionHub = angular.module('questionHub', ['convenienceMethodModule', 'once']);
 
 function QuestionHubController($scope, $q, $rootElement, $location, convenienceMethods) {
 	
@@ -146,7 +146,6 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
 		obs.edit = !obs.edit;
 		$scope.question.newObservation = angular.copy(obs);
 		$scope.question.newObservation.IsDirty = false;
-
 	}
 
 	function onAddObs(def, question){

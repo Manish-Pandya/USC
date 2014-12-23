@@ -19,6 +19,8 @@ class Inspection extends GenericCrud {
 		"date_started"	=> "timestamp",
 		"date_closed"	=> "timestamp",
 		"notification_date"	=> "timestamp",
+		"schedule_month"	=> "text",
+		"schedule_year"		=> "text",
 		"note"			=> "text",
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -97,6 +99,7 @@ class Inspection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getResponses");
 		$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getStatus");
 		$entityMaps[] = new EntityMap("lazy","getChecklists");
 
 		$this->setEntityMaps($entityMaps);
@@ -163,9 +166,15 @@ class Inspection extends GenericCrud {
 	public function getNotification_date() { return $this->notification_date;}
 	public function setNotification_date($notification_date) {$this->notification_date = $notification_date;}
 
+	public function getSchedule_month() { return $this->schedule_month;}
+	public function setSchedule_month($schedule_month) {$this->schedule_month = $schedule_month;}
+
+	public function getSchedule_year() { return $this->schedule_year;}
+	public function setSchedule_year($schedule_year) {$this->schedule_year = $schedule_year;}
+
 	public function getNote() { return $this->note;}
 	public function setNote($note) {$this->note = $note;}
-
+	
 	public function getDeficiency_selections(){
 		$deficiencySelections = array();
 		$correctedSelections = array();
@@ -184,6 +193,59 @@ class Inspection extends GenericCrud {
 		$this->deficiency_selections['deficiencySelections'] = $deficiencySelections;
 		$this->deficiency_selections['correctedSelections'] = $correctedSelections;
 		return $this->deficiency_selections;
+	}
+	
+	public function getStatus() {
+		
+		// If there is a close date, it's closed.
+		if ($this->date_closed != null) { return 'CLOSED';}
+
+		// Create some reference dates for status checking
+		$now = new DateTime("now");
+		$then = new DateTime("now - 30 days");
+
+		// If it's been scheduled but not started...
+		if ($this->schedule_month != null && $this->date_started == null) {
+			// ... and it's not 30 days past the first day of the scheduled month
+			if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {		
+				// Then it's pending	
+				return 'PENDING';
+			} else {
+				// If it is 30 days past due, it's overdue for inspection
+				return 'OVERDUE FOR INSPECTION';
+			}
+		}
+		
+		// Now we check to see if there are unresolved deficiencies.  Start by assuming all is good.
+		$accepted = true;
+
+		// iterate the responses that have deficiencies
+		foreach($this->getResponses() as $response){
+			foreach($response->getDeficiencySelections() as $def){
+				// Get the corrective actions for this deficiency
+				$cas = $def->getCorrectiveActions();
+				// if there are no corrective actions, no es bueno
+				if ($cas == null) {
+					$accepted = false;
+					break 2;
+				}
+				// If there are corrective actions, we need to make sure they're all "Accepted". Otherwise, not good.
+				foreach($cas as $ca){
+					if($ca != "Accepted") {
+						$accepted = false;
+						break 3;
+					}
+				}
+			}
+		}
+		
+		// If there are unresolved deficiences, and the PI was notified > 30 days ago, we're overdue for corrective action
+		if ($accepted == false && $this->notification_date != null && $then > $this->notification_date){
+				return 'OVERDUE FOR CORRECTIVE ACTION';
+		}
+
+		// If no other status applies, it's considered open.
+		return 'OPEN';
 	}
 }
 ?>

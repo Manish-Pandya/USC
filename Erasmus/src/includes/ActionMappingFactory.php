@@ -172,7 +172,12 @@ class ActionMappingFactory {
 
 				// EMERGENCY INFO HUB
 				"getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
+				"getRoomsByBuildingId"=>new ActionMapping("getRoomsByBuildingId", "", ""),
 
+				//INSPECTION MANAGEMENT HUB
+				"getCurrentYear"=>new ActionMapping("getCurrentYear", "", ""),
+				"getInspectionSchedule"=>new ActionMapping("getInspectionSchedule", "", ""),
+				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
 		);
 	}
 }

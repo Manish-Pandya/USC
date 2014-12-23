@@ -1,4 +1,4 @@
-var checklistHub = angular.module('checklistHub', ['convenienceMethodModule','ui.bootstrap']);
+var checklistHub = angular.module('checklistHub', ['convenienceMethodModule','ui.bootstrap','once']);
 
 function ChecklistHubController($scope, $rootElement, $location, convenienceMethods) {
 	

@@ -21,7 +21,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
     factory.getAllBuildings = function()
     {
 
-        var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllBuildings&skipRooms=true&callback=JSON_CALLBACK';
         return convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
               return promise;
@@ -65,8 +65,30 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
         }
 
+        if(!object.Rooms)$rootScope.error = "The selected location or PI has no rooms in the system."
         $rootScope.rooms = object.Rooms;
 
+    }
+
+    factory.onSelectBuilding = function( building )
+    {
+        $rootScope.rooms = null;
+        $rootScope.gettingRooms = true;
+        console.log(building);
+        if(building.Rooms){
+          factory.onSelectPIOrBuilding(building);
+        }else{
+          var url = '../../ajaxaction.php?action=getRoomsByBuildingId&id='+building.Key_id+'&callback=JSON_CALLBACK';
+          convenienceMethods.getDataAsDeferredPromise(url).then(
+              function(promise){
+                building.Rooms = promise;
+                $rootScope.gettingRooms = false;
+                factory.onSelectPIOrBuilding(building );
+              },
+              function(promise){
+              }
+          );
+        }
     }
 
     factory.getPIsByRoom = function( room )
@@ -174,6 +196,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
                           $scope.personnel = $scope.personnel.concat(pis[len].LabPersonnel);
                       }
                       $scope.loading = false;
+                      $scope.showingHazards = true;
                     }
                 )
 
