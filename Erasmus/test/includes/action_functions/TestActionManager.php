@@ -1790,7 +1790,7 @@ class TestActionManager extends PHPUnit_Framework_TestCase {
 		
 		// set subHazards as children of parent, set getById to return parent when getHazardById is called.
 		$parentHazard->setSubHazards( array($subHazard1, $subHazard2) );
-		$this->getDaoSpy(new Hazard())->overrideMethod("getById", $parentHazard);
+		$this->setGetByIdToReturn($parentHazard);
 		
 
 		$result = $this->actionManager->getHazardTreeNode(1);

@@ -442,7 +442,7 @@ class ActionManager {
 		return $hazards;
 	}
 
-	public function getHazardTreeNode( $id = NULL){
+	public function getHazardTreeNode( $id = NULL ){
 
 		// get the node hazard
 		$hazard = $this->getHazardById($id);
