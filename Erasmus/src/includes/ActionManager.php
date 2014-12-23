@@ -604,6 +604,11 @@ class ActionManager {
 		}
 	}
 
+	/**
+	 * Determines if the names of a list of Hazards are in alphabetical order
+	 * @param array of Hazards
+	 * @return boolean
+	 */
 	public function getIsAlphabetized( $list ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 
