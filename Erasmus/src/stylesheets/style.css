@@ -2900,3 +2900,14 @@ table.large tr th{
 a.modalBtn i, .modal-footer a.btn i {
   margin: 4px 16px 0 3px !important;
 }
+
+.savingBox{
+  background: rgba(0,0,0,.5) !important;
+  position: fixed;
+  left: 50px;
+  right: 50px;
+  top: 30%;
+  height: 70px;
+  border-color: black;
+  box-shadow: 0 0 6px rgba(0,0,0,.7);
+}
