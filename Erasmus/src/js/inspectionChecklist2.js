@@ -14,7 +14,44 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			
 	}
 })
+.filter('evaluateChecklist', function () {
+	return function (questions, checklist) {
+		
+			checklist.completedQuestions = 0;
+			if(!checklist.Questions) return questions;
+			var i = checklist.Questions.length;
 
+			while(i--){
+				var question = checklist.Questions[i]
+				if( !question.Responses ){
+					question.isComplete = false;
+				}
+				else if( !question.Responses.Answer ){
+					question.isComplete = false;
+				}
+				else if( question.Responses.Answer.toLowerCase() == "yes" || question.Responses.Answer.toLowerCase() == "n/a" ){
+					question.isComplete = true;
+					checklist.completedQuestions++;
+				}
+				//question is answered "no"
+				else{
+					if( !question.Responses.DeficiencySelections ){
+						question.isComplete = true;
+						checklist.completedQuestions++;
+					}
+					else if( !question.Responses.DeficiencySelections.length ){
+						question.isComplete = true;
+						checklist.completedQuestions++;
+					}
+					else{
+						question.isComplete = true;
+						checklist.completedQuestions++;
+					}
+				}
+			}
+			return checklist.Questions;
+	}
+})
 .factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout){
 
 	    var factory = {};
@@ -100,12 +137,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		function innerFilter(){
 	    			for( counter = 0; i < len && counter < 3; counter++, i++){
 	    				var checklist = factory.inspection.Checklists[i];
-	    				console.log(counter);
-	    				console.log('i: '+i);
-	    				console.log(checklist);
-
 		    			if( checklist.Master_hazard == category )selectedChecklists.push( checklist );
-
 	    			}
 
 	    			if(i == len){
