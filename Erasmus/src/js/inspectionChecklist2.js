@@ -1,5 +1,4 @@
 var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule','once'])
-
 .filter('categoryFilter', function () {
 	return function (items, category ) {
 			if( !category ) return false;
@@ -8,7 +7,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			while(i--){
 				var item = items[i];
 				if( item.Master_hazard.indexOf(category) > -1 )	filtered.unshift( item );
-
 			}
 			return filtered;
 			
@@ -35,14 +33,15 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 				}
 				//question is answered "no"
 				else{
+					//question has no deficiencies to select
 					if( !question.Responses.DeficiencySelections ){
-						question.isComplete = true;
-						checklist.completedQuestions++;
+						question.isComplete = false;
 					}
+					//question has no deficiencies selected
 					else if( !question.Responses.DeficiencySelections.length ){
-						question.isComplete = true;
-						checklist.completedQuestions++;
+						question.isComplete = false;
 					}
+					//question has one or more deficiencies selected
 					else{
 						question.isComplete = true;
 						checklist.completedQuestions++;
@@ -52,7 +51,34 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			return checklist.Questions;
 	}
 })
-.factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout){
+.filter('evaluateDeficiencySelectionRooms', function(){
+	return function(rooms, question, deficiency){
+		var defId = deficiency.Key_id;
+
+		var k = rooms.length
+		while(k--){
+			console.log(rooms[k]);
+			console.log(k)
+			var room = rooms[k];
+			var roomId = room.Key_id;
+    		var i = question.Responses.DeficiencySelections.length;
+    		while(i--){
+    			if( question.Responses.DeficiencySelections[i].Deficiency_id == defId ){
+    				var j = question.Responses.DeficiencySelections[i].Rooms.length;
+    				while(j--){
+    					if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == roomId ){
+    						room.checked = true;
+    					}
+    				}
+    			}
+
+    		}
+    	}
+    	console.log(rooms);
+        return rooms
+	}
+})
+.factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout,$location,$anchorScroll){
 
 	    var factory = {};
 	    factory.inspection = [];
@@ -96,28 +122,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    				return 'radiation-large-icon.png';
 	    		}
 	    }
-	    /*function filter() {
-        var i=0, filtered = [];
-        innerFilter();
-        
-        function innerFilter() {
-            var counter;
-            for( counter=0; i < $scope.data.length && counter < 5; counter++, i++ ) {
-                // REAL FILTER LOGIC; BETTER SPLIT TO ANOTHER FUNCTION //
-                if( $scope.data[i].indexOf($scope.filter) >= 0 ) {
-                    filtered.push($scope.data[i]);
-                }
-                /////////////////////////////////////////////////////////
-            }
-            if( i === $scope.data.length ) {
-                $scope.filteredData = filtered;
-                $scope.filtering = false;
-            }
-            else {
-                $timeout(innerFilter, 10);
-            }
-        }
-    }*/
 
 	    factory.selectCategory = function( category )
 	    {		
@@ -169,8 +173,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		var url = '../../ajaxaction.php?action=saveResponse';
 
 	    		responseDto = convenienceMethods.copyObject(response);
-	    		if(!response.Inspection_id)response.Inspection_id = this.inspection.Key_id;
-	    		if(!response.Question_id)response.Question_id = question.Key_id;
+	    		if(!response.Inspection_id)responseDto.Inspection_id = this.inspection.Key_id;
+	    		if(!response.Question_id)responseDto.Question_id = question.Key_id;
+	    		responseDto.Class = "Response";
+
+	    		if(!responseDto.Answer)responseDto.Answer = '';
+
+	    		console.log(responseDto)
 
 	    		var deferred = $q.defer();
 				convenienceMethods.saveDataAndDefer(url, responseDto).then(
@@ -193,7 +202,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    }
 
-	    factory.evaluateDeficieny = function( id ){
+	    factory.evaluateDeficiency = function( id ){
 	    		var i = this.inspection.Deficiency_selections[0].length;
 
 	    		while(i--){
@@ -203,29 +212,59 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    }
 
-	    factory.saveDeficiencySelection = function( deficiency, question, checklist )
+
+	    factory.evaluateDeficienyShowRooms = function( id ){
+	    		var i = this.inspection.Deficiency_selections[2].length;
+	    		console.log(i);
+	    		while(i--){
+	    			console.log(this.inspection.Deficiency_selections[2][i] + ' | ' + id)
+	    			if( id == this.inspection.Deficiency_selections[2][i] )return true;
+	    		}
+	    		return false;
+
+	    }
+	    factory.saveDeficiencySelection = function( deficiency, question, checklist, room )
 	    {
+	    		console.log(deficiency);
 	    		deficiency.IsDirty = true;
 	    		question.error =  null;
 
 				if( !deficiency.InspectionRooms ) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
-
-					//grab a collection of room ids
-					var i = deficiency.InspectionRooms.length;
-					var roomIds = [];
+				//grab a collection of room ids
+				var i = deficiency.InspectionRooms.length;
+				var roomIds = [];
+				if(!room){
+					//we haven't passed in a room, so we should set relationships for all possible rooms
 					while(i--){
 						roomIds.push( deficiency.InspectionRooms[i].Key_id );
 					}
+				}
+				else{
+					while(i--){
+						if(deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
+					}
+				}
+				console.log(roomIds)
 
 				var defDto = {
 			        Class: "DeficiencySelection",
 			        RoomIds: roomIds,
 			        Deficiency_id:  deficiency.Key_id,
 			        Response_id: question.Responses.Key_id,
-			        Inspection_id: this.inspection.Key_id
+			        Inspection_id: this.inspection.Key_id,
+			        Show_rooms:  deficiency.Show_rooms
 		      	}
-	    		if(deficiency.selected){
-	    				
+
+	    		if( deficiency.selected || this.evaluateDeficiency( deficiency.Key_id ) ){
+
+	    				if(question.Responses && question.Responses.DeficiencySelections){
+	    					var j = question.Responses.DeficiencySelections.length;
+	    					while(j--){
+	    						var ds = question.Responses.DeficiencySelections[j];
+	    						if(deficiency.Key_id == ds.Deficiency_id)defDto.Key_id = ds.Key_id;
+	    					}
+	    				}
+
 				      	var url = '../../ajaxaction.php?action=saveDeficiencySelection'; 
 						convenienceMethods.saveDataAndDefer(url, defDto)
 							.then(
@@ -233,6 +272,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 									deficiency.IsDirty = false;
 									deficiency.selected = true;
 									factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
+									if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
 									question.Responses.DeficiencySelections.push( returnedDeficiency );
 								},
 								function(promise){
@@ -269,10 +309,54 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		}
 	    }
 
+	    factory.handleCorrectedDurringInspection = function( deficiency, question )
+	    {
+	    	deficiency.IsDirty = true;
+		    var def_id = deficiency.Key_id;
+		    deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
+		    if( this.inspection.Deficiency_selections[1].indexOf(deficiency.Key_id > -1) ){
+		      //we set corrected durring inpsection
+		      var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
+		    }else{
+		      //we unset corrected durring inspection
+		      var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
+		    }
+
+		    convenienceMethods.getDataAsPromise( url )
+		      	.then(
+		      		function(){
+		      			deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection;
+		      			deficiency.IsDirty = false;
+		      		},
+		      		function(){
+		      			question.error = 'The deficiency could not be saved.  Please check your internet connection and try again.';
+		      			deficiency.IsDirty = false;
+		      		}
+		      	);
+	    }
+
+	    factory.changeChecklist = function( checklist )
+	    {
+	    	checklist.currentlyOpen = !checklist.currentlyOpen;
+	    	var insp = $location.search().inspection;
+	    	console.log(insp);
+	    	//$location.hash(checklist.Key_id);
+	    	$location.search('inspection',insp);
+		    $anchorScroll();
+	    }
+
+		factory.handRoomChecked = function( question, deficiency, checklist, room )
+		{
+
+
+
+
+		}
+
 	    return factory;
 });
 
-function ChecklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory) {
+function checklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory) {
 
 	$scope.cf = checklistFactory;
 
@@ -291,10 +375,28 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   		$scope.error = "No inspection specified."
   	}
 
-	//watcher for selected category
-	$scope.$watch('category', function() {
+	$scope.showRooms = function( event, deficiency, element, checklist, question ){
+	    if(!deficiency.InspectionRooms){
+	        //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
+	        deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+	    }
+	   // checklistFactory.evaluateDeficiecnyRooms( question, checklist );
 
-	});
+	    event.stopPropagation();
+	    calculateClickPosition(event,deficiency,element);
+	    deficiency.showRoomsModal = !deficiency.showRoomsModal;
+  	}
+
+	//get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
+	function calculateClickPosition(event, deficiency, element){
+		console.log(deficiency);
+		var x = event.clientX;
+		var y = event.clientY+$window.scrollY;
+
+		deficiency.calculatedOffset = {};
+		deficiency.calculatedOffset.x = x-110;
+		deficiency.calculatedOffset.y = y-185;
+	} 
 
 
 }

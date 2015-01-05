@@ -3,27 +3,44 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/inspectionChecklist2.js"></script>
 
-<div ng-app="inspectionChecklist" ng-controller="ChecklistController" ng-cloak>
+<div ng-app="inspectionChecklist" ng-controller="checklistController" ng-cloak>
 	<div id="sp-nav" class="span3">
 		<a class="menuIcon" ng-click="$spMenu.toggle()">&#9776;</a>
         <ul class="nav nav-list nav nav-pills nav-stacked" id="sideNav">
-          <li class="nav-header" style="font-size: 30px;padding: 20px 14px;">Checklists</li>
-          	<li ng-repeat="checklist in checklists" ng-if="checklist.checklists.length">
-
+          	<li class="nav-header" style="font-size: 30px;padding: 20px 14px;">Checklists</li>
+          	<li ng-show="biological">
+          		<a ng-click="cf.selectCategory('Biological Safety')" class="checklistListNavHeader" id="biologicalMaterialsHeader"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a>
+      			<ul ng-if="category.indexOf('Biological') > -1 && !loading">
+      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
+      			</ul>
+          	</li>
+			<li ng-show="chemical">
+				<a ng-click="cf.selectCategory('Chemical Safety')" class="checklistListNavHeader" id="chemicalSafetyHeader"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a>
+				<ul ng-if="category.indexOf('Chemical') > -1 && !loading">
+      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
+      			</ul>			
+      		</li>
+			<li>
+				<a ng-click="cf.selectCategory('General Safety')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
+				<ul ng-if="category.indexOf('General') > -1 && !loading">
+      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
+      			</ul>			
+      		</li>
+			<li ng-show="radiation">
+				<a ng-click="cf.selectCategory('Radiation Safety')" class="checklistListNavHeader" id="radiationSafetyHeader"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a>
+				<ul ng-if="category.indexOf('Radiation') > -1 && !loading">
+      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
+      			</ul>	
+			</li>
+          	
+          	<!--
+          	<li ng-repeat="checklist in inspection.Checklists">
           	<a ng-click="selectChecklistCategory(checklist.uid)" class="{{checklist.uid}}Header checklistListNavHeader">
           		<img ng-if="!checklist.altImg && checklist.img" src="../../img/{{checklist.img}}"/>
           		<img ng-if="checklist.altImg" src="../../img/{{checklist.altImg}}"/>
           		<span style="display:inline-block;">{{checklist.Name}}</span>
           	</a>
-          	<ul ng-if="selectedChecklists.checklists[0].Key_id == checklist.checklists[0].Key_id">
-          		<li ng-repeat="list in checklist.checklists">
-	          		<a ng-class="{active:list.currentlyOpen}" ng-click="change(list.Key_id,list)" href="#{{list.Key_id}}">
-	          			<span style="display:inline-block; width:75%; margin-right:10%;">{{list.Name}}</span>
-	          			<span ng-class="checklist.countClass" style="width: 15%;float:right; text-align:right;">{{list.AnsweredQuestions}}/{{list.Questions.length}}</span>
-	          		</a>
-          		</li>
-          	</ul>
-          </li>
+          	-->
         </ul>
     </div><!--/span-->
 <div class="tst">
@@ -42,7 +59,7 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
-<!--<pre>{{inspection | json}}</pre>-->
+<!--\<pre>{{inspection | json}}</pre>-->
 <div class="row-fluid">
 <!--<a ng-click="$spMenu.toggle()" .icon-menu-2 style="background:blue;font-size: 27px !important; color: black; text-decoration:none!important" class="toggles toggledIn"><p class="rotate">Show/Hide Menu<i style="margin-top: 16px; font-size: 50px !important;" class="icon-arrow-down"></i></p></a>  
 -->
@@ -69,7 +86,7 @@ require_once '../top_view.php';
 	
     <!-- begin checklist for this inspection -->
 		<accordion close-others="true" ng-hide="loading">
-			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen">
+			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
@@ -109,11 +126,12 @@ require_once '../top_view.php';
 								<h3>Deficiencies:</h3>
 								<li ng-repeat="deficiency in question.Deficiencies">
 									<label class="checkbox inline">
-										<input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficieny( deficiency.Key_id )"/>
-										<span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i><span style="margin-top:0" once-text="deficiency.Text"></span>{{deficiency.selected}}</span>
+										<input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency.Key_id )"/>
+										<span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i><span style="margin-top:0" once-text="deficiency.Text"></span></span>
+										{{deficiency.Key_id}}
 									</label>
-									<span ng-show="deficiency.selected">
-											<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
+									<span ng-if="cf.evaluateDeficiency( deficiency.Key_id )">
+										<i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
 									</span>
 
 									<div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
@@ -121,27 +139,30 @@ require_once '../top_view.php';
 										<ul>
 											<li class="show-rooms">
 												<label class="checkbox inline">
-													<input type="checkbox" ng-change="setShowRooms(question, deficiency, checklist)" ng-model="deficiency.Show_rooms"/>
+													<input type="checkbox" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-model="deficiency.Show_rooms" ng-checked="cf.evaluateDeficienyShowRooms(deficiency.Key_id)"/>
 													<span class="metro-checkbox">Show rooms in report<i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+													{{deficiency.Key_id}}
 												</label>
 											</li>
-											<li ng-repeat="room in deficiency.InspectionRooms">
+											<li ng-repeat="room in deficiency.InspectionRooms | evaluateDeficiencySelectionRooms:question:deficiency">
 												<label class="checkbox inline">
-													<input type="checkbox" ng-change="selectRoom(question, deficiency, room, checklist)" ng-model="room.checked"/>
+													<input type="checkbox" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist, room )" ng-model="room.checked"/>
 													<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+													{{room.checked}}
 												</label>
 											</li>
 										</ul>
 									</div>
 
-									<ul style="margin:10px" ng-switch on="deficiency.selected">
-										<li ng-switch-when="true">
+									<ul style="margin:10px" ng-if="cf.evaluateDeficiency( deficiency.Key_id )">
+										<li>
 											<label class="checkbox inline">
-												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-change="handleCorrectedDurringInspection(deficiency)" />
+												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-checked="inspection.Deficiency_selections[1].indexOf(deficiency.Key_id) > -1" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />
 												<span class="metro-radio">corrected during inpsection</span>
 											</label>
 										</li>
 									</ul>
+
 								</li>
 							</ul>
 						</span>
