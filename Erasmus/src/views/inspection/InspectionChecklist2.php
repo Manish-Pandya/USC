@@ -144,9 +144,9 @@ require_once '../top_view.php';
 													{{deficiency.Key_id}}
 												</label>
 											</li>
-											<li ng-repeat="room in deficiency.InspectionRooms | evaluateDeficiencySelectionRooms:question:deficiency">
+											<li ng-repeat="room in deficiency.InspectionRooms">
 												<label class="checkbox inline">
-													<input type="checkbox" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist, room )" ng-model="room.checked"/>
+													<input type="checkbox" ng-checked="cf.evaluateDeficiencyRoomChecked( room, question, deficiency )" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist, room )" ng-model="room.checked"/>
 													<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
 													{{room.checked}}
 												</label>

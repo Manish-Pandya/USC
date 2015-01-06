@@ -51,33 +51,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			return checklist.Questions;
 	}
 })
-.filter('evaluateDeficiencySelectionRooms', function(){
-	return function(rooms, question, deficiency){
-		var defId = deficiency.Key_id;
 
-		var k = rooms.length
-		while(k--){
-			console.log(rooms[k]);
-			console.log(k)
-			var room = rooms[k];
-			var roomId = room.Key_id;
-    		var i = question.Responses.DeficiencySelections.length;
-    		while(i--){
-    			if( question.Responses.DeficiencySelections[i].Deficiency_id == defId ){
-    				var j = question.Responses.DeficiencySelections[i].Rooms.length;
-    				while(j--){
-    					if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == roomId ){
-    						room.checked = true;
-    					}
-    				}
-    			}
-
-    		}
-    	}
-    	console.log(rooms);
-        return rooms
-	}
-})
 .factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout,$location,$anchorScroll){
 
 	    var factory = {};
@@ -212,7 +186,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    }
 
-
 	    factory.evaluateDeficienyShowRooms = function( id ){
 	    		var i = this.inspection.Deficiency_selections[2].length;
 	    		console.log(i);
@@ -223,6 +196,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		return false;
 
 	    }
+
 	    factory.saveDeficiencySelection = function( deficiency, question, checklist, room )
 	    {
 	    		console.log(deficiency);
@@ -240,8 +214,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 					}
 				}
 				else{
+					this.room = room;
 					while(i--){
-						if(deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
+						if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
 					}
 				}
 				console.log(roomIds)
@@ -271,9 +246,28 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 								function(returnedDeficiency){
 									deficiency.IsDirty = false;
 									deficiency.selected = true;
+									//console.log(returnedDeficiency);
 									factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
 									if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
 									question.Responses.DeficiencySelections.push( returnedDeficiency );
+
+									if(factory.room){
+										var l = deficiency.InspectionRooms.length;
+										var m = 0;
+										while(l--){
+											var room = deficiency.InspectionRooms.length[l];
+											if( roomIds.indexOf( factory.room.Key_id ) > -1 ){
+												factory.room.checked = true;
+												m++
+											}else{
+												factory.room.checked = false;
+											}
+											//if no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
+											if(m == 0)factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf(deficiency.Key_id, 1 ) )
+
+										}
+									}
+
 								},
 								function(promise){
 									question.IsDirty = false;
@@ -339,19 +333,27 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    {
 	    	checklist.currentlyOpen = !checklist.currentlyOpen;
 	    	var insp = $location.search().inspection;
-	    	console.log(insp);
 	    	//$location.hash(checklist.Key_id);
 	    	$location.search('inspection',insp);
 		    $anchorScroll();
 	    }
 
-		factory.handRoomChecked = function( question, deficiency, checklist, room )
-		{
-
-
-
-
-		}
+	    factory.evaluateDeficiencyRoomChecked = function( room, question, deficiency )
+	    {
+	    	//console.log(deficiency);
+	    	var i = question.Responses.DeficiencySelections.length;
+    		while(i--){
+    			if( question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id ){
+    				var j = question.Responses.DeficiencySelections[i].Rooms.length;
+    				while(j--){
+    					if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id ){
+    						return true;
+    					}
+    				}
+    			}
+    		}
+    		return false;
+	    }
 
 	    return factory;
 });
