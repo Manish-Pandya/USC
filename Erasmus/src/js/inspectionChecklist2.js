@@ -125,7 +125,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    			else{
 	    				$timeout(innerFilter, 10);
 	    			}
-
 	    		}	    		
 	    }
 
@@ -353,6 +352,277 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
     			}
     		}
     		return false;
+	    }
+
+	    factory.copyForEdit = function( question, objectToCopy )
+	    {
+	    	console.log(objectToCopy);
+	    	$rootScope[objectToCopy.Class+'Copy'] = convenienceMethods.copyObject( objectToCopy );
+	    	$rootScope[objectToCopy.Class+'Copy'].edit = true;
+	    	objectToCopy.edit = true;
+	    	question.edit = true;
+/*
+	    	if(objectToCopy.Class.indexOf("Sup") < 0){
+	    		question[objectToCopy.Class+'s'].push($rootScope[objectToCopy.Class+'Copy']);
+	    	}
+	    	else{
+	    		question.Responses[objectToCopy.Class+'s'].push($rootScope[objectToCopy.Class+'Copy']);
+	    	}
+*/
+	    }
+
+	    factory.objectNullifactor = function( objectToNullify )
+	    {
+	    	objectToNullify.edit = false;
+	    	$rootScope[objectToNullify.Class] = {};
+	    }
+
+	    factory.createRecommendation = function( question )
+	    {
+	    	$rootScope.RecommendationCopy = {
+	    		Class: "Recommendation",
+	    		Question_id: question.Key_id,
+	    		Text: question.newRecommendationText,
+	    		edit: true,
+	    		new: true,
+	    		Is_active: true
+	    	}
+
+	    	this.saveRecommendation( question, $rootScope.RecommendationCopy );
+
+	    }
+
+	    factory.createObservation = function( question )
+	    {
+	    	$rootScope.ObservationCopy = {
+	    		Class: "Observation",
+	    		Question_id: question.Key_id,
+	    		Text: "",
+	    		edit: true,
+	    		new: true,
+	    		Is_active: true
+	    	}
+	    	question.Observations.push($rootScope.ObservationCopy)
+	    }
+
+	    factory.saveObservation = function( question, observation )
+	    {
+	    	question.error = '';
+	    	observation.IsDirty = true;
+	    	var url = '../../ajaxaction.php?action=saveObservation';
+  				convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
+  					.then(
+  						function(returnedObeservation){
+  							factory.objectNullifactor($rootScope.ObservationCopy);
+  							if(!$rootScope.ObservationCopy.new){
+  								angular.extend(observation, returnedObservation)
+  							}
+  							else{
+  								question.Observations.push(returnedObservation);
+  							}
+  							observation.IsDirty = false;
+  							observation.edit = false;
+  							question.edit = false;
+  						},
+  						function(error){
+  							observation.IsDirty = false;
+							question.error = "The note could not be saved.  Please check your internet connection and try again."
+  						}
+  					)
+
+	    }
+
+	    factory.saveRecommendation = function( question, recommendation )
+	    {
+	    	question.savingNew = true;
+	    	question.error = '';
+	    	recommendation.IsDirty = true;
+	    	var url = '../../ajaxaction.php?action=saveRecommendation';
+  				convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
+  					.then(
+  						function(returnedRecommendation){
+  							factory.objectNullifactor($rootScope.RecommendationCopy)
+  							if(!$rootScope.RecommendationCopy.new){
+  								angular.extend(recommendation, returnedRecommendation)
+  							}
+  							else{
+  								returnedRecommendation.new = true;
+  								question.Recommendations.push(returnedRecommendation);
+  								question.newRecommendationText = '';
+	  							factory.saveRecommendationRelation( question, returnedRecommendation );
+  							}
+  							returnedRecommendation.IsDirty = false;
+  							returnedRecommendation.edit = false;
+  							returnedRecommendation.checked = true;
+  							question.edit = false;							
+  							question.savingNew = false;
+  						},
+  						function(error){
+  							returnedRecommendation.IsDirty = false;
+							question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+							question.savingNew = false;
+  						}
+  					)
+	    }
+
+	    factory.saveSupplementalObservation = function( question, isNew, so )
+	    {
+	    	var soDto = {
+	    		Class: "SupplementalObservation",
+	    		Text: question.newRecommendationText,
+	    		response_id: question.Responses.Key_id
+	    	}
+			if(isNew){
+				soDto.Is_active = true;
+				question.savingNew = true;
+			}
+			else{
+				soDto.Is_active = so.checked;
+				so.IsDirty = false;
+			}
+	    	question.error = '';
+	    	var url = '../../ajaxaction.php?action=saveSupplementalObservation';
+  				convenienceMethods.saveDataAndDefer( url, soDto )
+  					.then(
+  						function( returnedSupplementalObservation ){
+  							if( so ){
+  								angular.extend(so, returnedSupplementalObservation)
+  								so.IsDirty = false;
+  							}
+  							else{	
+								question.Responses.SupplementalObservations.push(returnedSupplementalObservation);
+								question.savingNew = false;
+  							}
+  							if($rootScope.SupplementalObservationCopy)factory.objectNullifactor($rootScope.SupplementalObservationCopy)
+  						},
+  						function(error){
+  							question.savingNew = false;
+  							if(so)so.IsDirty = false;
+							question.error = "The note could not be saved.  Please check your internet connection and try again."
+  						}
+  					)
+			
+	    }
+
+	    factory.saveSupplementalRecommendation = function( question, isNew, sr )
+	    {
+	    	var srDto = {
+	    		Class: "SupplementalRecommendation",
+	    		Text: question.newRecommendationText,
+	    		response_id: question.Responses.Key_id
+	    	}
+			if(isNew){
+				srDto.Is_active = true;
+				question.savingNew = true;
+			}
+			else{
+				srDto.Is_active = sr.checked;
+				sr.IsDirty = true;
+				srDto.Key_id = sr.Key_id
+			}
+	    	question.error = '';
+	    	var url = '../../ajaxaction.php?action=saveSupplementalRecommendation';
+  				convenienceMethods.saveDataAndDefer( url, srDto )
+  					.then(
+  						function( returnedSupplementalRecommendation ){
+  							if( sr ){
+  								srDto.checked = returnedSupplementalRecommendation.Is_active
+  								angular.extend(sr, returnedSupplementalRecommendation);
+  								sr.edit = false;
+  								sr.IsDirty = false;
+  							}
+  							else{
+  								alert('should be about to push')
+  								srDto.checked = true;
+								question.Responses.SupplementalRecommendations.push(srDto);
+								question.savingNew = false;
+  							}
+  							if($rootScope.SupplementalRecommendationCopy)factory.objectNullifactor($rootScope.SupplementalRecommendationCopy)
+  						},
+  						function(error){
+  							question.savingNew = false;
+  							if(sr)sr.IsDirty = false;
+							question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+  						}
+  					)
+	    }
+
+	    factory.saveRecommendationRelation = function( question, recommendation )
+	    {
+	    	recommendation.IsDirty = true;
+	    	recommendation.checked = !recommendation.checked;
+	    	question.error = ''
+	    	var relationshipDTO = {
+		        Class:          "RelationshipDto",
+		        Master_id :     question.Responses.Key_id,
+		        Relation_id:    recommendation.Key_id,
+		        add:            !recommendation.checked,
+		    }
+        	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
+		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+  					.then(
+  						function( ){
+  							recommendation.checked = !recommendation.checked;
+  							recommendation.IsDirty = false;
+  						},
+  						function(error){
+  							recommendation.IsDirty = false;
+							question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+  						}
+  					)
+	    }
+
+	    factory.saveObservationRelation = function(question, observation)
+	    {
+			observation.IsDirty = true;
+	    	observation.checked = !observation.checked;
+	    	question.error = ''
+	    	var relationshipDTO = {
+		        Class:          "RelationshipDto",
+		        Master_id :     question.Responses.Key_id,
+		        Relation_id:    observation.Key_id,
+		        add:            !observation.checked,
+		    }
+        	var url = '../../ajaxaction.php?action=saveObservationRelation';
+		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+  					.then(
+  						function(){
+  							observation.checked = !observation.checked;
+  							observation.IsDirty = false;
+  						},
+  						function(error){
+  							observation.IsDirty = false;
+							question.error = "The observation could not be saved.  Please check your internet connection and try again."
+  						}
+  					)
+	    }
+
+	    factory.getRecommendationChecked = function( question, recommendation )
+	    {
+	    	var i = question.Responses.Recommendations.length;
+	    	if(i==0)return false;
+	    	var ids = [];
+	    	while(i--)
+	    	{
+	    		ids.push(question.Responses.Recommendations[i].Key_id);
+	    	}
+	    	if( ids.indexOf(recommendation.Key_id ) >-1 )return true;
+	    	return false;
+
+	    }
+
+	    factory.getObservationChecked = function( question, observation )
+	    {
+	    	var i = question.Responses.Observations.length;
+	    	if(i==0)return false;
+	    	var ids = [];
+	    	while(i--)
+	    	{
+	    		ids.push(question.Responses.Observations[i].Key_id);
+	    	}
+	    	if( ids.indexOf(observation.Key_id ) >-1 )return true;
+	    	return false;
+
 	    }
 
 	    return factory;
