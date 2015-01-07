@@ -229,7 +229,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			        Show_rooms:  deficiency.Show_rooms
 		      	}
 
-	    		if( deficiency.selected || this.evaluateDeficiency( deficiency.Key_id ) ){
+	    		if( deficiency.selected ){
 
 	    				if(question.Responses && question.Responses.DeficiencySelections){
 	    					var j = question.Responses.DeficiencySelections.length;
@@ -371,9 +371,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 */
 	    }
 
-	    factory.objectNullifactor = function( objectToNullify )
+	    factory.objectNullifactor = function( objectToNullify, question )
 	    {
 	    	objectToNullify.edit = false;
+	    	question.edit = false;
 	    	$rootScope[objectToNullify.Class] = {};
 	    }
 
@@ -413,7 +414,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   				convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
   					.then(
   						function(returnedObeservation){
-  							factory.objectNullifactor($rootScope.ObservationCopy);
+  							factory.objectNullifactor($rootScope.ObservationCopy, question);
   							if(!$rootScope.ObservationCopy.new){
   								angular.extend(observation, returnedObservation)
   							}
@@ -441,7 +442,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   				convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
   					.then(
   						function(returnedRecommendation){
-  							factory.objectNullifactor($rootScope.RecommendationCopy)
+  							factory.objectNullifactor($rootScope.RecommendationCopy, question)
   							if(!$rootScope.RecommendationCopy.new){
   								angular.extend(recommendation, returnedRecommendation)
   							}
@@ -449,11 +450,11 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   								returnedRecommendation.new = true;
   								question.Recommendations.push(returnedRecommendation);
   								question.newRecommendationText = '';
-	  							factory.saveRecommendationRelation( question, returnedRecommendation );
   							}
   							returnedRecommendation.IsDirty = false;
   							returnedRecommendation.edit = false;
   							returnedRecommendation.checked = true;
+  							factory.saveRecommendationRelation( question, returnedRecommendation );
   							question.edit = false;							
   							question.savingNew = false;
   						},
@@ -493,7 +494,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 								question.Responses.SupplementalObservations.push(returnedSupplementalObservation);
 								question.savingNew = false;
   							}
-  							if($rootScope.SupplementalObservationCopy)factory.objectNullifactor($rootScope.SupplementalObservationCopy)
+  							if($rootScope.SupplementalObservationCopy)factory.objectNullifactor($rootScope.SupplementalObservationCopy, question)
   						},
   						function(error){
   							question.savingNew = false;
@@ -516,7 +517,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 				question.savingNew = true;
 			}
 			else{
-				srDto.Is_active = sr.checked;
+				srDto.Is_active = sr.checked
+	    		srDto.Text = $rootScope.SupplementalRecommendationCopy.Text;
 				sr.IsDirty = true;
 				srDto.Key_id = sr.Key_id
 			}
@@ -532,12 +534,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   								sr.IsDirty = false;
   							}
   							else{
-  								alert('should be about to push')
-  								srDto.checked = true;
-								question.Responses.SupplementalRecommendations.push(srDto);
+  								returnedSupplementalRecommendation.checked = true;
+								question.Responses.SupplementalRecommendations.push(returnedSupplementalRecommendation);
 								question.savingNew = false;
   							}
-  							if($rootScope.SupplementalRecommendationCopy)factory.objectNullifactor($rootScope.SupplementalRecommendationCopy)
+  							question.newRecommendationText = '';
+  							if($rootScope.SupplementalRecommendationCopy)factory.objectNullifactor($rootScope.SupplementalRecommendationCopy, question)
   						},
   						function(error){
   							question.savingNew = false;
@@ -624,6 +626,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	return false;
 
 	    }
+
+	    factory.supplementalRecommendationChanged = function( question, recommendation )
+	    {
+	    	$rootScope.SupplementalRecommendationCopy = convenienceMethods.copyObject(recommendation)
+	    	this.saveSupplementalRecommendation( question, false, recommendation, true );
+	    }
+
 
 	    return factory;
 });
