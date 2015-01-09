@@ -70,7 +70,10 @@ angular
                     }
 
                     //does this class exist? if not, make it on the fly
-                    if( !window[objectFlavor] ) inflator.dynamicallyCreateClass( objectFlavor );
+                    if( !window[objectFlavor] ) {
+                        console.log("WARNING! Creating Class " + objectFlavor + ' dynamically. THIS SHOULD NOT HAVE TO HAPPEN!');
+                        inflator.dynamicallyCreateClass( objectFlavor );
+                    } 
 
 
                     //instantiate an object of Class objectFlavor
@@ -86,6 +89,7 @@ angular
                     //create our getters and setters, if we don't already have them
                     modelledObject = inflator.createEntityAccessors( modelledObject );
 
+                    // call each of this object's eager accessors
                     if(modelledObject.eagerAccessors){
 
                         var eml = modelledObject.eagerAccessors.length;

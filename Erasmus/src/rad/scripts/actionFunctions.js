@@ -402,6 +402,55 @@ angular
             }
 
 
+
+            /********************************************************************
+            **
+            **      ISOTOPE
+            **
+            ********************************************************************/
+
+            af.getIsotopeById = function( key_id )
+            {
+                var urlSegment = 'getIsotopeById&id=' + key_id;
+
+                if( store.checkCollection( 'Isotope', key_id ) ) {
+                    var isotope = store.getById( 'Isotope', key_id )
+                        .then(function(isotope) {
+                            return isotope;
+                        });
+                }
+                else {
+                    var isotope = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store isotope in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return isotope;
+            }
+
+            af.getAllIsotopes = function( key_id )
+            {
+                var urlSegment = 'getAllIsotopes';
+
+                if( store.checkCollection('Isotopes') ) {
+                    var isotopes = store.get( 'Isotopes' ).then(function(isotope) {
+                        return isotope;
+                    });
+                }
+                else {
+                    var isotopes = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var isotopes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( isotopes );
+                            return store.get( 'Isotopes' );
+                        });
+                }
+                return isotopes;
+            }
+
+
+
             /********************************************************************
             **
             **      HAZARD INVENTORY
