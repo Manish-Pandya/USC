@@ -77,6 +77,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../scripts/controllers/users.js"></script>
 <script type="text/javascript" src="../scripts/controllers/hazardHub.js"></script>
 <script type="text/javascript" src="../scripts/controllers/hazardInventory.js"></script>
+<script type="text/javascript" src="../scripts/controllers/testCtrl.js"></script>
 
 <!-- directives -->
 <script type="text/javascript" src="../scripts/directives/hazardHubDirectives.js"></script>
@@ -93,6 +94,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../scripts/models/User.js"></script>
 <script src="../scripts/models/PrincipalInvestigator.js"></script>
 <script src="../scripts/models/Hazard.js"></script>
+<script src="../scripts/models/Isotope.js"></script>
 
 
 <script>
