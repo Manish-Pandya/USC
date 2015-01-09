@@ -90,7 +90,7 @@ require_once '../top_view.php';
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
-					<h2><span once-text="checklist.Name"></span><span style="float:right" class="checklist.countClass">{{checklist.completedQuestions}}/{{checklist.Questions.length}}</span></h2>
+					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.Questions.length, 'green' : checklist.completedQuestions==checklist.Questions.length}">{{checklist.completedQuestions}}/{{checklist.Questions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
 		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">
@@ -173,24 +173,24 @@ require_once '../top_view.php';
 								<li ng-repeat="recommendation in question.Recommendations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!recommendation.edit">
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-checked="cf.getRecommendationChecked(question, recommendation)" ng-change="cf.saveRecommendationRelation(question, recommendation)" />
-										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.new}"><span once-text="recommendation.Text"></span><i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small absolute"></i><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-show="recommendation.new" ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.new}"><span once-text="recommendation.Text"></span><i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small absolute"></i><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-if="recommendation.new" ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
 									<span ng-if="recommendation.edit" style="margin: 20px 0 ;display: block;">
 										<textarea ng-model="RecommendationCopy.Text" style="width:50%"></textarea><br>
-										<a ng-click="cf.saveRecommendation(question, recommendationCopy, recommendation)" class="btn btn-success">Save</a>
-										<a ng-click="cf.objectNullifactor(recommendation)" class="btn btn-danger">Cancel</a>
+										<a ng-click="cf.saveRecommendation(question, recommendation)" class="btn btn-success">Save</a>
+										<a ng-click="cf.objectNullifactor(recommendation, question)" class="btn btn-danger">Cancel</a>
+										<i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li>
 								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!recommendation.edit" >
-										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-checked="recommendation.Is_active" ng-change="cf.supplementalRecommendationChanged(question, recommendation)" />
-										<span class="metro-checkbox labSpecific" ng-class="{edit:recommendation.edit}">{{recommendation.Text}} | {{recommendation.Key_id}}<i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-init="recommendation.checked = recommendation.Is_active" ng-change="cf.supplementalRecommendationChanged(question, recommendation)" />
+										<span class="metro-checkbox labSpecific" ng-class="{edit:recommendation.edit}">{{recommendation.Text}}<i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
 									<span ng-if="recommendation.edit" style="margin: 20px 0 ;display: block;">
-										<pre>{{SupplementalRecommendationCopy}}</pre>
 										<textarea ng-model="SupplementalRecommendationCopy.Text" style="width:50%"></textarea><br>
 										<a ng-show="recommendation.edit" ng-click="cf.saveSupplementalRecommendation(question, false, recommendation)" class="btn btn-success">Save</a>
-										<a ng-show="recommendation.edit" ng-click="cf.objectNullifactor(recommendation)" class="btn btn-danger">Cancel</a><i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+										<a ng-show="recommendation.edit" ng-click="cf.objectNullifactor(recommendation, question)" class="btn btn-danger">Cancel</a><i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li><!--editItem = function(item, question)-->
 								<li>
@@ -208,33 +208,33 @@ require_once '../top_view.php';
 							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
 								<h3>Notes:</h3>
 								<li ng-repeat="note in question.Observations" style="margin-bottom:3px;">
-									<label class="checkbox inline">
-										<input type="checkbox" value="true" ng-show="!note.edit" ng-model="note.checked" ng-change="handleNotesAndRecommendations(question, note)"/>
-										<span class="metro-checkbox" ng-class="{newRecOrObs:note.isNew}">{{note.Text}}<i ng-if="note.IsDirt" class="icon-spinnery-dealie spinner small absolute"></i><!--<span style="margin-left:3px;" ng-show="note.isNew" class="label label-success">New Option</span>--><a ng-show="note.isNew" ng-click="editItem (question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+									<label class="checkbox inline" ng-if="!note.edit">
+										<input type="checkbox" value="true" ng-if="!note.edit" ng-model="note.checked" ng-checked="cf.getObservationChecked(question, note)" ng-change="cf.saveObservationRelation(question, note)"/>
+										<span class="metro-checkbox" ng-class="{newRecOrObs:note.new}">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small absolute"></i><!--<span style="margin-left:3px;" ng-show="note.isNew" class="label label-success">New Option</span>--><a ng-if="note.new" ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
-									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
-										<textarea ng-show="note.edit" ng-model="noteCopy.Text" style="width:50%"></textarea><br>
-										<a ng-show="note.edit" ng-click="saveEdit(question, noteCopy, note)" class="btn btn-success">Save</a>
-										<a ng-show="note.edit"  ng-click="cancelEdit(note)" class="btn btn-danger">Cancel</a>
+									<span ng-if="note.edit" style="margin: 20px 0 ;display: block;">
+										<textarea ng-show="note.edit" ng-model="ObservationCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="note.edit" ng-click="cf.saveObservation(question, note)" class="btn btn-success">Save</a>
+										<a ng-show="note.edit" ng-click="cf.objectNullifactor(note, question)" class="btn btn-danger">Cancel</a>
 									</span>
 								</li>
 								<li ng-repeat="note in question.Responses.SupplementalObservations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-show="!note.edit">
-										<input type="checkbox" value="true" ng-model="note.Is_active" ng-change="setNoteOrObsActiveOrInactive(question, note)"/>
-										<span class="metro-checkbox labSpecific">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="editItem (question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+										<input type="checkbox" value="true" ng-model="note.checked" ng-init="note.checked = note.Is_active" ng-change="cf.supplementalObservationChanged(question, note)"/>
+										<span class="metro-checkbox labSpecific">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
-									<span ng-show="note.edit" style="margin: 20px 0 ;display: block;">
-										<textarea  ng-model="noteCopy.Text" style="width:50%"></textarea><br>
-										<a ng-show="note.edit" ng-click="saveEdit(question, noteCopy, note)" class="btn btn-success">Save</a>
+									<span ng-if="note.edit" style="margin: 20px 0 ;display: block;">
+										<textarea  ng-model="SupplementalObservationCopy.Text" style="width:50%"></textarea><br>
+										<a ng-show="note.edit" ng-click="cf.saveSupplementalObservation(question, false, note)" class="btn btn-success">Save</a>
 										<a ng-show="note.edit" ng-click="cancelEdit(note)" class="btn btn-danger">Cancel</a><i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li>
 								<li>		
-									<form ng-if="!noteCopy">
+									<form ng-if="!note.edit">
 									 	<input type="hidden" value="note" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
-							        	<textarea ng-model="question.noteText" rows="2" style="width:100%;"></textarea>
-								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="createNewNoteOrRec(question,question.Responses,false,'observation')"/>
-								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Note Option" ng-click="createNewNoteOrRec(question,question.Responses,true,'observation')"/>
+							        	<textarea ng-model="question.newObservationText" rows="2" style="width:100%;"></textarea>
+								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="cf.saveSupplementalObservation(question, true)"/>
+								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Note Option" ng-click="cf.createObservation(question)"/>
 								        <i ng-if="question.savingNew" class="icon-spinnery-dealie spinner small"></i>
 								    </form>					
 								</li>

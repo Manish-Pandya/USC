@@ -373,6 +373,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.objectNullifactor = function( objectToNullify, question )
 	    {
+	    	console.log(question)
 	    	objectToNullify.edit = false;
 	    	question.edit = false;
 	    	$rootScope[objectToNullify.Class] = {};
@@ -386,6 +387,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		Text: question.newRecommendationText,
 	    		edit: true,
 	    		new: true,
+	    		push: true,
 	    		Is_active: true
 	    	}
 
@@ -398,44 +400,55 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	$rootScope.ObservationCopy = {
 	    		Class: "Observation",
 	    		Question_id: question.Key_id,
-	    		Text: "",
+	    		Text: question.newObservationText,
 	    		edit: true,
 	    		new: true,
+	    		push: true,
 	    		Is_active: true
 	    	}
-	    	question.Observations.push($rootScope.ObservationCopy)
+	 
+	    	this.saveObservation( question, $rootScope.ObservationCopy )
 	    }
 
 	    factory.saveObservation = function( question, observation )
 	    {
-	    	question.error = '';
-	    	observation.IsDirty = true;
-	    	var url = '../../ajaxaction.php?action=saveObservation';
-  				convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
-  					.then(
-  						function(returnedObeservation){
-  							factory.objectNullifactor($rootScope.ObservationCopy, question);
-  							if(!$rootScope.ObservationCopy.new){
-  								angular.extend(observation, returnedObservation)
-  							}
-  							else{
-  								question.Observations.push(returnedObservation);
-  							}
-  							observation.IsDirty = false;
-  							observation.edit = false;
-  							question.edit = false;
-  						},
-  						function(error){
-  							observation.IsDirty = false;
-							question.error = "The note could not be saved.  Please check your internet connection and try again."
-  						}
-  					)
+				if($rootScope.ObservationCopy.push)question.savingNew = true;
+		    	question.error = '';
+		    	observation.IsDirty = true;
+		    	var url = '../../ajaxaction.php?action=saveObservation';
+	  				convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
+	  					.then(
+	  						function(returnedObservation){
+	  							factory.objectNullifactor($rootScope.ObservationCopy, question)
+	  							if(!$rootScope.ObservationCopy.push){
+	  								observation.edit = false;
+	  								angular.extend(observation, returnedObservation)
+	  							}
+	  							else{
+	  								returnedObservation.new = true;
+	  								question.Observations.push(returnedObservation);
+	  								question.newObservationText = '';
+	  							}
+	  							returnedObservation.IsDirty = false;
+	  							returnedObservation.edit = false;
+	  							returnedObservation.checked = true;
+	  							observation.IsDirty = false;
+	  							factory.saveObservationRelation( question, returnedObservation );
+	  							question.edit = false;							
+	  							question.savingNew = false;
+	  						},
+	  						function(error){
+	  							returnedObservation.IsDirty = false;
+								question.error = "The note could not be saved.  Please check your internet connection and try again."
+								question.savingNew = false;
+	  						}
+	  					)
 
 	    }
 
 	    factory.saveRecommendation = function( question, recommendation )
 	    {
-	    	question.savingNew = true;
+	    	if($rootScope.RecommendationCopy.push)question.savingNew = true;
 	    	question.error = '';
 	    	recommendation.IsDirty = true;
 	    	var url = '../../ajaxaction.php?action=saveRecommendation';
@@ -443,7 +456,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   					.then(
   						function(returnedRecommendation){
   							factory.objectNullifactor($rootScope.RecommendationCopy, question)
-  							if(!$rootScope.RecommendationCopy.new){
+  							if(!$rootScope.RecommendationCopy.push){
+  								recommendation.edit = false;
   								angular.extend(recommendation, returnedRecommendation)
   							}
   							else{
@@ -454,6 +468,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   							returnedRecommendation.IsDirty = false;
   							returnedRecommendation.edit = false;
   							returnedRecommendation.checked = true;
+  							recommendation.IsDirty = false;
   							factory.saveRecommendationRelation( question, returnedRecommendation );
   							question.edit = false;							
   							question.savingNew = false;
@@ -470,7 +485,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    {
 	    	var soDto = {
 	    		Class: "SupplementalObservation",
-	    		Text: question.newRecommendationText,
+	    		Text: question.newObservationText,
 	    		response_id: question.Responses.Key_id
 	    	}
 			if(isNew){
@@ -480,6 +495,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			else{
 				soDto.Is_active = so.checked;
 				so.IsDirty = false;
+				soDto.Text = $rootScope.SupplementalObservationCopy.Text;
+				so.IsDirty = true;
+				soDto.Key_id = so.Key_id
 			}
 	    	question.error = '';
 	    	var url = '../../ajaxaction.php?action=saveSupplementalObservation';
@@ -487,10 +505,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   					.then(
   						function( returnedSupplementalObservation ){
   							if( so ){
+  								soDto.checked = returnedSupplementalObservation.Is_active
   								angular.extend(so, returnedSupplementalObservation)
   								so.IsDirty = false;
+  								so.edit=false;
   							}
   							else{	
+  								returnedSupplementalObservation.checked = true;
 								question.Responses.SupplementalObservations.push(returnedSupplementalObservation);
 								question.savingNew = false;
   							}
@@ -558,7 +579,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 		        Class:          "RelationshipDto",
 		        Master_id :     question.Responses.Key_id,
 		        Relation_id:    recommendation.Key_id,
-		        add:            !recommendation.checked,
+		        add:            !recommendation.checked
 		    }
         	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
 		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
@@ -583,7 +604,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 		        Class:          "RelationshipDto",
 		        Master_id :     question.Responses.Key_id,
 		        Relation_id:    observation.Key_id,
-		        add:            !observation.checked,
+		        add:            !observation.checked
 		    }
         	var url = '../../ajaxaction.php?action=saveObservationRelation';
 		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
@@ -601,6 +622,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.getRecommendationChecked = function( question, recommendation )
 	    {
+	    	if(recommendation.checked)return true;
 	    	var i = question.Responses.Recommendations.length;
 	    	if(i==0)return false;
 	    	var ids = [];
@@ -615,6 +637,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.getObservationChecked = function( question, observation )
 	    {
+	    	if(observation.checked)return true;
 	    	var i = question.Responses.Observations.length;
 	    	if(i==0)return false;
 	    	var ids = [];
@@ -631,6 +654,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    {
 	    	$rootScope.SupplementalRecommendationCopy = convenienceMethods.copyObject(recommendation)
 	    	this.saveSupplementalRecommendation( question, false, recommendation, true );
+	    }
+
+	    factory.supplementalObservationChanged = function( question, observation )
+	    {
+	    	$rootScope.SupplementalObservationCopy = convenienceMethods.copyObject(observation)
+	    	this.saveSupplementalObservation( question, false, observation, true );
 	    }
 
 
