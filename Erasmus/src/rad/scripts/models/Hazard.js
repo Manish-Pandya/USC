@@ -14,7 +14,33 @@ Hazard.prototype = {
 
 	},
 
-	SaveUrl:  'saveHazard'
+	SaveUrl:  'saveHazard',
+
+	getSubHazards: function()
+	{
+			if( dataStoreManager.checkCollection( 'Hazards' ) ){                    
+                    this.SubHazards = dataStoreManager.getChildrenByParentProperty( 'Hazard', 'Parent_hazard_id', this.Key_id );                                                                 
+            }
+            else if(this.SubHazards){
+            		return this.SubHazards;
+            }
+            else{
+            		var local = this;
+
+                    var urlFragment = this.PrincipalInvestigatorRoomRelationRelationship.queryString;
+                    var queryParam = this[this.PrincipalInvestigatorRoomRelationRelationship.queryParam];
+
+                    this.rootScope[this.Class+"sBusy"] = this.api.read( urlFragment, queryParam )
+                        .then(
+                            function( returnedPromise ){
+                                local.PrincipalInvestigatorRoomRelations = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
+                            },
+                            function( error ){
+
+                            }
+                        )
+            }
+	},
 
 }
 

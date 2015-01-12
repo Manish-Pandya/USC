@@ -31,9 +31,12 @@ dataStoreManager.store = function( object, trusted, flavor )
             if( !flavor ){
                 dataStoreManager.addToCollection( object[0].Class+'s', trusted );
                 dataStore[object[0].Class+'s'] = object;
+                dataStoreManager.mapCache(object[0].Class);
+
             }else{
                 dataStoreManager.addToCollection( flavor );
                 dataStore[flavor] = object;
+                dataStoreManager.mapCache(object[0].Class);
             }
 
         }
@@ -82,6 +85,7 @@ dataStoreManager.getById = function( objectFlavor, key_id )
 {
     //we are looking for a single object.  we don't have that object cached, but we DO have a collection of all such objects
     //find the object in the collection
+    /*
     var array = dataStore[objectFlavor+'s'];
     var len = array.length;
 
@@ -93,6 +97,11 @@ dataStoreManager.getById = function( objectFlavor, key_id )
              return current;
         }
     }
+    */
+     // get index of this room in the cache, no looping anymore!
+    var location = dataStore[objectFlavor+'sMap'][key_id];
+    console.log(dataStore[objectFlavor+'sMap']);
+    return dataStore[objectFlavor+'s'][location];
 }
 
 dataStoreManager.getIfExists = function( objectFlavor, key_id )
@@ -160,8 +169,6 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
         if(!dataStore[collectionType+'s']){
             return 'Not found';
         }else{
-                            console.log(dataStore[collectionType]);
-
             //store the lenght of the appropriate collection
             var i = dataStore[collectionType+'s'].length;
             var collectionToReturn = [];
@@ -177,5 +184,44 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
             return collectionToReturn;
 
         }
+
+}
+
+dataStoreManager.getRelatedItems = function( type, relationsip, key, foreign_key )
+{
+        if(!dataStore[type+'s']){
+            return 'Not found';
+        }else{
+            //store the length of the appropriate collection
+            var i = dataStore[type+'s'].length;
+            var collectionToReturn = [];
+            while(i--){
+                var j = relationsip.length
+                while(j--){
+                    var current = dataStore[type+'s'][i];
+                    if(current[foreign_key] == relationsip[j][key]){
+                        collectionToReturn.push(current);
+                    }
+                }
+                
+            }
+
+            return collectionToReturn;
+
+        }
+}
+
+dataStoreManager.mapCache = function( cacheClass )
+{
+    dataStore[cacheClass+'sMap'] = [];
+    var stuff = this.get(cacheClass+'s');
+    var length = stuff.length;
+    var cachePosition = 0; 
+
+    while(length--){
+        var targetId = stuff[cachePosition].Key_id;
+        dataStore[cacheClass+'sMap'][targetId] = cachePosition;
+        cachePosition++;
+    }
 
 }
