@@ -90,7 +90,7 @@ require_once '../top_view.php';
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
-					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.Questions.length, 'green' : checklist.completedQuestions==checklist.Questions.length}">{{checklist.completedQuestions}}/{{checklist.Questions.length}}</span></h2>
+					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.Questions.length, 'green' : checklist.completedQuestions==checklist.Questions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.Questions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
 		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">
