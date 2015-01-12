@@ -450,6 +450,569 @@ angular
             }
 
 
+            /********************************************************************
+            **
+            **      AUTHORIZATION            **
+            ********************************************************************/
+
+            af.getAuthorizationById = function( key_id )
+            {
+                var urlSegment = 'getAuthorizationById&id=' + key_id;
+
+                if( store.checkCollection( 'Authorization', key_id ) ) {
+                    var authorization = store.getById( 'Authorization', key_id )
+                        .then(function(authorization) {
+                            return authorization;
+                        });
+                }
+                else {
+                    var authorization = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store authorization in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return authorization;
+            }
+
+            af.getAllAuthorizations = function( key_id )
+            {
+                var urlSegment = 'getAllAuthorizations';
+
+                if( store.checkCollection('Authorizations') ) {
+                    var authorizations = store.get( 'Authorizations' ).then(function(authorization) {
+                        return authorization;
+                    });
+                }
+                else {
+                    var authorizations = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var authorizations = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( authorizations );
+                            return store.get( 'Authorizations' );
+                        });
+                }
+                return authorizations;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      CARBOY            **
+            ********************************************************************/
+
+            af.getCarboyById = function( key_id )
+            {
+                var urlSegment = 'getCarboyById&id=' + key_id;
+
+                if( store.checkCollection( 'Carboy', key_id ) ) {
+                    var carboy = store.getById( 'Carboy', key_id )
+                        .then(function(carboy) {
+                            return carboy;
+                        });
+                }
+                else {
+                    var carboy = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store carboy in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return carboy;
+            }
+
+            af.getAllCarboys = function( key_id )
+            {
+                var urlSegment = 'getAllCarboys';
+
+                if( store.checkCollection('Carboys') ) {
+                    var carboys = store.get( 'Carboys' ).then(function(carboy) {
+                        return carboy;
+                    });
+                }
+                else {
+                    var carboys = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var carboys = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( carboys );
+                            return store.get( 'Carboys' );
+                        });
+                }
+                return carboys;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      DRUM            **
+            ********************************************************************/
+
+            af.getDrumById = function( key_id )
+            {
+                var urlSegment = 'getDrumById&id=' + key_id;
+
+                if( store.checkCollection( 'Drum', key_id ) ) {
+                    var drum = store.getById( 'Drum', key_id )
+                        .then(function(drum) {
+                            return drum;
+                        });
+                }
+                else {
+                    var drum = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store drum in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return drum;
+            }
+
+            af.getAllDrums = function( key_id )
+            {
+                var urlSegment = 'getAllDrums';
+
+                if( store.checkCollection('Drums') ) {
+                    var drums = store.get( 'Drums' ).then(function(drum) {
+                        return drum;
+                    });
+                }
+                else {
+                    var drums = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var drums = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( drums );
+                            return store.get( 'Drums' );
+                        });
+                }
+                return drums;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PARCEL            **
+            ********************************************************************/
+
+            af.getParcelById = function( key_id )
+            {
+                var urlSegment = 'getParcelById&id=' + key_id;
+
+                if( store.checkCollection( 'Parcel', key_id ) ) {
+                    var parcel = store.getById( 'Parcel', key_id )
+                        .then(function(parcel) {
+                            return parcel;
+                        });
+                }
+                else {
+                    var parcel = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store parcel in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return parcel;
+            }
+
+            af.getAllParcels = function( key_id )
+            {
+                var urlSegment = 'getAllParcels';
+
+                if( store.checkCollection('Parcels') ) {
+                    var parcels = store.get( 'Parcels' ).then(function(parcel) {
+                        return parcel;
+                    });
+                }
+                else {
+                    var parcels = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var parcels = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( parcels );
+                            return store.get( 'Parcels' );
+                        });
+                }
+                return parcels;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PARCELUSE            **
+            ********************************************************************/
+
+            af.getParcelUseById = function( key_id )
+            {
+                var urlSegment = 'getParcelUseById&id=' + key_id;
+
+                if( store.checkCollection( 'ParcelUse', key_id ) ) {
+                    var parceluse = store.getById( 'ParcelUse', key_id )
+                        .then(function(parceluse) {
+                            return parceluse;
+                        });
+                }
+                else {
+                    var parceluse = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store parceluse in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return parceluse;
+            }
+
+            af.getAllParcelUses = function( key_id )
+            {
+                var urlSegment = 'getAllParcelUses';
+
+                if( store.checkCollection('ParcelUses') ) {
+                    var parceluses = store.get( 'ParcelUses' ).then(function(parceluse) {
+                        return parceluse;
+                    });
+                }
+                else {
+                    var parceluses = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var parceluses = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( parceluses );
+                            return store.get( 'ParcelUses' );
+                        });
+                }
+                return parceluses;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PARCELUSEAMOUNT            **
+            ********************************************************************/
+
+            af.getParcelUseAmountById = function( key_id )
+            {
+                var urlSegment = 'getParcelUseAmountById&id=' + key_id;
+
+                if( store.checkCollection( 'ParcelUseAmount', key_id ) ) {
+                    var parceluseamount = store.getById( 'ParcelUseAmount', key_id )
+                        .then(function(parceluseamount) {
+                            return parceluseamount;
+                        });
+                }
+                else {
+                    var parceluseamount = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store parceluseamount in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return parceluseamount;
+            }
+
+            af.getAllParcelUseAmounts = function( key_id )
+            {
+                var urlSegment = 'getAllParcelUseAmounts';
+
+                if( store.checkCollection('ParcelUseAmounts') ) {
+                    var parceluseamounts = store.get( 'ParcelUseAmounts' ).then(function(parceluseamount) {
+                        return parceluseamount;
+                    });
+                }
+                else {
+                    var parceluseamounts = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var parceluseamounts = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( parceluseamounts );
+                            return store.get( 'ParcelUseAmounts' );
+                        });
+                }
+                return parceluseamounts;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PICKUP            **
+            ********************************************************************/
+
+            af.getPickupById = function( key_id )
+            {
+                var urlSegment = 'getPickupById&id=' + key_id;
+
+                if( store.checkCollection( 'Pickup', key_id ) ) {
+                    var pickup = store.getById( 'Pickup', key_id )
+                        .then(function(pickup) {
+                            return pickup;
+                        });
+                }
+                else {
+                    var pickup = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store pickup in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return pickup;
+            }
+
+            af.getAllPickups = function( key_id )
+            {
+                var urlSegment = 'getAllPickups';
+
+                if( store.checkCollection('Pickups') ) {
+                    var pickups = store.get( 'Pickups' ).then(function(pickup) {
+                        return pickup;
+                    });
+                }
+                else {
+                    var pickups = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var pickups = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( pickups );
+                            return store.get( 'Pickups' );
+                        });
+                }
+                return pickups;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PRINCIPALINVESTIGATOR            **
+            ********************************************************************/
+
+            af.getPrincipalInvestigatorById = function( key_id )
+            {
+                var urlSegment = 'getPrincipalInvestigatorById&id=' + key_id;
+
+                if( store.checkCollection( 'PrincipalInvestigator', key_id ) ) {
+                    var principalinvestigator = store.getById( 'PrincipalInvestigator', key_id )
+                        .then(function(principalinvestigator) {
+                            return principalinvestigator;
+                        });
+                }
+                else {
+                    var principalinvestigator = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store principalinvestigator in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return principalinvestigator;
+            }
+
+            af.getAllPrincipalInvestigators = function( key_id )
+            {
+                var urlSegment = 'getAllPrincipalInvestigators';
+
+                if( store.checkCollection('PrincipalInvestigators') ) {
+                    var principalinvestigators = store.get( 'PrincipalInvestigators' ).then(function(principalinvestigator) {
+                        return principalinvestigator;
+                    });
+                }
+                else {
+                    var principalinvestigators = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var principalinvestigators = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( principalinvestigators );
+                            return store.get( 'PrincipalInvestigators' );
+                        });
+                }
+                return principalinvestigators;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      PURCHASEORDER            **
+            ********************************************************************/
+
+            af.getPurchaseOrderById = function( key_id )
+            {
+                var urlSegment = 'getPurchaseOrderById&id=' + key_id;
+
+                if( store.checkCollection( 'PurchaseOrder', key_id ) ) {
+                    var purchaseorder = store.getById( 'PurchaseOrder', key_id )
+                        .then(function(purchaseorder) {
+                            return purchaseorder;
+                        });
+                }
+                else {
+                    var purchaseorder = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store purchaseorder in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return purchaseorder;
+            }
+
+            af.getAllPurchaseOrders = function( key_id )
+            {
+                var urlSegment = 'getAllPurchaseOrders';
+
+                if( store.checkCollection('PurchaseOrders') ) {
+                    var purchaseorders = store.get( 'PurchaseOrders' ).then(function(purchaseorder) {
+                        return purchaseorder;
+                    });
+                }
+                else {
+                    var purchaseorders = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var purchaseorders = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( purchaseorders );
+                            return store.get( 'PurchaseOrders' );
+                        });
+                }
+                return purchaseorders;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      SOLIDSCONTAINER            **
+            ********************************************************************/
+
+            af.getSolidsContainerById = function( key_id )
+            {
+                var urlSegment = 'getSolidsContainerById&id=' + key_id;
+
+                if( store.checkCollection( 'SolidsContainer', key_id ) ) {
+                    var solidscontainer = store.getById( 'SolidsContainer', key_id )
+                        .then(function(solidscontainer) {
+                            return solidscontainer;
+                        });
+                }
+                else {
+                    var solidscontainer = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store solidscontainer in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return solidscontainer;
+            }
+
+            af.getAllSolidsContainers = function( key_id )
+            {
+                var urlSegment = 'getAllSolidsContainers';
+
+                if( store.checkCollection('SolidsContainers') ) {
+                    var solidscontainers = store.get( 'SolidsContainers' ).then(function(solidscontainer) {
+                        return solidscontainer;
+                    });
+                }
+                else {
+                    var solidscontainers = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var solidscontainers = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( solidscontainers );
+                            return store.get( 'SolidsContainers' );
+                        });
+                }
+                return solidscontainers;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      WASTEBAG            **
+            ********************************************************************/
+
+            af.getWasteBagById = function( key_id )
+            {
+                var urlSegment = 'getWasteBagById&id=' + key_id;
+
+                if( store.checkCollection( 'WasteBag', key_id ) ) {
+                    var wastebag = store.getById( 'WasteBag', key_id )
+                        .then(function(wastebag) {
+                            return wastebag;
+                        });
+                }
+                else {
+                    var wastebag = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store wastebag in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return wastebag;
+            }
+
+            af.getAllWasteBags = function( key_id )
+            {
+                var urlSegment = 'getAllWasteBags';
+
+                if( store.checkCollection('WasteBags') ) {
+                    var wastebags = store.get( 'WasteBags' ).then(function(wastebag) {
+                        return wastebag;
+                    });
+                }
+                else {
+                    var wastebags = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var wastebags = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( wastebags );
+                            return store.get( 'WasteBags' );
+                        });
+                }
+                return wastebags;
+            }
+
+
+
+            /********************************************************************
+            **
+            **      WASTETYPE            **
+            ********************************************************************/
+
+            af.getWasteTypeById = function( key_id )
+            {
+                var urlSegment = 'getWasteTypeById&id=' + key_id;
+
+                if( store.checkCollection( 'WasteType', key_id ) ) {
+                    var wastetype = store.getById( 'WasteType', key_id )
+                        .then(function(wastetype) {
+                            return wastetype;
+                        });
+                }
+                else {
+                    var wastetype = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store wastetype in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return wastetype;
+            }
+
+            af.getAllWasteTypes = function( key_id )
+            {
+                var urlSegment = 'getAllWasteTypes';
+
+                if( store.checkCollection('WasteTypes') ) {
+                    var wastetypes = store.get( 'WasteTypes' ).then(function(wastetype) {
+                        return wastetype;
+                    });
+                }
+                else {
+                    var wastetypes = genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var wastetypes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( wastetypes );
+                            return store.get( 'WasteTypes' );
+                        });
+                }
+                return wastetypes;
+            }
+
+
 
             /********************************************************************
             **
