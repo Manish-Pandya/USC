@@ -416,6 +416,7 @@ class ActionManager {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getSubhazards");
 		$entityMaps[] = new EntityMap("eager","getActiveSubhazards");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -437,7 +438,7 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-		$entityMaps[] = new EntityMap("lazy","getHasChildren");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 
 		foreach ($hazards as &$hazard){
@@ -1004,7 +1005,6 @@ class ActionManager {
 		return $dao->getAll();
 	}
 
-
 	public function getAllRooms(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -1039,6 +1039,14 @@ class ActionManager {
 		}
 
 		return $rooms;
+	}
+
+	public function getAllPrincipalInvestigatorRoomRelations(){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$dao = $this->getDao(new PrincipalInvestigatorRoomRelation());
+
+		return $dao->getAll();
 	}
 
 	public function getRoomsByPIId( $id = NULL ){
@@ -2824,6 +2832,7 @@ class ActionManager {
 			$rooms = $pi->getRooms();
 			$pi_bldg_rooms = array();
 			foreach ($rooms as $room){
+				$LOG->debug($room);
 				$bldg = $room->getBuilding();
 				if ($bldg->getKey_id() == $is->getBuilding_key_id()){
 					$pi_bldg_rooms[] = $room;
