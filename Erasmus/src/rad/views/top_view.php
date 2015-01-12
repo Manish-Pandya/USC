@@ -64,6 +64,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- Required for the ORM framework -->
+<!-- TODO include everything in certain directories by default -->
 
 <!-- app -->
 <script type="text/javascript" src="../scripts/app.js"></script>
@@ -90,9 +91,21 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../scripts/dataStore/dataManager.js"></script>
 
 <!-- models -->
-<script src="../scripts/models/User.js"></script>
-<script src="../scripts/models/PrincipalInvestigator.js"></script>
+<script src="../scripts/models/Authorization.js"></script>
+<script src="../scripts/models/Carboy.js"></script>
+<script src="../scripts/models/Drum.js"></script>
 <script src="../scripts/models/Hazard.js"></script>
+<script src="../scripts/models/Isotope.js"></script>
+<script src="../scripts/models/Parcel.js"></script>
+<script src="../scripts/models/ParcelUse.js"></script>
+<script src="../scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
+<script src="../scripts/models/Pickup.js"></script>
+<script src="../scripts/models/PrincipalInvestigator.js"></script>
+<script src="../scripts/models/PurchaseOrder.js"></script>
+<script src="../scripts/models/SolidsContainer.js"></script>
+<script src="../scripts/models/User.js"></script>
+<script src="../scripts/models/WasteBag.js"></script>
+<script src="../scripts/models/WasteType.js"></script>
 
 
 <script>
