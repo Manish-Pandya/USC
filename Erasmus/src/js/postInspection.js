@@ -606,6 +606,26 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     return false;
   }
 
+  $scope.todayOrAfter = function(d){
+    var calDate = Date.parse(d);
+    //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
+    var now = new Date(),
+    then = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,0,0),
+    diff = now.getTime() - then.getTime()
+
+    var today = Date.parse(now)-diff;
+ 
+    console.log(today);
+    if(calDate>=today){
+      return true;
+    }
+    return false;
+  }
+
   $scope.saveCorrectiveAction = function(def){
     def.CorrectiveActionCopy.isDirty = true;
 
@@ -645,7 +665,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     def.CorrectiveActionCopy = angular.copy(def.CorrectiveActions[0]);
   }
 
-  $scope.setViewDate = function(date){
+  $scope.setViewDate = function( date ){
+    if(!date)return convenienceMethods.getDate(convenienceMethods.setMysqlTime(Date())).formattedString;
     console.log(date);
     return convenienceMethods.getDate(date).formattedString;
   }
