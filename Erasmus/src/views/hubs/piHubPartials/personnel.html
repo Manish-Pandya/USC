@@ -1,8 +1,11 @@
 <!--
 <input style="" type="text"  typeahead-on-select='onSelectUser($item)' ng-model="selectedUser" placeholder="Add a lab contact" typeahead="user as user.Name for user in users | filter:$viewValue"><img ng-show="selectedUser.IsDirty" class="smallLoading" src="../../../img/loading.gif"/>
 -->
-
-<table class="roomList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
+<div class="container loading" ng-hide="noPiSet" ng-if="!PI || !PI.LabPersonnel">
+	<i class="icon-spinnery-dealie spinner large"></i>  
+	<span>Getting Lab Personnel...</span>
+</div>
+<table class="roomList table table-striped table-hover list" id="rooms" style="margin-top: 12px" ng-if="PI">
 <thead>
 	<tr>
 		<td colspan="6" style="padding:3px 0;" class="greenBg">
