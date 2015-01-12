@@ -40,6 +40,7 @@ class ActionMappingFactory {
 	 */
 	public function getConfig(){
 		return array(
+
 				//TODO: Correct action names
 				//TODO: Assign locations
 				//TODO: Assign roles
@@ -178,6 +179,10 @@ class ActionMappingFactory {
 				"getCurrentYear"=>new ActionMapping("getCurrentYear", "", ""),
 				"getInspectionSchedule"=>new ActionMapping("getInspectionSchedule", "", ""),
 				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
+
+
+				//GENERIC RELATIONSHIPS
+				"getRelationships"=>new ActionMapping("getRelationships", "", ""),
 		);
 	}
 }

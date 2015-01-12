@@ -13,7 +13,7 @@ class ActionManager {
 
 	private $daoFactory;
 	private $isTestModeEnabled;
-	
+
 	// during construction, can change daoFactory, for example for testing purposes
 	public function __construct( &$daoFactory ) {
 		// default to factory providing GenericDao, required for normal operation
@@ -22,16 +22,16 @@ class ActionManager {
 		}
 		$this->daoFactory = $daoFactory;
 	}
-	
+
 	public function setDaoFactory( &$newFactory ) {
 		$this->daoFactory = $newFactory;
 	}
-	
+
 	// will determine whether ActionManager actually uses JsonManager or not.
 	public function setTestMode( $newValue ) {
 		$this->isTestModeEnabled = $newValue;
 	}
-	
+
 	public function isTestModeEnabled() {
 		return $this->isTestModeEnabled;
 	}
@@ -71,7 +71,7 @@ class ActionManager {
 		if( $this->isTestModeEnabled() ) {
 			return $_REQUEST["testInput"];
 		}
-		
+
 		try{
 			$decodedObject = JsonManager::decodeInputStream();
 
@@ -432,7 +432,7 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-		$entityMaps[] = new EntityMap("lazy","getHasChildren");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 
 		foreach ($hazards as &$hazard){
@@ -728,9 +728,9 @@ class ActionManager {
 				foreach ($roomIds as $id){
 					$dao->removeRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
 				}
-				
+
 				//if we have removed all the rooms, delete this DeficiencySelection
-				
+
 				//clear out our rooms
 				$ds->setRooms(null);
 				//get a new collection from the db
@@ -739,7 +739,7 @@ class ActionManager {
 					$dao->deleteById($ds->getKey_id());
 				}
 
-   				
+
 			// else if no roomIds were provided, then just delete this DeficiencySelection
 			} else {
 				$dao->deleteById($ds->getKey_id());
@@ -2189,9 +2189,9 @@ class ActionManager {
 				return true;
 			}
 
-			$selection = $dao->getById($ds->getKey_id());	
+			$selection = $dao->getById($ds->getKey_id());
 			$LOG->debug($selection);
-			
+
 			return $selection;
 
 		}
@@ -2803,6 +2803,20 @@ class ActionManager {
 
 	public function getCurrentYear(){
 		return date("Y");
+	}
+
+	public function getRelationships( $class1 = NULL, $class2 = NULL ){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
+		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+
+		$dao = new GenericDAO();
+		$relationshipDao = new RelationshipMappingFactory();
+		$tableName = $relationshipDao->getTableName($class1, $class2);
+		$LOG->debug($dao->getRelationships($tableName));
+		return $dao->getRelationships($tableName);
+
 	}
 }
 ?>

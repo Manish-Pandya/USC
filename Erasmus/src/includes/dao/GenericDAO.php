@@ -517,8 +517,31 @@ class GenericDAO {
 		}
 
 		return $result;
-					
-		
+	}
+
+	function getRelationships( $tableName ){
+		$this->LOG->debug("about to get relationships from $tableName");
+
+		global $db;
+
+		$stmt = $db->prepare('SELECT * FROM ' . $tableName);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+			foreach($result as $row){
+				$row->passFlag = true;
+			}
+			$this->LOG->debug($result);
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+
+
+		return $result;
 	}
 
 
