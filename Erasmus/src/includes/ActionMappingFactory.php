@@ -53,12 +53,13 @@ class ActionMappingFactory {
 
 				// PI Hub
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
-				"getRoomsByPI"=>new ActionMapping("getRoomsByPI", "", ""),
+				"getRoomsByPIId"=>new ActionMapping("getRoomsByPIId", "", ""),
 				"getPIById"=>new ActionMapping("getPIById", "", ""),
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
 				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
 				"savePIDepartmentRelation"=>new ActionMapping("savePIDepartmentRelation", "", ""),
 				"savePI"=>new ActionMapping("savePI", "", ""),
+				"getAllPrincipalInvestigatorRoomRelations"=>new ActionMapping("getAllPrincipalInvestigatorRoomRelations", "", ""),
 
 				// Checklist Hub
 				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
