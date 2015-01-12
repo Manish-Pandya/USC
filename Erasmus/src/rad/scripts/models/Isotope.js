@@ -12,5 +12,5 @@ Isotope.prototype = {
 extend(Isotope, GenericModel);
 
 angular
-    .module("Isotope", [])
-    .value("PrincipalInvestigator", PrincipalInvestigator);
+    .module("isotope", [])
+    .value("Isotope", Isotope);
