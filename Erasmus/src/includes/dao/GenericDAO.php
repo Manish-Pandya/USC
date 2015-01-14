@@ -509,7 +509,7 @@ class GenericDAO {
 		
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $classname);
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $className);
 			// ... otherwise, die and echo the db error
 		} else {
 			$error = $stmt->errorInfo();
