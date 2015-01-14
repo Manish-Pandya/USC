@@ -119,11 +119,28 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         
 
 	function getPi(PIKeyID){
+		$scope.noPiSet = false;
 		$scope.PI = false;
 		var url = '../../ajaxaction.php?action=getPIById&id='+PIKeyID+'&callback=JSON_CALLBACK';
-		convenienceMethods.getData( url, onGetPI, onFailGetPI );
-		$scope.noPiSet = false;
+		convenienceMethods.getDataAsDeferredPromise(url)
+			.then(getRoomsByPi);
 	}
+
+	function getRoomsByPi(pi){
+		var url = '../../ajaxaction.php?action=getRoomsByPIId&piId='+pi.Key_id+'&callback=JSON_CALLBACK';
+		convenienceMethods.getDataAsDeferredPromise(url)
+			.then(
+				function( rooms ){
+					pi.Rooms = rooms;
+					$scope.PI = pi;
+					$scope.noPiSet = false;
+				},
+				function( error ){
+					$scope.error = "The system couldn't retrieve the selected Principal Investigator.  Please check your internet connection and try again."
+				}
+			);
+
+	} 
 
 	function onGetPI(data){
 		console.log(data);

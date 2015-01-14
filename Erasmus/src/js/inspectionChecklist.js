@@ -43,7 +43,7 @@ inspectionChecklist.run(function($rootScope, $templateCache) {
         return checklistHolder;
       };
 
-      factory.getQuestionsByChecklist = function(checklist){
+      factory.getQuestionsByChecklist = function( checklist ){
         return checklist.Questions;
       }
 

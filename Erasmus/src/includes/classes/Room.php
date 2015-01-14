@@ -167,11 +167,9 @@ class Room extends GenericCrud {
 		global $db;
 
 		$queryString = "SELECT COUNT(*) FROM hazard_room WHERE room_id = " . $this->key_id;
-		$LOG->debug("query: " . $queryString . " " . $this->key_id);
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$number_of_rows = $stmt->fetchColumn();
-		$LOG->debug($number_of_rows);
 		if($number_of_rows > 0) $this->has_hazards =  true;
 		return $this->has_hazards;
 	}

@@ -45,7 +45,7 @@
 					<input ng-if="campus.edit" ng-model="copy.Name">
 					<span class="absoluteBtns" style="margin-top:0">
 						<a class="btn-success btn left" ng-click="saveCampus(campus)" ng-if="copy.Name"><i class="icon-checkmark"></i>Save</a>
-						<a class="btn-success btn left" ng-if="!copy.Name" disable="disabled"><i class="icon-checkmark" disabled="disabled"></i>Save</a>
+						<a class="btn-success btn left" ng-if="!copy.Name" disabled="disabled"><i class="icon-checkmark" disabled="disabled"></i>Save</a>
 						<a class="btn-danger btn left" ng-click="lhf.cancelEdit(campus, campuses)"><i class="icon-cancel-2"></i>Cancel</a>
 						<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
 					</span>

@@ -1,18 +1,27 @@
-<table class="roomList table table-striped table-hover list" id="rooms">
+<div class="container loading" ng-hide="noPiSet" ng-if="!PI || !PI.Rooms">
+	<i class="icon-spinnery-dealie spinner large"></i>  
+	<span>Getting Rooms...</span>
+</div>
+<table class="roomList table table-striped table-hover list" id="rooms" ng-if="PI.Rooms">
 <thead>
 	<tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
-	<tr><td colspan="5"><a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large">Assign Room</a><a href="#roomModal" ng-click="modalify(PI,true)" class="btn btn-primary btn-large">Create Room</a></tr>
+	<tr>
+		<td colspan="5">
+			<a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large left">Assign Room</a>
+			<a href="locationhub.php" class="btn btn-primary btn-large left">Create Room</a>
+		</td>
+	</tr>
 	<tr>
 		<th>Remove Room</th><!--<th>Campus</th>--><th>Building</th><th>Room Number</th><th>Room Hazards</th>
 	</tr>
 </thead>
 <tbody>
-	<tr ng-repeat="room in PI.Rooms">
-		<td><a class="btn btn-danger btn-large removeRow" ng-click="removeRoom(room)" href="#"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif"/></td>
+	<tr ng-repeat="room in PI.Rooms | orderBy:'Name'">
+		<td><a class="btn btn-danger btn-large removeRow left" ng-click="removeRoom(room)" href="#"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif"/></td>
 		<!--<td width="25%">{{room.Capmus}}</td>-->
 		<td width="25%">{{room.Building.Name}}</td>
 		<td width="25%">{{room.Name}}</td>
-		<td><a class="edit btn btn-large btn-warning" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a></td>
+		<td><a class="edit btn btn-large btn-warning left" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a></td>
 	</tr>
 </tbody>
 </table>
@@ -26,9 +35,9 @@
     	<div class="control-group">
          <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls">
-            <input style="" ng-if="buildings" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
+            <input style="width:315px;" ng-if="buildings" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
             <span ng-if="!buildings">
-	        	<input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
+	        	<input class="span4" style="background:white;border-color:#999; width:315px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
 		       	<img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	        </span>
          </div>
@@ -36,7 +45,7 @@
 
 	   <h3 ng-show="chosenBuilding">Rooms in {{chosenBuilding.Name}}:</h3>
 	   <ul ng-show="!addRoom">
-	   		<li ng-repeat="room in chosenBuilding.Rooms">
+	   		<li ng-repeat="room in chosenBuilding.Rooms | orderBy:'Name'">
 	   			<label class="checkbox inline">
 					<input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
 					<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
