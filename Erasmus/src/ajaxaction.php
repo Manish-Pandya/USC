@@ -3,10 +3,10 @@
  * This script is responsible for parsing the incoming request/session
  * dispatching the requested action, and forwarding to the appropriate
  * destination.
- * 
+ *
  * The request is treated as an AJAX request whose action result will
  * be displayed
- */ 
+ */
 ?><?php
 
 //Setup basic action data
@@ -23,7 +23,8 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 
 // JSON-Encode result
 $json = JsonManager::encode($actionResult->actionFunctionResult);
-
+$LOG = Logger::getLogger('json manager result');
+//$LOG->debug($json);
 $output = $json;
 
 //If a callback function is requested
@@ -34,6 +35,7 @@ if( array_key_exists('callback', $_GET) ){
 
 // begin output
 // TODO: Will we ever need to use a different header?
+header('Access-Control-Allow-Origin: *');
 header('content-type: application/javascript');
 
 // Set the HTTP status code. ActionResult defaults this to 200

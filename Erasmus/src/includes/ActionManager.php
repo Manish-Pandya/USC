@@ -2760,6 +2760,7 @@ class ActionManager {
 
 		$dao = $this->getDao(new Inspection());
 		$inspectionSchedules = $dao->getInspectionsByYear($year);
+		return $inspectionSchedules;
 
 		foreach ($inspectionSchedules as &$is){
 			if ($is->getInspection_id() !== null){
@@ -2812,7 +2813,7 @@ class ActionManager {
 		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
 
 		$dao = new GenericDAO();
-		$relationshipDao = new RelationshipMappingFactory();
+		$relationshipDao = new RelationshipMappingFactory(new GenericCrud());
 		$tableName = $relationshipDao->getTableName($class1, $class2);
 		$LOG->debug($dao->getRelationships($tableName));
 		return $dao->getRelationships($tableName);

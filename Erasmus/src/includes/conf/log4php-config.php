@@ -18,7 +18,7 @@ return array(
 			),
 			'level' => 'INFO'
 		),
-			
+
 		'ErrorHandler' => array(
 			'appenders' => array(
 				'logFileAppender',
@@ -26,7 +26,7 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
-		
+
 		'DtoManager' => array(
 			'appenders' => array(
 				'logFileAppender',
@@ -34,7 +34,7 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
-		
+
 		'ValidationManager' => array(
 			'appenders' => array(
 				'logFileAppender',
@@ -42,15 +42,15 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
-		
+
 		'JsonManager' => array(
 			'appenders' => array(
 				'logFileAppender',
 				'htmlFileAppender',
 			),
-			'level' => 'TRACE'
+			'level' => 'DEBUG'
 		),
-		
+
 		'ActionDispatcher' => array(
 			'appenders' => array(
 				'logFileAppender',
@@ -58,7 +58,7 @@ return array(
 			),
 			'level' => 'TRACE'
 		),
-		
+
 		//Action Functions
 		'Action:moveHazardToParent' => array(
 			'appenders' => array(
@@ -68,7 +68,7 @@ return array(
 			'level' => 'TRACE'
 		),
 	),
-	
+
 	//Appenders
 	'appenders' => array(
 		'logFileAppender' => array(
@@ -84,7 +84,7 @@ return array(
 				'append' => true
 			)
 		),
-		
+
 		'htmlFileAppender' => array(
 			'class' => 'LoggerAppenderRollingFile',
 			'layout' => array(

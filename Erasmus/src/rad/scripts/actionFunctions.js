@@ -77,6 +77,10 @@ angular
                     return object;
             }
 
+            af.getById = function( objectFlavor, key_id )
+            {
+                    return store.getById(objectFlavor, key_id );       
+            }
 
         	/********************************************************************
         	**

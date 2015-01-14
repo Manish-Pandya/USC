@@ -61,7 +61,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
-
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
 
 <!-- Required for the ORM framework -->
 <!-- TODO include everything in certain directories by default -->
@@ -79,6 +79,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../scripts/controllers/hazardHub.js"></script>
 <script type="text/javascript" src="../scripts/controllers/hazardInventory.js"></script>
 <script type="text/javascript" src="../scripts/controllers/testCtrl.js"></script>
+<script type="text/javascript" src="../scripts/controllers/radmin.js"></script>
+<script type="text/javascript" src="../scripts/controllers/pi.js"></script>
 
 <!-- directives -->
 <script type="text/javascript" src="../scripts/directives/hazardHubDirectives.js"></script>
@@ -119,3 +121,4 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 </script>
 </head>
 <body>
+asdf

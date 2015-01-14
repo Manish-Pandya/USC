@@ -83,24 +83,8 @@ dataStoreManager.get = function( objectFlavor )
 
 dataStoreManager.getById = function( objectFlavor, key_id )
 {
-    //we are looking for a single object.  we don't have that object cached, but we DO have a collection of all such objects
-    //find the object in the collection
-    /*
-    var array = dataStore[objectFlavor+'s'];
-    var len = array.length;
-
-    for(var i =0; i<len; i++){
-        var current = array[i];
-        if( current.getKey_id() == key_id ){
-             //set the object in the cache, then resolve the promise with it
-             dataStoreManager.store( current );
-             return current;
-        }
-    }
-    */
-     // get index of this room in the cache, no looping anymore!
+    // get index of this room in the cache, no looping anymore!
     var location = dataStore[objectFlavor+'sMap'][key_id];
-    console.log(dataStore[objectFlavor+'sMap']);
     return dataStore[objectFlavor+'s'][location];
 }
 
@@ -164,7 +148,6 @@ dataStoreManager.deleteCopy = function( object )
 
 dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
 {
-        console.log()
 
         if(!dataStore[collectionType+'s']){
             return 'Not found';
@@ -213,8 +196,10 @@ dataStoreManager.getRelatedItems = function( type, relationsip, key, foreign_key
 
 dataStoreManager.mapCache = function( cacheClass )
 {
+    console.log(cacheClass+'sMap');
     dataStore[cacheClass+'sMap'] = [];
     var stuff = this.get(cacheClass+'s');
+    console.log(stuff);
     var length = stuff.length;
     var cachePosition = 0; 
 

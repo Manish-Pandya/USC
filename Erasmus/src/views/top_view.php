@@ -59,29 +59,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-infinite-scroll.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/binary-search.js"></script>
 
-<script>
-  $(function() {
-    $( ".sortable" ).sortable({
-      placeholder: "ui-state-highlight"
-    });
-    $( ".sortable" ).disableSelection();
-  });
-</script>
+
 </head>
 <body>
 <!-- main navigation  ng-app ng-controller="wrapperAppController" -->
 <div class="container-fluid " id="wrapper">
-<!--
-<div class="navbar" id="nav">
-  <div class="navbar-inner">
-    <a class=" siteTitle brand" href="<?php echo WEB_ROOT?>views/RSMScenter.php">Research Safety Management System</a>
-    <ul class="nav">
-      <li class="divider-vertical"></li>
-      <li><a href="#">Link</a></li>
-      <li class="divider-vertical"></li>
-      <li><a href="#">Link</a></li>
-    </ul>
-  </div>
-</div>
--->

@@ -16,10 +16,31 @@ angular
     'actionFunctionsModule',
     'cgBusy',
     'ui.bootstrap',
-    'once'
+    'once',
+    'ui.router'
     //'ngMockE2E'
   ])
-  .config(function ($routeProvider,$httpProvider,$sceDelegateProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $sceDelegateProvider) {
+
+    console.log('config')
+    $urlRouterProvider.otherwise("/home");
+
+    $stateProvider
+      .state('rad-home', {
+        url: "/home",
+        templateUrl: "rad-center.html"
+      })
+      .state('radmin', {
+        url: "/admin",
+        templateUrl: "admin/radmin.html",
+        controller: "RadminMainCtrl"
+      })
+      .state('radmin.pi-detail', {
+        url: "/pi-detail:pi",
+        templateUrl: "admin/pi-detail.html",
+        controller: "PiDetailCtrl"
+      })
+    /*
     $routeProvider
       .when('/', {
         templateUrl: 'views/users.html',
@@ -44,7 +65,8 @@ angular
       .otherwise({
         redirectTo: '/'
       }); 
-
+  */
+/*
       $httpProvider.interceptors.push(function( $q, $rootScope ) {
           return {
               'request': function(config) {
@@ -70,49 +92,5 @@ angular
         // Allow loading from our assets domain.  Notice the difference between * and **.
         'http://srv*.assets.example.com/**'
       ]);
-
-  })/*
-  .value('cgBusyDefaults',{
-    backdrop: false,
-    templateUrl: '/bower_components/angular-busy/dist/custom-template.html',
-    delay: 300,
-    minDuration: 700
+*/
   });
-  .run(function($httpBackend) {
-    var phones = [{name: 'phone1'}, {name: 'phone2'}];
-
-    
-    // adds a new phone to the phones array
-    $httpBackend.whenPOST('/phones').respond(function(method, url, data) {
-      var phone = angular.fromJson(data);
-      phones.push(phone);
-      return [200, phone, {}];
-    });
-
-    $httpBackend.whenGET(/^\/views\//).passThrough();
-    $httpBackend.whenGET(/^views\//).passThrough();
-    $httpBackend.whenGET(/^\/images\//).passThrough();
-    $httpBackend.whenGET(/^images\//).passThrough();
-    $httpBackend.whenGET("http://erasmus.graysail.com/Erasmus/src/ajaxaction.php").passThrough();
-
-    //...
-  })
-  .directive("loading", function(dataStoreManagerFactory) {
-      return {
-          restrict : "C",
-          template: "<div class=\"modal show in\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"alert alert-info\"><h1>Please Wait</h1><img src=\"../images/loading.gif\"></div></div><!-- /.modal-content --></div><!-- /.modal-dialog --></div><!-- /.modal -->",
-          link : function(scope, element, attrs, $transclude) {
-
-              scope.$on("loading-started", function(e) {
-                  console.log('started');
-                  element.show();
-              });
-
-              scope.$on("loading-complete", function(e) {
-                  console.log('finished')
-                  element.hide();
-              });
-
-          }
-      };
-  });*/

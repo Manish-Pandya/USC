@@ -26,7 +26,8 @@ angular.module('00RsmsAngularOrmApp')
     	).then(
             function( hazards ){
                     var hazard = dataStoreManager.getById('Hazard', 10000);
-                    $scope.hazards = hazard.getSubHazards();
+                    hazard.getSubHazards();
+                    $scope.hazards = hazard.SubHazards;
                     console.log($scope.hazards);
             },
             function(){
