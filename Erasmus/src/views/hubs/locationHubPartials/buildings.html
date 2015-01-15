@@ -59,8 +59,8 @@
 				<span ng-if="building.edit">
 					<input style="" class="span4" placeholder="Select A Campus" typeahead-on-select='onSelectCampus($item,building)' type="text" ng-model="copy.Campus" typeahead="campus as campus.Name for campus in campuses | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">					
 					<span class="absoluteBtns" style="margin-top:0">
-						<a ng-if="copy.Name && copy.Campus.Name" class="btn-success btn left" ng-click="saveBuilding(building)"><i class="icon-checkmark"></i>Save</a>
-						<a ng-if="!copy.Name || !copy.Campus.Name" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+						<a ng-if="copy.Name && copy.Physical_address" class="btn-success btn left" ng-click="saveBuilding(building)"><i class="icon-checkmark"></i>Save</a>
+						<a ng-if="!copy.Name || !copy.Physical_address" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
 						<a class="btn-danger btn left" ng-click="lhf.cancelEdit(building, buildings)"><i class="icon-cancel-2"></i>Cancel</a>
 						<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
 					</span>
@@ -70,35 +70,3 @@
 		</tr>
 	</tbody>
 </table>
-
-<script type="text/ng-template" id="buildings-modal.html">
-        <div class="modal-header" style="padding:0;" class="">
-            <h2 style="padding:5px" ng-if="modalData.Key_id" class="greenBg">Editing {{modalData.Name}}<span ng-if="!modalData.Name">Unnamed Room</span></h2>
-        	<h2 style="padding:5px" ng-if="!modalData.Key_id" class="greenBg">Create a New Room</h2>
-        </div>
-        <div class="modal-body">
-        	<form class="form-horizontal form">
-			    <div class="control-group">
-		         <label class="control-label" for="inputEmail">Room Number</label>
-		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="modalData.Name" placeholder="Room Number">
-		         </div>
-			    </div>
-
-			    <div class="" style="padding:3px 0;">
-				    <div  class="control-group">
-			         <label class="control-label" for="inputEmail">Building</label>
-			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-				  	 </div>
-			    </div>
-
-        	</form>
-        </div>
-        <div class="modal-footer">
-        	<img ng-show="modalData.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-            <a ng-if="modalData.Name && modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
-            <a ng-if="!modalData.Name || !modalData.Campus.Name" class="btn btn-success hazardBtn btn-large" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
-            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
-        </div>
-     </script>
