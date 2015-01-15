@@ -997,12 +997,29 @@ class ActionManager {
 		}
 	}
 
-	public function getAllPIs(){
+	public function getAllPIs($rooms = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
-		$dao = $this->getDao(new PrincipalInvestigator());
+		$rooms = $this->getValueFromRequest("rooms", $rooms);
 
-		return $dao->getAll();
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pis = $dao->getAll();
+		if($rooms != null){
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+			$entityMaps[] = new EntityMap("eager","getRooms");
+			$entityMaps[] = new EntityMap("eager","getDepartments");
+			$entityMaps[] = new EntityMap("eager","getUser");
+			$entityMaps[] = new EntityMap("lazy","getInspections");
+			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+
+			foreach($pis as $pi){
+				$pi->setEntityMaps($entityMaps);
+			}
+		}
+
+		return $pis;
+
 	}
 
 	public function getAllRooms(){
@@ -1024,6 +1041,7 @@ class ActionManager {
 
 			$piMaps = array();
 			$piMaps[] = new EntityMap("lazy","getLabPersonnel");
+			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
 			$piMaps[] = new EntityMap("lazy","getRooms");
 			$piMaps[] = new EntityMap("eager","getDepartments");
 			$piMaps[] = new EntityMap("eager","getUser");
@@ -2851,6 +2869,11 @@ class ActionManager {
 
 	public function getCurrentYear(){
 		return date("Y");
+	}
+
+	public function getAllSupplementalObservations(){
+		$dao = $this->getDao(new SupplementalObservation());
+		return $dao->getAll();
 	}
 }
 ?>

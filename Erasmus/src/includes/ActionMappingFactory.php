@@ -164,6 +164,10 @@ class ActionMappingFactory {
 				"getCurrentYear"=>new ActionMapping("getCurrentYear", "", ""),
 				"getInspectionSchedule"=>new ActionMapping("getInspectionSchedule", "", ""),
 				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
+
+
+
+				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "")
 		);
 	}
 }
