@@ -2110,6 +2110,9 @@ header h1 {display: inline;}
 	color: #333;
 	border-top: 0;
 }
+.table th{
+   font-size: 1.9em;
+}
 
 
 /* Pagination
