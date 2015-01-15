@@ -1,0 +1,4 @@
+<ul class="span3">
+	<li ng-repeat="pi in pis"><a ui-sref=".pi-detail({pi:pi.Key_id})"><span once-text="pi.User.Name"></span></a></li>
+</ul>
+<div class="span9" ui-view></div>
