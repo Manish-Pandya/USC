@@ -24,7 +24,7 @@ require_once '../top_view.php';
 			 <a class="btn btn-info left" style="margin-left:5px;" href="ChecklistHub.php#?id={{checklist.Hazard_id}}"><i class="icon-checkmark">	
 			 </i>View Checklist</a>
 		</h1>
-		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
+		<span class="spacer large"></span>
 		<a ng-if="!question.beingEdited && !noQuestion" class="btn btn-primary left" ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question, Compliance Reference or Description</a>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
 
@@ -71,11 +71,11 @@ require_once '../top_view.php';
 
 		<span ng-hide="!question">
 		<h2 style="margin-bottom:10px; margin-top:30px;" class="bold">Deficiencies
-			<a ng-show="question.Deficiencies.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addDef, 'btn-danger': addDef}" ng-click="addDef = !addDef">
+			<a ng-show="question.Deficiencies.length && !addDef" class="btn btn-mini btn-success" ng-class="{'btn-success':!addDef, 'btn-danger': addDef}" ng-click="addDef = !addDef">
 				<i ng-class="{'icon-plus-2': !addDef, 'icon-cancel': addDef}"></i>
 			</a>
 		</h2>
-		<form class="form" ng-if="!question.Deficiencies.length || addDef"  style="margin-top:10px;">
+		<form class="form" ng-show="!question.Deficiencies.length || addDef"  style="margin-top:10px;">
 		    <div class="control-group">
 			    <label class="control-label" for="email">Add a Deficiency for this Question:</label>
 			    <div class="controls">
@@ -83,11 +83,12 @@ require_once '../top_view.php';
 			 	</div>
 			 </div>
 			 <a class="btn btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
+			 <a class="btn btn-danger addDeficiency" ng-click="addDef = !addDef"><i class="icon-remove"></i>Cancel</a>
 		</form>
 
 		<span ng-hide="!question">
 
-		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Deficiencies.length" ng-class="{inactive: !def.Is_active}">
+		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Deficiencies.length" ng-class="{inactive: !def.Is_active}">
 			<tr>
 				<th>Edit</th>
 				<th>Deficiency</th>
@@ -115,12 +116,12 @@ require_once '../top_view.php';
 		<hr>
 
 		<h2 style="margin-bottom:10px; margin-top:25px;" class="bold">Recommendations
-			<a ng-show="question.Recommendations.length" class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec">
+			<a ng-show="question.Recommendations.length && !addRec" class="btn btn-mini btn-success" ng-class="{'btn-success':!addRec, 'btn-danger': addRec}" ng-click="addRec = !addRec">
 				<i ng-class="{'icon-plus-2': !addRec, 'icon-cancel': addRec}"></i>
 			</a>
 		</h2>
 
-		<form class="form" style="margin-top:10px;" ng-if="addRec || !question.Recommendations.length">
+		<form class="form" style="margin-top:10px;" ng-show="addRec || !question.Recommendations.length">
 		    <div class="control-group">
 			    <label class="control-label" for="email">Add a Recommendation for this Question:</label>
 			    <div class="controls">
@@ -128,8 +129,10 @@ require_once '../top_view.php';
 			    </div>
 			 </div>
 			 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
+			 <a class="btn  btn-danger" ng-show="addRec" ng-click="addRec = !addRec"><i class="icon-remove"></i>Cancel</a>
+
 		</form>
-		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
+		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
 			<tr>
 				<th>Edit</th>
 				<th>Recommendation</th>
@@ -158,12 +161,12 @@ require_once '../top_view.php';
 		<hr>
 		<h2 style="margin-bottom:10px; margin-top:25px;" class="bold">
 			Notes
-			<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs" ng-show="question.Observations.length">
+			<a class="btn btn-mini btn-success" ng-class="{'btn-success':!addObvs, 'btn-danger': addObvs}" ng-click="addObvs = !addObvs" ng-show="question.Observations.length && !addObvs">
 				<i ng-class="{'icon-plus-2': !addObvs, 'icon-cancel': addObvs}"></i>
 			</a>
 		</h2>
 		
-		<form class="form" style="margin-top:10px;" ng-if="addObvs || !question.Observations.length">
+		<form class="form" style="margin-top:10px;" ng-show="addObvs || !question.Observations.length">
 		    <div class="control-group">
 			    <label class="control-label" for="email">Add a Note or Comment for this Question:</label>
 			    <div class="controls">
@@ -171,8 +174,9 @@ require_once '../top_view.php';
 			    </div>
 			 </div>
 			 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
+			 <a class="btn btn-danger" ng-show="addObvs" ng-click="addObvs = !addObvs"><i class="icon-remove"></i>Cancel</a>
 		</form>
-		<table class="table table-striped table-hover table-bordered large editTable" style="width:1300px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
+		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
 			<tr>
 				<th>Edit</th>
 				<th>Note</th>
