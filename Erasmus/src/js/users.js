@@ -324,7 +324,7 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
 
 
 //controller for modal instance for lab contacts
-var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window, userHubFactory) {
+var labContactModalInstanceController = function ($scope, $modalInstance, items, $rootScope,convenienceMethods, $location, $window, userHubFactory) {
   if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
@@ -549,7 +549,7 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       $scope.onSelectDepartment( department, $scope.selectedDepartment );
     });
 
-    if(!convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy))$rootScope.PIs.push(piDTO);
+    if(!convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy))$rootScope.pis.push(piDTO);
 
     $modalInstance.close($scope.piCopy);
   }
