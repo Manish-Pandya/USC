@@ -162,7 +162,14 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 							.then(
 								function(returnedResponse){
 									question.IsDirty = false;
+									
+									console.log(question)
 									response = convenienceMethods.copyObject( returnedResponse );
+									if(!question.Responses.SupplementalObservations)question.Responses.SupplementalObservations = [];
+									if(!question.Responses.SupplementalRecommendations)question.Responses.SupplementalRecommendations = [];
+									if(!question.Responses.Observations)question.Responses.Observations = [];
+									if(!question.Responses.Observations)question.Responses.Observations = [];
+									question.Responses.Key_id = returnedResponse.Key_id;
 								}
 							)
 					},
@@ -483,6 +490,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveSupplementalObservation = function( question, isNew, so )
 	    {
+	    	if(!question.Responses.SupplementalObservations)question.Responses.SupplementalObservations=[];
 	    	var soDto = {
 	    		Class: "SupplementalObservation",
 	    		Text: question.newObservationText,
@@ -528,6 +536,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveSupplementalRecommendation = function( question, isNew, sr )
 	    {
+	    	if(!question.Responses.SupplementalRecommendations)question.Responses.SupplementalRecommendations=[];
 	    	var srDto = {
 	    		Class: "SupplementalRecommendation",
 	    		Text: question.newRecommendationText,
@@ -623,6 +632,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    factory.getRecommendationChecked = function( question, recommendation )
 	    {
 	    	if(recommendation.checked)return true;
+	    	if(!question.Responses.Recommendations)question.Responses.Recommendations=[];
 	    	var i = question.Responses.Recommendations.length;
 	    	if(i==0)return false;
 	    	var ids = [];
@@ -638,6 +648,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    factory.getObservationChecked = function( question, observation )
 	    {
 	    	if(observation.checked)return true;
+	    	if(!question.Responses.Observations)question.Responses.Observations=[];
 	    	var i = question.Responses.Observations.length;
 	    	if(i==0)return false;
 	    	var ids = [];
