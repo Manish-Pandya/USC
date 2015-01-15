@@ -21,7 +21,6 @@ class PrincipalInvestigatorRoomRelation extends GenericCrud {
 		"room_id"	=> "integer",
 		"principal_investigator_id"	=> "integer",
 							);
-	private $key_id;
 	private $room_id;
 	private $principal_investigator_id;
 
