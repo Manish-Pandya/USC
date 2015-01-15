@@ -211,9 +211,21 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     return obj;
   }
 
+  factory.setDateForCalWidget = function(obj, dateProperty){
+    console.log(obj);
+    if(obj[dateProperty]){
+      obj['view'+dateProperty] = new Date(obj[dateProperty].substring(0,10));
+    }
+    return obj;
+  }
+
   factory.setDatesForServer = function(obj, dateProperty){
     //by removing the string 'view' from the date property, we access the orginal MySQL datetime from which the property was set
     //i.e. corrective_action.viewPromised_date is the matching property to corrective_action.Promised_date
+    if(!obj[dateProperty]){
+      obj[dateProperty] = new Date();
+      return obj;
+    }
     obj[dateProperty.replace('view','')] = convenienceMethods.setMysqlTime(obj[dateProperty]);
     return obj;
   }
@@ -229,6 +241,15 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
         inspection.score.itemsInspected++;
         if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
           inspection.score.deficiencyItems++;
+          var i = question.Responses.DeficiencySelections.length;
+          while(i--){
+            console.log(i);
+            if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
+              console.log(question.Responses);
+              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
+              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
+            }
+          }
         }else /*if(question.Responses && question.Responses.Answer)*/{
           inspection.score.compliantItems++;
         }
@@ -557,12 +578,10 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
             //set the inspection date as a javascript date object
             if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
-            $scope.inspection = promise.data;
-            $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
+            $scope.inspection = postInspectionFactory.calculateScore(promise.data);
             $scope.doneLoading = true;
             // call the manager's setter to store the inspection in the local model
             postInspectionFactory.setInspection($scope.inspection);
-
             postInspectionFactory.setRecommendationsAndObservations()
                 .then(
                   function(){
@@ -600,7 +619,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     var calDate = Date.parse(d);
     //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
     var inspectionDate = Date.parse($scope.inspection.viewDate_started)-864000;
-    if(calDate>=inspectionDate){
+    var now = new Date();
+    if(calDate>=inspectionDate  && calDate<=now){
       return true;
     }
     return false;
@@ -618,9 +638,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     diff = now.getTime() - then.getTime()
 
     var today = Date.parse(now)-diff;
- 
-    console.log(today);
-    if(calDate>=today){
+     if(calDate>=today){
       return true;
     }
     return false;
@@ -666,9 +684,9 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
   }
 
   $scope.setViewDate = function( date ){
-    if(!date)return convenienceMethods.getDate(convenienceMethods.setMysqlTime(Date())).formattedString;
-    console.log(date);
-    return convenienceMethods.getDate(date).formattedString;
+   // if(!date)return convenienceMethods.getDate(convenienceMethods.setMysqlTime(Date()));
+    console.log(new Date(date));
+    return new Date(date);
   }
 
   function answerIsNotNo(answer){
