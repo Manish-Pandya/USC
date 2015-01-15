@@ -2567,9 +2567,12 @@ table.quickdate-calendar td:hover {
 }
 
 /* line 1990, ../sass/style.scss */
-.is-today {
-  background: #49afcd !important;
-  color: white !important;
+table.quickdate-calendar td.is-today {
+  color: #49afcd;
+}
+table.quickdate-calendar td.selected{
+  background:#5BB75B!important;
+  color:white;
 }
 
 /* line 1994, ../sass/style.scss */
