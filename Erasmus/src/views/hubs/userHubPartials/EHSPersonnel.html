@@ -46,8 +46,11 @@
 				<!--{{contact.First_name}}-->
 			</td>
 
-			<td style="width:12%;" once-text="contact.Roles[0].Name">
+			<td style="width:12%;">
 				<!--{{contact.Roles[0].Name}}-->
+				<ul>
+					<li ng-repeat="role in contact.Roles"><span once-text="role.Name"></span></li>
+				</ul>
 			</td>
 
 			<td style="width:12%;" once-text="contact.Position">
