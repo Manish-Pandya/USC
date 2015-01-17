@@ -53,6 +53,7 @@ class ActionMappingFactory {
 
 				// PI Hub
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
+				"getPisForUserHub"=>new ActionMapping("getPisForUserHub", "", ""),
 				"getRoomsByPIId"=>new ActionMapping("getRoomsByPIId", "", ""),
 				"getPIById"=>new ActionMapping("getPIById", "", ""),
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
