@@ -1,7 +1,7 @@
 <?php
 require_once '../top_view.php';
 ?>
-<script src="../../js/users.js"></script>
+<script src="../../js/userHub.js"></script>
 
 <div class="navbar">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
@@ -29,10 +29,10 @@ require_once '../top_view.php';
       </div>
     </form>
 
-   <span class="loading" ng-if="!LabContacts || !pis || !Admins">
-		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Users...
-    </span>
+	<div class="loading" ng-if="!neededUsers">
+	  <i class="icon-spinnery-dealie spinner large"></i> 
+	  <span>Loading Users...</span>
+	</div>
  
    <ng-view></ng-view>
 
