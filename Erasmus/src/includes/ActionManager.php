@@ -1039,6 +1039,20 @@ class ActionManager {
 		}
 		return $pis;
 	}
+	
+	public function getUserByPiUserId( $id = NULL ){
+
+		$id = $this->getValueFromRequest('id', $id);
+
+		if( $id !== NULL ){
+			$user = $this->getUserById($id);
+			return $user->getPrincipalInvestigator();
+		}
+		else{
+			//error
+			return new ActionError("No request parameter 'id' was provided");
+		}
+	}
 
 	public function getAllRooms(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1137,9 +1151,13 @@ class ActionManager {
 		}
 	}
 
-	public function savePI(){
+	public function savePI( $pi = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
+		if($pi == null){
+			$decodedObject = $this->convertInputJson();
+		}else{
+			$decodedObject = $pi;
+		}
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to Observation');
 		}
@@ -1245,6 +1263,16 @@ class ActionManager {
 		return true;
 	}
 
+	public function savePIDepartmentRelations(){
+		$piId = $this->getValueFromRequest('piId', $piId);
+		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
+	
+		foreach($roleIds as $roleId){
+			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
+		}
+		return true;
+	}
+
 	public function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -1289,12 +1317,31 @@ class ActionManager {
 		}
 		return true;
 	}
+	
+	public function saveUserRoleRelations($userId = null, $roleIds = null){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		
+		$userId = $this->getValueFromRequest('userId', $userId);
+		$roleIds = $this->getValueFromRequest('roleIds', $roleIds);
+		$LOG->debug($roleIds);
+		foreach($roleIds as $roleId){
+			$relation = new RelationshipDto();
+			$relation->setMaster_id($userId);
+			$relation->setRelation_id($roleId);
+			$relation->setAdd(true);
+			$this->saveUserRoleRelation($relation);
+		}
+		return true;
+	}
 
-
-	public function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
+	public function saveUserRoleRelation($relation = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
-		$decodedObject = $this->convertInputJson();
+		if($relation == null){
+			$decodedObject = $this->convertInputJson();
+		}else{
+			$decodedObject = $relation;
+		}
 
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to RelationshipDto');
@@ -1320,6 +1367,20 @@ class ActionManager {
 					if(!in_array($roleToAdd, $roles)){
 						// only add the role if the user doesn't already have it
 						$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+						//add PI record if role is PI
+						if($roleToAdd->getName() == 'Principal Investigator'){
+							$pi = new PrincipalInvestigator();
+							$pi->setUser_id($userID);
+							$pi->setIs_active(true);
+							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
+						}
+						
+						//add Inspector record if role is inspector
+						if($roleToAdd->getName() == 'Safety Inspector'){
+							$inspector = new Inspector();
+							$inspector->setUser_id($userID);
+							if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
+						}
 					}
 					// if add is false, remove this role from this PI
 				} else {
@@ -1335,6 +1396,13 @@ class ActionManager {
 		return true;
 	}
 
+	public function getPIByUserId($id = null){
+		$id = $this->getValueFromRequest('id', $id);
+		$userDao = $this->getDao(new User());
+		$user = $userDao->getById($id);
+		return $user->getPrincipalInvestigator();
+	}
+	
 	//Get a room dto duple
 	public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 		$id = $this->getValueFromRequest('id', $id);

@@ -42,9 +42,12 @@ class ActionMappingFactory {
 				"saveUser"=>new ActionMapping("saveUser", "", "", ""),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
+				"saveUserRoleRelations"=>new ActionMapping("saveUserRoleRelations", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
+				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
+				
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -59,6 +62,7 @@ class ActionMappingFactory {
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
 				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
 				"savePIDepartmentRelation"=>new ActionMapping("savePIDepartmentRelation", "", ""),
+				"savePIDepartmentRelations"=>new ActionMapping("savePIDepartmentRelations", "", ""),
 				"savePI"=>new ActionMapping("savePI", "", ""),
 				"getAllPrincipalInvestigatorRoomRelations"=>new ActionMapping("getAllPrincipalInvestigatorRoomRelations", "", ""),
 
