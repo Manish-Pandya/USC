@@ -24,6 +24,8 @@ require_once '../top_view.php';
 			  <option value="/pis">Principal Investigators</option>
 			  <option value="/contacts">Laboratory Contacts</option>
 			  <option value="/EHSPersonnel">EHS Personnel</option>
+  			  <option value="/uncategorized">Uncategorized Users</option>
+
 		   </select>
          </div>
       </div>
@@ -33,7 +35,7 @@ require_once '../top_view.php';
 	  <i class="icon-spinnery-dealie spinner large"></i> 
 	  <span>Loading Users...</span>
 	</div>
- 
+   <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
    <ng-view></ng-view>
 
 </span>
