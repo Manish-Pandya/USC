@@ -392,6 +392,21 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       defer.resolve(factory.uncategorizedUsers);
       return defer.promise;
   }
+  factory.lookUpUser = function(string)
+  {
+        var url = "../../ajaxaction.php?action=lookupUser&username="+string+"&callback=JSON_CALLBACK";
+        var deferred = $q.defer();
+          convenienceMethods.getDataAsDeferredPromise(url)
+            .then(
+              function(promise){
+                deferred.resolve(promise);
+              },
+              function(promise){
+                deferred.reject();
+              }
+            );  
+        return deferred.promise
+  }
 
   factory.placeUser = function(user)
   {
@@ -438,6 +453,7 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
     $scope.setRoute = function(){
       $location.path($scope.selectedRoute);
     }
+    if($location.$$host.indexOf('graysail')<0)$rootScope.isProductionServer = true;
 
     if(!$location.path()) {
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
@@ -949,10 +965,51 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       $scope.modalData.Primary_department_id = dept.Key_id;
       $scope.modalData.Primary_department = dept;
     }
+    $scope.getAuthUser = function(user){
+      console.log(userHubFactory);
+      $scope.lookingForUser = true;
+     var i = userHubFactory.users.length;
+      while(i--){
+        if( userHubFactory.users[i].Username && $scope.modalData.userNameForQuery.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
+          $scope.modalError='The username '+$scope.modalData.userNameForQuery+' is already taken by another user in the system.';
+          return;
+        } 
+      }
+      userHubFactory.lookUpUser($scope.modalData.userNameForQuery)
+        .then(
+          function(returnedUser){
+            if(returnedUser==null){
+               $scope.modalError='No user with that username was found.';
+               $scope.lookingForUser = false;
+               return;
+            }
+            $scope.lookingForUser = false;
+            if($scope.modalData.Class=="PrincipalInvestigator"){
+              $scope.modalData.User = returnedUser;
+              $scope.modalData.User.Roles = user.Roles;
+              console.log(returnedUser);
+            }else{
+              $scope.modalData=returnedUser;
+              $scope.modalData.Roles = user.Roles;
+            }
+          },
+          function(){
+            $scope.lookingForUser = false;
+            $scope.modalError='There was a problem querying for the user.  Please check your internet connection and try again.';
+          }
+        )
+
+    }
 
     function saveUser( userDto )
     {
-        console.log(userDto);
+        var i = userHubFactory.users.length;
+        while(i--){
+          if(  userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
+            $scope.modalError='This username is already taken by another user in the system.';
+            return;
+          } 
+        }
         return userHubFactory.saveUser( userDto )
           .then(
             function( returnedUser ){

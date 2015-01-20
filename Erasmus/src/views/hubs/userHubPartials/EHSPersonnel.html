@@ -79,12 +79,13 @@
         	<h2 style="padding:5px" ng-hide="modalData.Key_id" class="purpleBg">Add New EHS Personnel</h2>
         </div>
         <div class="modal-body">
+        	<h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         	<form class="form-horizontal form">
         		<div class="control-group">
 		         <label class="control-label" for="inputEmail">Username</label>
 		         <div class="controls">
 		         	<div class="input-append">
-		              <input type="text" ng-if="isProductionServer && !modalData.Username" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
+		              <input type="text" ng-if="isProductionServer && !modalData.Username" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
 			      			<img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
 			      </div>
 			      	<input type="hidden" ng-model="modalData.Username"/>
