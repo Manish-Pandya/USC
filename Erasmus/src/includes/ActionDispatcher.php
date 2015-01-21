@@ -13,7 +13,7 @@ class ActionDispatcher {
 	private $defaultErrorCode = 500;
 	
 	// name of actionManager class to use; depends on whether radiation is enabled.
-	private $actionManager;
+	private $actionManagerType;
 	
 	private $LOG;
 	
@@ -36,10 +36,10 @@ class ActionDispatcher {
 		// Which "ActionManager" class is used depends on whether the radiation
 		// module is enabled.
 		if( isRadiationEnabled() ) {
-			$this->actionManager = "Rad_ActionManager";
+			$this->actionManagerType = "Rad_ActionManager";
 		}
 		else {
-			$this->actionManager = "ActionManager";
+			$this->actionManagerType = "ActionManager";
 		}
 	}
 	
@@ -249,7 +249,7 @@ class ActionDispatcher {
 	 */
 	public function doAction( ActionMapping $actionMapping ){
 		$action_function = $actionMapping->actionFunctionName;
-		$actions = new $this->actionManager();
+		$actions = new $this->actionManagerType();
 		
 		if( method_exists( $actions, $action_function ) ){
 			//call the specified action function
