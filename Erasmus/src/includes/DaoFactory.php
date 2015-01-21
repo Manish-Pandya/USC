@@ -15,7 +15,7 @@ class DaoFactory {
 	// only instantiates one of each GenericDao
 	private $daos;
 	
-	public function __construct( $dao ) {
+	public function __construct( $dao = NULL) {
 		$this->modelDao = $dao;
 	}
 	

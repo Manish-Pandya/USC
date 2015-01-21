@@ -44,5 +44,8 @@ class RelationshipMappingFactory {
 				return $relation->getTableName();
 			}
 		}
+		
+		// no match found, return error
+		return new ActionError("No relationship found between " . $classA . " and " . $classB);
 	}
 }

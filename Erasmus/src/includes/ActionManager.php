@@ -15,7 +15,7 @@ class ActionManager {
 	private $isTestModeEnabled;
 
 	// during construction, can change daoFactory, for example for testing purposes
-	public function __construct( &$daoFactory ) {
+	public function __construct( &$daoFactory = NULL) {
 		// default to factory providing GenericDao, required for normal operation
 		if( is_null($daoFactory) ) {
 			$daoFactory = new DaoFactory(new GenericDAO());
@@ -2811,10 +2811,22 @@ class ActionManager {
 
 		if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
 		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+		
+		// make sure first letter of class name is capitalized.
+		$class1 = ucfirst($class1);
+		$class2 = ucfirst($class2);
 
-		$dao = new GenericDAO();
-		$relationshipDao = new RelationshipMappingFactory(new GenericCrud());
-		$tableName = $relationshipDao->getTableName($class1, $class2);
+		// get name of the table containing those two classes
+		$relationshipFactory = new RelationshipMappingFactory();
+		$tableName = $relationshipFactory->getTableName($class1, $class2);
+		
+		if( $tableName instanceof ActionError ) {
+			return $tableName;
+		}
+
+		// GenericDAO must recieve an entity class, but will not use it in this case.
+		$dao = new GenericDAO(new Isotope);
+
 		$LOG->debug($dao->getRelationships($tableName));
 		return $dao->getRelationships($tableName);
 
