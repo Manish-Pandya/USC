@@ -331,7 +331,9 @@ div.rsmsCenterIconContainer a p {
   }
   /* line 292, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a img {
+    margin: 0 auto;
     height: 250px;
+    display: block;
   }
 }
 @media (min-width: 773px) and (max-width: 999px) {
@@ -1331,7 +1333,16 @@ a.checklistNav span{
 }
 
 .inspectionReportTable td{
-  vertical-align: middle;
+  padding-top: 0px !important;
+  padding-top: 0px !important;
+}
+.inspectionReportTable td span:first-child{
+  padding: 10px 0 0;
+  display: inherit;
+}
+.inspectionReportTable td span:last-child{
+  padding: 0 0 10px;
+  display: inherit;
 }
 
 .def-table-cell{
