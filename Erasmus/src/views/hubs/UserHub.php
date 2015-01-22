@@ -1,7 +1,7 @@
 <?php
 require_once '../top_view.php';
 ?>
-<script src="../../js/users.js"></script>
+<script src="../../js/userHub.js"></script>
 
 <div class="navbar">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
@@ -24,16 +24,18 @@ require_once '../top_view.php';
 			  <option value="/pis">Principal Investigators</option>
 			  <option value="/contacts">Laboratory Contacts</option>
 			  <option value="/EHSPersonnel">EHS Personnel</option>
+  			  <option value="/uncategorized">Uncategorized Users</option>
+
 		   </select>
          </div>
       </div>
     </form>
 
-   <span class="loading" ng-if="!LabContacts || !pis || !Admins">
-		  <img class="" src="<?php echo WEB_ROOT?>img/loading.gif"/>
-		  Getting Users...
-    </span>
- 
+	<div class="loading" ng-if="!neededUsers">
+	  <i class="icon-spinnery-dealie spinner large"></i> 
+	  <span>Loading Users...</span>
+	</div>
+   <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
    <ng-view></ng-view>
 
 </span>

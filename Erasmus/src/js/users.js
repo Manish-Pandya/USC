@@ -70,7 +70,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
 
 });
 //called on page load, gets initial user data to list users
-var MainUserListController = function(userHubFactory,$scope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
+var MainUserListController = function(userHubFactory,$scope,$rootScope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
  ////console.log($modal);
   $scope.showInactive = false;
   $scope.users = [];
@@ -82,7 +82,7 @@ var MainUserListController = function(userHubFactory,$scope, $modal, $routeParam
   //we do it this way so that we know we get data before we set the $scope object
   function init(){
 
-    convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
+    convenienceMethods.getData('../../ajaxaction.php?action=getAllPIs&rooms=true&callback=JSON_CALLBACK',onGetPis,onFailGetPis);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK',onGetRoles,onFailGetRoles);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK',onGetUsers,onFailGetUsers);
     convenienceMethods.getData('../../ajaxaction.php?action=getAllActiveDepartments&callback=JSON_CALLBACK',onGetDepartments,onFailGetDepartments);
@@ -134,7 +134,7 @@ var MainUserListController = function(userHubFactory,$scope, $modal, $routeParam
       });
     });
 
-    $scope.pis = data;
+    $rootScope.pis = data;
     console.log($scope.pis);
     //do this only if we have not yet looped through our users, otherwise we will append the list of users to itself when we switch routes
     if(!$scope.run){
@@ -324,7 +324,7 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
 
 
 //controller for modal instance for lab contacts
-var labContactModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window, userHubFactory) {
+var labContactModalInstanceController = function ($scope, $modalInstance, items, $rootScope,convenienceMethods, $location, $window, userHubFactory) {
   if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
@@ -397,7 +397,6 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
   }
 
   function onCreateUser(data,userCopy){
-   
     $scope.userCopy.Key_id = data.Key_id;
     //console.log( data );
     //console.log( $scope.userCopy);
@@ -414,25 +413,25 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       $scope.onSelectRole(role);
     });
 
-    if(userCopy.userTypes){
-      if(userCopy.userTypes.indexOf('Principal Investigator')>-1 && !convenienceMethods.arrayContainsObject($scope.pis,userCopy)){
-        var piDTO = {
-          Class: "PrincipalInvestigator",
-          User_id: data.Key_id,
-          Is_active: true
-        }
-        convenienceMethods.updateObject( piDTO, userCopy.Departments, onSaveNewPI, onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
+    console.log()
+    if($scope.userCopy.isPI && !convenienceMethods.arrayContainsObject($scope.pis,userCopy)){
+      var piDTO = {
+        Class: "PrincipalInvestigator",
+        User_id: data.Key_id,
+        Is_active: true
       }
-
-      if(userCopy.userTypes.indexOf("Safety Inspector" > -1)){
-        var inspectorDTO = {
-          Class: "Inspector",
-          User_id: data.Key_id,
-          Is_active: true
-        }
-        convenienceMethods.updateObject( inspectorDTO, userCopy.Departments, onSaveNewInspector, onFailSaveNewInspector, '../../ajaxaction.php?action=saveInspector');
-      }
+      convenienceMethods.updateObject( piDTO, userCopy.Departments, onSaveNewPI, onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
     }
+/*
+    if(userCopy.userTypes.indexOf("Safety Inspector" > -1)){
+      var inspectorDTO = {
+        Class: "Inspector",
+        User_id: data.Key_id,
+        Is_active: true
+      }
+      convenienceMethods.updateObject( inspectorDTO, userCopy.Departments, onSaveNewInspector, onFailSaveNewInspector, '../../ajaxaction.php?action=saveInspector');
+    }
+    */
     
    
     $modalInstance.close($scope.userCopy);
@@ -469,9 +468,13 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
      }
   }
 
-  function onAddRole(returned,dept,model){
+  function onAddRole(returned,role,model){
     if(model)model.IsDirty = false;
-    if(!convenienceMethods.arrayContainsObject($scope.userCopy.Roles,dept))$scope.userCopy.Roles.push(dept);
+    if(!convenienceMethods.arrayContainsObject($scope.userCopy.Roles,role))$scope.userCopy.Roles.push(role);
+    if(role.Name.indexOf('rincip')>-1){
+      console.log($scope.userCopy);
+      $scope.userCopy.isPI = true;
+    }
   }
 
   function onFailAddRole(){
@@ -545,6 +548,8 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       //console.log(department);
       $scope.onSelectDepartment( department, $scope.selectedDepartment );
     });
+
+    if(!convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy))$rootScope.pis.push(piDTO);
 
     $modalInstance.close($scope.piCopy);
   }
@@ -707,8 +712,9 @@ var personnelModalInstanceController = function ($scope, $modalInstance, items, 
     angular.forEach(rolesToAdd, function(role, key){
       $scope.onSelectRole(role);
     });
+    console.log($scope.userCopy);
 
-    if($scope.userCopy.userTypes.indexOf('PrincipalInvestigator')>-1 && !convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy)){
+    if($scope.userCopy.isPI && !convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy)){
       var piDTO = {
         Class: "PrincipalInvestigator",
         User_id: data.Key_id,
@@ -723,6 +729,8 @@ var personnelModalInstanceController = function ($scope, $modalInstance, items, 
   function onSaveNewPI(piDTO, depts){
     //console.log('pi');
     $scope.piCopy = angular.copy(piDTO);
+    piDTO.User=$scope.userCopy;
+    if(!convenienceMethods.arrayContainsObject($scope.pis,$scope.userCopy))$rootScope.PIs.push(piDTO);
     //console.log($scope.piCopy);
   }
 

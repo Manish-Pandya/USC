@@ -58,9 +58,12 @@ class ActionMappingFactory {
 				"saveUser"=>new ActionMapping("saveUser", "", "", ""),
 				"getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
 				"saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", ""),
+				"saveUserRoleRelations"=>new ActionMapping("saveUserRoleRelations", "", ""),
 				"lookupUser"=>new ActionMapping("lookupUser", "", ""),
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
+				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
+				
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -69,12 +72,15 @@ class ActionMappingFactory {
 
 				// PI Hub
 				"getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
-				"getRoomsByPI"=>new ActionMapping("getRoomsByPI", "", ""),
+				"getPisForUserHub"=>new ActionMapping("getPisForUserHub", "", ""),
+				"getRoomsByPIId"=>new ActionMapping("getRoomsByPIId", "", ""),
 				"getPIById"=>new ActionMapping("getPIById", "", ""),
 				"savePIRoomRelation"=>new ActionMapping("savePIRoomRelation", "", ""),
 				"savePIContactRelation"=>new ActionMapping("savePIContactRelation", "", ""),
 				"savePIDepartmentRelation"=>new ActionMapping("savePIDepartmentRelation", "", ""),
+				"savePIDepartmentRelations"=>new ActionMapping("savePIDepartmentRelations", "", ""),
 				"savePI"=>new ActionMapping("savePI", "", ""),
+				"getAllPrincipalInvestigatorRoomRelations"=>new ActionMapping("getAllPrincipalInvestigatorRoomRelations", "", ""),
 
 				// Checklist Hub
 				"getChecklistById"=>new ActionMapping("getChecklistById", "", ""),
@@ -152,6 +158,7 @@ class ActionMappingFactory {
 				"saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
 				"saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", ""),
+				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", ""),
 				"saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", ""),
 				"getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", ""),
 				"getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", ""),
@@ -182,7 +189,7 @@ class ActionMappingFactory {
 
 
 				//GENERIC RELATIONSHIPS
-				"getRelationships"=>new ActionMapping("getRelationships", "", ""),
+				"getRelationships"=>new ActionMapping("getRelationships", "", "")
 		);
 	}
 }

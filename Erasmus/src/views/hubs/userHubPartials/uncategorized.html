@@ -1,0 +1,74 @@
+<table class="userList table table-striped table-hover piTable table-bordered" ng-show="neededUsers">
+	<thead>
+		<tr class="orangeBg">
+			<th colspan="8">
+				<h1 class="orangeBg" style="padding:0">Uncategorized Users</h1>
+				<div class="btn-group" style="margin:-22px 0 0 30px">
+			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+				     <span ng-show="showInactive">Show Active Users</span>
+				     <span ng-hide="showInactive">Show Inactive Users</span>
+			     </a>
+			   </div>
+			</th>
+		</tr>
+		<tr>
+			<th>Edit User</th>
+			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
+			<th>
+				<a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':reverse, 'icon-arrow-down':!reverse }"></i></a><br>
+				<input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
+			</th>
+			<th>First Name</th>
+			<!--<th>Roles</th>-->
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr ng-repeat="contact in users | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+			<td style="width:12%;">
+				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
+				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
+				<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position: absolute;" ng-show="contact.IsDirty"/></i>
+			</td>
+
+			<td style="width:14%;" once-text="contact.Last_name">
+				<!--{{contact.Last_name}}-->
+			</td>
+
+			<td style="width:74%;" once-text="contact.First_name">
+				<!--{{contact.First_name}}-->
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script type="text/ng-template" id="personnelModal.html">
+        <div class="modal-header" style="padding:0;" class="">
+            <h2 style="padding:5px" ng-show="modalData.Key_id" class="purpleBg">Add a role for {{modalData.Name}}</h2>
+        </div>
+        <div class="modal-body">
+        	<form class="form-horizontal form">
+			    <div class="" style="padding:3px 0;">
+				    <div  class="control-group">
+			         <label class="control-label" for="inputEmail">Roles(s)</label>
+			         <div class="controls">
+						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+						<input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
+				   		
+				    <ul style="margin-top:3px;">
+				    	<li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<i ng-show="role.IsDirty" class="small spinner icon-spinnery-dealie" src="../../img/loading.gif"></i>
+						</li>
+				    </ul>
+				   </div>
+			    </div>
+			    
+        	</form>
+        </div>
+        <div class="modal-footer">
+			<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin:5px;" ng-show="modalData.IsDirty"/>
+            <a ng-if="modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+        </div>
+     </script>

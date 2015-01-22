@@ -380,7 +380,7 @@ class GenericDAO {
 
 		$sql = "DELETE FROM $tableName WHERE $foreignKeyName =  :foreignKey_id AND $keyName = :key_id";
 
-		$this->LOG->debug("Preparing delete statement [$sql]");
+		$this->LOG->debug("DELETE FROM $tableName WHERE $foreignKeyName =  $foreignKey_id AND $keyName = $key_id");
 
 		$stmt = $db->prepare($sql);
 		// Bind the params.
@@ -494,22 +494,21 @@ class GenericDAO {
 
 
 	}
-	
+
 	function getInspectionsByYear($year){
-		
+
 		$this->LOG->debug("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
 		global $db;
-		$className = get_class( new InspectionScheduleDto());
 
 		//Prepare to query all from the table
 		$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name,pi_name');
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
-		
+
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $className);
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "InspectionScheduleDto");
 			// ... otherwise, die and echo the db error
 		} else {
 			$error = $stmt->errorInfo();

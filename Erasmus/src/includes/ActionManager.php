@@ -411,6 +411,7 @@ class ActionManager {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getSubhazards");
 		$entityMaps[] = new EntityMap("eager","getActiveSubhazards");
+		$entityMaps[] = new EntityMap("eager","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -996,14 +997,62 @@ class ActionManager {
 		}
 	}
 
-	public function getAllPIs(){
+	public function getAllPIs($rooms = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
-		$dao = $this->getDao(new PrincipalInvestigator());
+		$rooms = $this->getValueFromRequest("rooms", $rooms);
 
-		return $dao->getAll();
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pis = $dao->getAll();
+		if($rooms != null){
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+			$entityMaps[] = new EntityMap("eager","getRooms");
+			$entityMaps[] = new EntityMap("eager","getDepartments");
+			$entityMaps[] = new EntityMap("eager","getUser");
+			$entityMaps[] = new EntityMap("lazy","getInspections");
+			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+
+			foreach($pis as $pi){
+				$pi->setEntityMaps($entityMaps);
+			}
+		}
+
+		return $pis;
+
 	}
 
+	public function getPisForUserHub(){
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pis = $dao->getAll();
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getDepartments");
+		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+
+		foreach($pis as $pi){
+			$pi->setEntityMaps($entityMaps);
+		}
+		return $pis;
+	}
+	
+	public function getUserByPiUserId( $id = NULL ){
+
+		$id = $this->getValueFromRequest('id', $id);
+
+		if( $id !== NULL ){
+			$user = $this->getUserById($id);
+			return $user->getPrincipalInvestigator();
+		}
+		else{
+			//error
+			return new ActionError("No request parameter 'id' was provided");
+		}
+	}
 
 	public function getAllRooms(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1024,6 +1073,7 @@ class ActionManager {
 
 			$piMaps = array();
 			$piMaps[] = new EntityMap("lazy","getLabPersonnel");
+			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
 			$piMaps[] = new EntityMap("lazy","getRooms");
 			$piMaps[] = new EntityMap("eager","getDepartments");
 			$piMaps[] = new EntityMap("eager","getUser");
@@ -1039,6 +1089,14 @@ class ActionManager {
 		}
 
 		return $rooms;
+	}
+
+	public function getAllPrincipalInvestigatorRoomRelations(){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$dao = $this->getDao(new PrincipalInvestigatorRoomRelation());
+
+		return $dao->getAll();
 	}
 
 	public function getRoomsByPIId( $id = NULL ){
@@ -1093,9 +1151,13 @@ class ActionManager {
 		}
 	}
 
-	public function savePI(){
+	public function savePI( $pi = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
+		if($pi == null){
+			$decodedObject = $this->convertInputJson();
+		}else{
+			$decodedObject = $pi;
+		}
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to Observation', 202);
 		}
@@ -1201,6 +1263,16 @@ class ActionManager {
 		return true;
 	}
 
+	public function savePIDepartmentRelations(){
+		$piId = $this->getValueFromRequest('piId', $piId);
+		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
+	
+		foreach($roleIds as $roleId){
+			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
+		}
+		return true;
+	}
+
 	public function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -1245,12 +1317,31 @@ class ActionManager {
 		}
 		return true;
 	}
+	
+	public function saveUserRoleRelations($userId = null, $roleIds = null){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		
+		$userId = $this->getValueFromRequest('userId', $userId);
+		$roleIds = $this->getValueFromRequest('roleIds', $roleIds);
+		$LOG->debug($roleIds);
+		foreach($roleIds as $roleId){
+			$relation = new RelationshipDto();
+			$relation->setMaster_id($userId);
+			$relation->setRelation_id($roleId);
+			$relation->setAdd(true);
+			$this->saveUserRoleRelation($relation);
+		}
+		return true;
+	}
 
-
-	public function saveUserRoleRelation($userID = NULL,$roleId = NULL,$add= NULL){
+	public function saveUserRoleRelation($relation = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
-		$decodedObject = $this->convertInputJson();
+		if($relation == null){
+			$decodedObject = $this->convertInputJson();
+		}else{
+			$decodedObject = $relation;
+		}
 
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to RelationshipDto');
@@ -1276,6 +1367,20 @@ class ActionManager {
 					if(!in_array($roleToAdd, $roles)){
 						// only add the role if the user doesn't already have it
 						$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+						//add PI record if role is PI
+						if($roleToAdd->getName() == 'Principal Investigator'){
+							$pi = new PrincipalInvestigator();
+							$pi->setUser_id($userID);
+							$pi->setIs_active(true);
+							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
+						}
+						
+						//add Inspector record if role is inspector
+						if($roleToAdd->getName() == 'Safety Inspector'){
+							$inspector = new Inspector();
+							$inspector->setUser_id($userID);
+							if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
+						}
 					}
 					// if add is false, remove this role from this PI
 				} else {
@@ -1291,6 +1396,13 @@ class ActionManager {
 		return true;
 	}
 
+	public function getPIByUserId($id = null){
+		$id = $this->getValueFromRequest('id', $id);
+		$userDao = $this->getDao(new User());
+		$user = $userDao->getById($id);
+		return $user->getPrincipalInvestigator();
+	}
+	
 	//Get a room dto duple
 	public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 		$id = $this->getValueFromRequest('id', $id);
@@ -1611,32 +1723,56 @@ class ActionManager {
 	}
 
 	public function scheduleInspection(){
-
+		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		$inspectionDao = $this->getDao( new Inspection() );
-
-		if( $decodedObject->Inspection_id != NULL ){
-			$inspection = $inspectionDao->getById( $decodedObject->Inspection_id );
+		if( $decodedObject->getInspections()->getKey_id() != NULL ){
+			$inspection = $inspectionDao->getById( $decodedObject->getInspections()->getKey_id() );
 		}else{
 			$inspection = new Inspection();
 		}
 
-		if($decodedObject->getSchedule_month())$inspection->setSchedule_month( $decodedObject->getSchedule_month() );
-		if($decodedObject->getSchedule_year())$inspection->setSchedule_year( $decodedObject->getSchedule_year() );
+		if($decodedObject->getInspections()->getSchedule_month())$inspection->setSchedule_month( $decodedObject->getInspections()->getSchedule_month() );
+		if($decodedObject->getInspections()->getSchedule_year())$inspection->setSchedule_year( $decodedObject->getInspections()->getSchedule_year() );
 
+		$inspection->setPrincipal_investigator_id($decodedObject->getPi_key_id());
 		$inspection = $inspectionDao->save( $inspection );
 
-		foreach($decodedObject->getRooms() as $room){
+		if($inspection->getRooms() != null){
+			foreach($inspection->getRooms() as $room){
+				//remove old room relationship
+				$this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKey_id(),false);
+			}
+		}
+
+		foreach($decodedObject->getBuilding_rooms() as $room){
 			//save room relationships
-			$this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKeyId(),true);
+			$this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
 		}
 
-		foreach($decodedObject->getInspector() as $inspector){
+		if($inspection->getInspectors() != null){
+			foreach($inspection->getInspectors() as $inspector){
+				//remove old inspector relationships
+				$LOG->debug($inspector);
+				$inspectionDao->removeRelatedItems($inspector->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+			}
+		}
+
+		foreach($decodedObject->getInspections()->getInspectors() as $inspector){
 			//save inspector relationships
-			$inspectionDao->addRelatedItems($inspector->getKey_id(),$inspection->getKeyId(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
+			$inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
 		}
 
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getInspectors");
+		$entityMaps[] = new EntityMap("eager","getRooms");
+		$entityMaps[] = new EntityMap("eager","getResponses");
+		$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("eager","getStatus");
+		$entityMaps[] = new EntityMap("lazy","getChecklists");
 
+		$inspection->setEntityMaps($entityMaps);
 		return $inspection;
 	}
 
@@ -2786,6 +2922,7 @@ class ActionManager {
 			$rooms = $pi->getRooms();
 			$pi_bldg_rooms = array();
 			foreach ($rooms as $room){
+				$LOG->debug($room);
 				$bldg = $room->getBuilding();
 				if ($bldg->getKey_id() == $is->getBuilding_key_id()){
 					$pi_bldg_rooms[] = $room;
@@ -2829,7 +2966,11 @@ class ActionManager {
 
 		$LOG->debug($dao->getRelationships($tableName));
 		return $dao->getRelationships($tableName);
+	}
 
+	public function getAllSupplementalObservations(){
+		$dao = $this->getDao(new SupplementalObservation());
+		return $dao->getAll();
 	}
 }
 ?>

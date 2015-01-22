@@ -199,6 +199,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
 	factory.getBuildingByRoom = function( room )
 	{	
+		if(room.Building)return room.Building;
 		if(!room.trusted){
 			var i = this.buildings.length
 			while(i--){
@@ -213,6 +214,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 	}
 
 	factory.saveRoom = function(roomDto){
+		$rootScope.validationError='';
+		if(!roomDto.Key_id){
+			var defer = $q.defer();
+			if(this.roomAlreadyExists(roomDto)){
+				$rootScope.validationError="Room "+roomDto.Name+" already exists in "+ this.getBuildingByRoom(roomDto).Name+'.';
+				roomDto.IsDirty=false;
+				return 
+			}
+		}
 		var url = "../../ajaxaction.php?action=saveRoom";
 		var deferred = $q.defer();
 		convenienceMethods.saveDataAndDefer(url, roomDto).then(
@@ -224,6 +234,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 			}
 		);	
 		return deferred.promise
+	}
+
+	factory.roomAlreadyExists = function(room)
+	{
+		var i=this.rooms.length;
+		while(i--){
+			if(this.rooms[i].Name.toLowerCase()==room.Name.toLowerCase() && this.rooms[i].Building_id == room.Building_id)return true;
+		}
+		return false;
 	}
 
 	factory.saveBuilding = function(buildingDto){

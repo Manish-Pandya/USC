@@ -2,8 +2,8 @@
 require_once '../top_view.php';
 ?>
 <script src="../../js/inspectionChecklist2.js"></script>
-<div ng-app="inspectionChecklist" ng-controller="checklistController" ng-cloak>
 
+<div ng-app="inspectionChecklist" ng-controller="checklistController" ng-cloak>
 	<div id="sp-nav" class="span3">
 		<a class="menuIcon" ng-click="$spMenu.toggle()">&#9776;</a>
         <ul class="nav nav-list nav nav-pills nav-stacked" id="sideNav">
@@ -221,16 +221,16 @@ require_once '../top_view.php';
 								<li ng-repeat="note in question.Responses.SupplementalObservations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-show="!note.edit">
 										<input type="checkbox" value="true" ng-model="note.checked" ng-init="note.checked = note.Is_active" ng-change="cf.supplementalObservationChanged(question, note)"/>
-										<span class="metro-checkbox labSpecific">{{note.Text}}|{{note.Class}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
+										<span class="metro-checkbox labSpecific">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;"><i class="icon-pencil"></i></a></span>
 									</label>
 									<span ng-if="note.edit" style="margin: 20px 0 ;display: block;">
 										<textarea  ng-model="SupplementalObservationCopy.Text" style="width:50%"></textarea><br>
 										<a ng-show="note.edit" ng-click="cf.saveSupplementalObservation(question, false, note)" class="btn btn-success">Save</a>
-										<a ng-show="note.edit" ng-click="cf.objectNullifactor(note, question)" class="btn btn-danger">Cancel</a><i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+										<a ng-show="note.edit" ng-click="cancelEdit(note)" class="btn btn-danger">Cancel</a><i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li>
 								<li>		
-									<form ng-if="!question.edit">
+									<form ng-if="!note.edit">
 									 	<input type="hidden" value="note" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
 							        	<textarea ng-model="question.newObservationText" rows="2" style="width:100%;"></textarea>
 								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="cf.saveSupplementalObservation(question, true)"/>
