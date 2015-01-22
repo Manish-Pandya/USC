@@ -1005,7 +1005,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     {
         var i = userHubFactory.users.length;
         while(i--){
-          if(  userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
+          if( !userDto.Key_id && userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
             $scope.modalError='This username is already taken by another user in the system.';
             return;
           } 
