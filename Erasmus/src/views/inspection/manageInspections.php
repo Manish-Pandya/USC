@@ -12,7 +12,7 @@ require_once '../top_view.php';
 <div class="navbar">    		
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li class="">
-			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
+			<img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 0px;">Manage Inspections
 				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
 			</h2>	
@@ -93,7 +93,7 @@ require_once '../top_view.php';
 
 				<select ng-model="dto.selectedInspector" ng-if="!dto.Inspections || !dto.Inspections.Inspectors.length" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
 	      			<option value="">-- Select inspector --</option>
-	      			<option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}{{$index}}</option>
+	      			<option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}</option>
 				</select>
 
 				<br ng-if="!dto.Inspections.Inspectors.length"><span ng-if="!dto.Inspections.Inspectors.length">NO INSPECTOR ASSIGNED</span>

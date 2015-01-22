@@ -1171,9 +1171,13 @@ class ActionManager {
 		}
 	}
 
-	public function saveInspector(){
+	public function saveInspector($inspector = null){
 		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
+		if($inspector == null){
+			$decodedObject = $this->convertInputJson();
+		}else{
+			$decodedObject = $inspector;
+		}
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to Observation', 202);
 		}
@@ -1377,6 +1381,7 @@ class ActionManager {
 						
 						//add Inspector record if role is inspector
 						if($roleToAdd->getName() == 'Safety Inspector'){
+							$LOG->debug('trying to save inspector');
 							$inspector = new Inspector();
 							$inspector->setUser_id($userID);
 							if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
