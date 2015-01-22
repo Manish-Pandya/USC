@@ -244,7 +244,7 @@ require_once '../top_view.php';
 		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-		    <a class="btn btn-large btn-success" ng-if="selectedChecklists" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-success" ng-if="Inspection || inspection" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
 	</div>
 	</div>
