@@ -89,9 +89,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../scripts/genericModel/inheritance.js"></script>
 <script src="../scripts/genericModel/genericModel.js"></script>
 <script src="../scripts/genericModel/genericAPI.js"></script>
-<script src="../scripts/genericModel/modelContructor.js"></script>
+<script src="../scripts/genericModel/modelInflator.js"></script>
 <script src="../scripts/dataStore/dataStore.js"></script>
-<script src="../scripts/dataStore/dataManager.js"></script>
+<script src="../scripts/dataStore/dataStoreManager.js"></script>
 
 <!-- models -->
 <script src="../scripts/models/Authorization.js"></script>

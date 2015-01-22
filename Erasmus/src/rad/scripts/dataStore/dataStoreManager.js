@@ -170,7 +170,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
 }
 
-dataStoreManager.getRelatedItems = function( type, relationsip, key, foreign_key )
+dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_key )
 {
         if(!dataStore[type+'s']){
             return 'Not found';
@@ -179,10 +179,10 @@ dataStoreManager.getRelatedItems = function( type, relationsip, key, foreign_key
             var i = dataStore[type+'s'].length;
             var collectionToReturn = [];
             while(i--){
-                var j = relationsip.length
-                while(j--){
+                var j = relationship.length
                     var current = dataStore[type+'s'][i];
-                    if(current[foreign_key] == relationsip[j][key]){
+                while(j--){
+                    if(current[foreign_key] == relationship[j][key]){
                         collectionToReturn.push(current);
                     }
                 }
