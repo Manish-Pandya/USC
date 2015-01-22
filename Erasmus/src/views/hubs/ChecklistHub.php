@@ -30,11 +30,11 @@ require_once '../top_view.php';
     </form>
     <span ng-hide="!checklist">
         <span class="spacer"></span>
-        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left">
+        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left btn-large">
          <i class="icon-plus-2"></i>Add Question
         </a>
         <Input type="hidden" ng-model="showInactive.Is_active" ng-init="showInactive.Is_active = true">
-        <a class="btn" ng-click="showInactive.Is_active = !showInactive.Is_active">
+        <a class="btn btn-large" ng-class="{'btn-danger':showInactive.Is_active,'btn-success':!showInactive.Is_active}"ng-click="showInactive.Is_active = !showInactive.Is_active">
          <span ng-show="!showInactive.Is_active">Show Active Questions</span>
          <span ng-hide="!showInactive.Is_active">Show Inactive Questions</span>
         </a>
