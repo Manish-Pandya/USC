@@ -204,6 +204,27 @@ angular
             **
             ********************************************************************/
 
+            af.getHazardById = function( key_id )
+            {
+                var urlSegment = 'getHazardById&id=' + key_id;
+
+                if( store.checkCollection( 'Hazard', key_id ) ) {
+                    var hazard = store.getById( 'Hazard', key_id )
+                        .then(function(hazard) {
+                            return hazard;
+                        });
+                }
+                else {
+                    var hazard = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store isotope in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return hazard;
+            }
+
+
             af.getAllHazards = function()
             {
 
