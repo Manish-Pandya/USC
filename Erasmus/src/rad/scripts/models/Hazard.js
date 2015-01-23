@@ -6,41 +6,26 @@
 var Hazard = function(){};
 Hazard.prototype = {
 
-	SubHazardsRelationship: {
+    SubHazardsRelationship: {
 
-		Class: 	  'Hazard',
-		keyReference:  'Parent_hazard_id',
-		queryString:  'getHazardTreeNode'	
+        className:    'Hazard',
+        keyReference:  'Parent_hazard_id',
+        methodString:  'getHazardTreeNode',
+        paramValue: 'Key_id',
+        paramName: 'id'
 
-	},
+    },
 
-	SaveUrl:  'saveHazard',
+    SaveUrl:  'saveHazard',
 
-	getSubHazards: function()
-	{
-			if( dataStoreManager.checkCollection( 'Hazards' ) ){                    
-                    this.SubHazards = dataStoreManager.getChildrenByParentProperty( 'Hazard', 'Parent_hazard_id', this.Key_id );                                                                 
+    getSubHazards: function() {
+            if(this.SubHazards) {
+                return this.SubHazards;
             }
-            else if(this.SubHazards){
-            		return this.SubHazards;
+            else {
+                return dataSwitch.getChildObject( this, 'SubHazards', this.SubHazardsRelationship);
             }
-            else{
-            		var local = this;
-
-                    var urlFragment = this.PrincipalInvestigatorRoomRelationRelationship.queryString;
-                    var queryParam = this[this.PrincipalInvestigatorRoomRelationRelationship.queryParam];
-
-                    this.rootScope[this.Class+"sBusy"] = this.api.read( urlFragment, queryParam )
-                        .then(
-                            function( returnedPromise ){
-                                local.PrincipalInvestigatorRoomRelations = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                            },
-                            function( error ){
-
-                            }
-                        )
-            }
-	},
+    }
 
 }
 
