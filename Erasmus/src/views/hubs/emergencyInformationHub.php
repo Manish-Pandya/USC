@@ -46,13 +46,15 @@ require_once '../top_view.php';
 
 				    <span ng-if="searchType == 'pi'">
 						<label>Principal Investigator:</label>
-						<input ng-if="pis" style="width:280px" type="text" typeahead-on-select='eif.onSelectPIOrBuilding($item)' ng-model="selectedPi" placeholder="Select a Principal Investigator" typeahead="pi as (pi.User.Name) for pi in pis | filter:$viewValue">
+						<input ng-if="pis" style="width:280px" type="text" typeahead-on-select='eif.onSelectPI($item)' ng-model="selectedPi" placeholder="Select a Principal Investigator" typeahead="pi as (pi.User.Name) for pi in pis | filter:$viewValue">
 						<input ng-if="!pis" style="width:280px" type="text" disabled="disabled" placeholder="Getting Principal Investigators...">
 				       	<i ng-if="!pis" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
 
 						<label>Location:</label>
 						<input ng-if="rooms" style="width:350px" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:$viewValue">
-						<input ng-if="!rooms" style="width:350px" placeholder="Select a Principal Investigator" disabled="disabled">
+						<input ng-if="gettingRoomsForPI" style="width:350px" placeholder="Searching for rooms..." disabled="disabled">
+				       	<i ng-if="gettingRoomsForPI" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
+						<input ng-if="!rooms && !gettingRoomsForPI" style="width:350px" placeholder="Select a Principal Investigator" disabled="disabled">
 					</span>
 
 				</form>
