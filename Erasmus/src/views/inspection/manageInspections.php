@@ -112,12 +112,15 @@ require_once '../top_view.php';
 					-->
 					<span ng-if="dto.Inspections.Status == 'CLOSED'">
 						<span>: {{dto.Inspections.Date_closed | dateToISO | date:"MMMM d, yyyy"}}</span>
+						<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
 					</span>
 					<span ng-if="dto.Inspections.Status == 'STARTED'">
-						<span>: {{dto.Inspections.Date_started | dateToISO | date:"MMMM d, yyyy"}}</span>
+						<span>:{{dto.Inspections.Date_started | dateToISO | date:"MMMM d, yyyy"}}</span>
+						<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
 					</span>
 					<span ng-if="dto.Inspections.Status == 'OVERDUE CAP' || dto.Inspections.Status == 'PENDING EHS APPROVAL'">
 						<span><br>(Due Date:{{dto.Inspections.Date_started | getDueDate | date:"MMMM d, yyyy"}})</span>
+						<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
 					</span>
 					<span ng-if="dto.Inspections.Status == 'OVERDUE FOR INSPECTION'">
 						<span><br>(Scheduled For {{dto.Inspections.Schedule_month | getMonthName}}, {{dto.Inspections.Schedule_year}})</span>
