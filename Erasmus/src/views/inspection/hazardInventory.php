@@ -337,7 +337,7 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
+<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10; box-shadow:0 0 20px rgba(0,0,0,.5)">
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
@@ -362,7 +362,6 @@ require_once '../top_view.php';
 				<th>Inspection Date</th>
 				<th>Inspector(s)</th>
 				<th>Hazards</th>
-				<th>Inspection Report</th>
 				<th>Close Out Date</th>
 			</thead>
 			<tbody>
@@ -371,8 +370,7 @@ require_once '../top_view.php';
 					<td>{{inspection.startDate}}</td>
 					<td>{{inspection.Inspectors[0].User.Name}}</td>
 					<td>hazards</td>
-					<td><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
-					<td>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
+					<td><a style="margin-top: -4px; margin-right: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}""><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
 				</tr>
 			</tbody>	
 		</table>	
