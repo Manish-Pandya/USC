@@ -338,7 +338,6 @@ require_once '../top_view.php';
 	</div>
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
-
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
@@ -347,6 +346,42 @@ require_once '../top_view.php';
 	</ul>
 </div>
 </span>
+<script type="text/ng-template" id="archived-reports.html">
+	<div class="modal-header wide-modal" style="padding:0;">
+        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s previous inspections</h2>
+    <div class="modal-body">
+	   
+	   <span ng-if="gettingInspections" class="loading">
+	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
+	   	   <span>Loading Inspections...</span>
+	   </span>
+		<table class="table table-bordered table-striped">
+		<table ng-if="previousInspections" class="table table-striped table-bordered">
+		<thead>
+				<th>Year</th>
+				<th>Inspection Date</th>
+				<th>Inspector(s)</th>
+				<th>Hazards</th>
+				<th>Inspection Report</th>
+				<th>Close Out Date</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="(key, inspection) in previousInspections">
+					<td>{{inspection.year}}</td>
+					<td>{{inspection.startDate}}</td>
+					<td>{{inspection.Inspectors[0].User.Name}}</td>
+					<td>hazards</td>
+					<td><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
+					<td>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
+				</tr>
+			</tbody>	
+		</table>	
+	   <h3 ng-show="noHazards">{{noHazards}}</h3>
 
+    </div>
+    <div class="modal-footer">
+    	<a class="btn btn-large" ng-click="close()">Close</a>
+    </div>
+</script>
 
 </div>
