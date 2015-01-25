@@ -1,4 +1,4 @@
-//This module provides a directive to calculate the height of a bootstrap modal and position it accordingly, vertically
+//This module provides a directive to calculate the height of a bootstrap modal and position it accordingly
 angular.module('modalPosition', [])
 
 .directive('modal', ['$window', function($window) {
