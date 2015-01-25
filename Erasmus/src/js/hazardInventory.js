@@ -270,6 +270,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getInspectionsByPIId&piId="+pi.Key_id;
       convenienceMethods.getDataAsDeferredPromise(url).then(
         function(promise){
+          factory.previousInspections = promise;
           deferred.resolve(promise);
         },
         function(promise){
