@@ -26,8 +26,10 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
 
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
 	var factory = {};
-	var PI = {};
+	factory.PI = {};
 	var allPis = [];
+  factory.previousInspections = [];
+
 	factory.getAllPis = function(){
 
 		//lazy load
@@ -61,7 +63,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&callback=JSON_CALLBACK';
 	    	convenienceMethods.getDataAsDeferredPromise(url).then(
 				function(promise){
-					this.PI = promise;
+					factory.PI = promise;
 					deferred.resolve(promise);
 				},
 				function(promise){
@@ -254,6 +256,27 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   factory.roomContainsHazard = function( room ){
     if(room.ContainsHazard == true) return true;
     return false;
+  }
+
+  factory.getPreviousInspections = function(pi)
+  {
+      var deferred = $q.defer();
+
+      if(factory.previousInspections.length){
+        deferred.resolve( factory.previousInspections );
+        return deferred.promise;
+      }
+
+      var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getInspectionsByPIId&piId="+pi.Key_id;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );  
+      return deferred.promise
   }
 
 	return factory;
@@ -758,7 +781,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope){
+
+controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope, $modal){
   
   init();
 
@@ -774,13 +798,23 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   }
 
   $scope.getArchivedReports = function(){
-    $scope.selectedFooter = 'reports';
-    if(!$scope.previousInspections){
-      $scope.waitingForInspections = false;
-      var piId = $scope.PI.Key_id;
-      var url = '../../ajaxaction.php?action=getInspectionsByPIId&piId='+piId+'&callback=JSON_CALLBACK';
-      convenienceMethods.getData( url, onGetInspections, onFailGetInspections);
-    }
+      var modalInstance = $modal.open({
+        templateUrl: 'archived-reports.html',
+        controller: controllers.modalCtrl
+      });
+
+
+        modalInstance.result.then(function () {
+         locationHubFactory.getRooms()
+        .then(
+          function(rooms){
+            console.log('got rooms');
+            $scope.rooms = rooms;
+            $scope.loading = false;
+          }
+        )
+      });
+
   } 
 
   function onGetInspections(data){
@@ -853,6 +887,25 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     $scope.selectedFooter = false;
   }
 
+}
+
+controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+  $scope.gettingInspections = true;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log(hazardInventoryFactory);
+  hazardInventoryFactory.getPreviousInspections(pi)
+    .then(
+      function(inspections){
+        $scope.previousInspections = inspections;
+        $scope.gettingInspections = false;
+      },
+      function(){
+        $scope.gettingInspections = false;
+        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+      }
+    )
+
   $scope.$watch('previousInspections', function(previousInspections, oldValue) {
     angular.forEach($scope.previousInspections, function(inspection, key){
       if(inspection.Date_created){
@@ -867,6 +920,11 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     });
   });
 
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
 }
+
 //set controller
 hazardInventory.controller( controllers );
