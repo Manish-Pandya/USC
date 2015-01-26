@@ -63,7 +63,7 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-				
+
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -189,7 +189,27 @@ class ActionMappingFactory {
 
 
 				//GENERIC RELATIONSHIPS
-				"getRelationships"=>new ActionMapping("getRelationships", "", "")
+				"getRelationships"=>new ActionMapping("getRelationships", "", ""),
+
+				//RADIATION MODULE
+				"getAllAuthorizations"=>new ActionMapping("getAllAuthorizations", "", ""),
+				"getAllCarboys"=>new ActionMapping("getAllCarboys", "", ""),
+				"getAllCarboyUseCycles"=>new ActionMapping("getAllCarboyUseCycles", "", ""),
+				"getAllDrums"=>new ActionMapping("getAllDrums", "", ""),
+				"getAllIsotopes"=>new ActionMapping("getAllIsotopes", "", ""),
+				"getAllParcels"=>new ActionMapping("getAllParcels", "", ""),
+				"getAllParcelUses"=>new ActionMapping("getAllParcelUses", "", ""),
+				"getAllParcelUseAmounts"=>new ActionMapping("getAllParcelUseAmounts", "", ""),
+				"getAllPickups"=>new ActionMapping("getAllPickups", "", ""),
+				"getAllPurchaseOrders"=>new ActionMapping("getAllPurchaseOrders", "", ""),
+				"getAllSolidsContainers"=>new ActionMapping("getAllSolidsContainers", "", ""),
+				"getAllWasteBags"=>new ActionMapping("getAllWasteBags", "", ""),
+				"getAllWasteTypes"=>new ActionMapping("getAllWasteTypes", "", ""),
+				"getRadPIById"=>new ActionMapping("getRadPIById", "", ""),
+
+
+
+
 		);
 	}
 }

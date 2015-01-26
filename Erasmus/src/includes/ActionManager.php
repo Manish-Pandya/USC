@@ -1039,7 +1039,7 @@ class ActionManager {
 		}
 		return $pis;
 	}
-	
+
 	public function getUserByPiUserId( $id = NULL ){
 
 		$id = $this->getValueFromRequest('id', $id);
@@ -1270,7 +1270,7 @@ class ActionManager {
 	public function savePIDepartmentRelations(){
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-	
+
 		foreach($roleIds as $roleId){
 			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
 		}
@@ -1321,10 +1321,10 @@ class ActionManager {
 		}
 		return true;
 	}
-	
+
 	public function saveUserRoleRelations($userId = null, $roleIds = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
-		
+
 		$userId = $this->getValueFromRequest('userId', $userId);
 		$roleIds = $this->getValueFromRequest('roleIds', $roleIds);
 		$LOG->debug($roleIds);
@@ -1378,7 +1378,7 @@ class ActionManager {
 							$pi->setIs_active(true);
 							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
 						}
-						
+
 						//add Inspector record if role is inspector
 						if($roleToAdd->getName() == 'Safety Inspector'){
 							$LOG->debug('trying to save inspector');
@@ -1407,7 +1407,7 @@ class ActionManager {
 		$user = $userDao->getById($id);
 		return $user->getPrincipalInvestigator();
 	}
-	
+
 	//Get a room dto duple
 	public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 		$id = $this->getValueFromRequest('id', $id);
@@ -2953,7 +2953,7 @@ class ActionManager {
 
 		if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
 		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
-		
+
 		// make sure first letter of class name is capitalized.
 		$class1 = ucfirst($class1);
 		$class2 = ucfirst($class2);
@@ -2961,7 +2961,7 @@ class ActionManager {
 		// get name of the table containing those two classes
 		$relationshipFactory = new RelationshipMappingFactory();
 		$tableName = $relationshipFactory->getTableName($class1, $class2);
-		
+
 		if( $tableName instanceof ActionError ) {
 			return $tableName;
 		}
@@ -2973,9 +2973,96 @@ class ActionManager {
 		return $dao->getRelationships($tableName);
 	}
 
+
+
 	public function getAllSupplementalObservations(){
 		$dao = $this->getDao(new SupplementalObservation());
 		return $dao->getAll();
+	}
+
+	////RADIATION MODULE
+
+	public function getAllAuthorizations(){
+		$dao = $this->getDao(new Authorization());
+		return $dao->getAll();
+	}
+
+	public function getAllCarboys(){
+		$dao = $this->getDao(new Carboy());
+		return $dao->getAll();
+	}
+
+	public function getAllCarboyUseCycles(){
+		$dao = $this->getDao(new CarboyUseCycle());
+		return $dao->getAll();
+	}
+
+	public function getAllDrums(){
+		$dao = $this->getDao(new Drum());
+		return $dao->getAll();
+	}
+
+	public function getAllIsotopes(){
+		$dao = $this->getDao(new Isotope());
+		return $dao->getAll();
+	}
+
+	public function getAllParcels(){
+		$dao = $this->getDao(new Parcel());
+		return $dao->getAll();
+	}
+
+	public function getAllParcelUses(){
+		$dao = $this->getDao(new ParcelUse());
+		return $dao->getAll();
+	}
+
+	public function getAllParcelUseAmounts(){
+		$dao = $this->getDao(new ParcelUseAmount());
+		return $dao->getAll();
+	}
+
+	public function getAllPickups(){
+		$dao = $this->getDao(new Pickup());
+		return $dao->getAll();
+	}
+
+	public function getAllPurchaseOrders(){
+		$dao = $this->getDao(new PurchaseOrder());
+		return $dao->getAll();
+	}
+
+	public function getAllSolidsContainers(){
+		$dao = $this->getDao(new SolidsContainer());
+		return $dao->getAll();
+	}
+
+	public function getAllWasteBags(){
+		$dao = $this->getDao(new WasteBag());
+		return $dao->getAll();
+	}
+
+	public function getAllWasteTypes(){
+		$dao = $this->getDao(new WasteType());
+		return $dao->getAll();
+	}
+
+	public function getRadPIById( $id = null ){
+		if($id == null)$id = $this->getValueFromRequest( "id", $id );
+
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pi = $dao->getById($id);
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getDepartments");
+		$entityMaps[] = new EntityMap("eager","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("eager","getAuthorizations");
+		$entityMaps[] = new EntityMap("eager", "getActiveParcels");
+		$pi->setEntityMaps($entityMaps);
+		return $pi;
+
 	}
 }
 ?>
