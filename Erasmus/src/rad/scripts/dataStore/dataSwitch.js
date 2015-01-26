@@ -12,14 +12,14 @@ var dataSwitch = {};
 
 dataSwitch.getChildObject = function( parent, property, relationship )
 {
-
+        console.log(parent[relationship.paramValue]);
 
         // check cache first
         if( dataStoreManager.checkCollection(relationship.className) ) {
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                 relationship.className,
                 relationship.keyReference,
-                parent[queryParam]
+                parent[relationship.paramValue]
                 );
         }
         // if not in cache, get from server
@@ -27,9 +27,9 @@ dataSwitch.getChildObject = function( parent, property, relationship )
 
             // prepare url to send (TODO shoudl API handle this?)
             var urlFragment = relationship.queryString;
-            var queryParam = '&' + relationship.paramName + '=' + parent[relationship.queryParam];
+            var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
 
-            parent.rootScope[parent.Class+"sBusy"] = parent.api.read( urlFragment, queryParam )
+            parent.rootScope[parent.Class+"sBusy"] = parent.api.read( urlFragment, paramValue )
                 .then(function( returnedPromise ) {
                     parent[property] = parent.inflator.instateAllObjectsFromJson( returnedPromise.data );
                 });
