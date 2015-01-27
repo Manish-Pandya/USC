@@ -63,7 +63,7 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-				
+
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -189,7 +189,8 @@ class ActionMappingFactory {
 
 
 				//GENERIC RELATIONSHIPS
-				"getRelationships"=>new ActionMapping("getRelationships", "", "")
+				"getRelationships"=>new ActionMapping("getRelationships", "", ""),
+
 		);
 	}
 }

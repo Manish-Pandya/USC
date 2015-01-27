@@ -13,8 +13,25 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = actionFunctionsFactory;
 
 
-    //get the root hazard node
-    $scope.pi = actionFunctionsFactory.getById("PrincipalInvestigator", $stateParams.pi);  
+    //get the all the pis
+    $scope.piPromise = actionFunctionsFactory.getAllPIs()
+      .then(
+            function( pis ){
+                actionFunctionsFactory.getRadPIById($stateParams.pi)
+                    .then(
+                        function(pi){
+                            $scope.pi = pi;
+                        },
+                        function(){
+                            $scope.error = 'Fuck you';
+                        }
+                    );  
+            },
+            function(){
+                $scope.error = 'There was an error when the system tried to get the list of Principal Investigators.  Please check your internet connection and try again.'
+            }
+
+        );
 
     //local functions for ordering hazards.  in controller because it's only for the view ordering
     $scope.order = function(hazard){

@@ -1039,7 +1039,7 @@ class ActionManager {
 		}
 		return $pis;
 	}
-	
+
 	public function getUserByPiUserId( $id = NULL ){
 
 		$id = $this->getValueFromRequest('id', $id);
@@ -1270,7 +1270,7 @@ class ActionManager {
 	public function savePIDepartmentRelations(){
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-	
+
 		foreach($roleIds as $roleId){
 			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
 		}
@@ -1321,10 +1321,10 @@ class ActionManager {
 		}
 		return true;
 	}
-	
+
 	public function saveUserRoleRelations($userId = null, $roleIds = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
-		
+
 		$userId = $this->getValueFromRequest('userId', $userId);
 		$roleIds = $this->getValueFromRequest('roleIds', $roleIds);
 		$LOG->debug($roleIds);
@@ -1378,7 +1378,7 @@ class ActionManager {
 							$pi->setIs_active(true);
 							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
 						}
-						
+
 						//add Inspector record if role is inspector
 						if($roleToAdd->getName() == 'Safety Inspector'){
 							$LOG->debug('trying to save inspector');
@@ -1407,7 +1407,7 @@ class ActionManager {
 		$user = $userDao->getById($id);
 		return $user->getPrincipalInvestigator();
 	}
-	
+
 	//Get a room dto duple
 	public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 		$id = $this->getValueFromRequest('id', $id);
@@ -2953,7 +2953,7 @@ class ActionManager {
 
 		if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
 		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
-		
+
 		// make sure first letter of class name is capitalized.
 		$class1 = ucfirst($class1);
 		$class2 = ucfirst($class2);
@@ -2961,6 +2961,7 @@ class ActionManager {
 		$relationshipFactory = new RelationshipMappingFactory();
 		// get name of the table containing those two classes
 		$tableName = $relationshipFactory->getTableName($class1, $class2);
+
 		// get class name of the DTO that will contain the resulting relationships
 		$className = $relationshipFactory->getClassName($class1, $class2);
 		
@@ -2976,9 +2977,13 @@ class ActionManager {
 		return $relationships;
 	}
 
+
+
 	public function getAllSupplementalObservations(){
 		$dao = $this->getDao(new SupplementalObservation());
 		return $dao->getAll();
 	}
+
+
 }
 ?>
