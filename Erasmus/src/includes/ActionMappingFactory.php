@@ -3,6 +3,8 @@
 
 /**
  * Class that wraps a static accessor that returns all Action Mappings
+ * NOTE: Anything not in the base module should go in a sepparate class extending this,
+ * 		for example Rad_ActionMappingFactory.
  *
  * @author Mitch
  */

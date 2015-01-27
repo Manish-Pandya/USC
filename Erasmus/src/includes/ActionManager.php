@@ -6,6 +6,9 @@
  * If an error should occur, Action functions should return either NULL or
  * an instance of ActionError. (ActionError reccomended) Returning an ActionError allows the public function
  * to provide additional information about the error.
+ * 
+ * NOTE: Anything not in the base module should go in a sepparate class extending this,
+ * 		for example Rad_ActionManager.
  */
 ?><?php
 
