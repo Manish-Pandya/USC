@@ -2958,9 +2958,11 @@ class ActionManager {
 		$class1 = ucfirst($class1);
 		$class2 = ucfirst($class2);
 
-		// get name of the table containing those two classes
 		$relationshipFactory = new RelationshipMappingFactory();
+		// get name of the table containing those two classes
 		$tableName = $relationshipFactory->getTableName($class1, $class2);
+		// get class name of the DTO that will contain the resulting relationships
+		$className = $relationshipFactory->getClassName($class1, $class2);
 		
 		if( $tableName instanceof ActionError ) {
 			return $tableName;
@@ -2969,8 +2971,9 @@ class ActionManager {
 		// GenericDAO must recieve an entity class, but will not use it in this case.
 		$dao = new GenericDAO(new Isotope);
 
-		$LOG->debug($dao->getRelationships($tableName));
-		return $dao->getRelationships($tableName);
+		$relationships = $dao->getRelationships($tableName, $className);
+		$LOG->debug($relationships);
+		return $relationships;
 	}
 
 	public function getAllSupplementalObservations(){

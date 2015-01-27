@@ -518,7 +518,7 @@ class GenericDAO {
 		return $result;
 	}
 
-	function getRelationships( $tableName ){
+	function getRelationships( $tableName, $resultClass ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
 		global $db;
@@ -527,7 +527,7 @@ class GenericDAO {
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $resultClass);
 			foreach($result as $row){
 				$row->passFlag = true;
 			}
