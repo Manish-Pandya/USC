@@ -337,7 +337,7 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10; box-shadow:0 0 20px rgba(0,0,0,.5)">
+<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)">
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
