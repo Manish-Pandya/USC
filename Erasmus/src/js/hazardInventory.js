@@ -120,7 +120,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
 		//if we don't have a pi, get one from the server
 		var deferred = $q.defer();
-		
+		if(!inspectorIds)inspectorIds=[10];  
 		var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
 		var temp = this;
     	convenienceMethods.getDataAsDeferredPromise(url).then(
@@ -332,7 +332,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
       //todo:  when we do user siloing, give the user a way to add another inspection
       //dummy value for inspector ids
-      inspectorIds = [1];
+      inspectorIds = [10];
 
       //if we are accessing an inspection that has already been started, we get it's get ID from the $location.search() property (AngularJS hashed get param)
       if($location.search().inspectionId){
