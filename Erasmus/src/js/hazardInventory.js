@@ -29,6 +29,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 	factory.PI = {};
 	var allPis = [];
   factory.previousInspections = [];
+  factory.openInspections = [];
 
 	factory.getAllPis = function(){
 
@@ -60,7 +61,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       deferred.resolve( this.PI );
 		}else{
       //eager load
-			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&callback=JSON_CALLBACK';
+			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&getRooms=true&callback=JSON_CALLBACK';
 	    	convenienceMethods.getDataAsDeferredPromise(url).then(
 				function(promise){
 					factory.PI = promise;
@@ -280,6 +281,27 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       return deferred.promise
   }
 
+  factory.getOpenInspections = function(pi){
+    var deferred = $q.defer();
+
+      if(factory.previousInspections.length){
+        deferred.resolve( factory.previousInspections );
+        return deferred.promise;
+      }
+
+      var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getOpenInspectionsByPIId&id="+pi.Key_id;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.previousInspections = promise;
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );  
+      return deferred.promise
+  }
+
 	return factory;
 });
 
@@ -401,9 +423,10 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                 });
       return resetInspectionDefer.promise;
   },
-  getHazards = function(rooms)
-  {     
+  getHazards = function( pi )
+  {         
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
+            var rooms = pi.Rooms;
             var roomIds = [];
             var roomsLength = rooms.length;
             for(var i = 0; i < roomsLength; i++){
@@ -439,7 +462,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     getPi( piKey_id )
       .then( setInspection )
       .then( getHazards  );
-  };
+  }
 
 
   init();
@@ -469,9 +492,9 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   	$scope.PI = {};
   	$scope.inspection = {};
   	$scope.buildings = [];
-  	$location.search('inspectionId','');
 	  $location.search("pi",'');
-    initiateInspection($item.Key_id);
+    getPi($item.Key_id)
+      .then(getHazards)
   }
 
   $scope.removeBuilding = function(building){
@@ -837,6 +860,26 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     }
   }
 
+  $scope.startInspection = function()
+  {
+    var modalInstance = $modal.open({
+        templateUrl: 'open-inspections.html',
+        controller: controllers.findInspectionCtrl
+      });
+
+
+        modalInstance.result.then(function () {
+         locationHubFactory.getRooms()
+        .then(
+          function(rooms){
+            console.log('got rooms');
+            $scope.rooms = rooms;
+            $scope.loading = false;
+          }
+        )
+      });
+  }
+
   onGetLabContacts = function(data){
     $scope.contacts = data.LabPersonnel;
     $scope.doneLoading = data.doneLoading;
@@ -917,6 +960,40 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
         
       if(inspection.Date_closed){
         inspection.endDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
+      }
+    });
+  });
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+}
+
+controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  hazardInventoryFactory.getOpenInspections(pi)
+    .then(
+      function(inspections){
+        $scope.openInspections = inspections;
+        $scope.gettingInspections = false;
+      },
+      function(){
+        $scope.gettingInspections = false;
+        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+      }
+    )
+
+  $scope.$watch('openInspections', function(previousInspections, oldValue) {
+    angular.forEach($scope.previousInspections, function(inspection, key){
+      if(inspection.Date_created){
+        var date =  convenienceMethods.getDate(inspection.Date_created);
+        inspection.startDate = date.formattedString;
+        inspection.year = date.year;
+      }
+      if(inspection.Date_started){
+        inspection.startDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
       }
     });
   });
