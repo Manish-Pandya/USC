@@ -14,9 +14,14 @@ angular.module('modalPosition', [])
                 $(element[0]).find('.modal-body ul').css({ maxHeight:$window.innerHeight*.85-210});
 
                 if( $('.wide-modal').length ){
-                    console.log($window.innerWidth);
-                    $(element[0]).width($window.innerWidth * .8);
-                    $(element[0]).css({'left':$window.innerWidth * .1+'px', 'marginLeft': 0});
+                    if($window.innerWidth > 1370){
+                        console.log($window.innerWidth);
+                        $(element[0]).width($window.innerWidth * .8);
+                        $(element[0]).css({'left':$window.innerWidth * .1+'px', 'marginLeft': 0});
+                    }else{
+                        $(element[0]).width($window.innerWidth*.98);
+                        $(element[0]).css({'left':$window.innerWidth*.005+'px', 'marginLeft': 0});
+                    }
                 }
         	}
         	scope.onResize();
@@ -27,6 +32,7 @@ angular.module('modalPosition', [])
 
             angular.element($window).bind('resize', function() {
                 scope.onResize();
+                console.log('resizee');
             });
       	}
     }
