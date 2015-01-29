@@ -91,6 +91,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -160,6 +161,29 @@ class PrincipalInvestigator extends GenericCrud {
 			$this->principal_investigator_room_relations = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PRINCIPAL_INVESTIGATOR_ROOMS_RELATIONSHIP));
 		}
 		return $this->principal_investigator_room_relations;
+	}
+
+	public function getOpenInspections(){
+		// Get the db connection
+		global $db;
+
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+
+		$queryString = "SELECT * FROM inspection WHERE principal_investigator_id =  $this->key_id AND date_closed IS NULL";
+		$stmt = $db->prepare($queryString);
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		$LOG->debug($result);
+
+		return $result;
 	}
 
 

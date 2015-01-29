@@ -47,7 +47,7 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-				
+
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -108,6 +108,7 @@ class ActionMappingFactory {
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				"saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", ""),
 				"getSubHazards"=>new ActionMapping("getSubHazards", "", ""),
+				"getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", ""),
 
 				"getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", ""),
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),

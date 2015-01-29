@@ -142,7 +142,8 @@ class ActionManager {
 			$entityMaps = array();
 			$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
 			$entityMaps[] = new EntityMap("lazy","getInspections");
-			$entityMaps[] = new EntityMap("lazy","getUser");
+			$entityMaps[] = new EntityMap("eager","getUser");
+			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 
 			$supervisor = $user->getSupervisor();
 			if($supervisor != null){
@@ -983,13 +984,26 @@ class ActionManager {
 	}
 
 	// Inspection, step 1 (PI / Room assessment)
-	public function getPIById( $id = NULL ){
+	public function getPIById( $id = NULL, $getRooms = null ){
 
 		$id = $this->getValueFromRequest('id', $id);
+		$getRooms = $this->getValueFromRequest('getRooms', $getRooms);
 
 		if( $id !== NULL ){
 			$dao = $this->getDao(new PrincipalInvestigator());
-			return $dao->getById($id);
+			$pi = $dao->getById($id);
+			if($getRooms != null && $getRooms == true){
+				$entityMaps = array();
+				$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+				$entityMaps[] = new EntityMap("eager","getRooms");
+				$entityMaps[] = new EntityMap("eager","getDepartments");
+				$entityMaps[] = new EntityMap("eager","getUser");
+				$entityMaps[] = new EntityMap("lazy","getInspections");
+				$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+				$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+				$pi->setEntityMaps($entityMaps);
+			}
+			return $pi;
 		}
 		else{
 			//error
@@ -1012,6 +1026,7 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("eager","getUser");
 			$entityMaps[] = new EntityMap("lazy","getInspections");
 			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 
 			foreach($pis as $pi){
 				$pi->setEntityMaps($entityMaps);
@@ -1020,6 +1035,20 @@ class ActionManager {
 
 		return $pis;
 
+	}
+
+	public function getOpenInspectionsByPIId( $id = null){
+		$id = $this->getValueFromRequest('id', $id);
+
+		if( $id !== NULL ){
+			$dao = $this->getDao(new PrincipalInvestigator());
+			$pi =  $dao->getById($id);
+			return $pi->getOpenInspections();
+		}
+		else{
+			//error
+			return new ActionError("No request parameter 'id' was provided");
+		}
 	}
 
 	public function getPisForUserHub(){
@@ -1039,7 +1068,7 @@ class ActionManager {
 		}
 		return $pis;
 	}
-	
+
 	public function getUserByPiUserId( $id = NULL ){
 
 		$id = $this->getValueFromRequest('id', $id);
@@ -1270,7 +1299,7 @@ class ActionManager {
 	public function savePIDepartmentRelations(){
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-	
+
 		foreach($roleIds as $roleId){
 			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
 		}
@@ -1321,10 +1350,10 @@ class ActionManager {
 		}
 		return true;
 	}
-	
+
 	public function saveUserRoleRelations($userId = null, $roleIds = null){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
-		
+
 		$userId = $this->getValueFromRequest('userId', $userId);
 		$roleIds = $this->getValueFromRequest('roleIds', $roleIds);
 		$LOG->debug($roleIds);
@@ -1378,7 +1407,7 @@ class ActionManager {
 							$pi->setIs_active(true);
 							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
 						}
-						
+
 						//add Inspector record if role is inspector
 						if($roleToAdd->getName() == 'Safety Inspector'){
 							$LOG->debug('trying to save inspector');
@@ -1407,7 +1436,7 @@ class ActionManager {
 		$user = $userDao->getById($id);
 		return $user->getPrincipalInvestigator();
 	}
-	
+
 	//Get a room dto duple
 	public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
 		$id = $this->getValueFromRequest('id', $id);
