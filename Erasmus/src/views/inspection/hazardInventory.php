@@ -337,7 +337,7 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)">
+<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
@@ -388,7 +388,7 @@ require_once '../top_view.php';
 
 <script type="text/ng-template" id="open-inspections.html">
 	<div class="modal-header wide-modal" style="padding:0;">
-        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s open inspections</h2>
+        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections</h2>
     <div class="modal-body">
 	   
 	   <span ng-if="gettingInspections" class="loading">
@@ -402,7 +402,8 @@ require_once '../top_view.php';
 				<th>Scheduled Month</th>
 				<th>Inspector(s)</th>
 				<th>Hazards</th>
-				<th>Close Out Date</th>
+				<th>Review Report</th>
+				<th>Begin Inspection</th>
 			</thead>
 			<tbody>
 				<tr ng-repeat="(key, inspection) in openInspections">
@@ -411,9 +412,15 @@ require_once '../top_view.php';
 					<td>{{inspection.Inspectors[0].User.Name}}</td>
 					<td>hazards</td>
 					<td>
-						<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
-						{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span>
+						<span ng-if="inspection.startDate">
+							<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
+							{{inspection.startDate}}
+						</span>
 					</td>
+					<td>
+						<a class="btn btn-danger btn-large left"><i class="icon-checkmark-2"></i>Begin Inspection</a>
+					</td>
+					
 				</tr>
 			</tbody>	
 		</table>	

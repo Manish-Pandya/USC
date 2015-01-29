@@ -308,7 +308,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 controllers = {};
 
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
+controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
 
   var comboBreaker = $q.defer();
   var getAllPis = function()
@@ -334,7 +334,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                 .getPi(piKey_id)
                   .then(function(pi){
                       $scope.piLoading = false;
-                      $scope.PI = pi;
+                      $rootScope.PI = pi;
                       piDefer.resolve( pi );
                   },
                   function(fail){
