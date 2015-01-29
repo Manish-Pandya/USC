@@ -87,7 +87,7 @@ require_once '../top_view.php';
 		      </div>
 		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}">Manage Data for Selected PI</a></h3>
 		     </div>
-			<div class="span8">
+			<div class="span8" ng-if="PI || pi">
 		       <div class="controls">
 		       <h3 class="span6">Building(s):</h3>
 		       <h3 class="span6">
@@ -389,8 +389,8 @@ require_once '../top_view.php';
 <script type="text/ng-template" id="open-inspections.html">
 	<div class="modal-header wide-modal" style="padding:0;">
         <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections</h2>
+    </div>
     <div class="modal-body">
-	   
 	   <span ng-if="gettingInspections" class="loading">
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
@@ -398,28 +398,45 @@ require_once '../top_view.php';
 		<table class="table table-bordered table-striped">
 		<table ng-if="openInspections" class="table table-striped table-bordered">
 		<thead>
+				<th>Begin Inspection</th>
+				<th>Rooms</th>
 				<th>Scheduled Year</th>
 				<th>Scheduled Month</th>
 				<th>Inspector(s)</th>
 				<th>Hazards</th>
 				<th>Review Report</th>
-				<th>Begin Inspection</th>
 			</thead>
 			<tbody>
 				<tr ng-repeat="(key, inspection) in openInspections">
-					<td>{{inspection.Schedule_year}}</td>
-					<td>{{inspection.Schedule_month}}</td>
-					<td>{{inspection.Inspectors[0].User.Name}}</td>
+					<td>
+						<a class="btn btn-danger btn-large left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i></a>
+					</td>
+					<td>
+						<ul>
+							<li ng-repeat='room in pi.Rooms'>
+								<label class="checkbox inline">
+									<input type="checkbox" ng-checked="hif.evalInspectionRoomChecked( inspection, room )" ng-change="hif.saveInspectionRoomRelationship( inspection, room )" ng-model="room.checked"/>
+									<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="inspection.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+								</label>
+							</li>
+						</ul>
+					</td>
+					<td once-text="inspection.Schedule_year"></td>
+					<td once-text="inspection.Schedule_month"></td>
+					<td>
+						<ul>
+							<li ng-repeat='inspector in inspection.Inspectors' once-next='inspector.User.Name'></li>
+						</ul>
+					</td>
 					<td>hazards</td>
+
 					<td>
 						<span ng-if="inspection.startDate">
 							<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
 							{{inspection.startDate}}
 						</span>
 					</td>
-					<td>
-						<a class="btn btn-danger btn-large left"><i class="icon-checkmark-2"></i>Begin Inspection</a>
-					</td>
+					
 					
 				</tr>
 			</tbody>	

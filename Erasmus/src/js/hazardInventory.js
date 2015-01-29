@@ -282,7 +282,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   }
 
   factory.getOpenInspections = function(pi){
-    var deferred = $q.defer();
+      var deferred = $q.defer();
 
       if(factory.previousInspections.length){
         deferred.resolve( factory.previousInspections );
@@ -300,6 +300,37 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         }
       );  
       return deferred.promise
+  }
+
+  factory.saveInspectionRoomRelationship = function(inspection, room)
+  {
+    room.userChecked = room.checked;  
+    var deferred = $q.defer();
+    var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=saveInspectionRoomRelation&roomId="+room.Key_id+"&inspectionId="+inspection.Key_id+"&add="+room.checked;
+    room.checked = !room.checked;
+    inspection.IsDirty=true;
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        inspection.IsDirty=false;
+        room.checked = !room.checked;
+        deferred.resolve(room);
+      },
+      function(promise){
+        inspection.IsDirty=false;
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
+
+  factory.evalInspectionRoomChecked = function(inspection, room)
+  {
+      if(room.userChecked)return room.userChecked;
+      var i = inspection.Rooms.length;
+      while(i--){
+        if(inspection.Rooms[i].Key_id == room.Key_id)return true;
+      }
+      return false;
   }
 
   return factory;
@@ -514,7 +545,8 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
 
   $scope.selectRoom = function(room,building){
     if($scope.roomsToRequest.indexOf(room) === -1){
-       $scope.roomsToRequest.push(room.Key_id);saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL)
+       $scope.roomsToRequest.push(room.Key_id);
+       saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL)
 
     }else{
        $scope.roomsToRequest.splice($scope.roomsToRequest.indexOf(room.Key_id), 1);
@@ -971,8 +1003,10 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
 }
 
 controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+  $scope.hif=hazardInventoryFactory;
   var pi = hazardInventoryFactory.PI;
   $scope.pi = pi;
+  $scope.gettingInspections = true;
   hazardInventoryFactory.getOpenInspections(pi)
     .then(
       function(inspections){
