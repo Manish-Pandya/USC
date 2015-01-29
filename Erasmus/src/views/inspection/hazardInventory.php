@@ -337,12 +337,12 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)">
+<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
 		<li><a ng-click="openNotes()"><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
-		<li><a href="InspectionChecklist.php#?inspection={{location.inspectionId}}"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
+		<li><a ng-click="startInspection()"><img src="../../img/checkmarkFooter.png"/><span>Begin Inspection</a></span></li>
 	</ul>
 </div>
 </span>
@@ -362,6 +362,7 @@ require_once '../top_view.php';
 				<th>Inspection Date</th>
 				<th>Inspector(s)</th>
 				<th>Hazards</th>
+				<th>Inspection Report</th>
 				<th>Close Out Date</th>
 			</thead>
 			<tbody>
@@ -370,7 +371,56 @@ require_once '../top_view.php';
 					<td>{{inspection.startDate}}</td>
 					<td>{{inspection.Inspectors[0].User.Name}}</td>
 					<td>hazards</td>
-					<td><a style="margin-top: -4px; margin-right: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}""><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span></td>
+					<td>
+						<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
+						{{inspection.endDate}}<span ng-if="!inspection.endDate">Pending</span>
+					</td>
+				</tr>
+			</tbody>	
+		</table>	
+	   <h3 ng-show="noHazards">{{noHazards}}</h3>
+
+    </div>
+    <div class="modal-footer">
+    	<a class="btn btn-large" ng-click="close()">Close</a>
+    </div>
+</script>
+
+<script type="text/ng-template" id="open-inspections.html">
+	<div class="modal-header wide-modal" style="padding:0;">
+        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections</h2>
+    <div class="modal-body">
+	   
+	   <span ng-if="gettingInspections" class="loading">
+	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
+	   	   <span>Loading Inspections...</span>
+	   </span>
+		<table class="table table-bordered table-striped">
+		<table ng-if="openInspections" class="table table-striped table-bordered">
+		<thead>
+				<th>Scheduled Year</th>
+				<th>Scheduled Month</th>
+				<th>Inspector(s)</th>
+				<th>Hazards</th>
+				<th>Review Report</th>
+				<th>Begin Inspection</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="(key, inspection) in openInspections">
+					<td>{{inspection.Schedule_year}}</td>
+					<td>{{inspection.Schedule_month}}</td>
+					<td>{{inspection.Inspectors[0].User.Name}}</td>
+					<td>hazards</td>
+					<td>
+						<span ng-if="inspection.startDate">
+							<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
+							{{inspection.startDate}}
+						</span>
+					</td>
+					<td>
+						<a class="btn btn-danger btn-large left"><i class="icon-checkmark-2"></i>Begin Inspection</a>
+					</td>
+					
 				</tr>
 			</tbody>	
 		</table>	

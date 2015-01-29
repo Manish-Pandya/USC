@@ -25,54 +25,55 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
 }]);
 
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
-	var factory = {};
-	factory.PI = {};
-	var allPis = [];
+  var factory = {};
+  factory.PI = {};
+  var allPis = [];
   factory.previousInspections = [];
+  factory.openInspections = [];
 
-	factory.getAllPis = function(){
+  factory.getAllPis = function(){
 
-		//lazy load
-		if(this.allPis)return this.allPis;
+    //lazy load
+    if(this.allPis)return this.allPis;
 
-		//if we don't have a the list of pis, get it from the server
-		var deferred = $q.defer();
-		var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
-    	convenienceMethods.getDataAsDeferredPromise(url).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);
-		return deferred.promise;
+    //if we don't have a the list of pis, get it from the server
+    var deferred = $q.defer();
+    var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );
+    return deferred.promise;
     }
 
-	factory.getPi = function(id){
+  factory.getPi = function(id){
     console.log('id passed to getPi in factory ' + id);
 
-		//if we don't have a pi, get one from the server
-		var deferred = $q.defer();
+    //if we don't have a pi, get one from the server
+    var deferred = $q.defer();
 
     //lazy load
     if(this.PI && this.PI.Key_id == id){
       deferred.resolve( this.PI );
-		}else{
+    }else{
       //eager load
-			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&callback=JSON_CALLBACK';
-	    	convenienceMethods.getDataAsDeferredPromise(url).then(
-				function(promise){
-					factory.PI = promise;
-					deferred.resolve(promise);
-				},
-				function(promise){
-					deferred.reject();
-				}
-			);
-	  }
-		return deferred.promise;
-	}
+      var url = '../../ajaxaction.php?action=getPIById&id='+id+'&getRooms=true&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.PI = promise;
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );
+    }
+    return deferred.promise;
+  }
 
   factory.getHazards = function(rooms){
     //on page load, get the collection of hazards for all of the PI's rooms 
@@ -109,22 +110,22 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     return deferred.promise;
   }
 
-	factory.setAllPis = function(PIs){
-		this.PIs = PIs;
-	}
+  factory.setAllPis = function(PIs){
+    this.PIs = PIs;
+  }
 
-	factory.setPi = function(PI){
-		this.PI = PI;
-	}
+  factory.setPi = function(PI){
+    this.PI = PI;
+  }
 
-	factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
-		//if we don't have a pi, get one from the server
-		var deferred = $q.defer();
-		if(!inspectorIds)inspectorIds=[10];  
-		var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
-		var temp = this;
-    	convenienceMethods.getDataAsDeferredPromise(url).then(
-			function( inspection ){
+  factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
+    //if we don't have a pi, get one from the server
+    var deferred = $q.defer();
+    if(!inspectorIds)inspectorIds=[10];  
+    var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
+    var temp = this;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+      function( inspection ){
         //if the PI doesn't have any rooms, we should reject the promise and let the controller know why
         if(!inspection.Rooms.length){
           deferred.reject(true);
@@ -133,25 +134,25 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
           //we have a good inspection with a collection of rooms
           deferred.resolve(inspection); 
         }
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise;
-	}
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise;
+  }
 
-	factory.getInspection = function(){
-		return this.Inspection
-	}
+  factory.getInspection = function(){
+    return this.Inspection
+  }
 
-	factory.setInspection = function(inspection){
+  factory.setInspection = function(inspection){
     console.log(inspection);
-		this.Inspection = inspection;
-	}
+    this.Inspection = inspection;
+  }
 
-	factory.setHazarRoomRelations = function(hazard){
-		var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
+  factory.setHazarRoomRelations = function(hazard){
+    var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
       var deferred = $q.defer();
 
       convenienceMethods.saveDataAndDefer(url, hazard).then(
@@ -164,35 +165,35 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         }
       );
       return deferred.promise
-	}
+  }
 
-	factory.setSingleHazardRoomRelations = function(hazard, room, add){
-		var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
-		var deferred = $q.defer();
-		convenienceMethods.getDataAsDeferredPromise(url).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise
-	}
+  factory.setSingleHazardRoomRelations = function(hazard, room, add){
+    var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
+    var deferred = $q.defer();
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
 
-	factory.getSubHazards = function(hazard){
-		var url = "../../ajaxaction.php?action=getSubHazards";
-		var deferred = $q.defer();
-		convenienceMethods.saveDataAndDefer(url, hazard).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise
-	}
+  factory.getSubHazards = function(hazard){
+    var url = "../../ajaxaction.php?action=getSubHazards";
+    var deferred = $q.defer();
+    convenienceMethods.saveDataAndDefer(url, hazard).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
   //invert a collection of room objects with building properties to transform it into a collection of building objects with rooms collection properties
   factory.parseBuildings = function(rooms)
   {
@@ -280,13 +281,34 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       return deferred.promise
   }
 
-	return factory;
+  factory.getOpenInspections = function(pi){
+    var deferred = $q.defer();
+
+      if(factory.previousInspections.length){
+        deferred.resolve( factory.previousInspections );
+        return deferred.promise;
+      }
+
+      var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getOpenInspectionsByPIId&id="+pi.Key_id;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.previousInspections = promise;
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );  
+      return deferred.promise
+  }
+
+  return factory;
 });
 
 controllers = {};
 
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
+controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
 
   var comboBreaker = $q.defer();
   var getAllPis = function()
@@ -307,20 +329,20 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   getPi = function(piKey_id)
   {
         $scope.piLoading = true;
-	      var piDefer = $q.defer();
-	      hazardInventoryFactory
-	              .getPi(piKey_id)
-	                .then(function(pi){
+        var piDefer = $q.defer();
+        hazardInventoryFactory
+                .getPi(piKey_id)
+                  .then(function(pi){
                       $scope.piLoading = false;
-	                    $scope.PI = pi;
-	                    piDefer.resolve( pi );
-	                },
-	                function(fail){
+                      $rootScope.PI = pi;
+                      piDefer.resolve( pi );
+                  },
+                  function(fail){
                       $scope.piLoading = false;
-	                    piDefer.reject();
-	                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
-	                });
-	      return piDefer.promise;
+                      piDefer.reject();
+                      $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+                  });
+        return piDefer.promise;
   },
   setInspection = function(pi)
   {
@@ -401,9 +423,10 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                 });
       return resetInspectionDefer.promise;
   },
-  getHazards = function(rooms)
-  {     
+  getHazards = function( pi )
+  {         
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
+            var rooms = pi.Rooms;
             var roomIds = [];
             var roomsLength = rooms.length;
             for(var i = 0; i < roomsLength; i++){
@@ -439,7 +462,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     getPi( piKey_id )
       .then( setInspection )
       .then( getHazards  );
-  };
+  }
 
 
   init();
@@ -465,13 +488,13 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
-  	//unset scope.PI so that when we call initiateInspection, we will eager load a new PI from the server
-  	$scope.PI = {};
-  	$scope.inspection = {};
-  	$scope.buildings = [];
-  	$location.search('inspectionId','');
-	  $location.search("pi",'');
-    initiateInspection($item.Key_id);
+    //unset scope.PI so that when we call initiateInspection, we will eager load a new PI from the server
+    $scope.PI = {};
+    $scope.inspection = {};
+    $scope.buildings = [];
+    $location.search("pi",'');
+    getPi($item.Key_id)
+      .then(getHazards)
   }
 
   $scope.removeBuilding = function(building){
@@ -515,26 +538,26 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     $scope.selectedHazard = hazard;
     calculateClickPosition(event,hazard, element);
 
-  	//do we have subHazards for this hazard?
-  	if(hazard.ActiveSubHazards && hazard.ActiveSubHazards){
-  		hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
-  	}else if(hazard.HasChildren){
-  		//we don't have subhazards for this hazard, but there are some.
-  		//get them from the server.
-  		hazard.IsDirty = true;
-  		hazardInventoryFactory.getSubHazards(hazard).then(
-  			function(promise){
-  				hazard.error = "";
-  				hazard.IsDirty = false;
-  				hazard.ActiveSubHazards = promise;
-  				hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
-  			},
-  			function(){
-  				hazard.error = "There was a problem getting the subhazards for " + hazard.Name + "Please check your internet connection and try again.";
-  				hazard.IsDirty = false;
-  			}
-  		)
-  	}
+    //do we have subHazards for this hazard?
+    if(hazard.ActiveSubHazards && hazard.ActiveSubHazards){
+      hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
+    }else if(hazard.HasChildren){
+      //we don't have subhazards for this hazard, but there are some.
+      //get them from the server.
+      hazard.IsDirty = true;
+      hazardInventoryFactory.getSubHazards(hazard).then(
+        function(promise){
+          hazard.error = "";
+          hazard.IsDirty = false;
+          hazard.ActiveSubHazards = promise;
+          hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
+        },
+        function(){
+          hazard.error = "There was a problem getting the subhazards for " + hazard.Name + "Please check your internet connection and try again.";
+          hazard.IsDirty = false;
+        }
+      )
+    }
 
   }
 
@@ -704,21 +727,21 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
     //did we uncheck the last room?
     if(hazard.InspectionRooms.every(roomDoesNotContainsHazard)){
-    	hazard.IsPresent = false;
-    	$scope.handleHazardChecked(hazard);
+      hazard.IsPresent = false;
+      $scope.handleHazardChecked(hazard);
     }else{
-    	room.IsDirty = true;
-    	var add = room.ContainsHazard;
-    	hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
-    		function(promise){
-    			room.IsDirty = false;
+      room.IsDirty = true;
+      var add = room.ContainsHazard;
+      hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
+        function(promise){
+          room.IsDirty = false;
           removeSubHazardsFromRoom(room, hazard);
-    		},
-    		function(){
-    			room.ContainsHazard = !room.ContainsHazard;
-    			$scope.error = "Room "+room.Name+" could not be removed from "+hazard.Name+".  Please check your internet conneciton and try again.";
-    		}
-    	);
+        },
+        function(){
+          room.ContainsHazard = !room.ContainsHazard;
+          $scope.error = "Room "+room.Name+" could not be removed from "+hazard.Name+".  Please check your internet conneciton and try again.";
+        }
+      );
     }
     
   }
@@ -738,25 +761,25 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   }
 
   function roomDoesNotContainsHazard(room){
-  	if(!room.ContainsHazard)return true;
-  	return false;
+    if(!room.ContainsHazard)return true;
+    return false;
   }
 
   $scope.handleHazardChecked = function(hazard, parent){
-  	console.log(hazard);
-  	hazard.IsDirty = true;
+    console.log(hazard);
+    hazard.IsDirty = true;
     hazardInventoryFactory.setHazarRoomRelations(hazard).then(
-    	function(promise){
-    		hazard.IsDirty = false;
+      function(promise){
+        hazard.IsDirty = false;
         console.log($scope);
-    		hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
-    		hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
-    	},
-    	function(promise){
-    		console.log(promise);
-    		hazard.IsPresent = !hazard.IsPresent;
-    		$scope.error = 'There was a problem updating '+hazard.Name+' in the system.  Please check your internet connection and try again.'
-    	}
+        hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
+        hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
+      },
+      function(promise){
+        console.log(promise);
+        hazard.IsPresent = !hazard.IsPresent;
+        $scope.error = 'There was a problem updating '+hazard.Name+' in the system.  Please check your internet connection and try again.'
+      }
     )
 
   }
@@ -835,6 +858,26 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
       var url = '../../ajaxaction.php?action=getPI&id=12&callback=JSON_CALLBACK';
       convenienceMethods.getData( url, onGetLabContacts, onFailGetLabContacts);
     }
+  }
+
+  $scope.startInspection = function()
+  {
+    var modalInstance = $modal.open({
+        templateUrl: 'open-inspections.html',
+        controller: controllers.findInspectionCtrl
+      });
+
+
+        modalInstance.result.then(function () {
+         locationHubFactory.getRooms()
+        .then(
+          function(rooms){
+            console.log('got rooms');
+            $scope.rooms = rooms;
+            $scope.loading = false;
+          }
+        )
+      });
   }
 
   onGetLabContacts = function(data){
@@ -917,6 +960,40 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
         
       if(inspection.Date_closed){
         inspection.endDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
+      }
+    });
+  });
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+}
+
+controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  hazardInventoryFactory.getOpenInspections(pi)
+    .then(
+      function(inspections){
+        $scope.openInspections = inspections;
+        $scope.gettingInspections = false;
+      },
+      function(){
+        $scope.gettingInspections = false;
+        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+      }
+    )
+
+  $scope.$watch('openInspections', function(previousInspections, oldValue) {
+    angular.forEach($scope.previousInspections, function(inspection, key){
+      if(inspection.Date_created){
+        var date =  convenienceMethods.getDate(inspection.Date_created);
+        inspection.startDate = date.formattedString;
+        inspection.year = date.year;
+      }
+      if(inspection.Date_started){
+        inspection.startDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
       }
     });
   });
