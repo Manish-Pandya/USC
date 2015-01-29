@@ -11,11 +11,12 @@ function getDBConnection() {
 }
 
 function getDBUsername() {
-	return 'erasmus';
+	//return 'erasmus';
+	return 'root';
 }
 
 function getDBPassword() {
-	return 'eR@m#682d';
+	//return 'eR@m#682d';
 }
 
 
