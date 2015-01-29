@@ -191,7 +191,7 @@ class ActionMappingFactory {
 
 
 				//GENERIC RELATIONSHIPS
-				"getRelationships"=>new ActionMapping("getRelationships", "", ""),
+				"getRelationships"=>new ActionMapping("getRelationships", "", "")
 
 		);
 	}
