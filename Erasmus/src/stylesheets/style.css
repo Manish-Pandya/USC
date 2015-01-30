@@ -1741,6 +1741,7 @@ ul.key li.deficiencies span {
 /* line 1385, ../sass/style.scss */
 .hazardList i, .hazardList ul i {
   //margin: 5px 2px 0;
+  margin:3px;
   font-size: 17px;
 }
 /* line 1388, ../sass/style.scss */
