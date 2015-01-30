@@ -43,7 +43,7 @@ Object.prototype.isArray = function( obj ){
 }*/
 //testing pure angular way 
 angular
-    .module("modelInflator",['genericAPI'])
+    .module("modelInflator", ['genericAPI'])
         .factory("modelInflatorFactory", function modelInflatorFactory( genericAPIFactory, $q, $rootScope, $http, $interval ){
 
             var inflator = {};
@@ -199,7 +199,6 @@ angular
                                         var i = 0;
                                         var interval = setInterval(function(){          
                                              i++;
-                                             console.log(i);
                                              hackyClosureExtractor();
                                         },100);
 

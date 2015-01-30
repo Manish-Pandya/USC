@@ -65,21 +65,15 @@ PrincipalInvestigator.prototype = {
 
 	Buildings: {},
 
-	getAuthorizations: function() {
-            if(this.Authorizations) {
-                return this.Authorizations;
-            }
-            else {
-                return dataSwitch.getChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
+	loadAuthorizations: function() {
+            if(!this.Authorizations){
+                dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
             }
     },
 
-	getActiveParcels: function() {
-        if(this.ActiveParcels) {
-            return this.ActiveParcels;
-        }
-        else {
-            return dataSwitch.getChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+	loadActiveParcels: function() {
+        if(!this.ActiveParcels) {
+            dataLoader.getChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
         }
     },
 

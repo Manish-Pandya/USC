@@ -18,12 +18,12 @@ Hazard.prototype = {
 
     SaveUrl:  'saveHazard',
 
-    getSubHazards: function() {
+    loadSubHazards: function() {
             if(this.SubHazards) {
                 return this.SubHazards;
             }
             else {
-                return dataSwitch.getChildObject( this, 'SubHazards', this.SubHazardsRelationship);
+                return dataLoader.loadChildObject( this, 'SubHazards', this.SubHazardsRelationship);
             }
     }
 
