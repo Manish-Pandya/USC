@@ -388,12 +388,20 @@ require_once '../top_view.php';
 
 <script type="text/ng-template" id="open-inspections.html">
 	<div class="modal-header wide-modal" style="padding:0;">
-        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections</h2>
+        <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections
+	        <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
+		   	<i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+        </h2>
     </div>
     <div class="modal-body">
 	   <span ng-if="gettingInspections" class="loading">
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
+	   </span>
+	   <span ng-if="!gettingInspections && !openInspections">
+		   <h3>{{pi.User.Name}} has no pending inspections.</h3>
+		   <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
+	   	   <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
 	   </span>
 		<table class="table table-bordered table-striped">
 		<table ng-if="openInspections" class="table table-striped table-bordered">
@@ -422,7 +430,7 @@ require_once '../top_view.php';
 						</ul>
 					</td>
 					<td once-text="inspection.Schedule_year"></td>
-					<td once-text="inspection.Schedule_month"></td>
+					<td once-text="inspection.Text_schedule_month"></td>
 					<td>
 						<ul>
 							<li ng-repeat='inspector in inspection.Inspectors' once-next='inspector.User.Name'></li>

@@ -366,6 +366,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
                   .then(function(pi){
                       $scope.piLoading = false;
                       $rootScope.PI = pi;
+                      $scope.buildings = hazardInventoryFactory.parseBuildings( pi.Rooms );
                       piDefer.resolve( pi );
                   },
                   function(fail){
@@ -1031,6 +1032,52 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
       }
     });
   });
+
+  var setInspection = function()
+  {
+
+      $scope.creatingInspection = true;
+      //now that we have a PI, we can initialize the inspection
+      var PIKeyID = hif.PI.Key_id;
+      //todo:  when we do user siloing, give the user a way to add another inspection
+      //dummy value for inspector ids
+      inspectorIds = [10];
+
+      //if we are accessing an inspection that has already been started, we get it's get ID from the $location.search() property (AngularJS hashed get param)
+      if($location.search().inspectionId){
+        inspectionId = $location.search().inspectionId
+      }else{
+        inspectionId = '';
+      }
+
+      //set up our $q object so that we can either return a promise on success or break the promise chain on error
+      var inspectionDefer = $q.defer();
+
+      hazardInventoryFactory
+            .initialiseInspection( PIKeyID, inspectorIds, inspectionId )
+              .then(function(inspection)
+              {
+                $scope.creatingInspection = false;
+                  //set our get params so that this inspection can be quickly accessed on page reload
+                  $location.search('inspectionId', inspection.Key_id);
+                  $location.search("pi", PIKeyID);
+                  scope.openInspections.unshift(inspection);
+              },
+              function(noRooms)
+              {
+                  $scope.creatingInspection = false;
+                  if(noRooms){
+                    //there was no error, but this PI doesn't have any rooms, so we can't inspect
+                    $scope.noRoomsAssigned = true;
+                  }else{
+                    $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
+                  }
+                  //call our $q object's reject method to break the promise chain
+                  inspectionDefer.reject();
+              });
+
+      return inspectionDefer.promise;
+  }
 
   $scope.close = function () {
     $modalInstance.dismiss();
