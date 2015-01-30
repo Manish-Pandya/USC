@@ -389,11 +389,12 @@ require_once '../top_view.php';
 <script type="text/ng-template" id="open-inspections.html">
 	<div class="modal-header wide-modal" style="padding:0;">
         <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections
-	        <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
+	        <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2" style="color: rgba(255,255,255,.7);"></i>New Inspection</a>
 		   	<i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
         </h2>
     </div>
     <div class="modal-body">
+    	<h3 class="alert alert-danger" ng-if="error">{{error}}</sh3>
 	   <span ng-if="gettingInspections" class="loading">
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
@@ -415,16 +416,16 @@ require_once '../top_view.php';
 				<th>Review Report</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="(key, inspection) in openInspections">
+				<tr ng-repeat="(key, inspection) in openInspections" ng-class="{new:inspection.Is_new}">
 					<td>
 						<a class="btn btn-danger btn-large left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i></a>
 					</td>
 					<td>
 						<ul>
-							<li ng-repeat='room in pi.Rooms'>
+							<li ng-repeat="(key,room) in inspection.piRooms|orderBy:'Name'">
 								<label class="checkbox inline">
 									<input type="checkbox" ng-checked="hif.evalInspectionRoomChecked( inspection, room )" ng-change="hif.saveInspectionRoomRelationship( inspection, room )" ng-model="room.checked"/>
-									<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="inspection.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+									<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
 								</label>
 							</li>
 						</ul>
