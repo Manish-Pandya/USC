@@ -1618,6 +1618,16 @@ class ActionManager {
 				$inspection = $dao->getById($inspectionId);
 			}
 
+			if($inspection->getSchedule_year() == NULL){
+				$year = $this->getCurrentYear();
+				$inspection->setSchedule_year($year);
+			}
+
+			if($inspection->getSchedule_month() == null){
+				$month = date('m');
+				$inspection->setSchedule_month($month);
+			}
+
 			$inspection->setPrincipal_investigator_id($piId);
 
 			if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
