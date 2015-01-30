@@ -91,6 +91,11 @@ class Inspection extends GenericCrud {
 	private $deficiency_selections;
 
 	private $cap_submitted_date;
+	
+	private $schedule_month;
+	
+	/**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
+	private $text_schedule_month;
 
 	public function __construct(){
 
@@ -174,6 +179,12 @@ class Inspection extends GenericCrud {
 
 	public function getSchedule_year() { return $this->schedule_year;}
 	public function setSchedule_year($schedule_year) {$this->schedule_year = $schedule_year;}
+	
+	public function getText_schedule_month(){
+		$month_names = array("January","February","March","April","May","June","July","August","September","October","November","December");
+		if($this->schedule_month != NULL)$this->text_schedule_month = $month_names[$this->schedule_month-1];
+		return $this->text_schedule_month;
+	}
 
 	public function getNote() { return $this->note;}
 	public function setNote($note) {$this->note = $note;}
