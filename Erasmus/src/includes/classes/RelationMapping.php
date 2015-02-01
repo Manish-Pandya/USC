@@ -7,9 +7,11 @@
 class RelationMapping {
 	private $classesToCheck;
 	private $tableName;
+	private $className;
 	
-	public function __construct($classA, $classB, $tableName) {
+	public function __construct($classA, $classB, $tableName, $className) {
 		$this->tableName = $tableName;
+		$this->className = $className;
 		$this->classesToCheck = array($classA, $classB);
 	}
 	
@@ -24,4 +26,5 @@ class RelationMapping {
 	}
 	
 	public function getTableName() { return $this->tableName; }
+	public function getClassName() { return $this->className; }
 }

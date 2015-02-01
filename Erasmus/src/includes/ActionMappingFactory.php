@@ -3,6 +3,8 @@
 
 /**
  * Class that wraps a static accessor that returns all Action Mappings
+ * NOTE: Anything not in the base module should go in a sepparate class extending this,
+ * 		for example Rad_ActionMappingFactory.
  *
  * @author Mitch
  */
@@ -63,7 +65,7 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-				
+
 
 				//convenience method to split all usernames into first and last names
 				"makeFancyNames"=>new ActionMapping("makeFancyNames", "", ""),
@@ -190,6 +192,7 @@ class ActionMappingFactory {
 
 				//GENERIC RELATIONSHIPS
 				"getRelationships"=>new ActionMapping("getRelationships", "", "")
+
 		);
 	}
 }

@@ -43,7 +43,40 @@ PrincipalInvestigator.prototype = {
 		queryString:  'getRooms'	
 	},
 
+	AuthorizationsRelationship: {
+
+        className:    'Authorization',
+        keyReference:  'Principal_investigator_id',
+        methodString:  'getAuthorizationsByPIId',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
+    ActiveParcelsRelationship: {
+
+        className:    'Parcel',
+        keyReference:  'Principal_investigator_id',
+        methodString:  'getParcelsByPIId',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
 	Buildings: {},
+
+	loadAuthorizations: function() {
+            if(!this.Authorizations){
+                dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
+            }
+    },
+
+	loadActiveParcels: function() {
+        if(!this.ActiveParcels) {
+            dataLoader.getChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+        }
+    },
+
 
 	getUser: function()
 	{	
@@ -101,7 +134,7 @@ PrincipalInvestigator.prototype = {
                    this.Rooms = dataStoreManager.getRelatedItems( "Room", this.PrincipalInvestigatorRoomRelations, "Room_id", "Key_id" )                                                                 
             }
             else if(this.Supervisor){
-            		return this.Supervisor;
+            		return;
             }
             else{
             		console.log("searching server for rooms");

@@ -168,8 +168,27 @@ class Rad_ActionManager extends ActionManager {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}	
 	}
+
+	// getPIById already exists in the base module, however different entity maps
+	// are used in RadiationModule, so this sepparate method exists.
+	public function getRadPIById( $id = null ){
+		if($id == null)$id = $this->getValueFromRequest( "id", $id );
 	
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pi = $dao->getById($id);
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getDepartments");
+		$entityMaps[] = new EntityMap("eager","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("eager","getAuthorizations");
+		$entityMaps[] = new EntityMap("eager", "getActiveParcels");
+		$pi->setEntityMaps($entityMaps);
+		return $pi;
 	
+	}
+
 	/*****************************************************************************\
 	 *                        Get By Relationships Functions                     *
 	 *  Gets functions dependent on another entity or some form of relationship  *
@@ -290,13 +309,22 @@ class Rad_ActionManager extends ActionManager {
 	/*****************************************************************************\
 	 *                               getAll functions                            *
 	\*****************************************************************************/
-	
+
+	public function getAllAuthorizations(){
+		$dao = $this->getDao(new Authorization());
+		return $dao->getAll();
+	}	
 	
 	function getAllCarboys() {
 		$carboyDao = $this->getDao(new Carboy());
 		return $carboyDao->getAll();
 	}
 	
+	public function getAllCarboyUseCycles(){
+		$dao = $this->getDao(new CarboyUseCycle());
+		return $dao->getAll();
+	}
+
 	function getAllDrums() {
 		$drumDao = $this->getDao(new Drum());
 		return $drumDao->getAll();
@@ -307,6 +335,36 @@ class Rad_ActionManager extends ActionManager {
 		return $isotopeDao->getAll();
 	}
 	
+	public function getAllParcels(){
+		$dao = $this->getDao(new Parcel());
+		return $dao->getAll();
+	}
+
+	public function getAllParcelUses(){
+		$dao = $this->getDao(new ParcelUse());
+		return $dao->getAll();
+	}
+
+	public function getAllParcelUseAmounts(){
+		$dao = $this->getDao(new ParcelUseAmount());
+		return $dao->getAll();
+	}
+
+	public function getAllPickups(){
+		$dao = $this->getDao(new Pickup());
+		return $dao->getAll();
+	}
+
+	public function getAllPurchaseOrders(){
+		$dao = $this->getDao(new PurchaseOrder());
+		return $dao->getAll();
+	}
+
+	public function getAllWasteBags(){
+		$dao = $this->getDao(new WasteBag());
+		return $dao->getAll();
+	}
+
 	function getAllWasteTypes() {
 		$typeDao = $this->getDao(new WasteType());
 		return $typeDao->getAll();

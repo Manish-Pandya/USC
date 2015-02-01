@@ -6,6 +6,7 @@ angular
         .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q ){
         	var af = {};
             var store = dataStoreManager;
+            store.$q = $q;
 
 
             /********************************************************************
@@ -115,8 +116,8 @@ angular
         	{
         			var urlSegment = 'getAllUsers';
 
-                    if( store.checkCollection( 'Users' ) ){
-                        var users = store.get( 'Users' )
+                    if( store.checkCollection( 'User' ) ){
+                        var users = store.get( 'User' )
                             .then(
                                 function( users ){
                                     return users;
@@ -131,7 +132,7 @@ angular
                                     //var users = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                                     store.store( returnedPromise.data );
                                     //console.log(store.get( 'Users' ));
-                                    return store.get( 'Users' );
+                                    return store.get( 'User' );
                                 }
                             ); 
                     }
@@ -182,10 +183,10 @@ angular
                     return all.then(
                                 function( model ){
                                     var inflatedModel = {}
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Users' ) ) );
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigators' ) ) );
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigatorRoomRelations' ) ) );
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Rooms' ) ) );
+                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'User' ) ) );
+                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigator' ) ) );
+                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigatorRoomRelation' ) ) );
+                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Room' ) ) );
 
                                     inflatedModel.users = modelInflatorFactory.callAccessors( 'Users' );
                                     inflatedModel.pis = modelInflatorFactory.callAccessors( 'PrincipalInvestigators' );
@@ -230,10 +231,10 @@ angular
 
                     var urlSegment = 'getAllHazards';
 
-                    if( store.checkCollection( 'Hazards' ) ){
+                    if( store.checkCollection( 'Hazard' ) ){
                             console.log('check positive');
                             var hazards = $q.defer()
-                            var storedHazards = store.get( 'Hazards' );
+                            var storedHazards = store.get( 'Hazard' );
                             hazards.resolve(storedHazards);
                             return hazards.promise;
                     }else{
@@ -243,7 +244,7 @@ angular
                                         console.log(returnedPromise);
                                         var hazards = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                                         store.store( hazards );
-                                        return store.get( 'Hazards' );
+                                        return store.get( 'Hazard' );
                                     }
                                 );  
                     }                    
@@ -267,9 +268,9 @@ angular
                     var urlSegment = 'getHazardTreeNode&id='+nodeId;
 
                     if(nodeId == 10000){
-                        if( store.checkCollection( 'Hazards', nodeId ) ){
+                        if( store.checkCollection( 'Hazard', nodeId ) ){
                             console.log('check positive');
-                            var hazards = store.get( 'Hazards' )
+                            var hazards = store.get( 'Hazard' )
                                 .then(
                                     function( hazards ){
                                         console.log('here');
@@ -284,7 +285,7 @@ angular
                                     function( returnedPromise ){
                                         var hazards = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                                         store.store( hazards );
-                                        return store.get( 'Hazards' )
+                                        return store.get( 'Hazard' )
                                             .then(
                                                 function( hazards ){
                                                     console.log('adfasdfasdf');
@@ -406,18 +407,18 @@ angular
             {
                     var urlSegment = 'getAllPIs';
 
-                    if( store.checkCollection( 'PrincipalInvestigators' ) ){
+                    if( store.checkCollection( 'PrincipalInvestigator' ) ){
                             var pis = $q.defer()
-                            var storedPIs = store.get( 'PrincipalInvestigators' );
+                            var storedPIs = store.get( 'PrincipalInvestigator' );
                             pis.resolve(storedPIs);
                             return pis.promise
                     }else{
                             var pis = genericAPIFactory.read( urlSegment )
                                 .then(
                                     function( returnedPromise ){
-                                        //var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                        store.store( returnedPromise.data );
-                                        return store.get( 'PrincipalInvestigators' );
+                                        var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                                        store.store( pis );
+                                        return store.get( 'PrincipalInvestigator' );
                                     }
                                 );  
                     }                    
@@ -428,9 +429,9 @@ angular
             {
                     var urlSegment = 'getAllPrincipalInvestigatorRoomRelations';
 
-                    if( store.checkCollection( 'PrincipalInvestigatorRoomRelations' ) ){
+                    if( store.checkCollection( 'PrincipalInvestigatorRoomRelation' ) ){
                             var relations = $q.defer()
-                            var storedRelations = store.get( 'PrincipalInvestigatorRoomRelations' );
+                            var storedRelations = store.get( 'PrincipalInvestigatorRoomRelation' );
                             relations.resolve(storedRelations);
                             return relations.promise
                     }else{
@@ -439,7 +440,7 @@ angular
                                     function( returnedPromise ){
                                         var returnedRelations = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                                         store.store( returnedRelations );
-                                        return store.get( 'PrincipalInvestigatorRoomRelations' );
+                                        return store.get( 'PrincipalInvestigatorRoomRelation' );
                                     }
                                 );  
                     }                    
@@ -478,8 +479,8 @@ angular
             {
                 var urlSegment = 'getAllIsotopes';
 
-                if( store.checkCollection('Isotopes') ) {
-                    var isotopes = store.get( 'Isotopes' ).then(function(isotope) {
+                if( store.checkCollection('Isotope') ) {
+                    var isotopes = store.get( 'Isotope' ).then(function(isotope) {
                         return isotope;
                     });
                 }
@@ -488,7 +489,7 @@ angular
                         .then( function( returnedPromise) {
                             var isotopes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( isotopes );
-                            return store.get( 'Isotopes' );
+                            return store.get( 'Isotope' );
                         });
                 }
                 return isotopes;
@@ -524,8 +525,8 @@ angular
             {
                 var urlSegment = 'getAllAuthorizations';
 
-                if( store.checkCollection('Authorizations') ) {
-                    var authorizations = store.get( 'Authorizations' ).then(function(authorization) {
+                if( store.checkCollection('Authorization') ) {
+                    var authorizations = store.get( 'Authorization' ).then(function(authorization) {
                         return authorization;
                     });
                 }
@@ -534,7 +535,7 @@ angular
                         .then( function( returnedPromise) {
                             var authorizations = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( authorizations );
-                            return store.get( 'Authorizations' );
+                            return store.get( 'Authorization' );
                         });
                 }
                 return authorizations;
@@ -571,8 +572,8 @@ angular
             {
                 var urlSegment = 'getAllCarboys';
 
-                if( store.checkCollection('Carboys') ) {
-                    var carboys = store.get( 'Carboys' ).then(function(carboy) {
+                if( store.checkCollection('Carboy') ) {
+                    var carboys = store.get( 'Carboy' ).then(function(carboy) {
                         return carboy;
                     });
                 }
@@ -581,7 +582,7 @@ angular
                         .then( function( returnedPromise) {
                             var carboys = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( carboys );
-                            return store.get( 'Carboys' );
+                            return store.get( 'Carboy' );
                         });
                 }
                 return carboys;
@@ -618,8 +619,8 @@ angular
             {
                 var urlSegment = 'getAllDrums';
 
-                if( store.checkCollection('Drums') ) {
-                    var drums = store.get( 'Drums' ).then(function(drum) {
+                if( store.checkCollection('Drum') ) {
+                    var drums = store.get( 'Drum' ).then(function(drum) {
                         return drum;
                     });
                 }
@@ -628,7 +629,7 @@ angular
                         .then( function( returnedPromise) {
                             var drums = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( drums );
-                            return store.get( 'Drums' );
+                            return store.get( 'Drum' );
                         });
                 }
                 return drums;
@@ -665,8 +666,8 @@ angular
             {
                 var urlSegment = 'getAllParcels';
 
-                if( store.checkCollection('Parcels') ) {
-                    var parcels = store.get( 'Parcels' ).then(function(parcel) {
+                if( store.checkCollection('Parcel') ) {
+                    var parcels = store.get( 'Parcel' ).then(function(parcel) {
                         return parcel;
                     });
                 }
@@ -675,7 +676,7 @@ angular
                         .then( function( returnedPromise) {
                             var parcels = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( parcels );
-                            return store.get( 'Parcels' );
+                            return store.get( 'Parcel' );
                         });
                 }
                 return parcels;
@@ -712,8 +713,8 @@ angular
             {
                 var urlSegment = 'getAllParcelUses';
 
-                if( store.checkCollection('ParcelUses') ) {
-                    var parceluses = store.get( 'ParcelUses' ).then(function(parceluse) {
+                if( store.checkCollection('ParcelUse') ) {
+                    var parceluses = store.get( 'ParcelUse' ).then(function(parceluse) {
                         return parceluse;
                     });
                 }
@@ -722,7 +723,7 @@ angular
                         .then( function( returnedPromise) {
                             var parceluses = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( parceluses );
-                            return store.get( 'ParcelUses' );
+                            return store.get( 'ParcelUse' );
                         });
                 }
                 return parceluses;
@@ -759,8 +760,8 @@ angular
             {
                 var urlSegment = 'getAllParcelUseAmounts';
 
-                if( store.checkCollection('ParcelUseAmounts') ) {
-                    var parceluseamounts = store.get( 'ParcelUseAmounts' ).then(function(parceluseamount) {
+                if( store.checkCollection('ParcelUseAmount') ) {
+                    var parceluseamounts = store.get( 'ParcelUseAmount' ).then(function(parceluseamount) {
                         return parceluseamount;
                     });
                 }
@@ -769,7 +770,7 @@ angular
                         .then( function( returnedPromise) {
                             var parceluseamounts = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( parceluseamounts );
-                            return store.get( 'ParcelUseAmounts' );
+                            return store.get( 'ParcelUseAmount' );
                         });
                 }
                 return parceluseamounts;
@@ -806,8 +807,8 @@ angular
             {
                 var urlSegment = 'getAllPickups';
 
-                if( store.checkCollection('Pickups') ) {
-                    var pickups = store.get( 'Pickups' ).then(function(pickup) {
+                if( store.checkCollection('Pickup') ) {
+                    var pickups = store.get( 'Pickup' ).then(function(pickup) {
                         return pickup;
                     });
                 }
@@ -816,12 +817,38 @@ angular
                         .then( function( returnedPromise) {
                             var pickups = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( pickups );
-                            return store.get( 'Pickups' );
+                            return store.get( 'Pickup' );
                         });
                 }
                 return pickups;
             }
 
+
+
+            /********************************************************************
+            **
+            **      PRINCIPALINVESTIGATOR            **
+            ********************************************************************/
+
+            af.getPrincipalInvestigatorById = function( key_id )
+            {
+                var urlSegment = 'getPrincipalInvestigatorById&id=' + key_id;
+
+                if( store.checkCollection( 'PrincipalInvestigator', key_id ) ) {
+                    var principalinvestigator = store.getById( 'PrincipalInvestigator', key_id )
+                        .then(function(principalinvestigator) {
+                            return principalinvestigator;
+                        });
+                }
+                else {
+                    var principalinvestigator = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store principalinvestigator in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return principalinvestigator;
+            }
 
 
             /********************************************************************
@@ -853,8 +880,8 @@ angular
             {
                 var urlSegment = 'getAllPurchaseOrders';
 
-                if( store.checkCollection('PurchaseOrders') ) {
-                    var purchaseorders = store.get( 'PurchaseOrders' ).then(function(purchaseorder) {
+                if( store.checkCollection('PurchaseOrder') ) {
+                    var purchaseorders = store.get( 'PurchaseOrder' ).then(function(purchaseorder) {
                         return purchaseorder;
                     });
                 }
@@ -863,7 +890,7 @@ angular
                         .then( function( returnedPromise) {
                             var purchaseorders = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( purchaseorders );
-                            return store.get( 'PurchaseOrders' );
+                            return store.get( 'PurchaseOrder' );
                         });
                 }
                 return purchaseorders;
@@ -900,8 +927,8 @@ angular
             {
                 var urlSegment = 'getAllSolidsContainers';
 
-                if( store.checkCollection('SolidsContainers') ) {
-                    var solidscontainers = store.get( 'SolidsContainers' ).then(function(solidscontainer) {
+                if( store.checkCollection('SolidsContainer') ) {
+                    var solidscontainers = store.get( 'SolidsContainer' ).then(function(solidscontainer) {
                         return solidscontainer;
                     });
                 }
@@ -910,7 +937,7 @@ angular
                         .then( function( returnedPromise) {
                             var solidscontainers = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( solidscontainers );
-                            return store.get( 'SolidsContainers' );
+                            return store.get( 'SolidsContainer' );
                         });
                 }
                 return solidscontainers;
@@ -945,10 +972,10 @@ angular
 
             af.getAllWasteBags = function( key_id )
             {
-                var urlSegment = 'getAllWasteBags';
+                var urlSegment = 'getAllWasteBag';
 
-                if( store.checkCollection('WasteBags') ) {
-                    var wastebags = store.get( 'WasteBags' ).then(function(wastebag) {
+                if( store.checkCollection('WasteBag') ) {
+                    var wastebags = store.get( 'WasteBag' ).then(function(wastebag) {
                         return wastebag;
                     });
                 }
@@ -957,7 +984,7 @@ angular
                         .then( function( returnedPromise) {
                             var wastebags = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( wastebags );
-                            return store.get( 'WasteBags' );
+                            return store.get( 'WasteBag' );
                         });
                 }
                 return wastebags;
@@ -994,8 +1021,8 @@ angular
             {
                 var urlSegment = 'getAllWasteTypes';
 
-                if( store.checkCollection('WasteTypes') ) {
-                    var wastetypes = store.get( 'WasteTypes' ).then(function(wastetype) {
+                if( store.checkCollection('WasteType') ) {
+                    var wastetypes = store.get( 'WasteType', af.$q ).then(function(wastetype) {
                         return wastetype;
                     });
                 }
@@ -1004,12 +1031,75 @@ angular
                         .then( function( returnedPromise) {
                             var wastetypes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             store.store( wastetypes );
-                            return store.get( 'WasteTypes' );
+                            return store.get( 'WasteType' );
                         });
                 }
                 return wastetypes;
             }
 
+            /********************************************************************
+            **
+            **      RAD PI
+            **
+            ********************************************************************/
+
+            af.getRadPIById = function(id)
+            {
+                console.log(id);
+                var urlSegment = 'getALLPIS';
+                var pi;
+                var tempPI;
+                var getPI = function(id){
+                    return store.get( 'PrincipalInvestigator' )
+                            .then(
+                                function(pis){
+                                    console.log(pis);
+                                    pi = store.getById('PrincipalInvestigator', id );
+                                    return pi; 
+                                }
+                            );   
+                }
+                var getRadProperties = function(pi){
+                    if(!pi.Authorizations){
+                        var segment = "getRadPIById&id="+pi.Key_id;
+                        return genericAPIFactory.read(segment)
+                            .then( function( returnedPromise) {
+                                var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                                console.log(tempPI);
+                                if(tempPI.Authorizations.length){
+                                    console.log('store auths');
+                                    store.store(tempPI.Authorizations);
+                                }
+                                if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
+                                store.store(tempPI.User);
+                                //pi.getActiveParcels();
+                                pi.getAuthorizations();
+                                return pi;
+                            });
+                    }else{
+                        var defer = $q.defer();
+                        defer.resolve(pi);
+                        return defer.promise;
+                    }
+                }
+
+
+                if( store.checkCollection('PrincipalInvestigator') ) {
+                    return getPI(id)
+                        .then(getRadProperties);
+                }
+                else {
+                    return genericAPIFactory.read(urlSegment)
+                        .then( function( returnedPromise) {
+                            var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store( pis ); 
+                            return id;
+                        })
+                        .then(getPI)
+                        .then(getRadProperties);
+                }
+
+            }
 
 
             /********************************************************************
@@ -1096,7 +1186,7 @@ angular
             {
                     var urlSegment = 'getAllRooms';
 
-                    if( store.checkCollection( 'Rooms' ) ){
+                    if( store.checkCollection( 'Room' ) ){
                             var rooms = $q.defer()
                             var storedRooms = store.get( 'Rooms' );
                             relations.resolve(storedRooms);
@@ -1118,8 +1208,8 @@ angular
             {
                     dataStoreManager.getById("User", user.Key_id).setName('updated');
                     //user.Supervisor.User.setName('updated');
-                    console.log(dataStoreManager.getById("PrincipalInvestigator", user.Supervisor_id))
-;            }
+                    console.log(dataStoreManager.getById("PrincipalInvestigator", user.Supervisor_id));            
+            }
 
         	return af;
 		});

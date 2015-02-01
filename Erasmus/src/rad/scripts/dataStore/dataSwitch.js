@@ -1,37 +1,60 @@
 'use strict';
 
 /**
- *  This class simplifies data accessing, handling checking the Cache first for data, then contacting
+ * This class simplifies data loading on entities. It checks the cache first for data, then contacts
  * the API if that item is not present in the cache.
  *
  * @author Perry
  */
 
-// constructor
-var dataSwitch = {};
+angular
+    .module("dataSwitchModule", [])
+        .factory("dataSwitchFactory", function dataSwitchFactory(genericAPIFactory, modelInflatorFactory, $q, $rootScope) {
 
-dataSwitch.getChildObject = function( parent, property, relationship )
-{
+            // constructor
+            var dataSwitch = {};
 
+            /**
+             * Given a parent entity to operate on, will load given property from the
+             *  datastore or API and set it to the parent entity.
+             *
+             * @param parent       - entity to operate on
+             * @param property     - string of the name of the property to set on the parent
+             * @param relationship - object containing details of relationship
+             */
+            dataSwitch.getChildObject = function( parent, property, relationship )
+            {
+                    // this method should always return a promise
+                    var deferred = $q.defer();
 
-        // check cache first
-        if( dataStoreManager.checkCollection(relationship.className) ) {
-            parent[property] = dataStoreManager.getChildrenByParentProperty(
-                relationship.className,
-                relationship.keyReference,
-                parent[queryParam]
-                );
-        }
-        // if not in cache, get from server
-        else {
+                    // check cache first
+                    if( dataStoreManager.checkCollection(relationship.className) ) {
+                        deferred.resolve(
+                            dataStoreManager.getChildrenByParentProperty(
+                                relationship.className,
+                                relationship.keyReference,
+                                parent[relationship.paramValue]
+                            )
+                        );
+                    }
+                    // if not in cache, get from server
+                    else {
 
-            // prepare url to send (TODO shoudl API handle this?)
-            var urlFragment = relationship.queryString;
-            var queryParam = '&' + relationship.paramName + '=' + parent[relationship.queryParam];
+                        // prepare url to send (TODO shoudl API handle this?)
+                        var urlFragment = relationship.methodString;
+                        var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
 
-            parent.rootScope[parent.Class+"sBusy"] = parent.api.read( urlFragment, queryParam )
-                .then(function( returnedPromise ) {
-                    parent[property] = parent.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                });
-        }
-}
+                        // read object from server
+                        $rootScope[parent.Class+"sBusy"] = genericAPIFactory.read( urlFragment, paramValue )
+                            .then(function( returnedPromise ) {
+                                deferred.resolve( modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data) );
+                            });
+                    }
+
+                    return deferred.promise;
+            }
+
+            //TODO generic getObject method
+
+            return dataSwitch;
+        });

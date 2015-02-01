@@ -223,7 +223,6 @@ class JsonManager {
 		$LOG = Logger::getLogger( __CLASS__ );
 		
 		$classname = get_class($object);
-		if($object->passFlag === true)return $object;
 
 		$functions = get_class_methods( $classname);
 		

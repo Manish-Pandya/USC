@@ -43,10 +43,11 @@ Object.prototype.isArray = function( obj ){
 }*/
 //testing pure angular way 
 angular
-    .module("modelInflator",['genericAPI'])
+    .module("modelInflator", ['genericAPI'])
         .factory("modelInflatorFactory", function modelInflatorFactory( genericAPIFactory, $q, $rootScope, $http, $interval ){
 
             var inflator = {};
+            inflator.$q = $q;
 
             /**
             *
@@ -96,21 +97,16 @@ angular
 
                         while(eml--){
                             var em =  modelledObject.eagerAccessors[eml];
-                            console.log(em.boolean);
                             if(modelledObject[em.boolean])modelledObject[em.method]();
                         }
 
-                        
-
                     }
-
                     return modelledObject;
             }
 
             //treat this as a public method, called from controller layer
             inflator.instateAllObjectsFromJson = function(  json, objectFlavor  )
-            {
-        
+            {        
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
@@ -170,7 +166,7 @@ angular
                                 var promiseData;
 
                                 //check for the cache for a collection of this object type
-                                if( dataStoreManager.getIfExists( this[prop + 'Relationship'].Class+'s') ){
+                                if( dataStoreManager.getIfExists( this[prop + 'Relationship'].Class) ){
                                     
                                     $rootScope[this.Class+"Busy"] = defer.promise;
                                     var foreignKey = this[prop + 'Relationship'].keyReference;
@@ -203,7 +199,6 @@ angular
                                         var i = 0;
                                         var interval = setInterval(function(){          
                                              i++;
-                                             console.log(i);
                                              hackyClosureExtractor();
                                         },100);
 

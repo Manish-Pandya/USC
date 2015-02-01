@@ -15,7 +15,7 @@ dataStoreManager.store = function( object, trusted, flavor )
 {
         if(!trusted)trusted = false;
         
-        if( !( object instanceof Array ) ){
+        if( !(object instanceof Array) ){
             //we have a single object
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
@@ -29,8 +29,11 @@ dataStoreManager.store = function( object, trusted, flavor )
             //we have an array of objects
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
-                dataStoreManager.addToCollection( object[0].Class+'s', trusted );
-                dataStore[object[0].Class+'s'] = object;
+                if(!object.length){
+                    return
+                }
+                dataStoreManager.addToCollection( object[0].Class, trusted );
+                dataStore[object[0].Class] = object;
                 dataStoreManager.mapCache(object[0].Class);
 
             }else{
@@ -60,7 +63,7 @@ dataStoreManager.checkCollection = function( type )
         
         if( dataStore.Collections.hasOwnProperty( type ) ) return true;
         //if we don't have this object in the cache, but we DO have a collection of all such objects, we don't need to make an api call
-        if( dataStore.Collections.hasOwnProperty( type+'s' ) ) return true;
+        if( dataStore.Collections.hasOwnProperty( type ) ) return true;
         return false;
 }
 
@@ -70,22 +73,23 @@ dataStoreManager.purge = function( objectFlavor )
 }
 
 dataStoreManager.get = function( objectFlavor )
-{
-
+{   
+        var defer = this.$q.defer();
         if(dataStore[objectFlavor]){
             //we have the object or collection cached, so resolve the promise with it and we're done
-            return dataStore[objectFlavor];
+            defer.resolve(dataStore[objectFlavor]);
         }else{
-            return 'Not Found';
+            defer.reject([]);
         }
-
+        return defer.promise;
 }
 
 dataStoreManager.getById = function( objectFlavor, key_id )
 {
     // get index of this room in the cache, no looping anymore!
-    var location = dataStore[objectFlavor+'sMap'][key_id];
-    return dataStore[objectFlavor+'s'][location];
+    console.log(dataStore[objectFlavor+'Map']);
+    var location = dataStore[objectFlavor+'Map'][key_id];
+    return dataStore[objectFlavor][location];
 }
 
 dataStoreManager.getIfExists = function( objectFlavor, key_id )
@@ -129,11 +133,11 @@ dataStoreManager.replaceWithCopy = function( object )
 dataStoreManager.setEditStates = function( object )
 {
         //set the other objects in this one's collection to the non-edit state
-        if(dataStore[object.Class+'s']){
-            var len = dataStore[object.Class+'s'].length
+        if(dataStore[object.Class]){
+            var len = dataStore[object.Class].length
 
             for(var i=0; i<len; i++ ){
-                dataStore[object.Class+'s'][i].Edit = 'false';
+                dataStore[object.Class][i].Edit = 'false';
             }
         }
 
@@ -149,16 +153,16 @@ dataStoreManager.deleteCopy = function( object )
 dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
 {
 
-        if(!dataStore[collectionType+'s']){
+        if(!dataStore[collectionType]){
             return 'Not found';
         }else{
             //store the lenght of the appropriate collection
-            var i = dataStore[collectionType+'s'].length;
+            var i = dataStore[collectionType].length;
             var collectionToReturn = [];
-
             while(i--){
-                var current = dataStore[collectionType+'s'][i];
-
+                var current = dataStore[collectionType][i];
+                console.log(current[property]);
+                console.log(value);
                 if(current[property] == value){
                     collectionToReturn.push( current );
                 }
@@ -172,15 +176,15 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
 dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_key )
 {
-        if(!dataStore[type+'s']){
+        if(!dataStore[type]){
             return 'Not found';
         }else{
             //store the length of the appropriate collection
-            var i = dataStore[type+'s'].length;
+            var i = dataStore[type].length;
             var collectionToReturn = [];
             while(i--){
                 var j = relationship.length
-                    var current = dataStore[type+'s'][i];
+                    var current = dataStore[type][i];
                 while(j--){
                     if(current[foreign_key] == relationship[j][key]){
                         collectionToReturn.push(current);
@@ -195,18 +199,20 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
 }
 
 dataStoreManager.mapCache = function( cacheClass )
-{
-    console.log(cacheClass+'sMap');
-    dataStore[cacheClass+'sMap'] = [];
-    var stuff = this.get(cacheClass+'s');
-    console.log(stuff);
-    var length = stuff.length;
-    var cachePosition = 0; 
+{ 
+    dataStore[cacheClass+'Map'] = [];
+    this.get(cacheClass)
+        .then(
+            function(stuff){
+                var length = stuff.length;
+                var cachePosition = 0; 
 
-    while(length--){
-        var targetId = stuff[cachePosition].Key_id;
-        dataStore[cacheClass+'sMap'][targetId] = cachePosition;
-        cachePosition++;
-    }
+                while(length--){
+                    var targetId = stuff[cachePosition].Key_id;
+                    dataStore[cacheClass+'Map'][targetId] = cachePosition;
+                    cachePosition++;
+                }
+            }
+        );
 
 }

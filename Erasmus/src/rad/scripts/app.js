@@ -14,6 +14,7 @@ angular
     'modelInflator',
     'genericAPI',
     'actionFunctionsModule',
+    'dataSwitchModule',
     'cgBusy',
     'ui.bootstrap',
     'once',
