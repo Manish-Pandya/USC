@@ -7,10 +7,10 @@ angular.module('modalPosition', [])
 	    link : function(scope, element, attributes) {
 	    	scope.onResize = function() {
 	            var topMargin = $window.innerHeight - element[0].clientHeight;
-                $(element[0]).css({maxHeight: $window.innerHeight*.9, minHeight:'250px'});	    
-                $(element[0]).find('.modal-content').css({maxHeight: ($window.innerHeight*.9), minHeight:'250px'});          
-                $(element[0]).css({top: (topMargin/2)-60, marginTop:-10});
-                $(element[0]).find('.modal-body').css({overflowY:'auto', maxHeight:$window.innerHeight*.85-140});
+                $(element[0]).css({maxHeight: $window.innerHeight*.95, minHeight:'250px'});	    
+                $(element[0]).find('.modal-content').css({maxHeight: ($window.innerHeight*.95-50), minHeight:'250px'});          
+                $(element[0]).css({top: (topMargin/2)-20, marginTop:-10});
+                $(element[0]).find('.modal-body').css({overflowY:'auto', maxHeight:$window.innerHeight*.85-150});
                 $(element[0]).find('.modal-body ul').css({ maxHeight:$window.innerHeight*.85-210});
 
                 if( $('.wide-modal').length ){
@@ -31,7 +31,6 @@ angular.module('modalPosition', [])
 
             angular.element($window).bind('resize', function() {
                 scope.onResize();
-                console.log('resizee');
             });
       	}
     }
