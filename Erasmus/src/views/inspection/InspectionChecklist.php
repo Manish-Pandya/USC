@@ -3,7 +3,6 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/inspectionChecklist2.js"></script>
 <div ng-app="inspectionChecklist" ng-controller="checklistController" ng-cloak>
-
 	<div id="sp-nav" class="span3">
 		<a class="menuIcon" ng-click="$spMenu.toggle()">&#9776;</a>
         <ul class="nav nav-list nav nav-pills nav-stacked" id="sideNav">
@@ -21,7 +20,7 @@ require_once '../top_view.php';
       			</ul>			
       		</li>
 			<li>
-				<a ng-click="cf.selectCategory('General Safety')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
+				<a ng-click="cf.selectCategory('General Hazards')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
 				<ul ng-if="category.indexOf('General') > -1 && !loading">
       				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
       			</ul>			
@@ -74,7 +73,7 @@ require_once '../top_view.php';
 	<ul class="postInspectionNav row" style="margin-left:11px;">
 		<li ng-show="biological"><a ng-click="cf.selectCategory('Biological Safety')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: category.indexOf('Biological') > -1}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
 		<li ng-show="chemical"><a ng-click="cf.selectCategory('Chemical Safety')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: category.indexOf('Chemical') > -1}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
-		<li ng-show="general"><a ng-click="cf.selectCategory('General Safety')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
+		<li ng-show="general"><a ng-click="cf.selectCategory('General Hazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
 		<li ng-show="radiation"><a ng-click="cf.selectCategory('Radiation Safety')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: category.indexOf('Radiation') > -1}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
 	</ul>
 	<div class="loading" ng-show='loading' style="margin-left:11px;">
