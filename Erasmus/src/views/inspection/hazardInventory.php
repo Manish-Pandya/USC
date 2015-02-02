@@ -337,7 +337,7 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:10000; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
+<div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
 	<ul class="container-fluid whitebg" style="padding:0 70px !Important">
 		<li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
 		<li><a ng-click="selectedFooter = 'contacts'"><img src="../../img/phone.png"/><span>Laboratory Contacts</span></a></li>
@@ -347,7 +347,7 @@ require_once '../top_view.php';
 </div>
 </span>
 <script type="text/ng-template" id="archived-reports.html">
-	<div class="modal-header wide-modal" style="padding:0;">
+	<div class="modal-header wide-modal footer-present" style="padding:0;">
         <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s previous inspections</h2>
     <div class="modal-body">
 	   
@@ -394,7 +394,7 @@ require_once '../top_view.php';
         </h2>
     </div>
     <div class="modal-body">
-    	<h3 class="alert alert-danger" ng-if="error">{{error}}</sh3>
+    	<h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
 	   <span ng-if="gettingInspections" class="loading">
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
@@ -405,7 +405,7 @@ require_once '../top_view.php';
 	   	   <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
 	   </span>
 		<table class="table table-bordered table-striped">
-		<table ng-if="openInspections" class="table table-striped table-bordered">
+		<table ng-show="openInspections" class="table table-striped table-bordered">
 		<thead>
 				<th>Begin Inspection</th>
 				<th>Rooms</th>
