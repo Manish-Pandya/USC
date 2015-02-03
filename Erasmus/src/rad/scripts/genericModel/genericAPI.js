@@ -12,6 +12,23 @@ angular
 		api.baseUrl = '../../ajaxaction.php?action=';
 
 		//Generic calls
+
+		api.fetchActionString = function( actionName, className ) {
+			var urlList = urlMapper.getList();
+
+			if( !urlList[className] ) {
+				console.log("ERROR: No class '" + className + "' found in url mappings!");
+				return false;
+			}
+			if( !urlList[className][actionName] ) {
+				console.log("ERROR: No action string for action '" + actionName + "' on class '" + className + "'!");
+				return false;
+			}
+
+			return urlList[className][actionName];
+
+		}
+
 		api.buildRequestUrl = function( urlFragment, callback, queryParam )
 		{
 
@@ -55,7 +72,7 @@ angular
 
 		api.save = function( object, urlFragment )
 		{
-				if( !urlFragment )var urlFragment = object.SaveUrl;	
+				if( !urlFragment )var urlFragment = object.saveUrl;	
 				var url = api.buildRequestUrl( urlFragment, false );
 
 				var testPromise = $q.defer();

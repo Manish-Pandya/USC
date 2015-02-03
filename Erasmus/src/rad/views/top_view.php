@@ -90,6 +90,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../scripts/genericModel/genericModel.js"></script>
 <script src="../scripts/genericModel/genericAPI.js"></script>
 <script src="../scripts/genericModel/modelInflator.js"></script>
+<script src="../scripts/genericModel/urlMapper.js"></script>
 <script src="../scripts/dataStore/dataStore.js"></script>
 <script src="../scripts/dataStore/dataStoreManager.js"></script>
 <script src="../scripts/dataStore/dataLoader.js"></script>
