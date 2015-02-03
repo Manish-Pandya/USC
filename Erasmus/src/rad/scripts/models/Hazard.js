@@ -6,25 +6,20 @@
 var Hazard = function(){};
 Hazard.prototype = {
 
-    SubHazardsRelationship: {
-
+    subHazardsRelationship: {
         className:    'Hazard',
         keyReference:  'Parent_hazard_id',
         methodString:  'getHazardTreeNode',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
-    SaveUrl:  'saveHazard',
+    saveUrl:  'saveHazard',
 
     loadSubHazards: function() {
-            if(this.SubHazards) {
-                return this.SubHazards;
-            }
-            else {
-                return dataLoader.loadChildObject( this, 'SubHazards', this.SubHazardsRelationship);
-            }
+        if(!this.subHazards) {
+            dataLoader.loadChildrenFromRelationship( this, 'subHazards', this.subHazardsRelationship);
+        }
     }
 
 }
