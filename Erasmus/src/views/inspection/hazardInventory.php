@@ -85,7 +85,7 @@ require_once '../top_view.php';
 		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
-		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection={{inspection.Key_id}}">Manage Data for Selected PI</a></h3>
+		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
 		     </div>
 			<div class="span8" ng-if="PI || pi">
 		       <div class="controls">
@@ -101,7 +101,7 @@ require_once '../top_view.php';
 					       	Select a Principal Investigator.
 				       	</p>
 				       	 <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-					    	<span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id+'&inspection='+inspection.Key_id">Add Rooms</a>
+					    	<span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
 					    </p>
 				</span>
 
@@ -399,7 +399,7 @@ require_once '../top_view.php';
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
 	   </span>
-	   <span ng-if="!gettingInspections && !openInspections">
+	   <span ng-if="!gettingInspections && !openInspections.length">
 		   <h3>{{pi.User.Name}} has no pending inspections.</h3>
 		   <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
 	   	   <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
