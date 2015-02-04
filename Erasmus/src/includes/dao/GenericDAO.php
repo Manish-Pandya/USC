@@ -492,6 +492,32 @@ class GenericDAO {
 
 	}
 
+	function getAllLocations(){
+		$LOG = Logger::getLogger(__CLASS__);
+
+		$this->has_hazards = false;
+		// Get the db connection
+		global $db;
+
+		$queryString = "SELECT a.key_id as room_id, a.building_id as building_id, a.name as room_name, c.key_id as pi_key_id, CONCAT(f.first_name, ' ', f.last_name) as pi_name, e.key_id as department_id, e.name as department_name
+						FROM room a
+						LEFT JOIN principal_investigator_room b
+						ON a.key_id = b.room_id
+						LEFT JOIN principal_investigator c
+						ON b.principal_investigator_id = c.key_id
+						LEFT JOIN principal_investigator_department d
+						ON c.key_id = d.principal_investigator_id
+						LEFT JOIN department e
+						ON d.department_id = e.key_id
+						LEFT JOIN erasmus_user f
+						ON c.user_id = f.key_id
+						ORDER BY a.building_id, c.key_id;";
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
+
+	}
+
 
 }
 ?>
