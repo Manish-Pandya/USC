@@ -1740,8 +1740,7 @@ ul.key li.deficiencies span {
 }
 /* line 1385, ../sass/style.scss */
 .hazardList i, .hazardList ul i {
-  //margin: 5px 2px 0;
-  margin:3px;
+  margin:2px 3px 0 3px;
   font-size: 17px;
 }
 /* line 1388, ../sass/style.scss */
@@ -2258,7 +2257,7 @@ span.green {
 /* line 1804, ../sass/style.scss */
 .hazardLi {
   margin-bottom: 0px;
-  padding: 3px 0;
+  padding: 4px 0;
 }
 .hazardLi:not(.topChild){
   padding-top:10px;
