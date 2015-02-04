@@ -346,12 +346,13 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 });
 
 
-routeCtrl = function($scope, $location){
+routeCtrl = function($scope, $location,$rootScope){
 	$scope.location = $location.path();
 	$scope.setRoute = function(route){
 		$location.path(route);
 		$scope.location = route;
 	}
+	$rootScope.iterator=0;
 }
 
 roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, locationHubFactory){
