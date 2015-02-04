@@ -97,7 +97,8 @@ require_once '../top_view.php';
 
 		     			<h3 style="width:45%; float:left;">
 		     				<i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
-		     				<span once-text="question.Text"></span><br>
+		     				<span once-text=""></span><br>
+		     				<span once-text="$index+1 +'. '+question.Text"></span><br>
 		     				<span class="checklistQuestionError" ng-if="question.error">{{question.error}}</span>
 		     			</h3>
 		     			<div class="questionAnswerInputs">
