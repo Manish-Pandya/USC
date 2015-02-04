@@ -81,6 +81,7 @@ class Room extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		$entityMaps[] = new EntityMap("lazy","getHazards");
 		$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
+		$entityMaps[] = new EntityMap("lazy","getHas_hazards");
 		$entityMaps[] = new EntityMap("eager","getBuilding");
 		$this->setEntityMaps($entityMaps);
 
