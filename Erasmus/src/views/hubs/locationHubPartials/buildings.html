@@ -14,6 +14,7 @@
 			</th>
 		</tr>
 		<tr>
+			<th class="poundNotHash">#</th>
 			<th clas="temp">Edit</th>
 			<th>
 				<a>Building<br>
@@ -30,7 +31,9 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="building in buildings |  orderBy:['index', 'Campus.Name', 'Name'] | genericFilter:search" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
+		<tr ng-repeat="building in buildings | genericFilter:search | orderBy:['index', 'Campus.Name', 'Name']" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
+					<td once-text="building.idx+1 + '.'"></td>
+
 			<td style="width:6%;">
 				<a ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)"><i class="icon-pencil"></i></a>
 				<a ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>

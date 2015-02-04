@@ -14,6 +14,7 @@
 			   </div>
 			</th>
 		</tr>
+		<th class="poundNotHash">#</th>
 		<tr>
 			<th>Edit</th>
 			<th>
@@ -24,6 +25,7 @@
 
 	<tbody>
 		<tr ng-repeat="campus in campuses |  orderBy:['index', 'Name']" ng-class="{inactive: !campus.Is_active, 'new': campus.isNew}">
+			<td once-text="campus.idx+1 + '.'"></td>
 			<td style="width:11%;">
 				<a ng-if="!campus.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses)"><i class="icon-pencil"></i></a>
 				<a ng-if="campus.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>

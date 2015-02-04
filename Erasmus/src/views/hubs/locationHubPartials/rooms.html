@@ -14,6 +14,7 @@
 			</th>
 		</tr>
 		<tr>
+			<th class="poundNotHash">#</th>
 			<th clas="temp">Edit</th>
 			<th>
 				Building<br>
@@ -39,7 +40,9 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="room in rooms |  orderBy:['index', 'Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
+		<tr ng-repeat="(key,room) in rooms |  orderBy:['index', 'Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
+			<input type="hidden" ng-init="iterator=iterator+1" ng-model="iterator"/>
+			<td once-text="iterator"></td>
 			<td style="width:6%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"><i class="icon-remove"></i></a>
