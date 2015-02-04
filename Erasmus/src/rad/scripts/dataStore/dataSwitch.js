@@ -56,5 +56,42 @@ angular
 
             //TODO generic getObject method
 
+
+            dataSwitch.getAllObjects = function( className ) {
+
+                // should always return a promise
+                var deferred = $q.defer();
+
+                // check cache first
+                if( dataStoreManager.checkCollection(className) ) {
+                    console.log('not hitting server');
+                    deferred.resolve( dataStoreManager.get(className) );
+                }
+                // if not in cache, get from server
+                else {
+
+                    //prepare url fragment to send
+                    var action = genericAPIFactory.fetchActionString('getAll', className);
+                    console.log('URL: ' + action);
+
+                    // get data
+                    genericAPIFactory.read(action).then(function(returnedPromise) {
+                        var object = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                        console.log('OBJECT:');
+                        console.log(object);
+                        deferred.resolve(object);
+                    });
+
+                    /*
+                    FOR TOMORROW:
+                    add returned data to dataStore
+                        dataStoreManager.store or .addToCollection?
+
+                    */
+
+                }
+
+                return deferred.promise;
+            }
             return dataSwitch;
         });

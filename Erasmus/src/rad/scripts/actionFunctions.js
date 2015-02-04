@@ -3,7 +3,7 @@
 angular
     .module('actionFunctionsModule',[])
     
-        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q ){
+        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory ){
         	var af = {};
             var store = dataStoreManager;
             store.$q = $q;
@@ -114,31 +114,8 @@ angular
 
         	af.getAllUsers = function()
         	{
-        			var urlSegment = 'getAllUsers';
-
-                    if( store.checkCollection( 'User' ) ){
-                        var users = store.get( 'User' )
-                            .then(
-                                function( users ){
-                                    return users;
-                                }
-                            );
-                    }else{
-                        console.log('here');
-                        var users = genericAPIFactory.read( urlSegment )
-                            .then(
-                                function( returnedPromise ){
-                                    //console.log(returnedPromise.data)
-                                    //var users = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                    store.store( returnedPromise.data );
-                                    //console.log(store.get( 'Users' ));
-                                    return store.get( 'User' );
-                                }
-                            ); 
-                    }
-
-        			return users;
-        	}
+                return dataSwitchFactory.getAllObjects('User');
+            }
 
             af.getUsersViewModel = function()
             {       
@@ -228,27 +205,7 @@ angular
 
             af.getAllHazards = function()
             {
-
-                    var urlSegment = 'getAllHazards';
-
-                    if( store.checkCollection( 'Hazard' ) ){
-                            console.log('check positive');
-                            var hazards = $q.defer()
-                            var storedHazards = store.get( 'Hazard' );
-                            hazards.resolve(storedHazards);
-                            return hazards.promise;
-                    }else{
-                            var hazards = genericAPIFactory.read( urlSegment )
-                                .then(
-                                    function( returnedPromise ){
-                                        console.log(returnedPromise);
-                                        var hazards = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                        store.store( hazards );
-                                        return store.get( 'Hazard' );
-                                    }
-                                );  
-                    }                    
-                    return hazards;
+                return dataSwitchFactory.getAllObjects('Hazard');
             }
 
             af.getHasChildren = function( hazards )
@@ -405,24 +362,7 @@ angular
 
             af.getAllPIs= function()
             {
-                    var urlSegment = 'getAllPIs';
-
-                    if( store.checkCollection( 'PrincipalInvestigator' ) ){
-                            var pis = $q.defer()
-                            var storedPIs = store.get( 'PrincipalInvestigator' );
-                            pis.resolve(storedPIs);
-                            return pis.promise
-                    }else{
-                            var pis = genericAPIFactory.read( urlSegment )
-                                .then(
-                                    function( returnedPromise ){
-                                        var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                        store.store( pis );
-                                        return store.get( 'PrincipalInvestigator' );
-                                    }
-                                );  
-                    }                    
-                    return pis;
+                return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
             }
 
             af.getAllPIRoomRelations = function()
@@ -477,22 +417,7 @@ angular
 
             af.getAllIsotopes = function( key_id )
             {
-                var urlSegment = 'getAllIsotopes';
-
-                if( store.checkCollection('Isotope') ) {
-                    var isotopes = store.get( 'Isotope' ).then(function(isotope) {
-                        return isotope;
-                    });
-                }
-                else {
-                    var isotopes = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var isotopes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( isotopes );
-                            return store.get( 'Isotope' );
-                        });
-                }
-                return isotopes;
+                return dataSwitchFactory.getAllObjects('Isotope');
             }
 
 
@@ -523,22 +448,7 @@ angular
 
             af.getAllAuthorizations = function( key_id )
             {
-                var urlSegment = 'getAllAuthorizations';
-
-                if( store.checkCollection('Authorization') ) {
-                    var authorizations = store.get( 'Authorization' ).then(function(authorization) {
-                        return authorization;
-                    });
-                }
-                else {
-                    var authorizations = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var authorizations = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( authorizations );
-                            return store.get( 'Authorization' );
-                        });
-                }
-                return authorizations;
+                return dataSwitchFactory.getAllObjects('Authorization');
             }
 
 
@@ -570,22 +480,7 @@ angular
 
             af.getAllCarboys = function( key_id )
             {
-                var urlSegment = 'getAllCarboys';
-
-                if( store.checkCollection('Carboy') ) {
-                    var carboys = store.get( 'Carboy' ).then(function(carboy) {
-                        return carboy;
-                    });
-                }
-                else {
-                    var carboys = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var carboys = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( carboys );
-                            return store.get( 'Carboy' );
-                        });
-                }
-                return carboys;
+                return dataSwitchFactory.getAllObjects('Carboy');
             }
 
 
@@ -617,22 +512,7 @@ angular
 
             af.getAllDrums = function( key_id )
             {
-                var urlSegment = 'getAllDrums';
-
-                if( store.checkCollection('Drum') ) {
-                    var drums = store.get( 'Drum' ).then(function(drum) {
-                        return drum;
-                    });
-                }
-                else {
-                    var drums = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var drums = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( drums );
-                            return store.get( 'Drum' );
-                        });
-                }
-                return drums;
+                return dataSwitchFactory.getAllObjects('Drum');
             }
 
 
@@ -664,22 +544,7 @@ angular
 
             af.getAllParcels = function( key_id )
             {
-                var urlSegment = 'getAllParcels';
-
-                if( store.checkCollection('Parcel') ) {
-                    var parcels = store.get( 'Parcel' ).then(function(parcel) {
-                        return parcel;
-                    });
-                }
-                else {
-                    var parcels = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var parcels = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( parcels );
-                            return store.get( 'Parcel' );
-                        });
-                }
-                return parcels;
+                return dataSwitchFactory.getAllObjects('Parcel');
             }
 
 
@@ -711,22 +576,7 @@ angular
 
             af.getAllParcelUses = function( key_id )
             {
-                var urlSegment = 'getAllParcelUses';
-
-                if( store.checkCollection('ParcelUse') ) {
-                    var parceluses = store.get( 'ParcelUse' ).then(function(parceluse) {
-                        return parceluse;
-                    });
-                }
-                else {
-                    var parceluses = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var parceluses = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( parceluses );
-                            return store.get( 'ParcelUse' );
-                        });
-                }
-                return parceluses;
+                return dataSwitchFactory.getAllObjects('ParcelUse');
             }
 
 
@@ -758,22 +608,7 @@ angular
 
             af.getAllParcelUseAmounts = function( key_id )
             {
-                var urlSegment = 'getAllParcelUseAmounts';
-
-                if( store.checkCollection('ParcelUseAmount') ) {
-                    var parceluseamounts = store.get( 'ParcelUseAmount' ).then(function(parceluseamount) {
-                        return parceluseamount;
-                    });
-                }
-                else {
-                    var parceluseamounts = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var parceluseamounts = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( parceluseamounts );
-                            return store.get( 'ParcelUseAmount' );
-                        });
-                }
-                return parceluseamounts;
+                return dataSwitchFactory.getAllObjects('ParcelUseAmount');
             }
 
 
@@ -805,22 +640,7 @@ angular
 
             af.getAllPickups = function( key_id )
             {
-                var urlSegment = 'getAllPickups';
-
-                if( store.checkCollection('Pickup') ) {
-                    var pickups = store.get( 'Pickup' ).then(function(pickup) {
-                        return pickup;
-                    });
-                }
-                else {
-                    var pickups = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var pickups = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( pickups );
-                            return store.get( 'Pickup' );
-                        });
-                }
-                return pickups;
+                return dataSwitchFactory.getAllObjects('Pickup');
             }
 
 
@@ -878,22 +698,7 @@ angular
 
             af.getAllPurchaseOrders = function( key_id )
             {
-                var urlSegment = 'getAllPurchaseOrders';
-
-                if( store.checkCollection('PurchaseOrder') ) {
-                    var purchaseorders = store.get( 'PurchaseOrder' ).then(function(purchaseorder) {
-                        return purchaseorder;
-                    });
-                }
-                else {
-                    var purchaseorders = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var purchaseorders = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( purchaseorders );
-                            return store.get( 'PurchaseOrder' );
-                        });
-                }
-                return purchaseorders;
+                return dataSwitchFactory.getAllObjects('PurchaseOrder');
             }
 
 
@@ -925,22 +730,7 @@ angular
 
             af.getAllSolidsContainers = function( key_id )
             {
-                var urlSegment = 'getAllSolidsContainers';
-
-                if( store.checkCollection('SolidsContainer') ) {
-                    var solidscontainers = store.get( 'SolidsContainer' ).then(function(solidscontainer) {
-                        return solidscontainer;
-                    });
-                }
-                else {
-                    var solidscontainers = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var solidscontainers = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( solidscontainers );
-                            return store.get( 'SolidsContainer' );
-                        });
-                }
-                return solidscontainers;
+                return dataSwitchFactory.getAllObjects('SolidsContainer');
             }
 
 
@@ -972,22 +762,7 @@ angular
 
             af.getAllWasteBags = function( key_id )
             {
-                var urlSegment = 'getAllWasteBag';
-
-                if( store.checkCollection('WasteBag') ) {
-                    var wastebags = store.get( 'WasteBag' ).then(function(wastebag) {
-                        return wastebag;
-                    });
-                }
-                else {
-                    var wastebags = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var wastebags = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( wastebags );
-                            return store.get( 'WasteBag' );
-                        });
-                }
-                return wastebags;
+                return dataSwitchFactory.getAllObjects('WasteBag');
             }
 
 
@@ -1019,22 +794,7 @@ angular
 
             af.getAllWasteTypes = function( key_id )
             {
-                var urlSegment = 'getAllWasteTypes';
-
-                if( store.checkCollection('WasteType') ) {
-                    var wastetypes = store.get( 'WasteType', af.$q ).then(function(wastetype) {
-                        return wastetype;
-                    });
-                }
-                else {
-                    var wastetypes = genericAPIFactory.read(urlSegment)
-                        .then( function( returnedPromise) {
-                            var wastetypes = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( wastetypes );
-                            return store.get( 'WasteType' );
-                        });
-                }
-                return wastetypes;
+                return dataSwitchFactory.getAllObjects('WasteType');
             }
 
             /********************************************************************
@@ -1184,24 +944,7 @@ angular
 
             af.getAllRooms = function()
             {
-                    var urlSegment = 'getAllRooms';
-
-                    if( store.checkCollection( 'Room' ) ){
-                            var rooms = $q.defer()
-                            var storedRooms = store.get( 'Rooms' );
-                            relations.resolve(storedRooms);
-                            return rooms.promise
-                    }else{
-                            var rooms = genericAPIFactory.read( urlSegment )
-                                .then(
-                                    function( returnedPromise ){
-                                        var returnedRooms = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                        store.store( returnedRooms );
-                                        return store.get( 'Rooms' );
-                                    }
-                                );  
-                    }                    
-                    return rooms;
+                return dataSwitchFactory.getAllObjects('Room');
             }
 
             af.test = function(user)
