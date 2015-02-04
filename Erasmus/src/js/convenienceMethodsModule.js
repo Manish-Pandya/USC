@@ -130,7 +130,7 @@ angular.module('convenienceMethodModule', ['ngRoute'])
         getDataAsDeferredPromise: function( url ){
         	var deferred = $q.defer();
           	//use jsonp method of the angularjs $http object to request data from service layer
-        	var promise = $http.jsonp(url)
+        	$http.jsonp(url)
 	            .success( function(data) {
 					deferred.resolve(data);
 	            })
