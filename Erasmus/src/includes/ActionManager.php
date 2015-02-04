@@ -1062,6 +1062,8 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+
 
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);
@@ -1099,18 +1101,29 @@ class ActionManager {
 			$roomMaps[] = new EntityMap("lazy","getBuilding");
 			$roomMaps[] = new EntityMap('eager', 'getBuilding_id');
 			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+			$roomMaps[] = new EntityMap("lazy","getHas_hazards");
 
 			$piMaps = array();
 			$piMaps[] = new EntityMap("lazy","getLabPersonnel");
-			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+			$piMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
 			$piMaps[] = new EntityMap("lazy","getRooms");
 			$piMaps[] = new EntityMap("eager","getDepartments");
 			$piMaps[] = new EntityMap("eager","getUser");
 			$piMaps[] = new EntityMap("lazy","getInspections");
-			$LOG->debug($room->getPrincipalInvestigators());
+			$piMaps[] = new EntityMap("lazy","getOpenInspections");
 
 			foreach($room->getPrincipalInvestigators() as $pi){
 				$pi->setEntityMaps($piMaps);
+
+				$user = $pi->getUser();
+
+				$userMaps = array();
+				$userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+				$userMaps[] = new EntityMap("lazy","getInspector");
+				$userMaps[] = new EntityMap("lazy","getSupervisor");
+				$userMaps[] = new EntityMap("lazy","getRoles");
+				$userMaps[] = new EntityMap("lazy","getPrimary_department");
+				$user->setEntityMaps($userMaps);
 			}
 
 			$room->setEntityMaps($roomMaps);
@@ -2224,6 +2237,21 @@ class ActionManager {
 		}
 	}
 
+	public function getGrandma($hazard){
+		$parentBranchIds = array(1,10009,10010);
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		$LOG->debug('hazard id is '.$hazardId);
+		$parentDao = $this->getDao(new Hazard());
+		$granny    = $parentDao->getById($hazard->getParent_hazard_id());
+
+		if(!in_array($granny->getKey_id(), $parentBranchIds)){
+			$this->getGrandma($granny);
+		}else{
+			return $granny;
+		}
+
+	}
+
 	public function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL, $recurse = NULL){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -2232,21 +2260,42 @@ class ActionManager {
 		if($add == null)$add = $this->getValueFromRequest('add', $add);
 		if($recurse == null)$recurse = $this->getValueFromRequest('recurse', $recurse);
 
-
 		if( $roomId !== NULL && $hazardId !== NULL && $add !== null ){
-			$LOG->debug("ADD's type: ".gettype($add)." add's value: ".$add);
 			// Get this room
 			$dao = $this->getDao(new Room());
 			$room = $dao->getById($roomId);
+			$hazDao = $this->getDao(new Hazard());
+			$hazard = $hazDao->getById($hazardId);
+			$granny = $this->getGrandma($hazard);
+			if($granny != null)$grannysRooms = $granny->getRooms();
+
 			// if add is true, add this hazard to this room
 			if ($add != false){
 				$dao->addRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+				if($granny != null && !in_array($room, $grannysRooms)){
+					$LOG->debug('about to add parent hazard');
+					$dao->addRelatedItems($granny->getKey_id(),$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+				}
 			// if add is false, remove this hazard from this room
 			} else {
-				$hazDao = $this->getDao(new Hazard());
-				$hazard = $hazDao->getById($hazardId);
-				$LOG->debug("removing " . $hazard->getName() . " from room with key id" . $roomId);
 				$dao->removeRelatedItems($hazardId,$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+				$parentBranchIds = array(1,10009,10010);
+
+				if(in_array($hazard->getParent_hazard_id(), $parentBranchIds)){
+					//do any hazards in this room have a parent id in $parentBranchIds
+					$hazards = $room->getHazards();
+					$delete = true;
+					foreach ($hazards as $roomHazard){
+						if($hazard->getParent_hazard_id() == $roomHazard->getParent_hazard_id()){
+							$delete = false;
+						}
+					}
+
+					//remove relevant parent hazard
+					if($delete == true){
+						$dao->removeRelatedItems($hazard->getParent_hazard_id(),$roomId,DataRelationship::fromArray(Room::$HAZARDS_RELATIONSHIP));
+					}
+				}
 
 				//if we are recursing, we need to get the subhazards
 				if($recurse == true){
@@ -3006,6 +3055,40 @@ class ActionManager {
 		}
 
 		return $inspectionSchedules;
+	}
+
+	public function getAllLabLocations(){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$dao = $this->getDao(new Inspection());
+		$rooms = $dao->getAllLocations();
+		//return $rooms;
+		$packedLocations = array();
+		$skip = false;
+		$previousRoomID = 0;
+		foreach ($rooms as &$roomDTO){
+			if ( $roomDTO->getRoom_id() !== NULL && $roomDTO->getPi_key_id() !== null && $previousRoomID !== $roomDTO->getRoom_id() ){
+					$roomDao = $this->getDao(new Room());
+					$room = $roomDao->getById($roomDTO->getRoom_id());
+					$pis = $room->getPrincipalInvestigators();
+					$entityMaps = array();
+					$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+					$entityMaps[] = new EntityMap("lazy","getRooms");
+					$entityMaps[] = new EntityMap("eager","getDepartments");
+					$entityMaps[] = new EntityMap("eager","getUser");
+					$entityMaps[] = new EntityMap("lazy","getInspections");
+					$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+					$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+					foreach($pis as $pi){
+						$pi->setEntityMaps($entityMaps);
+					}
+					$roomDTO->setPrincipal_investigators($pis);
+					$previousRoomID == $roomDTO->getRoom_id();
+				}
+		}
+
+		return $rooms;
+
 	}
 
 	//generate a random float

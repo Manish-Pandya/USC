@@ -172,6 +172,10 @@ class ActionMappingFactory {
 				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
 
 
+				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", ""),
+
+
+
 
 				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "")
 		);
