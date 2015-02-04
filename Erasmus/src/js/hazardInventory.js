@@ -300,10 +300,12 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getOpenInspectionsByPIId&id="+pi.Key_id;
       convenienceMethods.getDataAsDeferredPromise(url).then(
         function(promise){
-          factory.previousInspections = promise;
-          var i = factory.previousInspections.length;
+          factory.openInspections = promise;
+          var i = promise.length;
+          console.log(i);
+          if(i==0)deferred.resolve();
           while(i--){
-            var inspection = factory.previousInspections[i];
+            var inspection = factory.openInspections[i];
             inspection.piRooms = [];
             var j = factory.PI.Rooms.length;
             while(j--){
@@ -380,6 +382,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   },
   getPi = function(piKey_id)
   {
+        $scope.error='';
         $scope.piLoading = true;
         var piDefer = $q.defer();
         hazardInventoryFactory
@@ -486,6 +489,12 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
             for(var i = 0; i < roomsLength; i++){
               if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
             }
+
+            if(!rooms || !rooms.length){
+              $scope.noRoomsAssigned = true;
+              return
+            }
+
             $scope.hazardsLoading = true;
 
             var hazardDefer = $q.defer();
@@ -1031,9 +1040,11 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   var pi = hazardInventoryFactory.PI;
   $scope.pi = pi;
   $scope.gettingInspections = true;
+  console.log('getting inspections')
   hazardInventoryFactory.getOpenInspections(pi)
     .then(
       function(inspections){
+        console.log('loaded');
         $scope.openInspections = inspections;
         $scope.gettingInspections = false;
       },
@@ -1073,7 +1084,7 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
               .then(function(inspection)
               {
                   $scope.creatingInspection = false;
-                  //$scope.creatingInspection = false;
+                  if(!$scope.openInspections)$scope.openInspections=[];
                   $scope.openInspections.unshift(inspection);
               },
               function(noRooms)
