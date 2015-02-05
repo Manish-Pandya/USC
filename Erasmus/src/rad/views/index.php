@@ -126,8 +126,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 </head>
 <body>
 
-<div ng-app="00RsmsAngularOrmApp" class="container-fluid">
+<div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
 <!-- NAVIGATION -->
+  <div class="banner {{bannerClass}}" ng-class="{'dashboard-banner':dashboardView}">
+    {{viewLabel}}
+  </div>
 <!-- VIEW NESTING -->
-	<div ui-view class="whiteBg"></div>
+	<div ui-view class="noBg"></div>
 </div>

@@ -3089,14 +3089,13 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
 
   return {
     parse:function (input) {
-
+      console.log(input);
       var match = input.match(TYPEAHEAD_REGEXP), modelMapper, viewMapper, source;
       if (!match) {
         throw new Error(
           "Expected typeahead specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
             " but got '" + input + "'.");
       }
-
       return {
         itemName:match[3],
         source:$parse(match[4]),
@@ -3115,7 +3114,6 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
   return {
     require:'ngModel',
     link:function (originalScope, element, attrs, modelCtrl) {
-
       //SUPPORTED ATTRIBUTES (OPTIONS)
 
       //minimal no of characters that needs to be entered before typeahead kicks-in
@@ -3172,7 +3170,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
         scope.matches = [];
         scope.activeIdx = -1;
       };
-
+      console.log(scope);
       var getMatchesAsync = function(inputValue) {
 
         var locals = {$viewValue: inputValue};

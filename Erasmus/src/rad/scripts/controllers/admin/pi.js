@@ -11,8 +11,6 @@ angular.module('00RsmsAngularOrmApp')
   .controller('PiDetailCtrl', function ($scope, actionFunctionsFactory, $stateParams) {
     //do we have access to action functions?
     $scope.af = actionFunctionsFactory;
-
-
     //get the all the pis
     $scope.piPromise = actionFunctionsFactory.getAllPIs()
       .then(
@@ -42,10 +40,9 @@ angular.module('00RsmsAngularOrmApp')
         return parseFloat(hazard.Name);
     }
 
-    //view filter for displaying hazards with the matching Is_active state
-    $scope.hazardFilter = function(hazard){
-      if(hazard.Is_active == true)return true;
-      return false;
+    $scope.onSelectPi = function (pi)
+    {
+        $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
 

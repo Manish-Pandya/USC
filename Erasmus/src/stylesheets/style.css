@@ -71,22 +71,25 @@ body {
   padding: 70px 15px !Important;
 }
 
+.noBg {
+  padding: 70px 15px !Important;
+}
+
 /* line 69, ../sass/style.scss */
-.whitebg.checklist {
+.whitebg.checklist, .noBg.checklist {
   padding: 0px !Important;
 }
 
 @media screen and (max-width: 1375px) {
   /* line 73, ../sass/style.scss */
-  .whitebg.checklist {
+  .whitebg.checklist, .noBg.checklist {
     margin-left: 53px !Important;
     padding: 0px !Important;
   }
 }
 @media (min-width: 1500px) {
   /* line 80, ../sass/style.scss */
-  .whitebg, .whiteBg {
-    background: #fff;
+  .whitebg, .whiteBg, .noBg {
     padding: 70px 30px !Important;
   }
 }
@@ -2952,3 +2955,70 @@ a.modalBtn i, .modal-footer a.btn i {
   display: block;
   padding: 5px;
 }
+
+
+
+/**********************************************************
+*
+*   RAD STYLES;
+*
+**********************************************************/
+.neg-marg{
+  margin:0 -30px;
+}
+.neg-marg .container-fluid,.dashboard .container-fluid {
+  padding-left:0;
+  padding-right:0;
+}
+.dashboard{
+    margin:0 -100px;
+}
+.card{
+  background:white;
+  padding:10px;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
+  margin-top: 10px;
+  float:left;
+}
+.card:after {
+    content:'';
+    display:block;
+    clear: both;
+}
+.card.full{
+  width:98%;
+  margin-right: 0;
+}
+.card.two-thirds{
+  width:62%;
+  margin-right:1.33333%;
+}
+.card.one-third{
+  width: 31%;
+  margin-right: 1%;
+}
+.card.half{
+  width:47%;
+  margin-right:1%;
+}
+
+@media screen and (max-width: 1366px) {
+  /* line 73, ../sass/style.scss */
+  .neg-marg{
+    margin:0 -15px;
+  }
+  .dashboard{
+    margin:0 -25px;
+  }
+  .card{
+    width:97% !important;
+    margin-right: 0 !important;
+  }
+
+}
+
+@media screen and (max-width: 1000px) {
+  /* line 73, ../sass/style.scss */
+
+}
+

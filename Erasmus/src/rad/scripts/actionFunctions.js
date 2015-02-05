@@ -86,6 +86,36 @@ angular
             af.getAll = function(className) {
                 return dataSwitchFactory.getAllObjects(className);
             }
+            
+            af.getViewMap = function(current)
+            {
+                console.log(current);
+                var viewMap = [
+                    {
+                        Name: 'rad-home',
+                        Label: 'Radiation Center',
+                        Dashboard:false
+                    },
+                    {
+                        Name:'radmin',
+                        Label: 'Radiation Administration',
+                        Dashboard: true
+                    },
+                    {
+                        Name:'radmin.pi-detail',
+                        Label: 'Radiation Administration',
+                        Dashboard: true
+                    }
+                ]
+
+                var i = viewMap.length;
+                while(i--){
+                    console.log(current.name);
+                    if(current.name == viewMap[i].Name){
+                        return viewMap[i];
+                    }
+                }
+            }
 
         	/********************************************************************
         	**
@@ -817,7 +847,6 @@ angular
                     return store.get( 'PrincipalInvestigator' )
                             .then(
                                 function(pis){
-                                    console.log(pis);
                                     pi = store.getById('PrincipalInvestigator', id );
                                     return pi; 
                                 }

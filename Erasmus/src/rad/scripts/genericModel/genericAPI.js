@@ -41,7 +41,7 @@ angular
 
 		api.read = function( urlFragment, queryParam )
 		{
-
+				console.log(urlFragment);
 				var url = api.buildRequestUrl( urlFragment, true, queryParam );
 
 		    	var promise = $http.jsonp( url )

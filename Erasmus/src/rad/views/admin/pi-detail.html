@@ -1,2 +1,14 @@
-<h1>{{pi.User.Name}}</h1>
-<pre>{{pi.Authorizations|json}}</pre>
+<div class="row-fluid">
+	<div class="span2">
+		<ul class="sideNav">
+			<li>Authorizations</li>
+			<li>Purhcase Orders</li>
+		</ul>
+	</div>
+	<div class="span10">
+
+		<h1>{{pi.User.Name}}</h1>
+		<div class="card full" cg-busy="{promise:piPromise,message:'Loading Principal Investigator',backdrop:true,minDuration:700}">{{pi.Authorizations|json}}</div>
+		<div class="card full">{{pi.Purchase_orders|json}}</div>
+	</div>	
+</div>

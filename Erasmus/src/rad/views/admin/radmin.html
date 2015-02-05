@@ -1,4 +1,9 @@
-<ul class="span3">
-	<li ng-repeat="pi in pis"><a ui-sref=".pi-detail({pi:pi.Key_id})"><span once-text="pi.User.Name"></span></a></li>
-</ul>
-<div class="span9" ui-view></div>
+<div cg-busy="{promise:allPisPromise,message:'Loading Principal Investigator',templateUrl:'busy-templates/full-page-busy.html',backdrop:true,minDuration:700}"></div>
+<div class="dashboard">
+   	<input style="" class="span2"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
+
+	<div class="container-fluid" ui-view></div>
+	
+</div>
+
+

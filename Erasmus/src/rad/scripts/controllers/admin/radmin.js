@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp Radmin
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('RadminMainCtrl', function ($scope, $q, $http, actionFunctionsFactory) {
+  .controller('RadminMainCtrl', function ($scope, $q, $http, actionFunctionsFactory, $state) {
     //do we have access to action functions?
     $scope.af = actionFunctionsFactory;
 
@@ -80,7 +80,13 @@ angular.module('00RsmsAngularOrmApp')
         getAllPIs()
             .then(
                 function(pis){
-                    $scope.pis = pis;
+                   $scope.pis = pis;
+                   $scope.typeAheadPis = [];
+                   var i = pis.length;
+                   while(i--){
+                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id}
+                        $scope.typeAheadPis.push(pi);
+                   }
                 }
             )
 
@@ -91,5 +97,10 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     init();
+
+    $scope.onSelectPi = function (pi)
+    {
+        $state.go('radmin.pi-detail',{pi:pi.Key_id});
+    }
 
   });
