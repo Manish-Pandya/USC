@@ -730,7 +730,7 @@ angular
                 return purchaseorder;
             }
 
-            af.getAllPurchaseOrders = function( key_id )
+            af.getAllPurchaseOrders = function(  )
             {
                 return dataSwitchFactory.getAllObjects('PurchaseOrder');
             }
@@ -840,7 +840,7 @@ angular
             af.getRadPIById = function(id)
             {
                 console.log(id);
-                var urlSegment = 'getALLPIS';
+                var urlSegment = 'getAllPIs';
                 var pi;
                 var tempPI;
                 var getPI = function(id){
@@ -860,13 +860,12 @@ angular
                                 var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                                 console.log(tempPI);
                                 if(tempPI.Authorizations.length){
-                                    console.log('store auths');
+                                    console.log(store);
                                     store.store(tempPI.Authorizations);
                                 }
                                 if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
                                 store.store(tempPI.User);
                                 //pi.getActiveParcels();
-                                pi.getAuthorizations();
                                 return pi;
                             });
                     }else{
