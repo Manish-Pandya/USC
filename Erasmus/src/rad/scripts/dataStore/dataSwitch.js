@@ -64,7 +64,6 @@ angular
 
                 // check cache first
                 if( dataStoreManager.checkCollection(className) ) {
-                    console.log('not hitting server');
                     deferred.resolve( dataStoreManager.get(className) );
                 }
                 // if not in cache, get from server
@@ -72,13 +71,10 @@ angular
 
                     //prepare url fragment to send
                     var action = genericAPIFactory.fetchActionString('getAll', className);
-                    console.log('URL: ' + action);
 
                     // get data
                     genericAPIFactory.read(action).then(function(returnedPromise) {
                         var object = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                        console.log('OBJECT:');
-                        console.log(object);
                         deferred.resolve(object);
                     });
 
