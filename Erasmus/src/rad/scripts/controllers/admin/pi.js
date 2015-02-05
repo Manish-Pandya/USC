@@ -19,9 +19,9 @@ angular.module('00RsmsAngularOrmApp')
                     .then(
                         function(pi){
                             $scope.pi = pi;
+                            pi.loadAuthorizations();
                         },
                         function(){
-                            $scope.error = 'Fuck you';
                         }
                     );  
             },
