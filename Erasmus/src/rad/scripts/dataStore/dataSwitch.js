@@ -74,16 +74,12 @@ angular
 
                     // get data
                     genericAPIFactory.read(action).then(function(returnedPromise) {
-                        var object = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                        deferred.resolve(object);
+                        var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                        deferred.resolve(instatedObjects);
+
+                        // add returned data to cache
+                        dataStoreManager.store(instatedObjects, true, className);
                     });
-
-                    /*
-                    FOR TOMORROW:
-                    add returned data to dataStore
-                        dataStoreManager.store or .addToCollection?
-
-                    */
 
                 }
 
