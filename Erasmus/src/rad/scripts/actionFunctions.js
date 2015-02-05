@@ -83,6 +83,10 @@ angular
                     return store.getById(objectFlavor, key_id );       
             }
 
+            af.getAll = function(className) {
+                return dataSwitchFactory.getAllObjects(className);
+            }
+
         	/********************************************************************
         	**
         	**		USER MANAGEMENT
