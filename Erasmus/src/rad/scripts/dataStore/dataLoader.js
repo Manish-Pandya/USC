@@ -11,8 +11,8 @@
 var dataLoader = {};
 
 /* NOTE
-    This class does not return anything - instead, it sets the given property on parent.
-    This avoids any asynchronous vs synchronous nastiness.
+    This method does not return anything - instead, it sets the given property on parent.
+    Doing so avoids any asynchronous vs synchronous nastiness.
 */
 dataLoader.loadChildObject = function( parent, property, relationship )
 {
@@ -37,3 +37,20 @@ dataLoader.loadChildObject = function( parent, property, relationship )
                 });
         }
 }
+
+dataLoader.loadObjectById = function( parent, property, className, id ) {
+
+    // check cache first
+    if( dataStoreManager.checkCollection(className) ) {
+        parent[property] = dataStoreManager.getById(className, id);
+    }
+    // not cached, get from server
+    else {
+        var getString = parent.api.fetchActionString("getById", className);
+        var idParam = '&id=' + id;
+        parent.api.read(getString, idParam).then(function( returnedPromise ) {
+            parent[property] = parent.inflator.instateAllObjectsFromJson( returnedPromise.data );
+        });
+    }
+}
+
