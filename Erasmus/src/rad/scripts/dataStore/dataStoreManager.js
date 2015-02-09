@@ -47,6 +47,7 @@ dataStoreManager.store = function( object, trusted, flavor )
 
 dataStoreManager.addToCollection = function( type, trusted )
 {       
+        console.log('adding '+type+'s to the collection');
         //if we don't have the name of this type of object or a name for this array of objects, push it into the collection
         if( !dataStore.Collections.hasOwnProperty( type ) || !dataStore.Collections[type].trusted ){
             dataStore.Collections[type] = {type:type, trusted:trusted};  
@@ -61,8 +62,6 @@ dataStoreManager.removeFromCollection = function( type )
 dataStoreManager.checkCollection = function( type )
 {
         
-        if( dataStore.Collections.hasOwnProperty( type ) ) return true;
-        //if we don't have this object in the cache, but we DO have a collection of all such objects, we don't need to make an api call
         if( dataStore.Collections.hasOwnProperty( type ) ) return true;
         return false;
 }
@@ -87,7 +86,6 @@ dataStoreManager.get = function( objectFlavor )
 dataStoreManager.getById = function( objectFlavor, key_id )
 {
     // get index of this room in the cache, no looping anymore!
-    console.log(dataStore[objectFlavor+'Map']);
     var location = dataStore[objectFlavor+'Map'][key_id];
     return dataStore[objectFlavor][location];
 }
@@ -120,12 +118,10 @@ dataStoreManager.createCopy = function( object )
 
 dataStoreManager.replaceWithCopy = function( object )
 {      
-        console.log(dataStore[object.Class+'Copy']);
         //replace the object with the cached copy version
         for( var prop in object ){
             object[prop] = dataStore[object.Class+'Copy'][prop];
         }
-        console.log(object);
         //clear the copy from the cache
         dataStore.purge( object );
 }
@@ -161,8 +157,6 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
             var collectionToReturn = [];
             while(i--){
                 var current = dataStore[collectionType][i];
-                console.log(current[property]);
-                console.log(value);
                 if(current[property] == value){
                     collectionToReturn.push( current );
                 }
