@@ -440,9 +440,8 @@ require_once '../top_view.php';
 					<td>hazards</td>
 
 					<td>
-						<span ng-if="inspection.startDate">
+						<span ng-if="inspection.Date_started">
 							<a style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
-							{{inspection.startDate}}
 						</span>
 					</td>
 					
