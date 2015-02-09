@@ -2,7 +2,7 @@
 	<thead>
 		<tr class="orangeBg">
 			<th colspan="9">
-				<h1 class="orangeBg" style="padding:0">Uncategorized Users</h1>
+				<h1 class="orangeBg" style="padding:0">{{users.length}} Uncategorized Users</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
 				     <span ng-show="showInactive">Show Active Users</span>
@@ -12,7 +12,6 @@
 			</th>
 		</tr>
 		<tr>
-			<th class="poundNotHash">#</th>
 			<th>Edit User</th>
 			<!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
 			<th>
@@ -25,7 +24,6 @@
 	</thead>
 	<tbody>
 		<tr ng-repeat="contact in users | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
-			<td once-text="$index+1 + '.'"></td>
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
