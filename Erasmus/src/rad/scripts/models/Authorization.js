@@ -5,7 +5,12 @@
 var Authorization = function() {};
 Authorization.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+
+    loadIsotope: function() {
+        if(!this.isotope) {
+            dataLoader.loadObjectById(this, 'isotope', 'Isotope', this.Isotope_id);
+        }
+    }
 
 }
 

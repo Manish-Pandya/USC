@@ -5,7 +5,7 @@ Class Blueprint:
 2. Constructor:
 var ClassName = function() {};
 
-Add everything else to ClassName.prototype:
+Add everything else from this point on to ClassName.prototype:
 Hazard.prototype = {
 	.....
 }
@@ -41,35 +41,25 @@ paramValue - property of this class to be checked against keyReference
 paramName - name of the paramValue property to insert into the request url.
 		
 
-5. SaveUrl - String containing server method to call when saving this entity.
-
-
-6. Getters and Setters
+5. Loaders
 	example:
 
-	getSubEntity: function() {
-			if(this.SubEntity) {
-				return this.SubEntity;
+	loadSubEntity: function() {
+			if(!this.SubEntity) {
+			    dataLoader.getChildObject( this, 'PropertyName', this.EntityRelationship );
 			}
-			else {
-				return dataSwitch.getChildObject( this, 'PropertyName', EntityRelationship_;
-			}
-	}
-
-	setSubEntity: function(newValue) {
-			this.SubEntity = newValue;
 	}
 
 ('PropertyName' - name of the property on this object for the result to be assigned to.
  EntityRelationship - defined in #4.)
 
 
-7. Inherit from and extend GenericModel
+6. Inherit from and extend GenericModel
 
-extend(Class, GenericModel);
+extend(className, GenericModel);
 
 
-8. Create an angular module for the model, so it can be injected downstream
+7. Create an angular module for the model, so it can be injected downstream
 
 angular
     .module("className",[])
