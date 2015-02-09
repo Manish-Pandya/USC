@@ -232,28 +232,35 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
   //calculate the inspection's scores
   factory.calculateScore = function(inspection){
+    console.log(inspection);
     if(!inspection.score)inspection.score = {};
     inspection.score.itemsInspected = 0;
     inspection.score.deficiencyItems = 0;
     inspection.score.compliantItems = 0;
     angular.forEach(inspection.Checklists, function(checklist, key){
-      angular.forEach(checklist.Questions, function(question, key){
-        inspection.score.itemsInspected++;
-        if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
-          inspection.score.deficiencyItems++;
-          var i = question.Responses.DeficiencySelections.length;
-          while(i--){
-            console.log(i);
-            if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
-              console.log(question.Responses);
-              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
-              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
+      if(checklist.Is_active != false){
+        console.log('checklist active')
+        angular.forEach(checklist.Questions, function(question, key){
+          if(question.Responses && question.Responses.Answer){
+            console.log('question had responses');
+            inspection.score.itemsInspected++;
+            if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
+              inspection.score.deficiencyItems++;
+              var i = question.Responses.DeficiencySelections.length;
+              while(i--){
+                console.log(i);
+                if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
+                  console.log(question.Responses);
+                  factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
+                  factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
+                }
+              }
+            }else /*if(question.Responses && question.Responses.Answer)*/{
+              inspection.score.compliantItems++;
             }
           }
-        }else /*if(question.Responses && question.Responses.Answer)*/{
-          inspection.score.compliantItems++;
-        }
-      });
+        });
+      }
     });
 
     //javascript does not believe that 0 is a number in spite of my long philosophical debates with it
