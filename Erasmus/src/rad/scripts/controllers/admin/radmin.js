@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp Radmin
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('RadminMainCtrl', function ($scope, $q, $http, actionFunctionsFactory, $state) {
+  .controller('RadminMainCtrl', function ($scope, $rootScope, $q, $http, actionFunctionsFactory, $state) {
     //do we have access to action functions?
     $scope.af = actionFunctionsFactory;
 
@@ -54,7 +54,14 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getAllPIs()
             .then(
                 function( pis ){
-                    return pis;
+                   $scope.pis = pis;
+                   $scope.typeAheadPis = [];
+                   var i = pis.length;
+                   while(i--){
+                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id}
+                        $scope.typeAheadPis.push(pi);
+                }
+                return pis;
                 },
                 function(){
                     $scope.error = 'There was an error when the system tried to get the list of Principal Investigators.  Please check your internet connection and try again.'
@@ -76,27 +83,13 @@ angular.module('00RsmsAngularOrmApp')
         );
     }
 
-    var init = function(){
-        getAllPIs()
-            .then(
-                function(pis){
-                   $scope.pis = pis;
-                   $scope.typeAheadPis = [];
-                   var i = pis.length;
-                   while(i--){
-                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id}
-                        $scope.typeAheadPis.push(pi);
-                   }
-                }
-            )
-
-        getAllIsotopes()
+   
+    $rootScope.pisPromise = getAllPIs()
+            .then(getAllIsotopes)
             .then(getAllParcels)
             .then(getAllIsotopes)
             .then(getAllPOs)
-    }
 
-    init();
 
     $scope.onSelectPi = function (pi)
     {
