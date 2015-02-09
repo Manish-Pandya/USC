@@ -1,5 +1,11 @@
 var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule','once'])
-
+.directive('tableRow', ['$window', function($window) {
+    return {
+      restrict : 'A',
+      link : function(scope, element, attributes) {
+      }
+    }
+ }]);
 .config(function($routeProvider){
   $routeProvider
     .when('/pis', 
@@ -32,7 +38,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
     );
 })
-.factory('userHubFactory', function(convenienceMethods,$q){
+.factory('userHubFactory', function(convenienceMethods,$q, $rootScope){
 
   var factory = {};
   factory.roles = [];
@@ -372,21 +378,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
                   if(factory.pis[k].User_id==user.Key_id)noPi=false;
                 }
               }
-            }
-/*
-            while(j--){
-              var role =  user.Roles[j];
-              if(role.Name.toLowerCase().indexOf('rincipal')>-1){
-                var k = factory.pis.length
-                var noInsp = true;
-                while(k--){
-                  if(factory.personnel[k].User_id==user.Key_id)noInsp=false;
-                }
-                if(noInsp)factory.uncategorizedUsers.push(user);
-              }
-            }
-            if(noPi || noInsp)factory.uncategorizedUsers.push(user);
-*/
+          }
         }
       }
       defer.resolve(factory.uncategorizedUsers);
@@ -408,10 +400,13 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         return deferred.promise
   }
 
-  factory.placeUser = function(user)
+  factory.placeUser = function(user, previousFlag)
   {
       var defer = $q.defer();
       var i = user.Roles.length;
+      if(i==0 && factory.notInCollection(user, factory.uncategorizedUsers)){
+        factory.uncategorizedUsers.push(user);
+      }
       while(i--){
         if(factory.hasRole(user, 'Principal Investigator')){
           factory.getPIByUserId(user.Key_id)
@@ -429,6 +424,49 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
   }
 
+  factory.removeUserFromCollections = function(user)
+  {
+      var defer = $q.defer();
+      var i = user.Roles.length;
+
+      if(i!=0 && factory.notInCollection(user, factory.uncategorizedUsers)){
+        var j = factory.uncategorizedUsers.length;
+        while(j--){
+          if(factory.uncategorizedUsers[j].Key_id == user.Key_id)factory.uncategorizedUsers.splice(j,1);
+        }
+      }
+
+      while(i--){
+        if(!factory.hasRole(user, 'Principal Investigator')){
+          factory.getPIByUserId(user.Key_id)
+            .then(
+              function(pi){
+                //find pi in pis collection and remove
+                var j = factory.pis.length;
+                while(j--){
+                  if(factory.pis[j].Key_id == pi.Key_id)factory.pis.splice(j,1);
+                }
+              }
+            )
+        }
+        if(!factory.hasRole(user, 'admin') && !factory.hasRole(user, 'inspector') && !factory.hasRole(user, 'radiation') && !factory.notInCollection(user, factory.personnel)){
+            //find user in admin and remove
+            var j = factory.personnel.length;
+            while(j--){
+              if (factory.personnel[j].Key_id == user.Key_id)factory.personnel.splice(j,1);
+            }
+        }
+        if(!factory.hasRole(user, 'Lab Contact') && !factory.notInCollection(user, factory.labContacts)){
+            //find user in contacts and remove
+            //find user in admin and remove
+            var j = factory.labContacts.length;
+            while(j--){
+              if (factory.labContacts[j].Key_id == user.Key_id)factory.labContacts.splice(j,1);
+            } 
+        }
+      }
+  }
+
   factory.notInCollection = function(object, collection)
   {
       var i = collection.length;
@@ -438,12 +476,17 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       return true;
   }
 
+  factory.iterate = function(num){
+    console.log(num+1)
+    return num+1;
+  }
+
   return factory
 
 });
 
 var MainUserListController = function(userHubFactory, $scope, $rootScope, $location, convenienceMethods, $route) {
-
+    $rootScope.uhf=userHubFactory;
 
     //----------------------------------------------------------------------
     //
@@ -556,7 +599,13 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
             userHubFactory.pis.push(returnedPi);
             //$scope.pis.push(returnedPi);
           }else{  
-            angular.extend(pi, returnedPi);         
+            angular.extend(pi, returnedPi);
+            if(!userHubFactory.hasRole(returnedPi,'PrincipalInvestigator')){
+              var i = $scope.pis.lenth;
+              while(i--){
+                if($scope.pis[i].Key_id = pi.Key_id)$scope.pis.splice(i,1);
+              }
+            }
           }
         });
 
@@ -683,6 +732,14 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
             }
             userHubFactory.getRelation(returnedUser, 'Supervisor', 'Supervisor_id', userHubFactory.pis );
             $scope.LabContacts[$index]=returnedUser;
+
+            if(!userHubFactory.hasRole(returnedUser,'contact')){
+              var i = $scope.LabContacts.length;
+              while(i--){
+                if($scope.LabContacts[i].Key_id == returnedUser.Key_id)$scope.LabContacts.splice(i,1);
+              }
+            }
+
           }
         });
 
@@ -729,6 +786,14 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
               if(userHubFactory.personnel[i].Key_id == user.Key_id)userHubFactory.personnel[i] = returnedUser;
             }
             $scope.Admins[$index]=returnedUser;
+
+            if(!factory.hasRole(returnedUser, 'admin') && !factory.hasRole(returnedUser, 'inspector') && !factory.hasRole(returnedUser, 'radiation') ){
+              var i = $scope.Admins.length;
+              while(i--){
+                if($scope.Admins.personnel[i].Key_id == user.Key_id)$scope.Admins.splice(i,1);
+              }
+            }
+
           }
         });
 
@@ -764,9 +829,9 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
       return userHubFactory.getUncategorizedUsers()
         .then(
           function(users){
+            console.log(users);
             $scope.users = users;
             $rootScope.neededUsers = true;
-
           }
         )
     }
@@ -788,12 +853,7 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
         });
 
         modalInstance.result.then(function (returnedUser) {
-            userHubFactory.placeUser(user);
-            var i = userHubFactory.uncategorizedUsers.length;
-            while(i--){
-              var u = userHubFactory.uncategorizedUsers[i];
-              if(u.Key_id == user.Key_id)userHubFactory.uncategorizedUsers(i,1);
-            };
+          getUncategorizedUsers();
         });
     }
 }
@@ -1131,6 +1191,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     function closeModal( dataToReturn ){
         console.log(dataToReturn);
+        userHubFactory.placeUser( dataToReturn );
+        userHubFactory.removeUserFromCollections( dataToReturn );
         $scope.modalData.IsDirty = false;
         $modalInstance.close(dataToReturn);
     }
