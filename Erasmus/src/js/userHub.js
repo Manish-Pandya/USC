@@ -5,7 +5,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       link : function(scope, element, attributes) {
       }
     }
- }]);
+ }])
 .config(function($routeProvider){
   $routeProvider
     .when('/pis', 
@@ -107,7 +107,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       return deferred.promise;
   }
 
-
   factory.getLabContacts = function()
   {
     this.labContacts = [];
@@ -131,7 +130,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       var user = factory.users[i];
       if(factory.hasRole(user, 'admin') || factory.hasRole(user, 'inspector') || factory.hasRole(user, 'radiation'))factory.personnel.push(user);
     }
-
     return this.personnel;
   }
 
@@ -140,7 +138,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
     var j = user.Roles.length;
     while(j--){
       var userRole = user.Roles[j];
-      console.log(role);
       if(userRole.Name.toLowerCase().indexOf(role.toLowerCase())>-1) return true
     }
     return false;
@@ -477,7 +474,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
   }
 
   factory.iterate = function(num){
-    console.log(num+1)
     return num+1;
   }
 
@@ -741,6 +737,8 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
             }
 
           }
+
+          getAllPis();
         });
 
     }
@@ -795,6 +793,8 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
             }
 
           }
+          getPersonnel();
+
         });
 
     }
@@ -838,7 +838,14 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
 
     userHubFactory.getAllUsers()
       .then(getAllPis)
-      .then(getUncategorizedUsers);
+      .then(getUncategorizedUsers)
+      .then(function(){
+        var i = userHubFactory.users.length;
+        while(i--){
+          var user = userHubFactory.users[i];
+          user.First_name="asdfadfadf";
+        }
+      });
 
 
     $scope.openModal = function(user,$index){
@@ -853,6 +860,7 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
         });
 
         modalInstance.result.then(function (returnedUser) {
+          angular.extend(user, returnedUser);
           getUncategorizedUsers();
         });
     }
