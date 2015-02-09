@@ -90,7 +90,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    				return 'biohazard-largeicon.png';
 	    		}else if( category == 'Chemical Safety' ){
 	    				return 'chemical-safety-large-icon.png';
-	    		}else if( category == 'General Safety' ){
+	    		}else if( category.toLowerCase().indexOf('general') > -1 ){
 	    				return 'gen-hazard-large-icon.png';
 	    		}else{
 	    				return 'radiation-large-icon.png';
