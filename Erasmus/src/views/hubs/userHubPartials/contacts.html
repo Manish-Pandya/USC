@@ -1,3 +1,4 @@
+	<input ng-model='num' type="hidden" ng-init="num=0">
 	<table class="userList table table-striped table-hover piTable table-bordered"  ng-show="neededUsers">
 	<thead>
 		<tr class="greenBg">
@@ -42,7 +43,7 @@
 
 	<tbody>
 		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: selectedDepartment | filter: selectedPi" ng-if="contact.Is_active != showInactive">
-			<td once-text="$index+1 + '.'"></td>
+			<td>{{uhf.iterate(num)}}</td>
 			<td style="width:18%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>

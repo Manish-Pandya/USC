@@ -23,11 +23,12 @@
 			<!--<th>Roles</th>-->
 		</tr>
 	</thead>
-
+	<input ng-model='num' ng-init="num=0">
 	<tbody>
-		<tr ng-repeat="contact in users | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+		<tr tablerow ng-repeat="contact in users | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
 			<td once-text="$index+1 + '.'"></td>
 			<td style="width:12%;">
+				{{rowIndex}}
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
@@ -71,6 +72,6 @@
 			<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin:5px;" ng-show="modalData.IsDirty"/>
             <a ng-if="modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
             <a ng-if="!modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+            <a class="btn btn-danger hazardBtn btn-large" ng-click="saveUser()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>
