@@ -85,7 +85,7 @@ require_once '../top_view.php';
 	
     <!-- begin checklist for this inspection -->
 		<accordion close-others="true" ng-hide="loading">
-			<accordion-group ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
+			<accordion-group ng-if="checklist.Is_active!=false" ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
