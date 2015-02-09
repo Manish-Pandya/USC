@@ -1,7 +1,7 @@
 <td><span once-text="question.Text"></span></td>
 <td colspan="2" style="padding:0;">
 <!--<pre>{{question | json}}</pre>-->
-	<div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unkown Deficiency</div>
+	<div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unknown Deficiency</div>
 	<div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections" >
 
 		<span class="span6" ng-if="def.Deficiency.Text">
@@ -12,7 +12,7 @@
 			</ul>
 		</span>
 		<span class="span6" ng-if="!def.Deficiency.Text">
-			Unkown Deficiency
+			Unknown Deficiency
 			<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
 				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
 				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
@@ -21,7 +21,7 @@
 
 		<span class="span6">
 			<span ng-if="!def.Deficiency.Text">
-				Unkown Deficiency
+				Unknown Deficiency
 			</span>
 			<span ng-if="def.Deficiency.Text">
 				<span ng-if="def.Corrected_in_inspection < 1">
