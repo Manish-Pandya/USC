@@ -21,11 +21,9 @@ angular
     'ui.router'
     //'ngMockE2E'
   ])
-  .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $sceDelegateProvider) {
-
-    console.log('config')
+  .config(function ($stateProvider, $urlRouterProvider,$qProvider, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
     $urlRouterProvider.otherwise("/home");
-
+    console.log(modelInflatorFactoryProvider.$get());
     $stateProvider
       .state('rad-home', {
         url: "/home",
@@ -34,7 +32,16 @@ angular
       .state('radmin', {
         url: "/admin",
         templateUrl: "admin/radmin.html",
-        controller: "RadminMainCtrl"
+        controller: "RadminMainCtrl",
+        resolve:{
+          pis: function($http){
+            return $http({method: 'GET', url: 'http://erasmus.graysail.com/Erasmus/src/ajaxaction.php?action=getAllPIs'})
+               .then (function (pis) {
+                  dataStoreManager.store(modelInflatorFactoryProvider.$get().instateAllObjectsFromJson(pis.data));
+                  return dataStoreManager.get('PrincipalInvestigator');
+               });
+          }
+        }
       })
       .state('radmin.pi-detail', {
         url: "/pi-detail:pi",
@@ -43,11 +50,13 @@ angular
       })
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
-    console.log($state);
+    $rootScope.$on('$stateChangeStart ',function(){
+      $rootScope.loading = true;
+    });
     $rootScope.$on('$stateChangeSuccess', 
         function(event, toState, toParams, fromState, fromParams){
+            $rootScope.loading = false;
             var viewMap = actionFunctionsFactory.getViewMap($state.current);
-            console.log(viewMap);
             $rootScope.viewLabel = viewMap.Label;
             $rootScope.bannerClass = viewMap.Name;
             $rootScope.dashboardView = viewMap.Dashboard;
