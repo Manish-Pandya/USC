@@ -127,6 +127,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <body>
 
 <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
+<h1>hello?{{loading}}</h1>
+<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass}}" ng-class="{'dashboard-banner':dashboardView}">
     {{viewLabel}}
