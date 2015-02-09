@@ -31,15 +31,6 @@ require_once '../top_view.php';
       				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
       			</ul>	
 			</li>
-          	
-          	<!--
-          	<li ng-repeat="checklist in inspection.Checklists">
-          	<a ng-click="selectChecklistCategory(checklist.uid)" class="{{checklist.uid}}Header checklistListNavHeader">
-          		<img ng-if="!checklist.altImg && checklist.img" src="../../img/{{checklist.img}}"/>
-          		<img ng-if="checklist.altImg" src="../../img/{{checklist.altImg}}"/>
-          		<span style="display:inline-block;">{{checklist.Name}}</span>
-          	</a>
-          	-->
         </ul>
     </div><!--/span-->
 <div class="tst">
@@ -85,7 +76,7 @@ require_once '../top_view.php';
 	
     <!-- begin checklist for this inspection -->
 		<accordion close-others="true" ng-hide="loading">
-			<accordion-group ng-if="checklist.Is_active!=false" ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
+			<accordion-group ng-if="checklist.Is_active!=false && checklist.Questions.length" ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
