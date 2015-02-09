@@ -1,4 +1,4 @@
-<a ng-if="list.Questions.length && list.Is_active != false" ng-class="{active:list.currentlyOpen}" ng-click="cf.changeChecklist(list)" href="#{{list.Key_id}}">
+<a ng-if="list.Questions.length && list.Is_active != false" ng-class="{active:list.currentlyOpen}" ng-click="cf.changeChecklist(list)">
 	<span style="display:inline-block; width:75%; margin-right:10%;">{{list.Name}}</span>
 	<span style="width: 15%;float:right; text-align:right;" ng-class="{'red' : list.completedQuestions>0&&list.completedQuestions<list.Questions.length, 'green' : list.completedQuestions==list.Questions.length&&list.completedQuestions!=0}">{{list.completedQuestions}}/{{list.Questions.length}}</span>
 </a>
