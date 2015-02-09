@@ -140,6 +140,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveResponse = function(  question )
 	    {
+	    		question.error='';
 	    		var response = question.Responses;
 	    		question.IsDirty = true;
 
@@ -162,7 +163,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 							.then(
 								function(returnedResponse){
 									question.IsDirty = false;
-									
 									console.log(question)
 									response = convenienceMethods.copyObject( returnedResponse );
 									if(!question.Responses.SupplementalObservations)question.Responses.SupplementalObservations = [];
@@ -207,9 +207,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    {
 	    		console.log(deficiency);
 	    		deficiency.IsDirty = true;
-	    		question.error =  null;
-
-				if( !deficiency.InspectionRooms ) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+	    		question.error =  '';
+	    		if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
+	    		console.log(checklist.InspectionRooms);
+				if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
 				//grab a collection of room ids
 				var i = deficiency.InspectionRooms.length;
 				var roomIds = [];
@@ -225,7 +226,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 						if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
 					}
 				}
-				console.log(roomIds)
+				console.log(roomIds);
 
 				var defDto = {
 			        Class: "DeficiencySelection",
@@ -311,6 +312,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.handleCorrectedDurringInspection = function( deficiency, question )
 	    {
+	    	question.error='';
 	    	deficiency.IsDirty = true;
 		    var def_id = deficiency.Key_id;
 		    deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
@@ -386,7 +388,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	$rootScope[objectToNullify.Class] = {};
 	    }
 
-	    factory.createRecommendation = function( question )
+	    factory.createRecommendation = function( question, id )
 	    {
 	    	$rootScope.RecommendationCopy = {
 	    		Class: "Recommendation",
@@ -395,7 +397,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		edit: true,
 	    		new: true,
 	    		push: true,
-	    		Is_active: true
+	    		Is_active: true,
 	    	}
 
 	    	this.saveRecommendation( question, $rootScope.RecommendationCopy );
@@ -440,7 +442,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	  							returnedObservation.edit = false;
 	  							returnedObservation.checked = true;
 	  							observation.IsDirty = false;
-	  							factory.saveObservationRelation( question, returnedObservation );
+	  							if(!observation.Key_id)factory.saveObservationRelation( question, returnedObservation );
 	  							question.edit = false;							
 	  							question.savingNew = false;
 	  						},
@@ -455,6 +457,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveRecommendation = function( question, recommendation )
 	    {
+	    	console.log(recommendation);
 	    	if($rootScope.RecommendationCopy.push)question.savingNew = true;
 	    	question.error = '';
 	    	recommendation.IsDirty = true;
@@ -476,7 +479,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   							returnedRecommendation.edit = false;
   							returnedRecommendation.checked = true;
   							recommendation.IsDirty = false;
-  							factory.saveRecommendationRelation( question, returnedRecommendation );
+  							if(!recommendation.Key_id)factory.saveRecommendationRelation( question, returnedRecommendation );
   							question.edit = false;							
   							question.savingNew = false;
   						},
