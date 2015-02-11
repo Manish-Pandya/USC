@@ -409,11 +409,11 @@ require_once '../top_view.php';
 		<thead>
 				<th>Begin Inspection</th>
 				<th>Rooms</th>
-				<th>Scheduled Year</th>
-				<th>Scheduled Month</th>
+				<th>Year</th>
+				<th>Month</th>
 				<th>Inspector(s)</th>
 				<th>Hazards</th>
-				<th>Review Report</th>
+				<th>Report</th>
 			</thead>
 			<tbody>
 				<tr ng-repeat="(key, inspection) in openInspections" ng-class="{new:inspection.Is_new}">
@@ -434,7 +434,7 @@ require_once '../top_view.php';
 					<td once-text="inspection.Text_schedule_month"></td>
 					<td>
 						<ul>
-							<li ng-repeat='inspector in inspection.Inspectors' once-next='inspector.User.Name'></li>
+							<li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.User.Name'></li>
 						</ul>
 					</td>
 					<td>hazards</td>
