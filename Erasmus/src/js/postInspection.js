@@ -200,7 +200,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
   factory.notAnswered = function(question)
   {
-      if(question.Responses && !question.Responses.Answer)return true
+      if(!question.Reponses || question.Responses && !question.Responses.Answer)return true
       return false;
   }
 
