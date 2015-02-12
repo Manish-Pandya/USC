@@ -108,7 +108,8 @@ dataStoreManager.setIsDirty = function( object )
 }
 
 dataStoreManager.createCopy = function( object )
-{
+{   
+        console.log(object.Class);
         dataStore[object.Class+'Copy'] = new window[object.Class];
 
         for( var prop in object ){
@@ -209,4 +210,24 @@ dataStoreManager.mapCache = function( cacheClass )
             }
         );
 
+}
+
+dataStoreManager.setModalData = function(data)
+{
+    if(typeof data == "Array"){
+        var i = data.length;
+        while(i--){
+            dataStore.modalData.push(data[i]);
+        }
+    }else{
+        dataStore.modalData = data;
+    }
+
+    console.log(dataStoreManager.getModalData());
+
+}
+
+dataStoreManager.getModalData = function()
+{
+    return dataStore.modalData;
 }

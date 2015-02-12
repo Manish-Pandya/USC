@@ -3,9 +3,13 @@
 angular
     .module('actionFunctionsModule',[])
     
-        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory ){
+        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal ){
         	var af = {};
             var store = dataStoreManager;
+
+            //give us access to this factory in all views.  Because that's cool.
+            $rootScope.af = this;
+
             store.$q = $q;
 
 
@@ -115,6 +119,36 @@ angular
                         return viewMap[i];
                     }
                 }
+            }
+
+            /********************************************************************
+            **
+            **      MODALS
+            **
+            ********************************************************************/
+            af.fireModal = function( templateName, object  )
+            {
+                console.log(templateName);
+                if(object)af.setModalData(object);
+                var modalInstance = $modal.open({
+                  templateUrl: templateName+'.html',
+                  controller: 'GenericModalCtrl'
+                });
+            }
+
+            af.setModalData = function(thing)
+            {
+                dataStoreManager.setModalData(thing);
+            }
+
+            af.getModalData = function()
+            {
+                return dataStoreManager.getModalData();
+            }
+
+            af.createCopy = function(obj)
+            {
+                return dataStoreManager.createCopy(obj);
             }
 
         	/********************************************************************
