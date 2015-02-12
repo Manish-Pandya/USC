@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp Radmin
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('RadminMainCtrl', function ($scope, $rootScope, $q, $http, actionFunctionsFactory, $state) {
+  .controller('RadminMainCtrl', function ($scope, $rootScope, actionFunctionsFactory, $state, $modal) {
     //do we have access to action functions?
     $scope.af = actionFunctionsFactory;
 
