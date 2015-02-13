@@ -57,7 +57,7 @@ PrincipalInvestigator.prototype = {
 
         className:    'Parcel',
         keyReference:  'Principal_investigator_id',
-        methodString:  'getParcelsByPIId',
+        methodString:  'getActiveParcelsFromPIById',
         paramValue: 'Key_id',
         paramName: 'id'
 
@@ -73,6 +73,7 @@ PrincipalInvestigator.prototype = {
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
+            console.log(this);
             dataLoader.loadChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
         }
     },
