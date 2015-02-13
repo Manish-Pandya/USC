@@ -15,12 +15,10 @@ angular.module('00RsmsAngularOrmApp')
 
     var getRadPi = function(){
         var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
-        console.log(pi)
         return actionFunctionsFactory.getRadPI(pi)
                 .then(
-                    function(pi){
+                    function(){
                         $scope.pi = pi;
-                        console.log(dataStore);
                         return pi;
                     },
                     function(){
@@ -35,7 +33,6 @@ angular.module('00RsmsAngularOrmApp')
     {
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
-
 
     $scope.openModal = function(templateName, object){
         var modalData = {};
