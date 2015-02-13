@@ -10,7 +10,8 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('RadminMainCtrl', function ($scope, $rootScope, actionFunctionsFactory, $state, $modal) {
     //do we have access to action functions?
-    $scope.af = actionFunctionsFactory;
+    var af = actionFunctionsFactory;
+    $scope.af = af;
 
     var getAllAuthorizations = function(){
         return actionFunctionsFactory.getAllAuthorizations
@@ -54,9 +55,9 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getAllPIs()
             .then(
                 function( pis ){
-                   $scope.pis = pis;
+                   $scope.pis = af.getCachedCollection('PrincipalInvestigators');
                    $scope.typeAheadPis = [];
-                   var i = pis.length;
+                   var i = $scope.pis.length;
                    while(i--){
                         var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id}
                         $scope.typeAheadPis.push(pi);
@@ -83,13 +84,12 @@ angular.module('00RsmsAngularOrmApp')
         );
     }
 
-   
     $rootScope.pisPromise = getAllPIs()
             .then(getAllIsotopes)
             .then(getAllParcels)
             .then(getAllIsotopes)
             .then(getAllPOs)
-
+    
 
     $scope.onSelectPi = function (pi)
     {
