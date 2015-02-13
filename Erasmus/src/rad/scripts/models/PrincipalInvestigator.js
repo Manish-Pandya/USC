@@ -73,7 +73,13 @@ PrincipalInvestigator.prototype = {
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
-            dataLoader.getChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+            dataLoader.loadChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+        }
+    },
+
+    loadPurchaseOrders: function() {
+        if(!this.PurchaseOrders) {
+            dataLoader.loadChildObject( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
         }
     },
 
