@@ -32,16 +32,7 @@ angular
       .state('radmin', {
         url: "/admin",
         templateUrl: "admin/radmin.html",
-        controller: "RadminMainCtrl",
-        resolve:{
-          pis: function($http){
-            return $http({method: 'GET', url: 'http://erasmus.graysail.com/Erasmus/src/ajaxaction.php?action=getAllPIs'})
-               .then (function (pis) {
-                  dataStoreManager.store(modelInflatorFactoryProvider.$get().instateAllObjectsFromJson(pis.data));
-                  return dataStoreManager.get('PrincipalInvestigator');
-               });
-          }
-        }
+        controller: "RadminMainCtrl"
       })
       .state('radmin.pi-detail', {
         url: "/pi-detail:pi",
