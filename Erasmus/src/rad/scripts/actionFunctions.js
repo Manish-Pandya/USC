@@ -58,7 +58,7 @@ angular
 
             }
 
-            af.saveObject = function( object )
+            af.save = function( object )
             {
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
@@ -90,10 +90,15 @@ angular
             af.getAll = function(className) {
                 return dataSwitchFactory.getAllObjects(className);
             }
+
+            af.getCachedCollection = function(flavor)
+            {
+                return dataStoreManager.get(flavor);
+            }
             
             af.getViewMap = function(current)
             {
-                console.log(current);
+                //console.log(current);
                 var viewMap = [
                     {
                         Name: 'rad-home',
@@ -114,7 +119,7 @@ angular
 
                 var i = viewMap.length;
                 while(i--){
-                    console.log(current.name);
+                    //console.log(current.name);
                     if(current.name == viewMap[i].Name){
                         return viewMap[i];
                     }
@@ -549,6 +554,11 @@ angular
             af.getAllCarboys = function( key_id )
             {
                 return dataSwitchFactory.getAllObjects('Carboy');
+            }
+
+            af.saveAuthorization = function()
+            {
+
             }
 
 
