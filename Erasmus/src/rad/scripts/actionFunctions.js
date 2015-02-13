@@ -6,7 +6,6 @@ angular
         .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal ){
         	var af = {};
             var store = dataStoreManager;
-
             //give us access to this factory in all views.  Because that's cool.
             $rootScope.af = this;
 
@@ -84,7 +83,7 @@ angular
 
             af.getById = function( objectFlavor, key_id )
             {
-                    return store.getById(objectFlavor, key_id );       
+                return store.getById(objectFlavor, key_id );       
             }
 
             af.getAll = function(className) {
@@ -93,7 +92,9 @@ angular
 
             af.getCachedCollection = function(flavor)
             {
-                return dataStoreManager.get(flavor);
+                console.log(flavor);
+                console.log(dataStore);
+                return dataStore[flavor];
             }
             
             af.getViewMap = function(current)
@@ -153,7 +154,7 @@ angular
 
             af.createCopy = function(obj)
             {
-                return dataStoreManager.createCopy(obj);
+                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
             }
 
         	/********************************************************************
@@ -556,9 +557,32 @@ angular
                 return dataSwitchFactory.getAllObjects('Carboy');
             }
 
-            af.saveAuthorization = function()
+            af.saveAuthorization = function( pi, auth )
             {
+                af.clearError();
+                this.save( $rootScope.authorizationCopy )
+                    .then(
+                        function(returnedAuth){
+                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
+                            if(auth){
+                                auth = returnedAuth;
+                            }else{
+                                dataStoreManager.addOnSave(returnedAuth);
+                            }
+                            pi.loadAuthorizations();
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
 
+            af.error = function(errorString)
+            {
+                $rootScope.error = errorString + ' please check your internet connection and try again';
+            }
+
+            af.clearError = function()
+            {
+                $rootScope.error = '';
             }
 
 
