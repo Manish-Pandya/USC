@@ -55,11 +55,12 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getAllPIs()
             .then(
                 function( pis ){
-                   $scope.pis = af.getCachedCollection('PrincipalInvestigators');
+                   $scope.pis = af.getCachedCollection('PrincipalInvestigator');
                    $scope.typeAheadPis = [];
                    var i = $scope.pis.length;
                    while(i--){
-                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id}
+                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id};
+                        console.log(pi);
                         $scope.typeAheadPis.push(pi);
                 }
                 return pis;
