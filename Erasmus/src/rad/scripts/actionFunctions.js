@@ -871,58 +871,29 @@ angular
             **
             ********************************************************************/
 
-            af.getRadPIById = function(id)
+            af.getRadPI = function(pi)
             {
-                console.log(id);
-                var urlSegment = 'getAllPIs';
-                var pi;
-                var tempPI;
-                var getPI = function(id){
-                    return store.get( 'PrincipalInvestigator' )
-                            .then(
-                                function(pis){
-                                    pi = store.getById('PrincipalInvestigator', id );
-                                    return pi; 
-                                }
-                            );   
-                }
-                var getRadProperties = function(pi){
-                    if(!pi.Authorizations){
-                        var segment = "getRadPIById&id="+pi.Key_id;
-                        return genericAPIFactory.read(segment)
-                            .then( function( returnedPromise) {
-                                var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                console.log(tempPI);
-                                if(tempPI.Authorizations.length){
-                                    console.log(store);
-                                    store.store(tempPI.Authorizations);
-                                }
-                                if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
-                                store.store(tempPI.User);
-                                //pi.getActiveParcels();
-                                return pi;
-                            });
-                    }else{
-                        var defer = $q.defer();
-                        defer.resolve(pi);
-                        return defer.promise;
-                    }
-                }
-
-
-                if( store.checkCollection('PrincipalInvestigator') ) {
-                    return getPI(id)
-                        .then(getRadProperties);
-                }
-                else {
-                    return genericAPIFactory.read(urlSegment)
+            
+                if(!pi.Authorizations){
+                    var segment = "getRadPIById&id="+pi.Key_id;
+                    return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
-                            var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( pis ); 
-                            return id;
-                        })
-                        .then(getPI)
-                        .then(getRadProperties);
+                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            console.log(tempPI);
+                            if(tempPI.Authorizations.length){
+                                console.log(store);
+                                store.store(tempPI.Authorizations);
+                            }
+                            if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
+                            store.store(tempPI.User);
+                            pi.loadActiveParcels();
+                            pi.loadAuthorizations();
+                            return pi;
+                        });
+                }else{
+                    var defer = $q.defer();
+                    defer.resolve(pi);
+                    return defer.promise;
                 }
 
             }
