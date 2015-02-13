@@ -217,10 +217,10 @@ dataStoreManager.setModalData = function(data)
     if(typeof data == "Array"){
         var i = data.length;
         while(i--){
-            dataStore.modalData.push(data[i]);
+            dataStore.modalData.push(dataStoreManager.copy(data[i]));
         }
     }else{
-        dataStore.modalData = data;
+        dataStore.modalData = dataStoreManager.copy(data);
     }
 
     console.log(dataStoreManager.getModalData());
@@ -234,5 +234,5 @@ dataStoreManager.getModalData = function()
 
 dataStoreManager.addOnSave = function( object )
 {
-    dataStore[object.Class].push( object );
+    if( !this.getById(object.Class, object.Key_id ) )dataStore[object.Class].push( object );
 }
