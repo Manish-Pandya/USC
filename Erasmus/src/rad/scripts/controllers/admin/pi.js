@@ -12,19 +12,21 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
+
     var getRadPi = function(){
-        return actionFunctionsFactory.getRadPIById($stateParams.pi)
+        var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
+        console.log(pi)
+        return actionFunctionsFactory.getRadPI(pi)
                 .then(
                     function(pi){
                         $scope.pi = pi;
-                        pi.loadAuthorizations();
+                        console.log(dataStore);
                         return pi;
                     },
                     function(){
                     }
                 );  
     }
-
     //get the all the pis
     $rootScope.piPromise = actionFunctionsFactory.getAllPIs()
       .then(getRadPi);
@@ -36,7 +38,6 @@ angular.module('00RsmsAngularOrmApp')
 
 
     $scope.openModal = function(templateName, object){
-
         var modalData = {};
         modalData.pi = $scope.pi;
         if(object)modalData[object.Class] = object;
