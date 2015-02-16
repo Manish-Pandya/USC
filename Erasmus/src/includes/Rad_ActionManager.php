@@ -169,6 +169,44 @@ class Rad_ActionManager extends ActionManager {
 		}	
 	}
 
+	public function getAllRadPis(){
+		$dao = $this->getDao(new PrincipalInvestigator());
+		$pis = $dao->getAll();	
+		
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getDepartments");
+		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+		
+		foreach($pis as $pi){
+			$pi->setEntityMaps($entityMaps);
+		}
+		
+		return $pis;
+		
+	}
+	
+	public function getAllRadUsers(){
+		$dao = $this->getDao(new User());
+		$users = $dao->getAll();
+		
+		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getInspector");
+		$entityMaps[] = new EntityMap("lazy","getSupervisor");
+		$entityMaps[] = new EntityMap("lazy","getRoles");
+		$entityMaps[] = new EntityMap("eager","getEmergency_phone");
+		
+		foreach($users as $user){
+			$user->setEntityMaps($entityMaps);
+		}
+		
+		return $users;
+	}
+	
 	// getPIById already exists in the base module, however different entity maps
 	// are used in RadiationModule, so this sepparate method exists.
 	public function getRadPIById( $id = null ){
