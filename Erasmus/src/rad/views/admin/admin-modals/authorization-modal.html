@@ -2,61 +2,23 @@
     <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.User.Name}}</h2>
 </div>
 <div class="modal-body">
-{{modalData}}
 	<div class="control-group">
      <label class="control-label" for="inputEmail">Isotope</label>
      <div class="controls">
-        
+        <select data-ng-change="selectIsotope()" data-ng-options="isotope.Name for isotope in isotopes" data-ng-model="modalData.AuthorizationCopy.Isotope">
+            <option style="display:none" value="">Select an Isotope</option>
+        </select>
      </div>
-    </div>
+  </div>
 
-   <h3 ng-show="chosenBuilding">Rooms in {{chosenBuilding.Name}}:</h3>
-   <ul ng-show="!addRoom">
-   		<li ng-repeat="room in chosenBuilding.Rooms | orderBy:'Name'">
-   			<label class="checkbox inline">
-				<input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
-				<span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
-			</label>
-   		</li>
-   </ul>
-
-   <ul ng-show="addRoom">
-   		<input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-   		<li ng-repeat="room in chosenBuilding.Rooms | orderBy: room.Name">
-   			{{room.Name}}
-   		</li>
-   </ul>
-
-
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">Maximum Quantity</label>
+     <div class="controls input-append">
+        <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi</span>
+     </div>
+  </div>
 </div>
 <div class="modal-footer">
-	<a class="btn btn-large" ng-class="{'btn-info': !addRoom, 'btn-primary': addRoom}" ng-click="close()">Close</a>
-</div>
-</script>
-
-
-<script type="text/ng-template" id="roomHazardsModal.html">
-<div class="modal-header piHazards" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px;" class="orangeBg">Hazards in room {{room.Name}}</h2>
-<div class="modal-body">
-   
-   <span ng-if="!hazards && !error" class="loading">
-   	   <img class="smallLoading" src="../../img/loading.gif"/>
-   	   Loading Hazards...
-   </span>
-	<h1 class="hazardHeader" ng-if="hazards ">LABORATORY HAZARDS</h1>
-	<ul class="modalHazardList">
-		<li ng-if="hazards" data-ng-repeat="hazard in hazards" class="modalHazard{{hazard.Key_id}}">
-			<h1>{{hazard.Name}}</h1>
-			<ul ng-if="hazard.ActiveSubHazards" style="margin-left:35px;">
-				<div ng-include="'EmergencyInfoList.php'" ng-init="SubHazards = hazard.ActiveSubHazards"></div>
-    		</ul>
-		</li>
-		<div style='clear:both'>&nbsp;</div>
-	</ul>	
-   <h3 ng-show="noHazards">{{noHazards}}</h3>
-
-</div>
-<div class="modal-footer">
-	<a class="btn btn-large" ng-click="close()">Close</a>
+  <a class="btn btn-large btn-success left" ng-click="saveAuthorization(modalData.pi, modalData.AuthorizationCopy, modalData.Authorization)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>
