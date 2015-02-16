@@ -72,7 +72,7 @@ angular
 
 		api.save = function( object, urlFragment )
 		{
-				if( !urlFragment )var urlFragment = object.saveUrl;	
+				if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );	
 				var url = api.buildRequestUrl( urlFragment, false );
 
 				var testPromise = $q.defer();
