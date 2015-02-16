@@ -14,7 +14,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = af;
 
     var getAllAuthorizations = function(){
-        return actionFunctionsFactory.getAllAuthorizations
+        return actionFunctionsFactory.getAllAuthorizations()
             .then(
                 function(authorizations){
                     return authorizations
@@ -51,6 +51,19 @@ angular.module('00RsmsAngularOrmApp')
             );
     }
 
+    var getAllUsers = function(){
+        return actionFunctionsFactory.getAllUsers()
+            .then(
+                function( users ){
+                    return users;
+                },
+                function(){
+                    $scope.error = 'There was an error when the system tried to get the list of Purchase Orders.  Please check your internet connection and try again.'
+                }
+
+            );
+    }
+
     var getAllPIs = function(){
         return actionFunctionsFactory.getAllPIs()
             .then(
@@ -59,11 +72,11 @@ angular.module('00RsmsAngularOrmApp')
                    $scope.typeAheadPis = [];
                    var i = $scope.pis.length;
                    while(i--){
-                        var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id};
-                        console.log(pi);
+                        //$scope.pis[i].loadUser();
+                        if($scope.pis[i].User)var pi = {Name:pis[i].User.Name, Key_id:pis[i].Key_id};
                         $scope.typeAheadPis.push(pi);
-                }
-                return pis;
+                    }
+                    return pis;
                 },
                 function(){
                     $scope.error = 'There was an error when the system tried to get the list of Principal Investigators.  Please check your internet connection and try again.'
@@ -85,10 +98,11 @@ angular.module('00RsmsAngularOrmApp')
         );
     }
 
-    $rootScope.pisPromise = getAllPIs()
+    $rootScope.pisPromise = getAllUsers()
+            .then(getAllPIs)
             .then(getAllIsotopes)
             .then(getAllParcels)
-            .then(getAllIsotopes)
+            .then(getAllAuthorizations)
             .then(getAllPOs)
     
 
