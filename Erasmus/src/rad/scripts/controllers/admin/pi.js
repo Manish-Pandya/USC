@@ -26,24 +26,77 @@ angular.module('00RsmsAngularOrmApp')
                 );  
     }
     //get the all the pis
-    $rootScope.piPromise = actionFunctionsFactory.getAllPIs()
-      .then(getRadPi);
+    $rootScope.pisPromise
+        .then(
+            function(){
+                $rootScope.piPromise = actionFunctionsFactory.getAllPIs()
+                    .then(getRadPi);
+                }
+            )
+    
 
     $scope.onSelectPi = function (pi)
     {
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
-    $scope.openModal = function(templateName, object){
+    $scope.setSelectedView = function(view){
+        $scope.selectedView = view;
+    }
+
+    $scope.openAuthorizationModal = function(templateName, object){
         var modalData = {};
         modalData.pi = $scope.pi;
         if(object)modalData[object.Class] = object;
         af.setModalData(modalData);
         var modalInstance = $modal.open({
           templateUrl: templateName+'.html',
-          controller: 'GenericModalCtrl'
+          controller: 'PiDetailModalCtrl'
         });
     }
 
 
-  });
+  })
+  .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory) {
+        console.log(actionFunctionsFactory)
+        var af = actionFunctionsFactory;
+        $scope.af = af;
+        $scope.modalData = af.getModalData();
+        if(!$scope.modalData.AuthorizationCopy){
+            $scope.modalData.AuthorizationCopy = {
+                Class: 'Authorization',
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Isotope:{},
+                Isotope_id: null,
+                Is_active: true
+            }
+        }
+        var isotopePromise = af.getAllIsotopes()
+            .then(
+                function(){
+                    $scope.isotopes = af.getCachedCollection('Isotope');
+                },
+                function(){
+                    $rootScope.error = "There was a problem retrieving the list of all isotopes.  Please check your internet connection and try again."
+                }
+            )
+
+        $scope.selectIsotope = function(isotope){
+            $scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id
+        }
+
+        $scope.close = function(){
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
+        $scope.saveAuthorization = function(pi, copy, auth){
+           $modalInstance.dismiss();
+           af.saveAuthorization( pi, copy, auth )
+                .then(
+                    function(){
+                        
+                    }
+                )
+        }
+  }])
