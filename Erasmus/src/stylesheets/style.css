@@ -2929,10 +2929,6 @@ table.large tr th{
   font-size: 30px;
 }
 
-a.modalBtn i, .modal-footer a.btn i {
-  margin: 4px 16px 0 3px !important;
-}
-
 .savingBox{
   background: rgba(0,0,0,.5) !important;
   position: fixed;
