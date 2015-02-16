@@ -109,12 +109,8 @@ dataStoreManager.setIsDirty = function( object )
 
 dataStoreManager.createCopy = function( object )
 {   
-        console.log(object.Class);
-        dataStore[object.Class+'Copy'] = new window[object.Class];
-
-        for( var prop in object ){
-            dataStore[object.Class+'Copy'][prop] = object[prop];
-        }
+        dataStore[object.Class+'Copy'] =  $.extend(true,{},object);
+        return dataStore[object.Class+'Copy'];
 }
 
 dataStoreManager.replaceWithCopy = function( object )
@@ -149,7 +145,7 @@ dataStoreManager.deleteCopy = function( object )
 
 dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
 {
-
+        console.log(value);
         if(!dataStore[collectionType]){
             return 'Not found';
         }else{
@@ -214,17 +210,12 @@ dataStoreManager.mapCache = function( cacheClass )
 
 dataStoreManager.setModalData = function(data)
 {
-    if(typeof data == "Array"){
-        var i = data.length;
-        while(i--){
-            dataStore.modalData.push(dataStoreManager.copy(data[i]));
-        }
-    }else{
-        dataStore.modalData = dataStoreManager.copy(data);
+    if(!dataStore.modalData)dataStore.modalData={};
+    for(var prop in data){
+        dataStore.modalData[prop] = data[prop];
+        dataStore.modalData[prop+'Copy'] = dataStoreManager.createCopy(data[prop]);
     }
-
     console.log(dataStoreManager.getModalData());
-
 }
 
 dataStoreManager.getModalData = function()
