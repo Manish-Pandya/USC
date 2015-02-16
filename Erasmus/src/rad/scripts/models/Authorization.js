@@ -5,10 +5,14 @@
 var Authorization = function() {};
 Authorization.prototype = {
 
+	eagerAccessors:[
+		{method:"loadIsotope", boolean:"Isotope_id"}
+	],
 
     loadIsotope: function() {
-        if(!this.isotope) {
-            dataLoader.loadObjectById(this, 'isotope', 'Isotope', this.Isotope_id);
+        if(!this.Isotope) {
+        	console.log()
+            dataLoader.loadObjectById(this, 'Isotope', 'Isotope', this.Isotope_id);
         }
     }
 
