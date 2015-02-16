@@ -19,7 +19,7 @@ class RelationshipMappingFactory {
 			new RelationMapping("Response" 			   , "Inspection"		  , "inspection_response"					, "InspectionResponseRelation"),
 			new RelationMapping("Room"				   , "Inspection"		  , "inspection_room"						, "InspectionRoomRelation"),
 			new RelationMapping("PrincipalInvestigator", "Department"		  , "principal_investigator_department"  	, "PIDepartmentRelation"   ),
-			new RelationMapping("PrincipalInvestigator", "Room"				  , "principal_investigator_room"			, "PIRoomRelation"),
+			new RelationMapping("PrincipalInvestigator", "Room"				  , "principal_investigator_room"			, "PrincipalInvestigatorRoomRelation"),
 			new RelationMapping("Response"			   , "Observation"		  , "response_observation"					, "ResponseObservationRelation"),
 			new RelationMapping("Response"			   , "Recommendation"	  , "response_recommendation"				, "ResponseRecommendationRelation"),
 			new RelationMapping("User"				   , "Role"				  , "user_role"								, "UserRoleRelation")
