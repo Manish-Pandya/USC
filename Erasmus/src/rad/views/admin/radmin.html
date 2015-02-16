@@ -1,4 +1,4 @@
-<div cg-busy="{promise:pisPromise,message:'Loading Principal Investigators',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:pisPromise,message:'Loading', backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
 <div class="dashboard">
    	<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
    	<div cg-busy="{promise:allPisPromise,message:'Loading Principal Investigator',backdrop:true}"></div>
