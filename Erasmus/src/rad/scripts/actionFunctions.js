@@ -42,7 +42,6 @@ angular
                         .then(
                             function( returnedPromise ){
                                 console.log(returnedPromise);
-                                
                                 if(typeof returnedPromise === 'object')object = returnedPromise;
                                 return true;
                             },
@@ -51,25 +50,19 @@ angular
                                 //object.Name = error;
                                 object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
+                                return false;
                             }
                         );
-                    return object;
 
             }
 
             af.save = function( object )
             {
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
+                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
                         .then(
-                            function( returnedPromise ){
-                                console.log(returnedPromise);          
-                                if(typeof returnedPromise.data === 'object') {
-                                        for( var prop in returnedPromise.data ){
-                                                object[prop] = returnedPromise.data[prop];
-                                        }
-                                }
-                                object.Edit = false;
+                            function( returnedData ){
+                                return returnedData.data;
                             },
                             function( error )
                             {
@@ -78,7 +71,6 @@ angular
                                 $rootScope.error = 'error';
                             }
                         );
-                    return object;
             }
 
             af.getById = function( objectFlavor, key_id )
@@ -150,6 +142,11 @@ angular
             af.getModalData = function()
             {
                 return dataStoreManager.getModalData();
+            }
+
+            af.deleteModalData = function()
+            {
+                dataStore.modalData = [];
             }
 
             af.createCopy = function(obj)
@@ -520,7 +517,7 @@ angular
                 return authorization;
             }
 
-            af.getAllAuthorizations = function( key_id )
+            af.getAllAuthorizations = function( )
             {
                 return dataSwitchFactory.getAllObjects('Authorization');
             }
@@ -557,25 +554,26 @@ angular
                 return dataSwitchFactory.getAllObjects('Carboy');
             }
 
-            af.saveAuthorization = function( pi, auth )
+            af.saveAuthorization = function( pi, copy, auth )
             {
                 af.clearError();
-                this.save( $rootScope.authorizationCopy )
+                console.log(auth);
+                return this.save( copy )
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
                             if(auth){
-                                auth = returnedAuth;
+                                angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
+                                pi.Authorizations.push(returnedAuth);
                             }
-                            pi.loadAuthorizations();
                         },
                         af.setError('The authorization could not be saved')
                     )
             }
 
-            af.error = function(errorString)
+            af.setError = function(errorString)
             {
                 $rootScope.error = errorString + ' please check your internet connection and try again';
             }
@@ -907,15 +905,15 @@ angular
 
             af.getRadPI = function(pi)
             {
-            
-                if(!pi.Authorizations){
+                
+                if(!store.checkCollection( 'Authorization')){
                     var segment = "getRadPIById&id="+pi.Key_id;
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             console.log(tempPI);
                             if(tempPI.Authorizations.length){
-                                console.log(store);
+                                console.log(tempPI.loadAuthorizations);
                                 store.store(tempPI.Authorizations);
                             }
                             if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
@@ -925,6 +923,8 @@ angular
                             return pi;
                         });
                 }else{
+                    pi.loadActiveParcels();
+                    pi.loadAuthorizations();
                     var defer = $q.defer();
                     defer.resolve(pi);
                     return defer.promise;
