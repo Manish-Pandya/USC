@@ -18,7 +18,8 @@ angular
     'cgBusy',
     'ui.bootstrap',
     'once',
-    'ui.router'
+    'ui.router',
+    'modalPosition'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider,$qProvider, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
