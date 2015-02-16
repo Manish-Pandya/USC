@@ -157,9 +157,7 @@ User.prototype = {
 	*/
 	//entity relationship mapping
 
-	eagerAccessors:[
-		{method:"getSupervisor",boolean:"Supervisor_id"}
-	],
+	eagerAccessors:[],
 
 	setEagerAccessors: function( eagerAccessors )
 	{
