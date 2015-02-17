@@ -63,6 +63,16 @@ PrincipalInvestigator.prototype = {
 
     },
 
+    PurchaseOrdersRelationship: {
+
+        className:    'PurchaseOrder',
+        keyReference:  'Principal_investigator_id',
+        methodString:  'getPurchaseOrdersByPIId',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
 	Buildings: {},
 
 	loadAuthorizations: function() {
@@ -85,7 +95,6 @@ PrincipalInvestigator.prototype = {
     },
 
     loadUser:  function() {
-        alert('yo');
         if(!this.User && this.User_id) {
             dataLoader.loadObjectById( this, 'User', 'User', this.User_id );
         }
