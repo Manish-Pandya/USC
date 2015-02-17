@@ -79,7 +79,6 @@ angular
                     else {
 
                         //prepare url fragment to send
-                        console.log('in dataswitch api branch')
                         var action = genericAPIFactory.fetchActionString('getAll', className);
 
                         // get data
