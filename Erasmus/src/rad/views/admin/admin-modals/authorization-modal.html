@@ -1,0 +1,24 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.User.Name}}</h2>
+</div>
+<div class="modal-body">
+	<div class="control-group">
+     <label class="control-label" for="inputEmail">Isotope</label>
+     <div class="controls">
+        <select data-ng-change="selectIsotope()" data-ng-options="isotope.Name for isotope in isotopes" data-ng-model="modalData.AuthorizationCopy.Isotope">
+            <option style="display:none" value="">Select an Isotope</option>
+        </select>
+     </div>
+  </div>
+
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">Maximum Quantity</label>
+     <div class="controls input-append">
+        <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi</span>
+     </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <a class="btn btn-large btn-success left" ng-click="saveAuthorization(modalData.pi, modalData.AuthorizationCopy, modalData.Authorization)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

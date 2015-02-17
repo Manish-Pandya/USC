@@ -2929,10 +2929,6 @@ table.large tr th{
   font-size: 30px;
 }
 
-a.modalBtn i, .modal-footer a.btn i {
-  margin: 4px 16px 0 3px !important;
-}
-
 .savingBox{
   background: rgba(0,0,0,.5) !important;
   position: fixed;
@@ -3020,5 +3016,104 @@ a.modalBtn i, .modal-footer a.btn i {
 @media screen and (max-width: 1000px) {
   /* line 73, ../sass/style.scss */
 
+}
+.left-nav-typeahead{
+  margin: 10px;
+  position: absolute;
+  width: 180px;
+}
+.left-nav{
+  float: left;
+  width: 200px;
+  background: #343f51;
+  height: 100%;
+  padding-top:58px;
+}
+.left-nav ul{
+  list-style-type: none;
+  margin-left: 0;
+}
+.left-nav ul li{
+  //border-top: 1px solid #3D4756;
+  margin:3px 0;
+}
+.left-nav ul li a{
+  padding: 10px;
+  display:block;
+  font-size:17px;
+  color:white;
+  cursor: pointer;
+}
+.left-nav ul li a.auths{
+  background:rgba(0, 154, 255,.5)
+}
+.left-nav ul li a.auths:hover{
+  background:rgba(0, 154, 255,1)
+}
+.left-nav ul li a.pos{
+  background: rgba(0, 128, 0, 0.5);
+}
+.left-nav ul li a.pos:hover{
+  background: rgba(0, 128, 0, 1);
+}
+.left-nav ul li a.parcels{
+  background: rgba(255, 130, 0, 0.5);
+}
+.left-nav ul li a.parcels:hover{
+  background: rgba(255, 130, 0, 1);
+}
+.left-nav ul li a i{
+  margin: 4px 13px 0 5px;
+  width: 12px;
+}
+.left-nav ul li a:hover{
+  text-decoration: none;
+}
+.right-column{
+  margin-left:210px;
+}
+.banner{
+  background: white;
+  padding:10px;
+}
+
+.banner.dashboard-banner{
+  position: absolute;
+  width: 100%;
+  left: 0;
+}
+div.fake-table{
+  display: table;
+  width:100%;
+}
+
+div.fake-table .table-header{
+  display: table-header-group;
+}
+
+div.fake-table .table-header > h3{
+  display: table-cell;
+  padding:10px;
+}
+
+div.fake-table .table-row{
+  display: table-row;
+}
+div.fake-table.striped .table-row:nth-of-type(odd){
+  background:rgba(221, 221, 221, 0.4);
+}
+div.fake-table .table-row > div{
+  display: table-cell;
+  padding:10px;
+  font-size:16px;
+}
+div.fake-table.bordered .table-row > div, div.fake-table .table-header > h3{
+    border-top: 1px solid #dddddd;
+}
+div.fake-table .table-row:hover{
+  background: rgba(221, 221, 221, 1) !important;
+}
+div.fake-table .table-row:hover > div{
+    box-shadow: 5px 3px 8px rgba(0,0,0,.4);
 }
 

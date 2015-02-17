@@ -3,9 +3,12 @@
 angular
     .module('actionFunctionsModule',[])
     
-        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory ){
+        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal ){
         	var af = {};
             var store = dataStoreManager;
+            //give us access to this factory in all views.  Because that's cool.
+            $rootScope.af = this;
+
             store.$q = $q;
 
 
@@ -39,7 +42,6 @@ angular
                         .then(
                             function( returnedPromise ){
                                 console.log(returnedPromise);
-                                
                                 if(typeof returnedPromise === 'object')object = returnedPromise;
                                 return true;
                             },
@@ -48,25 +50,19 @@ angular
                                 //object.Name = error;
                                 object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
+                                return false;
                             }
                         );
-                    return object;
 
             }
 
-            af.saveObject = function( object )
+            af.save = function( object )
             {
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
+                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
                         .then(
-                            function( returnedPromise ){
-                                console.log(returnedPromise);          
-                                if(typeof returnedPromise.data === 'object') {
-                                        for( var prop in returnedPromise.data ){
-                                                object[prop] = returnedPromise.data[prop];
-                                        }
-                                }
-                                object.Edit = false;
+                            function( returnedData ){
+                                return returnedData.data;
                             },
                             function( error )
                             {
@@ -75,21 +71,27 @@ angular
                                 $rootScope.error = 'error';
                             }
                         );
-                    return object;
             }
 
             af.getById = function( objectFlavor, key_id )
             {
-                    return store.getById(objectFlavor, key_id );       
+                return store.getById(objectFlavor, key_id );       
             }
 
             af.getAll = function(className) {
                 return dataSwitchFactory.getAllObjects(className);
             }
+
+            af.getCachedCollection = function(flavor)
+            {
+                console.log(flavor);
+                console.log(dataStore);
+                return dataStore[flavor];
+            }
             
             af.getViewMap = function(current)
             {
-                console.log(current);
+                //console.log(current);
                 var viewMap = [
                     {
                         Name: 'rad-home',
@@ -110,11 +112,46 @@ angular
 
                 var i = viewMap.length;
                 while(i--){
-                    console.log(current.name);
+                    //console.log(current.name);
                     if(current.name == viewMap[i].Name){
                         return viewMap[i];
                     }
                 }
+            }
+
+            /********************************************************************
+            **
+            **      MODALS
+            **
+            ********************************************************************/
+            af.fireModal = function( templateName, object  )
+            {
+                console.log(templateName);
+                if(object)af.setModalData(object);
+                var modalInstance = $modal.open({
+                  templateUrl: templateName+'.html',
+                  controller: 'GenericModalCtrl'
+                });
+            }
+
+            af.setModalData = function(thing)
+            {
+                dataStoreManager.setModalData(thing);
+            }
+
+            af.getModalData = function()
+            {
+                return dataStoreManager.getModalData();
+            }
+
+            af.deleteModalData = function()
+            {
+                dataStore.modalData = [];
+            }
+
+            af.createCopy = function(obj)
+            {
+                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
             }
 
         	/********************************************************************
@@ -480,7 +517,7 @@ angular
                 return authorization;
             }
 
-            af.getAllAuthorizations = function( key_id )
+            af.getAllAuthorizations = function( )
             {
                 return dataSwitchFactory.getAllObjects('Authorization');
             }
@@ -515,6 +552,35 @@ angular
             af.getAllCarboys = function( key_id )
             {
                 return dataSwitchFactory.getAllObjects('Carboy');
+            }
+
+            af.saveAuthorization = function( pi, copy, auth )
+            {
+                af.clearError();
+                console.log(auth);
+                return this.save( copy )
+                    .then(
+                        function(returnedAuth){
+                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
+                            if(auth){
+                                angular.extend(auth, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedAuth);
+                                pi.Authorizations.push(returnedAuth);
+                            }
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
+
+            af.setError = function(errorString)
+            {
+                $rootScope.error = errorString + ' please check your internet connection and try again';
+            }
+
+            af.clearError = function()
+            {
+                $rootScope.error = '';
             }
 
 
@@ -837,58 +903,31 @@ angular
             **
             ********************************************************************/
 
-            af.getRadPIById = function(id)
+            af.getRadPI = function(pi)
             {
-                console.log(id);
-                var urlSegment = 'getAllPIs';
-                var pi;
-                var tempPI;
-                var getPI = function(id){
-                    return store.get( 'PrincipalInvestigator' )
-                            .then(
-                                function(pis){
-                                    pi = store.getById('PrincipalInvestigator', id );
-                                    return pi; 
-                                }
-                            );   
-                }
-                var getRadProperties = function(pi){
-                    if(!pi.Authorizations){
-                        var segment = "getRadPIById&id="+pi.Key_id;
-                        return genericAPIFactory.read(segment)
-                            .then( function( returnedPromise) {
-                                var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                                console.log(tempPI);
-                                if(tempPI.Authorizations.length){
-                                    console.log(store);
-                                    store.store(tempPI.Authorizations);
-                                }
-                                if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
-                                store.store(tempPI.User);
-                                //pi.getActiveParcels();
-                                return pi;
-                            });
-                    }else{
-                        var defer = $q.defer();
-                        defer.resolve(pi);
-                        return defer.promise;
-                    }
-                }
-
-
-                if( store.checkCollection('PrincipalInvestigator') ) {
-                    return getPI(id)
-                        .then(getRadProperties);
-                }
-                else {
-                    return genericAPIFactory.read(urlSegment)
+                
+                if(!store.checkCollection( 'Authorization')){
+                    var segment = "getRadPIById&id="+pi.Key_id;
+                    return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
-                            var pis = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store( pis ); 
-                            return id;
-                        })
-                        .then(getPI)
-                        .then(getRadProperties);
+                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            console.log(tempPI);
+                            if(tempPI.Authorizations.length){
+                                console.log(tempPI.loadAuthorizations);
+                                store.store(tempPI.Authorizations);
+                            }
+                            if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
+                            store.store(tempPI.User);
+                            pi.loadActiveParcels();
+                            pi.loadAuthorizations();
+                            return pi;
+                        });
+                }else{
+                    pi.loadActiveParcels();
+                    pi.loadAuthorizations();
+                    var defer = $q.defer();
+                    defer.resolve(pi);
+                    return defer.promise;
                 }
 
             }

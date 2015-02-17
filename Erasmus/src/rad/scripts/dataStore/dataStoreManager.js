@@ -27,16 +27,17 @@ dataStoreManager.store = function( object, trusted, flavor )
             }
         }else{
             //we have an array of objects
+            if(!object.length){
+                return [];
+            }
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
-                if(!object.length){
-                    return
-                }
                 dataStoreManager.addToCollection( object[0].Class, trusted );
                 dataStore[object[0].Class] = object;
                 dataStoreManager.mapCache(object[0].Class);
 
             }else{
+                console.log(object);
                 dataStoreManager.addToCollection( flavor );
                 dataStore[flavor] = object;
                 dataStoreManager.mapCache(object[0].Class);
@@ -47,7 +48,7 @@ dataStoreManager.store = function( object, trusted, flavor )
 
 dataStoreManager.addToCollection = function( type, trusted )
 {       
-        console.log('adding '+type+'s to the collection');
+        //console.log('adding '+type+'s to the collection');
         //if we don't have the name of this type of object or a name for this array of objects, push it into the collection
         if( !dataStore.Collections.hasOwnProperty( type ) || !dataStore.Collections[type].trusted ){
             dataStore.Collections[type] = {type:type, trusted:trusted};  
@@ -73,14 +74,7 @@ dataStoreManager.purge = function( objectFlavor )
 
 dataStoreManager.get = function( objectFlavor )
 {   
-        var defer = this.$q.defer();
-        if(dataStore[objectFlavor]){
-            //we have the object or collection cached, so resolve the promise with it and we're done
-            defer.resolve(dataStore[objectFlavor]);
-        }else{
-            defer.reject([]);
-        }
-        return defer.promise;
+        return dataStore[objectFlavor];
 }
 
 dataStoreManager.getById = function( objectFlavor, key_id )
@@ -108,12 +102,9 @@ dataStoreManager.setIsDirty = function( object )
 }
 
 dataStoreManager.createCopy = function( object )
-{
-        dataStore[object.Class+'Copy'] = new window[object.Class];
-
-        for( var prop in object ){
-            dataStore[object.Class+'Copy'][prop] = object[prop];
-        }
+{   
+        dataStore[object.Class+'Copy'] =  $.extend(true,{},object);
+        return dataStore[object.Class+'Copy'];
 }
 
 dataStoreManager.replaceWithCopy = function( object )
@@ -148,7 +139,7 @@ dataStoreManager.deleteCopy = function( object )
 
 dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
 {
-
+        console.log(value);
         if(!dataStore[collectionType]){
             return 'Not found';
         }else{
@@ -195,18 +186,34 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
 dataStoreManager.mapCache = function( cacheClass )
 { 
     dataStore[cacheClass+'Map'] = [];
-    this.get(cacheClass)
-        .then(
-            function(stuff){
-                var length = stuff.length;
-                var cachePosition = 0; 
+    var stuff = this.get(cacheClass);
+    var length = stuff.length;
+    var cachePosition = 0; 
 
-                while(length--){
-                    var targetId = stuff[cachePosition].Key_id;
-                    dataStore[cacheClass+'Map'][targetId] = cachePosition;
-                    cachePosition++;
-                }
-            }
-        );
+    while(length--){
+        var targetId = stuff[cachePosition].Key_id;
+        dataStore[cacheClass+'Map'][targetId] = cachePosition;
+        cachePosition++;
+    }
 
+}
+
+dataStoreManager.setModalData = function(data)
+{
+    if(!dataStore.modalData)dataStore.modalData={};
+    for(var prop in data){
+        dataStore.modalData[prop] = data[prop];
+        dataStore.modalData[prop+'Copy'] = dataStoreManager.createCopy(data[prop]);
+    }
+    console.log(dataStoreManager.getModalData());
+}
+
+dataStoreManager.getModalData = function()
+{
+    return dataStore.modalData;
+}
+
+dataStoreManager.addOnSave = function( object )
+{
+    if( !this.getById(object.Class, object.Key_id ) )dataStore[object.Class].push( object );
 }

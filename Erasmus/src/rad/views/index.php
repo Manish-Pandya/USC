@@ -73,6 +73,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../scripts/actionFunctions.js"></script>
 
 <!-- controllers -->
+<script type="text/javascript" src="../scripts/controllers/generic-modal-controller.js"></script>
+
 <script type="text/javascript" src="../scripts/controllers/main.js"></script>
 <script type="text/javascript" src="../scripts/controllers/about.js"></script>
 <script type="text/javascript" src="../scripts/controllers/users.js"></script>
@@ -82,8 +84,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../scripts/controllers/admin/radmin.js"></script>
 <script type="text/javascript" src="../scripts/controllers/admin/pi.js"></script>
 
+
 <!-- directives -->
 <script type="text/javascript" src="../scripts/directives/hazardHubDirectives.js"></script>
+
+<!-- filters -->
+<script type="text/javascript" src="../scripts/filters/dateToIso.js"></script>
+
 
 <!-- framework -->
 <script src="../scripts/genericModel/inheritance.js"></script>
@@ -127,11 +134,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <body>
 
 <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
-<h1>hello?{{loading}}</h1>
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass}}" ng-class="{'dashboard-banner':dashboardView}">
-    {{viewLabel}}
+    <h1>{{viewLabel}}</h1>
   </div>
 <!-- VIEW NESTING -->
 	<div ui-view class="noBg"></div>

@@ -9,9 +9,9 @@ PrincipalInvestigator.prototype = {
 
 	eagerAccessors:[
 		{method:"getPrincipalInvestigatorRoomRelations"},
-		{method:"getUser"},
+		{method:"loadUser", boolean:"User_id"},
 		{method:"getLabPersonnel"},
-		{method:"getRooms", bolean:"PrincipalInvestigatorRoomRelations"}
+		{method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
 	],
 
 	UserRelationship: {
@@ -57,7 +57,7 @@ PrincipalInvestigator.prototype = {
 
         className:    'Parcel',
         keyReference:  'Principal_investigator_id',
-        methodString:  'getParcelsByPIId',
+        methodString:  'getActiveParcelsFromPIById',
         paramValue: 'Key_id',
         paramName: 'id'
 
@@ -66,113 +66,30 @@ PrincipalInvestigator.prototype = {
 	Buildings: {},
 
 	loadAuthorizations: function() {
-            if(!this.Authorizations){
-                dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
-            }
+        if(!this.Authorizations){
+            dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
+        }
     },
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
-            dataLoader.getChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+            console.log(this);
+            dataLoader.loadChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
         }
     },
 
+    loadPurchaseOrders: function() {
+        if(!this.PurchaseOrders) {
+            dataLoader.loadChildObject( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+        }
+    },
 
-	getUser: function()
-	{	
-		//alert('getting user');
-		if( dataStoreManager.checkCollection( 'Users' ) ){
-                    //console.log('trying to find cached relations');
-                    //var defer = $q.defer();     
-                    //this.rootScope[this.Class+"Busy"] = defer.promise;
-                    this.User = dataStoreManager.getById( 'User', this.User_id );
-
-                   // return this.Supervisor;
-                    //we return via the object's getterCallback method so that we can wait until the promise is fulfilled
-                    //this way we can display an angular-busy loading directive.
-                                                                 
-            }	
-	},
-	getBuildings: function(rooms)
-	{
-		if(!this.rooms && !rooms)return false;
-		if(!this.rooms)this.rooms = rooms;
-		var roomLen
-	},
-
-	getPrincipalInvestigatorRoomRelations: function()
-	{
-			if( dataStoreManager.checkCollection( 'PrincipalInvestigatorRoomRelations' ) ){                    
-                    this.PrincipalInvestigatorRoomRelations = dataStoreManager.getChildrenByParentProperty( 'PrincipalInvestigatorRoomRelation', 'Principal_investigator_id', this.Key_id );                                                                 
-            }
-            else if(this.Supervisor){
-            		return this.PrincipalInvestigatorRoomRelations;
-            }
-            else{
-            		var local = this;
-
-                    var urlFragment = this.PrincipalInvestigatorRoomRelationRelationship.queryString;
-                    var queryParam = this[this.PrincipalInvestigatorRoomRelationRelationship.queryParam];
-
-                    this.rootScope[this.Class+"sBusy"] = this.api.read( urlFragment, queryParam )
-                        .then(
-                            function( returnedPromise ){
-                                local.PrincipalInvestigatorRoomRelations = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                            },
-                            function( error ){
-
-                            }
-                        )
-            }
-	},
-
-	getRooms: function()
-	{
-			if(!this.PrincipalInvestigatorRoomRelations)this.getPrincipalInvestigatorRoomRelations();
-
-			if( dataStoreManager.checkCollection( "Rooms" ) ){
-                   this.Rooms = dataStoreManager.getRelatedItems( "Room", this.PrincipalInvestigatorRoomRelations, "Room_id", "Key_id" )                                                                 
-            }
-            else if(this.Supervisor){
-            		return;
-            }
-            else{
-            		console.log("searching server for rooms");
-            		var local = this;
-
-                    var urlFragment = this.SupervisorRelationship.queryString;
-                    var queryParam = this[this.SupervisorRelationship.queryParam];
-
-                    //set the rootScope property for this class equal to the asynch promise so that we can trigger angular-busy
-                    this.rootScope[this.Class+"sBusy"] = this.api.read( urlFragment, queryParam )
-                        .then(
-                            function( returnedPromise ){
-                                local.Supervisor = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                                console.log( local.Supervisor );
-                            },
-                            function( error ){
-
-                            }
-                        )
-            }
-	},
-
-	getLabPersonnel: function()
-	{
-			console.log('getting user');
-			if( dataStoreManager.checkCollection( 'Users' ) ){
-					this.LabPersonnel=[];
-                    //console.log('trying to find cached relations');
-                    //var defer = $q.defer();     
-                    //this.rootScope[this.Class+"Busy"] = defer.promise;
-                    this.LabPersonnel = dataStoreManager.getChildrenByParentProperty( 'User', "Supervisor_id", this.Key_id, this.Class );
-
-                   // return this.Supervisor;
-                    //we return via the object's getterCallback method so that we can wait until the promise is fulfilled
-                    //this way we can display an angular-busy loading directive.
-                                                                 
-            }
-	}
+    loadUser:  function() {
+        alert('yo');
+        if(!this.User && this.User_id) {
+            dataLoader.loadObjectById( this, 'User', 'User', this.User_id );
+        }
+    }
 
 }
 
