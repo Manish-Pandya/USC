@@ -27,16 +27,17 @@ dataStoreManager.store = function( object, trusted, flavor )
             }
         }else{
             //we have an array of objects
+            if(!object.length){
+                return [];
+            }
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
-                if(!object.length){
-                    return
-                }
                 dataStoreManager.addToCollection( object[0].Class, trusted );
                 dataStore[object[0].Class] = object;
                 dataStoreManager.mapCache(object[0].Class);
 
             }else{
+                console.log(object);
                 dataStoreManager.addToCollection( flavor );
                 dataStore[flavor] = object;
                 dataStoreManager.mapCache(object[0].Class);
@@ -73,14 +74,7 @@ dataStoreManager.purge = function( objectFlavor )
 
 dataStoreManager.get = function( objectFlavor )
 {   
-        var defer = this.$q.defer();
-        if(dataStore[objectFlavor]){
-            //we have the object or collection cached, so resolve the promise with it and we're done
-            defer.resolve(dataStore[objectFlavor]);
-        }else{
-            defer.reject([]);
-        }
-        return defer.promise;
+        return dataStore[objectFlavor];
 }
 
 dataStoreManager.getById = function( objectFlavor, key_id )
@@ -192,19 +186,15 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
 dataStoreManager.mapCache = function( cacheClass )
 { 
     dataStore[cacheClass+'Map'] = [];
-    this.get(cacheClass)
-        .then(
-            function(stuff){
-                var length = stuff.length;
-                var cachePosition = 0; 
+    var stuff = this.get(cacheClass);
+    var length = stuff.length;
+    var cachePosition = 0; 
 
-                while(length--){
-                    var targetId = stuff[cachePosition].Key_id;
-                    dataStore[cacheClass+'Map'][targetId] = cachePosition;
-                    cachePosition++;
-                }
-            }
-        );
+    while(length--){
+        var targetId = stuff[cachePosition].Key_id;
+        dataStore[cacheClass+'Map'][targetId] = cachePosition;
+        cachePosition++;
+    }
 
 }
 
