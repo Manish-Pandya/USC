@@ -57,7 +57,7 @@ angular
             }
 
             af.save = function( object )
-            {
+            { 
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
                         .then(
@@ -84,8 +84,6 @@ angular
 
             af.getCachedCollection = function(flavor)
             {
-                console.log(flavor);
-                console.log(dataStore);
                 return dataStore[flavor];
             }
             
@@ -573,6 +571,44 @@ angular
                     )
             }
 
+            af.savePurchaseOrder = function( pi, copy, order )
+            {
+                af.clearError();
+                console.log(order);
+                return this.save( copy )
+                    .then(
+                        function(returnedPO){
+                            returnedPO = modelInflatorFactory.instateAllObjectsFromJson( returnedPO );
+                            if(order){
+                                angular.extend(order, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedPO);
+                                pi.PurchaseOrders.push(returnedPO);
+                            }
+                        },
+                        af.setError('The Purchase Order could not be saved')
+                    )
+            }
+
+            af.saveParcel = function( pi, copy, parcel )
+            {
+                af.clearError();
+                console.log(parcel);
+                return this.save( copy )
+                    .then(
+                        function(returnedParcel){
+                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
+                            if(parcel){
+                                angular.extend(parcel, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedParcel);
+                                pi.ActiveParcels.push(returnedParcel);
+                            }
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
+
             af.setError = function(errorString)
             {
                 $rootScope.error = errorString + ' please check your internet connection and try again';
@@ -580,7 +616,7 @@ angular
 
             af.clearError = function()
             {
-                $rootScope.error = '';
+                $rootScope.error = null;
             }
 
 
@@ -916,14 +952,14 @@ angular
                                 console.log(tempPI.loadAuthorizations);
                                 store.store(tempPI.Authorizations);
                             }
-                            if(tempPI.ActiveParcels.length)store.store(tempPI.ActiveParcels);
-                            store.store(tempPI.User);
                             pi.loadActiveParcels();
                             pi.loadAuthorizations();
+                            pi.loadPurchaseOrders();
                             return pi;
                         });
                 }else{
                     pi.loadActiveParcels();
+                    pi.loadPurchaseOrders();
                     pi.loadAuthorizations();
                     var defer = $q.defer();
                     defer.resolve(pi);
