@@ -39,6 +39,9 @@ keyReference - property of the child to be checked
 methodString - method to call on the server
 paramValue - property of this class to be checked against keyReference
 paramName - name of the paramValue property to insert into the request url.
+
+Note: above define how Relationships are used to describe many to many relationships.
+    In one to many relationships, methodString and paramName are left unused and empty.
 		
 
 5. Loaders

@@ -792,7 +792,7 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
             var i = userHubFactory.uncategorizedUsers.length;
             while(i--){
               var u = userHubFactory.uncategorizedUsers[i];
-              if(u.Key_id == user.Key_id)userHubFactory.uncategorizedUsers(i,1);
+              if(u.Key_id == user.Key_id)userHubFactory.uncategorizedUsers.splice(i,1);
             };
         });
     }
@@ -913,7 +913,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             if(pi.Departments[i].Key_id == department.Key_id)pi.Departments.splice(i,1);
           }
         }else{
-          alert('asdfasdfasdfasdf');
           department.IsDirty = true;
           userHubFactory.savePIDepartmentRelation(pi, department, false)
             .then(

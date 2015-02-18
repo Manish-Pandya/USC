@@ -6,6 +6,7 @@
 var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
+    className: "PrincipalInvestigator",
 
 	eagerAccessors:[
 		{method:"getPrincipalInvestigatorRoomRelations"},
@@ -38,9 +39,10 @@ PrincipalInvestigator.prototype = {
 	},	
 
 	RoomsRelationship:{
-		className: 	  'Room',
-		keyReference: 'principalInvestigator_id',
-		queryString:  'getRooms'	
+		name: 	  'PrincipalInvestigatorRoomRelation',
+        className: 'Room',
+		keyReference: 'Principal_investigator_id',
+		paramValue:  'Key_id'	
 	},
 
 	AuthorizationsRelationship: {
@@ -67,7 +69,7 @@ PrincipalInvestigator.prototype = {
 
         className:    'PurchaseOrder',
         keyReference:  'Principal_investigator_id',
-        methodString:  'getPurchaseOrdersByPIId',
+        methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
 
@@ -77,26 +79,36 @@ PrincipalInvestigator.prototype = {
 
 	loadAuthorizations: function() {
         if(!this.Authorizations){
-            dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
         }
     },
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
+<<<<<<< HEAD
             console.log(this);
             dataLoader.loadChildObject( this, 'ActiveParcels', this.ActiveParcelsRelationship);
+=======
+            dataLoader.loadOneToManyRelationship( this, 'Parcels', this.ActiveParcelsRelationship);
+        }
+    },
+
+    loadRooms: function() {
+        if(!this.Rooms) {
+            dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
+>>>>>>> branch 'RadiationModule' of git@bitbucket.org:hoke/erasmus.git
         }
     },
 
     loadPurchaseOrders: function() {
         if(!this.PurchaseOrders) {
-            dataLoader.loadChildObject( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
         }
     },
 
     loadUser:  function() {
         if(!this.User && this.User_id) {
-            dataLoader.loadObjectById( this, 'User', 'User', this.User_id );
+            dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
         }
     }
 
