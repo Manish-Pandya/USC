@@ -69,7 +69,7 @@ PrincipalInvestigator.prototype = {
 
         className:    'PurchaseOrder',
         keyReference:  'Principal_investigator_id',
-        methodString:  'getPurchaseOrdersByPIId',
+        methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
 
