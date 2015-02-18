@@ -65,6 +65,16 @@ PrincipalInvestigator.prototype = {
 
     },
 
+    PurchaseOrdersRelationship: {
+
+        className:    'PurchaseOrder',
+        keyReference:  'Principal_investigator_id',
+        methodString:  'getPurchaseOrdersByPIId',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
 	Buildings: {},
 
 	loadAuthorizations: function() {

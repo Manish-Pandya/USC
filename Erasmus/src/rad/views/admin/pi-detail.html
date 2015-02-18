@@ -1,11 +1,13 @@
 <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:AuthorizationSaving,message:'Saving Authorization',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PurchaseOrderSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PacelSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
 
 <div class="row-fluid">
 	<div class="left-nav blueBg">
 		<ul class="sideNav">
 			<li><a class="auths" ng-click="setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>
-			<li><a class="pos"  ng-click="setSelectedView('orders')"><i class="fa fa-usd"></i>Purhcase Orders</a></li>
+			<li><a class="pos"  ng-click="setSelectedView('orders')"><i class="fa fa-usd"></i>Purchase Orders</a></li>
 			<li><a class="parcels"  ng-click="setSelectedView('parcels')"><i class="icon-box"></i>Parcels</a></li>
 		</ul>
 	</div>
@@ -18,7 +20,7 @@
 				<span class="bold">
 					{{pi.Authorizations.length}} Authorization<span ng-if="pi.Authorizations.length != 1">s</span>
 				</span>
-				<a class="btn btn-success left" ng-click="openAuthorizationModal('admin/admin-modals/authorization-modal')"><i class="icon-plus-2"></i><i class="icon-unlocked-2"></i>Add Authorization</a>
+				<a class="btn btn-success left" ng-click="openModal('admin/admin-modals/authorization-modal')"><i class="icon-plus-2"></i><i class="icon-unlocked-2"></i>Add Authorization</a>
 			</h3>
 			<h3 class="card-header" ng-if="!pi.Authorizations || !pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no Authorizations <a class="btn btn-success left"><i class="icon-plus-2"></i><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
 			<div class="card-content" ng-if="selectedView == 'authorizations'">
@@ -34,7 +36,7 @@
 					</div>
 						<div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
 							<div>
-								<a class="btn btn-primary" ng-click="openAuthorizationModal('admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
+								<a class="btn btn-primary" ng-click="openModal('admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
 								<a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
 								<a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
 							</div>
@@ -68,14 +70,32 @@
 			</ul>
 		</div>
 		<div class="card full" ng-click="setSelectedView('orders')">
-			<h3 class="card-header" ng-if="pi.PurchaseOrders"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purhcase Order<span ng-if="pi.Authorizations.length != 1">s</span></span></h3>
-			<h3 class="card-header" ng-if="!pi.PurchaseOrders"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purhcase Orders</h3>
+			<h3 class="card-header" ng-if="pi.PurchaseOrders"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
+			<h3 class="card-header" ng-if="!pi.PurchaseOrders"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purhcase Orders <a class="btn btn-success left" ng-click="openModal('admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
+				<div class="card-content" ng-if="selectedView == 'orders'">
+				<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+					<div class="table-header">
+						<h3>Edit</h3>
+						<h3>P.O. Number</h3>
+						<h3>Date Created</h3>
+					</div>
+					<div class="table-row" ng-repeat="order in pi.PurchaseOrders" ng-class="{'inactive':!auth.Is_active}">
+						<div>
+							<a class="btn btn-primary" ng-click="openModal('admin/admin-modals/po-modal', order)"><i class="icon-pencil"></i></a>
+							<a ng-if="order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-danger"><i class="icon-remove"></i></a>
+							<a ng-if="!order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+						</div>
 
-			<ul ng-if="selectedView == 'orders'">
-				<li ng-repeat="order in pi.PurchaseOrders">
-					{{order}}
-				</li>
-			</ul>
+						<div>
+							{{order.Purchase_order_number}}
+						</div>
+
+						<div>
+							{{order.Date_created | dateToISO}}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="card full" ng-click="setSelectedView('parcels')">
 			<h3 class="card-header" ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Parcel<span ng-if="pi.Authorizations.length != 1">s</span></span></h3>

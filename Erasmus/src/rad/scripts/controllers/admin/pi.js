@@ -44,7 +44,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.selectedView = view;
     }
 
-    $scope.openAuthorizationModal = function(templateName, object){
+    $scope.openModal = function(templateName, object){
         var modalData = {};
         modalData.pi = $scope.pi;
         if(object)modalData[object.Class] = object;
@@ -55,13 +55,13 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
-
   })
   .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory) {
         console.log(actionFunctionsFactory)
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+
         if(!$scope.modalData.AuthorizationCopy){
             $scope.modalData.AuthorizationCopy = {
                 Class: 'Authorization',
@@ -71,6 +71,16 @@ angular.module('00RsmsAngularOrmApp')
                 Is_active: true
             }
         }
+
+        if(!$scope.modalData.PurchaseOrderCopy){
+            $scope.modalData.PurchaseOrderCopy = {
+                Class: 'PurchaseOrder',
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Purchase_order_number:null,
+                Is_active: true
+            }
+        }
+
         var isotopePromise = af.getAllIsotopes()
             .then(
                 function(){
@@ -92,11 +102,14 @@ angular.module('00RsmsAngularOrmApp')
 
         $scope.saveAuthorization = function(pi, copy, auth){
            $modalInstance.dismiss();
+           af.deleteModalData();
            af.saveAuthorization( pi, copy, auth )
-                .then(
-                    function(){
-                        
-                    }
-                )
+        }
+
+        $scope.savePO = function(pi, copy, po){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.savePurchaseOrder( pi, copy, po )
         }
   }])
+  

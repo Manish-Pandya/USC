@@ -1,0 +1,16 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px;" class="greenBg"><span ng-if="!modalData.PurchaseOrder">Add</span><span ng-if="modalData.PurchaseOrder">Edit</span> a Purchase Order for {{modalData.pi.User.Name}}</h2>
+</div>
+<div class="modal-body">
+	
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">P.O. Number</label>
+     <div class="controls input-append">
+        <input data-ng-model="modalData.PurchaseOrderCopy.Purchase_order_number" placeholder="P.O. Number"/>
+     </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <a class="btn btn-large btn-success left" ng-click="savePO(modalData.pi, modalData.PurchaseOrderCopy, modalData.PurchaseOrder)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
