@@ -747,32 +747,6 @@ angular
 
             /********************************************************************
             **
-            **      PRINCIPALINVESTIGATOR            **
-            ********************************************************************/
-
-            af.getPrincipalInvestigatorById = function( key_id )
-            {
-                var urlSegment = 'getPrincipalInvestigatorById&id=' + key_id;
-
-                if( store.checkCollection( 'PrincipalInvestigator', key_id ) ) {
-                    var principalinvestigator = store.getById( 'PrincipalInvestigator', key_id )
-                        .then(function(principalinvestigator) {
-                            return principalinvestigator;
-                        });
-                }
-                else {
-                    var principalinvestigator = genericAPIFactory.read( urlSegment )
-                        .then( function( returnedPromise ) {
-                            // store principalinvestigator in cache here?
-                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                        });
-                }
-                return principalinvestigator;
-            }
-
-
-            /********************************************************************
-            **
             **      PURCHASEORDER            **
             ********************************************************************/
 
