@@ -84,7 +84,7 @@ PrincipalInvestigator.prototype = {
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
             console.log(this);
-            dataLoader.loadChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+            dataLoader.loadChildObject( this, 'ActiveParcels', this.ActiveParcelsRelationship);
         }
     },
 
