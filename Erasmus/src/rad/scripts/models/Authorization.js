@@ -11,7 +11,7 @@ Authorization.prototype = {
 
     loadIsotope: function() {
         if(!this.Isotope) {
-            dataLoader.loadObjectById(this, 'Isotope', 'Isotope', this.Isotope_id);
+            dataLoader.loadChildObject(this, 'Isotope', 'Isotope', this.Isotope_id);
         }
     }
 

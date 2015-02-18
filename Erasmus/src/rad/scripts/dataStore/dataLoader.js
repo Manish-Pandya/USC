@@ -139,7 +139,7 @@ dataLoader.instateRelationItems = function(relationList, className, keyProperty)
     return instatedItems;
 }
 
-dataLoader.loadObjectById = function( parent, property, className, id ) {
+dataLoader.loadChildObject = function( parent, property, className, id ) {
 
     // check cache first
     if( dataStoreManager.checkCollection(className) ) {

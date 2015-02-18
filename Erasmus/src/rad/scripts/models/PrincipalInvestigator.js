@@ -97,13 +97,13 @@ PrincipalInvestigator.prototype = {
 
     loadPurchaseOrders: function() {
         if(!this.PurchaseOrders) {
-            dataLoader.loadChildObject( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
         }
     },
 
     loadUser:  function() {
         if(!this.User && this.User_id) {
-            dataLoader.loadObjectById( this, 'User', 'User', this.User_id );
+            dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
         }
     }
 
