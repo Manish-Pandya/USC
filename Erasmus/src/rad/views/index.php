@@ -120,6 +120,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../scripts/models/User.js"></script>
 <script src="../scripts/models/WasteBag.js"></script>
 <script src="../scripts/models/WasteType.js"></script>
+<script src="../scripts/models/Room.js"></script>
 
 
 <script>

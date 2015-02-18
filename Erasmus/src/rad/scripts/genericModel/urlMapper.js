@@ -16,7 +16,7 @@
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
                                    
-        'Authorization'         : {getById: "getAuthorizationById"  , getAll: "getAllAuthorizations"  , save: "saveAuthorization" }, // Authorization has no getById, supposed to get by PI Id usually - "getAuthorizationsByPIId"
+        'Authorization'         : {getById: "getAuthorizationById"  , getAll: "getAllAuthorizations"  , save: "saveAuthorization" }, // note that you're supposed to get authorizations by PI Id usually - "getAuthorizationsByPIId"
         'Carboy'                : {getById: "getCarboyById"         , getAll: "getAllCarboys"         , save: "saveCarboy"        },
         'Drum'                  : {getById: "getDrumById"           , getAll: "getAllDrums"           , save: "saveDrum"          },
         'Hazard'                : {getById: "getHazardById"         , getAll: "getAllHazards"         , save: "saveHazard"        },
@@ -30,6 +30,9 @@
         'SolidsContainer'       : {getById: "getSolidsContainerById", getAll: "getAllSolidsContainers", save: ""                  },
         'User'                  : {getById: "getUserById"           , getAll: "getAllRadUsers"        , save: "saveUser"          },
         'WasteBag'              : {getById: "getWasteBagById"       , getAll: "getAllWasteBags"       , save: "saveWasteBag"      },
-        'WasteType'             : {getById: "getWasteTypeById"      , getAll: "getAllWasteTypes"      , save: "saveWasteType"     }
+        'WasteType'             : {getById: "getWasteTypeById"      , getAll: "getAllWasteTypes"      , save: "saveWasteType"     },
+
+        // Forgot to add Base module entities - add as needed.
+        'Room'                  : {getById: "getRoomById"           , getAll: "getAllRooms"           , save: "saveRoom"          }
     };
  }

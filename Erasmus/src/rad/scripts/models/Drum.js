@@ -5,7 +5,18 @@
 var Drum = function() {};
 Drum.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+    WasteBagsRelationship: {
+        className: 'WasteBag', 
+        keyReference: 'Drum_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: ''
+    },
+    loadWasteBags: function() {
+        if(!this.WasteBags) {
+            dataLoader.loadOneToManyRelationship(this, 'WasteBags', this.WasteBagsRelationship);
+        }
+    }
 
 }
 

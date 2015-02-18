@@ -6,6 +6,7 @@
 var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
+    className: "PrincipalInvestigator",
 
 	eagerAccessors:[
 		{method:"getPrincipalInvestigatorRoomRelations"},
@@ -38,9 +39,10 @@ PrincipalInvestigator.prototype = {
 	},	
 
 	RoomsRelationship:{
-		className: 	  'Room',
-		keyReference: 'principalInvestigator_id',
-		queryString:  'getRooms'	
+		name: 	  'PrincipalInvestigatorRoomRelation',
+        className: 'Room',
+		keyReference: 'Principal_investigator_id',
+		paramValue:  'Key_id'	
 	},
 
 	AuthorizationsRelationship: {
@@ -67,14 +69,19 @@ PrincipalInvestigator.prototype = {
 
 	loadAuthorizations: function() {
         if(!this.Authorizations){
-            dataLoader.loadChildObject( this, 'Authorizations', this.AuthorizationsRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
         }
     },
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
-            console.log(this);
-            dataLoader.loadChildObject( this, 'Parcels', this.ActiveParcelsRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'Parcels', this.ActiveParcelsRelationship);
+        }
+    },
+
+    loadRooms: function() {
+        if(!this.Rooms) {
+            dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
         }
     },
 
@@ -85,7 +92,6 @@ PrincipalInvestigator.prototype = {
     },
 
     loadUser:  function() {
-        alert('yo');
         if(!this.User && this.User_id) {
             dataLoader.loadObjectById( this, 'User', 'User', this.User_id );
         }

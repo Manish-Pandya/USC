@@ -6,7 +6,7 @@
 var Hazard = function(){};
 Hazard.prototype = {
 
-    subHazardsRelationship: {
+    SubHazardsRelationship: {
         className:    'Hazard',
         keyReference:  'Parent_hazard_id',
         methodString:  'getHazardTreeNode',
@@ -14,11 +14,9 @@ Hazard.prototype = {
         paramName: 'id'
     },
 
-    saveUrl:  'saveHazard',
-
     loadSubHazards: function() {
-        if(!this.subHazards) {
-            dataLoader.loadChildrenFromRelationship( this, 'subHazards', this.subHazardsRelationship);
+        if(!this.SubHazards) {
+            dataLoader.loadOneToManyRelationship( this, 'SubHazards', this.SubHazardsRelationship);
         }
     }
 

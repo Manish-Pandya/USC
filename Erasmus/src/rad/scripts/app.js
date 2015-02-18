@@ -24,7 +24,6 @@ angular
   ])
   .config(function ($stateProvider, $urlRouterProvider,$qProvider, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
     $urlRouterProvider.otherwise("/home");
-    console.log(modelInflatorFactoryProvider.$get());
     $stateProvider
       .state('rad-home', {
         url: "/home",
