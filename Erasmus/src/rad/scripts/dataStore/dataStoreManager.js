@@ -141,7 +141,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 {
         console.log(value);
         if(!dataStore[collectionType]){
-            return 'Not found';
+            return [];
         }else{
             //store the lenght of the appropriate collection
             var i = dataStore[collectionType].length;
@@ -162,7 +162,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_key )
 {
         if(!dataStore[type]){
-            return 'Not found';
+            return [];
         }else{
             //store the length of the appropriate collection
             var i = dataStore[type].length;
