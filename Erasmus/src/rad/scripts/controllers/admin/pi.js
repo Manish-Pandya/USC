@@ -15,10 +15,12 @@ angular.module('00RsmsAngularOrmApp')
 
     var getRadPi = function(){
         var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
+        pi.loadRooms();
         return actionFunctionsFactory.getRadPI(pi)
                 .then(
                     function(){
-                        $scope.pi = pi;
+                        $rootScope.pi = pi;
+                        console.log(pi);
                         return pi;
                     },
                     function(){
@@ -40,10 +42,6 @@ angular.module('00RsmsAngularOrmApp')
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
-    $scope.setSelectedView = function(view){
-        $scope.selectedView = view;
-    }
-
     $scope.openModal = function(templateName, object){
         var modalData = {};
         modalData.pi = $scope.pi;
@@ -56,8 +54,7 @@ angular.module('00RsmsAngularOrmApp')
     }
 
   })
-  .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory) {
-        console.log(actionFunctionsFactory)
+  .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
@@ -81,6 +78,29 @@ angular.module('00RsmsAngularOrmApp')
             }
         }
 
+        if(!$scope.modalData.ParcelCopy){
+            $scope.modalData.ParcelCopy = {
+                Class: 'Parcel',
+                Purchase_order:null,
+                Purchase_order_id:null,
+                Status:'Pre-order',
+                Isotope:null,
+                Isotope_id:null,
+                Arrival_date:null,
+                Is_active: true,
+                Principal_investigator_id: $scope.modalData.pi.Key_id
+            }
+        }
+
+        if(!$scope.modalData.SolidsContainerCopy){
+            $scope.modalData.SolidsContainerCopy = {
+                Class: 'SolidsContainer',
+                Room_id:null,
+                Principal_investigator_id:$scope.modalData.pi.Key_id,
+                Is_active: true
+            }
+        }
+
         var isotopePromise = af.getAllIsotopes()
             .then(
                 function(){
@@ -90,9 +110,15 @@ angular.module('00RsmsAngularOrmApp')
                     $rootScope.error = "There was a problem retrieving the list of all isotopes.  Please check your internet connection and try again."
                 }
             )
+        $scope.carboys = af.getCachedCollection('CarboyUseCycle');
 
         $scope.selectIsotope = function(isotope){
-            $scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id
+            if($scope.modalData.AuthorizationCopy)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
+            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
+        }
+
+        $scope.selectPO = function(po){
+            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Purchase_order_id = $scope.modalData.ParcelCopy.Purchase_order.Key_id;
         }
 
         $scope.close = function(){
@@ -106,10 +132,43 @@ angular.module('00RsmsAngularOrmApp')
            af.saveAuthorization( pi, copy, auth )
         }
 
+        $scope.saveParcel = function(pi, copy, parcel){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.saveParcel( pi, copy, parcel )
+        }
+
+
         $scope.savePO = function(pi, copy, po){
            $modalInstance.dismiss();
            af.deleteModalData();
            af.savePurchaseOrder( pi, copy, po )
         }
+
+        $scope.saveContainer = function(pi, copy, container){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.saveSolidsContainer( pi, copy, container )
+        }
+
+        $scope.saveCarboy = function(pi, copy, carboy){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.saveCarboy( pi, copy, carboy )
+        }
+
+        $scope.markAsArrived = function(pi, copy, parcel){
+            copy.Status = "Arrived";
+            copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
+            $scope.saveParcel(pi, copy, parcel);
+        }
+
+        $scope.addCarboyToLab = function(cycle, pi, room){
+            cycle.Is_active = false;
+            $modalInstance.dismiss();
+            af.deleteModalData();
+            af.addCarboyToLab(cycle, pi, room)
+        }
+
   }])
   
