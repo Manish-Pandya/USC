@@ -56,7 +56,7 @@
 		</ul>
 	</div>
 	<div class="card full pos" ng-click="af.setSelectedView('orders')">
-		<h3 class="card-header"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
+		<h3 class="card-header" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
 		<h3 class="card-header pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purhcase Orders <a class="btn btn-success left" ng-click="openModal('admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
 		<div class="card-content" ng-if="selectedView == 'orders'">
 			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
