@@ -91,6 +91,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- filters -->
 <script type="text/javascript" src="../scripts/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../scripts/filters/splitAtPeriod.js"></script>
+<script type="text/javascript" src="../scripts/filters/carboyIsAvailable.js"></script>
 
 
 <!-- framework -->
@@ -108,6 +109,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- models -->
 <script src="../scripts/models/Authorization.js"></script>
 <script src="../scripts/models/Carboy.js"></script>
+<script src="../scripts/models/CarboyUseCycle.js"></script>
 <script src="../scripts/models/Drum.js"></script>
 <script src="../scripts/models/Hazard.js"></script>
 <script src="../scripts/models/Isotope.js"></script>
