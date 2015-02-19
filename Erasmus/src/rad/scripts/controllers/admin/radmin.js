@@ -97,15 +97,56 @@ angular.module('00RsmsAngularOrmApp')
 
         );
     }
+    
+    var getAllSolidsContainers = function(){
+        return actionFunctionsFactory.getAllSolidsContainers()
+        .then(
+            function( containers ){
+                return containers;
+            },
+            function(){
+                $scope.error = 'There was an error when the system tried to get the list of Isotopes.  Please check your internet connection and try again.'
+            }
+
+        );
+    }
+
+    var getAllCarboys = function(){
+        return actionFunctionsFactory.getAllCarboys()
+        .then(
+            function( carboys ){
+                return carboys;
+            },
+            function(){
+                $scope.error = 'There was an error when the system tried to get the list of Isotopes.  Please check your internet connection and try again.'
+            }
+
+        );
+    }
+
+    var getAllCarboyUseCycles = function(){
+        return actionFunctionsFactory.getAllCarboyUseCycles()
+        .then(
+            function( cycles ){
+                return cycles;
+            },
+            function(){
+                $scope.error = 'There was an error when the system tried to get the list of Isotopes.  Please check your internet connection and try again.'
+            }
+
+        );
+    }
 
     $rootScope.pisPromise = getAllUsers()
             .then(getAllPIs)
             .then(getAllIsotopes)
-            .then(getAllParcels)
             .then(getAllAuthorizations)
             .then(getAllPOs)
+            .then(getAllParcels)
+            .then(getAllCarboys)
+            .then(getAllSolidsContainers)
+            .then(getAllCarboyUseCycles)
     
-
     $scope.onSelectPi = function (pi)
     {
         $state.go('radmin.pi-detail',{pi:pi.Key_id});
