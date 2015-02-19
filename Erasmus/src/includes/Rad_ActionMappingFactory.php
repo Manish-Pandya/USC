@@ -69,6 +69,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"savePurchaseOrder"	=> new ActionMapping("savePurchaseOrder", "", ""),
 			"saveWasteType"		=> new ActionMapping("saveWasteType", "", ""),
 			"saveWasteBag"		=> new ActionMapping("saveWasteBag", "", ""),
+			"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", ""),
 
 			// other functions
 			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),
