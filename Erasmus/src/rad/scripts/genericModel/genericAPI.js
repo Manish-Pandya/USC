@@ -9,7 +9,7 @@ angular
 
 		var  api = {};
 
-		api.baseUrl = '../../ajaxaction.php?action=';
+		api.baseUrl = '../ajaxaction.php?action=';
 
 		//Generic calls
 

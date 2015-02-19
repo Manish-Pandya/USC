@@ -1,11 +1,11 @@
-<div cg-busy="{promise:pisPromise,message:'Loading', backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:piPromise,message:'Loading Principal Investigator',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:AuthorizationSaving,message:'Saving Authorization',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:PurchaseOrderSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:ParcelSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:SolidsContainerSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:CarboySaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:pisPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:piPromise,message:'Loading Principal Investigator',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:AuthorizationSaving,message:'Saving Authorization',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PurchaseOrderSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:ParcelSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:SolidsContainerSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:CarboySaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="dashboard">
    	<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
