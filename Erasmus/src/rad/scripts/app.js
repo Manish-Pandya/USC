@@ -40,6 +40,11 @@ angular
         templateUrl: "admin/pi-detail.html",
         controller: "PiDetailCtrl"
       })
+      .state('testpage', {
+        url: '/testpage',
+        templateUrl: 'testpage.php',
+        controller: "TestCtrl"
+      })
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
     $rootScope.$on('$stateChangeStart ',function(){
