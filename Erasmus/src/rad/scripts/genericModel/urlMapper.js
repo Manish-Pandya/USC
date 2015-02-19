@@ -18,6 +18,7 @@
                                    
         'Authorization'         : {getById: "getAuthorizationById"  , getAll: "getAllAuthorizations"  , save: "saveAuthorization" }, // note that you're supposed to get authorizations by PI Id usually - "getAuthorizationsByPIId"
         'Carboy'                : {getById: "getCarboyById"         , getAll: "getAllCarboys"         , save: "saveCarboy"        },
+        'CarboyUseCycle'        : {getById: "getCarboyUseCycleById" , getAll: "getAllCarboyUseCycles" , save: "saveCarboyUseCycle"},
         'Drum'                  : {getById: "getDrumById"           , getAll: "getAllDrums"           , save: "saveDrum"          },
         'Hazard'                : {getById: "getHazardById"         , getAll: "getAllHazards"         , save: "saveHazard"        },
         'Isotope'               : {getById: "getIsotopeById"        , getAll: "getAllIsotopes"        , save: "saveIsotope"       },
@@ -27,7 +28,7 @@
         'Pickup'                : {getById: "getPickupById"         , getAll: "getAllPickups"         , save: "savePickup"        },
         'PrincipalInvestigator' : {getById: "getPIById"             , getAll: "getAllRadPis"          , save: "savePI"            },
         'PurchaseOrder'         : {getById: "getPurchaseOrderById"  , getAll: "getAllPurchaseOrders"  , save: "savePurchaseOrder" },
-        'SolidsContainer'       : {getById: "getSolidsContainerById", getAll: "getAllSolidsContainers", save: ""                  },
+        'SolidsContainer'       : {getById: "getSolidsContainerById", getAll: "getAllSolidsContainers", save: "saveSolidsContainer"},
         'User'                  : {getById: "getUserById"           , getAll: "getAllRadUsers"        , save: "saveUser"          },
         'WasteBag'              : {getById: "getWasteBagById"       , getAll: "getAllWasteBags"       , save: "saveWasteBag"      },
         'WasteType'             : {getById: "getWasteTypeById"      , getAll: "getAllWasteTypes"      , save: "saveWasteType"     },
