@@ -5,8 +5,20 @@
 var Carboy = function() {};
 Carboy.prototype = {
 
+    CarboyUseCyclesRelationship: {
+        className:    'CarboyUseCycle',
+        keyReference:  'Carboy_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+    
     // TODO eager accessors, relationships, method names.
-
+    loadCarboyUseCycles:function(){
+    	if(!this.CarboyUseCycles){
+            return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
+    	}
+    }
 }
 
 // inherit from GenericModel
