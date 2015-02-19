@@ -77,7 +77,7 @@ class Parcel extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
 		$entityMaps[] = new EntityMap("lazy", "getIsotope");
 		$entityMaps[] = new EntityMap("lazy", "getUses");
-		$entityMaps[] = new EntityMap("lazy", "getRemainder");
+		$entityMaps[] = new EntityMap("eager", "getRemainder");
 		$this->setEntityMaps($entityMaps);
 
 	}
