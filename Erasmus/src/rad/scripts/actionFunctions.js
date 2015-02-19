@@ -3,7 +3,7 @@
 angular
     .module('actionFunctionsModule',[])
     
-        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal ){
+        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods ){
         	var af = {};
             var store = dataStoreManager;
             //give us access to this factory in all views.  Because that's cool.
@@ -115,6 +115,10 @@ angular
                         return viewMap[i];
                     }
                 }
+            }
+
+            af.setSelectedView = function(view){
+                $rootScope.selectedView = view;
             }
 
             /********************************************************************
@@ -552,71 +556,9 @@ angular
                 return dataSwitchFactory.getAllObjects('Carboy');
             }
 
-            af.saveAuthorization = function( pi, copy, auth )
+            af.getAllCarboyUseCycles = function( key_id )
             {
-                af.clearError();
-                console.log(auth);
-                return this.save( copy )
-                    .then(
-                        function(returnedAuth){
-                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(auth){
-                                angular.extend(auth, copy)
-                            }else{
-                                dataStoreManager.addOnSave(returnedAuth);
-                                pi.Authorizations.push(returnedAuth);
-                            }
-                        },
-                        af.setError('The authorization could not be saved')
-                    )
-            }
-
-            af.savePurchaseOrder = function( pi, copy, order )
-            {
-                af.clearError();
-                console.log(order);
-                return this.save( copy )
-                    .then(
-                        function(returnedPO){
-                            returnedPO = modelInflatorFactory.instateAllObjectsFromJson( returnedPO );
-                            if(order){
-                                angular.extend(order, copy)
-                            }else{
-                                dataStoreManager.addOnSave(returnedPO);
-                                pi.PurchaseOrders.push(returnedPO);
-                            }
-                        },
-                        af.setError('The Purchase Order could not be saved')
-                    )
-            }
-
-            af.saveParcel = function( pi, copy, parcel )
-            {
-                af.clearError();
-                console.log(parcel);
-                return this.save( copy )
-                    .then(
-                        function(returnedParcel){
-                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
-                            if(parcel){
-                                angular.extend(parcel, copy)
-                            }else{
-                                dataStoreManager.addOnSave(returnedParcel);
-                                pi.ActiveParcels.push(returnedParcel);
-                            }
-                        },
-                        af.setError('The authorization could not be saved')
-                    )
-            }
-
-            af.setError = function(errorString)
-            {
-                $rootScope.error = errorString + ' please check your internet connection and try again';
-            }
-
-            af.clearError = function()
-            {
-                $rootScope.error = null;
+                return dataSwitchFactory.getAllObjects('CarboyUseCycle');
             }
 
 
@@ -929,12 +871,17 @@ angular
                             pi.loadActiveParcels();
                             pi.loadAuthorizations();
                             pi.loadPurchaseOrders();
+                            pi.loadCarboys();
+                            pi.loadSolidsContainers();
+
                             return pi;
                         });
                 }else{
                     pi.loadActiveParcels();
                     pi.loadPurchaseOrders();
                     pi.loadAuthorizations();
+                    pi.loadCarboyUseCycles();
+                    pi.loadSolidsContainers();
                     var defer = $q.defer();
                     defer.resolve(pi);
                     return defer.promise;
@@ -1034,6 +981,150 @@ angular
                     //user.Supervisor.User.setName('updated');
                     console.log(dataStoreManager.getById("PrincipalInvestigator", user.Supervisor_id));            
             }
+
+            /********************************************************************
+            **
+            **      SAVE CALLS
+            **
+            ********************************************************************/
+
+            af.saveAuthorization = function( pi, copy, auth )
+            {
+                af.clearError();
+                console.log(auth);
+                return this.save( copy )
+                    .then(
+                        function(returnedAuth){
+                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
+                            if(auth){
+                                angular.extend(auth, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedAuth);
+                                pi.Authorizations.push(returnedAuth);
+                            }
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
+
+            af.savePurchaseOrder = function( pi, copy, order )
+            {
+                af.clearError();
+                console.log(order);
+                return this.save( copy )
+                    .then(
+                        function(returnedPO){
+                            returnedPO = modelInflatorFactory.instateAllObjectsFromJson( returnedPO );
+                            if(order){
+                                angular.extend(order, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedPO);
+                                pi.PurchaseOrders.push(returnedPO);
+                            }
+                        },
+                        af.setError('The Purchase Order could not be saved')
+                    )
+            }
+
+            af.saveParcel = function( pi, copy, parcel )
+            {
+                af.clearError();
+                console.log(parcel);
+                return this.save( copy )
+                    .then(
+                        function(returnedParcel){
+                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
+                            if(parcel){
+                                angular.extend(parcel, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedParcel);
+                                pi.ActiveParcels.push(returnedParcel);
+                            }
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
+
+            af.saveSolidsContainer = function( pi, copy, container )
+            {
+                af.clearError();
+                console.log(container);
+                return this.save( copy )
+                    .then(
+                        function(returnedContainer){
+                            returnedContainer = modelInflatorFactory.instateAllObjectsFromJson( returnedContainer );
+                            if(container){
+                                angular.extend(container, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedContainer);
+                                pi.SolidsContainers.push(returnedContainer);
+                            }
+                        },
+                        af.setError('The Solids Container could not be saved')
+                    )
+            }
+
+            af.saveCarboy = function( pi, copy, carboy )
+            {
+                af.clearError();
+                console.log(carboy);
+                return this.save( copy )
+                    .then(
+                        function(returnedCarboy){
+                            returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedCarboy );
+                            if(carboy){
+                                angular.extend(carboy, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedCarboy);
+                                pi.SolidsContainers.push(returnedCarboy);
+                            }
+                        },
+                        af.setError('The Solids Container could not be saved')
+                    )
+            }
+
+            af.removeCarboyFromLab = function(cycle){
+                af.clearError();
+                console.log(cycle);
+                cycle.Status = 'Decaying';
+                return this.save( cycle )
+                    .then(
+                        function(returnedCycle){
+                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
+                            angular.extend(cycle, returnedCycle)
+                        },
+                        af.setError('The Carboy could not be removed from the lab.')
+                    )
+            }
+
+            af.addCarboyToLab = function(cycle, pi, room){
+                cycle.Principal_investigator_id = pi.Key_id;
+                cycle.Room_id = room.Key_id;
+                cycle.Lab_date = convenienceMethods.setMysqlTime(new Date());
+                cycle.Status = 'In Use';
+
+                af.clearError();
+                return this.save( cycle )
+                    .then(
+                        function(returnedCycle){
+                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
+                            angular.extend(cycle, returnedCycle);
+                            pi.CarboyUseCycles.push(cycle);
+                        },
+                        af.setError('The Carboy could not be added to the lab.')
+                    )
+            }
+
+            af.setError = function(errorString)
+            {
+                $rootScope.error = errorString + ' please check your internet connection and try again';
+            }
+
+            af.clearError = function()
+            {
+                $rootScope.error = null;
+            }
+
 
         	return af;
 		});
