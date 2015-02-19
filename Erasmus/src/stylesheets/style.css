@@ -2779,24 +2779,26 @@ table.roomList h2 {
 }
 
 a.btn i {
+color:white !important;
+font-size: 17px !important;
 margin: 1px 2px;
 }
 
 a.btn.left i{
-  margin: 2px 6px 1px 2px;
+  margin: 2px 6px 1px 2px !important;
 }
 
 a.btn.right i{
-  margin: 2px 2px 1px 6px;
+  margin: 2px 2px 1px 6px !important;
 }
 
 a.btn-large.left i{
-  font-size:33px;
-  margin: 2px 24px 1px 2px
+  font-size:33px !important;
+  margin: 2px 24px 1px 2px !important
 }
 a.btn-large.right i{
-  font-size:33px;
-  margin: 2px 2px 1px 24px
+  font-size:33px !important;
+  margin: 2px 2px 1px 24px !important
 }
 
 
@@ -2971,7 +2973,6 @@ table.large tr th{
 }
 .card{
   background:white;
-  padding:10px;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
   margin-top: 10px;
   float:left;
@@ -2994,9 +2995,18 @@ table.large tr th{
   margin-right: 1%;
 }
 .card.half{
-  width:47%;
-  margin-right:1%;
+  width: 48%;
+  margin-right: 1.5%;
 }
+.card .card-header{
+  padding:10px;
+}
+.card .card-header i{
+  font-size: 24px;
+  margin-top: 5px;
+  margin-right: 16px;
+}
+
 
 @media screen and (max-width: 1366px) {
   /* line 73, ../sass/style.scss */
@@ -3044,11 +3054,24 @@ table.large tr th{
   color:white;
   cursor: pointer;
 }
+.card.auths{
+  border-left:rgba(26, 108, 167, 1) solid 6px;
+}
+.card.auths h3 i:first-child{
+  color:rgba(26, 108, 167, 1)
+}
 .left-nav ul li a.auths{
   background:rgba(0, 154, 255,.5)
 }
+
 .left-nav ul li a.auths:hover{
   background:rgba(0, 154, 255,1)
+}
+.card.pos{
+  border-left: rgba(26, 95, 40, 1) solid 6px;
+}
+.card.pos h3 i:first-child{
+  color:rgba(26, 95, 40, 1);
 }
 .left-nav ul li a.pos{
   background: rgba(0, 128, 0, 0.5);
@@ -3056,12 +3079,39 @@ table.large tr th{
 .left-nav ul li a.pos:hover{
   background: rgba(0, 128, 0, 1);
 }
+.card.parcels{
+  border-left: rgba(153, 96, 40, 1) solid 6px
+}
+.card.parcels h3 i:first-child{
+  color: rgba(153, 96, 40, 1);
+}
 .left-nav ul li a.parcels{
   background: rgba(255, 130, 0, 0.5);
 }
 .left-nav ul li a.parcels:hover{
   background: rgba(255, 130, 0, 1);
 }
+.card.carboys{
+  border-left:rgb(122, 6, 109) solid 6px;
+}
+.card.carboys h3 i:first-child{color:rgb(122, 6, 109);}
+.left-nav ul li a.carboys{
+  background: rgba(122, 6, 109, 0.5)
+}
+.left-nav ul li a.carboys:hover{
+  background: rgba(122, 6, 109, 1)
+}
+.card.solids-containers{
+  border-left:rgb(151, 49, 58) solid 6px
+}
+.card.solids-containers h3 i:first-child{color:rgb(151, 49, 58)}
+.left-nav ul li a.solids-containers{
+  background: rgb(151, 49, 58)
+}
+.left-nav ul li a.solids-containers:hover{
+  background: rgba(251, 37, 37, 1)
+}
+
 .left-nav ul li a i{
   margin: 4px 13px 0 5px;
   width: 12px;
@@ -3072,15 +3122,23 @@ table.large tr th{
 .right-column{
   margin-left:210px;
 }
-.banner{
-  background: white;
-  padding:10px;
-}
+
 
 .banner.dashboard-banner{
   position: absolute;
   width: 100%;
   left: 0;
+}
+.banner.radmin{
+  background: url('../img/radiation-large-icon.png') rgba(252, 255, 0, 0.34)
+}
+.banner{
+  background: white;
+  padding: 10px;
+  background-repeat: no-repeat !important;
+  background-size: 70px !Important;
+  padding-left: 80px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.7)
 }
 div.fake-table{
   display: table;
@@ -3113,7 +3171,38 @@ div.fake-table.bordered .table-row > div, div.fake-table .table-header > h3{
 div.fake-table .table-row:hover{
   background: rgba(221, 221, 221, 1) !important;
 }
+div.fake-table .table-row.inactive{
+  background: pink !important;
+}
 div.fake-table .table-row:hover > div{
     box-shadow: 5px 3px 8px rgba(0,0,0,.4);
+}
+@font-face {
+  font-family: 'carboy';
+  src:url('../font/carboy.eot?-5rvjwq');
+  src:url('../font/carboy.eot?#iefix-5rvjwq') format('embedded-opentype'),
+    url('../font/carboy.woff?-5rvjwq') format('woff'),
+    url('../font/carboy.ttf?-5rvjwq') format('truetype'),
+    url('../font/carboy.svg?-5rvjwq#carboy') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon-carboy {
+  font-family: 'carboy';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-carboy:before {
+    content: "\e600";
 }
 
