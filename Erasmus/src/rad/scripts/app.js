@@ -19,7 +19,8 @@ angular
     'ui.bootstrap',
     'once',
     'ui.router',
-    'modalPosition'
+    'modalPosition',
+    'convenienceMethodModule'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider,$qProvider, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
