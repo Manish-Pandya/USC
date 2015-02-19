@@ -11,7 +11,8 @@ PrincipalInvestigator.prototype = {
 	eagerAccessors:[
 		{method:"getPrincipalInvestigatorRoomRelations"},
 		{method:"loadUser", boolean:"User_id"},
-		{method:"getLabPersonnel"},
+        {method:"loadCarboys", boolean:true},
+        {method:"loadSolidsContainers", boolean:true},
 		{method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
 	],
 
@@ -75,6 +76,28 @@ PrincipalInvestigator.prototype = {
 
     },
 
+    SolidsContainersRelationship: {
+
+        className:    'SolidsContainer',
+        keyReference:  'Principal_investigator_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
+
+    CarboyUseCyclesRelationship: {
+
+        className:    'CarboyUseCycle',
+        keyReference:  'Principal_investigator_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
+
 	Buildings: {},
 
 	loadAuthorizations: function() {
@@ -85,24 +108,31 @@ PrincipalInvestigator.prototype = {
 
 	loadActiveParcels: function() {
         if(!this.ActiveParcels) {
-<<<<<<< HEAD
-            console.log(this);
-            dataLoader.loadChildObject( this, 'ActiveParcels', this.ActiveParcelsRelationship);
-=======
-            dataLoader.loadOneToManyRelationship( this, 'Parcels', this.ActiveParcelsRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship);
         }
     },
 
     loadRooms: function() {
         if(!this.Rooms) {
             dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
->>>>>>> branch 'RadiationModule' of git@bitbucket.org:hoke/erasmus.git
         }
     },
 
     loadPurchaseOrders: function() {
         if(!this.PurchaseOrders) {
             dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+        }
+    },
+
+    loadSolidsContainers: function() {
+        if(!this.SolidsContainers) {
+            dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
+        }
+    },
+
+    loadCarboyUseCycles: function() {
+        if(!this.Carboys) {
+            dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
         }
     },
 
