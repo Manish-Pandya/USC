@@ -1,0 +1,47 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px; background:rgba(153, 96, 40, 1); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an parcel for {{modalData.pi.User.Name}}</h2>
+</div>
+ 
+<div class="modal-body">
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">Status</label>
+     <div class="controls">
+        <select data-ng-model="modalData.ParcelCopy.Status">
+            <option value="Pre-order">Pre-order</option>
+            <option value="Ordered">Ordered</option>
+            <option value="Arrived">Arrived</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Disposed">Disposed</option>
+        </select>
+     </div>
+  </div>
+  <div class="control-group" ng-if="!modalData.ParcelCopy.Status || modalData.ParcelCopy.Status == 'Pre-order'">
+     <label class="control-label" for="inputEmail">Isotope</label>
+     <div class="controls">
+        <select data-ng-change="selectIsotope()" data-ng-options="isotope.Name for isotope in isotopes" data-ng-model="modalData.ParcelCopy.Isotope">
+            <option style="display:none" value="">Select an Isotope</option>
+        </select>
+     </div>
+  </div>
+
+  <div class="control-group" ng-if="!modalData.ParcelCopy.Status || modalData.ParcelCopy.Status == 'Pre-order'">
+     <label class="control-label" for="inputEmail">Purchase Order</label>
+     <div class="controls">
+        <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.Purchase_order">
+            <option style="display:none" value="">Select a Purchase Order</option>
+        </select>
+     </div>
+  </div>
+
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">Quantity</label>
+     <div class="controls">
+        <input ng-model="modalData.ParcelCopy.Quantity" />
+     </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <a class="btn btn-info btn-large left" ng-if="!modalData.ParcelCopy.Status || modalData.ParcelCopy.Status == 'Pre-order' || modalData.ParcelCopy.Status == 'Ordered'" ng-click="markAsArrived(modalData.pi, modalData.ParcelCopy, modalData.Parcel)"><i class=" icon-download-2"></i>Mark as Arrived</a>
+  <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.pi, modalData.ParcelCopy, modalData.Parcel)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
