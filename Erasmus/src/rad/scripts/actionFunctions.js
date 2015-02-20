@@ -41,7 +41,6 @@ angular
                     $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
                         .then(
                             function( returnedPromise ){
-                                console.log(returnedPromise);
                                 if(typeof returnedPromise === 'object')object = returnedPromise;
                                 return true;
                             },
@@ -89,7 +88,6 @@ angular
             
             af.getViewMap = function(current)
             {
-                //console.log(current);
                 var viewMap = [
                     {
                         Name: 'rad-home',
@@ -110,7 +108,6 @@ angular
 
                 var i = viewMap.length;
                 while(i--){
-                    //console.log(current.name);
                     if(current.name == viewMap[i].Name){
                         return viewMap[i];
                     }
@@ -128,7 +125,6 @@ angular
             ********************************************************************/
             af.fireModal = function( templateName, object  )
             {
-                console.log(templateName);
                 if(object)af.setModalData(object);
                 var modalInstance = $modal.open({
                   templateUrl: templateName+'.html',
@@ -202,7 +198,6 @@ angular
                     this.getAllUsers()
                         .then(
                             function(users){
-                                console.log('here now')
                                 userPromise.resolve(users);
                             }
 
@@ -218,7 +213,6 @@ angular
                     this.getAllPIs()
                         .then(
                             function (pis){
-                                console.log('and now here');
                                 piPromise.resolve(pis);
                             }
                         )
@@ -299,17 +293,13 @@ angular
 
                     if(nodeId == 10000){
                         if( store.checkCollection( 'Hazard', nodeId ) ){
-                            console.log('check positive');
                             var hazards = store.get( 'Hazard' )
                                 .then(
                                     function( hazards ){
-                                        console.log('here');
-                                        console.log(hazards);
                                         return hazards;
                                     }
                                 );
                         }else{
-                            console.log('here')
                             var hazards = genericAPIFactory.read( urlSegment )
                                 .then(
                                     function( returnedPromise ){
@@ -318,7 +308,6 @@ angular
                                         return store.get( 'Hazard' )
                                             .then(
                                                 function( hazards ){
-                                                    console.log('adfasdfasdf');
                                                     return hazards;
                                                 }
                                             );
@@ -386,7 +375,6 @@ angular
                     $rootScope.HazardSaving = genericAPIFactory.save( hazard, url )
                         .then(
                             function( returned ){
-                                console.log( returned.data );
                                 hazard.setOrder_index( returned.data );
                             },
                             function( error )
@@ -408,9 +396,7 @@ angular
 
             af.onSelectPi = function(pi)
             {
-                    console.log(pi);
                     $rootScope.pi = pi;
-                    console.log($rootScope);
             }
 
             af.getPrincipalInvestigatorById = function( key_id )
@@ -863,9 +849,7 @@ angular
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            console.log(tempPI);
                             if(tempPI.Authorizations.length){
-                                console.log(tempPI.loadAuthorizations);
                                 store.store(tempPI.Authorizations);
                             }
                             pi.loadActiveParcels();
@@ -979,7 +963,6 @@ angular
             {
                     dataStoreManager.getById("User", user.Key_id).setName('updated');
                     //user.Supervisor.User.setName('updated');
-                    console.log(dataStoreManager.getById("PrincipalInvestigator", user.Supervisor_id));            
             }
 
             /********************************************************************
@@ -991,7 +974,6 @@ angular
             af.saveAuthorization = function( pi, copy, auth )
             {
                 af.clearError();
-                console.log(auth);
                 return this.save( copy )
                     .then(
                         function(returnedAuth){
@@ -1010,7 +992,6 @@ angular
             af.savePurchaseOrder = function( pi, copy, order )
             {
                 af.clearError();
-                console.log(order);
                 return this.save( copy )
                     .then(
                         function(returnedPO){
@@ -1029,7 +1010,6 @@ angular
             af.saveParcel = function( pi, copy, parcel )
             {
                 af.clearError();
-                console.log(parcel);
                 return this.save( copy )
                     .then(
                         function(returnedParcel){
@@ -1048,7 +1028,6 @@ angular
             af.saveSolidsContainer = function( pi, copy, container )
             {
                 af.clearError();
-                console.log(container);
                 return this.save( copy )
                     .then(
                         function(returnedContainer){
@@ -1067,7 +1046,6 @@ angular
             af.saveCarboy = function( pi, copy, carboy )
             {
                 af.clearError();
-                console.log(carboy);
                 return this.save( copy )
                     .then(
                         function(returnedCarboy){
@@ -1085,7 +1063,6 @@ angular
 
             af.removeCarboyFromLab = function(cycle){
                 af.clearError();
-                console.log(cycle);
                 cycle.Status = 'Decaying';
                 return this.save( cycle )
                     .then(

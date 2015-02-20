@@ -26,9 +26,7 @@ User.prototype = {
 
 	getSupervisor: function()
 	{
-			console.log('trying to get PI')
 			if( dataStoreManager.checkCollection( this.SupervisorRelationship.Class ) ){
-                    console.log('trying to find cached PI');
                     //var defer = $q.defer();     
                     //this.rootScope[this.Class+"Busy"] = defer.promise;
                     var foreignKey = this[this.SupervisorRelationship.keyReference];
@@ -44,7 +42,6 @@ User.prototype = {
             		return this.Supervisor;
             }
             else{
-            		console.log("searching server for pi");
             		var local = this;
 
                     var urlFragment = this.SupervisorRelationship.queryString;
@@ -56,7 +53,6 @@ User.prototype = {
                         .then(
                             function( returnedPromise ){
                                 local.Supervisor = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                                console.log( local.Supervisor );
                             },
                             function( error ){
 

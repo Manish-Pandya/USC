@@ -5,7 +5,6 @@
 //constructor
 var GenericModel = function( api ){
 	if(this && api)this.setApi(api);
-	console.log('hit api')
 };
 
 GenericModel.prototype = {

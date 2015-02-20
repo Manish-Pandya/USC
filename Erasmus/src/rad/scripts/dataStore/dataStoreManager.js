@@ -37,7 +37,6 @@ dataStoreManager.store = function( object, trusted, flavor )
                 dataStoreManager.mapCache(object[0].Class);
 
             }else{
-                console.log(object);
                 dataStoreManager.addToCollection( flavor );
                 dataStore[flavor] = object;
                 dataStoreManager.mapCache(object[0].Class);
@@ -48,7 +47,6 @@ dataStoreManager.store = function( object, trusted, flavor )
 
 dataStoreManager.addToCollection = function( type, trusted )
 {       
-        //console.log('adding '+type+'s to the collection');
         //if we don't have the name of this type of object or a name for this array of objects, push it into the collection
         if( !dataStore.Collections.hasOwnProperty( type ) || !dataStore.Collections[type].trusted ){
             dataStore.Collections[type] = {type:type, trusted:trusted};  
@@ -139,7 +137,6 @@ dataStoreManager.deleteCopy = function( object )
 
 dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
 {
-        console.log(value);
         if(!dataStore[collectionType]){
             return [];
         }else{
@@ -205,7 +202,6 @@ dataStoreManager.setModalData = function(data)
         dataStore.modalData[prop] = data[prop];
         dataStore.modalData[prop+'Copy'] = dataStoreManager.createCopy(data[prop]);
     }
-    console.log(dataStoreManager.getModalData());
 }
 
 dataStoreManager.getModalData = function()

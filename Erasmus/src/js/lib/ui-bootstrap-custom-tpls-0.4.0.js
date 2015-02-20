@@ -3089,7 +3089,6 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
 
   return {
     parse:function (input) {
-      console.log(input);
       var match = input.match(TYPEAHEAD_REGEXP), modelMapper, viewMapper, source;
       if (!match) {
         throw new Error(
@@ -3170,7 +3169,6 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
         scope.matches = [];
         scope.activeIdx = -1;
       };
-      console.log(scope);
       var getMatchesAsync = function(inputValue) {
 
         var locals = {$viewValue: inputValue};

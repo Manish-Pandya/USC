@@ -145,14 +145,12 @@ initiateInspection = function(piKey_id)
                         .then(
                             function(pis){
                                 $scope.pis = pis;
-                                console.log(pis);
                                 $scope.hazardsPromise = getHazards();
                             }
                         );
 
 
     $scope.onSelectPi = function(pi){
-      console.log(pi);
         $scope.pi = pi;
     }
 

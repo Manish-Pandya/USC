@@ -84,25 +84,17 @@ dataLoader.loadManyToManyRelationship = function( parent, property, relationship
 
                 // double check that the child class has been loaded, so instateRelationItems has something to instate.
                 if(! dataStoreManager.checkCollection(className) ) {
-                    console.log(className);
-                    console.log('getting rooms');
                     var action = parent.api.fetchActionString('getAll', className);
 
                     // get data
                     parent.api.read(action).then(function(returnedPromise) {
                         var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
 
-                        console.log('returned promise:');
-                        console.log(returnedPromise);
-
                         // add returned data to cache
                         dataStoreManager.store(instatedObjects, true, className);
-                        console.log(window.performance.now());
 
                         // finally instate and set the result on parent.
                         var instatedMatches = dataLoader.instateRelationItems(matches, className, idProperty);
-                        console.log('Matches:');
-                        console.log(instatedMatches);
                         parent[property] = instatedMatches;
                     });
                 }
@@ -123,15 +115,7 @@ dataLoader.instateRelationItems = function(relationList, className, keyProperty)
     var i = relationList.length;
     var instatedItems = [];
 
-    /*
-    console.log('relation list:');
-    console.log(relationList);
-    console.log('className: ' + className);
-    */
     while(i--) {
-        console.log('relationlist:');
-        console.log(relationList);
-        console.log(i);
         var id = relationList[i][keyProperty];
         instatedItems.push( dataStoreManager.getById(className, id) );
     }
