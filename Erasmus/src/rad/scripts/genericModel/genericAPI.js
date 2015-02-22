@@ -9,7 +9,7 @@ angular
 
 		var  api = {};
 
-		api.baseUrl = '../../ajaxaction.php?action=';
+		api.baseUrl = '../ajaxaction.php?action=';
 
 		//Generic calls
 
@@ -49,6 +49,7 @@ angular
 			            })
 			            .error( function( data, status, headers, config ) {
 			            	console.log('Error returned while reading data from the server.');
+			            	console.log(data);
 			            	//todo
 			            	//figure out how we will handle errors going forward.
 			            	//probably, we will simply need to return an error object
@@ -82,14 +83,13 @@ angular
 
 				var promise = $http.post(url, object)
 					.success( function( data ){
-						console.log(data);
 						object = data;
 						return object;
 					})
 					.error( function(){
-						console.log('error')
+						console.log('error while saving object: ' + object);
 					})
-				
+
 				return promise;
 
 		}

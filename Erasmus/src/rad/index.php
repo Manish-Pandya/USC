@@ -4,7 +4,7 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
 	require_once('Application.php');
 }else{
-	require_once('../../Application.php');
+	require_once('../Application.php');
 }
 
 echo '<script type="text/javascript">
@@ -32,7 +32,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/jquery-ui.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 
 <!-- included fonts 
@@ -67,51 +66,63 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- TODO include everything in certain directories by default -->
 
 <!-- app -->
-<script type="text/javascript" src="../scripts/app.js"></script>
+<script type="text/javascript" src="./scripts/app.js"></script>
 
 <!-- business logic-->
-<script type="text/javascript" src="../scripts/actionFunctions.js"></script>
+<script type="text/javascript" src="./scripts/actionFunctions.js"></script>
 
 <!-- controllers -->
-<script type="text/javascript" src="../scripts/controllers/main.js"></script>
-<script type="text/javascript" src="../scripts/controllers/about.js"></script>
-<script type="text/javascript" src="../scripts/controllers/users.js"></script>
-<script type="text/javascript" src="../scripts/controllers/hazardHub.js"></script>
-<script type="text/javascript" src="../scripts/controllers/hazardInventory.js"></script>
-<script type="text/javascript" src="../scripts/controllers/testCtrl.js"></script>
-<script type="text/javascript" src="../scripts/controllers/radmin.js"></script>
-<script type="text/javascript" src="../scripts/controllers/pi.js"></script>
+<script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
+
+<script type="text/javascript" src="./scripts/controllers/main.js"></script>
+<script type="text/javascript" src="./scripts/controllers/about.js"></script>
+<script type="text/javascript" src="./scripts/controllers/users.js"></script>
+<script type="text/javascript" src="./scripts/controllers/hazardHub.js"></script>
+<script type="text/javascript" src="./scripts/controllers/hazardInventory.js"></script>
+<script type="text/javascript" src="./scripts/controllers/testCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
+
 
 <!-- directives -->
-<script type="text/javascript" src="../scripts/directives/hazardHubDirectives.js"></script>
+<script type="text/javascript" src="./scripts/directives/hazardHubDirectives.js"></script>
+
+<!-- filters -->
+<script type="text/javascript" src="./scripts/filters/dateToIso.js"></script>
+<script type="text/javascript" src="./scripts/filters/splitAtPeriod.js"></script>
+<script type="text/javascript" src="./scripts/filters/carboyIsAvailable.js"></script>
+
 
 <!-- framework -->
-<script src="../scripts/genericModel/inheritance.js"></script>
-<script src="../scripts/genericModel/genericModel.js"></script>
-<script src="../scripts/genericModel/genericAPI.js"></script>
-<script src="../scripts/genericModel/modelInflator.js"></script>
-<script src="../scripts/genericModel/urlMapper.js"></script>
-<script src="../scripts/dataStore/dataStore.js"></script>
-<script src="../scripts/dataStore/dataStoreManager.js"></script>
-<script src="../scripts/dataStore/dataLoader.js"></script>
-<script src="../scripts/dataStore/dataSwitch.js"></script>
+<script src="./scripts/genericModel/inheritance.js"></script>
+<script src="./scripts/genericModel/genericModel.js"></script>
+<script src="./scripts/genericModel/genericAPI.js"></script>
+<script src="./scripts/genericModel/modelInflator.js"></script>
+<script src="./scripts/genericModel/urlMapper.js"></script>
+<script src="./scripts/dataStore/dataStore.js"></script>
+<script src="./scripts/dataStore/dataStoreManager.js"></script>
+<script src="./scripts/dataStore/dataSwitch.js"></script>
+<script src="./scripts/dataStore/dataLoader.js"></script>
+
 
 <!-- models -->
-<script src="../scripts/models/Authorization.js"></script>
-<script src="../scripts/models/Carboy.js"></script>
-<script src="../scripts/models/Drum.js"></script>
-<script src="../scripts/models/Hazard.js"></script>
-<script src="../scripts/models/Isotope.js"></script>
-<script src="../scripts/models/Parcel.js"></script>
-<script src="../scripts/models/ParcelUse.js"></script>
-<script src="../scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
-<script src="../scripts/models/Pickup.js"></script>
-<script src="../scripts/models/PrincipalInvestigator.js"></script>
-<script src="../scripts/models/PurchaseOrder.js"></script>
-<script src="../scripts/models/SolidsContainer.js"></script>
-<script src="../scripts/models/User.js"></script>
-<script src="../scripts/models/WasteBag.js"></script>
-<script src="../scripts/models/WasteType.js"></script>
+<script src="./scripts/models/Authorization.js"></script>
+<script src="./scripts/models/Carboy.js"></script>
+<script src="./scripts/models/CarboyUseCycle.js"></script>
+<script src="./scripts/models/Drum.js"></script>
+<script src="./scripts/models/Hazard.js"></script>
+<script src="./scripts/models/Isotope.js"></script>
+<script src="./scripts/models/Parcel.js"></script>
+<script src="./scripts/models/ParcelUse.js"></script>
+<script src="./scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
+<script src="./scripts/models/Pickup.js"></script>
+<script src="./scripts/models/PrincipalInvestigator.js"></script>
+<script src="./scripts/models/PurchaseOrder.js"></script>
+<script src="./scripts/models/SolidsContainer.js"></script>
+<script src="./scripts/models/User.js"></script>
+<script src="./scripts/models/WasteBag.js"></script>
+<script src="./scripts/models/WasteType.js"></script>
+<script src="./scripts/models/Room.js"></script>
 
 
 <script>
@@ -124,3 +135,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 </script>
 </head>
 <body>
+
+<div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
+<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<!-- NAVIGATION -->
+  <div class="banner {{bannerClass | splitAtPeriod}}" ng-class="{'dashboard-banner':dashboardView}">
+    <h1>{{viewLabel}}</h1>
+  </div>
+<!-- VIEW NESTING -->
+	<div ui-view class="noBg"></div>
+</div>

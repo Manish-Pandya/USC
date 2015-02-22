@@ -1068,11 +1068,13 @@ class ActionManager {
 			// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
 			// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
 			$roomMaps = array();
-			$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+			$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 			$roomMaps[] = new EntityMap("lazy","getHazards");
 			$roomMaps[] = new EntityMap("lazy","getBuilding");
 			$roomMaps[] = new EntityMap('eager', 'getBuilding_id');
 			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+			$roomMaps[] = new EntityMap("lazy","getCarboys");
+
 
 			$piMaps = array();
 			$piMaps[] = new EntityMap("lazy","getLabPersonnel");

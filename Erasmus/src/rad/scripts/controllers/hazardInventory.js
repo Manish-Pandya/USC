@@ -133,38 +133,6 @@ resetInspectionRooms = function( roomIds,  inspectionId )
             });
   return resetInspectionDefer.promise;
 },
-/*
-getHazards = function(rooms)
-{     
-        //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
-        var roomIds = [];
-        var roomsLength = rooms.length;
-        for(var i = 0; i < roomsLength; i++){
-          if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
-        }
-        $scope.hazardsLoading = true;
-
-        var hazardDefer = $q.defer();
-
-        hazardInventoryFactory
-          .getHazards( roomIds )
-            .then(function( hazards )
-            {
-              //create our view model for hazards
-              $scope.hazards = hazards.ActiveSubHazards;
-              $scope.hazardsLoading = false;
-              $scope.needNewHazards = false;
-
-              $scope.hazards = hazardInventoryFactory.parseHazards( $scope.hazards );
-              hazardDefer.resolve( $scope.hazards );
-            },
-            function(){
-                $scope.hazardsLoading = false;
-                $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
-                hazardDefer.reject();
-            });
-        return hazardDefer.promise;
-},*/
 initiateInspection = function(piKey_id)
 {
     //start our inspeciton creation/load process
@@ -173,46 +141,16 @@ initiateInspection = function(piKey_id)
       .then( setInspection )
       .then( getHazards  );
 };
-
-/*
-    //get the root hazard node
-    $scope.hazardPromise = actionFunctionsFactory.getAllHazards()
-    	.then( 
-    		function( hazards ){
-                return hazards
-    		},
-            function(){
-                $scope.error = 'Couldn\'t get all hazards.'
-            }
-    	).then(
-            function( hazards ){
-                    var hazard = dataStoreManager.getById('Hazard', 10000);
-                    hazard.getSubHazards()
-                        .then(
-                            function(subHazards){
-                                console.log(subHazards);
-                                $scope.hazards = subHazards;
-                            }
-                        )
-            },
-            function(){
-                $scope.error = 'Couldn\'t find the right hazards.'
-            }
-
-        );
-*/
     $scope.piPromise = getAllPIs()
                         .then(
                             function(pis){
                                 $scope.pis = pis;
-                                console.log(pis);
                                 $scope.hazardsPromise = getHazards();
                             }
                         );
 
 
     $scope.onSelectPi = function(pi){
-      console.log(pi);
         $scope.pi = pi;
     }
 

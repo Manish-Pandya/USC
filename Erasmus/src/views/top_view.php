@@ -61,6 +61,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/binary-search.js"></script>
 
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
 
 </head>
 <body>

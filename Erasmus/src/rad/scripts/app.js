@@ -28,17 +28,22 @@ angular
     $stateProvider
       .state('rad-home', {
         url: "/home",
-        templateUrl: "rad-center.html"
+        templateUrl: "views/rad-center.html"
       })
       .state('radmin', {
         url: "/admin",
-        templateUrl: "admin/radmin.html",
+        templateUrl: "views/admin/radmin.html",
         controller: "RadminMainCtrl"
       })
       .state('radmin.pi-detail', {
         url: "/pi-detail:pi",
-        templateUrl: "admin/pi-detail.html",
+        templateUrl: "views/admin/pi-detail.html",
         controller: "PiDetailCtrl"
+      })
+      .state('testpage', {
+        url: '/testpage',
+        templateUrl: 'views/testpage.php',
+        controller: "TestCtrl"
       })
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {

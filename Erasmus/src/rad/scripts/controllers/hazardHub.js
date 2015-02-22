@@ -28,7 +28,6 @@ angular.module('00RsmsAngularOrmApp')
                     var hazard = dataStoreManager.getById('Hazard', 10000);
                     hazard.getSubHazards();
                     $scope.hazards = hazard.SubHazards;
-                    console.log($scope.hazards);
             },
             function(){
                 $scope.error = 'Couldn\'t find the right hazards.'

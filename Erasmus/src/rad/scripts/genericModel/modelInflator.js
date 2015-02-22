@@ -34,7 +34,6 @@ angular
 
 
                     //instantiate an object of Class objectFlavor
-                    //console.log(genericAPIFactory);
                     var modelledObject = new window[objectFlavor]( );
                     modelledObject.setApi( genericAPIFactory );
                     modelledObject.setRootScope( $rootScope );
@@ -113,7 +112,6 @@ angular
                     window[object.Class].prototype[getterName] = function( data ){
                         //lazy load
                         if(data){
-                            console.log(data);
                             return data;
                         }
                         if( typeof this[prop+'Relationship'] !== 'undefined' ){

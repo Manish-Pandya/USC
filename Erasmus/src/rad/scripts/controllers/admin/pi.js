@@ -20,7 +20,6 @@ angular.module('00RsmsAngularOrmApp')
                 .then(
                     function(){
                         $rootScope.pi = pi;
-                        console.log(pi);
                         return pi;
                     },
                     function(){

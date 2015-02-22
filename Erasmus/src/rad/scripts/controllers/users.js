@@ -32,7 +32,6 @@ angular.module('00RsmsAngularOrmApp')
          return actionFunctionsFactory.getAllPIs()
             .then(
                 function( pis ){
-                    console.log(pis);
                     return;
                 },
                 function(){
