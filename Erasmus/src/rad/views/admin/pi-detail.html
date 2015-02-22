@@ -4,11 +4,11 @@
 		<h3 class="card-header" ng-if="pi.Authorizations.length">
 			<i class="icon-unlocked-2"></i>{{pi.User.Name}} has 
 			<span class="bold">
-				{{pi.Authorizations.length}} Authorization<span ng-if="pi.Authorizations.length != 1">s</span>
+				{{pi.Authorizations.length}} authorized rad material<span ng-if="pi.Authorizations.length != 1">s</span>
 			</span>
 			<a class="btn btn-success left" ng-click="openModal('admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Authorization</a>
 		</h3>
-		<h3 class="card-header auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no Authorizations <a class="btn btn-success left"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
+		<h3 class="card-header auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <a class="btn btn-success left"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
 		<div class="card-content" ng-if="selectedView == 'authorizations'">
 			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
 				<div class="table-header">
@@ -19,6 +19,7 @@
 					<h3>Maximum Quantity</h3>
 					<h3>Approval Date</h3>
 					<h3>Revocation Date</h3>
+					<h3>Form</h3>
 				</div>
 					<div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
 						<div>
@@ -50,6 +51,10 @@
 						<div>
 							{{auth.Revocation_date | dateToISO}}
 						</div>
+
+						<div>
+							{{auth.Form}}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -63,7 +68,8 @@
 				<div class="table-header">
 					<h3>Edit</h3>
 					<h3>P.O. Number</h3>
-					<h3>Date Created</h3>
+					<h3>Start Date</h3>
+					<h3>End Date</h3>
 				</div>
 				<div class="table-row" ng-repeat="order in pi.PurchaseOrders" ng-class="{'inactive':!order.Is_active}">
 					<div>
@@ -77,7 +83,11 @@
 					</div>
 
 					<div>
-						{{order.Date_created | dateToISO}}
+						{{order.Start_date}}
+					</div>
+
+					<div>
+						{{order.End_date | dateToISO}}
 					</div>
 				</div>
 			</div>

@@ -17,6 +17,13 @@
         <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi</span>
      </div>
   </div>
+
+  <div class="control-group">
+     <label class="control-label" for="inputEmail">Form</label>
+     <div class="controls input-append">
+        <input data-ng-model="modalData.AuthorizationCopy.Form" maxlength="35" placeholder="Form"/>
+     </div>
+  </div>
 </div>
 <div class="modal-footer">
   <a class="btn btn-large btn-success left" ng-click="saveAuthorization(modalData.pi, modalData.AuthorizationCopy, modalData.Authorization)"><i class="icon-checkmark"></i>Save</a>
