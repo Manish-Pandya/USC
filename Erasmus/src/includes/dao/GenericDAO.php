@@ -44,7 +44,7 @@ class GenericDAO {
 
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 	}
-	
+
 	public function setModelObject(GenericCrud $new_model_object) {
 		$this->modelObject = $new_model_object;
 		$this->modelClassName = get_class($new_model_object);
@@ -94,6 +94,7 @@ class GenericDAO {
 				// $result being false indicates no rows returned.
 				if(!$result) {
 					$this->LOG->debug('No Rows returned. Returning ActionError');
+					return;
 					return new ActionError('No rows returned');
 				}
 			// ... otherwise, generate error message to be returned
