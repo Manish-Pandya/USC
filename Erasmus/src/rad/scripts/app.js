@@ -40,11 +40,33 @@ angular
         templateUrl: "views/admin/pi-detail.html",
         controller: "PiDetailCtrl"
       })
+      .state('pi-rad-management', {
+        url:'/my-lab:pi',
+        templateUrl: "views/pi/pi-rad-home.html",
+        controller: "PiRadHomeCtrl"
+      })     
+      .state('pi-rad-management.waste-log', {
+        url:'/my-lab:pi/waste-log',
+        templateUrl: "views/pi/waste-log.html",
+        controller: "WasteLogCtrl"
+      })
+      .state('pi-rad-management.solids', {
+        url:'/my-lab:pi/waste-recepticals',
+        templateUrl: "views/pi/recepticals.html",
+        controller: "RecipticalCtrl"
+      })
+      .state('pi-rad-management.pickups', {
+        url:'/my-lab:pi/pickups',
+        templateUrl: "views/pi/pickups.html",
+        controller: "PickupCtrl"
+      })
+
       .state('testpage', {
         url: '/testpage',
         templateUrl: 'views/testpage.php',
         controller: "TestCtrl"
       })
+
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
     $rootScope.$on('$stateChangeStart ',function(){
