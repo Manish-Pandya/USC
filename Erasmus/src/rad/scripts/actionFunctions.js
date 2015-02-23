@@ -992,6 +992,10 @@ angular
             af.savePurchaseOrder = function( pi, copy, order )
             {
                 af.clearError();
+                console.log(copy.view_Start_date);
+                copy.Start_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Start_date));
+                copy.End_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_End_date));
+
                 return this.save( copy )
                     .then(
                         function(returnedPO){
@@ -1005,6 +1009,18 @@ angular
                         },
                         af.setError('The Purchase Order could not be saved')
                     )
+            }
+
+            af.getDate = function(dateString){
+                console.log(dateString)
+                console.log(Date.parse(dateString))
+                var seconds = Date.parse(dateString);
+                console.log(seconds);
+                //if( !dateString || isNaN(dateString) )return;
+                var t = new Date(1970,0,1);
+                t.setTime(seconds);
+                console.log(t);
+                return t;
             }
 
             af.saveParcel = function( pi, copy, parcel )
