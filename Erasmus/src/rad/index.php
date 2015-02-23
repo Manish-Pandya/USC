@@ -73,7 +73,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <!-- controllers -->
 <script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
-
 <script type="text/javascript" src="./scripts/controllers/main.js"></script>
 <script type="text/javascript" src="./scripts/controllers/about.js"></script>
 <script type="text/javascript" src="./scripts/controllers/users.js"></script>
@@ -82,10 +81,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/testCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
+<script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 
 
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/hazardHubDirectives.js"></script>
+<script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
+
 
 <!-- filters -->
 <script type="text/javascript" src="./scripts/filters/dateToIso.js"></script>
