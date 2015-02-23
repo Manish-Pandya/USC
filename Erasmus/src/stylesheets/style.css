@@ -3205,4 +3205,6 @@ div.fake-table .table-row:hover > div{
 .icon-carboy:before {
     content: "\e600";
 }
-
+.input-inline,.input-block{
+  font-size: 13px;
+}
