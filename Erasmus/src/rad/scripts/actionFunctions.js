@@ -103,6 +103,10 @@ angular
                         Name:'radmin.pi-detail',
                         Label: 'Radiation Administration',
                         Dashboard: true
+                    },
+                    {
+                        Name:'pi-rad-management',
+                        Label: 'My Radiation Laboratory'
                     }
                 ]
 
@@ -857,7 +861,6 @@ angular
                             pi.loadPurchaseOrders();
                             pi.loadCarboys();
                             pi.loadSolidsContainers();
-
                             return pi;
                         });
                 }else{
@@ -870,6 +873,41 @@ angular
                     defer.resolve(pi);
                     return defer.promise;
                 }
+
+            }
+
+            af.getRadPIById = function(id)
+            {       
+                    console.log(id);
+                    var segment = "getRadPIById&id="+id;
+                    return genericAPIFactory.read(segment)
+                        .then( function( returnedPromise) {
+                            var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            console.log(pi);
+                            if(pi.Authorizations.length){
+                                store.store(pi.Authorizations);
+                            }
+                            if(pi.Authorizations.length){
+                                store.store(pi.Authorizations);
+                            }
+                            if(pi.ActiveParcels.length){
+                                store.store(pi.ActiveParcels);
+                            }
+                            if(pi.PurchaseOrders.length){
+                                store.store(pi.PurchaseOrders);
+                            }
+                            if(pi.CarboyUseCycles.length){
+                                store.store(pi.CarboyUseCycles);
+                            }
+                            if(pi.SolidsContainers.length){
+                                store.store(pi.SolidsContainers);
+                            }
+                            if(pi.Pickups.length){
+                                store.store(pi.Pickups);
+                            }
+
+                            return pi;
+                        });
 
             }
 
@@ -1012,6 +1050,7 @@ angular
             }
 
             af.getDate = function(dateString){
+                if(d)
                 console.log(dateString)
                 console.log(Date.parse(dateString))
                 var seconds = Date.parse(dateString);
@@ -1021,6 +1060,15 @@ angular
                 t.setTime(seconds);
                 console.log(t);
                 return t;
+            }
+
+            af.getIsExpired = function(dateString){
+                console.log(dateString)
+                console.log(Date.parse(dateString))
+                var seconds = Date.parse(dateString);
+                console.log(new Date().getTime())
+                console.log(seconds < new Date().getTime())
+                return seconds < new Date().getTime();
             }
 
             af.saveParcel = function( pi, copy, parcel )
@@ -1095,6 +1143,7 @@ angular
                 cycle.Room_id = room.Key_id;
                 cycle.Lab_date = convenienceMethods.setMysqlTime(new Date());
                 cycle.Status = 'In Use';
+                cycle.Is_active = true;
 
                 af.clearError();
                 return this.save( cycle )

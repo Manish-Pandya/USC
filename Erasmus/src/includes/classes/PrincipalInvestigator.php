@@ -69,14 +69,29 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName" => "principal_investigator_id"
 	);
 
-	public static $PURCHACEORDER_RELATIONSHIP = array(
+	public static $PURCHACEORDERS_RELATIONSHIP = array(
 		"className" => "PurchaseOrder",
 		"tableName" => "purchase_order",
 		"keyName"   => "key_id",
 		"foreignKeyName" => "principal_investigator_id"
 	);
 
-/** Base User object that this PI represents */
+	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+		"className" => "CarboyUseCycle",
+		"tableName" => "carboy_use_cycle",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "principal_investigator_id"
+	);
+
+	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
+			"className" => "SolidsContainer",
+			"tableName" => "solids_container",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+
+
+	/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
 
@@ -101,6 +116,14 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of PurchaseOrder entities **/
 	private $purchaseOrders;
 
+	/** Array of SolidsContainer entities **/
+	private $solidsContainers;
+
+	/** Array of CarboyUseCycle entities **/
+	private $carboyUseCycles;
+
+	/** Array of Carboy entities **/
+	private $activeCarboys;
 
 	public function __construct(){
 
@@ -112,6 +135,10 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
 		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -199,12 +226,37 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
 	public function getPurchaseOrders(){
-
+		if($this->purchaseOrders === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->purchaseOrders = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$PURCHACEORDERS_RELATIONSHIP)
+			);
+		}
+		return $this->purchaseOrders;
 	}
+	public function setPurchaseOrders($purchaseOrders){$this->purchaseOrders = $purchaseOrders;}
 
-	public function setPurchaseOrders($purchaseOrders){
-		$this->purchaseOrders = $purchaseOrders;
+	public function getCarboyUseCycles(){
+		if($this->carboyUseCycles === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->carboyUseCycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CABOY_USE_CYCLES_RELATIONSHIP));
+		}
+		return $this->carboyUseCycles;
 	}
+	public function setCarboyUseCycles($carboyUseCycles){$this->carboyUseCycles = $carboyUseCycles;}
+
+	public function getSolidsContainers(){
+		if($this->solidsContainers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->solidsContainers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SOLIDS_CONTAINERS_RELATIONSHIP));
+		}
+		return $this->solidsContainers;
+	}
+	public function setSolidsContainers($solidsContainers){$this->solidsContainers = $solidsContainers;}
 }
 
 ?>

@@ -59,8 +59,8 @@ class SolidsContainer extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
-		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentWasteBags");
+		$entityMaps[] = new EntityMap("eager", "getWasteBags");
+		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -115,7 +115,7 @@ class SolidsContainer extends GenericCrud {
 		}
 		return $this->waste_bags;
 	}
-	public function setWAsteBags($newBags) {
+	public function setWasteBags($newBags) {
 		$this->waste_bags = $newBags;
 	}
 
@@ -126,8 +126,9 @@ class SolidsContainer extends GenericCrud {
 		// only select bags that have not been entered in drum
 		$currentBags = array();
 		foreach($wasteBags as $bag) {
+			print_r($bag);
 			$drumId = $bag->getDrum_id();
-			if($drumId !== NULL) {
+			if($drumId == NULL) {
 				$currentBags[] = $bag;
 			}
 		}

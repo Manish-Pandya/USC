@@ -6,7 +6,7 @@
  * If an error should occur, Action functions should return either NULL or
  * an instance of ActionError. (ActionError reccomended) Returning an ActionError allows the public function
  * to provide additional information about the error.
- * 
+ *
  * NOTE: Anything not in the base module should go in a sepparate class extending this,
  * 		for example Rad_ActionManager.
  */
@@ -1015,6 +1015,10 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("eager","getUser");
 			$entityMaps[] = new EntityMap("lazy","getInspections");
 			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+			$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
+			$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
 
 			foreach($pis as $pi){
 				$pi->setEntityMaps($entityMaps);
@@ -1036,6 +1040,10 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+		$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
+		$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
 
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);
@@ -1083,6 +1091,10 @@ class ActionManager {
 			$piMaps[] = new EntityMap("eager","getDepartments");
 			$piMaps[] = new EntityMap("eager","getUser");
 			$piMaps[] = new EntityMap("lazy","getInspections");
+			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+			$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
+			$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
 			$LOG->debug($room->getPrincipalInvestigators());
 
 			foreach($room->getPrincipalInvestigators() as $pi){
@@ -2969,7 +2981,7 @@ class ActionManager {
 
 		// get class name of the DTO that will contain the resulting relationships
 		$className = $relationshipFactory->getClassName($class1, $class2);
-		
+
 		if( $tableName instanceof ActionError ) {
 			return $tableName;
 		}
