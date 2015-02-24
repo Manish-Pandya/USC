@@ -84,10 +84,10 @@ class PrincipalInvestigator extends GenericCrud {
 	);
 
 	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
-			"className" => "SolidsContainer",
-			"tableName" => "solids_container",
-			"keyName"   => "key_id",
-			"foreignKeyName" => "principal_investigator_id"
+		"className" => "SolidsContainer",
+		"tableName" => "solids_container",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "principal_investigator_id"
 	);
 
 
