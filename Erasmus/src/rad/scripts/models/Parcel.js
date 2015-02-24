@@ -25,7 +25,6 @@ Parcel.prototype = {
 		queryParam:   ''	
 	},
 
-    // TODO eager accessors, relationships, method names
 	loadIsotope: function() {
         if(!this.Isotope){
             dataLoader.loadChildObject(this, 'Isotope', 'Isotope', this.Isotope_id);
@@ -36,7 +35,14 @@ Parcel.prototype = {
         if(!this.PurchaseOrder){
             dataLoader.loadChildObject(this, 'PurchaseOrder', 'PurchaseOrder', this.Purchase_order_id);
         }
-    }
+    },
+
+    loadPrincipalInvestigator: function() {
+        if(!this.PrincipalInvestigator) {
+            dataLoader.loadChildObject(this, 'Principal_investigator',
+                'PrincipalInvestigator', this.Principal_investigator_id);
+        }
+    },
 }
 
 // inherit from GenericModel
