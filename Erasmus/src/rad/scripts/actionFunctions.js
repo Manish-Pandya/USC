@@ -1050,7 +1050,6 @@ angular
             }
 
             af.getDate = function(dateString){
-                if(d)
                 console.log(dateString)
                 console.log(Date.parse(dateString))
                 var seconds = Date.parse(dateString);
