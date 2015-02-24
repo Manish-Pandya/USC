@@ -251,8 +251,17 @@ class PrincipalInvestigator extends GenericCrud {
 
 	public function getSolidsContainers(){
 		if($this->solidsContainers === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->solidsContainers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SOLIDS_CONTAINERS_RELATIONSHIP));
+
+			// get rooms this PI has
+			$rooms = $this->getRooms();
+				
+			// get containers in each room
+			$containers = array();
+			foreach($rooms as $room) {
+				$containers = array_merge($room->getSolidsContainers(), $containers);
+			}
+			
+			$this->solidsContainers = $containers;
 		}
 		return $this->solidsContainers;
 	}
