@@ -3,8 +3,21 @@
 //constructor
 var Room = function() {};
 Room.prototype = {
-    //className: "Room"
 
+    // many-to-many relationship for rooms-pi
+    PIRelationship: {
+        name: 'PrincipalInvestigatorRoomRelation',
+        className: 'PrincipalInvestigator',
+        keyReference: 'Room_id',
+        otherKey:     'Principal_investigator_id',
+        paramValue: 'Key_id'
+    },
+
+    loadPrincipalInvestigators: function() {
+        if(!this.PrincipalInvestigators) {
+            dataLoader.loadManyToManyRelationship(this, 'PrincipalInvestigators', this.PIRelationship);
+        }
+    }
 
 }
 

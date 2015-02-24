@@ -5,7 +5,7 @@
 var Pickup = function() {};
 Pickup.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+    // Future eager accessors or loader functions go here.
 
 }
 

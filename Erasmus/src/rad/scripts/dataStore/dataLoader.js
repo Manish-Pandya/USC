@@ -75,7 +75,7 @@ dataLoader.loadManyToManyRelationship = function( parent, property, relationship
                     relationship.name, relationship.keyReference, parent[relationship.paramValue]);
 
                 var className = relationship.className;
-                var idProperty = className + '_id'; // property containing key id of desired item.
+                var idProperty = relationship.otherKey; // property containing key id of desired item.
 
 
                 // *********************************************

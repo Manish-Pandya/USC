@@ -17,6 +17,9 @@ angular.module('00RsmsAngularOrmApp')
 .controller('TestCtrl', function ($scope, actionFunctionsFactory, dataSwitchFactory) {
     // allow calling action functions in the scope
     $scope.af = actionFunctionsFactory;
+    $scope.callLoader = function() {
+        $scope.testData[$scope.loaderName]();
+    }
 
     // just checking getAlls work.
     /*
@@ -38,20 +41,22 @@ angular.module('00RsmsAngularOrmApp')
 
     //one to many, with methodString
     /*
-    actionFunctionsFactory.getHazardById(1).then(function(object) {
-        console.log(object);
+    actionFunctionsFactory.getParcelUseById(1).then(function(object) {
         $scope.testData = object;
-        //object.loadSubHazards();
+        console.log(object);
+        setTimeout(function() {
+            console.log(object);
+        }, 0);
+        //object.loadParcel();
     });
     //*/
 
     //many to many
-    /*
     actionFunctionsFactory.getPrincipalInvestigatorById(1).then(function(object) {
         console.log('hooray!');
         console.log(object);
         $scope.testData = object;
-        object.loadRooms();
+        //object.loadRooms();
     });
     //*/
 

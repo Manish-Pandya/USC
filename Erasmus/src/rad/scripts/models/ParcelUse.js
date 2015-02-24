@@ -5,8 +5,11 @@
 var ParcelUse = function() {};
 ParcelUse.prototype = {
 
-    // TODO eager accessors, relationships, method names.
-
+    loadParcel: function() {
+        if(!this.Parcel) {
+            dataLoader.loadChildObject(this, 'Parcel', 'Parcel', this.Parcel_id);
+        }
+    }
 }
 
 // inherit from GenericModel

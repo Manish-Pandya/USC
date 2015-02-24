@@ -5,7 +5,12 @@
 var PurchaseOrder = function() {};
 PurchaseOrder.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+    loadPrincipalInvestigator: function() {
+        if(!this.Principal_investigator) {
+            dataLoader.loadChildObject(this, 'Principal_investigator',
+                'PrincipalInvestigator', this.Principal_investigator_id);
+        }
+    }
 
 }
 

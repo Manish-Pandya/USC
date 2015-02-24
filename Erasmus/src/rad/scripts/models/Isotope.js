@@ -4,7 +4,7 @@
 var Isotope = function() {};
 Isotope.prototype = {
 
-    // Really? Nothing to go here? Surely I'm forgetting something, this is too easy...
+    // no loaders or eager accesors to add currently
 
 }
 
