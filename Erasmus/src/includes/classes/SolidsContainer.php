@@ -111,7 +111,7 @@ class SolidsContainer extends GenericCrud {
 	public function getWasteBags() {
 		if($this->waste_bags === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->waste_bags = $thisDao->getById(DataRelationship::fromArray(self::$WASTEBAG_RELATIONSHIP));
+			$this->waste_bags = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WASTEBAG_RELATIONSHIP));
 		}
 		return $this->waste_bags;
 	}
@@ -122,13 +122,15 @@ class SolidsContainer extends GenericCrud {
 	public function getCurrentWasteBags() {
 		// get all waste bags
 		$wasteBags = $this->getWasteBags();
-
+		$LOG = Logger::getLogger( __CLASS__ );
+		$LOG->debug('should see waste bags');
+		$LOG->debug($wasteBags);
 		// only select bags that have not been entered in drum
 		$currentBags = array();
 		foreach($wasteBags as $bag) {
-			print_r($bag);
-			$drumId = $bag->getDrum_id();
-			if($drumId == NULL) {
+
+			$removed = $bag->getDate_removed();
+			if($removed == NULL) {
 				$currentBags[] = $bag;
 			}
 		}
