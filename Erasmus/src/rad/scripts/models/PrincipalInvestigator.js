@@ -43,6 +43,7 @@ PrincipalInvestigator.prototype = {
 		name: 	  'PrincipalInvestigatorRoomRelation',
         className: 'Room',
 		keyReference: 'Principal_investigator_id',
+        otherKey:     'Room_id',
 		paramValue:  'Key_id'	
 	},
 
