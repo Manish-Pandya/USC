@@ -57,9 +57,6 @@ angular
                     return deferred.promise;
             }
 
-            //TODO generic getObject method
-
-
             dataSwitch.getAllObjects = function( className ) {
 
                 // should always return a promise
@@ -95,5 +92,41 @@ angular
                     return deferred.promise;
                 }
             }
+
+            dataSwitch.getObjectById = function(className, id) {
+
+                // should always return a promise
+                var deferred = $q.defer();
+
+                if( dataSwitch.promises[className] ) {
+                    return dataSwitch.promises[className].promise;
+                }
+                else {
+                    dataSwitch.promises[className] = deferred;
+                    //check cache first
+                    if( dataStoreManager.checkCollection(className) ) {
+                        deferred.resolve( dataStoreManager.getById(className, id) );
+                    }
+                    else {
+                        var action = genericAPIFactory.fetchActionString('getById', className);
+
+                        action += '&id=' + id;
+
+                        // get data
+                        genericAPIFactory.read(action).then(function(returnedPromise) {
+                            var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            deferred.resolve(instatedObjects);
+
+                            // TODO should we cache individually-loaded things?
+                            console.log('NOTE: Recieved object of flavor ' + className +
+                                    ' and id ' + id + ', but not caching it');
+                        });
+
+                    }
+
+                }
+                return deferred.promise;
+            }
+
             return dataSwitch;
         });

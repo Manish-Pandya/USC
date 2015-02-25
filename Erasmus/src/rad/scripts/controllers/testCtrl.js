@@ -41,22 +41,21 @@ angular.module('00RsmsAngularOrmApp')
 
     //one to many, with methodString
     /*
-    actionFunctionsFactory.getParcelUseById(1).then(function(object) {
+    actionFunctionsFactory.getHazardById(1).then(function(object) {
         $scope.testData = object;
         console.log(object);
         setTimeout(function() {
             console.log(object);
         }, 0);
-        //object.loadParcel();
+        //object.loadSubHazards();
     });
     //*/
 
     //many to many
-    actionFunctionsFactory.getPrincipalInvestigatorById(1).then(function(object) {
+    actionFunctionsFactory.getRoomById(1).then(function(object) {
         console.log('hooray!');
         console.log(object);
         $scope.testData = object;
-        //object.loadRooms();
     });
     //*/
 

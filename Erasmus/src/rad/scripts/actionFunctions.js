@@ -1008,6 +1008,11 @@ angular
                 return dataSwitchFactory.getAllObjects('Room');
             }
 
+            af.getRoomById = function(id) 
+            {
+                return dataSwitchFactory.getObjectById("Room", id);
+            } 
+
             af.test = function(user)
             {
                     dataStoreManager.getById("User", user.Key_id).setName('updated');
@@ -1061,7 +1066,6 @@ angular
             }
 
             af.getDate = function(dateString){
-                if(d)
                 console.log(dateString)
                 console.log(Date.parse(dateString))
                 var seconds = Date.parse(dateString);
