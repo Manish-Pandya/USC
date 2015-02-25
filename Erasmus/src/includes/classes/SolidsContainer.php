@@ -122,15 +122,11 @@ class SolidsContainer extends GenericCrud {
 	public function getCurrentWasteBags() {
 		// get all waste bags
 		$wasteBags = $this->getWasteBags();
-		$LOG = Logger::getLogger( __CLASS__ );
-		$LOG->debug('should see waste bags');
-		$LOG->debug($wasteBags);
 		// only select bags that have not been entered in drum
 		$currentBags = array();
 		foreach($wasteBags as $bag) {
-
 			$removed = $bag->getDate_removed();
-			if($removed == NULL) {
+			if($removed == NULL || $removed == '0000-00-00 00:00:00') {
 				$currentBags[] = $bag;
 			}
 		}
