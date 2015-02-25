@@ -230,6 +230,17 @@ div.rsmsCenterIconContainer a:hover {
   -ms-transform: scale(1.06);
   text-decoration: none !Important;
 }
+div.rsmsCenterIconContainer a i{
+  width: 230px;
+  height: 230px;
+  color: white;
+  display: block;
+  margin: 20px auto 0;
+  font-size: 220px;
+  line-height: 1;
+  text-align: center;
+  overflow: hidden;
+}
 
 @media (max-width: 1200px) {
   /* line 109, ../sass/style.scss */
@@ -2781,7 +2792,7 @@ table.roomList h2 {
 a.btn i {
 color:white !important;
 font-size: 17px !important;
-margin: 1px 2px;
+margin: 1px 2px !important;
 }
 
 a.btn.left i{
@@ -2982,8 +2993,12 @@ table.large tr th{
     display:block;
     clear: both;
 }
+.card.super{
+  width:100%;
+  margin-right: 0;
+}
 .card.full{
-  width:98%;
+  width:100%;
   margin-right: 0;
 }
 .card.two-thirds{
@@ -3129,7 +3144,7 @@ table.large tr th{
   width: 100%;
   left: 0;
 }
-.banner.radmin{
+.banner.radmin, .banner.radiation{
   background: url('../img/radiation-large-icon.png') rgba(252, 255, 0, 0.34)
 }
 .banner{
@@ -3167,6 +3182,10 @@ div.fake-table .table-row > div{
 }
 div.fake-table.bordered .table-row > div, div.fake-table .table-header > h3{
     border-top: 1px solid #dddddd;
+}
+div.fake-table.striped .table-row:nth-of-type(odd){
+  background:transparent;
+  border-top:none;
 }
 div.fake-table .table-row:hover{
   background: rgba(221, 221, 221, 1) !important;
