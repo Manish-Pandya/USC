@@ -211,12 +211,17 @@ class Rad_ActionManager extends ActionManager {
 	// are used in RadiationModule, so this sepparate method exists.
 	public function getRadPIById( $id = null ){
 		if($id == null)$id = $this->getValueFromRequest( "id", $id );
+		if($rooms == null)$rooms = $this->getValueFromRequest( "rooms", $rooms );
 
 		$dao = $this->getDao(new PrincipalInvestigator());
 		$pi = $dao->getById($id);
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-		$entityMaps[] = new EntityMap("lazy","getRooms");
+		if($rooms == null){
+			$entityMaps[] = new EntityMap("lazy","getRooms");
+		}else{
+			$entityMaps[] = new EntityMap("eager","getRooms");
+		}
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
