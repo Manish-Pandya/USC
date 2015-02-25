@@ -114,7 +114,11 @@ angular
                     },
                     {
                         Name:'use-log',
-                        Label: 'My Radiation Laboratory'
+                        Label: 'Use Log'
+                    },
+                    {
+                        Name:'parcel-use-log',
+                        Label: 'Package Use Log'
                     }
                 ]
 
@@ -885,13 +889,13 @@ angular
             }
 
             af.getRadPIById = function(id)
-            {       
-                    console.log(id);
-                    var segment = "getRadPIById&id="+id;
+            {   
+                //no PI has been cached
+                if(!store.checkCollection( 'PrincipalInvestigator' )){
+                    var segment = "getRadPIById&id="+id+"&rooms=true";
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            console.log(pi);
                             if(pi.Authorizations && pi.Authorizations.length){
                                 var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
                                 store.store(auths);
@@ -918,14 +922,92 @@ angular
                             if(pi.Pickups && pi.Pickups.length){
                                 var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
                                 store.store(containers);
-                                pi.Pickups = store.pickups('Pickup');   
+                                pi.Pickups = store.get('Pickup');   
                             }
-
+                            if(pi.Rooms && pi.Rooms.length){
+                                var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
+                                store.store(rooms);
+                                pi.Rooms = store.get('Room');   
+                            }
+                            store.store(pi);
                             return pi;
                         });
 
+                    }
+                    //PI has been cached
+                    else{
+                        var pi = store.getById('PrincipalInvestigator',id);
+                        if(pi.Authorizations && pi.Authorizations.length){
+                            var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
+                            store.store(auths);
+                            pi.Authorizations = store.get('Authorization');
+                        }
+                        if(pi.ActiveParcels && pi.ActiveParcels.length){
+                            var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
+                            store.store(parcels);
+                            pi.ActiveParcels = store.get('Parcel');
+                        }
+                        if(pi.PurchaseOrders && pi.PurchaseOrders.length){
+                            var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
+                            store.store(orders);
+                            pi.PurchaseOrders = store.get('PurchaseOrder');                            }
+                        if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
+                            var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
+                            store.store(cycles);
+                            pi.CarboyUseCycles = store.get('CarboyUseCycle');    
+                        }   
+                        if(pi.SolidsContainers && pi.SolidsContainers.length){
+                            var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
+                            store.store(containers);
+                            pi.SolidsContainers = store.get('SolidsContainer');                             }
+                        if(pi.Pickups && pi.Pickups.length){
+                            var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
+                            store.store(containers);
+                            pi.Pickups = store.get('Pickup');   
+                        }
+                        if(pi.Rooms && pi.Rooms.length){
+                            var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
+                            store.store(rooms);
+                            pi.Rooms = store.get('Room');   
+                        }
+                        //return a promise so return type is consistent
+                        var defer = $q.defer();
+                        defer.resolve(pi);
+                        return defer.promise;
+                    }
+
             }
 
+            af.getParcelUses = function(parcel)
+            {
+                if(!store.checkCollection( 'ParcelUseAmounts' )){
+                    var segment = "getParcelUsesByParcelId&id="+parcel.Key_id;
+                    return genericAPIFactory.read(segment)
+                        .then(
+                            function(returnedUses){
+                                //console.log(returnedUses.data);
+                                var uses = modelInflatorFactory.instateAllObjectsFromJson( returnedUses.data );
+                                store.store(uses);
+                                var useAmounts = [];
+                                var i = uses.length;
+                                while(i--){
+                                    var use = uses[i];
+                                    var j = use.ParcelUseAmounts.length;
+                                    while(j--)useAmounts = useAmounts.concat(use.ParcelUseAmounts);
+                                }
+                                console.log(useAmounts);
+                                var amounts = modelInflatorFactory.instateAllObjectsFromJson(useAmounts);
+                                store.store(amounts);
+                                parcel.loadUses();
+                            }
+                        )
+                }else{
+                    parcel.loadUses();
+                    var defer = $q.defer();
+                    defer.resolve(parcel);
+                    return defer.promise;
+                }
+            }
 
             /********************************************************************
             **
@@ -1118,8 +1200,8 @@ angular
                             if(container){
                                 angular.extend(container, copy)
                             }else{
+                                returnedContainer.loadRoom();
                                 dataStoreManager.addOnSave(returnedContainer);
-                                pi.SolidsContainers.push(returnedContainer);
                             }
                         },
                         af.setError('The Solids Container could not be saved')
