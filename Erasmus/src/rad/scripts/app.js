@@ -45,17 +45,22 @@ angular
         templateUrl: "views/pi/pi-rad-home.html",
         controller: "PiRadHomeCtrl"
       })     
-      .state('pi-rad-management.waste-log', {
-        url:'/my-lab:pi/waste-log',
-        templateUrl: "views/pi/waste-log.html",
-        controller: "WasteLogCtrl"
+      .state('use-log', {
+        url:'/my-lab:pi/use-log',
+        templateUrl: "views/pi/use-log.html",
+        controller: "UseLogCtrl"
       })
-      .state('pi-rad-management.solids', {
+      .state('solids', {
         url:'/my-lab:pi/waste-recepticals',
         templateUrl: "views/pi/recepticals.html",
-        controller: "RecipticalCtrl"
+        controller: "RecepticalCtrl"
       })
-      .state('pi-rad-management.pickups', {
+      .state('carboys', {
+        url:'/my-lab:pi/carboys',
+        templateUrl: "views/pi/carboys.html",
+        controller: "PiCarboyCtrl"
+      })
+      .state('pickups', {
         url:'/my-lab:pi/pickups',
         templateUrl: "views/pi/pickups.html",
         controller: "PickupCtrl"

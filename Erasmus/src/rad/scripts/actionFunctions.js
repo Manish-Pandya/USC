@@ -111,6 +111,10 @@ angular
                     {
                         Name:'solids',
                         Label: 'My Radiation Laboratory'
+                    },
+                    {
+                        Name:'use-log',
+                        Label: 'My Radiation Laboratory'
                     }
                 ]
 
@@ -1185,7 +1189,7 @@ angular
             af.addWasteBagToSolidsContainer = function(container)
             {
                 var bag = {
-                    Date_removed: convenienceMethods.setMysqlTime(new Date()),
+                    Date_added: convenienceMethods.setMysqlTime(new Date()),
                     Is_active: true,
                     Class: "WasteBag",
                     Container_id: container.Key_id
@@ -1206,8 +1210,7 @@ angular
 
             af.removeWasteBagFromContainer = function(container, bag){
                 console.log(convenienceMethods.setMysqlTime(new Date()))
-                //bag.Date_removed = convenienceMethods.setMysqlTime(new Date());
-                bag.Isotope_id = 3;
+                bag.Date_removed = convenienceMethods.setMysqlTime(new Date());
                 console.log(bag);
                 af.clearError();
                 return this.save( bag )
