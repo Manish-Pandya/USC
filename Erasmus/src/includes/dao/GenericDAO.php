@@ -216,11 +216,8 @@ class GenericDAO {
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ($object->getKey_id() != null) {
-			$this->LOG->debug($object);
 
 		    $_SESSION["DEBUG"] = "Calling db update...";
-		    $this->LOG->debug("Calling db update...");
-			$this->LOG->debug($object);
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
 			$stmt->execute();
