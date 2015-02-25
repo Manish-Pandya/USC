@@ -20,10 +20,12 @@ dataStoreManager.store = function( object, trusted, flavor )
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
                 dataStoreManager.addToCollection( object.Class, trusted );
-                dataStore[object.Class] = object;
+                dataStore[object.Class] = [object];
+                dataStoreManager.mapCache(object.Class);
             }else{
                 dataStoreManager.addToCollection( flavor );
-                dataStore[flavor] = object;
+                dataStore[flavor] = [object];
+                dataStoreManager.mapCache(object.Class);
             }
         }else{
             //we have an array of objects
@@ -76,7 +78,8 @@ dataStoreManager.get = function( objectFlavor )
 }
 
 dataStoreManager.getById = function( objectFlavor, key_id )
-{
+{   
+    console.log(dataStore[objectFlavor+'Map']);
     // get index of this room in the cache, no looping anymore!
     var location = dataStore[objectFlavor+'Map'][key_id];
     return dataStore[objectFlavor][location];
