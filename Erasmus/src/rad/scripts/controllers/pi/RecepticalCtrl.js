@@ -37,7 +37,7 @@ angular.module('00RsmsAngularOrmApp')
 	    }
 
   })
-  .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+  .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = actionFunctionsFactory;
 		$scope.af = af;
 
@@ -53,6 +53,17 @@ angular.module('00RsmsAngularOrmApp')
 
 		$scope.selectRoom = function(){
 			$scope.modalData.SolidsContainerCopy.Room_id = $scope.modalData.SolidsContainerCopy.Room.Key_id;
+		}
+
+		$scope.saveSolidsContainer = function(pi, copy, container){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.saveSolidsContainer( pi, copy, container )
+		}
+
+		$scope.close = function(){
+           $modalInstance.dismiss();
+           af.deleteModalData();
 		}
 
 	});
