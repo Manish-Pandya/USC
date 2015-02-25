@@ -108,7 +108,7 @@ class WasteBag extends GenericCrud {
 		return $this->drum;
 	}
 	public function setDrum($newDrum) {
-		$this->drum = newDrum;
+		$this->drum = $newDrum;
 	}
 
 	public function getDrum_id() { return $this->drum_id; }
