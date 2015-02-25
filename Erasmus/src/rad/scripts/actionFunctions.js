@@ -107,6 +107,10 @@ angular
                     {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory'
+                    },
+                    {
+                        Name:'solids',
+                        Label: 'My Radiation Laboratory'
                     }
                 ]
 
@@ -884,26 +888,33 @@ angular
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             console.log(pi);
-                            if(pi.Authorizations.length){
-                                store.store(pi.Authorizations);
+                            if(pi.Authorizations && pi.Authorizations.length){
+                                var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
+                                store.store(auths);
+                                pi.Authorizations = store.get('Authorization');
                             }
-                            if(pi.Authorizations.length){
-                                store.store(pi.Authorizations);
+                            if(pi.ActiveParcels && pi.ActiveParcels.length){
+                                var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
+                                store.store(parcels);
+                                pi.ActiveParcels = store.get('Parcel');
                             }
-                            if(pi.ActiveParcels.length){
-                                store.store(pi.ActiveParcels);
-                            }
-                            if(pi.PurchaseOrders.length){
-                                store.store(pi.PurchaseOrders);
-                            }
-                            if(pi.CarboyUseCycles.length){
-                                store.store(pi.CarboyUseCycles);
-                            }
-                            if(pi.SolidsContainers.length){
-                                store.store(pi.SolidsContainers);
-                            }
-                            if(pi.Pickups.length){
-                                store.store(pi.Pickups);
+                            if(pi.PurchaseOrders && pi.PurchaseOrders.length){
+                                var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
+                                store.store(orders);
+                                pi.PurchaseOrders = store.get('PurchaseOrder');                            }
+                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
+                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
+                                store.store(cycles);
+                                pi.CarboyUseCycles = store.get('CarboyUseCycle');    
+                            }   
+                            if(pi.SolidsContainers && pi.SolidsContainers.length){
+                                var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
+                                store.store(containers);
+                                pi.SolidsContainers = store.get('SolidsContainer');                             }
+                            if(pi.Pickups && pi.Pickups.length){
+                                var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
+                                store.store(containers);
+                                pi.Pickups = store.pickups('Pickup');   
                             }
 
                             return pi;
@@ -1167,6 +1178,44 @@ angular
                 $rootScope.error = null;
             }
 
+            af.addWasteBagToSolidsContainer = function(container)
+            {
+                var bag = {
+                    Date_removed: convenienceMethods.setMysqlTime(new Date()),
+                    Is_active: true,
+                    Class: "WasteBag",
+                    Container_id: container.Key_id
+                };
+
+                af.clearError();
+                return this.save( bag )
+                    .then(
+                        function(returnedBag){
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                            console.log(returnedBag);
+                            angular.extend(bag, returnedBag);
+                            container.CurrentWasteBags.push(returnedBag);
+                        },
+                        af.setError('The Waste Bage could not be added to the Receptical.')
+                    )
+            }
+
+            af.removeWasteBagFromContainer = function(container, bag){
+                console.log(convenienceMethods.setMysqlTime(new Date()))
+                //bag.Date_removed = convenienceMethods.setMysqlTime(new Date());
+                bag.Isotope_id = 3;
+                console.log(bag);
+                af.clearError();
+                return this.save( bag )
+                    .then(
+                        function(returnedBag){
+                            console.log(returnedBag);
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                            angular.extend(bag, returnedBag)
+                        },
+                        af.setError('The Carboy could not be removed from the lab.')
+                    )
+            }
 
         	return af;
 		});
