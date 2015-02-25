@@ -28,6 +28,14 @@ class Carboy extends GenericCrud {
 		"created_user_id"				=> "integer"
 	);
 
+	public function __construct() {
+
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$this->setEntityMaps($entityMaps);
+
+	}
 	//access information
 
 	/** timestamp with the date this carboy was made */
