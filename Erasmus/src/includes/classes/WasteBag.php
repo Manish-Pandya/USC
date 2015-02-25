@@ -8,21 +8,16 @@ class WasteBag extends GenericCrud {
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"container_id" => "integer",
-		"isotope_id"   => "integer",
 		"pickup_id"	   => "integer",
 		"drum_id"	   => "integer",
 		"curie_level"  => "float",
 		"date_added"   => "timestamp",
-		"date_removed"	=> "timestamp"
+		"date_removed" => "timestamp"
 	);
 
 	/** container this bag went into */
 	private $container;
 	private $container_id;
-
-	/** isotope this bag contains */
-	private $isotope;
-	private $isotope_id;
 
 	/** curie level of the isotope contained in this bag */
 	private $curie_level;
@@ -44,7 +39,6 @@ class WasteBag extends GenericCrud {
 	public function __construct() {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getContainer");
-		$entityMaps[] = new EntityMap("eager", "getIsotope");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
 		$this->setEntityMaps($entityMaps);
@@ -75,24 +69,6 @@ class WasteBag extends GenericCrud {
 	}
 	public function setContainer_id($newId) {
 		$this->container_id = $newId;
-	}
-
-	public function getIsotope() {
-		if($this->isotope === null && $this->hasPrimaryKeyValue()) {
-			$isotopeDao = new GenericDAO(new Isotope());
-			$this->isotope = $isotopeDao->getById( $this->getIsotope_id() );
-		}
-		return $this->isotope;
-	}
-	public function setIsotope($newIso) {
-		$this->isotope = $newIso;
-	}
-
-	public function getIsotope_id() {
-		return $this->isotope_id;
-	}
-	public function setIsotope_id($newId) {
-		$this->isotope_id = $newId;
 	}
 
 	public function getCurie_level() {
