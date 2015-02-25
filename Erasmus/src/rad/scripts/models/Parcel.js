@@ -25,6 +25,16 @@ Parcel.prototype = {
 		queryParam:   ''	
 	},
 
+    ParcelUsesRelationship: {
+
+        className:    'ParcelUse',
+        keyReference:  'Parcel_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
 	loadIsotope: function() {
         if(!this.Isotope){
             dataLoader.loadChildObject(this, 'Isotope', 'Isotope', this.Isotope_id);
@@ -39,8 +49,13 @@ Parcel.prototype = {
 
     loadPrincipalInvestigator: function() {
         if(!this.PrincipalInvestigator) {
-            dataLoader.loadChildObject(this, 'Principal_investigator',
-                'PrincipalInvestigator', this.Principal_investigator_id);
+            dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
+        }
+    },
+
+    loadUses: function() {
+        if(!this.Uses) {
+            dataLoader.loadOneToManyRelationship( this, 'ParcelUses', this.ParcelUsesRelationship);
         }
     },
 }
