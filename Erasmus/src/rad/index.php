@@ -84,7 +84,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
-
+<script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
 
 
 
