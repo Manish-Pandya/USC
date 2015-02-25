@@ -50,6 +50,11 @@ angular
         templateUrl: "views/pi/use-log.html",
         controller: "UseLogCtrl"
       })
+      .state('parcel-use-log', {
+        url:'/my-lab:pi/use-log:parcel',
+        templateUrl: "views/pi/parcel-use-log.html",
+        controller: "ParcelUseLogCtrl"
+      })
       .state('solids', {
         url:'/my-lab:pi/waste-recepticals',
         templateUrl: "views/pi/recepticals.html",
