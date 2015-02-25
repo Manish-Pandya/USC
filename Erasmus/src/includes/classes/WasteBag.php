@@ -12,7 +12,15 @@ class WasteBag extends GenericCrud {
 		"drum_id"	   => "integer",
 		"curie_level"  => "float",
 		"date_added"   => "timestamp",
-		"date_removed" => "timestamp"
+		"date_removed" => "timestamp",
+
+		//GenericCrud
+		"key_id"			=> "integer",
+		"date_created"		=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"			=> "boolean",
+		"last_modified_user_id"			=> "integer",
+		"created_user_id"	=> "integer"
 	);
 
 	/** container this bag went into */
