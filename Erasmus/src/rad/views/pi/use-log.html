@@ -1,0 +1,46 @@
+<div class="neg-marg" ng-if="pi">
+	<div class="card full parcels">
+		<h3 class="card-header " ng-if="pi.ActiveParcels"><i class="icon-box"></i>You have <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span></h3>
+		<h3 class="card-header parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>You have no Packages</h3>
+		<div class="card-content">
+			<div class="fake-table striped bordered">
+				<div class="table-header">
+					<h3>Use Log</h3>
+					<h3>R.S. Number</h3>
+					<h3>Isotope</h3>
+					<h3>Arrival Date</h3>
+					<h3>Orginal Quantity</h3>
+					<h3>Remaining Quantity</h3>
+				</div>
+				<div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
+					<div>
+						<a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/parcel-modal', parcel)"><i class="icon-carboy"></i></a>
+						<a ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove-2"></i></a>
+					</div>
+
+					<div>
+						<a s-ref="" class="btn btn-info"></a>
+						{{parcel.Rs_number}}
+					</div>
+
+					<div>
+						{{parcel.Isotope.Name}}
+					</div>
+
+					<div>
+						{{parcel.Arrival_date | dateToISO}}
+					</div>
+
+					<div>
+						{{parcel.Quantity}} mCi
+					</div>
+
+					<div>
+						{{parcel.Remainder}} mCi
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
