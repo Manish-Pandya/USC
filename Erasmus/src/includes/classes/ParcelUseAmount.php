@@ -19,6 +19,7 @@ include_once 'GenericCrud.php';
         "curie_level"          		=> "float",
         "waste_type_id"         	=> "integer",
         "carboy_id"          		=> "integer",
+    	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
 
         //GenericCrud
@@ -34,7 +35,7 @@ include_once 'GenericCrud.php';
 
     /** Float amount of radiation in curies */
     private $curie_level;
-    
+
     /** Reference to the waste type this use amount consists of */
     private $waste_type;
     private $waste_type_id;
@@ -42,12 +43,16 @@ include_once 'GenericCrud.php';
     /** Reference to the carboy containing this amount. Null if not liquid waste. */
     private $carboy;
     private $carboy_id;
-    
+
+    /** Reference to the WasteBag containing this amount.  Null if not solid wast */
+    private $waste_bag;
+    private $waste_bag_id;
+
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
-    
+
     public function __construct() {
-    	
+
     	// Define which subentities to load
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getCarboy");
@@ -78,7 +83,7 @@ include_once 'GenericCrud.php';
     public function setWaste_type($newType) {
     	$this->waste_type = $newType;
     }
-    
+
     public function getWaste_type_id() { return $this->waste_type_id; }
     public function setWaste_type_id($newValue) { $this->waste_type_id = $newValue; }
 
@@ -93,12 +98,15 @@ include_once 'GenericCrud.php';
     public function setCarboy($newCarboy) {
     	$this->carboy = $newCarboy;
     }
-    
+
     public function getCarboy_id() { return $this->carboy_id; }
     public function setCarboy_id($newValue) { $this->carboy_id = $newValue; }
 
     public function getParcel_use_id() { return $this->parcel_use_id; }
     public function setParcel_use_id($newId) { $this->parcel_use_id = $newId; }
 
+
+    public function getWaste_bag_id(){return $this->waste_bag_id;}
+    public function setWaste_bag_id($waste_bag_id){$this->waste_bag_id = $waste_bag_id;}
 }
 ?>
