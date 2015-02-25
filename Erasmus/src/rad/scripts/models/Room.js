@@ -13,9 +13,22 @@ Room.prototype = {
         paramValue: 'Key_id'
     },
 
+    // one-to-many relationship
+    ContainerRelationship: {
+        className: 'SolidsContainer',
+        keyReference: 'Room_id',
+        paramValue: 'Key_id'
+    },
+
     loadPrincipalInvestigators: function() {
         if(!this.PrincipalInvestigators) {
             dataLoader.loadManyToManyRelationship(this, 'PrincipalInvestigators', this.PIRelationship);
+        }
+    },
+
+    loadSolidsContainers: function() {
+        if(!this.SolidsContainers) {
+            dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.ContainerRelationship);
         }
     }
 
