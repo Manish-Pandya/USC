@@ -595,6 +595,7 @@ class Rad_ActionManager extends ActionManager {
 	function saveWasteBag() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
+		$LOG->debug($decodedObject);
 		if( $decodedObject === NULL ) {
 			return new ActionError('Error converting input stream to WasteBag', 202);
 		}
