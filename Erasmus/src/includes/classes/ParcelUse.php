@@ -16,7 +16,6 @@ class ParcelUse extends GenericCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"parcel_id"						=> "integer",
-		"date_of_use"					=> "timestamp",
 		"quantity"						=> "float",
 		"experiment_use"				=> "text",
 		"date_used"						=> "timestamp",
