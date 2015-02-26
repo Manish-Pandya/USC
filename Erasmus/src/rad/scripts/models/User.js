@@ -6,62 +6,15 @@
 var User = function( api ){};
 
 User.prototype = {
-	//entity relationship mapping
 
-	eagerAccessors:[],
-
-	setEagerAccessors: function( eagerAccessors )
+	loadSupervisor: function()
 	{
-		this.eagerAccessors = eagerAccessors;
-	},
-
-	SupervisorRelationship: {
-
-		Class: 	  'PrincipalInvestigator',
-		foreignKey:  'Key_id',
-		queryString:  'getPIById&id=',
-		queryParam:   'Supervisor_id'
-
-	},
-
-	getSupervisor: function()
-	{
-			if( dataStoreManager.checkCollection( this.SupervisorRelationship.Class ) ){
-                    //var defer = $q.defer();     
-                    //this.rootScope[this.Class+"Busy"] = defer.promise;
-                    var foreignKey = this[this.SupervisorRelationship.keyReference];
-                    var term       = this.SupervisorRelationship.Class+'s';
-                    this.Supervisor = dataStoreManager.getById( "PrincipalInvestigator", this.Supervisor_id );
-
-                   // return this.Supervisor;
-                    //we return via the object's getterCallback method so that we can wait until the promise is fulfilled
-                    //this way we can display an angular-busy loading directive.
-                                                                 
-            }
-            else if(this.Supervisor){
-            		return this.Supervisor;
-            }
-            else{
-            		var local = this;
-
-                    var urlFragment = this.SupervisorRelationship.queryString;
-                    var queryParam = this[this.SupervisorRelationship.queryParam];
-                    var promiseData;
-
-                    //set the rootScope property for this class equal to the asynch promise so that we can trigger angular-busy
-                    this.rootScope[this.Class+"sBusy"] = this.api.read( urlFragment, queryParam )
-                        .then(
-                            function( returnedPromise ){
-                                local.Supervisor = local.inflator.instateAllObjectsFromJson( returnedPromise.data );
-                            },
-                            function( error ){
-
-                            }
-                        )
-            }
+        // not all users have a supervisor, don't try to load something that doesn't exist.
+        if(!this.Supervisor && this.Supervisor_id) {
+            dataLoader.loadChildObject(this, 'Supervisor', 'PrincipalInvestigator', this.Supervisor_id);
+        }
 	}
 }
-
 
 //inherit from and extend GenericModel
 extend(User, GenericModel);

@@ -5,7 +5,7 @@
 var ParcelUseAmount = function() {};
 ParcelUseAmount.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+    // Any future accessors, eager loaders, etc. will go here.
 
 }
 

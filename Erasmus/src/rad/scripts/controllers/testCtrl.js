@@ -52,11 +52,6 @@ angular.module('00RsmsAngularOrmApp')
     //*/
 
     //many to many
-    actionFunctionsFactory.getRoomById(1).then(function(object) {
-        console.log('hooray!');
-        console.log(object);
-        $scope.testData = object;
-    });
     //*/
 
 });

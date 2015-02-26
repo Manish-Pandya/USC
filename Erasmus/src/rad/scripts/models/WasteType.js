@@ -5,8 +5,7 @@
 var WasteType = function() {};
 WasteType.prototype = {
 
-    // TODO eager accessors, relationships, method names.
-
+    // Future accessors, eager loaders, etc will go here.
 }
 
 // inherit from GenericModel
