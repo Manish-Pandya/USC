@@ -3183,9 +3183,25 @@ div.fake-table .table-row > div{
 div.fake-table.bordered .table-row > div, div.fake-table .table-header > h3{
     border-top: 1px solid #dddddd;
 }
-div.fake-table.striped .table-row:nth-of-type(odd){
-  background:transparent;
-  border-top:none;
+div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div {
+  padding-top: 0;
+  background: transparent !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  margin-top: 0;
+}
+div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row.edit > div{
+  border-right: 1px solid #ccc;
+}
+div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div input{
+  width:30px;
+}
+
+div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div select{
+  width:145px;
+}
+div.fake-table .table-row.top-align div{
+  vertical-align: top;
 }
 div.fake-table .table-row:hover{
   background: rgba(221, 221, 221, 1) !important;
@@ -3195,6 +3211,24 @@ div.fake-table .table-row.inactive{
 }
 div.fake-table .table-row:hover > div{
     box-shadow: 5px 3px 8px rgba(0,0,0,.4);
+}
+div.use-log > .table-row > div:nth-of-type(1){
+  width:3%;
+}
+div.use-log > .table-row > div:nth-of-type(2){
+  width:5%;
+}
+div.use-log > .table-row > div:nth-of-type(3){
+  width:17%;
+}
+div.use-log > .table-row > div:nth-of-type(4){
+  width:10%;
+}
+div.use-log > .table-row > div:nth-of-type(5){
+  width:55%
+}
+div.use-log > .table-row > div:nth-of-type(6){
+  width:9%;
 }
 @font-face {
   font-family: 'carboy';
@@ -3227,3 +3261,11 @@ div.fake-table .table-row:hover > div{
 .input-inline,.input-block{
   font-size: 13px;
 }
+
+.extra-top{
+  padding-top:36px !important;
+}
+
+.table .btn, .fake-table .btn{
+  margin-bottom:3px;
+} 
