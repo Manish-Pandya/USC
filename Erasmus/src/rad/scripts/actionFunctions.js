@@ -118,7 +118,8 @@ angular
                     },
                     {
                         Name:'parcel-use-log',
-                        Label: 'Package Use Log'
+                        Label: 'Package Use Log',
+                        Dashboard: true
                     }
                 ]
 
@@ -1301,6 +1302,32 @@ angular
                             console.log(returnedBag);
                             returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
                             angular.extend(bag, returnedBag)
+                        },
+                        af.setError('The Carboy could not be removed from the lab.')
+                    )
+            }
+
+            af.saveParcelUse = function(parcel, copy, use){
+                copy.Class = 'ParcelUse';
+
+                copy.ParcelUseAmounts = [];
+                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Solids);
+                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Liquids);
+                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Vials);
+           
+                console.log(copy);
+
+                return this.save( copy )
+                    .then(
+                        function(returnedUse){
+                            console.log(returnedUse);
+                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
+                            if(use){
+                                angular.extend(use, returnedUse)
+                            }else{
+                                dataStoreManager.addOnSave(returnedUse);
+                                parcel.ParcelUses.push(returnedUse)
+                            }
                         },
                         af.setError('The Carboy could not be removed from the lab.')
                     )
