@@ -40,7 +40,7 @@
 					<h3>Use Amount</h3>
 					<h3>Disposal</h3>
 				</div>
-				<div class="table-row" ng-repeat="use in parcel.ParcelUses">
+				<div class="table-row" ng-repeat="use in parcel.ParcelUses track by $index | parcelParser:'test'">
 					<div>
 						{{use.Date_used | dateToISO:use:'Date_used'}}
 					</div>
@@ -52,21 +52,31 @@
 					</div>
 					<div style="width:50%">
 						<div class="fake-table no-bg">
-							<div class="table-row" ng-if="!use.edit" ng-repeat="amt in use.ParcelUseAmounts">
-								<div>Sol: {{amt.Curie_level}}mCi</div>
-								<div>Liq: {{amt.Curie_level}}mCi</div>
-								<div>S/v: {{amt.Curie_level}}mCi</div>
+							<div class="table-row" ng-if="!use.edit">
+								<div class="span4">
+									Sol:
+									{{use.Solids}}
+								</div>
+								<div class="span4">
+									Liq:
+									{{use.Liquids}}
+								</div>
+								<div class="span4">
+									Vials:
+									{{use.Vials}}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!--
 			<ul>
 				<li ng-repeat="use in parcel.ParcelUses">
 					<pre>{{use|json}}</pre>
 				</li>
 			</ul>
-
+			-->
 		</div>
 		</div>
 	</div>
