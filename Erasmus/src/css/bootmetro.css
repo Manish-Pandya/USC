@@ -210,7 +210,7 @@ input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
 }
 
 .input-prepend .add-on, .input-append .add-on {
-   height: 16px;
+   height: 18px;
    line-height: 15px;
 }
 .input-prepend .add-on:first-child,
