@@ -141,7 +141,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
-  <div class="banner {{bannerClass | splitAtPeriod}}" ng-class="{'dashboard-banner':dashboardView}">
+  <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView}">
     <h1>{{viewLabel}}</h1>
   </div>
 <!-- VIEW NESTING -->
