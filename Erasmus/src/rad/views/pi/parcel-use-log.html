@@ -1,4 +1,4 @@
-<div class="neg-marg" ng-if="pi">
+<div class="dashboard" ng-if="pi">
 	<div class="card full parcels">
 		<div class="card-content">
 			<div class="fake-table striped bordered">
@@ -31,45 +31,131 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
 
-			<div class="card-content">
-			<div class="fake-table striped bordered">
+	<div class="card full parcels" ng-if="pi">
+		<h3 class="card-header">Package Usages <a ng-click="addUsage(parcel)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</a></h3>
+		<div class="card-content">
+			<div class="fake-table striped bordered use-log">
 				<div class="table-header">
+					<h3>Edit</h3>
 					<h3>Date</h3>
 					<h3>Use</h3>
 					<h3>Use Amount</h3>
-					<h3>Disposal</h3>
+					<h3>Disposals</h3>
+					<h3></h3>
+
 				</div>
-				<div class="table-row" ng-repeat="use in parcel.ParcelUses track by $index | parcelParser:'test'">
-					<div>
+				<div class="table-row top-align" ng-repeat="use in parcel.ParcelUses | parcelParser">
+					<div ng-class="{'extra-top': use.edit}">
+						<a ng-if="!use.edit" class="btn btn-primary" ng-click="editUse(use)"><i class="icon-pencil"></i></a>
+						<a ng-if="use.edit" disabled="disabled" class="btn btn-primary"><i class="icon-pencil"></i></a>
+					</div>
+					<div ng-if="!use.edit">
 						{{use.Date_used | dateToISO:use:'Date_used'}}
 					</div>
-					<div>
+					<div ng-if="use.edit">
+						<div class="control-group">
+						     <label class="control-label" for="inputEmail">Date Used:</label>
+						     <div class="controls">
+								<input ng-model="use.view_Date_used">
+						        <span class="help-block" style="">mm/dd/yy</span>
+							</div>
+						</div>
+					</div>
+
+					<div ng-if="!use.edit">
 						{{use.Experiment_use}}
 					</div>
-					<div>
+					<div ng-if="use.edit">
+						<div class="control-group">
+						     <label class="control-label" for="experiment-use">Use:</label>
+						     <div class="controls">
+						     <textarea rows="3" name="experiment-use" ng-model="use.Experiment_use" maxlength="60"></textarea>
+							</div>
+						</div>
+					</div>
+
+					<div ng-class="{'extra-top': use.edit}">
 						{{use.Quantity}} mCi
 					</div>
-					<div style="width:50%">
+
+					<div>
 						<div class="fake-table no-bg">
-							<div class="table-row" ng-if="!use.edit">
+							<div class="table-row row-fluid" ng-if="!use.edit">
 								<div class="span4">
-									Sol:
-									{{use.Solids}}
+									<div ng-repeat="solid in use.Solids">
+										Sol: {{solid.Curie_level}} mCi
+									</div>
+									<div ng-if="!use.Solids.length">No Solid Disposals</div>
 								</div>
 								<div class="span4">
-									Liq:
-									{{use.Liquids}}
+									<div ng-repeat="liquid in use.Liquids">
+										Liq: {{liquid.Curie_level}} mCi
+									</div>
+									<div ng-if="!use.Liquids.length">No Solid Disposals</div>
 								</div>
 								<div class="span4">
-									Vials:
-									{{use.Vials}}
+									<div ng-repeat="vial in use.Vials">
+										S/V: {{vial.Curie_level}} mCi
+									</div>
+									<div ng-if="!use.Vials.length">No vial Disposals</div>
+								</div>
+							</div>
+							<div class="table-row row-fluid edit" ng-if="use.edit">
+								<div class="span4">
+									<div ng-repeat="solid in use.Solids">
+										<div class="control-group">
+										     <label class="control-label" for="solid-curies">Sol:</label>
+										     <div class="controls input-append">
+												<input style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
+												<span class="add-on">mCi</span>
+												<select ng-options="cont.Name for cont in pi.SolidsContainers">
+													<option>Select Receptical</option>
+												</select>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="span4">
+									<div ng-repeat="liquid in use.Liquids">
+										<div class="control-group">
+										     <label class="control-label" for="liquid-curies">Liq:</label>
+										     <div class="controls input-append">
+												<input style="max-width:50%;" name="liquid-curies" ng-model="liquid.Curie_level">
+												<span class="add-on">mCi</span>
+												<select ng-options="cuc.Carboy.Name for cuc in pi.CarboysUseCycles">
+													<option>Select Carboy</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="span4">									
+									<div ng-repeat="vial in use.Vials">
+										<div class="control-group">
+										     <label class="control-label" for="vial-curies">S/V:</label>
+										     <div class="controls input-append">
+												<input style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
+												<span class="add-on">mCi</span>	
+												<select ng-options="cont.Name for cont in pi.SolidsContainers">
+													<option>Select Receptical</option>
+												</select>
+											</div>
+
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+					<div ng-class="{'extra-top': use.edit}">
+						<a ng-if="use.edit" ng-click="af.saveParcelUse(parcel, use)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+						<a ng-if="use.edit" class="btn btn-danger"><i class="icon-cancel-2"></i></a>
+					</div>
 				</div>
-			</div>
 			<!--
 			<ul>
 				<li ng-repeat="use in parcel.ParcelUses">
@@ -77,7 +163,6 @@
 				</li>
 			</ul>
 			-->
-		</div>
 		</div>
 	</div>
 </div>
