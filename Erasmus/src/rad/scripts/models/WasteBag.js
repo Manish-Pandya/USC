@@ -5,7 +5,23 @@
 var WasteBag = function() {};
 WasteBag.prototype = {
 
-    // TODO eager accessors, relationships, method names.
+    loadContainer: function() {
+        if(!this.Container && this.Container_id) {
+            dataLoader.loadChildObject(this, 'Container', 'SolidsContainer', this.Container_id);
+        }
+    },
+
+    loadDrum: function() {
+        if(!this.Drum && this.Drum_id) {
+            dataLoader.loadChildObject(this, 'Drum', 'Drum', this.Drum_id);
+        }
+    },
+
+    loadPickup: function() {
+        if(!this.Pickup && this.Pickup_id) {
+            dataLoader.loadChildObject(this, 'Pickup', 'Pickup', this.Pickup_id);
+        }
+    }
 
 }
 
