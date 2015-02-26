@@ -544,8 +544,22 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new ParcelUse());
-			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
+			$use = $dao->save($decodedObject);
+
+			$amounts = $decodedObject->getParcelUseAmounts();
+			foreach($amounts as $amount){
+				$amountDao = $this->getDao(new ParcelUseAmount());
+				$newAmount = new ParcelUseAmount();
+
+				$newAmount->setParcel_use_id($use->getKey_id());
+				$newAmount->setCurie_level($amount['Curie_level']);
+				if($amount['Waste_bag_id'])$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+				if($amount['Carboy_id'])$newAmount->setWaste_bag_id($amount['Carboy_id']);
+				$newAmount->setWaste_type_id($amount['Waste_type_id']);
+				$amountDao->save($newAmount);
+			}
+
+			return $use;
 		}
 	}
 
