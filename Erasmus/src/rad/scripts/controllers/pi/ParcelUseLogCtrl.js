@@ -57,8 +57,6 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $scope.editUse = function(use){
-          console.log(dataStoreManager.get("Carboy"));
-          console.log(use);
           if(!use.Solids.length){
             var solidUsageAmount = new window.ParcelUseAmount();
             solidUsageAmount.Waste_type_id = 4;
