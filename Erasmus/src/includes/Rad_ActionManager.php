@@ -228,11 +228,12 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getActiveParcels");
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
-		$entityMaps[] = new EntityMap("eager", "getActiveParcels");
 		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
 		$pi->setEntityMaps($entityMaps);
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug($pi);
 		return $pi;
 
 	}
@@ -553,8 +554,9 @@ class Rad_ActionManager extends ActionManager {
 
 				$newAmount->setParcel_use_id($use->getKey_id());
 				$newAmount->setCurie_level($amount['Curie_level']);
-				if($amount['Waste_bag_id'])$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-				if($amount['Carboy_id'])$newAmount->setWaste_bag_id($amount['Carboy_id']);
+				if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+				if($amount['Carboy_id'] != NULL)$newAmount->setWaste_bag_id($amount['Carboy_id']);
+				if($amount['Key_id'] != NULL)$newAmount->setWaste_bag_id($amount['Key_id']);
 				$newAmount->setWaste_type_id($amount['Waste_type_id']);
 				$amountDao->save($newAmount);
 			}
