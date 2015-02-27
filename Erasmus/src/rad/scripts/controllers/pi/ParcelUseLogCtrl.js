@@ -57,6 +57,7 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $scope.editUse = function(use){
+          console.log(dataStoreManager.get("Carboy"));
           console.log(use);
           if(!use.Solids.length){
             var solidUsageAmount = new window.ParcelUseAmount();
@@ -73,7 +74,11 @@ angular.module('00RsmsAngularOrmApp')
             vialUsageAmount.Waste_type_id = 3;
             use.ParcelUseAmounts.push(vialUsageAmount);
           }
+
           use.edit = true;
       }
       
+      $scope.selectCarboy = function(useAmount){
+          useAmount.Carboy_id = useAmount.Carboy.Key_id;
+      }
  });
