@@ -897,6 +897,13 @@ angular
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            console.log(pi);
+                            if(pi.Rooms && pi.Rooms.length){
+                                console.log(pi.Rooms);
+                                var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
+                                store.store(rooms);
+                                pi.Rooms = store.get('Room');  
+                            }
                             if(pi.Authorizations && pi.Authorizations.length){
                                 var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
                                 store.store(auths);
@@ -911,11 +918,6 @@ angular
                                 var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
                                 store.store(orders);
                                 pi.PurchaseOrders = store.get('PurchaseOrder');                            }
-                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
-                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
-                                store.store(cycles);
-                                pi.CarboyUseCycles = store.get('CarboyUseCycle');    
-                            }   
                             if(pi.SolidsContainers && pi.SolidsContainers.length){
                                 var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
                                 store.store(containers);
@@ -925,11 +927,20 @@ angular
                                 store.store(containers);
                                 pi.Pickups = store.get('Pickup');   
                             }
-                            if(pi.Rooms && pi.Rooms.length){
-                                var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
-                                store.store(rooms);
-                                pi.Rooms = store.get('Room');   
-                            }
+                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
+                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
+                                store.store(cycles);
+                                pi.CarboyUseCycles = store.get('CarboyUseCycle');
+                                var i = pi.CarboyUseCycles.length;
+                                var carboys = [];
+                                while(i--){
+                                    pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
+                                    carboys.push(pi.CarboyUseCycles[i].Carboy);
+                                }
+                                store.store(carboys);
+                                console.log(store.get("Carboy"));
+                            }   
+                            console.log(pi);
                             store.store(pi);
                             return pi;
                         });
@@ -938,6 +949,11 @@ angular
                     //PI has been cached
                     else{
                         var pi = store.getById('PrincipalInvestigator',id);
+                        if(pi.Rooms && pi.Rooms.length){
+                            var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
+                            store.store(rooms);
+                            pi.Rooms = store.get('Room');   
+                        }
                         if(pi.Authorizations && pi.Authorizations.length){
                             var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
                             store.store(auths);
@@ -966,11 +982,7 @@ angular
                             store.store(containers);
                             pi.Pickups = store.get('Pickup');   
                         }
-                        if(pi.Rooms && pi.Rooms.length){
-                            var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
-                            store.store(rooms);
-                            pi.Rooms = store.get('Room');   
-                        }
+                        console.log(pi)
                         //return a promise so return type is consistent
                         var defer = $q.defer();
                         defer.resolve(pi);
@@ -989,6 +1001,7 @@ angular
                                 //console.log(returnedUses.data);
                                 var uses = modelInflatorFactory.instateAllObjectsFromJson( returnedUses.data );
                                 store.store(uses);
+                                console.log(uses);
                                 var useAmounts = [];
                                 var i = uses.length;
                                 while(i--){
@@ -996,7 +1009,6 @@ angular
                                     var j = use.ParcelUseAmounts.length;
                                     while(j--)useAmounts = useAmounts.concat(use.ParcelUseAmounts);
                                 }
-                                console.log(useAmounts);
                                 var amounts = modelInflatorFactory.instateAllObjectsFromJson(useAmounts);
                                 store.store(amounts);
                                 parcel.loadUses();
