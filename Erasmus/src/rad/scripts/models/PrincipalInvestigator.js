@@ -141,6 +141,20 @@ PrincipalInvestigator.prototype = {
         if(!this.User && this.User_id) {
             dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
         }
+    },
+
+    loadWasteBags: function() {
+        if(!this.WasteBags && this.SolidsContainers){
+            this.WasteBags = [];
+            var i = this.SolidsContainers.length;
+            while(i--){
+                if(this.SolidsContainers[i].CurrentWasteBags && this.SolidsContainers[i].CurrentWasteBags.length){
+                    this.SolidsContainers[i].CurrentWasteBags[0] = this.inflator.instateAllObjectsFromJson(this.SolidsContainers[i].CurrentWasteBags[0]);
+                    this.SolidsContainers[i].CurrentWasteBags[0].loadContainer();
+                    this.WasteBags.push(this.SolidsContainers[i].CurrentWasteBags[0]);
+                }
+            }
+        }
     }
 
 }
