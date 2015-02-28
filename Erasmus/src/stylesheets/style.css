@@ -3234,11 +3234,15 @@ div.use-log > .table-row > div:nth-of-type(3) textarea{
   width:100%;
 }
 div.use-log > .table-row > div:nth-of-type(4){
-  width:7%;
+  width:3%;
+}
+div.use-log > .table-row > div:nth-of-type(4) input{
+  width: 68%;
+  min-width: 30px;
 }
 div.use-log > .table-row > div:nth-of-type(5){
   padding-right:0;
-  width:60%
+  width:64%
 }
 div.use-log > .table-row > div:nth-of-type(5) .row-fluid .span4 {
   width: 33%;
