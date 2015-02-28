@@ -897,13 +897,25 @@ angular
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            console.log(pi);
                             if(pi.Rooms && pi.Rooms.length){
                                 console.log(pi.Rooms);
                                 var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
                                 store.store(rooms);
                                 pi.Rooms = store.get('Room');  
-                            },
+                            }
+                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
+                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
+                                store.store(cycles);
+                                pi.CarboyUseCycles = store.get('CarboyUseCycle');
+                                var i = pi.CarboyUseCycles.length;
+                                var carboys = [];
+                                while(i--){
+                                    pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
+                                    carboys.push(pi.CarboyUseCycles[i].Carboy);
+                                }
+                                store.store(carboys);
+                                console.log(store.get("Carboy"));
+                            }
                             if(pi.Authorizations && pi.Authorizations.length){
                                 var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
                                 store.store(auths);
@@ -913,10 +925,21 @@ angular
                                 var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
                                 store.store(parcels);
                                 pi.ActiveParcels = store.get('Parcel');
-
-                                var i pi.ActiveParcels.length;
+                                var allUses = [];
+                                var allAmounts = [];
+                                var i = pi.ActiveParcels.length;
                                 while(i--){
-                                    var uses = pi.ActiveParcels[i].ParcelUses;
+                                    if(pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length){
+                                        pi.ActiveParcels[i].ParcelUses = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses );
+                                        var j = pi.ActiveParcels[i].ParcelUses.length
+                                        while(j--){                                            
+                                            pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts );
+                                            allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts);
+                                        }
+                                        allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses);
+                                    }
+                                    if(allUses.length)store.store(allUses);
+                                    if(allAmounts.length)store.store(allAmounts);
                                 }
 
                             }
@@ -932,19 +955,6 @@ angular
                                 var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
                                 store.store(containers);
                                 pi.Pickups = store.get('Pickup');   
-                            }
-                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
-                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
-                                store.store(cycles);
-                                pi.CarboyUseCycles = store.get('CarboyUseCycle');
-                                var i = pi.CarboyUseCycles.length;
-                                var carboys = [];
-                                while(i--){
-                                    pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
-                                    carboys.push(pi.CarboyUseCycles[i].Carboy);
-                                }
-                                store.store(carboys);
-                                console.log(store.get("Carboy"));
                             }   
                             console.log(pi);
                             store.store(pi);
@@ -1327,7 +1337,6 @@ angular
 
             af.saveParcelUse = function(parcel, copy, use){
                 copy.Class = 'ParcelUse';
-
                 copy.ParcelUseAmounts = [];
                 copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Solids);
                 copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Liquids);
