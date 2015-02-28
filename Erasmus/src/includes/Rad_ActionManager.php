@@ -317,7 +317,7 @@ class Rad_ActionManager extends ActionManager {
 		if( $id !== NULL ) {
 			$parcelDao = $this->getDao(new Parcel());
 			$selectedParcel = $parcelDao->getById($id);
-			return $selectedParcel->getUses();
+			return $selectedParcel->getParcelUses();
 		}
 		else {
 			return new ActionError("No request parameter 'id' was provided", 201);
@@ -551,14 +551,15 @@ class Rad_ActionManager extends ActionManager {
 			foreach($amounts as $amount){
 				$amountDao = $this->getDao(new ParcelUseAmount());
 				$newAmount = new ParcelUseAmount();
-
-				$newAmount->setParcel_use_id($use->getKey_id());
-				$newAmount->setCurie_level($amount['Curie_level']);
-				if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-				if($amount['Carboy_id'] != NULL)$newAmount->setWaste_bag_id($amount['Carboy_id']);
-				if($amount['Key_id'] != NULL)$newAmount->setWaste_bag_id($amount['Key_id']);
-				$newAmount->setWaste_type_id($amount['Waste_type_id']);
-				$amountDao->save($newAmount);
+				if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
+					$newAmount->setParcel_use_id($use->getKey_id());
+					$newAmount->setCurie_level($amount['Curie_level']);
+					if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+					if($amount['Carboy_id'] != NULL)$newAmount->setWaste_bag_id($amount['Carboy_id']);
+					if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+					$newAmount->setWaste_type_id($amount['Waste_type_id']);
+					$amountDao->save($newAmount);
+				}
 			}
 
 			return $use;
@@ -713,7 +714,7 @@ class Rad_ActionManager extends ActionManager {
 			$parcelDao = new GenericDAO(new Parcel());
 			$parcelUseDao = new GenericDAO(new ParcelUse());
 			$parcel = $parcelDao->getById($id);
-			$parcelUses = $parcel->getUses();
+			$parcelUses = $parcel->getParcelUses();
 
 			$typesAndAmounts = array();
 
@@ -823,7 +824,7 @@ class Rad_ActionManager extends ActionManager {
 		$parcelUses = array();
 		$parcels = $pi->getActiveParcels();
 		foreach( $parcels as $parcel ) {
-			$uses = $parcel->getUses();
+			$uses = $parcel->getParcelUses();
 
 			foreach( $uses as $use ) {
 				// convert date of use into format we can do comparisons with

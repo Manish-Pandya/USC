@@ -68,7 +68,7 @@ class Parcel extends GenericCrud {
 	private $remainder;
 
 	/** Array of parcel uses that pertain to this parcel. */
-	private $uses;
+	private $parcelUses;
 
 	/* Text field human readable unique ID for orders*/
 	private $rs_number;
@@ -80,7 +80,7 @@ class Parcel extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
 		$entityMaps[] = new EntityMap("lazy", "getIsotope");
-		$entityMaps[] = new EntityMap("lazy", "getUses");
+		$entityMaps[] = new EntityMap("eager", "getParcelUses");
 		$entityMaps[] = new EntityMap("eager", "getRemainder");
 		$this->setEntityMaps($entityMaps);
 
@@ -147,21 +147,21 @@ class Parcel extends GenericCrud {
 	public function getQuantity() { return $this->quantity; }
 	public function setQuantity($newQuantity) { $this->quantity = $newQuantity; }
 
-	public function getUses() {
-		if($this->uses == null && $this->hasPrimaryKeyValue()) {
+	public function getParcelUses() {
+		if($this->parcelUses == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->uses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP));
+			$this->parcelUses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP));
 		}
-		return $this->uses;
+		return $this->parcelUses;
 	}
-	public function setUses($newUsesArray) {
-		$this->uses = $newUsesArray;
+	public function setParcelUses($newUsesArray) {
+		$this->parcelUses = $newUsesArray;
 	}
 
 	public function getRemainder() {
 		if($this->remainder == null) {
 			// Get total amount used from this parcel
-			$uses = $this->getUses();
+			$uses = $this->getParcelUses();
 			$usedAmount = 0;
 			foreach($uses as $use) {
 				$usedAmount += $use->getQuantity();
