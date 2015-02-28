@@ -93,7 +93,7 @@ class CarboyUseCycle extends GenericCrud {
 	// Accessors / Mutators
 	public function getCarboy() {
 		if($this->carboy == null) {
-			$carboyDAO = new GenericDAO(new carboy());
+			$carboyDAO = new GenericDAO(new Carboy());
 			$this->carboy = $carboyDAO->getById($this->getCarboy_id());
 		}
 		return $this->carboy;
