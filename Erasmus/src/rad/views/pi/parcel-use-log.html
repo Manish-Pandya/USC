@@ -42,7 +42,7 @@
 					<h3>Edit</h3>
 					<h3>Date</h3>
 					<h3>Use</h3>
-					<h3>Use Amount</h3>
+					<h3>Amount</h3>
 					<h3>Disposals</h3>
 					<h3></h3>
 
@@ -92,6 +92,8 @@
 								</div>
 								<div class="span4">
 									<div ng-repeat="liquid in use.Liquids">
+										<pre>{{liquid.Carboy.Carboy_number}}</pre>									
+
 										Liq: {{liquid.Curie_level}} mCi
 									</div>
 									<div ng-if="!use.Liquids.length">No Solid Disposals</div>
@@ -105,43 +107,45 @@
 							</div>
 							<div class="table-row row-fluid edit" ng-if="use.edit">
 								<div class="span4">
+							    	<label class="control-label" for="solid-curies">Sol:</label>
 									<div ng-repeat="solid in use.Solids">
 										<div class="control-group">
-										     <label class="control-label" for="solid-curies">Sol:</label>
 										     <div class="controls input-append">
 												<input style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
 												<span class="add-on">mCi</span>
-												<select ng-options="cont.Name for cont in pi.SolidsContainers">
-													<option>Select Receptical</option>
+												<select ng-model="solid.SolidsContainer" ng-options="container.Name for container in pi.SolidsContainers">
+													<option value="">Select Receptical</option>
 												</select>
-
 											</div>
 										</div>
 									</div>
 								</div>
 								<div class="span4">
 									<div ng-repeat="liquid in use.Liquids">
+									<pre>{{liquid.Carboy.Carboy_number}}</pre>									
+									<pre>{{liquid.Carboy_id}}</pre>
+
+										<label class="control-label" for="liquid-curies">Liq:</label>
 										<div class="control-group">
-										     <label class="control-label" for="liquid-curies">Liq:</label>
 										     <div class="controls input-append">
 												<input style="max-width:50%;" name="liquid-curies" ng-model="liquid.Curie_level">
 												<span class="add-on">mCi</span>
-												<select ng-options="cuc.Carboy.Name for cuc in pi.CarboysUseCycles">
-													<option>Select Carboy</option>
+												<select ng-change="selectCarboy(liquid)" ng-model="liquid.Carboy" ng-options="cycle.Carboy as 'Carboy Number ' + cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
+													<option value="">Select Carboy</option>
 												</select>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div class="span4">									
+								<div class="span4">		
+								    <label class="control-label" for="vial-curies">S/V:</label>
 									<div ng-repeat="vial in use.Vials">
 										<div class="control-group">
-										     <label class="control-label" for="vial-curies">S/V:</label>
 										     <div class="controls input-append">
 												<input style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
 												<span class="add-on">mCi</span>	
-												<select ng-options="cont.Name for cont in pi.SolidsContainers">
-													<option>Select Receptical</option>
+												<select ng-model="vial.SolidsContainer"ng-options="container.Name for container in pi.SolidsContainers">
+													<option value="">Select Receptical</option>
 												</select>
 											</div>
 
