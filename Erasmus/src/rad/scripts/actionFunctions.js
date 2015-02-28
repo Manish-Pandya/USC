@@ -903,7 +903,7 @@ angular
                                 var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
                                 store.store(rooms);
                                 pi.Rooms = store.get('Room');  
-                            }
+                            },
                             if(pi.Authorizations && pi.Authorizations.length){
                                 var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
                                 store.store(auths);
@@ -913,6 +913,12 @@ angular
                                 var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
                                 store.store(parcels);
                                 pi.ActiveParcels = store.get('Parcel');
+
+                                var i pi.ActiveParcels.length;
+                                while(i--){
+                                    var uses = pi.ActiveParcels[i].ParcelUses;
+                                }
+
                             }
                             if(pi.PurchaseOrders && pi.PurchaseOrders.length){
                                 var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
