@@ -3032,7 +3032,7 @@ table.large tr th{
     margin:0 -25px;
   }
   .card{
-    width:97% !important;
+    width:100% !important;
     margin-right: 0 !important;
   }
 
@@ -3189,16 +3189,22 @@ div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div {
   border-top: none !important;
   box-shadow: none !important;
   margin-top: 0;
+  margin-left:0;
 }
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row.edit > div{
   border-right: 1px solid #ccc;
 }
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div input{
-  width:30px;
+  width:15%;
+  min-width: 30px
 }
-
+div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div .input-prepend .add-on, div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div .input-append .add-on{
+  width:15%;
+  max-width: 30px
+}
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div select{
-  width:145px;
+  width:67%;
+  min-width:145px;
 }
 div.fake-table .table-row.top-align div{
   vertical-align: top;
@@ -3216,19 +3222,29 @@ div.use-log > .table-row > div:nth-of-type(1){
   width:3%;
 }
 div.use-log > .table-row > div:nth-of-type(2){
-  width:5%;
+  width:6%;
+}
+div.use-log > .table-row > div:nth-of-type(2) input{
+  width:100%;
 }
 div.use-log > .table-row > div:nth-of-type(3){
-  width:17%;
+  width:13%;
+}
+div.use-log > .table-row > div:nth-of-type(3) textarea{
+  width:100%;
 }
 div.use-log > .table-row > div:nth-of-type(4){
-  width:10%;
+  width:7%;
 }
 div.use-log > .table-row > div:nth-of-type(5){
-  width:55%
+  padding-right:0;
+  width:60%
+}
+div.use-log > .table-row > div:nth-of-type(5) .row-fluid .span4 {
+  width: 33%;
 }
 div.use-log > .table-row > div:nth-of-type(6){
-  width:9%;
+  width:11%;
 }
 @font-face {
   font-family: 'carboy';
