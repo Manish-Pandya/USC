@@ -99,10 +99,7 @@ class ParcelUse extends GenericCrud {
 	public function getParcelUseAmounts() {
 		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->parcelUseAmounts = $thisDao->getRelatedItemsById(
-					$this->getKey_id(),
-					DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP)
-			);
+			$this->parcelUseAmounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
 		}
 		return $this->parcelUseAmounts;
 	}
