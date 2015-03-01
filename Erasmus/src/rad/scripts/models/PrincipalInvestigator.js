@@ -150,7 +150,7 @@ PrincipalInvestigator.prototype = {
             while(i--){
                 if(this.SolidsContainers[i].CurrentWasteBags && this.SolidsContainers[i].CurrentWasteBags.length){
                     this.SolidsContainers[i].CurrentWasteBags[0] = this.inflator.instateAllObjectsFromJson(this.SolidsContainers[i].CurrentWasteBags[0]);
-                    this.SolidsContainers[i].CurrentWasteBags[0].loadContainer();
+                    //this.SolidsContainers[i].CurrentWasteBags[0].loadContainer();
                     this.WasteBags.push(this.SolidsContainers[i].CurrentWasteBags[0]);
                 }
             }
