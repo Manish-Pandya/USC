@@ -61,6 +61,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/cycle.js"></script>
 
 <!-- Required for the ORM framework -->
 <!-- TODO include everything in certain directories by default -->
