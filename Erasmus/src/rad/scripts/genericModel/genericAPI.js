@@ -75,12 +75,10 @@ angular
 				if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );	
 				var url = api.buildRequestUrl( urlFragment, false );
 
-				var testPromise = $q.defer();
-				testPromise.resolve(object)
 				//return testPromise.promise;
 				//test api post
 				//url = 'http://angularormtest.apiary.io/hazards/1';
-
+				console.log(object);
 				var promise = $http.post(url, object)
 					.success( function( data ){
 						object = data;
