@@ -76,6 +76,16 @@ angular.module('00RsmsAngularOrmApp')
 
           use.edit = true;
       }
+
+      $scope.addAmount = function(type){
+          console.log(type);
+          var amt = new window.ParcelUseAmount();
+          if(type == "Solids")amt.Waste_type_id = 1;
+          if(type == "Liquids")amt.Waste_type_id = 1;
+          if(type == "Vials")amt.Waste_type_id = 1;
+          $rootScope.ParcelUseCopy.ParcelUseAmounts.push(amt);
+          $rootScope.ParcelUseCopy[type].push(amt);
+      }
       
       $scope.selectCarboy = function(useAmount){
           useAmount.Carboy_id = useAmount.Carboy.Key_id;
@@ -83,5 +93,48 @@ angular.module('00RsmsAngularOrmApp')
 
       $scope.selectContainer = function(useAmount){
           useAmount.Waste_bag_id = useAmount.Waste_bag.Key_id;
+      }
+      $scope.selectedBag = function(solid, bags){
+          console.log(solid);
+          var i = bags.length;
+          while(i--){
+            if(bags[i].Key_id == solid.Waste_bag_id)solid.Waste_bag = bags[i];
+          }
+      }
+      $scope.cancel = function(use){
+          use.edit = false;
+          $rootScope.ParcelUseCopy = {};
+      }
+
+      $scope.saveUse = function(use){
+          var copy = $rootScope.ParcelUseCopy
+          var useDTO = {
+            Parcel_id: copy.Parcel_id,
+            //Date_of_use: 
+
+          }
+          /*private $quantity;
+
+  /** Reference to the Isotope entity this usage concerns 
+
+Date_of_use
+Experiment_use
+Date_used
+ParcelUseAmounts
+Quantity
+  Curie_level
+  Waste_type_id
+  Carboy_id
+  Waste_bag_id
+  Parcel_use_id
+  */
+
+           af.saveParcelUse()
+            .then(
+              function(){
+
+              }
+
+            )
       }
  });
