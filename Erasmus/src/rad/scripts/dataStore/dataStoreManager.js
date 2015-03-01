@@ -79,7 +79,6 @@ dataStoreManager.get = function( objectFlavor )
 
 dataStoreManager.getById = function( objectFlavor, key_id )
 {   
-    console.log(dataStore[objectFlavor+'Map']);
     // get index of this room in the cache, no looping anymore!
     var location = dataStore[objectFlavor+'Map'][key_id];
     return dataStore[objectFlavor][location];
