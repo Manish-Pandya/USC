@@ -898,7 +898,6 @@ angular
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                             if(pi.Rooms && pi.Rooms.length){
-                                console.log(pi.Rooms);
                                 var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
                                 store.store(rooms);
                                 pi.Rooms = store.get('Room');  
@@ -914,7 +913,6 @@ angular
                                     carboys.push(pi.CarboyUseCycles[i].Carboy);
                                 }
                                 store.store(carboys);
-                                console.log(store.get("Carboy"));
                             }
                             if(pi.Authorizations && pi.Authorizations.length){
                                 var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
@@ -1336,14 +1334,6 @@ angular
             }
 
             af.saveParcelUse = function(parcel, copy, use){
-                copy.Class = 'ParcelUse';
-                copy.ParcelUseAmounts = [];
-                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Solids);
-                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Liquids);
-                copy.ParcelUseAmounts = copy.ParcelUseAmounts.concat(copy.Vials);
-           
-                console.log(copy);
-
                 return this.save( copy )
                     .then(
                         function(returnedUse){
@@ -1355,6 +1345,9 @@ angular
                                 dataStoreManager.addOnSave(returnedUse);
                                 parcel.ParcelUses.push(returnedUse)
                             }
+                            $rootScope.ParcelUseCopy = {};
+                            use.edit = false;
+                            return parcel;
                         },
                         af.setError('The Carboy could not be removed from the lab.')
                     )
