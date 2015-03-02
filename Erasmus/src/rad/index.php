@@ -86,7 +86,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
-
+<script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
 
 
 <!-- directives -->
@@ -146,7 +146,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
-  <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView}">
+  <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
     <h1>{{viewLabel}}</h1>
   </div>
 <!-- VIEW NESTING -->

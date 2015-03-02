@@ -89,6 +89,8 @@ angular
             $rootScope.viewLabel = viewMap.Label;
             $rootScope.bannerClass = viewMap.Name;
             $rootScope.dashboardView = viewMap.Dashboard;
+            $rootScope.noHead = viewMap.NoHead;
+            console.log($rootScope);
           });
    
   });;

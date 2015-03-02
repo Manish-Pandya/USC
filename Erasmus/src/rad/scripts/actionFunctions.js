@@ -106,11 +106,12 @@ angular
                     },
                     {
                         Name:'pi-rad-management',
-                        Label: 'My Radiation Laboratory'
+                        Label: 'My Radiation Laboratory',
+                        NoHead: true
                     },
                     {
                         Name:'solids',
-                        Label: 'My Radiation Laboratory'
+                        Label: 'My Radiation Laboratory',
                     },
                     {
                         Name:'use-log',
@@ -119,6 +120,11 @@ angular
                     {
                         Name:'parcel-use-log',
                         Label: 'Package Use Log',
+                        Dashboard: true
+                    },
+                    {
+                        Name:'pickups',
+                        Label: 'Pickups',
                         Dashboard: true
                     }
                 ]
@@ -953,7 +959,7 @@ angular
                             }
                             if(pi.Pickups && pi.Pickups.length){
                                 var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
-                                store.store(containers);
+                                store.store(pickups);
                                 pi.Pickups = store.get('Pickup');   
                             }   
                             console.log(pi);
@@ -1021,7 +1027,7 @@ angular
                         }
                         if(pi.Pickups && pi.Pickups.length){
                             var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
-                            store.store(containers);
+                            store.store(pickups);
                             pi.Pickups = store.get('Pickup');   
                         }
                         console.log(pi)
