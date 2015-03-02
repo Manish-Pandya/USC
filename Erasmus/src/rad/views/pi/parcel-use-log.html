@@ -1,6 +1,7 @@
 <div cg-busy="{promise:parcelPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:ParcelUseSaving,message:'Saving Use', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
+<h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
 <div class="dashboard" ng-if="pi">
 	<div class="card full parcels">
 		<div class="card-content">
@@ -88,7 +89,7 @@
 						<label class="control-label" for="quantity">Amount:</label>
 							<div class="control-group">
 							     <div class="controls input-append">
-									<input style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
+									<input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
 									<span class="add-on">mCi</span>
 								</div>
 							</div>
@@ -98,19 +99,19 @@
 							<div class="table-row row-fluid" ng-if="!use.edit">
 								<div class="span4">
 									<div ng-repeat="solid in use.Solids">
-										Sol: {{solid.Curie_level}} mCi
+										Sol: {{solid.Curie_level}} mCi in {{solid.Container_name}} 
 									</div>
 									<div ng-if="!use.Solids.length">No Solid Disposals</div>
 								</div>
 								<div class="span4">
 									<div ng-repeat="liquid in use.Liquids">
-										Liq: {{liquid.Curie_level}} mCi
+										Liq: {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy_number}}
 									</div>
 									<div ng-if="!use.Liquids.length">No Solid Disposals</div>
 								</div>
 								<div class="span4">
 									<div ng-repeat="vial in use.Vials">
-										S/V: {{vial.Curie_level}} mCi
+										S/V: {{vial.Curie_level}} mCi in {{vial.Container_name}} 
 									</div>
 									<div ng-if="!use.Vials.length">No vial Disposals</div>
 								</div>
@@ -122,9 +123,9 @@
 									<div ng-repeat="solid in ParcelUseCopy.Solids">
 										<div class="control-group">
 										     <div class="controls input-append">
-												<input style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
+												<input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
 												<span class="add-on">mCi</span>
-												<select ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.ContainerName for bag in pi.WasteBags">
+												<select ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags">
 													<option value="">Select Receptical</option>
 												</select>
 											</div>
@@ -136,7 +137,7 @@
 									<div ng-repeat="liquid in ParcelUseCopy.Liquids">
 										<div class="control-group">
 										     <div class="controls input-append">
-												<input style="max-width:50%;" name="liquid-curies" ng-model="liquid.Curie_level">
+												<input ng-blur="validateUseAmounts(ParcelUseCopy)" name="liquid-curies" ng-model="liquid.Curie_level">
 												<span class="add-on">mCi</span>
 												<select ng-change="selectCarboy(liquid)" ng-model="liquid.Carboy" ng-options="cycle.Carboy as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
 													<option value="">Select Carboy</option>
@@ -150,9 +151,9 @@
 									<div ng-repeat="vial in ParcelUseCopy.Vials">
 										<div class="control-group">
 										     <div class="controls input-append">
-												<input style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
+												<input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
 												<span class="add-on">mCi</span>	
-												<select ng-model="vial.Waste_bag" ng-change="selectContainer(vial)" ng-options="bag.Container.Name for bag in pi.WasteBags">
+												<select ng-model="vial.Waste_bag" ng-selected="selectedBag(vial, pi.WasteBags)"  ng-change="selectContainer(vial)" ng-options="bag.Container_name for bag in pi.WasteBags">
 													<option value="">Select Receptical</option>
 												</select>
 											</div>
