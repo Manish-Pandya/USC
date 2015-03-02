@@ -902,6 +902,11 @@ angular
                                 store.store(rooms);
                                 pi.Rooms = store.get('Room');  
                             }
+                            if(pi.SolidsContainers && pi.SolidsContainers.length){
+                                var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
+                                store.store(containers);
+                                pi.SolidsContainers = store.get('SolidsContainer');                             
+                            }
                             if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
                                 var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
                                 store.store(cycles);
@@ -944,11 +949,8 @@ angular
                             if(pi.PurchaseOrders && pi.PurchaseOrders.length){
                                 var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
                                 store.store(orders);
-                                pi.PurchaseOrders = store.get('PurchaseOrder');                            }
-                            if(pi.SolidsContainers && pi.SolidsContainers.length){
-                                var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
-                                store.store(containers);
-                                pi.SolidsContainers = store.get('SolidsContainer');                             }
+                                pi.PurchaseOrders = store.get('PurchaseOrder');                            
+                            }
                             if(pi.Pickups && pi.Pickups.length){
                                 var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
                                 store.store(containers);
@@ -966,7 +968,24 @@ angular
                         if(pi.Rooms && pi.Rooms.length){
                             var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
                             store.store(rooms);
-                            pi.Rooms = store.get('Room');   
+                            pi.Rooms = store.get('Room');  
+                        }
+                        if(pi.SolidsContainers && pi.SolidsContainers.length){
+                            var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
+                            store.store(containers);
+                            pi.SolidsContainers = store.get('SolidsContainer');                             
+                        }
+                        if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
+                            var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
+                            store.store(cycles);
+                            pi.CarboyUseCycles = store.get('CarboyUseCycle');
+                            var i = pi.CarboyUseCycles.length;
+                            var carboys = [];
+                            while(i--){
+                                pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
+                                carboys.push(pi.CarboyUseCycles[i].Carboy);
+                            }
+                            store.store(carboys);
                         }
                         if(pi.Authorizations && pi.Authorizations.length){
                             var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
@@ -977,20 +996,29 @@ angular
                             var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
                             store.store(parcels);
                             pi.ActiveParcels = store.get('Parcel');
+                            var allUses = [];
+                            var allAmounts = [];
+                            var i = pi.ActiveParcels.length;
+                            while(i--){
+                                if(pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length){
+                                    pi.ActiveParcels[i].ParcelUses = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses );
+                                    var j = pi.ActiveParcels[i].ParcelUses.length
+                                    while(j--){                                            
+                                        pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts );
+                                        allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts);
+                                    }
+                                    allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses);
+                                }
+                                if(allUses.length)store.store(allUses);
+                                if(allAmounts.length)store.store(allAmounts);
+                            }
+
                         }
                         if(pi.PurchaseOrders && pi.PurchaseOrders.length){
                             var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
                             store.store(orders);
-                            pi.PurchaseOrders = store.get('PurchaseOrder');                            }
-                        if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
-                            var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
-                            store.store(cycles);
-                            pi.CarboyUseCycles = store.get('CarboyUseCycle');    
-                        }   
-                        if(pi.SolidsContainers && pi.SolidsContainers.length){
-                            var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
-                            store.store(containers);
-                            pi.SolidsContainers = store.get('SolidsContainer');                             }
+                            pi.PurchaseOrders = store.get('PurchaseOrder');                            
+                        }
                         if(pi.Pickups && pi.Pickups.length){
                             var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
                             store.store(containers);
@@ -1334,11 +1362,21 @@ angular
             }
 
             af.saveParcelUse = function(parcel, copy, use){
+                af.clearError();
+                copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
                     .then(
                         function(returnedUse){
                             console.log(returnedUse);
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
+                            var i = returnedUse.ParcelUseAmounts.length;
+                            while(i--){
+                                returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
+                                if(returnedUse.ParcelUseAmounts[i].Carboy){
+                                    returnedUse.ParcelUseAmounts[i].Carboy = null;
+                                    returnedUse.ParcelUseAmounts[i].loadCarboy();
+                                }
+                            }
                             if(use){
                                 angular.extend(use, returnedUse)
                             }else{
@@ -1347,9 +1385,12 @@ angular
                             }
                             $rootScope.ParcelUseCopy = {};
                             use.edit = false;
+                            af.clearError();
                             return parcel;
                         },
-                        af.setError('The Carboy could not be removed from the lab.')
+                        function(){
+                            af.setError('The usage could not be saved.')
+                        }
                     )
             }
 
