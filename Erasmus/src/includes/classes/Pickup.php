@@ -16,6 +16,7 @@ class Pickup extends GenericCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"pickup_date"					=> "timestamp",
+		"requested_date"				=> "timestamp",
 		"pickup_user_id"				=> "integer",
 		"principal_investigator_id"		=> "integer",
 
@@ -47,6 +48,10 @@ class Pickup extends GenericCrud {
 
 	/** Date (timestamp) that this pickup occurred. */
 	private $pickup_date;
+
+	/** Date (timestamp) that this pickup was requested by PI or labPersonnel. */
+	private $requested_date;
+
 
 	/** Integer id of the user who picked up the materials. */
 	private $pickup_user_id;
@@ -122,5 +127,8 @@ class Pickup extends GenericCrud {
 		return $this->principalInvestigator;
 	}
 	public function setPrincipalInvestigator($principalInvestigator){$this->principalInvestigator = $principalInvestigator;}
+
+	public function getRequested_date() {return $this->requested_date;}
+	public function setRequested_date($requested_date) {$this->requested_date = $requested_date;}
 }
 ?>

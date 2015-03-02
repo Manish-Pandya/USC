@@ -90,6 +90,14 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName" => "principal_investigator_id"
 	);
 
+	public static $PICKUPS_RELATIONSHIP = array(
+		"className" => "Pickup",
+		"tableName" => "pickup",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "principal_investigator_id"
+	);
+
+
 
 	/** Base User object that this PI represents */
 	private $user_id;
@@ -125,6 +133,9 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of Carboy entities **/
 	private $activeCarboys;
 
+	/** Array of Pickup entities **/
+	private $pickups;
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -138,6 +149,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+		$entityMaps[] = new EntityMap("lazy", "getPickups");
 
 		$this->setEntityMaps($entityMaps);
 
@@ -254,18 +266,27 @@ class PrincipalInvestigator extends GenericCrud {
 
 			// get rooms this PI has
 			$rooms = $this->getRooms();
-				
+
 			// get containers in each room
 			$containers = array();
 			foreach($rooms as $room) {
 				$containers = array_merge($room->getSolidsContainers(), $containers);
 			}
-			
+
 			$this->solidsContainers = $containers;
 		}
 		return $this->solidsContainers;
 	}
 	public function setSolidsContainers($solidsContainers){$this->solidsContainers = $solidsContainers;}
+
+	public function getPickups(){
+		if($this->pickups === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->pickups = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PICKUPS_RELATIONSHIP));
+		}
+		return $this->pickups;
+	}
+	public function setPickups($pickups){$this->pickups = $pickups;}
 }
 
 ?>
