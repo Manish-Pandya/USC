@@ -7,7 +7,6 @@ ParcelUseAmount.prototype = {
 
 	eagerAccessors:[
 		{method: "loadCarboy", boolean:"Carboy_id"},
-		{method: "loadSolidsContainer", boolean:"SolidsContainer_id"}
 	],
 
     // Any future accessors, eager loaders, etc. will go here.
@@ -18,7 +17,7 @@ ParcelUseAmount.prototype = {
     // Any future accessors, eager loaders, etc. will go here.
     loadSolidsContainer: function(){
     	dataLoader.loadChildObject(this, "SolidsContainer", "SolidsContainer", this.SolidsContainer_id);
-    }
+    },
 }
 
 // inherit from GenericModel
