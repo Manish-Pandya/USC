@@ -5,9 +5,7 @@
 var WasteBag = function() {};
 WasteBag.prototype = {
 
-    eagerAccessors:[
-        {method:'loadContainerName', boolean:"Container_id"}
-    ],
+    eagerAccessors:[],
 
     loadContainer: function() {
         if(!this.Container && this.Container_id) {
@@ -25,11 +23,6 @@ WasteBag.prototype = {
         if(!this.Pickup && this.Pickup_id) {
             dataLoader.loadChildObject(this, 'Pickup', 'Pickup', this.Pickup_id);
         }
-    },
-
-    loadContainerName:function(){
-        var container = dataStoreManager.getById('SolidsContainer', this.Container_id);
-        this.ContainerName = container.Name;
     }
 
 }
