@@ -98,6 +98,14 @@ PrincipalInvestigator.prototype = {
 
     },
 
+    PickupsRelationship: {
+        className:    'Pickup',
+        keyReference:  'Principal_investigator_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+
 
 	Buildings: {},
 
@@ -134,6 +142,12 @@ PrincipalInvestigator.prototype = {
     loadCarboyUseCycles: function() {
         if(!this.Carboys) {
             dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
+        }
+    },
+
+    loadPickups: function() {
+        if(!this.Pickups) {
+            dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
         }
     },
 
