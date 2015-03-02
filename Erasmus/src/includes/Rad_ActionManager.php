@@ -230,6 +230,7 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
+		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
 		$pi->setEntityMaps($entityMaps);
 		$LOG = Logger::getLogger(__CLASS__);
