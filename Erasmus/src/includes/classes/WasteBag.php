@@ -43,6 +43,8 @@ class WasteBag extends GenericCrud {
 
 	/** date this bag was removed from its SolidsContiner */
 	private $date_removed;
+	
+	private $container_name;
 
 	public function __construct() {
 		$entityMaps = array();
@@ -77,6 +79,14 @@ class WasteBag extends GenericCrud {
 	}
 	public function setContainer_id($newId) {
 		$this->container_id = $newId;
+	}
+	
+	public function getContainer_name(){
+		if($this->getContainer_id() != NULL && $this->container_name == NULL){
+			$container = $this->getContainer();
+			$this->container_name = $container->getName();
+		}
+		return $this->container_name;
 	}
 
 	public function getCurie_level() {
