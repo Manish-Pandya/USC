@@ -50,6 +50,8 @@ include_once 'GenericCrud.php';
 
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
+    
+    private $container_name;
 
     public function __construct() {
 
@@ -57,6 +59,7 @@ include_once 'GenericCrud.php';
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getCarboy");
     	$entityMaps[] = new EntityMap("eager", "getWaste_type");
+    	$entityMaps[] = new EntityMap("eager", "getContainer_name");
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -99,7 +102,12 @@ include_once 'GenericCrud.php';
     	$this->carboy = $newCarboy;
     }
 
-    public function getCarboy_id() { return $this->carboy_id; }
+    public function getCarboy_id() { 
+    	$LOG = Logger::getLogger(__CLASS__);
+    	$LOG->debug('carboy id is '.$this->carboy_id);
+    	 
+    	return $this->carboy_id; 
+    }
     public function setCarboy_id($newValue) { $this->carboy_id = $newValue; }
 
     public function getParcel_use_id() { return $this->parcel_use_id; }
@@ -108,5 +116,16 @@ include_once 'GenericCrud.php';
 
     public function getWaste_bag_id(){return $this->waste_bag_id;}
     public function setWaste_bag_id($waste_bag_id){$this->waste_bag_id = $waste_bag_id;}
+    
+    public function getContainer_name(){
+    	if($this->getWaste_bag_id() != NULL && $this->container_name == NULL){
+    		$wasteBagDao = new GenericDAO(new WasteBag());
+    		$wasteBag = $wasteBagDao->getById($this->getWaste_bag_id());
+    		$container = $wasteBag->getContainer();
+    		$this->container_name = $container->getName();
+    	}
+    	return $this->container_name;
+    }
+    
 }
 ?>
