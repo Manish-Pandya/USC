@@ -34,14 +34,20 @@ angular.module('00RsmsAngularOrmApp')
                               .then(getParcel);
 
       $scope.addUsage = function(parcel){
+          var i = $scope.parcel.ParcelUses.length;
+          while(i--){
+            $scope.parcel.ParcelUses[i].edit=false
+          }
+          $rootScope.ParcelUseCopy = {};
           $rootScope.ParcelUseCopy = new window.ParcelUse();
           $rootScope.ParcelUseCopy.Parcel_id = $scope.parcel.Key_id;
           $rootScope.ParcelUseCopy.ParcelUseAmounts = [];
           $rootScope.ParcelUseCopy.edit = true;
+          $rootScope.ParcelUseCopy.Class = "ParcelUse";
           var solidUsageAmount = new window.ParcelUseAmount();
           var liquidUsageAmount = new window.ParcelUseAmount();
           var vialUsageAmount = new window.ParcelUseAmount();
-
+          $rootScope.ParcelUseCopy.isNew = true;
           solidUsageAmount.Waste_type_id = 4;
           liquidUsageAmount.Waste_type_id = 1;
           vialUsageAmount.Waste_type_id = 3;
@@ -53,6 +59,12 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $scope.editUse = function(use){
+          var i = $scope.parcel.ParcelUses.length;
+          while(i--){
+            $scope.parcel.ParcelUses[i].edit=false
+          }
+          $rootScope.ParcelUseCopy = {}
+
           af.createCopy(use);
           if(!$rootScope.ParcelUseCopy.Solids.length){
             var solidUsageAmount = new window.ParcelUseAmount();
@@ -88,53 +100,62 @@ angular.module('00RsmsAngularOrmApp')
       }
       
       $scope.selectCarboy = function(useAmount){
-          useAmount.Carboy_id = useAmount.Carboy.Key_id;
+          if( !useAmount.Carboy ){
+            useAmount.Carboy_id = null;
+          }else{
+            useAmount.Carboy_id = useAmount.Carboy.Key_id;
+          }
       }
 
       $scope.selectContainer = function(useAmount){
-          useAmount.Waste_bag_id = useAmount.Waste_bag.Key_id;
+          if(!useAmount.Waste_bag){
+            useAmount.Waste_bag_id = null;
+          }else{
+            useAmount.Waste_bag_id = useAmount.Waste_bag.Key_id;
+          }
       }
       $scope.selectedBag = function(solid, bags){
-          console.log(solid);
           var i = bags.length;
           while(i--){
             if(bags[i].Key_id == solid.Waste_bag_id)solid.Waste_bag = bags[i];
           }
       }
       $scope.cancel = function(use){
+          if($rootScope.ParcelUseCopy.isNew == true)$scope.parcel.ParcelUses.shift();
           use.edit = false;
           $rootScope.ParcelUseCopy = {};
       }
 
-      $scope.saveUse = function(use){
-          var copy = $rootScope.ParcelUseCopy
-          var useDTO = {
-            Parcel_id: copy.Parcel_id,
-            //Date_of_use: 
 
+      //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
+      //which if you think about it, has sort of become an MVCVM 
+
+      $scope.validateUseAmounts = function(use){
+          $rootScope.error = '';
+          use.isValid = false;
+          var total = 0;
+
+          var i = use.Liquids.length;
+          while(i--){
+            if(use.Liquids[i].Curie_level)total = total + parseInt(use.Liquids[i].Curie_level);
           }
-          /*private $quantity;
 
-  /** Reference to the Isotope entity this usage concerns 
+          var j = use.Solids.length;
+          while(j--){
+            if(use.Solids[j].Curie_level)total = total + parseInt(use.Solids[j].Curie_level);
+          }
 
-Date_of_use
-Experiment_use
-Date_used
-ParcelUseAmounts
-Quantity
-  Curie_level
-  Waste_type_id
-  Carboy_id
-  Waste_bag_id
-  Parcel_use_id
-  */
+          var k = use.Vials.length;
+          while(k--){
+            if(use.Vials[k].Curie_level)total = total + parseInt(use.Vials[k].Curie_level);
+          }
 
-           af.saveParcelUse()
-            .then(
-              function(){
-
-              }
-
-            )
+          console.log('total '+total);
+          console.log('quantity '+use.Quantity)
+          if(use.Quantity == total){
+            use.isValid = true;
+          }else{
+            $rootScope.error = 'Total disposal amount must equal use amount.';
+          }
       }
  });
