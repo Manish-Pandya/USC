@@ -3289,3 +3289,10 @@ div.use-log > .table-row > div:nth-of-type(6){
 .table .btn, .fake-table .btn{
   margin-bottom:3px;
 } 
+.fixed-full{
+  position:fixed;
+  top:10%;
+  left:0;
+  right:0;
+  box-shadow: 0 0 15px rbga(0,0,0,.7)
+}
