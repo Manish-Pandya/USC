@@ -1037,6 +1037,38 @@ class ActionManager {
 
 	}
 
+	public function getUsersForUserHub(){
+		$userDao = $this->getDao( new User() );
+		$users = $userDao->getAll('last_name');
+
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("eager","getInspector");
+		$entityMaps[] = new EntityMap("lazy","getSupervisor");
+		$entityMaps[] = new EntityMap("eager","getRoles");
+
+		foreach($users as $user){
+
+			if($user->getPrincipalInvestigator() != null){
+				$pi = $user->getPrincipalInvestigator();
+
+				$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+				$entityMaps[] = new EntityMap("eager","getRooms");
+				$entityMaps[] = new EntityMap("eager","getDepartments");
+				$entityMaps[] = new EntityMap("lazy","getUser");
+				$entityMaps[] = new EntityMap("lazy","getInspections");
+				$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+				$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+
+				$pi->setEntityMaps($entityMaps);
+			}
+
+			$user->setEntityMaps($entityMaps);
+		}
+
+		return $users;
+	}
+
 	public function getOpenInspectionsByPIId( $id = null){
 		$id = $this->getValueFromRequest('id', $id);
 

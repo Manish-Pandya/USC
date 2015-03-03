@@ -47,6 +47,8 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
+				"getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", ""),
+
 
 
 				//convenience method to split all usernames into first and last names
