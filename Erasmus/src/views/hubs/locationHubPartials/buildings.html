@@ -11,10 +11,10 @@
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn-large btn" ng-click="addBuilding()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Building</a>
 			   </div>
+   				<h2 class="greenBg" style="float:right; margin-top:8">Showing {{filtered.length}} Building</h2>
 			</th>
 		</tr>
 		<tr>
-			<th class="poundNotHash">#</th>
 			<th clas="temp">Edit</th>
 			<th>
 				<a>Building<br>
@@ -31,9 +31,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="building in buildings | genericFilter:search | orderBy:['index', 'Campus.Name', 'Name']" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
-					<td once-text="building.idx+1 + '.'"></td>
-
+		<tr ng-repeat="building in (filtered = (buildings | genericFilter:search | orderBy:['index', 'Campus.Name', 'Name']))" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
 			<td style="width:6%;">
 				<a ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)"><i class="icon-pencil"></i></a>
 				<a ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled"><i class="icon-pencil"></i></a>

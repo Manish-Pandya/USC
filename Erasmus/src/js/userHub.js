@@ -539,6 +539,16 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
         }
       )
 
+    $scope.activeFilter = function(showInactive){
+      console.log(showInactive);
+      return function(obj) {
+        var show = false;
+        //for pis that don't have buildings, don't filter them unless the filter has some text
+        if(obj.Is_active != showInactive)show = true;
+        return show;
+    }
+  }
+
 
 }
 

@@ -2,14 +2,16 @@
 	<thead>
 		<tr class="purpleBg">
 			<th colspan="9" class="purpleBg">
-				<h1 class="purpleBg">{{Admins.length}} EHS Personnel</h1>
-				<div class="btn-group" style="margin:-22px 0 0 30px">
+				<h1 class="purpleBg">EHS Personnel</h1>
+				<div class="btn-group" style="margin: -18px 0 0 20px;">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+			     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
 				     <span ng-show="showInactive">Show Active Personnel</span>
 				     <span ng-hide="showInactive">Show Inactive Personnel</span>
 			     </a>
 			     <a class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add EHS Staff</a>
 			   </div>
+   				<h2 class="purpleBg" style="float:right; margin-top:8px;">Displaying {{filtered.length}} EHS Personnel</h2>
 			</th>
 		</tr>
 		<tr>
@@ -30,7 +32,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in Admins | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in (filtered = (Admins | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>

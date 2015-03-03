@@ -2,13 +2,16 @@
 	<thead>
 		<tr class="orangeBg">
 			<th colspan="9">
-				<h1 class="orangeBg" style="padding:0">{{users.length}} Uncategorized Users</h1>
-				<div class="btn-group" style="margin:-22px 0 0 30px">
-			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+				<h1 class="orangeBg">UNCATEGORIZED USERS</h1>
+				<div class="btn-group">
+		     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false" class="ng-pristine ng-valid">
+			     <a class="btn btn-large" ng-click="showInactive = !showInactive" style="margin: -18px 0 0 20px;">
 				     <span ng-show="showInactive">Show Active Users</span>
 				     <span ng-hide="showInactive">Show Inactive Users</span>
 			     </a>
 			   </div>
+   				<h2 class="orangeBg" style="float:right; margin-top:8px">Displaying {{filtered.length}} Uncategorized Users</h2>
+
 			</th>
 		</tr>
 		<tr>
@@ -23,7 +26,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="contact in users | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in (filtered = (users  | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>

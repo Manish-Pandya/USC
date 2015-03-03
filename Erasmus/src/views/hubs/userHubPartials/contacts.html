@@ -2,9 +2,10 @@
 	<thead>
 		<tr class="greenBg">
 			<th colspan="9" class="greenBg">
-				<h1 class="greenBg">{{LabContacts.length}} Lab Contacts</h1>
-				<div class="btn-group" style="margin:-22px 0 0 30px">
+				<h1 class="greenBg">Lab Contacts</h1>
+				<div class="btn-group" style="margin: -18px 0 0 20px;">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+			     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
 				     <span ng-show="showInactive">Show Active Contacts</span>
 				     <span ng-hide="showInactive">Show Inactive Contacts</span>
 			     </a>
@@ -12,6 +13,8 @@
 			     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
 
 			   </div>
+   				<h2 style="margin-top:8px;float:right" class="greenBg">{{filtered.length}} Lab Contacts</h2>
+
 			</th>
 		</tr>
 		<tr>
@@ -40,7 +43,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: selectedDepartment | filter: selectedPi" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in (filtered = (LabContacts  | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
 			<td style="width:18%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
