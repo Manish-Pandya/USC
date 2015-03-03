@@ -38,6 +38,87 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
     );
 })
+.filter('isPI',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var pis = [];             /* more code, to make code better  */
+    var i = users.length
+    while(i--){
+      if(userHubFactory.hasRole(users[i], 'principal investigator')){
+        if(users[i].PrincipalInvestigator){
+          userHubFactory.getBuildingsByPi(users[i].PrincipalInvestigator);
+          pis.unshift(users[i]);
+        }else{
+          users[i].isUncat = true;
+        }
+      }
+    }
+    return pis;
+  }
+}])
+.filter('isPersonel',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+    var i = users.length
+    while(i--){
+      var shouldPush = false;
+      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
+        shouldPush = true;
+      }
+      
+      if(userHubFactory.hasRole(users[i], 'inspector')){
+        if(users[i].Inspector){
+          shouldPush = true;
+        }else{
+          users[i].isUncat = true;
+        }
+      }
+      if(shouldPush)personnel.unshift(users[i]);
+    }
+    return personnel;
+  }
+}])
+.filter('isContact',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var contacts = [];
+    var i = users.length
+    while(i--){
+      if( userHubFactory.hasRole(users[i], 'contact') ){
+        userHubFactory.getSupervisor(users[i]);
+        contacts.unshift(users[i]);
+      }
+    }
+    return contacts;
+  }
+}])
+.filter('isUncat',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var uncat = [];
+    var i = users.length
+    while(i--){
+      if(!users[i].Roles || !users[i].Roles.length){
+        uncat.unshift(users[i]);
+      }
+      
+      if(userHubFactory.hasRole(users[i], 'principal')){
+        if(!users[i].PrincipalInvestigator){
+          uncat.unshift(users[i]);
+        }
+      }
+
+      if(userHubFactory.hasRole(users[i], 'inspector')){
+        if(!users[i].Inspector){
+          uncat.unshift(users[i]);
+        }
+      }
+    }
+    return uncat;
+  }
+  
+}])
 .factory('userHubFactory', function(convenienceMethods,$q, $rootScope){
 
   var factory = {};
@@ -50,39 +131,24 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
   factory.modalData = {};
   factory.uncategorizedUsers = [];
 
-  factory.setPIs = function(pis)
-  {
-    this.pis = pis;
+  factory.getSupervisor = function(user){
+    var i = factory.users.length;
+    while(i--){
+      if(factory.users[i].PrincipalInvestigator){
+          if(user.Supervisor_id == factory.users[i].PrincipalInvestigator.Key_id)user.Supervisor = factory.users[i];
+      }
+    }
   }
 
   factory.getPIs = function(){
-    return this.pis;
-  }
-
-  factory.getAllPis = function()
-  {
-    
-    //if we don't have a the list of pis, get it from the server
-    var deferred = $q.defer();
-
-    //lazy load
-    if(factory.pis.length){
-      deferred.resolve(factory.pis);
-      return deferred.promise;
+    var pis = [];
+    var i = factory.users.length;
+    while(i--){
+      if(factory.users[i].PrincipalInvestigator)pis.unshift(factory.users[i]);
     }
-
-    var url = '../../ajaxaction.php?action=getPisForUserHub&callback=JSON_CALLBACK';
-      convenienceMethods.getDataAsDeferredPromise(url).then(
-      function(pis){
-        factory.pis = pis;
-        deferred.resolve(pis);
-      },
-      function(promise){
-        deferred.reject();
-      }
-    );
-    return deferred.promise;
+    return pis;
   }
+
 
   factory.getAllUsers = function()
   {
@@ -94,7 +160,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         return deferred.promise;
       }
 
-      var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
+      var url = '../../ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(users){
           factory.users = users;
@@ -105,32 +171,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         }
       );
       return deferred.promise;
-  }
-
-  factory.getLabContacts = function()
-  {
-    this.labContacts = [];
-    var i = this.users.length;
-    while(i--){
-      var user = factory.users[i];
-      if(factory.hasRole(user, 'Lab Contact')){
-        factory.getRelation(user, 'Supervisor', 'Supervisor_id', factory.pis );
-        factory.labContacts.push(user);
-      }
-    }
-
-    return this.labContacts;
-  }
-
-  factory.getPersonnel = function()
-  {
-    this.personnel = [];
-    var i = this.users.length;
-    while(i--){
-      var user = factory.users[i];
-      if(factory.hasRole(user, 'admin') || factory.hasRole(user, 'inspector') || factory.hasRole(user, 'radiation'))factory.personnel.push(user);
-    }
-    return this.personnel;
   }
 
   factory.hasRole = function(user, role)
@@ -240,6 +280,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       );
       return deferred.promise;
   }
+
   factory.getAllDepartments = function()
   {
       var deferred = $q.defer();
@@ -354,33 +395,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       )
   }
 
-  factory.getUncategorizedUsers = function()
-  {
-      var defer = $q.defer();
-      factory.uncategorizedUsers = [];
-      var i = this.users.length;
-      while(i--){
-          var user = this.users[i];
-          if(!user.Roles.length){
-            factory.uncategorizedUsers.push(user);
-        }
-        else{
-            var j = user.Roles.length;
-            while(j--){
-              var role =  user.Roles[j];
-              if(role.Name.toLowerCase().indexOf('rincipal')>-1){
-                var k = factory.pis.length
-                var noPi = true;
-                while(k--){
-                  if(factory.pis[k].User_id==user.Key_id)noPi=false;
-                }
-              }
-          }
-        }
-      }
-      defer.resolve(factory.uncategorizedUsers);
-      return defer.promise;
-  }
   factory.lookUpUser = function(string)
   {
         var url = "../../ajaxaction.php?action=lookupUser&username="+string+"&callback=JSON_CALLBACK";
@@ -555,32 +569,19 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
 var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
-    var getAllPis = function(users){
-      userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            return pis
+
+    userHubFactory.getAllUsers()
+      .then(
+          function(users){
+            console.log(users);
+            $scope.pis = userHubFactory.users;
+            $rootScope.neededUsers = true;
+            return users
           },
           function(){
             $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
           }
         )
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-              userHubFactory.getBuildingsByPi(pi);
-            }
-            $scope.pis = pis;
-            $rootScope.neededUsers = true;
-          }
-        )
-    }
-
-    userHubFactory.getAllUsers()
-      .then(getAllPis);
 
     $scope.openModal = function(pi){
         if(!pi){
@@ -680,35 +681,13 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
     $rootScope.error="";
     $scope.order = 'Last_name';
 
-    var getAllPis = function(users){
-      return userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-            }
-          },
-          function(){
-            $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
-          }
-        )
-    }
-
-    var getLabContacts = function()
-    {
-      if(userHubFactory.users.length){
-        $scope.LabContacts = userHubFactory.getLabContacts();
-        $rootScope.neededUsers = true;
-      }else{
-        $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
-      }
-    }
-
     userHubFactory.getAllUsers()
-      .then(getAllPis)
-      .then(getLabContacts)
+      .then(
+        function(users){
+          $scope.LabContacts = userHubFactory.users;;
+          $rootScope.neededUsers = true;
+        }
+      )
 
     $scope.openModal = function(user,$index){
         if(!user){
@@ -758,18 +737,17 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
     $rootScope.neededUsers = false;
     $rootScope.order="Last_name";
     $rootScope.error="";
-    var getPersonnel = function(users)
-    { 
-      if(userHubFactory.users.length){
-        $scope.Admins = userHubFactory.getPersonnel();
-        $rootScope.neededUsers = true;
-      }else{
-        $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
-      }
-    }
 
     userHubFactory.getAllUsers()
-      .then(getPersonnel);
+      .then(
+        function(users){
+          $scope.Admins = userHubFactory.users;
+          $rootScope.neededUsers = true;
+        },
+        function(){
+          $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
+        }
+      )
 
 
     $scope.openModal = function(user,$index){
@@ -813,48 +791,22 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
     $rootScope.order="Last_name";
     $rootScope.neededUsers = false;
     $rootScope.error="";
-    var getAllPis = function(users){
-      userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            return pis
-          },
-          function(){
-            $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
-          }
-        )
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-              userHubFactory.getBuildingsByPi(pi);
-            }
-          }
-        )
-    }
 
     var getUncategorizedUsers = function(){
       return userHubFactory.getUncategorizedUsers()
         .then(
           function(users){
             console.log(users);
-            $scope.users = users;
+            $scope.user = userHubFactory.users;
             $rootScope.neededUsers = true;
           }
         )
     }
 
     userHubFactory.getAllUsers()
-      .then(getAllPis)
-      .then(getUncategorizedUsers)
-      .then(function(){
-        var i = userHubFactory.users.length;
-        while(i--){
-          var user = userHubFactory.users[i];
-          user.First_name="asdfadfadf";
-        }
+      .then(function(users){
+        $rootScope.neededUsers = true;
+        $scope.users = users;
       });
 
 
@@ -991,7 +943,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             if(pi.Departments[i].Key_id == department.Key_id)pi.Departments.splice(i,1);
           }
         }else{
-          alert('asdfasdfasdfasdf');
           department.IsDirty = true;
           userHubFactory.savePIDepartmentRelation(pi, department, false)
             .then(
@@ -1036,7 +987,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     $scope.onSelectPI = function(pi,user){
       $scope.modalData.Supervisor = pi;
-      $scope.modalData.Supervisor_id = pi.Key_id;
+      $scope.modalData.Supervisor_id = pi.PrincipalInvestigator.Key_id;
     }
 
     $scope.onSelectDepartment = function(dept,user){

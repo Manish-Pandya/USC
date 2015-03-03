@@ -36,7 +36,7 @@
 		</tr>
 	</thead>
 	<tbody>
-			<tr ng-repeat="pi in (filtered = (pis | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
+			<tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
 			<td style="width:8%;">
 				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="openModal(pi)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi)" ng-show="pi.Is_active"><i class="icon-remove"></i></a>
@@ -45,39 +45,39 @@
 			</td>
 			
 			<td style="width:9%;">
-				{{pi.User.Last_name}}
+				{{pi.Last_name}}
 			</td>
 
 			<td style="width:9%;">
-				{{pi.User.First_name}}
+				{{pi.First_name}}
 			</td>
 
 			<td style="width:20%;">
 				<ul>
-					<li ng-repeat="department in pi.Departments" once-text="department.Name"><!--{{department.Name}}--></li>
+					<li ng-repeat="department in pi.PrincipalInvestigator.Departments" once-text="department.Name"><!--{{department.Name}}--></li>
 				</ul>
 			</td>
 
 			<td style="width:9%;">
-				{{pi.User.Office_phone}}
+				{{pi.Office_phone}}
 			</td>
 
 			<td style="width:9%;">
-				{{pi.User.Lab_phone}}
+				{{pi.Lab_phone}}
 			</td>
 
 			<td style="width:17%;">
 				<ul>
-					<li ng-repeat="building in pi.Buildings" once-text="building.Name"></li>
+					<li ng-repeat="building in pi.PrincipalInvestigator.Buildings" once-text="building.Name"></li>
 				</ul>
 			</td>
 
 			<td style="width:12%;">
-				{{pi.User.Email}}
+				{{pi.Email}}
 			</td>
 
 			<td style="width:7%;">
-				{{pi.User.Emergency_phone}}
+				{{pi.Emergency_phone}}
 			</td>
 
 		</tr>

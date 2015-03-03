@@ -29,7 +29,7 @@
 			</th>
 			<th>
 				<a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedPi.Supervisor.User.Name" placeholder="Filter by PI"/>
+				<input class="span2" ng-model="selectedPi.Supervisor.Name" placeholder="Filter by PI"/>
 			</th>
 			<th>
 				<a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
@@ -43,7 +43,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in (filtered = (LabContacts  | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
+		<tr ng-repeat="contact in (filtered = (LabContacts | isContact | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
 			<td style="width:18%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
@@ -59,8 +59,7 @@
 				<!--{{contact.First_name}}-->
 			</td>
 			<td style="width:14%;" >
-				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.Key_id" once-text="contact.Supervisor.User.Name"></a>
-				<!--{{contact.Supervisor.User.Name}}-->
+				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.PrincipalInvestigator.Key_id" once-text="contact.Supervisor.Name"></a>
 			</td>
 
 			<td style="width:14%;" once-text="contact.Primary_department.Name">
@@ -75,7 +74,7 @@
 				<!--{{contact.Email}}-->
 			</td>
 
-			<td style="width:10%;" once-text="contact.Supervisor.User.Lab_phone">
+			<td style="width:10%;" once-text="contact.Supervisor.Lab_phone">
 				<!--{{contact.Emergency_phone}}-->
 			</td>
 
@@ -155,9 +154,8 @@
 				    <div  class="control-group">
 			         <label class="control-label" for="inputEmail">Principal Investigator</label>
 			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-				   		<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-				   			<!--<p>{{modalData.Supervisor.User.Name}}</p>-->
+						<input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+				   		<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
 				    </div>
 			    </div>
 

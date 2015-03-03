@@ -2,7 +2,7 @@
 	<thead>
 		<tr class="orangeBg">
 			<th colspan="9">
-				<h1 class="orangeBg">UNCATEGORIZED USERS</h1>
+				<h1 class="orangeBg" style="padding:0">UNCATEGORIZED USERS</h1>
 				<div class="btn-group">
 		     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false" class="ng-pristine ng-valid">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive" style="margin: -18px 0 0 20px;">
@@ -10,8 +10,7 @@
 				     <span ng-hide="showInactive">Show Inactive Users</span>
 			     </a>
 			   </div>
-   				<h2 class="orangeBg" style="float:right; margin-top:8px">Displaying {{filtered.length}} Uncategorized Users</h2>
-
+   				<h2 class="orangeBg" style="float:right; margin-top:8px; padding:0">Displaying {{filtered.length}} Uncategorized Users</h2>
 			</th>
 		</tr>
 		<tr>
