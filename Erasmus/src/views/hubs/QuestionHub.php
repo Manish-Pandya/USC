@@ -83,7 +83,7 @@ require_once '../top_view.php';
 			 	</div>
 			 </div>
 			 <a class="btn btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
-			 <a class="btn btn-danger addDeficiency" ng-click="addDef = !addDef"><i class="icon-remove"></i>Cancel</a>
+			 <a class="btn btn-danger addDeficiency" ng-show="addDef" ng-click="addDef = !addDef"><i class="icon-remove"></i>Cancel</a>
 		</form>
 
 		<span ng-hide="!question">
