@@ -32,7 +32,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in (filtered = (Admins | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
+		<tr ng-repeat="contact in (filtered = (Admins | isPersonel | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
 			<td style="width:12%;">
 				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
@@ -40,12 +40,12 @@
 				<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position: absolute;" ng-show="contact.IsDirty"/></i>
 			</td>
 
-			<td style="width:14%;" once-text="contact.Last_name">
-				<!--{{contact.Last_name}}-->
+			<td style="width:14%;">
+				{{contact.Last_name}}
 			</td>
 
-			<td style="width:14%;" once-text="contact.First_name">
-				<!--{{contact.First_name}}-->
+			<td style="width:14%;">
+				{{contact.First_name}}
 			</td>
 
 			<td style="width:12%;">
@@ -55,20 +55,20 @@
 				</ul>
 			</td>
 
-			<td style="width:12%;" once-text="contact.Position">
-				<!--{{contact.Position}}-->
+			<td style="width:12%;">
+				{{contact.Position}}
 			</td>
 
-			<td style="width:12%;" once-text="contact.Office_phone">
-				<!--{{contact.Office_phone}}-->
+			<td style="width:12%;">
+				{{contact.Office_phone}}
 			</td>
 
-			<td style="width:12%;" once-text="contact.Email">
-				<!--{{contact.Email}}-->
+			<td style="width:12%;">
+				{{contact.Email}}
 			</td>
 
-			<td style="width:12%;" once-text="contact.Emergency_phone">
-				<!--{{contact.Emergency_phone}}-->
+			<td style="width:12%;">
+				{{contact.Emergency_phone}}
 			</td>
 
 		</tr>
@@ -162,8 +162,7 @@
         </div>
         <div class="modal-footer">
 			<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin:5px;" ng-show="modalData.IsDirty"/>
-            <a ng-if="modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-            <a ng-if="!modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>

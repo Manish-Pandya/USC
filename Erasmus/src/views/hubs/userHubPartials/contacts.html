@@ -29,11 +29,11 @@
 			</th>
 			<th>
 				<a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedPi.Supervisor.Name" placeholder="Filter by PI"/>
+				<input class="span2" ng-model="searchText.Supervisor.Name" placeholder="Filter by PI"/>
 			</th>
 			<th>
 				<a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedDepartment.Primary_department.Name" placeholder="Filter by Department"/>
+				<input class="span2" ng-model="searchText.Primary_department.Name" placeholder="Filter by Department"/>
 			</th>
 			<!--<th>Lab Phone</th>-->
 			<th>Email</th>
@@ -51,35 +51,35 @@
 				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 			</td>
 
-			<td style="width:12%;" once-text="contact.Last_name">
-				<!--{{contact.Last_name}}-->
+			<td style="width:12%;">
+				{{contact.Last_name}}
 			</td>
 
-			<td style="width:12%;" once-text="contact.First_name">
-				<!--{{contact.First_name}}-->
+			<td style="width:12%;">
+				{{contact.First_name}}
 			</td>
 			<td style="width:14%;" >
 				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.PrincipalInvestigator.Key_id" once-text="contact.Supervisor.Name"></a>
 			</td>
 
-			<td style="width:14%;" once-text="contact.Primary_department.Name">
-				<!--{{contact.Primary_department.Name}}-->
+			<td style="width:14%;">
+				{{contact.Primary_department.Name}}
 			</td>
 			<!--
 			<td style="width:12%;" once-text="contact.Lab_phone">
 			
 			</td>
 			-->
-			<td style="width:10%;" once-text="contact.Email">
-				<!--{{contact.Email}}-->
+			<td style="width:10%;">
+				{{contact.Email}}
 			</td>
 
-			<td style="width:10%;" once-text="contact.Supervisor.Lab_phone">
-				<!--{{contact.Emergency_phone}}-->
+			<td style="width:10%;">
+				{{contact.Emergency_phone}}
 			</td>
 
-			<td style="width:10%;" once-text="contact.Emergency_phone">
-				<!--{{contact.Emergency_phone}}-->
+			<td style="width:10%;">
+				{{contact.Emergency_phone}}
 			</td>
 
 		</tr>
@@ -168,7 +168,7 @@
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				   		
 				    <ul style="margin-top:3px;">
-				    	<li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+				    	<li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 						</li>
 				    </ul>
 				   </div>
@@ -180,7 +180,6 @@
 			         <div class="controls">
 						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				    </div>
 			    </div>
