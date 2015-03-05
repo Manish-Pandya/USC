@@ -1307,6 +1307,15 @@ a.checklistNav span{
 .correctiveAction {
   position: absolute;
 }
+.corrective-action > div{
+  padding:15px;
+}
+.corrective-action > div p{
+  margin-bottom:15px;
+}
+.corrective-action > div h4{
+  margin-top:15px;
+}
 
 /* line 1099, ../sass/style.scss */
 .inspectionInfo .row {
@@ -1367,6 +1376,24 @@ a.checklistNav span{
 /* line 1124, ../sass/style.scss */
 .inspectionReportTable td .row-fluid .span6:last-child {
   border-left: 1px solid #dddddd;
+}
+.modal .quickdate-popup {
+  display: block !important;
+  position: relative !important;
+  box-shadow: none;
+}
+.modal .quickdate-button {
+  visibility: hidden !important;
+}
+.modal-body p {
+  font-size: 16px;
+}
+.Pending{
+  background: #ffffb9 !important;
+}
+.Complete{
+  background: rgb(86, 201, 86);
+  background: rgba(86, 201, 86, 0.5) !important;
 }
 
 /* line 1133, ../sass/style.scss */
@@ -1457,53 +1484,6 @@ td.reviewHeader {
 #generalSafetyHeader, .generalHazardsHeader {
   background-color: #009900;
 }
-
-/* line 1203, ../sass/style.scss */
-.Pending {
-  font-size: 14px;
-}
-
-/* line 1206, ../sass/style.scss */
-.Pending:after {
-  margin-left: 15px;
-  font-family: 'Open Sans', sans-serif !important;
-}
-
-/* line 1210, ../sass/style.scss */
-.Incomplete {
-  color: #e67e1d !important;
-}
-
-/* line 1213, ../sass/style.scss */
-.Pending {
-  color: #e67e1d !important;
-}
-
-/* line 1216, ../sass/style.scss */
-.Pending:before {
-  content: "\e13a";
-}
-
-/* line 1222, ../sass/style.scss */
-.Complete {
-  color: #090 !important;
-}
-
-/* line 1228, ../sass/style.scss */
-.Complete:before {
-  content: "\e03c";
-}
-
-/* line 1231, ../sass/style.scss */
-.Incomplete {
-  color: #900 !important;
-}
-
-/* line 1234, ../sass/style.scss */
-.Incomplete:before {
-  content: "\e03a";
-}
-
 /* line 1240, ../sass/style.scss */
 .detail {
   margin-bottom: 55px;

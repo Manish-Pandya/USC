@@ -1,28 +1,4 @@
 angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate','ngRoute','once'])
-/*
-.directive('htmlText', function(){
-  return {
-    'restrict': 'A',
-    'require': 'ngModel',
-    'link': function(scope,element,attrs,model) {
-      console.log(model);
-      model.$formatters.push(function(val){
-        return val.Text;
-      });
-
-      model.$parsers.push(function(val){
-        model.$modelValue.Text = val;
-      });
-    } 
-  };
-})
-*/
-.run(function($rootScope, $templateCache) {
-   $rootScope.$on('$viewContentLoaded', function() {
-      $templateCache.removeAll();
-   });
-})
-
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -76,6 +52,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   var inspection = {};
   factory.recommendations = [];
   factory.observations = [];
+  factory.modalData = {};
 
   factory.getInspectionData = function(url){
     //return convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById3&id=132&callback=JSON_CALLBACK', this.onFailGet);
@@ -347,6 +324,14 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
           return false;
   }
 
+  factory.setModalData = function(data){
+    factory.modalData = convenienceMethods.copyObject(data);
+  }
+
+  factory.getModalData = function(){
+    return factory.modalData;
+  }
+
   return factory;
 });
 
@@ -573,7 +558,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
 }
 
-inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory,$rootScope){
+inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal){
   $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
   function init(){
     if($location.search().inspection){
@@ -702,5 +687,131 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       return false;
   }
 
+  $scope.openModal = function(question, def){
+    var modalData = {
+      question: question,
+      deficiency: def
+    }
+    postInspectionFactory.setModalData(modalData);
+    var modalInstance = $modal.open({
+      templateUrl: 'post-inspection-templates/corrective-action-modal.html',
+      controller: modalCtrl
+    });
 
+
+    modalInstance.result.then(function (returnedCA) {
+      if(def.CorrectiveActions.length && def.CorrectiveActions[0].Key_id){
+          angular.extend(def.CorrectiveActions[0], returnedCA)
+      }else{
+          def.CorrectiveActions.push(returnedCA);
+      }
+    });
+  }
+
+  $scope.complete = function(action){
+    var copy = convenienceMethods.copyObject(action);
+    action.dirty = true;
+    copy.Completion_date = convenienceMethods.setMysqlTime(Date());
+    copy.Status = 'Complete';
+    $scope.error=''
+    //call to factory to save, return, then close modal, passing data back
+    postInspectionFactory.saveCorrectiveAction(copy)
+      .then(
+        function(returnedAction){
+          action.dirty = false;
+          angular.extend(action, returnedAction);
+        },
+        function(){
+          action.dirty = false;
+          $scope.error = "The corrective action could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
+
+}
+
+modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance){
+  var data = postInspectionFactory.getModalData();
+  $scope.options = ['Incomplete','Pending','Complete'];
+  $scope.validationError='';
+  if(!data.deficiency.CorrectiveActions.length){
+    data.deficiency.CorrectiveActions[0] = {
+      Class:"CorrectiveAction",
+      Deficiency_selection_id: data.deficiency.Key_id,
+      Status: "Incomplete"
+    }
+  }
+  $scope.question = data.question;
+  $scope.def      = data.deficiency;
+
+  $scope.saveCorrectiveAction = function(copy){
+    $scope.dirty = true;
+    if(copy.view_Promised_date)copy.Promised_date = convenienceMethods.setMysqlTime(copy.view_Promised_date);
+    if(copy.view_Completion_date)copy.Completion_date = convenienceMethods.setMysqlTime(copy.view_Completion_date);
+
+    $scope.validationError=''
+    //call to factory to save, return, then close modal, passing data back
+    postInspectionFactory.saveCorrectiveAction(copy)
+      .then(
+        function(returnedAction){
+          $scope.dirty = false;
+          $modalInstance.close(returnedAction);
+        },
+        function(){
+          $scope.dirty = false;
+          $scope.validationError = "The corrective action could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
+
+  $scope.getIsValid = function(){
+
+    if($scope.def.CorrectiveActions 
+      && $scope.def.CorrectiveActions.length
+      && $scope.def.CorrectiveActions[0].Text
+      ){
+
+        if($scope.def.CorrectiveActions[0].Status == "Pending" && $scope.def.CorrectiveActions[0].view_Promised_date){
+            $scope.isValid = true;
+        }
+
+        if($scope.def.CorrectiveActions[0].Status == "Complete" && $scope.def.CorrectiveActions[0].view_Completion_date){
+            $scope.isValid = true;
+        }
+    }
+  }
+
+  $scope.cancel = function(){
+    $modalInstance.dismiss();
+  }
+
+  //parse function to ensure that users cannot set the date for a corrective action before the date of the inspection
+  $scope.afterInspection = function(d){
+    var calDate = Date.parse(d);
+    //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
+    var inspectionDate = Date.parse(postInspectionFactory.getInspection().view_Date_started)-864000;
+    var now = new Date();
+    if(calDate>=inspectionDate){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.todayOrAfter = function(d){
+    var calDate = Date.parse(d);
+    //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
+    var now = new Date(),
+    then = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,0,0),
+    diff = now.getTime() - then.getTime()
+
+    var today = Date.parse(now)-diff;
+     if(calDate>=today){
+      return true;
+    }
+    return false;
+  }
 }
