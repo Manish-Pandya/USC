@@ -14,7 +14,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 })
 .filter('evaluateChecklist', function () {
 	return function (questions, checklist) {
-		
 			checklist.completedQuestions = 0;
 			if(!checklist.Questions) return questions;
 			var i = checklist.Questions.length;
