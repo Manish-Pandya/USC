@@ -1484,6 +1484,18 @@ class ActionManager {
 					// if add is false, remove this role from this PI
 				} else {
 					$dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+					if($roleToAdd->getName() == 'Principal Investigator'){
+						$LOG->debug('trying to remove pi');
+						$pi = $user->getPrincipalInvestigator();
+						$dao = $this->getDao(new PrincipalInvestigator());
+						$dao->deleteById($pi->getKey_id());
+					}
+					if($roleToAdd->getName() == 'Safety Inspector'){
+						$LOG->debug('trying to remove Inspector');
+						$inspector = $user->getInspector();
+						$dao = $this->getDao(new Inspector());
+						$dao->deleteById($inspector->getKey_id());
+					}
 				}
 
 			} else {
