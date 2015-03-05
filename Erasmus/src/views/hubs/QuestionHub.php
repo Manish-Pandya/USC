@@ -176,7 +176,7 @@ require_once '../top_view.php';
 			 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
 			 <a class="btn btn-danger" ng-show="addObvs" ng-click="addObvs = !addObvs"><i class="icon-remove"></i>Cancel</a>
 		</form>
-		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
+		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px;" ng-if="question.Observations.length" ng-class="{inactive: !rec.Is_active}">
 			<tr>
 				<th>Edit</th>
 				<th>Note</th>
