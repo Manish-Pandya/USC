@@ -82,14 +82,13 @@ require_once '../top_view.php';
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
 					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.Questions.length, 'green' : checklist.completedQuestions==checklist.Questions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.Questions.length}}</span></h2>
 				</accordion-heading>
-		     	<ul style="margin-left:0;">	
+		     	<ol style="margin-left:0; list-style-type:decimal">	
 		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">
 		     			<!--call evaluateDeficiecnyRooms -->
 
-		     			<h3 style="width:45%; float:left;">
+		     			<h3 style="width:70%; float:left;">
 		     				<i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
-		     				<span once-text=""></span><br>
-		     				<span once-text="$index+1 +'. '+question.Text"></span><br>
+		     				<span once-text="question.Text"></span><br>
 		     				<span class="checklistQuestionError" ng-if="question.error">{{question.error}}</span>
 		     			</h3>
 		     			<div class="questionAnswerInputs">
@@ -233,7 +232,7 @@ require_once '../top_view.php';
 						</span>
 		     		</li>
 		     		<div style="clear:both"></div>
-		     	</ul>
+		     	</ol>
 		    </accordion-group>
 		    <a class="btn btn-large btn-success" ng-if="Inspection || inspection" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>

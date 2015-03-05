@@ -1180,9 +1180,9 @@ img.smallLoading {
 /* line 1008, ../sass/style.scss */
 div.question, li.question {
   border-bottom: 1px solid #d7d7d7;
-  padding: 10px 2%;
+  padding: 10px;
   margin: 10px 0;
-  width: 93%;
+  width: 97%;
   background: #f7f7f7;
 }
 
