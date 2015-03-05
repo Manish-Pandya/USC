@@ -186,8 +186,23 @@ class ActionManager {
 		}
 		else{
 			$dao = $this->getDao( new User() );
-			$dao->save( $decodedObject );
-			if($decodedObject->getKey_id()>0)return $decodedObject;
+			$user = $dao->save( $decodedObject );
+			if($decodedObject->getPrincipalInvestigator() != null){
+				$pi = $decodedObject->getPrincipalInvestigator();
+				$pi->setUser_id($user->getKey_id());
+				$LOG->debug($pi);
+				$this->savePI($pi);
+			}
+
+			if($user->getKey_id()>0){
+				$entityMaps = array();
+				$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+				$entityMaps[] = new EntityMap("eager","getInspector");
+				$entityMaps[] = new EntityMap("lazy","getSupervisor");
+				$entityMaps[] = new EntityMap("eager","getRoles");
+				$user->setEntityMaps($entityMaps);
+				return $user;
+			}
 		}
 		return new ActionError('Could not save');
 	}
@@ -1341,20 +1356,25 @@ class ActionManager {
 		return true;
 	}
 
-	public function savePIDepartmentRelations(){
+	public function savePIDepartmentRelations($piId = NULL, $departmentIds = NULL){
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-
-		foreach($roleIds as $roleId){
-			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		$LOG->debug($this->getValueFromRequest('departmentIds', $departmentIds));
+		foreach($departmentIds as $departmentId){
+			$relation = new RelationshipDto();
+			$relation->setMaster_id($piId);
+			$relation->setRelation_id($departmentId);
+			$relation->setAdd(true);
+			$this->savePIDepartmentRelation($relation);
 		}
 		return true;
 	}
 
-	public function savePIDepartmentRelation($PIID = NULL,$deptId = NULL,$add= NULL){
+	public function savePIDepartmentRelation($decodedObject){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
-		$decodedObject = $this->convertInputJson();
+		if($decodedObject == null)$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to RelationshipDto');
