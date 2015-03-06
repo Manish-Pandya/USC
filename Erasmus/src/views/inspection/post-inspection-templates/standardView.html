@@ -75,6 +75,8 @@
 			</span>
 		</div>
 	</div>
+	<h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
+	<a ng-if="readyToSubmit" class="btn btn-success btn-large left" style="margin:10px 0;" ng-click="submit()"><i class="icon-checkmark"></i>Submit CAP</a>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
 	<th style="width:10%">AUDIT CRITERIA</th>
 	<th colspan="2" style="width:34%;">
