@@ -292,8 +292,8 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   {
       var deferred = $q.defer();
 
-      if(factory.previousInspections.length){
-        deferred.resolve( factory.previousInspections );
+      if(factory.openInspections.length){
+        deferred.resolve( factory.openInspections );
         return deferred.promise;
       }
 
