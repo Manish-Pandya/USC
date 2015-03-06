@@ -314,8 +314,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	question.error='';
 	    	deficiency.IsDirty = true;
 		    var def_id = deficiency.Key_id;
-		    deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
-		    if( this.inspection.Deficiency_selections[1].indexOf(deficiency.Key_id > -1) ){
+		    //deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
+		    if( deficiency.correctedDuringInspection ){
 		      //we set corrected durring inpsection
 		      var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
 		    }else{
@@ -326,10 +326,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 		    convenienceMethods.getDataAsPromise( url )
 		      	.then(
 		      		function(){
-		      			deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection;
 		      			deficiency.IsDirty = false;
 		      		},
 		      		function(){
+		      			deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection;
 		      			question.error = 'The deficiency could not be saved.  Please check your internet connection and try again.';
 		      			deficiency.IsDirty = false;
 		      		}
