@@ -62,7 +62,7 @@ require_once '../top_view.php';
 		       	  <i class="icon-spinnery-dealie spinner large"></i>
 				  <span>Loading...</span>
 				</span>
-				<ul ng-if="hazards && pisByRoom && showingHazards" style="margin:-30px auto 30px; font-size:20px; font-weight:bold; list-style:none;">
+				<ul ng-if="hazards && showingHazards" style="margin:-30px auto 30px; font-size:20px; font-weight:bold; list-style:none;">
 					<li style="padding:10px"><a target="_blank" href="http://wiser.nlm.nih.gov/">WISER (Wireless Information System for Emergency Responders)</a></li>
 					<li style="padding:10px"><a target="_blank" href="http://cameochemicals.noaa.gov/">CAMEO Chemicals (Database of Hazardous Materials)</a></li>
 				</ul>
@@ -70,23 +70,23 @@ require_once '../top_view.php';
 				<table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered">
 					<tr class="blue-tr">
 						<th>Principal Investigator</th>
-						<th>Emergency Phone</th>
-						<th>PI Department</th>
+						<th>Phone</th>
+						<th>Department</th>
 					</tr>
 					<tr ng-repeat="pi in pisByRoom">
-						<td>{{pi.User.Name}}</td>
-						<td><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
-						<td>
+						<td style="width:37%">{{pi.User.Name}}</td>
+						<td style="width:18%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
+						<td style="width:45%">
 							<ul style="list-style: none;">
 								<li ng-repeat="dept in pi.Departments">{{dept.Name}}</li>
 							</ul>
 						</td>
 					</tr>
 				</table>
-				<table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered" style="max-width:700px;">
+				<table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered" style="max-width:500px;">
 					<tr class="blue-tr">
 						<th>Lab Personnel Contacts</th>
-						<th>Emergency Phone</th>
+						<th>Phone</th>
 					</tr>
 					<tr ng-repeat="contact in personnel">
 						<td>{{contact.Name}}</td>
