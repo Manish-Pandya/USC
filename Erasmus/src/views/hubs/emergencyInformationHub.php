@@ -51,7 +51,7 @@ require_once '../top_view.php';
 				       	<i ng-if="!pis" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
 
 						<label>Location:</label>
-						<input ng-if="rooms" style="width:350px" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:$viewValue">
+						<input ng-if="rooms && !gettingRoomsForPI" style="width:350px" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:$viewValue">
 						<input ng-if="gettingRoomsForPI" style="width:350px" placeholder="Searching for rooms..." disabled="disabled">
 				       	<i ng-if="gettingRoomsForPI" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
 						<input ng-if="!rooms && !gettingRoomsForPI" style="width:350px" placeholder="Select a Principal Investigator" disabled="disabled">
@@ -62,6 +62,10 @@ require_once '../top_view.php';
 		       	  <i class="icon-spinnery-dealie spinner large"></i>
 				  <span>Loading...</span>
 				</span>
+				<ul ng-if="hazards && pisByRoom && showingHazards" style="margin:-30px auto 30px; font-size:20px; font-weight:bold; list-style:none;">
+					<li style="padding:10px"><a target="_blank" href="http://wiser.nlm.nih.gov/">WISER (Wireless Information System for Emergency Responders)</a></li>
+					<li style="padding:10px"><a target="_blank" href="http://cameochemicals.noaa.gov/">CAMEO Chemicals (Database of Hazardous Materials)</a></li>
+				</ul>
 
 				<table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered">
 					<tr class="blue-tr">
