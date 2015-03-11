@@ -280,6 +280,9 @@ class ActionManager {
 			if ($decodedObject->getHazard_id() != null) {
 				// Get the hazard for this checklist
 				$hazard = $decodedObject->getHazard();
+				if($decodedObject->getIs_active()==null){
+					$decodedObject->setIs_active(true);
+				}
 				// Get the array of parent hazards
 				$hazard->setParentIds(null);
 				$parentIds = $hazard->getParentIds();
@@ -620,7 +623,13 @@ class ActionManager {
 					}
 				}
 			}
-			$LOG->debug($hazard);
+			if($hazard->getChecklist() != null){
+				$chDao = $this->getDao(new Checklist());
+				$checklist = $hazard->getChecklist();
+				$checklist->setIs_active($decodedObject->getIs_active());
+				$chDao->save($checklist);
+			}
+
 			$dao->save($decodedObject);
 
 			return $decodedObject;
