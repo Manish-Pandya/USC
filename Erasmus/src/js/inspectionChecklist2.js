@@ -6,7 +6,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			var filtered = [];
 			while(i--){
 				var item = items[i];
-				if( item.Master_hazard.indexOf(category) > -1 )	filtered.unshift( item );
+				if( item.Master_hazard.toLowerCase().indexOf(category.toLowerCase()) > -1 )	filtered.unshift( item );
 			}
 			return filtered;
 			
@@ -98,11 +98,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.selectCategory = function( category )
 	    {		
+	    		//if(!category)category = "Biological Safety";
 	    		$rootScope.loading = true;
 	    		$rootScope.image = factory.setImage( category );	
-				$rootScope.category = category;
 				$rootScope.inspection = factory.inspection
 				$rootScope.inspection.selectedChecklists = [];
+				$rootScope.category = category;
+				var categoryLabel = category.split(" ")[0].toLowerCase();
 
 	    		var len = factory.inspection.Checklists.length;
 	    		var counter;
@@ -114,7 +116,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		function innerFilter(){
 	    			for( counter = 0; i < len && counter < 3; counter++, i++){
 	    				var checklist = factory.inspection.Checklists[i];
-		    			if( checklist.Master_hazard == category )selectedChecklists.push( checklist );
+		    			if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  )selectedChecklists.push( checklist );
 	    			}
 
 	    			if(i == len){
