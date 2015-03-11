@@ -187,7 +187,8 @@ class ActionManager {
 		else{
 			$dao = $this->getDao( new User() );
 			$user = $dao->save( $decodedObject );
-			if($decodedObject->getPrincipalInvestigator() != null){
+			$pi = $user->getPrincipalInvestigator();
+			if($decodedObject->getPrincipalInvestigator() != null && $pi == NULL){
 				$pi = $decodedObject->getPrincipalInvestigator();
 				$pi->setUser_id($user->getKey_id());
 				$LOG->debug($pi);
@@ -1467,8 +1468,14 @@ class ActionManager {
 						$dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 						//add PI record if role is PI
 						if($roleToAdd->getName() == 'Principal Investigator'){
-							$pi = new PrincipalInvestigator();
-							$pi->setUser_id($userID);
+							//if the user already has a PI, get that PI
+							if($user->getPrincipalInvestigator() != NULL){
+								$pi = $user->getPrincipalInvestigator();
+							}else{
+								$pi = new PrincipalInvestigator();
+								$pi->setUser_id($userID);
+							}
+
 							$pi->setIs_active(true);
 							if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
 						}
@@ -1476,8 +1483,13 @@ class ActionManager {
 						//add Inspector record if role is inspector
 						if($roleToAdd->getName() == 'Safety Inspector'){
 							$LOG->debug('trying to save inspector');
-							$inspector = new Inspector();
-							$inspector->setUser_id($userID);
+							//if the user already has an Inspector, get that Inspector
+							if($user->getPrincipalInvestigator() != NULL){
+								$pi = $user->getInspector();
+							}else{
+								$inspector = new Inspector();
+								$inspector->setUser_id($userID);
+							}
 							if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
 						}
 					}
@@ -1485,16 +1497,19 @@ class ActionManager {
 				} else {
 					$dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
 					if($roleToAdd->getName() == 'Principal Investigator'){
-						$LOG->debug('trying to remove pi');
+						$LOG->debug('trying to deactivate pi');
 						$pi = $user->getPrincipalInvestigator();
 						$dao = $this->getDao(new PrincipalInvestigator());
-						$dao->deleteById($pi->getKey_id());
+						$pi->setIs_active(false);
+						$dao->save($pi);
 					}
 					if($roleToAdd->getName() == 'Safety Inspector'){
-						$LOG->debug('trying to remove Inspector');
+						$LOG->debug('trying to deactivate Inspector');
 						$inspector = $user->getInspector();
 						$dao = $this->getDao(new Inspector());
-						$dao->deleteById($inspector->getKey_id());
+
+						$inspector->setIs_active(false);
+						$dao->save($inspector);
 					}
 				}
 

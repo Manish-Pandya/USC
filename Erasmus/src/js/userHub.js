@@ -1046,13 +1046,10 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       var userCopy, oldRoles
       var oldRoleIds = [];
       var idsToAdd = [];
-      if($scope.modalData.Class=="PrincipalInvestigator"){
-        userCopy = userHubFactory.getModalData().User;
-        oldRoles = userHubFactory.getModalData().User.Roles;
-      }else{
-        userCopy = userHubFactory.getModalData();
-        oldRoles = userHubFactory.getModalData().Roles;
-      }
+  
+      userCopy = userHubFactory.getModalData();
+      oldRoles = $scope.modalData.Roles;
+      
 
       if(!userHubFactory.getModalData().Is_new){
         //get the ids of the roles the user already had, if the user is not new
