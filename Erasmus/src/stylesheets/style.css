@@ -570,6 +570,9 @@ tr.new td{
 tr.inactive td {
   background: pink !important;
 }
+h3.inactive{
+  color:red;
+}
 
 /* line 451, ../sass/style.scss */
 li.inactive {
