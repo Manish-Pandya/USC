@@ -24,7 +24,7 @@ require_once '../top_view.php';
 		       		<i class="icon-spinnery-dealie spinner small asbolute" style="margin-left:-258px; margin-top:-5px;"></i>
 		       </span>
 		       <span ng-if="PIs && buildings">
-		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span4"  typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi.User.Name+(pi.Is_active ? '': ' (Inactive)') as pi.User.Name+(pi.Is_active ? '': ' (Inactive)') for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		     </div>
@@ -38,7 +38,7 @@ require_once '../top_view.php';
 			<a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
 		</div>
 	</span>
-	<h3 ng-hide="!PI" class="piHeader">Principle Investigator:  {{PI.User.Name}}</h3>
+	<h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !pi.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!pi.Is_active">(Inactive)</span></h3>
 	<ng-view></ng-view>
 
 
