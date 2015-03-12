@@ -117,7 +117,7 @@ class Room extends GenericCrud {
 	public function getHazards(){
 		if($this->hazards == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP));
+			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP), NULL, NULL, TRUE);
 			$LOG = Logger::getLogger(__CLASS__);
 			//General Hazards are present in every room
 			//In addition to the Hazards this room is related to, we also get all hazards that are either the General Hazard or it's SubHazards
@@ -140,7 +140,7 @@ class Room extends GenericCrud {
 	public function getPrincipalInvestigators(){
 		if($this->principalInvestigators == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
+			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, NULL, TRUE);
 		}
 		return $this->principalInvestigators;
 	}
