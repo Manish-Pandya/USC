@@ -62,7 +62,8 @@ require_once '../top_view.php';
 		       	  <i class="icon-spinnery-dealie spinner large"></i>
 				  <span>Loading...</span>
 				</span>
-				<ul ng-if="hazards && showingHazards" style="margin:-30px auto 30px; font-size:20px; font-weight:bold; list-style:none;">
+				<h2 class="bold" style="margin:-35px 0 10px" ng-if="room && building">Room {{room.Name}}, {{building.Name}}</h2>
+				<ul ng-if="hazards && showingHazards" style="font-size:20px; font-weight:bold; list-style:none;">
 					<li style="padding:10px"><a target="_blank" href="http://wiser.nlm.nih.gov/">WISER (Wireless Information System for Emergency Responders)</a></li>
 					<li style="padding:10px"><a target="_blank" href="http://cameochemicals.noaa.gov/">CAMEO Chemicals (Database of Hazardous Materials)</a></li>
 				</ul>

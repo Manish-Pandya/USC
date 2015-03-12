@@ -221,6 +221,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
         eif.getHazards( room ).
           then(
             function(rootHazard){
+              console.log(room);
               $scope.hazards = rootHazard.ActiveSubHazards;
 
               eif.getPIsByRoom(room)
@@ -234,6 +235,12 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
                       }
                       $scope.loading = false;
                       $scope.showingHazards = true;
+                      var i = $scope.buildings.length;
+                      while(i--){
+                        if(room.Building_id == $scope.buildings[i].Key_id)$scope.building = $scope.buildings[i];
+                      }                       
+
+                      $scope.room = room;
                     }
                 )
 
