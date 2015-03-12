@@ -79,7 +79,8 @@ class GenericDAO {
 			global $db;
 
 			//Prepare to query the table by key_id
-			$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
+			$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
+			$stmt = $db->prepare($sql);
 			$stmt->bindParam(1,$id,PDO::PARAM_INT);
 			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
 			if ($stmt->execute()) {
@@ -252,7 +253,7 @@ class GenericDAO {
 	 * @param DataRelationship $relationship
 	 * @return Array:
 	 */
-	function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = FALSE){
+	function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = NULL, $activeRelated = NULL){
 		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		// make sure there's an id
 		if (empty($id)) { return array();}
@@ -295,8 +296,14 @@ class GenericDAO {
 			$itemDao = new GenericDAO( $item );
 			$item = $itemDao->getById( $record[$keyName] );
 
-			// Add the results to an array
-			array_push($resultList, $item);
+			if($activeRelated != null){
+				// Add the results to an array
+				if($item->getIs_active() == true)array_push($resultList, $item);
+			}else{
+				// Add the results to an array
+				array_push($resultList, $item);
+			}
+
 		}
 		$this->LOG->debug("$this->logprefix returning" . count($resultList)  . "related records");
 
