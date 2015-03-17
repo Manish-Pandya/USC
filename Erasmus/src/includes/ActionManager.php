@@ -193,6 +193,11 @@ class ActionManager {
 				$pi->setUser_id($user->getKey_id());
 				$LOG->debug($pi);
 				$this->savePI($pi);
+			}else{
+				//we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+				$pi->setIs_active($user->getIs_active());
+				$piDao  = $this->getDao(new PrincipalInvestigator());
+				$piDao->save($pi);
 			}
 
 			if($user->getKey_id()>0){
