@@ -29,7 +29,8 @@ class Inspection extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"created_user_id"	=> "integer"
+		"created_user_id"	=> "integer",
+		"cap_complete"      => "integer"
 	);
 
 	/** Relationships */
@@ -95,6 +96,8 @@ class Inspection extends GenericCrud {
 	private $schedule_year;
 
 	private $schedule_month;
+	
+	private $cap_complete;
 
 	/**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
 	private $text_schedule_month;
@@ -225,13 +228,13 @@ class Inspection extends GenericCrud {
 
 		// If there is a close date, it's closed.
 		if ($this->date_closed != null) {
-			return 'CLOSED';
+			return 'CLOSED OUT';
 		}
 
 		// Create some reference dates for status checking
 		$now = new DateTime("now");
 		$then = new DateTime("now - 30 days");
-
+		
 
 		// If it's been scheduled but not started...
 		if ($this->schedule_month != null && $this->date_started == null) {
@@ -252,22 +255,27 @@ class Inspection extends GenericCrud {
 				$LOG->debug("there was no notification date for inspection with key_id $this->key_id");
 
 				//Inspection has been started
-				return "STARTED";
+				return "INCOMPLETE REPORT";
 
 			}
 			//PI has been notified of the results
 			else{
-				//Is the Corrective Action Plan overdue?
-				if($now->diff($datetime2) < -14){
-					return "OVERDUE CAP";
-				}else{
-					return "PENDING EHS APPROVAL";
+				$notificationDate = new DateTime($this->notification_date);
+				
+				//CAP has been submitted
+				if($this->cap_submitted_date != null && $this->cap_submitted_date != '0000-00-00 00:00:00'){
+					return 'CLOSED OUT';
 				}
-
-
+				//CAP not been submitted
+				else{
+					//Is the Corrective Action Plan overdue?
+					if($now->diff($notificationDate) < -14){
+						return "OVERDUE CORRECTIVE ACTIONS";
+					}else{
+						return "PENDING CLOSEOUT";
+					}
+				}
 			}
-
-
 		}
 
 		// Now we check to see if there are unresolved deficiencies.  Start by assuming all is good.
@@ -301,6 +309,9 @@ class Inspection extends GenericCrud {
 		// If no other status applies, it's considered open.
 		return 'OPEN';
 	}
+	public function getCapComplete() {return $this->cap_complete;}
+	public function setCapComplete($cap_complete) {$this->cap_complete = $cap_complete;}
+	
 
 }
 ?>
