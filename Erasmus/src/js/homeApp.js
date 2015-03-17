@@ -14,6 +14,12 @@ homeApp.config(function($routeProvider){
 				controller: adminController
 			}
 		)
+		.when('/inspections', 
+			{
+				templateUrl: '../views/rsmsCenterPartials/inspections.html', 
+				controller: adminController
+			}
+		)
 		.otherwise(
 			{
 				redirectTo: '/home'
@@ -54,7 +60,6 @@ var adminController = function($location, $scope){
 
 	init();
 	function init(){
-		console.log('yowza');
 		$scope.view = 'home';
 	}
 
