@@ -333,7 +333,7 @@ require_once '../top_view.php';
 			<img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
 		</span>
 		<span ng-if="inspection.Note && !noteEdited">
-			<h4>{{inspection.Note}}<a style="margin-left:5px;" class="btn btn-mini btn-primary" ng-click="editNote()"><i class="icon-pencil"></i></a></h4>
+			<h4>{{inspection.Note}}<a style="margin-left:5px;" class="btn btn-mini btn-primary" ng-click="editNote()" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></h4>
 		</span>
 	</div>
 

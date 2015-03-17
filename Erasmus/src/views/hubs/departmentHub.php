@@ -41,9 +41,9 @@ require_once '../top_view.php';
 		<tbody>
 			<tr ng-repeat="(key, department) in departments | orderBy: 'Name'" class="center-block" ng-class="{inactive:!department.Is_active}">
 				<td>
-					<a class="btn btn-primary left" ng-click="editDepartment(department)"><i class="icon-pencil"></i>Edit</a>
+					<a class="btn btn-primary left" ng-click="editDepartment(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a>
 					<a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
-						<span ng-if="department.Is_active"><i class="icon-remove"></i></span>
+						<span ng-if="department.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
 						<span ng-if="!department.Is_active"><i class="icon-checkmark-2"></i></span>
 					</a>
 					<img ng-show="department.isDirty && department.setActive" class="smallLoading" src="../../img/loading.gif"/>

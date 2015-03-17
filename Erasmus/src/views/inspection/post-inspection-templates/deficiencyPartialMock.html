@@ -49,7 +49,7 @@
 							</span>
 
 							<span ng-if="def.CorrectiveActions[0].Status != 'Pending' && !def.CorrectiveActionCopy.Editing && def.CorrectiveActions.length">
-								<p><a class="btn-mini btn btn-primary" ng-click="def.CorrectiveActionCopy.Editing = !def.CorrectiveActionCopy.Editing"><i class="icon-pencil"></i></a>{{def.CorrectiveActionCopy.Text}}</p>
+								<p><a class="btn-mini btn btn-primary" ng-click="def.CorrectiveActionCopy.Editing = !def.CorrectiveActionCopy.Editing" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>{{def.CorrectiveActionCopy.Text}}</p>
 							</span>
 							
 							<label ng-if="def.CorrectiveActionCopy.Status == 'Pending'">Anticipated Completion Date:</label>

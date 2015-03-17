@@ -19,7 +19,7 @@ require_once '../top_view.php';
   <span>Loading Checklist</span>
 </span>
 
-	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit"><i class="icon-pencil"></i>Edit</a></h1>
+	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a></h1>
     <h2 ng-if="noChecklist && !checklist" style="">{{hazard.Name}}</h2>
     <a ng-if="!edit && doneLoading && !checklist"  style="margin-top:5px;" ng-click="editChecklist()" class="btn btn-primary">Create Checklist</a>
    <form ng-show="edit" style="margin-top:5px;">
@@ -53,9 +53,9 @@ require_once '../top_view.php';
           </td>
 
           <td>
-              <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary"><i class="icon-pencil"></i></a>
+              <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
               <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
-              <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"><i class="icon-remove"></i></a>
+              <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
               <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
               <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->
           </td>

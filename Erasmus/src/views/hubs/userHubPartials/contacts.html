@@ -13,7 +13,7 @@
 			     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
 
 			   </div>
-   				<h2 style="margin-top:8px;float:right" class="greenBg">{{filtered.length}} Lab Contacts</h2>
+   				<h2 style="margin-top:8px;float:right" class="greenBg"><span class="bold underline">{{filtered.length}}</span> Lab Contacts Displayed</h2>
 
 			</th>
 		</tr>
@@ -45,7 +45,7 @@
 	<tbody>
 		<tr ng-repeat="contact in (filtered = (LabContacts | isContact | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
 			<td style="width:18%;">
-				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)"><i class="icon-pencil"></i></a>
+				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0">Activate</a>
 				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>

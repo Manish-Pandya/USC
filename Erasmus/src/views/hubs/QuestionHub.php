@@ -25,7 +25,7 @@ require_once '../top_view.php';
 			 </i>View Checklist</a>
 		</h1>
 		<span class="spacer large"></span>
-		<a ng-if="!question.beingEdited && !noQuestion" class="btn btn-primary left" ng-click="editQuestion()"><i class="icon-pencil"></i>Edit Question, Compliance Reference or Description</a>
+		<a ng-if="!question.beingEdited && !noQuestion" class="btn btn-primary left" ng-click="editQuestion()" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit Question, Compliance Reference or Description</a>
 		<span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
 
 		<h2 class="row" ng-if="!question.beingEdited && !noQuestion" ng-hide="!question" id="currentQuestion"><span class="span4 bold">Question:</span><span class="span9" id="questionText">{{question.Text}}</span>
@@ -83,7 +83,7 @@ require_once '../top_view.php';
 			 	</div>
 			 </div>
 			 <a class="btn btn-success addDeficiency" ng-click="addDeficiency(question)"><i class="icon-checkmark"></i>Save Deficiency</a><img ng-if="savingDeficiency" class="smallLoading" src="../../img/loading.gif"/>
-			 <a class="btn btn-danger addDeficiency" ng-show="addDef" ng-click="addDef = !addDef"><i class="icon-remove"></i>Cancel</a>
+			 <a class="btn btn-danger addDeficiency" ng-show="addDef" ng-click="addDef = !addDef"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Cancel</a>
 		</form>
 
 		<span ng-hide="!question">
@@ -96,8 +96,8 @@ require_once '../top_view.php';
 			<tr ng-repeat="def in question.Deficiencies">
 				<td style="width:8%;">
 					<a class="btn btn-success btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="!def.Is_active"><i class="icon-checkmark"></i></a>
-					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="def.Is_active"><i class="icon-remove"></i></a>
-					<a class="btn btn-primary btn-mini" ng-click="editDef(def,question)" ng-disabled="def.edit"><i class="icon-pencil"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="def.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editDef(def,question)" ng-disabled="def.edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 				</td>
 				<td>
 					<h3 once-text="def.Text" ng-if="!def.edit"></h3>
@@ -129,7 +129,7 @@ require_once '../top_view.php';
 			    </div>
 			 </div>
 			 <a class="btn  btn-success" ng-click="addRecommendation(question)"><i class="icon-checkmark"></i>Save Recommendation</a><img ng-if="savingRecommendation" class="smallLoading" src="../../img/loading.gif"/>
-			 <a class="btn  btn-danger" ng-show="addRec" ng-click="addRec = !addRec"><i class="icon-remove"></i>Cancel</a>
+			 <a class="btn  btn-danger" ng-show="addRec" ng-click="addRec = !addRec"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Cancel</a>
 
 		</form>
 		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px; margin-bottom:40px;" ng-if="question.Recommendations.length" ng-class="{inactive: !rec.Is_active}">
@@ -140,8 +140,8 @@ require_once '../top_view.php';
 			<tr ng-repeat="rec in question.Recommendations" ng-class="{inactive: !rec.Is_active}">
 				<td style="width:8%;">
 					<a class="btn btn-success btn-mini" ng-click="handleObjActive(rec,question)" ng-disabled="rec.edit" ng-if="!rec.Is_active"><i class="icon-checkmark"></i></a>
-					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(rec,question)" ng-disabled="rec.edit" ng-if="rec.Is_active"><i class="icon-remove"></i></a>
-					<a class="btn btn-primary btn-mini" ng-click="editRec(rec,question)" ng-disabled="rec.edit"><i class="icon-pencil"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(rec,question)" ng-disabled="rec.edit" ng-if="rec.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editRec(rec,question)" ng-disabled="rec.edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 				</td>
 				<td>
 					<h3 once-text="rec.Text" ng-if="!rec.edit"></h3>
@@ -174,7 +174,7 @@ require_once '../top_view.php';
 			    </div>
 			 </div>
 			 <a class="btn  btn-success" ng-click="addObservation(question)"><i class="icon-checkmark"></i>Save Note</a><img ng-if="savingObservation" class="smallLoading" src="../../img/loading.gif"/>
-			 <a class="btn btn-danger" ng-show="addObvs" ng-click="addObvs = !addObvs"><i class="icon-remove"></i>Cancel</a>
+			 <a class="btn btn-danger" ng-show="addObvs" ng-click="addObvs = !addObvs"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Cancel</a>
 		</form>
 		<table class="table table-striped table-hover table-bordered editTable" style="width:1300px;" ng-if="question.Observations.length" ng-class="{inactive: !rec.Is_active}">
 			<tr>
@@ -184,8 +184,8 @@ require_once '../top_view.php';
 			<tr ng-repeat="obs in question.Observations" ng-class="{inactive: !obs.Is_active}">
 				<td style="width:8%;">
 					<a class="btn btn-success btn-mini" ng-click="handleObjActive(obs,question)" ng-disabled="obs.edit" ng-if="!obs.Is_active"><i class="icon-checkmark"></i></a>
-					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(obs,question)" ng-disabled="obs.edit" ng-if="obs.Is_active"><i class="icon-remove"></i></a>
-					<a class="btn btn-primary btn-mini" ng-click="editObs(obs,question)" ng-disabled="obs.edit"><i class="icon-pencil"></i></a>
+					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(obs,question)" ng-disabled="obs.edit" ng-if="obs.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
+					<a class="btn btn-primary btn-mini" ng-click="editObs(obs,question)" ng-disabled="obs.edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 				</td>
 				<td>
 					<h3 once-text="obs.Text" ng-if="!obs.edit"></h3>

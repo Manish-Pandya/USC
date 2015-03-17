@@ -11,7 +11,7 @@
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn-large btn" ng-click="openRoomModal()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
 			   </div>
-   				<h2 class="blueBg" style="float:right; margin-top:8">Showing {{filtered.length}} Laboratory Locations</h2>
+   				<h2 class="blueBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Laboratory Locations Displayed</h2>
 			</th>
 		</tr>
 		<tr>
@@ -42,8 +42,8 @@
 	<tbody>
 		<tr ng-repeat="room in (filtered = (rooms |  orderBy:['index', 'Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search))" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
 			<td style="width:6%;">
-				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"><i class="icon-remove"></i></a>
+				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></a>
 				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
 			</td>
@@ -61,9 +61,11 @@
 						<ul ng-if="pi.Departments">
 							<li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
 						</ul>
+						<span ng-if="!pi.Departments" style="color:#f00;">Unassigned</span>
+
 					</li>
 				</ul>
-				<span ng-if="!room.PrincipalInvestigators.length">Unassigned</span>
+				<span ng-if="!room.PrincipalInvestigators.length" style="color:#f00;">Unassigned</span>
 			</td>
 
 			<td style="width:15%" once-text="room.Building.Campus.Name">

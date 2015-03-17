@@ -11,7 +11,7 @@
 				     </a>
 				     <a class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add PI</a>
 			     </div>
-			     <h2 class="blueBg" style="float:right; margin-top:8px;">Displaying <span class="underline bold">{{filtered.length}}</span> Principal Investigators</h2>
+			     <h2 class="blueBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Principal Investigators Displayed</h2>
 			</th>
 		</tr>
 		<tr>
@@ -38,8 +38,8 @@
 	<tbody>
 			<tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive, true) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
 			<td style="width:8%;">
-				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="openModal(pi)"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi.PrincipalInvestigator)" ng-show="pi.PrincipalInvestigator.Is_active"><i class="icon-remove"></i></a>
+				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="openModal(pi)"  alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
+				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi.PrincipalInvestigator)" ng-show="pi.PrincipalInvestigator.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi.PrincipalInvestigator)" ng-show="!pi.PrincipalInvestigator.Is_active"><i class="icon-checkmark"></i></a>
 				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
 			</td>
