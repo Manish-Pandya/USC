@@ -888,7 +888,7 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
   $scope.getArchivedReports = function(){
       var modalInstance = $modal.open({
-        templateUrl: 'archived-reports.html',
+        templateUrl: 'hazard-inventory-modals/archived-reports.html',
         controller: controllers.modalCtrl
       });
 
@@ -928,7 +928,7 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   $scope.startInspection = function()
   {
     var modalInstance = $modal.open({
-        templateUrl: 'open-inspections.html',
+        templateUrl: 'hazard-inventory-modals/open-inspections.html',
         controller: controllers.findInspectionCtrl
       });
 
