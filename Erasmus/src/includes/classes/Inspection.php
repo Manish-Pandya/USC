@@ -98,6 +98,8 @@ class Inspection extends GenericCrud {
 	private $schedule_month;
 	
 	private $cap_complete;
+	
+	private $cap_due_date;
 
 	/**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
 	private $text_schedule_month;
@@ -111,7 +113,7 @@ class Inspection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getResponses");
 		$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
-		$entityMaps[] = new EntityMap("lazy","getStatus");
+		$entityMaps[] = new EntityMap("eager","getStatus");
 		$entityMaps[] = new EntityMap("lazy","getChecklists");
 
 		$this->setEntityMaps($entityMaps);
@@ -311,6 +313,16 @@ class Inspection extends GenericCrud {
 	}
 	public function getCapComplete() {return $this->cap_complete;}
 	public function setCapComplete($cap_complete) {$this->cap_complete = $cap_complete;}
+	public function getCapDueDate() {
+		if($this->getNotification_date() == NULL)return;
+		
+		//14 days after notification date
+		$noteficationDate = new DateTime($this->getNotification_date());
+		$interval = new DateInterval('P14D');
+		$this->cap_due_date = $noteficationDate->add($interval);
+		return $this->cap_due_date;
+	}
+	
 	
 
 }
