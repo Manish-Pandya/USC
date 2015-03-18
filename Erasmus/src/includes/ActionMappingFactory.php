@@ -124,6 +124,8 @@ class ActionMappingFactory {
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
 				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
 				"saveCampus"=>new ActionMapping("saveCampus", "", ""),
+				"getLocationCSV"=>new ActionMapping("getLocationCSV", "", ""),
+				
 
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
@@ -176,7 +178,7 @@ class ActionMappingFactory {
 
 				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", ""),
 
-
+				
 
 
 				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "")

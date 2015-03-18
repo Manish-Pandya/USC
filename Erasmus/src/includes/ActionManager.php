@@ -3183,6 +3183,37 @@ class ActionManager {
 		return $rooms;
 
 	}
+	
+	
+	public function getLocationCSV(){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		
+		$rooms = $this->getAllRooms();
+		$csvName = date("F j, Y") . "";
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename=Lab_Locations.csv');
+		$output = fopen('php://output', 'w');
+		fputcsv($output, array('Building', 'Room', 'Lab PIS'));
+		$roomArray = array();
+		foreach ($rooms as $room){
+			$building = $room->getBuilding();
+			$piString = '';
+			foreach($room->getPrincipalInvestigators() as $pi){
+				$user = $pi->getUser();
+				$piString .= $user->getName();
+				$departments = $pi->getDepartments();
+				foreach($departments as $dept){
+					$piString .= '   '.$dept->getName()."\n";
+				}
+				$piString .= "\n";
+			}			
+			fputcsv($output, array($building->getName(), $room->getName(), $piString));
+			
+		}
+		
+		return $roomArray;
+		
+	}
 
 	//generate a random float
 	public function random_float ($min,$max) {
