@@ -570,7 +570,7 @@ tr.new td{
 tr.inactive td {
   background: pink !important;
 }
-h3.inactive{
+h3.inactive, .unassigned{
   color:red;
 }
 

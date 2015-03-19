@@ -10,6 +10,7 @@
 				<h1 class="blueBg">Laboratory Locations</h1>
 				<div class="btn-group" style="margin:-22px 0 0 30px">
 			     <a class="btn-large btn" ng-click="openRoomModal()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
+			     <a style="  margin: 3px 0px 0 6px !important;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
 			   </div>
    				<h2 class="blueBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Laboratory Locations Displayed</h2>
 			</th>
@@ -56,16 +57,23 @@
 			</td>
 			<td colspan="2" style="width:28%">
 				<ul ng-if="room.PrincipalInvestigators.length">
-					<li ng-repeat="pi in room.PrincipalInvestigators" class="piList"> 
+					<li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}"> 
 						<span once-text="pi.User.Name"></span>
-						<ul ng-if="pi.Departments">
-							<li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
+						<ul>
+							<li ng-if="!pi.Departments">Unassigned</li>
+							<li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
 						</ul>
-						<span ng-if="!pi.Departments" style="color:#f00;">Unassigned</span>
+					</li>
+				</ul>
+				<ul ng-if="!room.PrincipalInvestigators.length">
+					<li>
+						<span style="color:#f00;">Unassigned</span>
+						<ul>
+							<li><span style="color:#f00;">Unassigned</span></li>
+						</ul>
 
 					</li>
 				</ul>
-				<span ng-if="!room.PrincipalInvestigators.length" style="color:#f00;">Unassigned</span>
 			</td>
 
 			<td style="width:15%" once-text="room.Building.Campus.Name">

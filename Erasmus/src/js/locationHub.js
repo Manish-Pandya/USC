@@ -64,8 +64,10 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 				}
 
 				if(search.pi || search.department && item.PrincipalInvestigators){
+					console.log('has pis property')
 					if(!item.PrincipalInvestigators.length){
-						item.PrincipalInvestigators = [{User:{Name: 'Unassigned'}}]; 
+						console.log('no pis in room '+item.Name);
+						item.PrincipalInvestigators = [{Class:"PrincipalInvestigator",User:{Name: 'Unassigned', Class:"User"}, Departments:[{Name: 'Unassigned'}] }]; 
 					}
 
 					var j = item.PrincipalInvestigators.length
@@ -76,7 +78,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
 						if(search.department){
 							if(!pi.Departments){
-								item.matched = false;
+								pi.Departments = [{Name: 'Unassigned'}];
 							}else{
 								var k = pi.Departments.length;
 								while(k--){
@@ -89,7 +91,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
 				}
 
-
 				if(item.matched == true)filtered.push(item);
 
 			}
@@ -100,7 +101,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 		}
 	};
 })
-.factory('locationHubFactory', function(convenienceMethods,$q,$rootScope){
+.factory('locationHubFactory', function(convenienceMethods,$q,$rootScope,$http){
 	var factory = {};
 	factory.rooms = [];
 	factory.buildings = [];
@@ -339,6 +340,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 				}
 
 			}
+	}
+
+	factory.getCSV = function(){
+		var url = "../../ajaxaction.php?action=getLocationCSV";
+		$http.get(url, function(status, response){
+			// success
+		}, function(status, response){
+			$rootScope.error = 'The list of locations could not be retrieved.  Please check your internet connection and try again.';
+		});
 	}
 
 
