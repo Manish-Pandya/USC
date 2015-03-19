@@ -188,16 +188,29 @@ class ActionManager {
 			$dao = $this->getDao( new User() );
 			$user = $dao->save( $decodedObject );
 			$pi = $user->getPrincipalInvestigator();
+			$inspector = $user->getInspector();
 			if($decodedObject->getPrincipalInvestigator() != null && $pi == NULL){
 				$pi = $decodedObject->getPrincipalInvestigator();
 				$pi->setUser_id($user->getKey_id());
 				$LOG->debug($pi);
 				$this->savePI($pi);
-			}else{
+			}elseif($pi != null){
 				//we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
 				$pi->setIs_active($user->getIs_active());
 				$piDao  = $this->getDao(new PrincipalInvestigator());
 				$piDao->save($pi);
+			}
+			
+			if($decodedObject->getInspector() != null && $pi == NULL){
+				$inspector = $decodedObject->getInspector();
+				$inspector->setUser_id($user->getKey_id());
+				$LOG->debug($inspector);
+				$this->savePI($inspector);
+			}elseif($inspector != null){
+				//we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+				$inspector->setIs_active($user->getIs_active());
+				$inspectorDao  = $this->getDao(new Inspector());
+				$inspectorDao->save($inspector);
 			}
 
 			if($user->getKey_id()>0){
@@ -1010,7 +1023,7 @@ class ActionManager {
 
 		$dao = $this->getDao(new Inspector());
 
-		return $dao->getAll();
+		return $dao->getAll(NULL, NULL, TRUE);
 	}
 
 	// Inspection, step 1 (PI / Room assessment)
@@ -1498,8 +1511,8 @@ class ActionManager {
 						if($roleToAdd->getName() == 'Safety Inspector'){
 							$LOG->debug('trying to save inspector');
 							//if the user already has an Inspector, get that Inspector
-							if($user->getPrincipalInvestigator() != NULL){
-								$pi = $user->getInspector();
+							if($user->getInspector() != NULL){
+								$inspector = $user->getInspector();
 							}else{
 								$inspector = new Inspector();
 								$inspector->setUser_id($userID);
@@ -3189,30 +3202,50 @@ class ActionManager {
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 		
 		$rooms = $this->getAllRooms();
-		$csvName = date("F j, Y") . "";
+		
+		usort($rooms, function($a, $b)
+		{	
+			return strcmp($a->getBuilding()->getName(), $b->getBuilding()->getName());
+		});
+		
+		$csvDate = date("F j, Y");
+		$LOG->debug($csvDate);
 		header('Content-Type: text/csv; charset=utf-8');
-		header('Content-Disposition: attachment; filename=Lab_Locations.csv');
+		header("Content-Disposition: attachment; filename=\"$csvDate\"Lab_Locations.csv");
 		$output = fopen('php://output', 'w');
-		fputcsv($output, array('Building', 'Room', 'Lab PIS'));
-		$roomArray = array();
+		fputcsv($output, array('Building', 'Room', 'Lab PIS', 'Departments'));
+		
 		foreach ($rooms as $room){
+			$i = 0;
 			$building = $room->getBuilding();
 			$piString = '';
+			$departmentString = '';
 			foreach($room->getPrincipalInvestigators() as $pi){
+				$i++;
 				$user = $pi->getUser();
 				$piString .= $user->getName();
 				$departments = $pi->getDepartments();
+				$j = 0;
 				foreach($departments as $dept){
-					$piString .= '   '.$dept->getName()."\n";
+					$j++;
+						
+					$departmentString .= $dept->getName();
+					if( $j != count($departments) ){
+						$departmentString .= "\n";
+						$piString .= "\n";
+					}
 				}
-				$piString .= "\n";
-			}			
-			fputcsv($output, array($building->getName(), $room->getName(), $piString));
+				if( $i != count($room->getPrincipalInvestigators() ) ){
+					$piString .= "\n\n ";
+					$departmentString .= "\n\n";
+				}
+			}		
+			if($piString == '')$piString = 'Unassigned';
+			
+			fputcsv($output, array($building->getName(), $room->getName(), $piString, $departmentString));
 			
 		}
-		
-		return $roomArray;
-		
+		fclose($output);
 	}
 
 	//generate a random float
