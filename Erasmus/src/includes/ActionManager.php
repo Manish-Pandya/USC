@@ -3241,6 +3241,7 @@ class ActionManager {
 				}
 			}		
 			if($piString == '')$piString = 'Unassigned';
+			if($departmentString == '')$departmentString = 'Unassigned';
 			
 			fputcsv($output, array($building->getName(), $room->getName(), $piString, $departmentString));
 			
