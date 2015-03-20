@@ -558,6 +558,7 @@ class Rad_ActionManager extends ActionManager {
 					if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
 					if($amount['Carboy_id'] != NULL)$newAmount->setCarboy_id($amount['Carboy_id']);
 					if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+					if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
 					$newAmount->setWaste_type_id($amount['Waste_type_id']);
 					$amountDao->save($newAmount);
 				}
