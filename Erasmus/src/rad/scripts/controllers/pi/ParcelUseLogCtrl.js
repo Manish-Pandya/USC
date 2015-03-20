@@ -47,14 +47,19 @@ angular.module('00RsmsAngularOrmApp')
           var solidUsageAmount = new window.ParcelUseAmount();
           var liquidUsageAmount = new window.ParcelUseAmount();
           var vialUsageAmount = new window.ParcelUseAmount();
+          var otherUsageAmount = new window.ParcelUseAmount();
+
           $rootScope.ParcelUseCopy.isNew = true;
           solidUsageAmount.Waste_type_id = 4;
           liquidUsageAmount.Waste_type_id = 1;
           vialUsageAmount.Waste_type_id = 3;
+          otherUsageAmount.Waste_type_id = 5;
 
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(vialUsageAmount);
+          $rootScope.ParcelUseCopy.ParcelUseAmounts.push(otherUsageAmount);
+
           parcel.ParcelUses.unshift($rootScope.ParcelUseCopy);
       }
 
@@ -66,25 +71,29 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.ParcelUseCopy = {}
 
           af.createCopy(use);
-          if(!$rootScope.ParcelUseCopy.Solids.length){
+
+          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,4)){
             var solidUsageAmount = new window.ParcelUseAmount();
             solidUsageAmount.Waste_type_id = 4;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
-            $rootScope.ParcelUseCopy.Solids.push(solidUsageAmount);
           }
-          if(!$rootScope.ParcelUseCopy.Liquids.length){
+          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,1)){
             var liquidUsageAmount = new window.ParcelUseAmount();
             liquidUsageAmount.Waste_type_id = 1;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
-            $rootScope.ParcelUseCopy.Liquids.push(liquidUsageAmount);
           }
-          if(!$rootScope.ParcelUseCopy.Vials.length){
+          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,3)){
             var vialUsageAmount = new window.ParcelUseAmount();
             vialUsageAmount.Waste_type_id = 3;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(vialUsageAmount);
-            $rootScope.ParcelUseCopy.Vials.push(vialUsageAmount);
           }
-          console.log($rootScope.ParcelUseCopy);
+          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,5)){
+            var otherUsageAmount = new window.ParcelUseAmount();
+            otherUsageAmount.Waste_type_id = 5;
+            $rootScope.ParcelUseCopy.ParcelUseAmounts.push(otherUsageAmount);
+            console.log(otherUsageAmount)
+          }
+
 
           use.edit = true;
       }
@@ -92,9 +101,11 @@ angular.module('00RsmsAngularOrmApp')
       $scope.addAmount = function(type){
           console.log(type);
           var amt = new window.ParcelUseAmount();
-          if(type == "Solids")amt.Waste_type_id = 1;
+          if(type == "Solids")amt.Waste_type_id = 4;
           if(type == "Liquids")amt.Waste_type_id = 1;
-          if(type == "Vials")amt.Waste_type_id = 1;
+          if(type == "Vials")amt.Waste_type_id = 3;
+          if(type == "Others")amt.Waste_type_id = 5;
+
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(amt);
           $rootScope.ParcelUseCopy[type].push(amt);
       }
@@ -128,34 +139,30 @@ angular.module('00RsmsAngularOrmApp')
 
 
       //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
-      //which if you think about it, has sort of become an MVCVM 
-
+      //which if you think about it, has sort of become an MVCVM
       $scope.validateUseAmounts = function(use){
           $rootScope.error = '';
           use.isValid = false;
           var total = 0;
 
-          var i = use.Liquids.length;
+          var i = use.ParcelUseAmounts.length;
           while(i--){
-            if(use.Liquids[i].Curie_level)total = total + parseInt(use.Liquids[i].Curie_level);
+            if(use.ParcelUseAmounts[i].Curie_level)total = total + parseInt(use.ParcelUseAmounts[i].Curie_level);
           }
 
-          var j = use.Solids.length;
-          while(j--){
-            if(use.Solids[j].Curie_level)total = total + parseInt(use.Solids[j].Curie_level);
-          }
-
-          var k = use.Vials.length;
-          while(k--){
-            if(use.Vials[k].Curie_level)total = total + parseInt(use.Vials[k].Curie_level);
-          }
-
-          console.log('total '+total);
-          console.log('quantity '+use.Quantity)
           if(use.Quantity == total){
             use.isValid = true;
           }else{
             $rootScope.error = 'Total disposal amount must equal use amount.';
           }
+      }
+
+      var parcelUseHasUseAmountType = function(use, typeId){
+          var i = use.ParcelUseAmounts.length;
+          while(i--){
+            var amt = use.ParcelUseAmounts[i];
+            if(amt.Waste_type_id == typeId)return true;
+          }
+          return false;
       }
  });
