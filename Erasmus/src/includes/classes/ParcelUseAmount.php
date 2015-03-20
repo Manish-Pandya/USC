@@ -21,6 +21,7 @@ include_once 'GenericCrud.php';
         "carboy_id"          		=> "integer",
     	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
+    	"comments"					=> "text",
 
         //GenericCrud
         "key_id"                    => "integer",
@@ -52,6 +53,9 @@ include_once 'GenericCrud.php';
     private $parcel_use_id;
     
     private $container_name;
+    
+    //comments field used to describe ParcelUseAmounts with Waste_type "Other"
+    private $comments;
 
     public function __construct() {
 
@@ -126,6 +130,9 @@ include_once 'GenericCrud.php';
     	}
     	return $this->container_name;
     }
+	public function getComments() {	return $this->comments;	}
+	public function setComments($comments) {$this->comments = $comments;}
+	
     
 }
 ?>
