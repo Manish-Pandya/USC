@@ -1,6 +1,6 @@
 <?php
 
-class WasteBag extends GenericCrud {
+class WasteBag extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "waste_bag";
@@ -22,6 +22,15 @@ class WasteBag extends GenericCrud {
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer"
 	);
+	
+	/** Relationships */
+	protected static $USEAMOUNTS_RELATIONSHIP = array(
+			"className" => "ParcelUseAmount",
+			"tableName" => "parcel_use_amount",
+			"keyName"	=> "key_id",
+			"foreignKeyName"	=> "parcel_use_id"
+	);
+	
 
 	/** container this bag went into */
 	private $container;
@@ -45,6 +54,8 @@ class WasteBag extends GenericCrud {
 	private $date_removed;
 	
 	private $container_name;
+	
+	private $parcel_use_amounts;
 
 	public function __construct() {
 		$entityMaps = array();
@@ -143,4 +154,6 @@ class WasteBag extends GenericCrud {
 	{
 	    $this->date_removed = $date_removed;
 	}
+	
+	//public function getIs
 }
