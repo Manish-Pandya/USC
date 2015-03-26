@@ -1,6 +1,6 @@
 <?php
 
-include_once 'GenericCrud.php';
+include_once 'RadCrud.php';
 
 /**
  *
@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Perry Cate, GraySail LLC
  */
-class CarboyUseCycle extends GenericCrud {
+class CarboyUseCycle extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "carboy_use_cycle";
@@ -67,7 +67,13 @@ class CarboyUseCycle extends GenericCrud {
 	/** Reference to the pickup that removed this carboy from the lab. */
 	private $pickup;
 	private $pickup_id;
-
+	
+	/* parcel use amounts currently in the carboy */
+	private $parcel_use_amounts;
+	
+	/* currie level of each isotope in this carboy **/
+	private $isotope_amounts;
+	
 
 	public function __construct() {
 
@@ -90,6 +96,14 @@ class CarboyUseCycle extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+	/** Relationships */
+	protected static $USEAMOUNTS_RELATIONSHIP = array(
+			"className" => "ParcelUseAmount",
+			"tableName" => "parcel_use_amount",
+			"keyName"	=> "key_id",
+			"foreignKeyName"	=> "carboy_id"
+	);
+	
 	// Accessors / Mutators
 	public function getCarboy() {
 		if($this->carboy == null) {
@@ -162,6 +176,21 @@ class CarboyUseCycle extends GenericCrud {
 	public function getPickup_id() { return $this->pickup_id; }
 	public function setPickup_id($newId) { $this->pickup_id = $newId; }
 
-
+	public function getParcelUseAmounts() {
+		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->parcelUseAmounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
+		}
+		return $this->parcelUseAmounts;
+	}
+	public function setParcelUseAmounts($parcel_use_amounts) {
+		$this->parcel_use_amounts = $parcel_use_amounts;
+	}
+	
+	public function getIsotopeAmounts(){
+		$this->isotope_amounts = $this->sumUsages($this->getParcelUseAmounts());
+		return $this->isotope_amounts;
+	}
+	
 }
 ?>

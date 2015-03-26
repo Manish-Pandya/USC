@@ -1,6 +1,6 @@
 <?php
 
-include_once 'GenericCrud.php';
+include_once 'RadCrud.php';
 
 /**
  *
@@ -9,7 +9,7 @@ include_once 'GenericCrud.php';
  * @author GrayBeard Entity Generator
  * @author Perry Cate
  */
- class ParcelUseAmount extends GenericCrud {
+ class ParcelUseAmount extends RadCrud {
 
     /** Name of the DB Table */
     protected static $TABLE_NAME = "parcel_use_amount";
@@ -32,6 +32,15 @@ include_once 'GenericCrud.php';
         "last_modified_user_id"     => "integer"
     );
 
+    /** Relationships */
+    protected static $PARCELUSE_RELATIONSHIP = array(
+    		"className" => "ParcelUse",
+    		"tableName" => "parcel_use",
+    		"keyName"	=> "key_id",
+    		"foreignKeyName" => "parcel_id"
+    );
+    
+    
     //access information
 
     /** Float amount of radiation in curies */
@@ -56,6 +65,9 @@ include_once 'GenericCrud.php';
     
     //comments field used to describe ParcelUseAmounts with Waste_type "Other"
     private $comments;
+    
+    /* The name of the isotope up in this ParcelUseAmount */
+    private $isotope_name;
 
     public function __construct() {
 
@@ -133,6 +145,14 @@ include_once 'GenericCrud.php';
 	public function getComments() {	return $this->comments;	}
 	public function setComments($comments) {$this->comments = $comments;}
 	
+	public function getIsotopeName() {
+		$useDao = new GenericDAO(new ParcelUse());
+		$use = $useDao->getById($this->getParcel_use_id());
+		$parcel = $use->getParcel();
+		$isotope = $parcel->getIsotope();
+		$this->isotope_name = $isotope->getName();
+		return $this->isotope_name;
+	}
     
 }
 ?>

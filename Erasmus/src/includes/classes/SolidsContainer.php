@@ -1,6 +1,6 @@
 <?php
 
-include_once 'GenericCrud.php';
+include_once 'RadCrud.php';
 
 /**
  *
@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Perry Cate, GraySail LLC
  */
-class SolidsContainer extends GenericCrud {
+class SolidsContainer extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "solids_container";

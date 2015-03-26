@@ -1,6 +1,6 @@
 <?php
 
-include_once 'GenericCrud.php';
+include_once 'RadCrud.php';
 
 /**
  *
@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Perry Cate, GraySail LLC
  */
-class Parcel extends GenericCrud {
+class Parcel extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "parcel";
@@ -72,6 +72,9 @@ class Parcel extends GenericCrud {
 
 	/* Text field human readable unique ID for orders*/
 	private $rs_number;
+	
+	/* collection of IsotopeAmountDTOs that went into scint vials for this parcel */
+	private $svIsotopeAmounts;
 
 
 	public function __construct() {
@@ -175,5 +178,27 @@ class Parcel extends GenericCrud {
 
 	public function getRs_number(){return $this->rs_number;}
 	public function setRs_number($rs_number){$this->rs_number = $rs_number;}
+	
+	public function getSVIsotopeAmounts(){
+		
+		//get use amounts
+		$svAmounts = array();
+		foreach($this->getParcelUses() as $use){
+			$innerAmounts = array_filter(
+					$use->getParcelUseAmounts(),
+					function ($e) {
+						$wasteType = $e->getWaste_type();
+						return $wasteType->getName() == "Vial";
+					}
+			);
+			$svAmounts = array_merge($svAmounts, $innerAmounts);
+		}
+		
+		//sum use amounts
+		if($svAmounts != NULL)$this->svIsotopeAmounts = $this->sumUsages($svAmounts);
+		return $this->svIsotopeAmounts;
+		
+	}
+	
 }
 ?>

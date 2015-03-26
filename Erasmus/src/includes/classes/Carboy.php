@@ -1,6 +1,6 @@
 <?php
 
-include_once 'GenericCrud.php';
+include_once 'RadCrud.php';
 
 /**
  *
@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Perry Cate, GraySail LLC
  */
-class Carboy extends GenericCrud {
+class Carboy extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "carboy";
@@ -47,7 +47,7 @@ class Carboy extends GenericCrud {
 	private $retirement_date;
 
 	private $caboy_use_cycles;
-
+	
 	// Required for GenericCrud
 	public function getTableName() {
 		return self::$TABLE_NAME;
@@ -86,5 +86,6 @@ class Carboy extends GenericCrud {
 	{
 	    $this->carboy_use_cycles = $cycles;
 	}
+	
 }
 ?>
