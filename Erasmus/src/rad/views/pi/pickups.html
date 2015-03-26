@@ -1,33 +1,108 @@
 <div cg-busy="{promise:PikcupSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-
+<!--<pre>{{pi | json}}</pre>-->
 <div class="neg-marg" ng-if="pi && pi.Rooms.length">
 	<div class="alert alert-info" ng-if="scheduledPickups">
 		<h3></h3> 
 	</div>
 
-	<div class="card super">
+	<div class="card super pickups">
 		<h3 class="card-header"><i class="icon-box-remove"></i>You have <span class="bold">{{pi.Pickups.length}} Requested Pickup<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
-			<a ng-click="openModal('views/pi/pi-modals/solids-container-modal')" class="btn btn-success left"><i class="icon-box-remove"></i>Request Pickup</a>
+			<a ng-click="openModal('views/pi/pi-modals/pickup-modal')" class="btn btn-success left"><i class="icon-box-remove"></i>Request Pickup</a>
 		</h3>
-		<div class="fake-table striped bordered" ng-if="pi.Pickups.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>Date Requested</h3>
-					<h3>Pickup Date</h3>
+		<div class="fake-table bordered" ng-if="pi.Pickups.length">
+			<div class="table-header">
+				<h3>Edit</h3>
+				<h3>Date Requested</h3>
+				<h3>Pickup Date</h3>
+			</div>
+			<div class="table-row" ng-repeat="pickup in pi.Pickups" ng-class="{'green':!pickup.Pickup_date}">
+				<div>
+					<a ng-click="af.removeWasteBagFromContainer(container, bag)" class="btn btn-danger"><i class="icon-remove"></i></a>
 				</div>
-				<div class="table-row" ng-repeat="pickup in pi.Pickups" ng-class="{'green':!pickup.Pickup_date}">
-					<div>
-						<a ng-click="af.removeWasteBagFromContainer(container, bag)" class="btn btn-danger"><i class="icon-remove"></i></a>
-					</div>
-					<div>
-						{{pickup.Date_created | dateToISO}}
-					</div>
-					<div>
-						{{pickup.Pickup_date | dateToISO}}
-					</div>
+				<div>
+					{{pickup.Date_created | dateToISO}}
+				</div>
+				<div>
+					{{pickup.Pickup_date | dateToISO}}
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="card super pickups">
+			<h3 class="card-header"><i class="icon-box-remove"></i>The following items can be picked up</a>
+			</h3>
+			<div class="striped bordered">
+				
+				<div class="table-header">
+					<h3><i class="icon-remove-2 solids-containers"></i>Solids</h3>
+				</div>
+
+				<ul>
+					<ul>
+						<li ng-repeat="container in pi.SolidsContainers">
+							<h3>{{container.Name}}</h3>
+							<ul>
+								<li ng-repeat="bag in container.WasteBags">
+									<pre>{{bag | json}}</pre>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</ul>
+
+				<div class="table-row">
+					<div><h4>Include In Pickup</h4></div>
+				</div>
+
+				<div class="table-row" ng-if="container.WasteBags.length" ng-repeat="container in pi.SolidsContainers">
+					<div>
+						<label class="checkbox inline">
+							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+							<span class="metro-checkbox">{{container.WasteBags.length}} Waste bag<span ng-if="container.WasteBags.length>1">s</span> from {{container.Name}}</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="table-header">
+					<h3>Scintillation Vials</h3>
+				</div>
+
+				<div class="table-row">
+					<div><h4>Include In Pickup</h4></div>
+				</div>
+
+				<div class="table-row" ng-if="container.WasteBags.length">
+					<div>
+						<label class="checkbox inline">
+							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+							<span class="metro-checkbox">{{container.WasteBags.length}} Waste bag<span ng-if="container.WasteBags.length>1">s</span> from {{container.Name}}</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="table-header">
+					<h3><i class="icon-carboy carboys"></i>Carboys</h3>
+				</div>
+
+				<div class="table-row">
+					<div><h4>Include In Pickup</h4></div>
+				</div>
+
+				<div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles">
+					<div>
+						<label class="checkbox inline">
+							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+							<span class="metro-checkbox">Carboy {{cycle.Carboy.Carboy_number}}</span>
+						</label>
+					</div>
+				</div>
+				<div class="table-header">
+					<h3><a class="btn btn-success btn-large left"><i class="icon-box-remove"></i>Request Pickup</a></h3>
+				</div>
+			</div>
+		</div>
+		<!--<i style="font-size:200px;" class="icon-box-remove"></i>-->
 	</div>
 </div>

@@ -108,6 +108,7 @@
 .card.auths h3 i:first-child{
   color:rgba(26, 108, 167, 1)
 }
+.modal-header.auths h2{background: rgba(26, 108, 167, 1)}
 .left-nav ul li a.auths{
   background:rgba(0, 154, 255,.5)
 }
@@ -115,6 +116,7 @@
 .left-nav ul li a.auths:hover{
   background:rgba(0, 154, 255,1)
 }
+.modal-header.pos h2{background: rgba(26, 95, 40, 1)}
 .card.pos{
   border-left: rgba(26, 95, 40, 1) solid 6px;
 }
@@ -127,6 +129,7 @@
 .left-nav ul li a.pos:hover{
   background: rgba(0, 128, 0, 1);
 }
+.modal-header.parcels h2{background: rgba(153, 96, 40, 1)}
 .card.parcels{
   border-left: rgba(153, 96, 40, 1) solid 6px
 }
@@ -139,25 +142,41 @@
 .left-nav ul li a.parcels:hover{
   background: rgba(255, 130, 0, 1);
 }
+.modal-header.carboys h2{background: rgb(122, 6, 109)}
 .card.carboys{
   border-left:rgb(122, 6, 109) solid 6px;
 }
+.modal-header.carboys h2{background: rgb(122, 6, 109);}
 .card.carboys h3 i:first-child{color:rgb(122, 6, 109);}
+i.carboys{color:rgb(122, 6, 109) !important;}
 .left-nav ul li a.carboys{
   background: rgba(122, 6, 109, 0.5)
 }
 .left-nav ul li a.carboys:hover{
   background: rgba(122, 6, 109, 1)
 }
+.modal-header.solids-containers h2{background:rgb(151, 49, 58);}
 .card.solids-containers{
   border-left:rgb(151, 49, 58) solid 6px
 }
 .card.solids-containers h3 i:first-child{color:rgb(151, 49, 58)}
+i.solids-containers{color:rgb(151, 49, 58) !important}
 .left-nav ul li a.solids-containers{
   background: rgb(151, 49, 58)
 }
 .left-nav ul li a.solids-containers:hover{
   background: rgba(251, 37, 37, 1)
+}
+.modal-header.pickups h2{background:rgb(91, 183, 91);}
+.card.pickups{
+  border-left: rgb(91, 183, 91) solid 6px
+}
+.card.pickups h3 i:first-child{color:rgb(91, 183, 91);margin: 7px 19px 0 0;}
+.left-nav ul li a.pickups{
+  background: rgba(91, 183, 91, .64);
+}
+.left-nav ul li a.pickups:hover{
+  background: rgb(91, 183, 91);
 }
 
 .left-nav ul li a i{
@@ -213,8 +232,15 @@ div.fake-table .table-row > div{
   padding:10px;
   font-size:16px;
 }
-div.fake-table.bordered .table-row > div, div.fake-table .table-header > h3{
-    border-top: 1px solid #dddddd;
+div.bordered .table-row > div {
+  border-bottom: 1px solid #dddddd;
+}
+div.fake-table.bordered .table-row > div:first-child{
+ // border:none;
+}
+.table-header > h3 {
+  border-top: 3px solid #ddd;
+  border-bottom: 3px solid #ddd;
 }
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div {
   padding-top: 0;
