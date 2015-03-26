@@ -23,6 +23,12 @@ WasteBag.prototype = {
         if(!this.Pickup && this.Pickup_id) {
             dataLoader.loadChildObject(this, 'Pickup', 'Pickup', this.Pickup_id);
         }
+    },
+
+    loadParcelUseAmounts: function() {
+        if(!this.Pickup && this.Pickup_id) {
+            dataLoader.loadChildObject(this, 'Pickup', 'Pickup', this.Pickup_id);
+        }
     }
 
 }
