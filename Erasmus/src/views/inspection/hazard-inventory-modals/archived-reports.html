@@ -7,8 +7,12 @@
 	   	   <i class="icon icon-spinnery-dealie spinner large"></i>
 	   	   <span>Loading Inspections...</span>
 	   </span>
-		<table class="table table-bordered table-striped">
-		<table ng-if="previousInspections" class="table table-striped table-bordered">
+      	<span ng-if="!gettingInspections && !previousInspections.length">
+		   <h3>No Archived Reports Available</h3>
+		   <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
+	   	   <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+   		</span>
+		<table ng-if="previousInspections.length" class="table table-striped table-bordered">
 			<thead>
 				<th>Year</th>
 				<th>Inspection Date</th>
