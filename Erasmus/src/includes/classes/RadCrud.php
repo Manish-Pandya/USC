@@ -8,11 +8,8 @@ include_once 'GenericCrud.php';
  *
  * @author Matt Breeden, GraySail LLC
  */
-class RadCrud extends GenericCrud {
-	// Required for GenericCrud
-	public function getTableName() {}
-	public function getColumnData() {}
-	
+abstract class RadCrud extends GenericCrud {
+
 	/**
 	 * TOTALS parcel use amounts in a container, grouped by isotope
 	 * param:  $useAmounts Array of ParcelUseAmounts
@@ -20,8 +17,6 @@ class RadCrud extends GenericCrud {
 	 * 
 	 */
 	public function sumUsages($useAmounts){
-		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->debug('calling sumUsages');
 		$isotopeAmounts = array();
 		foreach($useAmounts as $amount){
 			$isotopeName = $amount->getIsotopeName();			
@@ -33,7 +28,6 @@ class RadCrud extends GenericCrud {
 			}else{				
 				$isotopeAmounts[$isotopeName]->addCuries($amount->getCurie_level());
 			}
-			$LOG->debug(array_values($isotopeAmounts));
 			return array_values($isotopeAmounts);
 			
 		}
