@@ -136,29 +136,20 @@ class SolidsContainer extends RadCrud {
 	}
 
 	public function getWasteBagsForPickup() {
+		$LOG = Logger::getLogger(__CLASS__);
 		// get all waste bags
 		$wasteBags = $this->getWasteBags();
 		// only select bags that have not been entered in drum
 		$availableBags = array();
-		foreach($wasteBags as $bag) {
-			$bag = new WasteBag();
-			$availableForPickup = false;
+		foreach($wasteBags as $bag) {				
 			$removed = $bag->getDate_removed();
-			if($removed != NULL && $removed != '0000-00-00 00:00:00') {
+			if($removed != NULL && $removed != '0000-00-00 00:00:00' && $bag->getPickup_id() == null) {
 				//this bag hasn't been assigned to a pickup, so it is available
-				if($bag->getPickup() == null){
-					$availableForPickup = true;
-				}
-				/*
-				//this bag has been assigned to a pickup, but not yet actually picked up, so it is available
-				elseif(strtolower($bag->getPickup()->getStatus()) == "requested"){
-					$availableForPickup = true;
-				}
-				*/
+				$availableBags[] = $bag;
 			}
-			if($availableForPickup == true)$availableBags[] = $bag;
 		}
-		return $availableBags;
+		$this->waste_bags_for_pickup = $availableBags;
+		return $this->waste_bags_for_pickup;
 	}
 
 	public function getName()
