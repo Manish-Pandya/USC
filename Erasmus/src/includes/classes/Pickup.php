@@ -19,6 +19,7 @@ class Pickup extends RadCrud {
 		"requested_date"				=> "timestamp",
 		"pickup_user_id"				=> "integer",
 		"principal_investigator_id"		=> "integer",
+		"status"						=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -67,6 +68,9 @@ class Pickup extends RadCrud {
 
 	/** PI who scheduled this pikcup */
 	private $principalInvestigator;
+	
+	/** the current status of this pickup, indicated whether it's been Requested, Picked Up, etc. **/
+	private $status;
 
 	public function __construct() {
 
@@ -130,5 +134,9 @@ class Pickup extends RadCrud {
 
 	public function getRequested_date() {return $this->requested_date;}
 	public function setRequested_date($requested_date) {$this->requested_date = $requested_date;}
+	
+	public function getStatus() { return $this->status;	}
+	public function setStatus($status) { $this->status = $status; }
+	
 }
 ?>
