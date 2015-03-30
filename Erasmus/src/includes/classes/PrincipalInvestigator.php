@@ -135,6 +135,9 @@ class PrincipalInvestigator extends GenericCrud {
 
 	/** Array of Pickup entities **/
 	private $pickups;
+	
+	/** isotopes in scint vials that are ready for pickup **/
+	private $scintVialAmounts;
 
 	public function __construct(){
 
@@ -287,6 +290,29 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->pickups;
 	}
 	public function setPickups($pickups){$this->pickups = $pickups;}
+	
+	public function getSVIsotopeAmounts(){
+		
+		//build array of ParcelUseAmounts that went into Scint Vials
+		$amounts = array();
+		foreach($this->getActiveParcels() as $parcel){
+			$uses = $parcel->getParcelUses();
+			foreach($uses as $use){
+				$useAmounts = $use->getParcelUseAmounts();
+				foreach($useAmounts as $useAmount){
+					if($useAmount->getWaste_type()->getName() == "Vial"){
+						array_push($amounts, $useAmount);
+					}
+				}
+			}
+		}
+		
+		$radShim = new RadCrud();
+		
+		if($amounts != NULL)$this->scitnVialsForPickups = $radShim->sumUsages($amounts);
+		return $this->scintVialsForPickups;
+	
+	}
 }
 
 ?>
