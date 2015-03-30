@@ -82,6 +82,13 @@ class PrincipalInvestigator extends GenericCrud {
 		"keyName"   => "key_id",
 		"foreignKeyName" => "principal_investigator_id"
 	);
+	
+	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
+		"className" => "ScintVialCollection",
+		"tableName" => "scint_vial_collection",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "principal_investigator_id"
+	);
 
 	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
 		"className" => "SolidsContainer",
@@ -136,6 +143,9 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of Pickup entities **/
 	private $pickups;
 	
+	/** Array of collections of scint vials that are ready for pickup or were in a given pickup **/
+	private $scintVialCollections;
+	
 	/** isotopes in scint vials that are ready for pickup **/
 	private $scintVialAmounts;
 
@@ -153,7 +163,10 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
-
+		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollection");
+		
+		
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -291,28 +304,33 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function setPickups($pickups){$this->pickups = $pickups;}
 	
-	public function getSVIsotopeAmounts(){
+	public function getScintVialCollections(){
 		
-		//build array of ParcelUseAmounts that went into Scint Vials
-		$amounts = array();
-		foreach($this->getActiveParcels() as $parcel){
-			$uses = $parcel->getParcelUses();
-			foreach($uses as $use){
-				$useAmounts = $use->getParcelUseAmounts();
-				foreach($useAmounts as $useAmount){
-					if($useAmount->getWaste_type()->getName() == "Vial"){
-						array_push($amounts, $useAmount);
-					}
-				}
-			}
+		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->scintVialCollections = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTION_RELATIONSHIP)
+			);
 		}
-		
-		$radShim = new RadCrud();
-		
-		if($amounts != NULL)$this->scitnVialsForPickups = $radShim->sumUsages($amounts);
-		return $this->scintVialsForPickups;
-	
+		return $this->scintVialCollections;
 	}
+	
+	public function getCurrentScintVialCollection(){
+		//todo:  determine if this should be one-to-many or one to one.
+		
+		$svCollections = $this->getScintVialCollections();
+		
+		$currentSVCollections = array();
+		foreach($svCollections as $collection){
+			if($collection->getPickup_id() == null)$svCollections = array_push($currentSVCollections, $collection);
+		}
+		return $currentSVCollections;
+	}
+
 }
 
 ?>
