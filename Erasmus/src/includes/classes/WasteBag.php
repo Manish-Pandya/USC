@@ -55,6 +55,8 @@ class WasteBag extends RadCrud {
 	
 	private $container_name;
 	
+	private $parcel_use_amounts;
+	
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
 
