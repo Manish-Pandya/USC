@@ -1400,5 +1400,21 @@ angular
                     )
             }
 
+            af.savePickup = function(pickup,pi){
+                af.clearError();
+                return this.save( pickup )
+                    .then(
+                        function(returnedPickup){
+                            returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
+                            dataStoreManager.addOnSave(returnedPickup);
+                            pi.Pickups.push(returnedPickup);
+                            pi.CarboyUseCycles = null;
+                            pi.Parcels = null;
+                            //pi.  c
+                        },
+                        af.setError('The Solids Container could not be saved')
+                    )
+            }
+
         	return af;
 		});
