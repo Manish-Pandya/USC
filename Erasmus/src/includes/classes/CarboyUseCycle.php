@@ -72,7 +72,7 @@ class CarboyUseCycle extends RadCrud {
 	private $parcel_use_amounts;
 	
 	/* currie level of each isotope in this carboy **/
-	private $isotope_amounts;
+	private $contents;
 	
 
 	public function __construct() {
@@ -187,9 +187,9 @@ class CarboyUseCycle extends RadCrud {
 		$this->parcel_use_amounts = $parcel_use_amounts;
 	}
 	
-	public function getIsotopeAmounts(){
-		$this->isotope_amounts = $this->sumUsages($this->getParcelUseAmounts());
-		return $this->isotope_amounts;
+	public function getContents(){
+		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
+		return $this->contents;
 	}
 	
 }
