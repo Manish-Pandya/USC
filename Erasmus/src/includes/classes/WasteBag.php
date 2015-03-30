@@ -55,7 +55,8 @@ class WasteBag extends RadCrud {
 	
 	private $container_name;
 	
-	private $parcel_use_amounts;
+	/** IsotopeAmountDTOs in this bag **/
+	private $contents;
 
 	public function __construct() {
 		$entityMaps = array();
@@ -155,5 +156,21 @@ class WasteBag extends RadCrud {
 	    $this->date_removed = $date_removed;
 	}
 	
-	//public function getIs
+	public function getParcelUseAmounts() {
+		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->parcelUseAmounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
+		}
+		return $this->parcelUseAmounts;
+	}
+	public function setParcelUseAmounts($parcel_use_amounts) {
+		$this->parcel_use_amounts = $parcel_use_amounts;
+	}
+	
+	public function getContents(){
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug('getting contents for waste bag');
+		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
+		return $this->contents;
+	}
 }
