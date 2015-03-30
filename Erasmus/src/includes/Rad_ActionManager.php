@@ -209,7 +209,7 @@ class Rad_ActionManager extends ActionManager {
 
 	// getPIById already exists in the base module, however different entity maps
 	// are used in RadiationModule, so this sepparate method exists.
-	public function getRadPIById( $id = null ){
+	public function getRadPIById( $id = null, $rooms = null ){
 		if($id == null)$id = $this->getValueFromRequest( "id", $id );
 		if($rooms == null)$rooms = $this->getValueFromRequest( "rooms", $rooms );
 
@@ -232,6 +232,10 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
+		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollection");
+		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		
+				
 		$pi->setEntityMaps($entityMaps);
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug($pi);
