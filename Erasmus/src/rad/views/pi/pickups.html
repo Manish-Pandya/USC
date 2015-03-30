@@ -41,13 +41,8 @@
 						<li ng-repeat="container in pi.SolidsContainers">
 							<h3>{{container.Name}}</h3>
 							<ul>
-								<li ng-repeat="bag in container.WasteBags" ng-if="bag.Date_removed && bag.Date_removed != '0000-00-00 00:00:00' && bag.Contents.length">
-									<h4>Removed {{bag.Date_removed | dateToISO}}</h4>
-									<ul>
-										<li ng-repeat="isotope in bag.Contents">
-											{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}
-										</li>
-									</ul>
+								<li ng-repeat="bag in container.WasteBagsForPickup" ng-if="bag.Date_removed && bag.Date_removed != '0000-00-00 00:00:00' && bag.Contents.length">
+									<h4>Removed {{bag.Date_removed | dateToISO}} (<span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)</h4>
 								</li>
 							</ul>
 						</li>
