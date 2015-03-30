@@ -40,6 +40,14 @@ angular.module('00RsmsAngularOrmApp')
 	        });
 	    }
 
+
+	    //collection of things to be picked up
+	    var pickup = new window.Pickup();
+
+	    $scope.handleItemInPickup = function( item ){
+
+	    }
+
   })
   .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = actionFunctionsFactory;
