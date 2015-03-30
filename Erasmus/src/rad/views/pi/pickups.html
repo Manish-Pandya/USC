@@ -32,21 +32,39 @@
 
 	<div class="card half pickups">
 			<h3 class="card-header"><i class="icon-box-remove"></i>The following items can be picked up</a></h3>			
-			
-
 			<div>
-				<h3><i class="icon-remove-2 solids-containers"></i>Solids</h3>
+				<h3><i class="icon-remove-2 solids-containers"></i>Solid Waste Containers</h3>
 				<ul>
 					<ul>
-						<li ng-repeat="container in pi.SolidsContainers">
+						<li ng-repeat="container in pi.SolidsContainers" ng-if="container.WasteBagsForPickup.length">
 							<h3>{{container.Name}}</h3>
-							<ul>
-								<li ng-repeat="bag in container.WasteBagsForPickup" ng-if="bag.Date_removed && bag.Date_removed != '0000-00-00 00:00:00' && bag.Contents.length">
-									<h4>Removed {{bag.Date_removed | dateToISO}} (<span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)</h4>
-								</li>
-							</ul>
+							<h4>Waste Bags:</h4>
+							<label class="checkbox" ng-repeat="bag in container.WasteBagsForPickup">
+								<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+								<span class="metro-checkbox">Removed from container on {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)</span>
+							</label>
 						</li>
 					</ul>
+				</ul>
+			</div>
+
+			<div>
+				<h3><i class="icon-carboy carboys"></i>Scintillation Vials</h3>
+				<label class="checkbox">
+					<input type="checkbox" ng-true-value="yes" ng-change="cf.saveResponse( question )"/>
+					<span class="metro-checkbox"><h3 ng-repeat="amt in pi.ScintVialsForPickups">{{amt.Curie_level}}mCi of {{amt.IsotopeName}}</h3></span>
+				</label>
+			</div>
+
+			<div>
+				<h3><i class="icon-carboy carboys"></i>Carboys</h3>
+				<ul>
+					<label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length">
+						<input type="checkbox" ng-true-value="yes" ng-change="cf.saveResponse( question )"/>
+						<span class="metro-checkbox">
+							Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)
+						</span>
+					</label>
 				</ul>
 			</div>
 
