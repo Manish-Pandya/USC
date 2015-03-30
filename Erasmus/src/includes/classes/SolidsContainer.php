@@ -50,6 +50,8 @@ class SolidsContainer extends RadCrud {
 
 	/** array of the waste bags currently in this container */
 	private $current_waste_bags;
+	
+	private $waste_bags_for_pickup;
 
 	private $name;
 
@@ -133,6 +135,31 @@ class SolidsContainer extends RadCrud {
 		return $currentBags;
 	}
 
+	public function getWasteBagsForPickup() {
+		// get all waste bags
+		$wasteBags = $this->getWasteBags();
+		// only select bags that have not been entered in drum
+		$availableBags = array();
+		foreach($wasteBags as $bag) {
+			$bag = new WasteBag();
+			$availableForPickup = false;
+			$removed = $bag->getDate_removed();
+			if($removed != NULL && $removed != '0000-00-00 00:00:00') {
+				//this bag hasn't been assigned to a pickup, so it is available
+				if($bag->getPickup() == null){
+					$availableForPickup = true;
+				}
+				/*
+				//this bag has been assigned to a pickup, but not yet actually picked up, so it is available
+				elseif(strtolower($bag->getPickup()->getStatus()) == "requested"){
+					$availableForPickup = true;
+				}
+				*/
+			}
+			if($availableForPickup == true)$availableBags[] = $bag;
+		}
+		return $availableBags;
+	}
 
 	public function getName()
 	{
