@@ -28,7 +28,7 @@ class WasteBag extends RadCrud {
 			"className" => "ParcelUseAmount",
 			"tableName" => "parcel_use_amount",
 			"keyName"	=> "key_id",
-			"foreignKeyName"	=> "parcel_use_id"
+			"foreignKeyName"	=> "waste_bag_id"
 	);
 	
 
