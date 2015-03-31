@@ -32,8 +32,8 @@ class ScintVialCollection extends RadCrud{
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('constructor called');
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
-		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("eager", "getContents");
 		
@@ -68,7 +68,7 @@ class ScintVialCollection extends RadCrud{
 	}
 	
 	
-	public function getParcelUseAmounts() {
+	public function getParcel_use_amounts() {
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug("getting parcel use amounts sv");
 		
@@ -80,7 +80,7 @@ class ScintVialCollection extends RadCrud{
 		$LOG->debug($this->parcel_use_amounts);
 		return $this->parcel_use_amounts;
 	}
-	public function setParcelUseAmounts($parcel_use_amounts) {
+	public function setParcel_use_amounts($parcel_use_amounts) {
 		$this->parcel_use_amounts = $parcel_use_amounts;
 	}
 		
@@ -95,19 +95,19 @@ class ScintVialCollection extends RadCrud{
 		$this->contents = $contents;
 	}
 	
-	public function getPrincipalInvestigatorId() {
+	public function getPrincipal_investigator_id() {
 		return $this->principal_investigator_id;
 	}
-	public function setPrincipalInvestigatorId($principal_investigator_id) {
+	public function setPrincipal_investigator_id($principal_investigator_id) {
 		$this->principal_investigator_id = $principal_investigator_id;
 	}
 	
 
-	public function getPrincipalInvestigator() {
+	public function getPrincipal_investigator() {
 		return $this->principal_investigator;
 	}
 
-	public function setPrincipalInvestigator($principal_investigator) {
+	public function setPrincipal_investigator($principal_investigator) {
 		$this->principal_investigator = $principal_investigator;
 	}
 	
