@@ -168,6 +168,10 @@ PrincipalInvestigator.prototype = {
                 }
             }
         }
+    },
+
+    loadScintVialUsageAmounts: function(){
+        
     }
 
 }
