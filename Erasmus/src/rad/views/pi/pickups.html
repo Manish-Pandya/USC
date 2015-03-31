@@ -50,9 +50,9 @@
 
 			<div>
 				<h3><i class="icon-carboy carboys"></i>Scintillation Vials</h3>
-				<label class="checkbox">
+				<label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollection">
 					<input type="checkbox" ng-true-value="yes" ng-change="cf.saveResponse( question )"/>
-					<span class="metro-checkbox"><h3 ng-repeat="amt in pi.ScintVialsForPickups">{{amt.Curie_level}}mCi of {{amt.IsotopeName}}</h3></span>
+					<span class="metro-checkbox"><h3 ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.IsotopeName}}</h3></span>
 				</label>
 			</div>
 
