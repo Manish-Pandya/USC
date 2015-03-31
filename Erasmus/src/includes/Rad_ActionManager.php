@@ -583,8 +583,35 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new Pickup());
-			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
+			$pickup = $dao->save($decodedObject);
+				
+			$wasteBags = $decodedObject->getWasteBags();
+			$svCollections = $decodedObject->getScintVialCollections();
+			$carboys = $decodedObject->getCarboys();
+			
+			foreach($wasteBags as $bagArray){
+				$bagDao = $this->getDao(new WasteBag());
+				$bag = $bagDao->getById($bagArray['Key_id']);
+				$bag->setPickup_id($pickup->getKey_id());
+				$bagDao->save($bag);
+			}
+			
+			foreach($svCollections as $collectionArray){
+				$svColDao = $this->getDao(new ScintVialCollection());
+				$collection = $svColDao->getById($collectionArray['Key_id']);
+				$collection->setPickup_id($pickup->getKey_id());
+				$svColDao->save($collection);
+			}
+			
+			foreach($carboys as $carboyArray){
+				$carboyDao = $this->getDao(new Carboy());
+				$carboy = $carboyDao->getById($carboyArray['Key_id']);
+				$collection
+				$carboyDao->save($carboy);
+			}
+			
+			$LOG->debug($decodedObject);
+			return $pickup;
 		}
 	}
 
