@@ -29,22 +29,48 @@ angular.module('00RsmsAngularOrmApp')
   				function(){}
   			)
 
-	    $scope.openModal = function(templateName, object){
-	        var modalData = {};
-	        modalData.pi = $scope.pi;
-	        if(object)modalData[object.Class] = object;
-	        af.setModalData(modalData);
-	        var modalInstance = $modal.open({
-	          templateUrl: templateName+'.html',
-	          controller: 'PickupModalCtrl'
-	        });
-	    }
-
 
 	    //collection of things to be picked up
 	    var pickup = new window.Pickup();
+	    pickup.Class="Pickup";
+	    pickup.Carboys = [];
+	    pickup.ScintVialCollections = [];
+	    pickup.WasteBags = [];
+	    pickup.Principal_investigator_id = null;
 
-	    $scope.handleItemInPickup = function( item ){
+
+	    $scope.createPickup = function(pi){
+
+	    	pickup.Principal_investigator_id = pi.Key_id;
+
+	    	//include proper objects in pickup
+	    	var i = pi.SolidsContainers.length;
+	    	while(i--){
+	    		var container = pi.SolidsContainers[i];
+	    		var j =  container.WasteBagsForPickup.length;
+	    		while(j--){
+	    			if( container.WasteBagsForPickup[j].include )pickup.WasteBags.push( container.WasteBagsForPickup[j] );
+	    		}
+	    	}
+
+	    	var i = pi.CurrentScintVialCollection.length;
+	    	while(i--){
+	    		if( pi.CurrentScintVialCollection[i].include ) pickup.ScintVialCollections.push( pi.CurrentScintVialCollection[i] );
+	    	}
+
+	    	var i = pi.CarboyUseCycles.length;
+	    	while(i--){
+	    		if( pi.CarboyUseCycles[i].include )pickup.Carboys.push( pi.CarboyUseCycles[i].Carboy );
+	    	}
+
+	    	var modalData = {};
+	        modalData.pi = pi;
+	        modalData.pickup = pickup;
+	        af.setModalData(modalData);
+	        var modalInstance = $modal.open({
+	          templateUrl: 'views/pi/pi-modals/pickup-modal.html',
+	          controller: 'PickupModalCtrl'
+	        });
 
 	    }
 
@@ -63,15 +89,19 @@ angular.module('00RsmsAngularOrmApp')
 		    }
 		}
 
-		$scope.selectRoom = function(){
-			$scope.modalData.SolidsContainerCopy.Room_id = $scope.modalData.SolidsContainerCopy.Room.Key_id;
+		$scope.requestPickup = function(pickup){
+			console.log(pickup)
+			af.savePickup(pickup)
+				.then(
+					function(){
+
+					},
+					function(){
+
+					}
+				)
 		}
 
-		$scope.saveSolidsContainer = function(pi, copy, container){
-           $modalInstance.dismiss();
-           af.deleteModalData();
-           af.saveSolidsContainer( pi, copy, container )
-		}
 
 		$scope.close = function(){
            $modalInstance.dismiss();
