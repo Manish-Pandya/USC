@@ -5,6 +5,7 @@
 var Pickup = function() {};
 Pickup.prototype = {
 
+	className: "Pickup"
     // Future eager accessors or loader functions go here.
 
 }
