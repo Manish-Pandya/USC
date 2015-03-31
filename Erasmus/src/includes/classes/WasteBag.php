@@ -159,11 +159,11 @@ class WasteBag extends RadCrud {
 	}
 	
 	public function getParcelUseAmounts() {
-		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->parcelUseAmounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
+			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
 		}
-		return $this->parcelUseAmounts;
+		return $this->parcel_use_amounts;
 	}
 	public function setParcelUseAmounts($parcel_use_amounts) {
 		$this->parcel_use_amounts = $parcel_use_amounts;
