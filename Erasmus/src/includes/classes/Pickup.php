@@ -20,6 +20,7 @@ class Pickup extends RadCrud {
 		"pickup_user_id"				=> "integer",
 		"principal_investigator_id"		=> "integer",
 		"status"						=> "text",
+		"notes"							=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -44,6 +45,13 @@ class Pickup extends RadCrud {
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
 	);
+	
+	public static $SCINT_VIAL_COLLECTIONS_RELATIONSHIP = array(
+			"className" => "ScintVialCollection",
+			"tableName" => "scint_vial_collection",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
 
 	//access information
 
@@ -62,6 +70,9 @@ class Pickup extends RadCrud {
 
 	/** Array of Waste Bags picked up */
 	private $waste_bags;
+	
+	/** Array of Scint Vial Collections picked up **/
+	private $scintVialCollections;
 
 	/** Key_id of the PI who scheduled this pickup */
 	private $principal_investigator_id;
@@ -71,6 +82,9 @@ class Pickup extends RadCrud {
 	
 	/** the current status of this pickup, indicated whether it's been Requested, Picked Up, etc. **/
 	private $status;
+	
+	/**  notes about this pickup added by lab personnel **/
+	private $notes;
 
 	public function __construct() {
 
@@ -119,9 +133,28 @@ class Pickup extends RadCrud {
 		return $this->waste_bags;
 	}
 	public function setWasteBags($newBags) {$this->waste_bags = $newBags;}
+	
+	public function getScintVialCollections(){
+	
+		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->scintVialCollections = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTIONS_RELATIONSHIP)
+			);
+		}
+		return $this->scintVialCollections;
+	}
+	
+	public function setScintVialCollections($collections){
+		$this->scintVialCollections = $collections;
+	}
 
-	public function getPrincipalInvestigatorId(){return $this->principal_investigator_id;}
-	public function setPrincipalInvestigatorId($principal_investigator_id){$this->principal_investigator_id = $principal_investigator_id;}
+	public function getPrincipal_investigator_id(){return $this->principal_investigator_id;}
+	public function setPrincipal_investigator_id($principal_investigator_id){$this->principal_investigator_id = $principal_investigator_id;}
 
 	public function getPrincipalInvestigator(){
 		if($this->principalInvestigator = null) {
@@ -137,6 +170,9 @@ class Pickup extends RadCrud {
 	
 	public function getStatus() { return $this->status;	}
 	public function setStatus($status) { $this->status = $status; }
+	
+	public function getNotes(){ return $this->notes; }
+	public function setNotes($notes){$this->notes = $notes;}
 	
 }
 ?>
