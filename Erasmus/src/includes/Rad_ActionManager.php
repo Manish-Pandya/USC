@@ -222,6 +222,7 @@ class Rad_ActionManager extends ActionManager {
 		}else{
 			$entityMaps[] = new EntityMap("eager","getRooms");
 		}
+		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollection");
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
@@ -232,7 +233,6 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
-		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollection");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
 		
 				

@@ -30,16 +30,14 @@ class ScintVialCollection extends RadCrud{
 	
 	public function __construct() {
 		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->debug('contstuctor called');
+		$LOG->debug('constructor called');
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
-		$entityMaps[] = new EntityMap("lazy", "getContents");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("eager", "getContents");
 		
 		$this->setEntityMaps($entityMaps);
-
 	}
 	
 
@@ -72,12 +70,12 @@ class ScintVialCollection extends RadCrud{
 	
 	public function getParcelUseAmounts() {
 		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug("getting parcel use amounts sv");
 		
 		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
 		}
-		$LOG->debug("getting parcel use amounts sv");
 		
 		$LOG->debug($this->parcel_use_amounts);
 		return $this->parcel_use_amounts;
