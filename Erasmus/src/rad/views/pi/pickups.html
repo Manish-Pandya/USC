@@ -40,7 +40,7 @@
 							<h3>{{container.Name}}</h3>
 							<h4>Waste Bags:</h4>
 							<label class="checkbox" ng-repeat="bag in container.WasteBagsForPickup">
-								<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+								<input type="checkbox" ng-true-value="yes" ng-model="bag.include"/>
 								<span class="metro-checkbox">Removed from container on {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)</span>
 							</label>
 						</li>
@@ -49,9 +49,9 @@
 			</div>
 
 			<div>
-				<h3><i class="icon-carboy carboys"></i>Scintillation Vials</h3>
+				<h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
 				<label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollection">
-					<input type="checkbox" ng-true-value="yes" ng-change="cf.saveResponse( question )"/>
+					<input type="checkbox" ng-true-value="yes" ng-model="collection.include"/>
 					<span class="metro-checkbox"><h3 ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.IsotopeName}}</h3></span>
 				</label>
 			</div>
@@ -60,7 +60,7 @@
 				<h3><i class="icon-carboy carboys"></i>Carboys</h3>
 				<ul>
 					<label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length">
-						<input type="checkbox" ng-true-value="yes" ng-change="cf.saveResponse( question )"/>
+						<input type="checkbox" ng-true-value="yes" ng-model="cycle.include"/>
 						<span class="metro-checkbox">
 							Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)
 						</span>
@@ -68,54 +68,8 @@
 				</ul>
 			</div>
 
-				<div class="table-row">
-					<div><h4>Include In Pickup</h4></div>
-				</div>
-
-				<div class="table-row" ng-if="container.WasteBags.length" ng-repeat="container in pi.SolidsContainers">
-					<div>
-						<label class="checkbox inline">
-							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
-							<span class="metro-checkbox">{{container.WasteBags.length}} Waste bag<span ng-if="container.WasteBags.length>1">s</span> from {{container.Name}}</span>
-						</label>
-					</div>
-				</div>
-
 				<div class="table-header">
-					<h3>Scintillation Vials</h3>
-				</div>
-
-				<div class="table-row">
-					<div><h4>Include In Pickup</h4></div>
-				</div>
-
-				<div class="table-row" ng-if="container.WasteBags.length">
-					<div>
-						<label class="checkbox inline">
-							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
-							<span class="metro-checkbox">{{container.WasteBags.length}} Waste bag<span ng-if="container.WasteBags.length>1">s</span> from {{container.Name}}</span>
-						</label>
-					</div>
-				</div>
-
-				<div class="table-header">
-					<h3><i class="icon-carboy carboys"></i>Carboys</h3>
-				</div>
-
-				<div class="table-row">
-					<div><h4>Include In Pickup</h4></div>
-				</div>
-
-				<div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles">
-					<div>
-						<label class="checkbox inline">
-							<input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
-							<span class="metro-checkbox">Carboy {{cycle.Carboy.Carboy_number}}</span>
-						</label>
-					</div>
-				</div>
-				<div class="table-header">
-					<h3><a class="btn btn-success btn-large left"><i class="icon-box-remove"></i>Request Pickup</a></h3>
+					<h3><a class="btn btn-success btn-large left" ng-click="createPickup(pi)"><i class="icon-box-remove"></i>Request Pickup</a></h3>
 				</div>
 			</div>
 		</div>
