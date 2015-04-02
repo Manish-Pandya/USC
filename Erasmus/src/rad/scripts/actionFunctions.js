@@ -100,6 +100,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'admin-pickups',
+                        Label: 'Pickups',
+                        Dashboard: true
+                    },
+                    {
                         Name:'radmin.pi-detail',
                         Label: 'Radiation Administration',
                         Dashboard: true
@@ -729,8 +734,6 @@ angular
             {
                 return dataSwitchFactory.getAllObjects('Pickup');
             }
-
-
 
             /********************************************************************
             **
