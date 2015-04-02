@@ -52,9 +52,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getAllWasteBags"				=> new ActionMapping("getAllWasteBags", "", ""),
 			"getAllWasteTypes"				=> new ActionMapping("getAllWasteTypes", "", ""),
 			"getAllSolidsContainers"		=> new ActionMapping("getAllSolidsContainers", "", ""),
-			"getAllRadPis"		=> new ActionMapping("getAllRadPis", "", ""),
-			"getAllRadUsers"		=> new ActionMapping("getAllRadUsers", "", ""),
-				
+			"getAllRadPis"					=> new ActionMapping("getAllRadPis", "", ""),
+			"getAllRadUsers"				=> new ActionMapping("getAllRadUsers", "", ""),
+			"getAllActivePickups"			=> new ActionMapping("getAllActivePickups", "", ""),
 				
 
 			// save functions
