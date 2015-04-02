@@ -19,11 +19,11 @@ abstract class RadCrud extends GenericCrud {
 	public function sumUsages($useAmounts){
 		$isotopeAmounts = array();
 		foreach($useAmounts as $amount){
-			$isotopeName = $amount->getIsotopeName();			
+			$isotopeName = $amount->getIsotope_name();			
 			if(!array_key_exists($isotopeName, $isotopeAmounts)){
 				$isotopeAmount = new IsotopeAmountDTO();
-				$isotopeAmount->setIsotopeName($isotopeName);
-				$isotopeAmount->setCurieLevel($amount->getCurie_level());
+				$isotopeAmount->setIsotope_name($isotopeName);
+				$isotopeAmount->setCurie_level($amount->getCurie_level());
 				$isotopeAmounts[$isotopeName] = $isotopeAmount;
 			}else{				
 				$isotopeAmounts[$isotopeName]->addCuries($amount->getCurie_level());
