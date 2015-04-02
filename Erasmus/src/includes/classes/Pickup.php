@@ -21,6 +21,7 @@ class Pickup extends RadCrud {
 		"principal_investigator_id"		=> "integer",
 		"status"						=> "text",
 		"notes"							=> "text",
+		"scint_vial_trays"				=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -33,7 +34,7 @@ class Pickup extends RadCrud {
 
 	/** Relationships */
 	public static $CARBOYS_RELATIONSHIP = array(
-		"className" => "Carboy",
+		"className" => "CarboyUseCycle",
 		"tableName" => "carboy_use_cycle",
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
@@ -47,10 +48,10 @@ class Pickup extends RadCrud {
 	);
 	
 	public static $SCINT_VIAL_COLLECTIONS_RELATIONSHIP = array(
-			"className" => "ScintVialCollection",
-			"tableName" => "scint_vial_collection",
-			"keyName"   => "key_id",
-			"foreignKeyName" => "principal_investigator_id"
+		"className" => "ScintVialCollection",
+		"tableName" => "scint_vial_collection",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "pickup_id"
 	);
 
 	//access information
@@ -66,18 +67,18 @@ class Pickup extends RadCrud {
 	private $pickup_user_id;
 
 	/** Array of Carboys picked up */
-	private $carboys;
+	private $carboy_use_cycles;
 
 	/** Array of Waste Bags picked up */
 	private $waste_bags;
 	
 	/** Array of Scint Vial Collections picked up **/
-	private $scintVialCollections;
+	private $scint_vial_collections;
 
 	/** Key_id of the PI who scheduled this pickup */
 	private $principal_investigator_id;
 
-	/** PI who scheduled this pikcup */
+	/** PI who scheduled this pickup */
 	private $principalInvestigator;
 	
 	/** the current status of this pickup, indicated whether it's been Requested, Picked Up, etc. **/
@@ -85,13 +86,17 @@ class Pickup extends RadCrud {
 	
 	/**  notes about this pickup added by lab personnel **/
 	private $notes;
+	
+	/** number of scint vial trays picked up **/
+	private $scint_vial_trays;
 
 	public function __construct() {
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager", "getCarboys");
-		$entityMaps[] = new EntityMap("eager", "getWasteBags");
+		$entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
+		$entityMaps[] = new EntityMap("eager", "getWaste_bags");
+		$entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
 		$this->setEntityMaps($entityMaps);
 
@@ -113,18 +118,18 @@ class Pickup extends RadCrud {
 	public function getPickup_user_id() { return $this->pickup_user_id; }
 	public function setPickup_user_id($newId) { $this->pickup_user_id = $newId; }
 
-	public function getCarboys() {
-		if($this->carboys === null && $this->hasPrimaryKeyValue()) {
+	public function getCarboy_use_cycles() {
+		if($this->carboy_use_cycles === null && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->carboys = $thisDao->getRelatedItemsById(
+			$this->carboy_use_cycles = $thisDao->getRelatedItemsById(
 					$this->getKey_id(), DataRelationship::fromArray(self::$CARBOYS_RELATIONSHIP));
 		}
-		return $this->carboys;
+		$LOG = Logger::getLogger(__CLASS__);
+		return $this->carboy_use_cycles;
 	}
-	public function setCarboys($newCarboys) {$this->carboys = $newCarboys;}
+	public function setCarboy_use_cycles($newCarboys) {$this->carboy_use_cycles = $newCarboys;}
 
-
-	public function getWasteBags() {
+	public function getWaste_bags() {
 		if($this->waste_bags === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->waste_bags = $thisDao->getRelatedItemsById(
@@ -132,37 +137,38 @@ class Pickup extends RadCrud {
 		}
 		return $this->waste_bags;
 	}
-	public function setWasteBags($newBags) {$this->waste_bags = $newBags;}
+	public function setWaste_bags($newBags) {$this->waste_bags = $newBags;}
 	
-	public function getScintVialCollections(){
+	public function getScint_vial_collections(){
 	
-		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->scint_vial_collections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
 			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
 			// added later if necessary.
-			$this->scintVialCollections = $thisDao->getRelatedItemsById(
+			$this->scint_vial_collections = $thisDao->getRelatedItemsById(
 					$this->getKey_id(),
 					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTIONS_RELATIONSHIP)
 			);
 		}
-		return $this->scintVialCollections;
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug('calling pickup get sv collections');
+		return $this->scint_vial_collections;
 	}
 	
-	public function setScintVialCollections($collections){
-		$this->scintVialCollections = $collections;
+	public function setScint_vial_collections($collections){
+		$this->scint_vial_collections = $collections;
 	}
 
 	public function getPrincipal_investigator_id(){return $this->principal_investigator_id;}
 	public function setPrincipal_investigator_id($principal_investigator_id){$this->principal_investigator_id = $principal_investigator_id;}
 
 	public function getPrincipalInvestigator(){
-		if($this->principalInvestigator = null) {
-			$piDAO = new GenericDAO(new PrincipalInvestigator());
-			$this->principalInvestigator = $piDAO->getById($this->getPrincipalInvestigatorId());
-		}
+		$piDAO = new GenericDAO(new PrincipalInvestigator());
+		$this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
 		return $this->principalInvestigator;
 	}
+	
 	public function setPrincipalInvestigator($principalInvestigator){$this->principalInvestigator = $principalInvestigator;}
 
 	public function getRequested_date() {return $this->requested_date;}
@@ -173,6 +179,9 @@ class Pickup extends RadCrud {
 	
 	public function getNotes(){ return $this->notes; }
 	public function setNotes($notes){$this->notes = $notes;}
+	
+	public function getScint_vial_trays(){ return $this->scint_vial_trays; }
+	public function setScint_vial_trays($trays){ $this->scint_vial_trays = $trays; }
 	
 }
 ?>
