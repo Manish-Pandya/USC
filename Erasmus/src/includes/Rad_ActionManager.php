@@ -594,7 +594,7 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 
-	function savePickup() {
+	function savePickup($saveChildren = null) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
@@ -611,30 +611,51 @@ class Rad_ActionManager extends ActionManager {
 			$carboys = $decodedObject->getCarboy_use_cycles();
 			$LOG->debug("collections logged on line 590");
 			$LOG->debug($svCollections);
-			
-			foreach($wasteBags as $bagArray){
-				$LOG->debug('bag with key id '+$bagArray['Key_id']);
-				$bagDao = $this->getDao(new WasteBag());
-				$bag = $bagDao->getById($bagArray['Key_id']);
-				$bag->setPickup_id($pickup->getKey_id());
-				$bagDao->save($bag);
+			$saveChildren = $this->getValueFromRequest('saveChildren', $saveChildren);
+				
+			if($saveChildren != NULL){
+				foreach($wasteBags as $bagArray){
+					$LOG->debug('bag with key id '+$bagArray['Key_id']);
+					$bagDao = $this->getDao(new WasteBag());
+					$bag = $bagDao->getById($bagArray['Key_id']);
+					$bag->setPickup_id($pickup->getKey_id());
+					$bagDao->save($bag);
+				}
+				
+				foreach($svCollections as $collectionArray){
+					$LOG->debug('collection with key id ');
+					$svColDao = $this->getDao(new ScintVialCollection());
+					$collection = $svColDao->getById($collectionArray['Key_id']);
+					$collection->setPickup_id($pickup->getKey_id());
+					$svColDao->save($collection);
+				}
+				
+				foreach($carboys as $carboyArray){
+					$LOG->debug('carboyUseCycle with key id '+$carboyArray['Key_id']);
+					$carboyDao = $this->getDao(new CarboyUseCycle());
+					$cycle = $carboyDao->getById($carboyArray['Key_id']);
+					$cycle->setPickup_id($pickup->getKey_id());
+					$LOG->debug($cycle);
+					//carboy has been picked up.  If it is back at the radiation safety office, we set it to decaying and set its hot room date
+					if($decodedObject->getStatus() == "AT RSO"){
+						$cycle->setStatus("Decaying");
+						$timestamp = date('Y-m-d G:i:s');
+						$cycle->setHotroom_date($timestamp);
+					}
+					elseif($decodedObject->getStatus() == "AT RSO"){
+						$cycle->setStatus("Picked up");
+						$cycle->setHotroom_date(NULL);
+					}
+					$carboyDao->save($cycle);
+				}
 			}
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
+			$entityMaps[] = new EntityMap("eager", "getWaste_bags");
+			$entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
+			$entityMaps[] = new EntityMap("eager", "getPrincipalInvestigator");
+			$pickup->setEntityMaps($entityMaps);
 			
-			foreach($svCollections as $collectionArray){
-				$LOG->debug('collection with key id ');
-				$svColDao = $this->getDao(new ScintVialCollection());
-				$collection = $svColDao->getById($collectionArray['Key_id']);
-				$collection->setPickup_id($pickup->getKey_id());
-				$svColDao->save($collection);
-			}
-			
-			foreach($carboys as $carboyArray){
-				$LOG->debug('carboyUseCycle with key id '+$carboyArray['Key_id']);
-				$carboyDao = $this->getDao(new CarboyUseCycle());
-				$cycle = $carboyDao->getById($carboyArray['Key_id']);
-				$cycle->setPickup_id($pickup->getKey_id());
-				$carboyDao->save($cycle);
-			}
 			return $pickup;
 		}
 	}
