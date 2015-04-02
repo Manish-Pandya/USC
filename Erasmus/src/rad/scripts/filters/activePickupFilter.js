@@ -1,6 +1,7 @@
 angular.module('00RsmsAngularOrmApp')
 	.filter('activePickups', function() {
 	  return function(pickups) {
+	  		if(!pickups)return;
 	  		var activePickups = [];
 	  		var i = pickups.length;
 
