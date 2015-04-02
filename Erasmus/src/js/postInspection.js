@@ -560,7 +560,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function onFailSetInspecitonClosed(){
-    alert("There was an issue when the system tried to set the Inpsection's closeout date");
+    alert("There was an issue when the system tried to set the Inspection's closeout date");
   }
 
 }

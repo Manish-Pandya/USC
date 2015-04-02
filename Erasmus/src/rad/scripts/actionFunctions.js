@@ -1084,7 +1084,7 @@ angular
                     store.store( pi.rooms, false );
             }
 
-            af.setInpsection = function( PIKeyID, inspectorIds, inspectionId )
+            af.setInspection = function( PIKeyID, inspectorIds, inspectionId )
             {
 
                     //set inspectionId to empty strying if we are starting a new inspection
