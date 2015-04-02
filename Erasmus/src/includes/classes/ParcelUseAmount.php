@@ -145,7 +145,7 @@ include_once 'RadCrud.php';
 	public function getComments() {	return $this->comments;	}
 	public function setComments($comments) {$this->comments = $comments;}
 	
-	public function getIsotopeName() {
+	public function getIsotope_name() {
 		$useDao = new GenericDAO(new ParcelUse());
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
