@@ -55,10 +55,11 @@ angular
 
             }
 
-            af.save = function( object )
+            af.save = function( object, saveChildren )
             { 
+                    if(!saveChildren)saveChildren = false;
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
+                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
                         .then(
                             function( returnedData ){
                                 return returnedData.data;
@@ -1403,21 +1404,31 @@ angular
                     )
             }
 
-            af.savePickup = function(pickup,pi){
+            af.savePickup = function(originalPickup, editedPickup){
                 af.clearError();
-                return this.save( pickup )
+                if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
+                return this.save( editedPickup, true )
                     .then(
                         function(returnedPickup){
-                            returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
-                            dataStoreManager.addOnSave(returnedPickup);
-                            pi.Pickups.push(returnedPickup);
-                            pi.CarboyUseCycles = null;
-                            pi.Parcels = null;
-                            //pi.  c
+                            returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
+                            
+                            //the pickup is new, so it has no key id
+                            if(!originalPickup.Key_id){
+                                dataStoreManager.addOnSave(returnedPickup);
+                                pi.Pickups.push(returnedPickup);
+                                pi.CarboyUseCycles = null;
+                                pi.Parcels = null;
+                            }
+                            //the pickup had a key id, so we are mutating a pickup that already existed
+                            else{
+                                angular.extend(originalPickup, returnedPickup);
+                            }
                         },
-                        af.setError('The Solids Container could not be saved')
+                        af.setError('The pickup could not be saved')
                     )
             }
+
+            af.u
 
         	return af;
 		});

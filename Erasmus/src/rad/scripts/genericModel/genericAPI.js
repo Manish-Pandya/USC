@@ -70,10 +70,12 @@ angular
 				return api.read( urlFragment );
 		}		
 
-		api.save = function( object, urlFragment )
+		api.save = function( object, urlFragment, saveChildren )
 		{
 				if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );	
 				var url = api.buildRequestUrl( urlFragment, false );
+				console.log(url);
+				if(saveChildren)url = url + "&saveChildren=true";
 
 				//return testPromise.promise;
 				//test api post

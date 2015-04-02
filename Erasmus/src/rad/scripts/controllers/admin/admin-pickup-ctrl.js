@@ -19,6 +19,31 @@ angular.module('00RsmsAngularOrmApp')
   				function(){}
   			)
 
+
+		$scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
+			console.log(status);
+			console.log(isChecked);
+			isChecked = !isChecked;
+			console.log(isChecked);
+
+			var pickupCopy = dataStoreManager.createCopy(pickup);
+
+			if(isChecked == true){
+				pickupCopy.Status = oldStatus;
+			}else{
+				if(oldStatus == "PICKED UP"){
+					pickupCopy.Status = null;
+				}else{
+					pickupCopy.Status = "PICKED UP";
+				}
+			}
+
+			af.savePickup(pickup,pickupCopy);
+
+		}
+
+
+
   })
   .controller('AdminPickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = actionFunctionsFactory;
@@ -33,20 +58,6 @@ angular.module('00RsmsAngularOrmApp')
 		        Is_active: true
 		    }
 		}
-
-		$scope.requestPickup = function(pickup){
-			console.log(pickup)
-			af.savePickup(pickup)
-				.then(
-					function(){
-
-					},
-					function(){
-
-					}
-				)
-		}
-
 
 		$scope.close = function(){
            $modalInstance.dismiss();

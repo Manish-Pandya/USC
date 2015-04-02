@@ -38,6 +38,7 @@ angular.module('00RsmsAngularOrmApp')
 	    pickup.Waste_bags = [];
 	    pickup.Principal_investigator_id = null;
 	    pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
+	    pickup.Status = "Requested";
 
 
 	    $scope.createPickup = function(pi){
@@ -91,8 +92,9 @@ angular.module('00RsmsAngularOrmApp')
 		}
 
 		$scope.requestPickup = function(pickup){
-			console.log(pickup)
-			af.savePickup(pickup)
+
+			var pickupCopy = dataStoreManager.createCopy(pickup);
+			af.savePickup(pickup,pickupCopy)
 				.then(
 					function(){
 
