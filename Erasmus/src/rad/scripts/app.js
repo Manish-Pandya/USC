@@ -40,6 +40,11 @@ angular
         templateUrl: "views/admin/pi-detail.html",
         controller: "PiDetailCtrl"
       })
+      .state('admin-pickups', {
+        url: "/admin/pickups",
+        templateUrl: "views/admin/pickups.html",
+        controller: "AdminPickupCtrl"
+      })
       .state('pi-rad-management', {
         url:'/my-lab:pi',
         templateUrl: "views/pi/pi-rad-home.html",

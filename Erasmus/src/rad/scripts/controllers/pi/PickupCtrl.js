@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp PI waste Pickups view
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('PickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+  .controller('PickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
   		var af = actionFunctionsFactory;
   		$scope.af = af;
   		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
@@ -20,7 +20,7 @@ angular.module('00RsmsAngularOrmApp')
 	  					$scope.scheduledPickups = [];
 	  					while(i--){
 							if(pi.Pickups[i].Requested_date){
-								scheduledPickups.unshift(pi.Pickups[i]);
+								$scope.scheduledPickups.unshift(pi.Pickups[i]);
 							};
 	  					}
 	  				}
@@ -33,10 +33,11 @@ angular.module('00RsmsAngularOrmApp')
 	    //collection of things to be picked up
 	    var pickup = new window.Pickup();
 	    pickup.Class="Pickup";
-	    pickup.Carboys = [];
-	    pickup.ScintVialCollections = [];
-	    pickup.WasteBags = [];
+	    pickup.Carboy_use_cycles = [];
+	    pickup.Scint_vial_collections = [];
+	    pickup.Waste_bags = [];
 	    pickup.Principal_investigator_id = null;
+	    pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
 
 
 	    $scope.createPickup = function(pi){
@@ -49,20 +50,20 @@ angular.module('00RsmsAngularOrmApp')
 	    		var container = pi.SolidsContainers[i];
 	    		var j =  container.WasteBagsForPickup.length;
 	    		while(j--){
-	    			if( container.WasteBagsForPickup[j].include )pickup.WasteBags.push( container.WasteBagsForPickup[j] );
+	    			if( container.WasteBagsForPickup[j].include )pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
 	    		}
 	    	}
 
 	    	var i = pi.CurrentScintVialCollection.length;
 	    	while(i--){
-	    		if( pi.CurrentScintVialCollection[i].include ) pickup.ScintVialCollections.push( pi.CurrentScintVialCollection[i] );
+	    		if( pi.CurrentScintVialCollection[i].include ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollection[i] );
 	    	}
 
 	    	var i = pi.CarboyUseCycles.length;
 	    	while(i--){
-	    		if( pi.CarboyUseCycles[i].include )pickup.Carboys.push( pi.CarboyUseCycles[i].Carboy );
+	    		if( pi.CarboyUseCycles[i].include )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
 	    	}
-
+	    	console.log(pickup);
 	    	var modalData = {};
 	        modalData.pi = pi;
 	        modalData.pickup = pickup;
