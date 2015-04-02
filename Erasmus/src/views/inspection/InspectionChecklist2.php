@@ -158,7 +158,7 @@ require_once '../top_view.php';
 										<li>
 											<label class="checkbox inline">
 												<input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-checked="inspection.Deficiency_selections[1].indexOf(deficiency.Key_id) > -1" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />
-												<span class="metro-radio">corrected during inpsection</span>
+												<span class="metro-radio">corrected during inspection</span>
 											</label>
 										</li>
 									</ul>

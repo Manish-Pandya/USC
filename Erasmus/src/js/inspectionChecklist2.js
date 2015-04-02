@@ -315,10 +315,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 		    var def_id = deficiency.Key_id;
 		    deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
 		    if( this.inspection.Deficiency_selections[1].indexOf(deficiency.Key_id > -1) ){
-		      //we set corrected durring inpsection
+		      //we set corrected during inspection
 		      var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
 		    }else{
-		      //we unset corrected durring inspection
+		      //we unset corrected during inspection
 		      var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
 		    }
 
