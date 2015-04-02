@@ -17,7 +17,7 @@ class ScintVialCollection extends RadCrud{
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"pickup_id"						=> "integer",
-			"principal_investigator"		=> "integer",
+			"principal_investigator_id"		=> "integer",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -30,7 +30,6 @@ class ScintVialCollection extends RadCrud{
 	
 	public function __construct() {
 		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->debug('constructor called');
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
@@ -76,8 +75,6 @@ class ScintVialCollection extends RadCrud{
 			$thisDao = new GenericDAO($this);
 			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
 		}
-		
-		$LOG->debug($this->parcel_use_amounts);
 		return $this->parcel_use_amounts;
 	}
 	public function setParcel_use_amounts($parcel_use_amounts) {
@@ -87,8 +84,7 @@ class ScintVialCollection extends RadCrud{
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for sv collection.');
-		$LOG->debug($this->getParcelUseAmounts());
-		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
+		$this->contents = $this->sumUsages($this->getParcel_use_amounts());
 		return $this->contents;
 	}
 	public function setContents($contents) {
@@ -115,6 +111,9 @@ class ScintVialCollection extends RadCrud{
 		return $this->pickup_id;
 	}
 	public function setPickup_id($pickup_id) {
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug('called set pickup id');
+
 		$this->pickup_id = $pickup_id;
 	}
 	
@@ -128,8 +127,6 @@ class ScintVialCollection extends RadCrud{
 	public function setPickup($newPickup) {
 		$this->pickup = $newPickup;
 	}
-	
-	
 	
 }
 
