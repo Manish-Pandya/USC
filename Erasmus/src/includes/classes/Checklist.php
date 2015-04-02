@@ -157,7 +157,7 @@ class Checklist extends GenericCrud {
 		//$LOG->debug($roomDao);
 
 		foreach ($inspectionRooms as $rm){
-			//if the hazard has been received from an API call, each of its inpsection rooms will be an array instead of an object, because PHP\
+			//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
 			//If so, we set the key id by index instead of calling the getter
 			if(!is_object($rm)){
 				$key_id = $rm['Key_id'];

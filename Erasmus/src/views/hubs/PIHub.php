@@ -35,7 +35,7 @@ require_once '../top_view.php';
 			<a href="UserHub.php#/pis?pi={{PI.User.Last_name}}piId={{PI.Key_id}}" id="editPI" class="btn btn-large btn-primary left" style="margin-left: 0;"><i class="icon-pencil"></i>Edit PI</a>
 			<a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info left"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
 			<a ng-click="setRoute('personnel')" class="btn btn-large btn-success left"><i class="icon-user-2"></i>Manage Lab Personnel</a>
-			<a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inpsection</a>
+			<a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inspection</a>
 		</div>
 	</span>
 	<h3 ng-hide="!PI" class="piHeader">Principle Investigator:  {{PI.User.Name}}</h3>

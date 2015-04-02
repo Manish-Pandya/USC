@@ -1085,14 +1085,14 @@ angular
                     store.store( pi.rooms, false );
             }
 
-            af.setInpsection = function( PIKeyID, inspectorIds, inspectionId )
+            af.setInspection = function( PIKeyID, inspectorIds, inspectionId )
             {
 
                     //set inspectionId to empty strying if we are starting a new inspection
                     if(!inspectionId)inspectionId = '';
 
                     var url = 'initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
-                    $rootScope.inpsectionPromise = genericAPIFactory.read(url)
+                    $rootScope.inspectionPromise = genericAPIFactory.read(url)
                         .then(
                             function( inspection ){
                                 store.store( inspection );
@@ -1102,7 +1102,7 @@ angular
                                 
                             }
                         );  
-                    return $rootScope.inpsectionPromise;
+                    return $rootScope.inspectionPromise;
             }
 
             af.resetInspectionRooms = function( roomIds, inspectionId )
@@ -1111,7 +1111,7 @@ angular
                     //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
                     var url = 'resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
 
-                    $rootScope.inpsectionPromise = genericAPIFactory.read( url )
+                    $rootScope.inspectionPromise = genericAPIFactory.read( url )
                             .then(
                                 function( inspection ){
                                     return inspection
@@ -1119,7 +1119,7 @@ angular
                                 function(promise){
                                 } 
                             );  
-                    return $rootScope.inpsectionPromise;
+                    return $rootScope.inspectionPromise;
                 
             }
 
@@ -1136,7 +1136,7 @@ angular
                     //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
                     var url = 'getHazardRoomRelations&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
 
-                    $rootScope.inpsectionPromise = genericAPIFactory.read( url )
+                    $rootScope.inspectionPromise = genericAPIFactory.read( url )
                             .then(
                                 function( HazardRoomRelations ){
                                     store.store( HazardRoomRelations, true );
@@ -1145,7 +1145,7 @@ angular
                                 function(promise){
                                 } 
                             );  
-                    return $rootScope.inpsectionPromise;
+                    return $rootScope.inspectionPromise;
             }
 
             /********************************************************************

@@ -622,11 +622,11 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     def.IsDirty = true;
     var def_id = def.Key_id;
     if(def.correctedDuringInspection){
-      //we set corrected durring inpsection
+      //we set corrected during inspection
       var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
       convenienceMethods.deleteObject( onAddCorrectedDurringInspection, onFailHandleCorrectedDurringInspection, url, def );
     }else{
-      //we unst corrected durring inspection
+      //we unst corrected during inspection
       var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+$scope.inspection.Key_id+'&callback=JSON_CALLBACK';
       convenienceMethods.deleteObject( onRemoveCorrectedDurringInspection, onFailHandleCorrectedDurringInspection, url, def );
     }
@@ -726,7 +726,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     //is this an observation or recommendation?
     if(item.Class.indexOf("Rec") > -1){
       //disable all other edits
-      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inpsections?
+      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inspection?
       if(item.Class.indexOf("Sup") > -1){
         angular.forEach(question.Responses.SupplementalRecommendations, function(rec, key){
           rec.edit = false;
@@ -739,7 +739,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       //this is a recommendation, so we make a recommendation copy for editing
       $scope.recommendationCopy = angular.copy(item);
     }else{
-      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inpsections?
+      //A supplemental one, specific to this inspection, or a new option added durring this inspection but available for all future inspection?
       //disable all other edits
       if(item.Class.indexOf("Sup") > -1){
 
