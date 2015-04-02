@@ -105,7 +105,7 @@
 .card.auths{
   border-left:rgba(26, 108, 167, 1) solid 6px;
 }
-.card.auths h3 i:first-child{
+.card.auths h1 i:first-child,.card.auths h2 i:first-child,.card.auths h3 i:first-child{
   color:rgba(26, 108, 167, 1)
 }
 .modal-header.auths h2{background: rgba(26, 108, 167, 1)}
@@ -120,7 +120,7 @@
 .card.pos{
   border-left: rgba(26, 95, 40, 1) solid 6px;
 }
-.card.pos h3 i:first-child{
+.card.pos h1 i:first-child,.card.pos h2 i:first-child,.card.pos h3 i:first-child{
   color:rgba(26, 95, 40, 1);
 }
 .left-nav ul li a.pos{
@@ -133,7 +133,7 @@
 .card.parcels{
   border-left: rgba(153, 96, 40, 1) solid 6px
 }
-.card.parcels h3 i:first-child{
+.card.parcels h1 i:first-child,.card.parcels h2 i:first-child,.card.parcels h3 i:first-child{
   color: rgba(153, 96, 40, 1);
 }
 .left-nav ul li a.parcels{
@@ -147,7 +147,7 @@
   border-left:rgb(122, 6, 109) solid 6px;
 }
 .modal-header.carboys h2{background: rgb(122, 6, 109);}
-.card.carboys h3 i:first-child{color:rgb(122, 6, 109);}
+.card.carboys h1 i:first-child,.card.carboys h2 i:first-child,.card.carboys h3 i:first-child{color:rgb(122, 6, 109);}
 i.carboys{color:rgb(122, 6, 109) !important;}
 .left-nav ul li a.carboys{
   background: rgba(122, 6, 109, 0.5)
@@ -159,7 +159,7 @@ i.carboys{color:rgb(122, 6, 109) !important;}
 .card.solids-containers{
   border-left:rgb(151, 49, 58) solid 6px
 }
-.card.solids-containers h3 i:first-child{color:rgb(151, 49, 58)}
+.card.solids-containers h1 i:first-child,.card.solids-containers h2 i:first-child,.card.solids-containers h3 i:first-child{color:rgb(151, 49, 58)}
 i.solids-containers{color:rgb(151, 49, 58) !important}
 .left-nav ul li a.solids-containers{
   background: rgb(151, 49, 58)
@@ -171,7 +171,7 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
 .card.pickups{
   border-left: rgb(91, 183, 91) solid 6px
 }
-.card.pickups h3 i:first-child{color:rgb(91, 183, 91);margin: 7px 19px 0 0;}
+.card.pickups h1 i:first-child,.card.pickups h2 i:first-child,.card.pickups h3 i:first-child{color:rgb(91, 183, 91);margin: 7px 19px 0 0;}
 .left-nav ul li a.pickups{
   background: rgba(91, 183, 91, .64);
 }
@@ -386,4 +386,15 @@ div.use-log > .table-row > div:nth-of-type(6){
 }
 .push-top {
   padding-top: 21px !Important;
+}
+
+@media print {
+  .no-print{
+    display: none;
+  }
+  .card{
+    padding:25px !important;
+    width:95%;
+    border:5px solid #999 !important;
+  }
 }
