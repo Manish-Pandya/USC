@@ -41,7 +41,7 @@
 							<h4>Waste Bags:</h4>
 							<label class="checkbox" ng-repeat="bag in container.WasteBagsForPickup">
 								<input type="checkbox" ng-true-value="yes" ng-model="bag.include"/>
-								<span class="metro-checkbox">Removed from container on {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)</span>
+								<span class="metro-checkbox">Removed from container on {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
 							</label>
 						</li>
 					</ul>
@@ -50,10 +50,11 @@
 
 			<div>
 				<h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
-				<label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollection">
+				<label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollection" ng-if="collection.Contents.length">
 					<input type="checkbox" ng-true-value="yes" ng-model="collection.include"/>
-					<span class="metro-checkbox"><h3 ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.IsotopeName}}</h3></span>
+					<span class="metro-checkbox"><h3 ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}</h3></span>
 				</label>
+				<h4 ng-if="!collection.Contents.length">No Scintillation Vial Disposals</h4>
 			</div>
 
 			<div>
@@ -62,7 +63,7 @@
 					<label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length">
 						<input type="checkbox" ng-true-value="yes" ng-model="cycle.include"/>
 						<span class="metro-checkbox">
-							Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.IsotopeName}}<span ng-if="!$last">, </span></span>)
+							Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)
 						</span>
 					</label>
 				</ul>

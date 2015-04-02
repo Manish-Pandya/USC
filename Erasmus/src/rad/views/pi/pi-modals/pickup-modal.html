@@ -1,36 +1,40 @@
-<div class="modal-header pickups wide-modal" style="padding:0;">
+<div class="modal-header pickups" style="padding:0;">
     <h2 ng-show="!addRoom" style="padding:5px;"><span ng-if="!modalData.Authorization">Request</span><span ng-if="modalData.Authorization">Edit</span> a Waste Pickup</h2>
 </div>
 <div class="modal-body">
-  <div class="span6">  
-  	<pre>{{modalData.pickup | json}}</pre>
+  <h3>Pickup Contents:</h3>
+  <h4>Waste Bags:</h4>
+  <ul>
+    <li ng-repeat="bag in modalData.pickup.Waste_bags">
+      Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}<br>
+      Contains:  <span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>
+    </li>
+  </ul>
 
-    <div class="control-group">
-       <label class="control-label" for="inputEmail">Maximum Quantity</label>
-       <div class="controls input-append">
-          <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi</span>
-       </div>
-    </div>
+  <h4>Scintillation Vial Contents</h4>
+  <ul>
+    <li ng-repeat="collection in modalData.pickup.Scint_vial_collections">
+      <span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>
+    </li>
+  </ul>
 
-    <div class="control-group">
-       <label class="control-label" for="inputEmail">Form</label>
-       <div class="controls input-append">
-          <input data-ng-model="modalData.AuthorizationCopy.Form" maxlength="35" placeholder="Form"/>
-       </div>
+  <h4>Carboys</h4>
+  <ul>
+    <li ng-repeat="cycle in modalData.pickup.Carboy_use_cycles">
+      Carboy Number {{cycle.Carboy.Carboy_number}} Contains:
+      <ul>
+        <li ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="form">
+     <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea ng-model="modalData.pickup.Notes" class="notes" id="notes" placeholder="I.E. Please bring 1 carboy."></textarea>
     </div>
   </div>
-  <div class="span6">
-    <h4>Your Used Materials</h4>
-    <ul>
-      <li ng-repeat="container in modalData.pi.SolidsContainers">
-        {{container.Name}}
-        <ul>
-          <li ng-repeat="bag in container.WasteBags" ng-if="bag.Date_removed && bag.Date_removed != ''">Removed from contaier {{bag.Date_removed | dateToISO}}</li>
-        </ul>
-      </li>
-    </ul>
-    <!--<pre>{{modalData | json}}</pre>-->
-  </div>
+
 </div>
 <div class="modal-footer">
   <a class="btn btn-large btn-success left" ng-click="requestPickup(modalData.pickup)"><i class="icon-checkmark"></i>Save</a>
