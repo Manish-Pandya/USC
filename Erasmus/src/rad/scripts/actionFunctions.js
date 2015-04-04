@@ -907,15 +907,23 @@ angular
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store(pi);
                             if(pi.Rooms && pi.Rooms.length){
                                 var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
                                 store.store(rooms);
                                 pi.Rooms = store.get('Room');  
                             }
                             if(pi.SolidsContainers && pi.SolidsContainers.length){
+                                var i = pi.SolidsContainers.length;
+                                while(i--){
+                                    var bags = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers[i].WasteBags );
+                                    store.store(bags);
+                                    console.log(store.get("WasteBag"));
+                                }
+
                                 var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
                                 store.store(containers);
-                                pi.SolidsContainers = store.get('SolidsContainer');                             
+                                pi.SolidsContainers = store.get('SolidsContainer');
                             }
                             if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
                                 var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
@@ -966,6 +974,11 @@ angular
                                 store.store(pickups);
                                 pi.Pickups = store.get('Pickup');   
                             }   
+                            if(pi.CurrentScintVialCollection && pi.CurrentScintVialCollection.length){
+                                var collections = modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollection );
+                                store.store(collections);
+                                pi.loadCurrentScintVialCollection();  
+                            }
                             console.log(pi);
                             store.store(pi);
                             return pi;
@@ -1414,10 +1427,35 @@ angular
                             
                             //the pickup is new, so it has no key id
                             if(!originalPickup.Key_id){
-                                dataStoreManager.addOnSave(returnedPickup);
+                                dataStoreManager.store(returnedPickup);
+                                var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
                                 pi.Pickups.push(returnedPickup);
-                                pi.CarboyUseCycles = null;
-                                pi.Parcels = null;
+
+                                //set pickup ids for items that are included in pickup
+                                var i = returnedPickup.Waste_bags.length;
+                                while(i--){
+                                    angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
+                                    //remove this WasteBag from it's containers collection of WasteBags ready to be have a pick requested.
+                                    var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
+                                    var j = container.WasteBagsForPickup.length;
+                                    while(j--){
+                                        if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(1,i);
+                                    }
+                                }
+
+                                var i = returnedPickup.Carboy_use_cycles.length;
+                                while(i--){
+                                    angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                    
+                                }
+
+                                var i = returnedPickup.Scint_vial_collections.length;
+                                while(i--){
+                                    angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
+                                }
+
+                                pi.loadCarboyUseCycles();
+                                pi.loadCurrentScintVialCollection();
+
                             }
                             //the pickup had a key id, so we are mutating a pickup that already existed
                             else{
@@ -1427,8 +1465,6 @@ angular
                         af.setError('The pickup could not be saved')
                     )
             }
-
-            af.u
 
         	return af;
 		});
