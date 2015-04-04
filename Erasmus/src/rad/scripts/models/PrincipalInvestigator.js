@@ -87,6 +87,17 @@ PrincipalInvestigator.prototype = {
 
     },
 
+    CurrentScintVialCollectionRelationship: {
+
+        className:    'ScintVialCollection',
+        keyReference:  'Principal_investigator_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id',
+        where:[{'Pickup_id':"IS NULL"}]
+
+    },
+
 
     CarboyUseCyclesRelationship: {
 
@@ -110,45 +121,32 @@ PrincipalInvestigator.prototype = {
 	Buildings: {},
 
 	loadAuthorizations: function() {
-        if(!this.Authorizations){
-            dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
+        
     },
 
 	loadActiveParcels: function() {
-        if(!this.ActiveParcels) {
-            dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship);
     },
 
     loadRooms: function() {
-        if(!this.Rooms) {
-            dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
-        }
+        dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
     },
 
     loadPurchaseOrders: function() {
-        if(!this.PurchaseOrders) {
-            dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
     },
 
     loadSolidsContainers: function() {
-        if(!this.SolidsContainers) {
-            dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
     },
 
     loadCarboyUseCycles: function() {
-        if(!this.Carboys) {
-            dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
     },
 
     loadPickups: function() {
-        if(!this.Pickups) {
-            dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
-        }
+        dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
     },
 
     loadUser:  function() {
@@ -170,8 +168,9 @@ PrincipalInvestigator.prototype = {
         }
     },
 
-    loadScintVialUsageAmounts: function(){
-        
+    loadCurrentScintVialCollection: function(){
+        alert('calling it');
+        dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollection', this.CurrentScintVialCollectionRelationship, this.CurrentScintVialCollectionRelationship.where);
     }
 
 }
