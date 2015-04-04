@@ -16,7 +16,7 @@ var dataLoader = {};
 */
 
 
-dataLoader.loadOneToManyRelationship = function( parent, property, relationship ) {
+dataLoader.loadOneToManyRelationship = function( parent, property, relationship, whereClause ) {
     // methodString overrides default behavior for making special server calls.
     if( relationship.methodString ) {
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
@@ -28,9 +28,10 @@ dataLoader.loadOneToManyRelationship = function( parent, property, relationship 
     }
 
     // if the required data is already cached get it from there.
-    else if( dataLoader[relationship.className]) {
+    else if( dataStore[relationship.className]) {
+        if(!whereClause)whereClause = false;
         parent[property] = dataStoreManager.getChildrenByParentProperty(
-                relationship.className, relationship.keyReference, parent[relationship.paramValue]);
+                relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
     }
 
     // data not cached, get it from the server

@@ -20,8 +20,7 @@ dataStoreManager.store = function( object, trusted, flavor )
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
                 dataStoreManager.addToCollection( object.Class, trusted );
-                dataStore[object.Class] = [object];
-                dataStoreManager.mapCache(object.Class);
+                dataStoreManager.pushIntoCollection(object);
             }else{
                 dataStoreManager.addToCollection( flavor );
                 dataStore[flavor] = [object];
@@ -80,6 +79,7 @@ dataStoreManager.get = function( objectFlavor )
 dataStoreManager.getById = function( objectFlavor, key_id )
 {   
     // get index of this room in the cache, no looping anymore!
+    if(!dataStore[objectFlavor+'Map'][key_id])return null;
     var location = dataStore[objectFlavor+'Map'][key_id];
     return dataStore[objectFlavor][location];
 }
@@ -137,19 +137,50 @@ dataStoreManager.deleteCopy = function( object )
         dataStoreFactory.purge( window[object.Class+"Copy"] );
 }
 
-dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value)
+dataStoreManager.getChildrenByParentProperty = function(collectionType, property, value, whereClause)
 {
         if(!dataStore[collectionType]){
             return [];
         }else{
+
             //store the lenght of the appropriate collection
             var i = dataStore[collectionType].length;
             var collectionToReturn = [];
             while(i--){
+                var getIt = false;
                 var current = dataStore[collectionType][i];
                 if(current[property] == value){
-                    collectionToReturn.push( current );
+                    getIt = true;
+
+                    //do we have a whereClause in our "query"?
+                    if(whereClause){
+                        var j = whereClause.length;
+                        while(j--){
+                            for(var prop in whereClause[j]){
+                                //we check to see if the properties of the current object are null or not, based on the value of the currenty property of whereClause
+                                if(whereClause[j][prop] == "NOT NULL"){
+                                    //where clause's current property's value is "NOT NULL", so we only want this object from the cache if it's property isn't null
+                                    if(!current[prop])getIt = false;
+                                }else if(whereClause[j][prop] == "IS NULL"){
+                                    //where clause's current property's value is "IS NULL", so we only want this object from the cache if it's property is null
+                                    if(current[prop])getIt = false;
+                                }else{
+                                    //the object property is neither "NOT NULL" or "IS NULL"
+                                    console.log(whereClause[j][prop]+' is neither "NOT NULL" or "IS NULL"');
+                                }
+                                /*
+                                //whereClause[j][prop] is neither "NOT NULL" or "IS NULL", so compare
+                                else if(current[prop] != whereClause[j][prop]){
+                                    getIt = false;
+                                    break;
+                                }
+                                */
+                            }
+                        }
+                    }
                 }
+
+                if(getIt)collectionToReturn.push( current );
             }
 
             return collectionToReturn;
@@ -212,6 +243,14 @@ dataStoreManager.getModalData = function()
 }
 
 dataStoreManager.addOnSave = function( object )
-{
+{   
     if( !this.getById(object.Class, object.Key_id ) )dataStore[object.Class].push( object );
+}
+
+dataStoreManager.pushIntoCollection = function(object){
+    if(!dataStore[object.Class])dataStoreManager.store([object]);
+    if(!dataStoreManager.getById(object.Class, object.Key_id)){
+        dataStore[object.Class].push(object);
+        dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class+'Map'].length;
+    }
 }
