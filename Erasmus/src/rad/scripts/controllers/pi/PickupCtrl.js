@@ -64,7 +64,6 @@ angular.module('00RsmsAngularOrmApp')
 	    	while(i--){
 	    		if( pi.CarboyUseCycles[i].include )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
 	    	}
-	    	console.log(pickup);
 	    	var modalData = {};
 	        modalData.pi = pi;
 	        modalData.pickup = pickup;
@@ -74,6 +73,27 @@ angular.module('00RsmsAngularOrmApp')
 	          controller: 'PickupModalCtrl'
 	        });
 
+	    }
+
+	    $scope.solidsContainersHavePickups = function(containers){
+	    	var i = containers.length;
+	    	while(i--){
+	    		//if(!containers[i].WasteBagsForPickup.length)return false;
+	    		if($scope.hasPickupItems(containers[i].WasteBagsForPickup))return true;
+	    	}
+	    	return false;
+	    }
+
+
+	    $scope.hasPickupItems = function(collection){
+	    	//if(!collection.length)return false;
+	    	var i = collection.length;
+	    	while(i--){
+	    		if(!collection[i].Pickup_id){
+	    			return true;
+	    		}
+	    	}
+	    	return false;
 	    }
 
   })
