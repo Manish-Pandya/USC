@@ -169,7 +169,6 @@ PrincipalInvestigator.prototype = {
     },
 
     loadCurrentScintVialCollection: function(){
-        alert('calling it');
         dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollection', this.CurrentScintVialCollectionRelationship, this.CurrentScintVialCollectionRelationship.where);
     }
 
