@@ -1424,45 +1424,86 @@ angular
                     .then(
                         function(returnedPickup){
                             returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
-                            
-                            //the pickup is new, so it has no key id
-                            if(!originalPickup.Key_id){
-                                dataStoreManager.store(returnedPickup);
-                                var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
-                                pi.Pickups.push(returnedPickup);
+                            var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
 
-                                //set pickup ids for items that are included in pickup
-                                var i = returnedPickup.Waste_bags.length;
-                                while(i--){
+                             //set pickup ids for items that are included in pickup
+                            var i = returnedPickup.Waste_bags.length;
+                            while(i--){
+                                    console.log(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id));
                                     angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
                                     //remove this WasteBag from it's containers collection of WasteBags ready to be have a pick requested.
                                     var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
                                     var j = container.WasteBagsForPickup.length;
                                     while(j--){
-                                        if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(1,i);
+                                        if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(i,1);
                                     }
-                                }
+                            }
 
-                                var i = returnedPickup.Carboy_use_cycles.length;
-                                while(i--){
-                                    angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                    
+                            var i = returnedPickup.Carboy_use_cycles.length;
+                            while(i--){
+                                if(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id)){
+                                    angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                  
                                 }
+                            }
 
-                                var i = returnedPickup.Scint_vial_collections.length;
-                                while(i--){
+                            var i = returnedPickup.Scint_vial_collections.length;
+                            while(i--){
+                                if(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id)){
                                     angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
                                 }
+                            }
 
-                                pi.loadCarboyUseCycles();
-                                pi.loadCurrentScintVialCollection();
+                            pi.loadCarboyUseCycles();
+                            pi.loadCurrentScintVialCollection();
 
+                             //the pickup is new, so it has no key id
+                            if(!originalPickup.Key_id){
+                                dataStoreManager.store(returnedPickup);
+                                pi.Pickups.push(returnedPickup);
                             }
                             //the pickup had a key id, so we are mutating a pickup that already existed
                             else{
-                                angular.extend(originalPickup, returnedPickup);
+                                originalPickup.Requested_date = returnedPickup.Requested_date;
+                                originalPickup.Pickup_date = returnedPickup.Pickup_date;
+                                originalPickup.Status = returnedPickup.Status;
+
+                                console.log(originalPickup);
                             }
                         },
                         af.setError('The pickup could not be saved')
+                    )
+            }
+
+            af.removeFromPickup = function(object, pickupCollection, pi){
+                var copy = dataStoreManager.createCopy(object);
+                copy.Pickup_id = null;
+                if(copy.Class == "CarboyUseCycle"){
+                    copy.Status = "In Use";
+                    var label = "Carboy";
+                }else if(copy.Class == "WasteBag"){
+                    var label = "Wate Bag";
+                }else{
+                    var label = "Scintillation Vials";
+                }
+                return this.save( copy )
+                    .then(
+                        function(returnedObj){
+                            angular.extend(object, returnedObj);
+                            if(copy.Class == "WasteBag"){
+                                var container = dataStoreManager.getById("SolidsContainer",copy.Container_id);
+                                container.WasteBagsForPickup.push(object);
+                            }
+                            var i = pickupCollection.length;
+                            console.log(pickupCollection);
+                            while(i--){
+                                console.log(i + ' | ' + object.Key_id + ' | ' + pickupCollection[i].Key_id);
+                                if(object.Key_id == pickupCollection[i].Key_id)pickupCollection.splice(i,1);
+                            }
+                            console.log(pickupCollection);
+
+
+                        },
+                        af.setError('The ' + label + ' could not removed from the pickup.')
                     )
             }
 
