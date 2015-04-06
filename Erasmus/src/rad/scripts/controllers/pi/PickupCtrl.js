@@ -19,31 +19,41 @@ angular.module('00RsmsAngularOrmApp')
 	  					var i = pi.Pickups.length;
 	  					$scope.scheduledPickups = [];
 	  					while(i--){
-							if(pi.Pickups[i].Requested_date){
+							if(!pi.Pickups[i].Pickup_date){
 								$scope.scheduledPickups.unshift(pi.Pickups[i]);
 							};
 	  					}
-	  				}
+  					}
 					$scope.pi = pi;
   				},
   				function(){}
   			)
 
 
-	    //collection of things to be picked up
-	    var pickup = new window.Pickup();
-	    pickup.Class="Pickup";
-	    pickup.Carboy_use_cycles = [];
-	    pickup.Scint_vial_collections = [];
-	    pickup.Waste_bags = [];
-	    pickup.Principal_investigator_id = null;
-	    pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
-	    pickup.Status = "Requested";
+	   
 
 
 	    $scope.createPickup = function(pi){
+	    	//collection of things to be picked up
+	    	
+	    	if(pi.Pickups.length){
+			    var i = pi.Pickups.length;
+			    while(i--){
+				    if(pi.Pickups[i].Status == "REQUESTED")var pickup = pi.Pickups[i];
+			    }
+			}
 
-	    	pickup.Principal_investigator_id = pi.Key_id;
+			if(!pickup){
+				var pickup = new window.Pickup();
+			    pickup.Class="Pickup";
+			    pickup.Carboy_use_cycles = [];
+			    pickup.Scint_vial_collections = [];
+			    pickup.Waste_bags = [];
+			    pickup.Principal_investigator_id = null;
+			    pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
+			    pickup.Status = "REQUESTED";
+		    	pickup.Principal_investigator_id = pi.Key_id;
+			}
 
 	    	//include proper objects in pickup
 	    	var i = pi.SolidsContainers.length;
@@ -51,18 +61,18 @@ angular.module('00RsmsAngularOrmApp')
 	    		var container = pi.SolidsContainers[i];
 	    		var j =  container.WasteBagsForPickup.length;
 	    		while(j--){
-	    			if( container.WasteBagsForPickup[j].include )pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
+	    			if( container.WasteBagsForPickup[j].include && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.WasteBagsForPickup[j]))pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
 	    		}
 	    	}
 
 	    	var i = pi.CurrentScintVialCollection.length;
 	    	while(i--){
-	    		if( pi.CurrentScintVialCollection[i].include ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollection[i] );
+	    		if( pi.CurrentScintVialCollection[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollection[i]) ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollection[i] );
 	    	}
 
 	    	var i = pi.CarboyUseCycles.length;
 	    	while(i--){
-	    		if( pi.CarboyUseCycles[i].include )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
+	    		if( pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i])  )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
 	    	}
 	    	var modalData = {};
 	        modalData.pi = pi;
@@ -87,13 +97,15 @@ angular.module('00RsmsAngularOrmApp')
 
 	    $scope.hasPickupItems = function(collection){
 	    	//if(!collection.length)return false;
+	    	var hasPickupItems = false;
 	    	var i = collection.length;
 	    	while(i--){
-	    		if(!collection[i].Pickup_id){
-	    			return true;
+	    		if(!collection[i].Pickup_id && collection[i].Contents.length){
+	    			hasPickupItems = true;
 	    		}
+
 	    	}
-	    	return false;
+	    	return hasPickupItems;
 	    }
 
   })
