@@ -32,7 +32,7 @@
         'User'                  : {getById: "getUserById"           , getAll: "getAllRadUsers"        , save: "saveUser"          },
         'WasteBag'              : {getById: "getWasteBagById"       , getAll: "getAllWasteBags"       , save: "saveWasteBag"      },
         'WasteType'             : {getById: "getWasteTypeById"      , getAll: "getAllWasteTypes"      , save: "saveWasteType"     },
-
+        'ScintVialCollection'   : {getById: "getSVCollectionById"   , getAll: "getAllSVCollections"   , save: "saveSVCollection"  },
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"           , getAll: "getAllRooms"           , save: "saveRoom"          }
     };
