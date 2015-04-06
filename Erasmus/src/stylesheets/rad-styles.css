@@ -54,7 +54,14 @@
   margin-top: 5px;
   margin-right: 16px;
 }
-
+.card h1.card-header{
+  border-bottom:1px solid #ccc;
+  margin:5px;
+}
+.card h1.card-header i{
+  font-size: 40px !important;
+  margin: 20px 35px 0 0 !important;
+}
 
 @media screen and (max-width: 1366px) {
   /* line 73, ../sass/style.scss */
@@ -388,6 +395,43 @@ div.use-log > .table-row > div:nth-of-type(6){
   padding-top: 21px !Important;
 }
 
+
+/**********************************************
+**
+**  PICKUPS
+**
+**********************************************/
+
+.pickup-collection > div{
+  padding:10px;
+}
+
+.pickup-collection > div > div{
+  margin:15px;
+  border-bottom:1px solid #ccc;
+  padding: 15px 0;
+}
+.pickup-collection > div > div ul{
+  list-style:none;
+}
+.pickup-collection > div > div > h3{
+}
+.pickup-collection > div > div > h3 i{
+  margin: 3px 14px 0px 0px !important;
+  font-size: 24px;
+}
+.pickup-collection span.metro-checkbox span{
+  margin-top:0;
+} 
+.pickup-collection > div > div p{
+  font-size:14px;
+}
+.pickup-collection > div .row-fluid{
+  padding:10px inherit;
+}
+.indent{
+  margin-left: 25px;
+}
 @media print {
   .no-print{
     display: none;
