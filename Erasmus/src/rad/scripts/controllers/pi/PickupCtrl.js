@@ -30,7 +30,7 @@ angular.module('00RsmsAngularOrmApp')
   			)
 
 
-	   
+	   $scope.svTrays = 0;
 
 
 	    $scope.createPickup = function(pi){
@@ -55,6 +55,7 @@ angular.module('00RsmsAngularOrmApp')
 		    	pickup.Principal_investigator_id = pi.Key_id;
 			}
 
+
 	    	//include proper objects in pickup
 	    	var i = pi.SolidsContainers.length;
 	    	while(i--){
@@ -67,6 +68,7 @@ angular.module('00RsmsAngularOrmApp')
 
 	    	var i = pi.CurrentScintVialCollection.length;
 	    	while(i--){
+				pickup.Scint_vial_trays = pi.CurrentScintVialCollection[i].svTrays;
 	    		if( pi.CurrentScintVialCollection[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollection[i]) ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollection[i] );
 	    	}
 
@@ -74,6 +76,8 @@ angular.module('00RsmsAngularOrmApp')
 	    	while(i--){
 	    		if( pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i])  )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
 	    	}
+	    	console.log(pickup);
+	    	console.log($scope);
 	    	var modalData = {};
 	        modalData.pi = pi;
 	        modalData.pickup = pickup;
@@ -124,7 +128,7 @@ angular.module('00RsmsAngularOrmApp')
 		}
 
 		$scope.requestPickup = function(pickup){
-
+			$scope.close();
 			var pickupCopy = dataStoreManager.createCopy(pickup);
 			af.savePickup(pickup,pickupCopy)
 				.then(
