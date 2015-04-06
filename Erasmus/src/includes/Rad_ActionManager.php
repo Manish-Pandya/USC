@@ -605,6 +605,7 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new Pickup());
+			$LOG->debug($decodedObject);
 			$pickup = $dao->save($decodedObject);
 			$wasteBags = $decodedObject->getWaste_bags();
 			$svCollections = $decodedObject->getScint_vial_collections();
@@ -660,6 +661,21 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 
+	function saveSVCollection($collection = null){
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to Parcel', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new ScintVialCollection());
+			$collection = $dao->save($decodedObject);
+			return $collection;
+		}
+	}
+	
 	function savePurchaseOrder() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
