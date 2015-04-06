@@ -1453,9 +1453,6 @@ angular
                                 }
                             }
 
-                            pi.loadCarboyUseCycles();
-                            pi.loadCurrentScintVialCollection();
-
                              //the pickup is new, so it has no key id
                             if(!originalPickup.Key_id){
                                 dataStoreManager.store(returnedPickup);
