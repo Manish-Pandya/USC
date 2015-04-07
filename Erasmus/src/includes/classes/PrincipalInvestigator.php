@@ -13,6 +13,7 @@ class PrincipalInvestigator extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//TODO: IS user a relationship?
 		"user_id" => "integer",
+		"inspection_notes" => "text",
 		//departments is a relationship
 		//rooms is a relationship
 		//lab_personnel is a relationship
@@ -80,6 +81,9 @@ class PrincipalInvestigator extends GenericCrud {
 
 
 	private $principal_investigator_room_relations;
+
+	/** Notes for inspections.   **/
+	private $inspection_notes;
 
 
 	public function __construct(){
@@ -185,6 +189,13 @@ class PrincipalInvestigator extends GenericCrud {
 
 		return $result;
 	}
+	public function getInspection_notes() {
+		return $this->inspection_notes;
+	}
+	public function setInspection_notes($inspection_notes) {
+		$this->inspection_notes = $inspection_notes;
+	}
+	
 
 
 }
