@@ -1946,10 +1946,17 @@ input[type=checkbox]:checked ~ span.metro-radio::after {
 /*}*/
 input[type=radio]:not(:checked):disabled ~ span.metro-radio::before,
 input[type=radio]:disabled ~ span.metro-radio::before,
-input[type=radio]:disabled ~ span.metro-radio::after {
+input[type=radio]:disabled ~ span.metro-checkbox::before,
+input[type=radio]:disabled ~ span.metro-radio::after,
+input[type=radio]:disabled ~ span.metro-checkbox::after,
+input[type=checkbox]:disabled ~ span.metro-radio::after,
+input[type=checkbox]:disabled ~ span.metro-radio::before
+{
    cursor: default;
    background: #868686;
+   border-color: rgb(102, 102, 102);
 }
+
 
 
 /* Metro Checkbox
@@ -1957,7 +1964,8 @@ input[type=radio]:disabled ~ span.metro-radio::after {
 label.checkbox input[type=checkbox],
 label.checkbox input[type=checkbox] ~ span.metro-checkbox,
 label.checkbox input[type=checkbox] ~ span.metro-checkbox::before,
-label.checkbox input[type=checkbox] ~ span.metro-checkbox::after {
+label.checkbox input[type=checkbox] ~ span.metro-checkbox::after,
+ {
    vertical-align: middle;
    display: inline-block;
 }
