@@ -47,9 +47,13 @@ require_once '../top_view.php';
           <th>Edit</th>
         </tr>
 
-        <tr ng-repeat="question in checklist.Questions | filter: showInactive"  ng-class="{inactive: question.Is_active == false}">
+        <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
           <td>
-            <h2 once-text="question.Text"></h2>
+            <h2 once-text="question.Text" style="float:left"></h2>
+            <div style="float:right">
+              <a class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-if="!$first" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></a><br>
+              <a class="btn btn-mini btn-info upvote" ng-if="!$last" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></a>
+            </div>
           </td>
 
           <td>

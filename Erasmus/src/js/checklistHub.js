@@ -108,6 +108,50 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 
 	}
 
+	// moves question up or down in the list
+	$scope.moveQuestion = function(direction, index) {
+		direction = direction.toUpperCase();
+
+		if(typeof index !== "number") {
+			console.log("ERROR: index is not a number, given "+index);
+		}
+
+		// get key id of the question we're moving
+		var initialId = $scope.filteredQuestions[index].Key_id;
+		var newId;
+
+		// determine which item we're swapping with
+		if(direction === "UP") {
+			newId = $scope.filteredQuestions[index - 1].Key_id;
+		}
+		else if(direction === "DOWN") {
+			newId = $scope.filteredQuestions[index + 1].Key_id;
+		}
+		else {
+			console.log("ERROR: Movement direction was detected as neither UP nor DOWN");
+			return;
+		}
+
+		var url = "../../ajaxaction.php?action=swapQuestions&firstKeyId="+initialId+"&secondKeyId="+newId+"&callback=JSON_CALLBACK";
+
+		// tell server to swap those questions and return the new checklist
+		convenienceMethods.getDataAsDeferredPromise(url)
+			.then(function(data) {
+				// reset page with new checklist
+				onGetChecklist(data);
+			},
+			function(errorData) {
+				console.log("An error occurred while attempting to move question with index "+index+":");
+				console.log(errorData);
+			});
+
+	}
+
+	// Necessary for ordering questions
+	$scope.order = function(question) {
+		return parseFloat(question.Order_index);
+	}
+
   $scope.$watch(
         "hazard",
         function( newValue, oldValue ) {

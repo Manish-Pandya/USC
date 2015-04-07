@@ -74,6 +74,7 @@ class ActionMappingFactory {
 				"getAllQuestions"=>new ActionMapping("getAllQuestions", "", ""),
 				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
+				"swapQuestions"=>new ActionMapping("swapQuestions", "", ""),
 				"setMasterHazardsForAllChecklists"=>new ActionMapping("setMasterHazardsForAllChecklists", "", ""),
 
 				// Hazards Hub

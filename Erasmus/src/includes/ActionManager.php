@@ -347,9 +347,14 @@ class ActionManager {
 		return $checklists;
 	}
 
-	public function saveQuestion(){
+	public function saveQuestion($question = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
+		if($question !== NULL) {
+			$decodedObject = $question;
+		}
+		else {
+        	$decodedObject = $this->convertInputJson();
+		}
 		if( $decodedObject === NULL ){
 			return new ActionError('Error converting input stream to Question');
 		}
@@ -3197,6 +3202,43 @@ class ActionManager {
 
 	}
 	
+	/**
+	 * Swaps two questions in a checklist. TODO This could be generalized to work
+	 * on any two entities with a setOrderIndex method.
+	 *
+	 * @param int $firstKeyId
+	 * @param int $secondKeyId
+	 */
+	public function swapQuestions($id1 = NULL, $id2 = NULL) {
+
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+		$firstKeyId = $this->getValueFromRequest('firstKeyId', $id1);
+		$secondKeyId = $this->getValueFromRequest('secondKeyId', $id2);
+
+		// get objects we're modifying
+		$questionDao = $this->getDao(new Question());
+		$firstObject = $questionDao->getById($firstKeyId);
+		$secondObject = $questionDao->getById($secondKeyId);
+
+		// make sure both questions are part of the same checklist
+		if( $firstObject->getChecklist_id() !== $secondObject->getChecklist_id() ) {
+			return new ActionError("Questions had different parent Checklist");
+		}
+
+		// swap order indicies of the two objects
+		$index1 = $firstObject->getOrder_index();
+		$index2 = $secondObject->getOrder_index();
+		$firstObject->setOrder_index($index2);
+		$secondObject->setOrder_index($index1);
+		$this->saveQuestion($firstObject);
+		$this->saveQuestion($secondObject);
+	
+		// It's easier on the client if we pass back the modified parent list.
+		// Not strictly necessary and slightly slower, but far simpler. Can change later.
+		$checklistDao = $this->getDao(new Checklist());
+		$parentList = $checklistDao->getById( $firstObject->getChecklist_id() );
+		return $parentList;
+	}
 	
 	public function getLocationCSV(){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
