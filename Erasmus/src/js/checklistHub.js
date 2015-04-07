@@ -18,14 +18,8 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 	function getChecklistById(id){
 		$scope.doneLoading = false;
 
-		var url = '../../ajaxaction.php?action=getHazardById&id='+id+'&callback=JSON_CALLBACK';
-		convenienceMethods.getData( url, onGetHazard, onFailGetHazard );
-
 		var url = '../../ajaxaction.php?action=getChecklistByHazardId&id='+id+'&callback=JSON_CALLBACK';
 		convenienceMethods.getData( url, onGetChecklist, onFailGetChecklist );
-
-		var url = '../../ajaxaction.php?action=getAllHazards&callback=JSON_CALLBACK';
-		convenienceMethods.getData( url, onGetHazards, onFailGetHazards );
 	}
 
 	function onGetChecklist(data){
