@@ -110,6 +110,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
         checklistHolder.biologicalHazards.checklists.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
+        console.log(checklistHolder.biologicalHazards.checklists);
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
@@ -433,7 +434,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
   }
 
   function isAnswered(question){
-    if(question.Responses && question.Responses.Answer)return true;
+    if(question.Responses && (question.Responses.Answer || question.Responses.Recommendations.length))return true;
     return false;
   }
 

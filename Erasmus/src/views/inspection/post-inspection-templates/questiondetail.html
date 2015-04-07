@@ -17,7 +17,7 @@
 		</ul>
 
 		<ul>
-			<li ng-repeat="rec in question.Responses.Recommendations">
+			<li ng-repeat="rec in question.Responses.Recommendations track by $index">
 				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
 			</li>
 		</ul>
