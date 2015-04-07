@@ -450,7 +450,13 @@ angular
 
             af.getAllPIs= function()
             {
-                return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
+                return this.getAllUsers()
+                    .then(
+                        function(){
+                            return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
+                        }
+                    )
+
             }
 
             af.getAllPIRoomRelations = function()
@@ -1417,42 +1423,44 @@ angular
                     )
             }
 
-            af.savePickup = function(originalPickup, editedPickup){
+            af.savePickup = function(originalPickup, editedPickup, saveChildren){
                 af.clearError();
+                if(!saveChildren)saveChildren = false;
                 if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
-                return this.save( editedPickup, true )
+                return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){
                             returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
                             var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
+                            if(saveChildren){
+                                 //set pickup ids for items that are included in pickup
+                                
+                                var i = returnedPickup.Waste_bags.length;
+                                while(i--){
+                                        console.log(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id));
+                                        angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
+                                        //remove this WasteBag from it's containers collection of WasteBags ready to be have a pick requested.
+                                        var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
+                                        var j = container.WasteBagsForPickup.length;
+                                        while(j--){
+                                            if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(i,1);
+                                        }
+                                }
 
-                             //set pickup ids for items that are included in pickup
-                            var i = returnedPickup.Waste_bags.length;
-                            while(i--){
-                                    console.log(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id));
-                                    angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
-                                    //remove this WasteBag from it's containers collection of WasteBags ready to be have a pick requested.
-                                    var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
-                                    var j = container.WasteBagsForPickup.length;
-                                    while(j--){
-                                        if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(i,1);
+                                var i = returnedPickup.Carboy_use_cycles.length;
+                                while(i--){
+                                    if(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id)){
+                                        angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                  
                                     }
-                            }
+                                }
 
-                            var i = returnedPickup.Carboy_use_cycles.length;
-                            while(i--){
-                                if(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id)){
-                                    angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                  
+                                var i = returnedPickup.Scint_vial_collections.length;
+                                while(i--){
+                                    if(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id)){
+                                        angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
+                                    }
                                 }
                             }
-
-                            var i = returnedPickup.Scint_vial_collections.length;
-                            while(i--){
-                                if(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id)){
-                                    angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
-                                }
-                            }
-
                              //the pickup is new, so it has no key id
                             if(!originalPickup.Key_id){
                                 dataStoreManager.store(returnedPickup);
@@ -1502,6 +1510,10 @@ angular
                         },
                         af.setError('The ' + label + ' could not removed from the pickup.')
                     )
+            }
+
+            af.pickup = function(p){
+
             }
 
         	return af;
