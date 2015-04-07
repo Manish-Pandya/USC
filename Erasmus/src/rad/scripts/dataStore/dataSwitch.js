@@ -84,7 +84,7 @@ angular
                             deferred.resolve(instatedObjects);
 
                             // add returned data to cache
-                            dataStoreManager.store(instatedObjects, true, className);
+                            dataStoreManager.store(instatedObjects, true);
                         });
 
                     }
