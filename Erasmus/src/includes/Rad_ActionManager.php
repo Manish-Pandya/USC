@@ -181,6 +181,13 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
 		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+		$entityMaps[] = new EntityMap("lazy", "getPickups");
+		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollection");
+		
 
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);
@@ -410,7 +417,7 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
 		$entityMaps[] = new EntityMap("eager", "getWaste_bags");
 		$entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
-		$entityMaps[] = new EntityMap("eager", "getPrincipal_investigator");
+		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		
 		$pickups = $dao->getAll();
 		foreach($pickups as $pickup){
