@@ -10,14 +10,23 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
   		var af = actionFunctionsFactory;
-  		$scope.af = af;
-  		$rootScope.pickupsPromise = af.getAllPickups()
+
+  		var getAllPickups = function(){
+  			af.getAllPickups()
   			.then(
-  				function(pickups){  					
+  				function(pickups){  	
+  					console.log(pickups);				
   					$scope.pickups = pickups;
+  					console.log(dataStore);
   				},
   				function(){}
   			)
+  		}
+
+  		$scope.af = af;
+  		$rootScope.pickupsPromise = af.getAllPIs()
+  										.then(getAllPickups);
+  			
 
 
 		$scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
