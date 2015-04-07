@@ -82,7 +82,7 @@ require_once '../top_view.php';
 		       	 <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
 		       </span>
 		       <span ng-hide="!PIs">
-		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.User.Name) for pi in PIs | filter:$viewValue">
+		       	<input style="" class="span8" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi.User.Name+(pi.Is_active ? '': ' (Inactive)') as pi.User.Name+(pi.Is_active ? '': ' (Inactive)') for pi in PIs | filter:$viewValue">
 		       </span>
 		      </div>
 		      	<h3 ng-hide="!inspection"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
@@ -156,7 +156,7 @@ require_once '../top_view.php';
 			</span>
 		
 		</div>								
-
+		<h3 ng-if="inactive">Principal Investigator is inactive.</h3>
 	    <form>
 	    <span ng-show="hazardsLoading" class="loading">
 	     <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>

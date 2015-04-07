@@ -355,6 +355,21 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       }
       return false;
   }
+  factory.savePi = function(pi)
+  {
+    var url = "../../ajaxaction.php?action=savePI";
+    var deferred = $q.defer();
+      convenienceMethods.saveDataAndDefer(url, pi)
+        .then(
+          function(promise){
+            deferred.resolve(promise);
+          },
+          function(promise){
+            deferred.reject();
+          }
+        );  
+    return deferred.promise
+  }
 
   return factory;
 });
@@ -390,6 +405,13 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
                   .then(function(pi){
                       $scope.piLoading = false;
                       $rootScope.PI = pi;
+                      if(!pi.Is_active){
+                        $scope.inactive = true;
+                      }else{
+                        $scope.inactive = false;
+                      }
+                      console.log(pi);
+                      $scope.customSelected = pi;
                       $scope.buildings = hazardInventoryFactory.parseBuildings( pi.Rooms );
                       $location.search("pi", pi.Key_id);
                       piDefer.resolve( pi );
@@ -482,6 +504,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   },
   getHazards = function( pi )
   {         
+            if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
             var rooms = pi.Rooms;
             var roomIds = [];
@@ -877,9 +900,8 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
   function init(){
     $scope.location = $location.search();
-    $scope.selectedFooter = '';
-    $scope.inspection = hazardInventoryFactory.getInspection();
-    console.log($scope.inspection);
+    $scope.selectedFooter = '';      
+    
   }
 
   $scope.close = function(){
@@ -959,10 +981,14 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   }
 
   $scope.openNotes = function(){
-     if(!$scope.inspection)$scope.inspection = hazardInventoryFactory.getInspection();
-     $scope.newNote = angular.copy($scope.inspection.Note);
-     $scope.noteEdited = false;
-     $scope.selectedFooter = 'comments'
+     var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/inspection-notes-modal.html',
+        controller: controllers.commentsController
+      });
+
+      modalInstance.result.then(function () {
+
+      });
   }
 
   $scope.saveNoteForInspection = function(note){
@@ -1107,6 +1133,53 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   $scope.close = function () {
     $modalInstance.dismiss();
   };
+
+}
+
+controllers.commentsController = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, $q){
+  $scope.hif=hazardInventoryFactory;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log($scope.pi);
+  $scope.piCopy = {
+    Key_id: $scope.pi.Key_id,
+    Is_active: $scope.pi.Is_active,
+    User_id: $scope.pi.User_id,
+    Inspection_notes: $scope.pi.Inspection_notes,
+    Class:"PrincipalInvestigator"
+  };
+
+
+  $scope.close = function () {
+    $scope.pi.Inspection_notes = $scope.pi.Inspection_notes_copy;
+    $modalInstance.dismiss();
+  };
+
+  $scope.edit = function(state){
+    $scope.pi.editNote = state;
+    console.log($scope.editNote);
+  }
+
+  $scope.saveNote = function(){
+    $scope.savingNote = true;
+    $scope.error = null;
+
+    hazardInventoryFactory.savePi($scope.piCopy)
+      .then(
+        function(returnedPi){
+          console.log(returnedPi);
+          angular.extend(hazardInventoryFactory.PI, returnedPi);
+          $scope.savingNote = false;
+          $scope.close();
+          $scope.pi.editNote = false;
+          $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
+        },
+        function(){  
+          $scope.savingNote = false;
+          $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
 
 }
 
