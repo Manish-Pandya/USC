@@ -60,7 +60,7 @@
 					<li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}"> 
 						<span once-text="pi.User.Name"></span>
 						<ul>
-							<li ng-if="!pi.Departments">Unassigned</li>
+							<li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
 							<li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
 						</ul>
 					</li>
