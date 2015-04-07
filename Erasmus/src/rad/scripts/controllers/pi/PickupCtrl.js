@@ -130,7 +130,7 @@ angular.module('00RsmsAngularOrmApp')
 		$scope.requestPickup = function(pickup){
 			$scope.close();
 			var pickupCopy = dataStoreManager.createCopy(pickup);
-			af.savePickup(pickup,pickupCopy)
+			af.savePickup(pickup,pickupCopy,true)
 				.then(
 					function(){
 
