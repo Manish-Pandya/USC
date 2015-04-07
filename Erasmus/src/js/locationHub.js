@@ -59,8 +59,14 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 				}
 
 				if( search.campus ) {
-					if( !item.Campus ) item.matched = false;
-					if( item.Campus && item.Campus.Name.toLowerCase().indexOf( search.campus ) < 0 ) item.matched = false;
+					if( !item.Building || !item.Building.Campus ){
+						item.matched = false;
+						console.log('set false because no building or campus')
+					} 
+					if( item.Building.Campus && item.Building.Campus.Name.toLowerCase().indexOf( search.campus ) < 0 ){
+						item.matched = false;
+						console.log('set false because of lack of match');
+					} 
 				}
 
 				if(search.pi || search.department && item.PrincipalInvestigators){
@@ -71,18 +77,20 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 					}
 
 					var j = item.PrincipalInvestigators.length
-
+					item.matched = false
 					while(j--){
+
 						var pi = item.PrincipalInvestigators[j];
-						if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi) < 0 ) item.matched = false;
+						if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi) > -1 ) item.matched = true;
 
 						if(search.department){
-							if(!pi.Departments){
+							if(!pi.Departments || !pi.Departments.length){
 								pi.Departments = [{Name: 'Unassigned'}];
 							}else{
+								item.matched = false;
 								var k = pi.Departments.length;
 								while(k--){
-									if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department) < 0 ) item.matched = false;
+									if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department) > -1 ) item.matched = true;
 								}
 							}
 
