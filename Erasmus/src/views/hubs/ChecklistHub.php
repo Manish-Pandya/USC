@@ -48,15 +48,15 @@ require_once '../top_view.php';
         </tr>
 
         <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
-          <td>
-            <h2 once-text="question.Text" style="float:left"></h2>
+          <td style="width:90%">
+            <h2 once-text="question.Text" style="float:left; width:90%;"></h2>
             <div style="float:right">
               <a class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-if="!$first" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></a><br>
               <a class="btn btn-mini btn-info upvote" ng-if="!$last" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></a>
             </div>
           </td>
 
-          <td>
+          <td style="width:10%">
               <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
               <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
               <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
