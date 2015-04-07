@@ -432,13 +432,48 @@ div.use-log > .table-row > div:nth-of-type(6){
 .indent{
   margin-left: 25px;
 }
+.print{
+  visibility: hidden;
+  display:none;
+}
+.card.pickup-collection ul{
+  margin:10px 5px;
+}
 @media print {
   .no-print{
     display: none;
   }
+  .print{
+    display:block;
+    visibility:visible;
+  }
+  .label.print{
+
+  }
   .card{
     padding:25px !important;
-    width:95%;
+    width:auto !important;
     border:5px solid #999 !important;
+    page-break-inside: avoid;
+  }
+}
+
+@media screen and (max-width: 1137px) {
+  /* line 73, ../sass/style.scss */
+  body{
+    padding:0;
+  }
+  body > div.container-fluid{
+    padding:0;
+  }
+  .card h1.card-header{
+      font-size: 26px;
+  }
+  .card h1.card-header i {
+    margin: 12px 35px 0 0 !important;
+  }
+  .card.pickup-collection ul li, .card.pickup-collection ul li p,.card.pickup-collection ul li span{
+    font-size:20px;
+    margin-bottom:7px;
   }
 }
