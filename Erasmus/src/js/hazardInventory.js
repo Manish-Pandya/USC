@@ -24,6 +24,18 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
     }
 }]);
 
+hazardInventory.filter('openInspections', function () {
+  return function (inspections) {
+      if(!inspections)return;
+      var openInspections = [];
+      var i = inspections.length;
+      while(i--){
+          if(!inspections[i].Status || inspections[i].Status.toLowerCase().indexOf('close') < 0)openInspections.push(inspections[i]);
+      }
+      return openInspections;
+  };
+})
+
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
   var factory = {};
   factory.PI = {};
@@ -1111,10 +1123,13 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
               {
                   $scope.creatingInspection = false;
                   if(!$scope.openInspections)$scope.openInspections=[];
-                  $scope.openInspections.unshift(inspection);
+                  console.log($scope.openInspections);
+                  $scope.openInspections.push(inspection);
+                  console.log($scope.openInspections)
               },
               function(noRooms)
-              {
+              {                  
+
                   $scope.creatingInspection = false;
                   //$scope.creatingInspection = false;
                   if(noRooms){

@@ -27,7 +27,7 @@
 			<th>Report</th>
 		</thead>
 		<tbody>
-			<tr ng-repeat="(key, inspection) in openInspections" ng-class="{new:inspection.Is_new}"ng-if="inspection.Status.indexOf('CLOSE') < 0">
+			<tr ng-repeat="(key, inspection) in openInspections|orderBy:'Date_started':reverse | openInspections" ng-class="{new:inspection.Is_new}">
 				<td style="width:14%; vertical-align:middle;text-align:center;">
 					<a class="btn btn-danger btn-large left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i></a>
 				</td>
@@ -67,7 +67,7 @@
 						</p>
 					</span>
 
-					<span ng-if="inspection.Status == 'SCHEDULED'">
+					<span ng-if="!inspection.Status || inspection.Status == 'SCHEDULED'">
 						<p>
 							N/A
 						</p>
