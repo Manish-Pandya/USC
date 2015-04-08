@@ -2768,6 +2768,9 @@ table.roomList h2 {
 .btn:active {
   box-shadow: none !important;
 }
+a.modalBtn i, .modal-footer a.btn i {
+  margin: 4px 16px 0 3px;
+}
 
 a.btn i {
 margin: 1px 2px;
@@ -2918,10 +2921,6 @@ table.large tr th{
   margin-bottom: 28px;
   margin-left: 60px;
   font-size: 30px;
-}
-
-a.modalBtn i, .modal-footer a.btn i {
-  margin: 4px 16px 0 3px !important;
 }
 
 .savingBox{

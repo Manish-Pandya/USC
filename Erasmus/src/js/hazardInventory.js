@@ -940,6 +940,17 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
   } 
 
+  $scope.getContacts = function(){
+      var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/lab-personnel.html',
+        controller: contactsController
+      });
+
+
+      modalInstance.result.then(function () {});
+
+  } 
+
   function onGetInspections(data){
     $scope.previousInspections = data;
     $scope.waitingForInspections = false;
@@ -1166,7 +1177,6 @@ controllers.commentsController = function($scope, hazardInventoryFactory, $modal
 
 
   $scope.close = function () {
-    $scope.pi.Inspection_notes = $scope.pi.Inspection_notes_copy;
     $modalInstance.dismiss();
   };
 
@@ -1195,6 +1205,18 @@ controllers.commentsController = function($scope, hazardInventoryFactory, $modal
         }
       )
   }
+
+}
+
+contactsController = function($scope, hazardInventoryFactory, $modalInstance){
+  $scope.hif=hazardInventoryFactory;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log($scope.pi);
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
 
 }
 
