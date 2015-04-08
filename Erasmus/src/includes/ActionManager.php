@@ -363,6 +363,15 @@ class ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new Question());
+			if($decodedObject->getOrder_index() == null){
+				$LOG->debug($decodedObject);
+				$checklistDao = $this->getDao(new Checklist());
+				$checklist = $checklistDao->getById($decodedObject->getChecklist_id());
+				$qCount    = count($checklist->getQuestions())-1;
+				$questions = $checklist->getQuestions();
+				$index     = $questions[$qCount]->getOrder_index();
+				$decodedObject->setOrder_index($index + 1);
+			}
 			$dao->save($decodedObject);
 			return $decodedObject;
 		}
