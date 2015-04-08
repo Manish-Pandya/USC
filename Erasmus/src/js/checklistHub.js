@@ -105,7 +105,7 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
 	// moves question up or down in the list
 	$scope.moveQuestion = function(direction, index) {
 		direction = direction.toUpperCase();
-
+		$scope.filteredQuestions[index].IsDirty=true;
 		if(typeof index !== "number") {
 			console.log("ERROR: index is not a number, given "+index);
 		}
