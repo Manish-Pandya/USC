@@ -60,7 +60,7 @@ require_once '../top_view.php';
               <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
               <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
               <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
-              <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+              <i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
               <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->
           </td>
         </tr>
