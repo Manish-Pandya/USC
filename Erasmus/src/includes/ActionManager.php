@@ -2687,6 +2687,12 @@ class ActionManager {
 			//get inspection
 			$inspection = $dao->getById($id);
 
+			// check if this is an inspection we're just starting
+			if( !isset($inspection->getDate_started) ) {
+				$inspection->setDate_started(date("Y-m-d H:i:s"));
+				$dao->save($inspection);
+			}
+
 			// Remove previous checklists (if any) and recalculate the required checklist.
 			$oldChecklists = $inspection->getChecklists();
 			if (!empty($oldChecklists)) {
