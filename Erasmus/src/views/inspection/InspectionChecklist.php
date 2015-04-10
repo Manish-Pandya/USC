@@ -37,22 +37,17 @@ require_once '../top_view.php';
 <div id="sp-page" class="whitebg checklist">
 	<div style="position:fixed">
 	</div>
-
-
 <div class="navbar">    		
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li class="">
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist
+			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist  <span style="margin-left:10px;" ng-if="inspection">({{inspection.PrincipalInvestigator.User.Name}})</span>
 				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
 			</h2>	
 		</li>
 	</ul>
 </div>
-<!--\<pre>{{inspection | json}}</pre>-->
 <div class="row-fluid">
-<!--<a ng-click="$spMenu.toggle()" .icon-menu-2 style="background:blue;font-size: 27px !important; color: black; text-decoration:none!important" class="toggles toggledIn"><p class="rotate">Show/Hide Menu<i style="margin-top: 16px; font-size: 50px !important;" class="icon-arrow-down"></i></p></a>  
--->
 	<div class="loading" ng-show='!inspection && !error' >
 	  <i class="icon-spinnery-dealie spinner large"></i>  
 	  <span>Getting Checklists...</span>
@@ -80,10 +75,10 @@ require_once '../top_view.php';
 				<accordion-heading>
 					<span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
 					<input type="hidden" ng-model="checklist.AnsweredQuestions"/>
-					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.Questions.length, 'green' : checklist.completedQuestions==checklist.Questions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.activeQuestions.length}}</span></h2>
+					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.activeQuestions.length, 'green' : checklist.completedQuestions==checklist.activeQuestions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.activeQuestions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
-		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">
+		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist | orderBy:question.Order_index">
 		     			<!--call evaluateDeficiecnyRooms -->
 		     			<h3 style="width:30px; float:left">{{$index+1}}.</h3>
 		     			<h3 style="width:65%; float:left;">
