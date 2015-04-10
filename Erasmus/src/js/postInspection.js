@@ -791,20 +791,21 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             }
         }
       }
-
-      var i = $scope.questionsByChecklist.radiationHazards.Questions.length;
-      while(i--){
-        var question = $scope.questionsByChecklist.radiationHazards.Questions[i];
-        console.log(question);
-        if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
-            var j = question.Responses.DeficiencySelections.length;
-            while(j--){
-              totals++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+      if($scope.questionsByChecklist.radiationHazards.Questions){
+          var i = $scope.questionsByChecklist.radiationHazards.Questions.length;
+          while(i--){
+            var question = $scope.questionsByChecklist.radiationHazards.Questions[i];
+            console.log(question);
+            if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+                var j = question.Responses.DeficiencySelections.length;
+                while(j--){
+                  totals++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+                }
             }
+          }
         }
-      }
 
       $rootScope.pendings = pendings;
       $rootScope.completes = completes;
