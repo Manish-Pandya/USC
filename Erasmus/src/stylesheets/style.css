@@ -2945,3 +2945,8 @@ table.large tr th{
   display: block;
   padding: 5px;
 }
+
+.success{color:#5bb75b;}
+.primary{color:#59008C;}
+.info{color:#49afcd;}
+.danger{color:#da4f49;}
