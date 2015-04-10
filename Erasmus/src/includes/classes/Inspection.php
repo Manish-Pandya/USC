@@ -309,7 +309,7 @@ class Inspection extends GenericCrud {
 		}
 
 		// If no other status applies, it's considered open.
-		return 'OPEN';
+		return 'N/A';
 	}
 	public function getCap_complete() {return $this->cap_complete;}
 	public function setCapComplete($cap_complete) {$this->cap_complete = $cap_complete;}
