@@ -369,18 +369,30 @@ angular.module('convenienceMethodModule', ['ngRoute'])
 	};
 })
 .filter('dateToISO', function() {
-	  return function(input,object,propertyName) {
-	  		if(!input)return "N/A";
-			// Split timestamp into [ Y, M, D, h, m, s ]
-			var t = input.split(/[- :]/);
-			// Apply each element to the Date function
-			var d = new Date(t[0], t[1]-1, t[2]);
-			if(object && propertyName){
-				object["view_"+propertyName] = d;
-			}
-			//at times like these, it's important to consider the nature of addition, concatonation and the universe in general.
-			input = d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear();
-			if(t[0]=="0000")return "N/A";
-			return input
-	  };
-	})
+	return function(input,object,propertyName) {
+			if(!input)return "N/A";
+		// Split timestamp into [ Y, M, D, h, m, s ]
+		var t = input.split(/[- :]/);
+		// Apply each element to the Date function
+		var d = new Date(t[0], t[1]-1, t[2]);
+		if(object && propertyName){
+			object["view_"+propertyName] = d;
+		}
+		//at times like these, it's important to consider the nature of addition, concatonation and the universe in general.
+		input = d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear();
+		if(t[0]=="0000")return "N/A";
+		return input
+	};
+})
+.filter('activeOnly', function() {
+	return function(array) {
+			if(!array)return;
+			var activeObjects = [];
+
+			var i = array.length;
+			while(i--){
+				if(array[i].Is_active)activeObjects.unshift(array[i]);
+		}
+		return activeObjects;
+	};
+})
