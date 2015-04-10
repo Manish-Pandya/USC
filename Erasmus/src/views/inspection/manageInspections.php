@@ -86,20 +86,37 @@ require_once '../top_view.php';
 
 			</td>
 			<td>
-				<select ng-if="dto.Inspections && dto.Inspections.Inspectors.length" ng-model="dto.selectedInspector" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
-	      			<option value="">--  Add an inspector --</option>
-	      			<option ng-repeat="inspector in inspectors" value="inspector">{{inspector.User.Name}}</option>
-				</select>
-
-				<select ng-model="dto.selectedInspector" ng-if="!dto.Inspections || !dto.Inspections.Inspectors.length" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
+				<select ng-model="dto.selectedInspector" ng-if="!dto.Inspections || !dto.Inspections.Inspectors.length || dto.replaceInspector" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
 	      			<option value="">-- Select inspector --</option>
 	      			<option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}</option>
 				</select>
 
-				<br ng-if="!dto.Inspections.Inspectors.length"><span ng-if="!dto.Inspections.Inspectors.length">NO INSPECTOR ASSIGNED</span>
 				<ul ng-if="dto.Inspections.Inspectors">
-					<li ng-repeat="inspector in dto.Inspections.Inspectors" once-text="inspector.User.Name"></li>
+					<li ng-repeat="inspector in dto.Inspections.Inspectors">
+						<span ng-if="!inspector.edit" once-text="inspector.User.Name"></span>
+						<span ng-if="inspector.edit && dtoCopy">
+							<select ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, selectedYear, $index, dtoCopy.replacementInspector, inspector)">
+	    						<option value="" disabled selected>Select an Inspector</option>
+				      			<option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+							</select>
+							<i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
+						</span>
+						<span ng-if="!inspector.edit">
+							<i class="icon-pencil primary" ng-click="mif.editInspector(inspector, dto)"></i>
+							<i class="icon-remove danger" ng-click="mif.removeInspector(dto, selectedYear, inspector)"></i>
+							<i ng-if="$last" class="icon-plus-2 success" ng-click="dto.addInspector = true"></i></a>
+						</span>
+					</li>
+					<li ng-if="dto.addInspector">
+						<select ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, selectedYear, dto.addedInspector )">
+    						<option value="" disabled selected>Add an Inspector</option>
+			      			<option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+						</select>
+						<i class="icon-cancel-2 danger" ng-click="dto.addInspector = false"></i>
+					</li>
 				</ul>
+
+		
 			</td>
 			<td>
 				<span ng-if="!dto.Inspection_id">NOT SCHEDULED</span>
