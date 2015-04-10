@@ -1933,6 +1933,7 @@ class ActionManager {
 				$LOG->debug($inspector);
 				$inspectionDao->removeRelatedItems($inspector->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
 			}
+			$inspection->setInspectors(null);
 		}
 
 		foreach($decodedObject->getInspections()->getInspectors() as $inspector){
@@ -2949,10 +2950,9 @@ class ActionManager {
 		$user = new User();
 
 		$fieldsToFind = array("cn","sn","givenName","mail");
-
 		if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
-			$user->setFirst_name($ldapData["givenName"]);
-			$user->setLast_name($ldapData["sn"]);
+			$user->setFirst_name(ucfirst(strtolower($ldapData["givenName"])));
+			$user->setLast_name(ucfirst(strtolower($ldapData["sn"])));
 			$user->setEmail($ldapData["mail"]);
 			$user->setUsername($ldapData["cn"]);
 		} else {
