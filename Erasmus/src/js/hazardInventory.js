@@ -42,6 +42,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   var allPis = [];
   factory.previousInspections = [];
   factory.openInspections = [];
+  factory.buildings = [];
 
   factory.getAllPis = function(){
 
@@ -216,7 +217,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   //invert a collection of room objects with building properties to transform it into a collection of building objects with rooms collection properties
   factory.parseBuildings = function(rooms)
   {
-      var buildings = [];
+      buildings = [];
       var roomsLength = rooms.length;
       for(var i = 0; i < roomsLength; i++){
         var room = rooms[i];
@@ -237,8 +238,8 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         building.Rooms.push(room);
 
       }
-
-      return buildings;
+      factory.buildings = buildings;
+      return factory.buildings;
   }
 
   factory.parseHazards = function( hazards )
@@ -1088,8 +1089,9 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   $scope.hif=hazardInventoryFactory;
   var pi = hazardInventoryFactory.PI;
   $scope.pi = pi;
+  $scope.buildings = hazardInventoryFactory.buildings;
   $scope.gettingInspections = true;
-  console.log('getting inspections')
+  console.log($scope.pi);
   hazardInventoryFactory.getOpenInspections(pi)
     .then(
       function(inspections){

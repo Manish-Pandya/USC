@@ -33,11 +33,16 @@
 				</td>
 				<td>
 					<ul>
-						<li ng-repeat="(key,room) in inspection.piRooms|orderBy:'Name'">
-							<label class="checkbox inline">
-								<input type="checkbox" ng-checked="hif.evalInspectionRoomChecked( inspection, room )" ng-change="hif.saveInspectionRoomRelationship( inspection, room )" ng-model="room.checked"/>
-								<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
-							</label>
+						<li ng-repeat="building in buildings">
+						<span class="bold underline">{{building.Name}}</span>
+							<ul style="margin:5px;">
+								<li ng-repeat="(key,room) in building.Rooms|orderBy:'Name'">
+									<label class="checkbox inline">
+										<input type="checkbox" ng-checked="hif.evalInspectionRoomChecked( inspection, room )" ng-change="hif.saveInspectionRoomRelationship( inspection, room )" ng-model="room.checked"/>
+										<span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+									</label>
+								</li>
+							</ul>
 						</li>
 					</ul>
 				</td>
