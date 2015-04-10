@@ -5,6 +5,7 @@
 </div>
 <div class="modal-body">
 	<h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+	<h3 ng-if="!pi.LabPersonnel">No active lab personnel have been selected.</h3>
    <span ng-if="gettingInspections" class="loading">
    	   <i class="icon icon-spinnery-dealie spinner large"></i>
    	   <span>Loading Inspections...</span>
