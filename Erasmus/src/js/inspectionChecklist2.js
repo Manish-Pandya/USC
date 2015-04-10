@@ -52,7 +52,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 							checklist.completedQuestions++;
 						}
 					}
-					checklist.activeQuestions.push(question);
+					checklist.activeQuestions.unshift(question);
 				}
 			}
 			return checklist.activeQuestions;
@@ -804,7 +804,6 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
 
 
   $scope.close = function () {
-    $scope.pi.Inspection_notes = $scope.pi.Inspection_notes_copy;
     $modalInstance.dismiss();
   };
 
