@@ -181,8 +181,8 @@ require_once '../top_view.php';
 								<li ng-if="question.addRec">
 									 <form ng-if="!question.edit">
 							        	<textarea ng-model="question.newRecommendationText" rows="2" style="width:100%;"></textarea>
-								        <input  class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="cf.saveSupplementalRecommendation(question, true)"/>
-								        <input  class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="cf.createRecommendation(question)"/>
+								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="cf.saveSupplementalRecommendation(question, true)"/>
+								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="cf.createRecommendation(question)"/>
 								    	<i ng-if="question.savingNew" class="icon-spinnery-dealie spinner small"></i>
 								    	<a class="btn btn-large btn-danger" ng-click="question.addRec = false;">Cancel</a>
 								    </form>
