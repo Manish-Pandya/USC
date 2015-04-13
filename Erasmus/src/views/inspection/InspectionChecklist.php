@@ -78,7 +78,8 @@ require_once '../top_view.php';
 					<h2><span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.activeQuestions.length, 'green' : checklist.completedQuestions==checklist.activeQuestions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.activeQuestions.length}}</span></h2>
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
-		     		<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">
+     				<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist | countRecAndObs">
+		     	<!--<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">-->
 		     			<!--call evaluateDeficiecnyRooms -->
 		     			<h3 style="width:30px; float:left">{{$index+1}}.</h3>
 		     			<h3 style="width:65%; float:left;">
@@ -100,8 +101,7 @@ require_once '../top_view.php';
 								<span class="metro-radio">N/A</span>
 							</label>
 							<label class="checkbox inline">
-								<input type="checkbox" ng-init="question.showRecommendations = question.Responses.Recommendations.length>0" ng-model="question.showRecommendations" ng-change="cf.showRecommendations(question)" />
-								<span class="metro-checkbox">Recommendations</span>
+								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}">{{question.checkedRecommendations}} Recommendation<span ng-if="question.checkedRecommendations != 1">s</span></span>
 							</label>
 							<label class="checkbox inline">
 								<input type="checkbox" value="true" ng-model="question.showNotes" ng-disabled="!question.Responses.Answer"/>
@@ -153,7 +153,7 @@ require_once '../top_view.php';
 						</span>
 
 						<span>
-							<ul ng-if="question.showRecommendations" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
+							<ul style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
 								<h3>Recommendations:<a ng-if="!question.addRec" style="margin-left: 5px" class="btn btn-success" ng-click="question.addRec = true"><i class="icon-plus-2"></i></a></h3>
 								<li ng-repeat="recommendation in question.Recommendations | activeOnly" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!recommendation.edit">
@@ -193,7 +193,7 @@ require_once '../top_view.php';
 						<span ng-hide="!question.Responses.Answer" ng-switch on="question.showNotes">
 							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
 								<h3>Notes:</h3>
-								<li ng-repeat="note in question.Observations | activeOnly" style="margin-bottom:3px;">
+								<li ng-repeat="note in question.Observations | activeOnly | countRecAndObs:question:'Observations'" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!note.edit">
 										<input type="checkbox" value="true" ng-if="!note.edit" ng-model="note.checked" ng-checked="cf.getObservationChecked(question, note)" ng-change="cf.saveObservationRelation(question, note)"/>
 										<span class="metro-checkbox" ng-class="{newRecOrObs:note.new}">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small absolute"></i><!--<span style="margin-left:3px;" ng-show="note.isNew" class="label label-success">New Option</span>--><a ng-if="note.new" ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></span>

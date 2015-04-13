@@ -1272,6 +1272,14 @@ a.checklistNav span{
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
+span.recs{
+  display: inline-block;
+  width: 150px !important;
+}
+span.recs span{
+    margin-top: 0 !important;
+}
+
 /*****************************************************************
 *****            POST INSPECTION PROCESS                **********
 *****************************************************************/

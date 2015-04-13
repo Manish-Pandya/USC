@@ -12,6 +12,35 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			
 	}
 })
+.filter('countRecAndObs', function () {
+	return function ( questions ) {
+			console.log(questions)
+
+			if( !questions ) return;
+			var i = questions.length;
+			while(i--){
+				var question = questions[i];
+				question.checkedRecommendations = 0;
+				if(question.Responses && question.Responses.Recommendations)question.checkedRecommendations = question.Responses.Recommendations.length;
+				if(question.SupplementalRecommendations){
+					var j = question.SupplementalRecommendations.length;
+					while(j--){
+						if(question.SupplementalRecommendations[j].Is_active)question.checkedRecommendations++;
+					}
+				}
+
+				question.checkedNotes = 0;
+				if(question.Responses && question.Responses.Observations)question.checkedNotes = question.Responses.Observations.length;
+				if(question.SupplementalObservations){
+					var j = question.SupplementalObservations.length;
+					while(j--){
+						if(question.SupplementalObservations[j].Is_active)question.checkedNotes++;
+					}
+				}
+			}
+			return questions;
+	}
+})
 .filter('evaluateChecklist', function () {
 	return function (questions, checklist) {
 			checklist.completedQuestions = 0;
@@ -29,6 +58,14 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 						//question doesn't have an answer but does have one or more recommendations selected
 						if(question.Responses.Recommendations && question.Responses.Recommendations.length){
 							question.isComplete = true;
+						}
+						if(question.SupplementalRecommendations && question.SupplementalRecommendations.length){
+							var j = question.SupplementalRecommendations.length;
+							while(j--){
+								if(question.SupplementalRecommendations.Is_active)question.isComplete = true;
+							}
+						}
+						if(question.isComplete){
 							checklist.completedQuestions++;
 						}
 					}
@@ -193,7 +230,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 							.then(
 								function(returnedResponse){
 									question.IsDirty = false;
-									console.log(question)
 									response = convenienceMethods.copyObject( returnedResponse );
 									if(!question.Responses.SupplementalObservations)question.Responses.SupplementalObservations = [];
 									if(!question.Responses.SupplementalRecommendations)question.Responses.SupplementalRecommendations = [];
@@ -630,7 +666,21 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   					.then(
   						function( ){
   							recommendation.checked = !recommendation.checked;
+  							//if the recommendation was checked, it should be added to the response so we can track the number of recommendations selected
+  							if(recommendation.checked){
+  								question.Responses.Recommendations.push(recommendation);
+  							}
+  							//if the recommendation was unchecked, we removed it from the response
+  							else{
+  								var i = question.Responses.Recommendations.length;
+  								while(i--){
+  									if(question.Responses.Recommendations[i].Key_id == recommendation.Key_id){
+  										question.Responses.Recommendations.splice(i,1);
+  									}
+  								}
+  							}
   							recommendation.IsDirty = false;
+  							console.log(question.Responses);
   						},
   						function(error){
   							recommendation.IsDirty = false;
@@ -666,7 +716,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.getRecommendationChecked = function( question, recommendation )
 	    {
-	    	console.log(recommendation);
 	    	if(!question.Responses)return false;
 	    	if(recommendation.checked)return true;
 	    	if(!question.Responses.Recommendations)question.Responses.Recommendations=[];
