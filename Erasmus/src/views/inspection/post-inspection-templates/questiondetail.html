@@ -23,19 +23,19 @@
 		</ul>
 
 		<ul>
-			<li ng-repeat="rec in question.Responses.SupplementalRecommendations">
+			<li ng-repeat="rec in question.Responses.SupplementalRecommendations | activeOnly">
 				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="note in question.Responses.SupplementalRecommendations">
+			<li ng-repeat="note in question.Responses.Observations">
 				<span style="color:#781096;">Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="note in question.Responses.SupplementalObservations">
+			<li ng-repeat="note in question.Responses.SupplementalObservations | activeOnly">
 				<span style="color:#781096;" >Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
 			</li>
 		</ul>
