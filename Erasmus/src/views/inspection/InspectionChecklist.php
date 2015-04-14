@@ -102,7 +102,7 @@ require_once '../top_view.php';
 								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}">{{question.checkedRecommendations}} Recommendation<span ng-if="question.checkedRecommendations != 1">s</span></span>
 							</label>
 							<label class="checkbox inline">
-								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}"><button ng-disabled="!question.isComplete" ng-class="{'disabled': !question.isComplete}" ng-click="question.showNotes = !question.showNotes;" class="btn btn-info right">{{question.checkedNotes}} Note<span ng-if="question.checkedNotes != 1">s<i ng-class="{'icon-plus-2':!question.showNotes,'icon-minus-2':question.showNotes}"></i></button></span>
+								<span class="metro-checkbox recs"><button ng-disabled="!question.isComplete" ng-class="{'disabled': !question.isComplete}" ng-click="question.showNotes = !question.showNotes;" class="btn btn-info right">{{question.checkedNotes}} Note<span ng-if="question.checkedNotes != 1">s</span><i ng-class="{'icon-plus-2':!question.showNotes,'icon-minus-2':question.showNotes}"></i></button></span>
 							</label>
 						</div>
 						<span style="clear:both; display:block; height:0;">&nbsp;</span>
@@ -164,7 +164,7 @@ require_once '../top_view.php';
 										<i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li>
-								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations | activeOnly" style="margin-bottom:3px;">
+								<li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!recommendation.edit" >
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-init="recommendation.checked = recommendation.Is_active" ng-change="cf.supplementalRecommendationChanged(question, recommendation)" />
 										<span class="metro-checkbox labSpecific" ng-class="{edit:recommendation.edit}">{{recommendation.Text}}<i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></span>
@@ -201,10 +201,10 @@ require_once '../top_view.php';
 										<a ng-show="note.edit" ng-click="cf.objectNullifactor(note, question)" class="btn btn-danger">Cancel</a>
 									</span>
 								</li>
-								<li ng-repeat="note in question.Responses.SupplementalObservations | activeOnly" style="margin-bottom:3px;">
+								<li ng-repeat="note in question.Responses.SupplementalObservations" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-show="!note.edit">
 										<input type="checkbox" value="true" ng-model="note.checked" ng-init="note.checked = note.Is_active" ng-change="cf.supplementalObservationChanged(question, note)"/>
-										<span class="metro-checkbox labSpecific">{{note.Text}}|{{note.Class}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></span>
+										<span class="metro-checkbox labSpecific">{{note.Text}}<i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i><!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>--><a ng-click="cf.copyForEdit(question, note)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></span>
 									</label>
 									<span ng-if="note.edit" style="margin: 20px 0 ;display: block;">
 										<textarea  ng-model="SupplementalObservationCopy.Text" style="width:50%"></textarea><br>

@@ -20,8 +20,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 				var question = questions[i];
 				question.checkedRecommendations = 0;
 				if(question.Responses && question.Responses.Recommendations)question.checkedRecommendations = question.Responses.Recommendations.length;
-				if(question.SupplementalRecommendations){
-					var j = question.SupplementalRecommendations.length;
+				if(question.Responses && question.Responses.SupplementalRecommendations){
+					var j = question.Responses.SupplementalRecommendations.length;
 					while(j--){
 						if(question.SupplementalRecommendations[j].Is_active)question.checkedRecommendations++;
 					}
@@ -29,10 +29,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 				question.checkedNotes = 0;
 				if(question.Responses && question.Responses.Observations)question.checkedNotes = question.Responses.Observations.length;
-				if(question.SupplementalObservations){
-					var j = question.SupplementalObservations.length;
+				if(question.Responses && question.Responses.SupplementalObservations){
+					var j = question.Responses.SupplementalObservations.length;
 					while(j--){
-						if(question.SupplementalObservations[j].Is_active)question.checkedNotes++;
+						if(question.Responses.SupplementalObservations[j].Is_active)question.checkedNotes++;
 					}
 				}
 			}
@@ -703,6 +703,18 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   					.then(
   						function(){
   							observation.checked = !observation.checked;
+  							if(observation.checked){
+  								question.Responses.Observations.push(observation);
+  							}
+  							//if the recommendation was unchecked, we removed it from the response
+  							else{
+  								var i = question.Responses.Observations.length;
+  								while(i--){
+  									if(question.Responses.Observations[i].Key_id == observation.Key_id){
+  										question.Responses.Observations.splice(i,1);
+  									}
+  								}
+  							}
   							observation.IsDirty = false;
   						},
   						function(error){
