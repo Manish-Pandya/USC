@@ -14,8 +14,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 })
 .filter('countRecAndObs', function () {
 	return function ( questions ) {
-			console.log(questions)
-
 			if( !questions ) return;
 			var i = questions.length;
 			while(i--){

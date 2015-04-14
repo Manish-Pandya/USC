@@ -2784,12 +2784,15 @@ a.btn i {
 margin: 1px 2px;
 }
 
-a.btn.left i{
+a.btn.left i, button.btn.left i{
   margin: 2px 6px 1px 2px;
 }
 
-a.btn.right i{
+a.btn.right i, button.btn.right i{
   margin: 2px 2px 1px 6px;
+}
+button.btn:not(.btn-large){
+  padding-bottom:25px;
 }
 
 a.btn-large.left i{

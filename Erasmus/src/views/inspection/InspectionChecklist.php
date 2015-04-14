@@ -79,8 +79,6 @@ require_once '../top_view.php';
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
      				<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist | countRecAndObs">
-		     	<!--<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist">-->
-		     			<!--call evaluateDeficiecnyRooms -->
 		     			<h3 style="width:30px; float:left">{{$index+1}}.</h3>
 		     			<h3 style="width:65%; float:left;">
 		     				<i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
@@ -104,8 +102,7 @@ require_once '../top_view.php';
 								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}">{{question.checkedRecommendations}} Recommendation<span ng-if="question.checkedRecommendations != 1">s</span></span>
 							</label>
 							<label class="checkbox inline">
-								<input type="checkbox" value="true" ng-model="question.showNotes" ng-disabled="!question.Responses.Answer"/>
-								<span class="metro-checkbox">Notes</span>
+								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}"><button ng-disabled="!question.isComplete" ng-class="{'disabled': !question.isComplete}" ng-click="question.showNotes = !question.showNotes;" class="btn btn-info right">{{question.checkedNotes}} Note<span ng-if="question.checkedNotes != 1">s<i ng-class="{'icon-plus-2':!question.showNotes,'icon-minus-2':question.showNotes}"></i></button></span>
 							</label>
 						</div>
 						<span style="clear:both; display:block; height:0;">&nbsp;</span>
@@ -190,7 +187,7 @@ require_once '../top_view.php';
 							</ul>
 						</span>
 
-						<span ng-hide="!question.Responses.Answer" ng-switch on="question.showNotes">
+						<span ng-hide="!question.isComplete" ng-switch on="question.showNotes">
 							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
 								<h3>Notes:</h3>
 								<li ng-repeat="note in question.Observations | activeOnly | countRecAndObs:question:'Observations'" style="margin-bottom:3px;">
