@@ -57,10 +57,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 						if(question.Responses.Recommendations && question.Responses.Recommendations.length){
 							question.isComplete = true;
 						}
-						if(question.SupplementalRecommendations && question.SupplementalRecommendations.length){
-							var j = question.SupplementalRecommendations.length;
+						if(question.Responses.SupplementalRecommendations && question.Responses.SupplementalRecommendations.length){
+							var j = question.Responses.SupplementalRecommendations.length;
 							while(j--){
-								if(question.SupplementalRecommendations.Is_active)question.isComplete = true;
+								if(question.Responses.SupplementalRecommendations.Is_active)question.isComplete = true;
 							}
 						}
 						if(question.isComplete){
