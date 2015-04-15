@@ -196,7 +196,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       while(i--){
         if(factory.users[i].Key_id == id)return factory.users[i];
       }
-  }
+  } 
 
   factory.getBuildingsByPi = function(pi)
   {
@@ -507,7 +507,11 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
     $scope.setRoute = function(){
       $location.path($scope.selectedRoute);
     }
-    if($location.$$host.indexOf('graysail')<0)$rootScope.isProductionServer = true;
+    if($location.$$host.indexOf('graysail')<0){
+      $rootScope.isProductionServer = true;
+    }else{
+      $rootScope.isProductionServer = false;
+    }
 
     if(!$location.path()) {
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
@@ -597,7 +601,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
         userHubFactory.setModalData(pi);
 
         var modalInstance = $modal.open({
-          templateUrl: 'piModal.html',
+          templateUrl: 'userHubPartials/piModal.html',
           controller: modalCtrl
         });
 
@@ -952,8 +956,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       $scope.modalData.Primary_department = dept;
     }
     $scope.getAuthUser = function(user){
-      console.log(userHubFactory);
-      $scope.lookingForUser = true;
+     $scope.lookingForUser = true;
+     $scope.modalError = false;
      var i = userHubFactory.users.length;
       while(i--){
         if( userHubFactory.users[i].Username && $scope.modalData.userNameForQuery.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
@@ -977,6 +981,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             }else{
               $scope.modalData=returnedUser;
               $scope.modalData.Roles = user.Roles;
+              if(user.PrincipalInvestigator)$scope.modalData.PrincipalInvestigator = user.PrincipalInvestigator;
+              if(user.Inspector)$scope.modalData.Inspector = user.Inspector;
             }
           },
           function(){
@@ -1075,6 +1081,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       return userHubFactory.saveUserRoleRelations(user.Key_id, idsToAdd)
         .then(
           function(){
+            console.log(user);
             return user;
           },
           function(){
@@ -1089,13 +1096,13 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       console.log(pi);
       console.log('saving dept relations')
       //save deparments added to pi
-      var user = userHubFactory.getModalData();
-      var piCopy = user.PrincipalInvestigator;
       var oldDepartments = [];
       var newDepartmentIds = [];
-      var i = piCopy.Departments.length;
+      var piCopy = convenienceMethods.copyObject(pi);
+      console.log(pi)
+      var i = piCopy.PrincipalInvestigator.Departments.length;
       while(i--){
-        oldDepartments.push(piCopy.Departments[i].Key_id);
+        oldDepartments.push(piCopy.PrincipalInvestigator.Departments[i].Key_id);
       }
 
       var j = pi.PrincipalInvestigator.Departments.length;
