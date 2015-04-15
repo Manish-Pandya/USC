@@ -74,12 +74,12 @@ body {
 /* line 69, ../sass/style.scss */
 .whitebg.checklist {
   padding: 0px !Important;
+  position: relative !important;
 }
 
 @media screen and (max-width: 1375px) {
   /* line 73, ../sass/style.scss */
   .whitebg.checklist {
-    margin-left: 53px !Important;
     padding: 0px !Important;
   }
 }
@@ -105,7 +105,7 @@ body {
 
   /* line 97, ../sass/style.scss */
   body {
-    padding-top: 0 !Important;
+    padding: 0 !Important;
   }
 }
 /******************************************************************************
@@ -2082,7 +2082,10 @@ li.active a {
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(0, 0, 0, 0.2);
 }
-
+/*********************************************
+*
+*
+*********************************************/
 /* line 653, ../sass/style.scss 
 .checklist:before {
   display: block;
@@ -2097,34 +2100,60 @@ li.active a {
 .checklist ul {
   list-style: none !important;
 }
-
+.navicon {
+  padding: 0 !important;
+  margin: 24px 42px -10px 9px;
+}
+.navicon i.icon-list{
+  font-size:50px;
+  margin-left:-10px;
+  margin-right:10px;
+}
+.navicon i.icon-cancel-2{
+  font-size:30px;
+}
+#side-nav{
+  background: rgba(0,0,0,.7);
+  z-index: 1049;
+  position: absolute;
+  margin-top: 59px;
+  width: 100%;
+  min-height: 100%;
+}
+#side-nav > ul{
+  padding: 0 5px 0;
+  overflow-y: scroll;
+  background: white;
+  width:360px;
+  height:100%;
+}
 /* line 663, ../sass/style.scss */
 /* line 1705, ../sass/style.scss */
-#sp-nav ul li ul li a {
+#side-nav ul li ul li a {
   display: block;
   line-height: normal;
   color: black;
   margin: 0;
   border-top: 1px solid #c0c0c0;
   font-size: 17px;
-  padding: 15px 10px 15px 30px;
+  padding: 15px 5px;
   text-shadow: none;
   box-shadow: none !important;
 }
-#sp-nav ul li ul li:first-child a{
+#side-nav ul li ul li:first-child a{
   border-top:none;
 }
 /* line 674, ../sass/style.scss */
 /* line 1717, ../sass/style.scss */
-#sp-nav ul li ul{
-  padding: 0;
-  margin-top: 0;
+#side-nav ul li ul{
+  padding: 0 10px;
+  margin: 0;
   list-style:none;
 }
 
 /* line 678, ../sass/style.scss */
 /* line 1722, ../sass/style.scss */
-#sp-nav ul li ul li a.active {
+#side-nav ul li ul li a.active {
   background: white;
   color: black;
 }
@@ -2164,7 +2193,7 @@ li.active a {
 /* line 690, ../sass/style.scss */
 /* line 1739, ../sass/style.scss */
 .questionAnswerInputs {
-  float: right;
+  margin:5px 30px 0;
 }
 
 /* line 693, ../sass/style.scss */
@@ -2207,7 +2236,20 @@ li.active a {
 .menuIcon:hover:active {
   color: green !important t;
 }
-
+.checklist-deficiencies{
+  padding: 10px;
+  margin: 20px 0px 0 26px;
+  border-top: 1px solid #ccc;
+  background: rgb(239, 195, 195);
+}
+.recOrObsList{
+  background: #CCDEDE;
+  padding:10px;
+  margin-top:10px;
+}
+.recOrObsList h4{
+  font-weight: bold;
+}
 .recOrObsList li span.metro-checkbox span{
   margin-top:0;
 }
@@ -2784,6 +2826,9 @@ a.btn i {
 margin: 1px 2px;
 }
 
+a.btn.btn-mini i {
+  margin: 1px 2px 1px 0px;
+}
 a.btn.left i, button.btn.left i{
   margin: 2px 6px 1px 2px;
 }
