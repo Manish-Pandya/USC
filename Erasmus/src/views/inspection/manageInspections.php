@@ -102,9 +102,9 @@ require_once '../top_view.php';
 							<i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
 						</span>
 						<span ng-if="!inspector.edit">
-							<i class="icon-pencil primary" ng-click="mif.editInspector(inspector, dto)"></i>
-							<i class="icon-remove danger" ng-click="mif.removeInspector(dto, selectedYear, inspector)"></i>
-							<i ng-if="$last" class="icon-plus-2 success" ng-click="dto.addInspector = true"></i></a>
+							<i class="icon-pencil primary" title="Edit" title="Edit" ng-click="mif.editInspector(inspector, dto)"></i>
+							<i class="icon-remove danger" title="Remove" title="Remove" ng-click="mif.removeInspector(dto, selectedYear, inspector)"></i>
+							<i ng-if="$last" title="Add" alt="Add" class="icon-plus-2 success" ng-click="dto.addInspector = true"></i></a>
 						</span>
 					</li>
 					<li ng-if="dto.addInspector">
