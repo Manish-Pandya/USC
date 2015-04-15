@@ -2,44 +2,15 @@
 require_once '../top_view.php';
 ?>
 <script src="../../js/inspectionChecklist2.js"></script>
-<div ng-app="inspectionChecklist" ng-controller="checklistController" ng-cloak>
-	<div id="sp-nav" class="span3">
-		<a class="menuIcon" ng-click="$spMenu.toggle()">&#9776;</a>
-        <ul class="nav nav-list nav nav-pills nav-stacked" id="sideNav">
-          	<li class="nav-header" style="font-size: 30px;padding: 20px 14px;">Checklists</li>
-          	<li ng-show="biological">
-          		<a ng-click="cf.selectCategory('Biological Safety')" class="checklistListNavHeader" id="biologicalMaterialsHeader"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a>
-      			<ul ng-if="category.indexOf('Biological') > -1 && !loading">
-      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
-      			</ul>
-          	</li>
-			<li ng-show="chemical">
-				<a ng-click="cf.selectCategory('Chemical Safety')" class="checklistListNavHeader" id="chemicalSafetyHeader"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a>
-				<ul ng-if="category.indexOf('Chemical') > -1 && !loading">
-      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
-      			</ul>			
-      		</li>
-			<li>
-				<a ng-click="cf.selectCategory('General Hazards')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
-				<ul ng-if="category.indexOf('General') > -1 && !loading">
-      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
-      			</ul>			
-      		</li>
-			<li ng-show="radiation">
-				<a ng-click="cf.selectCategory('Radiation Safety')" class="checklistListNavHeader" id="radiationSafetyHeader"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a>
-				<ul ng-if="category.indexOf('Radiation') > -1 && !loading">
-      				<li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.selectedCategory"></li>
-      			</ul>	
-			</li>
-        </ul>
-    </div><!--/span-->
+<div ng-app="inspectionChecklist" ng-controller="checklistController" id="inspection-checklist" ng-cloak>
 <div class="tst">
-<div id="sp-page" class="whitebg checklist">
+<div class="whitebg checklist">
 	<div style="position:fixed">
 	</div>
 <div class="navbar">    		
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-		<li class="">
+		<li>
+			<a class="pull-left navicon" ng-click="showMenu = !showMenu"><i ng-class="{'icon-list':!showMenu,'icon-cancel-2': showMenu}"></i></a>
 			<img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
 			<h2  style="padding: 11px 0 5px 85px;">Inspection Checklist  <span style="margin-left:10px;" ng-if="inspection">({{inspection.PrincipalInvestigator.User.Name}})</span>
 				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
@@ -47,6 +18,36 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
+<div id="side-nav" ng-show="showMenu">
+    <ul class="nav nav nav-pills nav-stacked" id="sideNav">
+      	<li class="nav-header" style="font-size: 30px;padding: 20px 3px;">Checklists</li>
+      	<li ng-show="biological">
+      		<a ng-click="cf.selectCategory('Biological Safety')" class="checklistListNavHeader" id="biologicalMaterialsHeader"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a>
+  			<ul ng-if="category.indexOf('Biological') > -1 && !loading">
+  				<li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
+  			</ul>
+      	</li>
+		<li ng-show="chemical">
+			<a ng-click="cf.selectCategory('Chemical Safety')" class="checklistListNavHeader" id="chemicalSafetyHeader"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a>
+			<ul ng-if="category.indexOf('Chemical') > -1 && !loading">
+  				<li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
+  			</ul>			
+  		</li>
+		<li>
+			<a ng-click="cf.selectCategory('General Hazards')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
+			<ul ng-if="category.indexOf('General') > -1 && !loading">
+  				<li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
+  			</ul>			
+  		</li>
+		<li ng-show="radiation">
+			<a ng-click="cf.selectCategory('Radiation Safety')" class="checklistListNavHeader" id="radiationSafetyHeader"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a>
+			<ul ng-if="category.indexOf('Radiation') > -1 && !loading">
+  				<li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
+  			</ul>	
+		</li>
+    </ul>
+</div><!--/span-->
+
 <div class="row-fluid">
 	<div class="loading" ng-show='!inspection && !error' >
 	  <i class="icon-spinnery-dealie spinner large"></i>  
@@ -56,11 +57,11 @@ require_once '../top_view.php';
 		<h2>{{error}}</h2>
 	</div>
 	<ul class="postInspectionNav row" style="margin-left:11px;">
-		<li ng-show="biological"><a ng-click="cf.selectCategory('Biological Safety')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: category.indexOf('Biological') > -1}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a></li>
-		<li ng-show="chemical"><a ng-click="cf.selectCategory('Chemical Safety')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: category.indexOf('Chemical') > -1}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a></li>
-		<li ng-show="general"><a ng-click="cf.selectCategory('General Hazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a></li>
-		<li ng-show="radiation"><a ng-click="cf.selectCategory('Radiation Safety')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: category.indexOf('Radiation') > -1}"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a></li>
-		<li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a ng-click="openNotes()" class="btn btn-large btn-info left checklistNav" ><i class="icon-clipboard-2"></i>Inspection Comments</a></li>
+		<li ng-show="biological"><a ng-click="cf.selectCategory('Biological Safety')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: category.indexOf('Biological') > -1}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL</span></a></li>
+		<li ng-show="chemical"><a ng-click="cf.selectCategory('Chemical Safety')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: category.indexOf('Chemical') > -1}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL</span></a></li>
+		<li ng-show="general"><a ng-click="cf.selectCategory('General Hazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL</span></a></li>
+		<li ng-show="radiation"><a ng-click="cf.selectCategory('Radiation Safety')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: category.indexOf('Radiation') > -1}"><img style="margin:1px 5px 2px 0 !important" src="../../img/radiation-large-icon.png"/><span>RADIATION</span></a></li>
+		<li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a ng-click="openNotes()" class="btn btn-large btn-info left checklistNav" ><i class="icon-clipboard-2"></i></a></li>
 	</ul>
 	<div class="loading" ng-show='loading' style="margin-left:11px;">
 	  <i class="icon-spinnery-dealie spinner large"></i> 
@@ -79,8 +80,8 @@ require_once '../top_view.php';
 				</accordion-heading>
 		     	<ul style="margin-left:0;">	
      				<li class="question" ng-repeat="question in checklist.Questions | evaluateChecklist:checklist | countRecAndObs">
-		     			<h3 style="width:30px; float:left">{{$index+1}}.</h3>
-		     			<h3 style="width:65%; float:left;">
+		     			<h3 class="span1" style="width:30px">{{$index+1}}.</h3>
+		     			<h3>
 		     				<i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
 		     				<span once-text="question.Text"></span><br>
 		     				<span class="checklistQuestionError" ng-if="question.error">{{question.error}}</span>
@@ -99,7 +100,7 @@ require_once '../top_view.php';
 								<span class="metro-radio">N/A</span>
 							</label>
 							<label class="checkbox inline">
-								<span class="metro-checkbox recs" ng-class="{'green': question.checkedRecommendations>0}">{{question.checkedRecommendations}} Recommendation<span ng-if="question.checkedRecommendations != 1">s</span></span>
+								<span class="metro-checkbox recs" ng-class="{'green bold': question.checkedRecommendations>0}">{{question.checkedRecommendations}} Recommendation<span ng-if="question.checkedRecommendations != 1">s</span></span>
 							</label>
 							<label class="checkbox inline">
 								<span class="metro-checkbox recs"><button ng-disabled="!question.isComplete" ng-class="{'disabled': !question.isComplete}" ng-click="question.showNotes = !question.showNotes;" class="btn btn-info right">{{question.checkedNotes}} Note<span ng-if="question.checkedNotes != 1">s</span><i ng-class="{'icon-plus-2':!question.showNotes,'icon-minus-2':question.showNotes}"></i></button></span>
@@ -107,7 +108,7 @@ require_once '../top_view.php';
 						</div>
 						<span style="clear:both; display:block; height:0;">&nbsp;</span>
 						<span ng-hide="!question.activeDeficiencies.length" ng-switch on="question.Responses.Answer">
-							<ul ng-show="question.Responses.Answer == 'no'" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;">
+							<ul class="checklist-deficiencies" ng-show="question.Responses.Answer == 'no'">
 								<h3>Deficiencies:</h3>
 								<li ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )">
 									<label class="checkbox inline">
@@ -150,9 +151,9 @@ require_once '../top_view.php';
 						</span>
 
 						<span>
-							<ul style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
-								<h3>Recommendations:<a ng-if="!question.addRec" style="margin-left: 5px" class="btn btn-success" ng-click="question.addRec = true"><i class="icon-plus-2"></i></a></h3>
-								<li ng-repeat="recommendation in question.Recommendations | activeOnly" style="margin-bottom:3px;">
+							<ul style="border-top: 1px solid #ccc;" class="recOrObsList">
+								<h4>Recommendations:<a ng-if="!question.addRec" style="margin-left: 5px" class="btn btn-mini btn-success" ng-click="question.addRec = true"><i class="icon-plus-2"></i></a></h4>
+								<li ng-repeat="recommendation in question.Recommendations | activeOnly" style="margin-top:3px;">
 									<label class="checkbox inline" ng-if="!recommendation.edit">
 										<input type="checkbox" value="true" ng-model="recommendation.checked" ng-checked="cf.getRecommendationChecked(question, recommendation)" ng-change="cf.saveRecommendationRelation(question, recommendation)" />
 										<span class="metro-checkbox standardRecOrObs" ng-class="{newRecOrObs:recommendation.new}"><span once-text="recommendation.Text"></span><i ng-if="recommendation.IsDirty" class="icon-spinnery-dealie spinner small absolute"></i><!--<span ng-show="recommendation.isNew" class="label label-success" style="margin-left:3px;">New Option</span>--><a ng-if="recommendation.new" ng-click="cf.copyForEdit(question, recommendation)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></span>
@@ -178,18 +179,18 @@ require_once '../top_view.php';
 								<li ng-if="question.addRec">
 									 <form ng-if="!question.edit">
 							        	<textarea ng-model="question.newRecommendationText" rows="2" style="width:100%;"></textarea>
-								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Recommendation" ng-click="cf.saveSupplementalRecommendation(question, true)"/>
-								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Recommendation Option" ng-click="cf.createRecommendation(question)"/>
+								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-info" type="submit" style="height:32px" value="Save as Lab-Specific Recommendation" ng-click="cf.saveSupplementalRecommendation(question, true)"/>
+								        <input ng-class="{'disabled': !question.newRecommendationText}" ng-disabled="!question.newRecommendationText" class="btn btn-success" type="submit" style="height:32px" value="Save as Recommendation Option" ng-click="cf.createRecommendation(question)"/>
+								    	<a class="btn btn-danger" ng-click="question.addRec = false;">Cancel</a>
 								    	<i ng-if="question.savingNew" class="icon-spinnery-dealie spinner small"></i>
-								    	<a class="btn btn-large btn-danger" ng-click="question.addRec = false;">Cancel</a>
 								    </form>
 								</li>
 							</ul>
 						</span>
 
 						<span ng-hide="!question.isComplete" ng-switch on="question.showNotes">
-							<ul ng-switch-when="true" style="padding: 20px 0px;margin: 20px 0;border-top: 1px solid #ccc;" class="recOrObsList">
-								<h3>Notes:</h3>
+							<ul ng-switch-when="true" style="border-top: 1px solid #ccc;" class="recOrObsList">
+								<h4>Notes:<a ng-if="!question.addNote" style="margin-left: 5px" class="btn btn-mini btn-success" ng-click="question.addNote = true"><i class="icon-plus-2"></i></a></h4>
 								<li ng-repeat="note in question.Observations | activeOnly | countRecAndObs:question:'Observations'" style="margin-bottom:3px;">
 									<label class="checkbox inline" ng-if="!note.edit">
 										<input type="checkbox" value="true" ng-if="!note.edit" ng-model="note.checked" ng-checked="cf.getObservationChecked(question, note)" ng-change="cf.saveObservationRelation(question, note)"/>
@@ -212,12 +213,13 @@ require_once '../top_view.php';
 										<a ng-show="note.edit" ng-click="cf.objectNullifactor(note, question)" class="btn btn-danger">Cancel</a><i ng-if="note.IsDirty" class="icon-spinnery-dealie spinner small"></i>
 									</span>
 								</li>
-								<li>		
+								<li ng-if="question.addNote">		
 									<form ng-if="!question.edit">
 									 	<input type="hidden" value="note" name="question.TextType" ng-model="question.TextType" ng-update-hidden />
 							        	<textarea ng-model="question.newObservationText" rows="2" style="width:100%;"></textarea>
-								        <input class="btn btn-large btn-info" type="submit" style="height:50px" value="Save as Lab-Specific Note" ng-click="cf.saveSupplementalObservation(question, true)"/>
-								        <input class="btn btn-large btn-success" type="submit" style="height:50px" value="Save as Note Option" ng-click="cf.createObservation(question)"/>
+								        <input style="height:32px" ng-class="{'disabled': !question.newObservationText}" ng-disabled="!question.newObservationText" class="btn btn-info" type="submit" value="Save as Lab-Specific Note" ng-click="cf.saveSupplementalObservation(question, true)"/>
+								        <input style="height:32px" ng-class="{'disabled': !question.newObservationText}" ng-disabled="!question.newObservationText"  class="btn btn-success" type="submit" value="Save as Note Option" ng-click="cf.createObservation(question)"/>
+								    	<a class="btn btn-danger" ng-click="question.addNote = false;">Cancel</a>
 								        <i ng-if="question.savingNew" class="icon-spinnery-dealie spinner small"></i>
 								    </form>					
 								</li>

@@ -23,7 +23,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 				if(question.Responses && question.Responses.SupplementalRecommendations){
 					var j = question.Responses.SupplementalRecommendations.length;
 					while(j--){
-						if(question.SupplementalRecommendations[j].Is_active)question.checkedRecommendations++;
+						if(question.Responses.SupplementalRecommendations[j].Is_active)question.checkedRecommendations++;
 					}
 				}
 
@@ -509,6 +509,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	  							if(!observation.Key_id)factory.saveObservationRelation( question, returnedObservation );
 	  							question.edit = false;							
 	  							question.savingNew = false;
+	  							question.addNote = false;
 	  						},
 	  						function(error){
 	  							returnedObservation.IsDirty = false;
@@ -590,6 +591,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 								question.Responses.SupplementalObservations.push(returnedSupplementalObservation);
 								question.savingNew = false;
   							}
+  							question.addNote = false;
   							if($rootScope.SupplementalObservationCopy)factory.objectNullifactor($rootScope.SupplementalObservationCopy, question)
   						},
   						function(error){
