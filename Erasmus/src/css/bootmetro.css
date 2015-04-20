@@ -238,7 +238,7 @@ input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
 
 /*
 Button control.
-*/
+
 a.win-command, button, input[type=button], input[type=reset], input[type=submit] {
    min-width: 90px;
    padding: 4px 8px;
@@ -246,15 +246,14 @@ a.win-command, button, input[type=button], input[type=reset], input[type=submit]
    border-width: 2px;
    border-style: solid;
    background-clip: padding-box;
-   /*font-size: 11pt;*/
    font-weight: 600;
-   line-height: 1.3636; /* 20px when font-size is 11pt */
+   line-height: 1.3636; 
 }
 a.win-command {
-   min-height: 32px; /* content (20px) + padding + border */
+   min-height: 32px; 
 }
 
-
+*/
 /*
 File upload control.
 */
