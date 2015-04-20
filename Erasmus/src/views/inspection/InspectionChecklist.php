@@ -5,8 +5,6 @@ require_once '../top_view.php';
 <div ng-app="inspectionChecklist" ng-controller="checklistController" id="inspection-checklist" ng-cloak>
 <div class="tst">
 <div class="whitebg checklist">
-	<div style="position:fixed">
-	</div>
 <div class="navbar">    		
 	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
 		<li>
