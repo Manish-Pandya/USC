@@ -592,12 +592,16 @@ class ActionManager {
 			return '';
 		}
 	}
+	public function saveHazard($decodedObject = NULL){
 
-	public function saveHazard(){
 		$LOG = Logger::getLogger('Action:' . __function__);
-		$decodedObject = $this->convertInputJson();
+
+		if( $decodedObject === NULL) {
+        	$decodedObject = $this->convertInputJson();
+		}
 
 		if( $decodedObject === NULL ){
+			// that is, still null after checking input parameters *and* stream.
 			return new ActionError('Error converting input stream to Hazard');
 		}
 		else if( $decodedObject instanceof ActionError ){
@@ -668,6 +672,46 @@ class ActionManager {
 		}
 	}
 
+	/**
+	 * Just like SaveHazard, but it only returns the single parent hazard,
+	 * without subhazards. THIS STILL SAVES SUBHAZARDS because there's an
+	 * annoying amount of complexity when saving subhazards. Thus, it's easier
+	 * to just reuse saveHazard and strip out unneeded data before it hits
+	 * JSONManager, which is where the real bottleneck occurs.
+	 */
+	public function saveHazardWithoutReturningSubHazards($decodedObject = NULL) {
+		$LOG = Logger::getLogger('Action:' . __function__);
+		
+		if( $decodedObject === NULL) {
+			$decodedObject = $this->convertInputJson();
+		}
+		
+		if( $decodedObject === NULL ){
+			// that is, still null after checking input parameters *and* stream.
+			return new ActionError('Error converting input stream to Hazard');
+		}
+		else if( $decodedObject instanceof ActionError ){
+			return $decodedObject;
+		}
+		else{	
+			$savedHazard = $this->saveHazard($decodedObject);
+			$savedHazard->setSubHazards(null);
+			
+			$newEntityMaps = array();
+			$newEntityMaps[] = new EntityMap("lazy","getSubHazards");
+			$newEntityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+			$newEntityMaps[] = new EntityMap("lazy","getChecklist");
+			$newEntityMaps[] = new EntityMap("lazy","getRooms");
+			$newEntityMaps[] = new EntityMap("lazy","getInspectionRooms");
+			$newEntityMaps[] = new EntityMap("lazy","getHasChildren");
+			$newEntityMaps[] = new EntityMap("lazy","getParentIds");
+			$savedHazard->setEntityMaps($newEntityMaps);
+			
+			return $savedHazard;
+			
+		}
+	}
+	
 	public function getIsAlphabetized( $list ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 

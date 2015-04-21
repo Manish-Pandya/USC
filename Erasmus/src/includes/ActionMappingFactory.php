@@ -84,6 +84,7 @@ class ActionMappingFactory {
 				"getHazardById"=>new ActionMapping("getHazardById", "", ""),
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
+				"saveHazardWithoutReturningSubHazards"=>new ActionMapping("saveHazardWithoutReturningSubHazards", "", ""),
 				"createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", ""),
 				"setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", ""),
 				"reorderHazards"=>new ActionMapping("reorderHazards", "", ""),
