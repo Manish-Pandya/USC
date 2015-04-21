@@ -26,9 +26,7 @@ angular.module('00RsmsAngularOrmApp')
   		$scope.af = af;
   		$rootScope.pickupsPromise = af.getAllPIs()
   										.then(getAllPickups);
-  			
-
-
+ 
 		$scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
 			console.log(status);
 			console.log(isChecked);
