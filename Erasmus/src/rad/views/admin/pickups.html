@@ -3,10 +3,15 @@
 
 <div class="card super pickups pickup-collection" ng-repeat="pickup in pickups | activePickups">
 	<div>
-		<h1 class="card-header">
-			<i class="icon-box-remove"></i>{{pickup.PrincipalInvestigator.User.Name}} requested a pickup on {{pickup.Requested_date | dateToISO}}
+		<h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
+			<!--<span class="pull-left">-->
+				<i class="icon-box-remove"></i>{{pickup.PrincipalInvestigator.User.Name}} requested a pickup on {{pickup.Requested_date | dateToISO}}
+			<!--</span>
+			<i class="pull-right" ng-class="{'icon-minus':pickup.show,'icon-plus':!pickup.show}"></i>
+	-->
 		</h1>
-		<div>
+
+		<div ng-show="pickup.show" class="print-always">
 			<h3>Pickup Status:<label class="checkbox print">
 					<input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == 'PICKED UP' || pickup.Status == 'AT RSO'"/>
 					<span class="metro-checkbox">Picked Up</span>
@@ -25,11 +30,12 @@
 			</a>
 		</div>
 
-		<div ng-if="pickup.Waste_bags.length">
+		<div class="print-always" ng-show="pickup.show" ng-if="pickup.Waste_bags.length">
 			<h3>{{pickup.Waste_bags.length}} Waste Bag<span ng-if="pickup.Waste_bags.length>1">s</span></h3>
 			<ul ng-if="pickup.Waste_bags.length">
 				<li ng-repeat="bag in pickup.Waste_bags">
 					<p>Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}</p>
+					<a class="btn btn-danger left" ng-click="af.removeFromPickup(bag, pickup.Waste_bags, pi, true)"><i class="icon-remove"></i>Remove</a>
 					<p ng-if="bag.Contents.length">
 						Contents: <span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
 					</p>
@@ -37,7 +43,7 @@
 			</ul>
 		</div>
 
-		<div ng-if="pickup.Scint_vial_collections.length">
+		<div class="print-always" ng-show="pickup.show" ng-if="pickup.Scint_vial_collections.length">
 			<h3 >{{pickup.Scint_vial_trays}} Scint Vial Trays:</h3>
 			<ul ng-if="pickup.Scint_vial_collections.length">
 				<li ng-repeat="collection in pickup.Scint_vial_collections" ng-if="collection.Contents.length">
@@ -46,7 +52,7 @@
 			</ul>
 		</div>
 
-		<div ng-if="pickup.Carboy_use_cycles.length">
+		<div class="print-always" ng-show="pickup.show" ng-if="pickup.Carboy_use_cycles.length">
 			<h3 >{{pickup.Carboy_use_cycles.length}} Carboy<span ng-if="pickup.Carboy_use_cycles.length>1">s</span></h3>
 			<ul ng-if="pickup.Carboy_use_cycles.length">
 				<li ng-repeat="cycle in pickup.Carboy_use_cycles">

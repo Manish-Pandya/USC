@@ -62,6 +62,13 @@
   font-size: 40px !important;
   margin: 20px 35px 0 0 !important;
 }
+.card-header.accordion-header > span:after{
+  clear:both;
+}
+.no-underline{
+  border-bottom:none !important;
+  text-decoration: none !important;
+}
 
 @media screen and (max-width: 1366px) {
   /* line 73, ../sass/style.scss */
@@ -433,8 +440,7 @@ div.use-log > .table-row > div:nth-of-type(6){
   margin-left: 25px;
 }
 .print{
-  visibility: hidden;
-  display:none;
+  display:none !important;
 }
 .card.pickup-collection ul{
   margin:10px 5px;
@@ -444,8 +450,10 @@ div.use-log > .table-row > div:nth-of-type(6){
     display: none;
   }
   .print{
-    display:block;
-    visibility:visible;
+    display:block !important;
+  }
+  .print-always{
+    display:block !important;
   }
   .label.print{
 
