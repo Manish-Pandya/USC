@@ -76,12 +76,19 @@ body {
   padding: 0px !Important;
   position: relative !important;
 }
-
-@media screen and (max-width: 1375px) {
-  /* line 73, ../sass/style.scss */
-  .whitebg.checklist {
+.checklist .navbar{
+  position:fixed;
+  left:0;
+  right:0;
+  z-index: 1040;    
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.checklist > .row-fluid{
+  padding-top: 50px;
+}
+.whitebg.checklist {
     padding: 0px !Important;
-  }
 }
 @media (min-width: 1500px) {
   /* line 80, ../sass/style.scss */
@@ -2115,13 +2122,13 @@ li.active a {
 #side-nav{
   background: rgba(0,0,0,.7);
   z-index: 1049;
-  position: absolute;
+  position: fixed;
   margin-top: 59px;
   width: 100%;
   min-height: 100%;
 }
 #side-nav > ul{
-  padding: 0 5px 0;
+  padding: 0 5px 0 0;
   overflow-y: scroll;
   background: white;
   width:360px;
