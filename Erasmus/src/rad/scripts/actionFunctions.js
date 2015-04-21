@@ -739,7 +739,7 @@ angular
 
             af.getAllPickups = function( key_id )
             {
-                return dataSwitchFactory.getAllObjects('Pickup');
+                return dataSwitchFactory.getAllObjects('Pickup', true);
             }
 
             /********************************************************************
@@ -1479,7 +1479,7 @@ angular
                     )
             }
 
-            af.removeFromPickup = function(object, pickupCollection, pi){
+            af.removeFromPickup = function(object, pickupCollection, pi, admin){
                 var copy = dataStoreManager.createCopy(object);
                 copy.Pickup_id = null;
                 if(copy.Class == "CarboyUseCycle"){
@@ -1494,7 +1494,7 @@ angular
                     .then(
                         function(returnedObj){
                             angular.extend(object, returnedObj);
-                            if(copy.Class == "WasteBag"){
+                            if(copy.Class == "WasteBag" && !admin){
                                 var container = dataStoreManager.getById("SolidsContainer",copy.Container_id);
                                 container.WasteBagsForPickup.push(object);
                             }

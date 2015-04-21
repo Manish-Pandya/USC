@@ -57,7 +57,7 @@ angular
                     return deferred.promise;
             }
 
-            dataSwitch.getAllObjects = function( className ) {
+            dataSwitch.getAllObjects = function( className, recurse ) {
 
                 // should always return a promise
                 var deferred = $q.defer();
@@ -81,11 +81,31 @@ angular
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            
+                            if(recurse){
+                                recursivelyInstantiate(instatedObjects);
+                            }
+
                             deferred.resolve(instatedObjects);
 
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
                         });
+
+                        function recursivelyInstantiate(instatedObjects){
+                            var i = instatedObjects.length;
+                                while(i--){
+                                    for(var prop in instatedObjects[i]){
+                                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class){
+                                            console.log(prop);
+                                            instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
+                                            dataStoreManager.store(instatedObjects[i][prop]);
+                                            console.log(dataStoreManager.get(instatedObjects[i][prop][0].Class));
+                                            recursivelyInstantiate(instatedObjects[i][prop]);
+                                        }
+                                    }
+                                }
+                        }
 
                     }
 
