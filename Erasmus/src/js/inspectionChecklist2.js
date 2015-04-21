@@ -196,7 +196,28 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	
 	    }
 
-	    factory.saveResponse = function(  question )
+	    factory.saveResponseSwitch = function( question )
+	    {
+	    		var defer = $q.defer();
+
+	    		if(question.Responses && question.Responses.Key_id){
+	    			defer.resolve(question.Responses.Key_id);
+	    			return defer.promise;
+	    		}
+	    		//the question doesn't have a reponse, so make a new one
+	    		else{
+	    			return factory.saveResponse( question )
+	    				.then(
+	    					function(returnedResponse){
+	    						return returnedResponse.Key_id;
+	    					}
+	    				)
+	    		}
+
+	    		
+	    }
+
+	    factory.saveResponse = function( question )
 	    {
 	    		question.error='';
 	    		if(!question.Responses){
@@ -224,7 +245,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 				return convenienceMethods.saveDataAndDefer(url, responseDto).then(
 					function(promise){
 						deferred.resolve(promise);
-						deferred.promise
+						return deferred.promise
 							.then(
 								function(returnedResponse){
 									question.IsDirty = false;
@@ -234,6 +255,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 									if(!question.Responses.Observations)question.Responses.Observations = [];
 									if(!question.Responses.Observations)question.Responses.Observations = [];
 									question.Responses.Key_id = returnedResponse.Key_id;
+									return returnedResponse;
 								}
 							)
 					},
@@ -651,42 +673,45 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveRecommendationRelation = function( question, recommendation )
 	    {
-	    	if(!question.Responses || question.Responses.Key_id)factory.saveResponse(question);
-	    	recommendation.IsDirty = true;
-	    	recommendation.checked = !recommendation.checked;
-	    	question.error = ''
-	    	var relationshipDTO = {
-		        Class:          "RelationshipDto",
-		        Master_id :     question.Responses.Key_id,
-		        Relation_id:    recommendation.Key_id,
-		        add:            !recommendation.checked
-		    }
-        	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
-		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
-  					.then(
-  						function( ){
-  							recommendation.checked = !recommendation.checked;
-  							//if the recommendation was checked, it should be added to the response so we can track the number of recommendations selected
-  							if(recommendation.checked){
-  								question.Responses.Recommendations.push(recommendation);
-  							}
-  							//if the recommendation was unchecked, we removed it from the response
-  							else{
-  								var i = question.Responses.Recommendations.length;
-  								while(i--){
-  									if(question.Responses.Recommendations[i].Key_id == recommendation.Key_id){
-  										question.Responses.Recommendations.splice(i,1);
-  									}
-  								}
-  							}
-  							recommendation.IsDirty = false;
-  							console.log(question.Responses);
-  						},
-  						function(error){
-  							recommendation.IsDirty = false;
-							question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
-  						}
-  					)
+	    	factory.saveResponseSwitch( question )
+	    		.then(function(responseId){
+	    			recommendation.IsDirty = true;
+			    	recommendation.checked = !recommendation.checked;
+			    	question.error = ''
+			    	var relationshipDTO = {
+				        Class:          "RelationshipDto",
+				        Master_id :     responseId,
+				        Relation_id:    recommendation.Key_id,
+				        add:            !recommendation.checked
+				    }
+		        	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
+				    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+	  					.then(
+	  						function(){
+	  							recommendation.checked = !recommendation.checked;
+	  							//if the recommendation was checked, it should be added to the response so we can track the number of recommendations selected
+	  							if(recommendation.checked){
+	  								question.Responses.Recommendations.push(recommendation);
+	  							}
+	  							//if the recommendation was unchecked, we removed it from the response
+	  							else{
+	  								var i = question.Responses.Recommendations.length;
+	  								while(i--){
+	  									if(question.Responses.Recommendations[i].Key_id == recommendation.Key_id){
+	  										question.Responses.Recommendations.splice(i,1);
+	  									}
+	  								}
+	  							}
+	  							recommendation.IsDirty = false;
+	  							console.log(question.Responses);
+	  						},
+	  						function(error){
+	  							recommendation.IsDirty = false;
+								question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+	  						}
+	  					)
+	    		});
+	    	
 	    }
 
 	    factory.saveObservationRelation = function(question, observation)
