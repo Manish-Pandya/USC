@@ -28,6 +28,8 @@ angular
 
                     //does this class exist? if not, make it on the fly
                     if( !window[objectFlavor] ) {
+                        //if we don't have the class, for now we just return the json
+                        return json;
                         console.log("WARNING! Creating Class " + objectFlavor + ' dynamically. THIS SHOULD NOT HAVE TO HAPPEN!');
                         inflator.dynamicallyCreateClass( objectFlavor );
                     } 
