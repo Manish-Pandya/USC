@@ -97,10 +97,8 @@ angular
                                 while(i--){
                                     for(var prop in instatedObjects[i]){
                                         if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class){
-                                            console.log(prop);
                                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                                             dataStoreManager.store(instatedObjects[i][prop]);
-                                            console.log(dataStoreManager.get(instatedObjects[i][prop][0].Class));
                                             recursivelyInstantiate(instatedObjects[i][prop]);
                                         }
                                     }
@@ -138,8 +136,8 @@ angular
                             deferred.resolve(instatedObjects);
 
                             // TODO should we cache individually-loaded things?
-                            console.log('NOTE: Recieved object of flavor ' + className +
-                                    ' and id ' + id + ', but not caching it');
+                            //console.log('NOTE: Recieved object of flavor ' + className +
+                                    //' and id ' + id + ', but not caching it');
                         });
 
                     }
