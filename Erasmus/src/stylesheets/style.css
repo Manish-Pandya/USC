@@ -715,19 +715,20 @@ tr.notedit, tr.notedit td {
   color: white !Important;
 }
 
-/* line 564, ../sass/style.scss */
-.hazardBtn i {
-  margin: 8px 4px 0 !important;
-  font-size: 25px;
-}
-
 /* line 568, ../sass/style.scss */
 a.hazardBtn {
   padding-left: 3px;
   padding-right: 8px;
   color: white !important;
 }
-
+a.hazardBtn i {
+  font-size: 35px !Important;
+  width: .8em !important;
+  margin: 3px !important;
+}
+a.hazardBtn i.icon-checkmark{
+  margin-right: 12px !important;
+}
 /* line 573, ../sass/style.scss */
 li.small a.hazardBtn span {
   display: none;
@@ -869,6 +870,14 @@ ul.questionList h3, ul.questionList h4, ul#parentHazards h3, ul#parentHazards h4
 ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+}
+
+table.questionList td h2{
+  margin-top: 10px;
+}
+table.questionList td h2 i{
+  font-size: 25px;
+  margin-top: 12px;
 }
 
 /* line 340, ../sass/style.scss */
@@ -1067,7 +1076,9 @@ img.smallLoading {
   margin: -3px 0 0 4px;
   width: 26px;
 }
-
+.modal-body {
+  border-bottom: 1px solid #ccc;
+}
 /* line 917, ../sass/style.scss */
 .subHazardModal, .roomsModal {
   padding: 0 3px;
@@ -2244,12 +2255,14 @@ li.active a {
   color: green !important t;
 }
 .checklist-deficiencies{
+  list-style-type: none;
   padding: 10px;
   margin: 20px 0px 0 26px;
   border-top: 1px solid #ccc;
   background: rgb(239, 195, 195);
 }
 .recOrObsList{
+  list-style-type: none;
   background: #CCDEDE;
   padding:10px;
   margin-top:10px;
