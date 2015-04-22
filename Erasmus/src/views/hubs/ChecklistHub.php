@@ -12,7 +12,7 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
-<div class="container-fluid whitebg" ng-app='checklistHub' ng-controller="ChecklistHubController">
+<div class="container-fluid whitebg checklist-hub" ng-app='checklistHub' ng-controller="ChecklistHubController">
 <span class="spacer"></span>
 <span ng-if="!checklist && !noChecklist" class="loading">
   <i class="icon-spinnery-dealie spinner large"></i>
@@ -40,7 +40,7 @@ require_once '../top_view.php';
         </a>
       </h3>
       <span class="spacer"></span>
-      <table class="table table-striped table-hover table-bordered large" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
+      <table class="table table-striped table-hover table-bordered large questionList" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
      		
         <tr class="blue-tr">
           <th>Checklist Questions</th>
@@ -50,10 +50,26 @@ require_once '../top_view.php';
         <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
           <td style="width:90%">
             <div class="span1" style="width:40px;">
-              <button ng-disabled="$first" class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
-              <button ng-disabled="$last" class="btn btn-mini btn-info upvote" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></button>
+              <button ng-disabled="$first" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
+              <button ng-disabled="$last" ng-class="{'disabled':$last}" class="btn btn-mini btn-info upvote" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></button>
             </div>
-            <h2 style="width:90%;"><span once-text="question.Text"></span><a ng-click="question.reveal" class=""><i ng-class="'icon-minus-2':question.reveal,'icon-plus-2':!question.reveal"></i></a></h2>
+            <h2 style="width:90%;"><span once-text="question.Text"></span><a ng-click="question.reveal" class=""><i ng-class="'icon-minus-2':question.reveal,'icon-plus-2':!question.reveal"></i></a>
+            <i ng-click="question.show = !question.show;" ng-class="{'icon-plus success':!question.show,'icon-minus danger':question.show}"></i>
+            </h2>
+            <div ng-if="question.show" style="clear:both">
+              <ul class="checklist-deficiencies" style="margin-top:60px; margin-left:66px">
+                <h3>Deficiencies</h3>
+                <li ng-repeat="def in question.Deficiencies">{{def.Text}}</li>
+              </ul>
+              <ul class="recOrObsList" style="margin-left:66px">
+                <h3>Recommendations</h3>
+                <li ng-repeat="rec in question.Recommendations">{{rec.Text}}</li>
+              </ul>
+              <ul class="recOrObsList" style="margin-left:66px">
+                <h3>Notes</h3>
+                <li ng-repeat="obs in question.Observations">{{obs.Text}}</li>
+              </ul>
+            </div>
           </td>
 
           <td style="width:10%; " >
