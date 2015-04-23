@@ -44,7 +44,7 @@ require_once '../top_view.php';
      		
         <tr class="blue-tr">
           <th>Checklist Questions</th>
-          <th>Edit</th>
+          <th style="text-align:center">Edit</th>
         </tr>
 
         <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
@@ -72,7 +72,7 @@ require_once '../top_view.php';
             </div>
           </td>
 
-          <td style="width:10%; " >
+          <td style="width:10%; text-align:center" >
               <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
               <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
               <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
