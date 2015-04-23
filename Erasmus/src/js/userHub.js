@@ -196,7 +196,14 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       while(i--){
         if(factory.users[i].Key_id == id)return factory.users[i];
       }
-  } 
+  }
+
+  factory.getUserByPIId = function(id){
+      var i = factory.users.length;
+      while(i--){
+        if(factory.users[i].PrincipalInvestigator && factory.users[i].PrincipalInvestigator.Key_id == id)return factory.users[i];
+      }
+  }
 
   factory.getBuildingsByPi = function(pi)
   {
@@ -573,7 +580,7 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
 
 }
 
-var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods) {
+var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods, $location) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
 
@@ -583,7 +590,10 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
             console.log(users);
             $scope.pis = userHubFactory.users;
             $rootScope.neededUsers = true;
-            return users
+            if($location.search().pi){
+              $scope.openModal(userHubFactory.getUserByPIId($location.search().pi));
+            }
+            return users;
           },
           function(){
             $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
