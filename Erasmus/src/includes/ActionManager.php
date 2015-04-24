@@ -697,15 +697,25 @@ class ActionManager {
 			$savedHazard = $this->saveHazard($decodedObject);
 			$savedHazard->setSubHazards(null);
 			
+			// loading checklist and getHasChildren are required in HazardHub,
+			// where this method will primarily be used.
 			$newEntityMaps = array();
 			$newEntityMaps[] = new EntityMap("lazy","getSubHazards");
 			$newEntityMaps[] = new EntityMap("lazy","getActiveSubHazards");
-			$newEntityMaps[] = new EntityMap("lazy","getChecklist");
+			$newEntityMaps[] = new EntityMap("eager","getChecklist");
 			$newEntityMaps[] = new EntityMap("lazy","getRooms");
 			$newEntityMaps[] = new EntityMap("lazy","getInspectionRooms");
-			$newEntityMaps[] = new EntityMap("lazy","getHasChildren");
+			$newEntityMaps[] = new EntityMap("eager","getHasChildren");
 			$newEntityMaps[] = new EntityMap("lazy","getParentIds");
 			$savedHazard->setEntityMaps($newEntityMaps);
+			
+			$chklstMaps = array();
+			$chklstMaps[] = new EntityMap("lazy","getHazard");
+			$chklstMaps[] = new EntityMap("lazy","getQuestions");
+
+			$checklist = $savedHazard->getChecklist();
+			$checklist->setEntityMaps($chklstMaps);
+			$savedHazard->setChecklist($checklist);
 			
 			return $savedHazard;
 			
