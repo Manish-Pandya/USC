@@ -4,7 +4,7 @@
 //constructor
 var SolidsContainer = function() {};
 SolidsContainer.prototype = {
-	eagerAccessors:[{method:"loadWasteBagsForPickup", boolean: 'WasteBagsForPickup'}],
+	eagerAccessors:[/*{method:"loadWasteBagsForPickup", boolean: 'WasteBagsForPickup'}*/],
 
 	WasteBagsForPickupRelationship:{
 		className:    'WasteBag',
