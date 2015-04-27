@@ -68,7 +68,13 @@ class ActionManager {
 
 	public function loginAction(){ }
 	public function logoutAction(){ }
-
+	
+	public function getCurrentUser(){
+		//todo:  when a user is logged in and in session, return the currently logged in user.
+		$userDao = $this->getDao(new User());
+		return $userDao->getById();
+	}
+	
 	public function activate(){
 		//Get the user
 		$LOG = Logger::getLogger('Action:' . __function__);

@@ -35,6 +35,7 @@ class ActionMappingFactory {
 				//Generic
 				"activate"=>new ActionMapping("activate", "", ""),
 				"deactivate"=>new ActionMapping("deactivate", "", ""),
+				"getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
 
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
