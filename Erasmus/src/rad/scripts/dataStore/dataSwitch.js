@@ -83,7 +83,7 @@ angular
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
                             
                             if(recurse){
-                                recursivelyInstantiate(instatedObjects);
+                                dataSwitch.recursivelyInstantiate(instatedObjects);
                             }
 
                             deferred.resolve(instatedObjects);
@@ -91,27 +91,13 @@ angular
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
                         });
-
-                        function recursivelyInstantiate(instatedObjects){
-                            var i = instatedObjects.length;
-                                while(i--){
-                                    for(var prop in instatedObjects[i]){
-                                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class){
-                                            instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
-                                            dataStoreManager.store(instatedObjects[i][prop]);
-                                            recursivelyInstantiate(instatedObjects[i][prop]);
-                                        }
-                                    }
-                                }
-                        }
-
                     }
 
                     return deferred.promise;
                 }
             }
 
-            dataSwitch.getObjectById = function(className, id) {
+            dataSwitch.getObjectById = function(className, id, recurse, queryParam) {
 
                 // should always return a promise
                 var deferred = $q.defer();
@@ -126,15 +112,19 @@ angular
                         deferred.resolve( dataStoreManager.getById(className, id) );
                     }
                     else {
-                        var action = genericAPIFactory.fetchActionString('getById', className);
+                        if(!queryParam)queryParam = false;
+                        var action = genericAPIFactory.fetchActionString('getById', className, queryParam);
 
                         action += '&id=' + id;
 
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            dataStoreManager.store(instatedObjects);
                             deferred.resolve(instatedObjects);
-
+                            if(recurse){
+                                dataSwitch.recursivelyInstantiate([instatedObjects]);
+                            }
                             // TODO should we cache individually-loaded things?
                             //console.log('NOTE: Recieved object of flavor ' + className +
                                     //' and id ' + id + ', but not caching it');
@@ -144,6 +134,19 @@ angular
 
                 }
                 return deferred.promise;
+            }
+
+            dataSwitch.recursivelyInstantiate = function(instatedObjects){
+                var i = instatedObjects.length;
+                while(i--){
+                    for(var prop in instatedObjects[i]){
+                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class){
+                            instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
+                            dataStoreManager.store(instatedObjects[i][prop]);
+                            dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);
+                        }
+                    }
+                }
             }
 
             return dataSwitch;
