@@ -21,19 +21,26 @@
 				<ul>
 					<ul>
 						<li ng-repeat="container in pi.SolidsContainers" ng-if="container.WasteBagsForPickup.length">
-							<h3>Waste Bags from {{container.Name}}</h3>
-							<label class="checkbox" ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">
-								<input type="checkbox" ng-true-value="yes" ng-model="bag.include"/>
-								<span class="metro-checkbox">Removed from container on {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+							<label class="checkbox">
+								<input type="checkbox" ng-true-value="yes" ng-model="container.include"/>
+								<span class="metro-checkbox"><h3>{{container.WasteBagsForPickup.length}} Waste Bags from {{container.Name}}</h3></span>
 							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag"/>
+								<span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">Empty Bag</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span></span>
+							</label>
+							<h3>Bags removed from {{container.Name}} since last pickup:</h3>
+							<p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">{{bag.Pickup_id}}
+								<span class="metro-checkbox">Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+							</p>
 						</li>
 					</ul>
 				</ul>
 			</div>
-			<div ng-if="hasPickupItems(pi.CurrentScintVialCollection)">
+			<div ng-if="hasPickupItems(pi.CurrentScintVialCollections)">
 				<h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
-			
-				<label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollection" ng-if="collection.Contents.length && !collection.Pickup_id">
+				<label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
 					<input type="checkbox" ng-true-value="yes" ng-model="collection.include"/>
 					<span class="metro-checkbox"><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span></span>
 					<div class="input-append ">
@@ -61,7 +68,7 @@
 		</div>
 	</div>
 
-	<div class="card half pickups pickup-collection">
+	<div class="card half pickups pickup-collection" ng-if="pi.Pickups.length">
 		<h3 class="card-header"><i class="icon-box-remove"></i>You requested a pickup on {{pickup.Requested_date | dateToISO}}
 		</h3>
 		<h4 class="indent">Pickup Contents:</h4>
