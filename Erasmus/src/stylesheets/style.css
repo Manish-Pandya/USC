@@ -1137,7 +1137,9 @@ img.smallLoading {
   margin: -3px 0 0 4px;
   width: 17px;
 }
-
+span.metro-checkbox h3{
+  margin-top:-4px;
+}
 /* line 960, ../sass/style.scss */
 .subHazardModal {
   min-width: 350px;
