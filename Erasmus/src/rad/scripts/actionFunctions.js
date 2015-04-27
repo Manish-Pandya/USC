@@ -909,7 +909,8 @@ angular
             {   
                 //no PI has been cached
                 if(!store.checkCollection( 'PrincipalInvestigator' )){
-                    var segment = "getRadPIById&id="+id+"&rooms=true";
+                    //var segment = "getRadPIById&id="+id+"&rooms=true";
+                    return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
@@ -1444,7 +1445,7 @@ angular
 
                                         //find the cached WasteBag with the same key_id as the one from the server, and update its properties
                                         angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
-                                        
+                                        console.log(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id));
                                         //remove this WasteBag from it's containers collection of WasteBags ready to be have a pickup requested.
                                         var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
                                         var j = container.WasteBagsForPickup.length;
