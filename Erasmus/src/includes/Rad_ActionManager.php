@@ -186,7 +186,7 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollection");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
 		
 
 		foreach($pis as $pi){
@@ -229,7 +229,7 @@ class Rad_ActionManager extends ActionManager {
 		}else{
 			$entityMaps[] = new EntityMap("eager","getRooms");
 		}
-		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollection");
+		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
@@ -240,7 +240,7 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
-		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("eager", "getScintVialCollections");
 		
 				
 		$pi->setEntityMaps($entityMaps);

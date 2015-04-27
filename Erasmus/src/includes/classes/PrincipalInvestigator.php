@@ -148,6 +148,9 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** isotopes in scint vials that are ready for pickup **/
 	private $scintVialAmounts;
+	
+	/** collections of scint vials that haven't been picked up **/
+	private $currentScintVialCollections;
 
 	public function __construct(){
 
@@ -164,7 +167,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollection");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
 		
 		
 		$this->setEntityMaps($entityMaps);
@@ -319,16 +322,16 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->scintVialCollections;
 	}
 	
-	public function getCurrentScintVialCollection(){
+	public function getCurrentScintVialCollections(){
 		//todo:  determine if this should be one-to-many or one to one.
-		
+		$LOG = Logger::getLogger(__CLASS__);
 		$svCollections = $this->getScintVialCollections();
 		
-		$currentSVCollections = array();
+		$this->currentScintVialCollection = array();
 		foreach($svCollections as $collection){
-			if($collection->getPickup_id() == null)$svCollections = array_push($currentSVCollections, $collection);
+			if($collection->getPickup_id() == null)$this->currentScintVialCollections[] = $collection;
 		}
-		return $currentSVCollections;
+		return $this->currentScintVialCollections;
 	}
 
 }
