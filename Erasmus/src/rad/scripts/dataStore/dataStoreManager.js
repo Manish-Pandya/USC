@@ -36,8 +36,17 @@ dataStoreManager.store = function( object, trusted, flavor )
                 dataStoreManager.addToCollection( object[0].Class, trusted );
                 if(!dataStore[object[0].Class]){
                     dataStore[object[0].Class] = object;
-                }else{
-                    dataStore[object[0].Class] = dataStore[object[0].Class].concat(object);
+                }
+                //this collection already exists.  add only the unique indices to it
+                else{
+                    var i = object.length;
+                    while(i--){
+                        if(!dataStoreManager.getById(object[i].Class, object[i].Key_id)){
+                            dataStore[object[0].Class][dataStore[object[0].Class].length] = object[i];
+                        }else{
+                            object[i] = dataStoreManager.getById(object[i].Class, object[i].Key_id);
+                        }
+                    }
                 }
                 dataStoreManager.mapCache(object[0].Class);
 
@@ -46,11 +55,19 @@ dataStoreManager.store = function( object, trusted, flavor )
                 if(!dataStore[flavor]){
                     dataStore[flavor] = object;
                 }else{
-                    dataStore[flavor] = dataStore[flavor].concat(object);
+                    var i = object.length;
+                    while(i--){
+                        if(!dataStoreManager.getById(object[i].Class, object[i].Key_id)){
+                            console.log(object[i].Class)
+                            dataStore[object[0].Class][dataStore[object[0].Class].length] = object[i];
+                        }else{
+                            object[i] = dataStoreManager.getById(object[i].Class, object[i].Key_id);
+                        }
+                    }
                 }
                 dataStoreManager.mapCache(dataStore[flavor]);
+                return object;
             }
-
         }
 }
 
@@ -87,7 +104,7 @@ dataStoreManager.get = function( objectFlavor )
 dataStoreManager.getById = function( objectFlavor, key_id )
 {   
     // get index of this room in the cache, no looping anymore!
-    if(dataStore[objectFlavor+'Map'][key_id] == null)return false;
+    if(!dataStore[objectFlavor+'Map'] || typeof dataStore[objectFlavor+'Map'][key_id] === 'undefined')return false;
     var location = dataStore[objectFlavor+'Map'][key_id];
     return dataStore[objectFlavor][location];
 }
@@ -162,6 +179,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
                     //do we have a whereClause in our "query"?
                     if(whereClause){
+                        console.log(whereClause)
                         var j = whereClause.length;
                         while(j--){
                             for(var prop in whereClause[j]){
@@ -256,6 +274,7 @@ dataStoreManager.addOnSave = function( object )
 }
 
 dataStoreManager.pushIntoCollection = function(object){
+    if(dataStoreManager.getById(object.Class, object.Key_id))return;
     if(!dataStore[object.Class])dataStoreManager.store([object]);
     if(!dataStoreManager.getById(object.Class, object.Key_id)){
         dataStore[object.Class].push(object);
