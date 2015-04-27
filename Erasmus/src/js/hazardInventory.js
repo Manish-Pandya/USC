@@ -423,8 +423,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
                       }else{
                         $scope.inactive = false;
                       }
-                      console.log(pi);
-                      $scope.customSelected = pi;
+                      $scope.selectPI = false;
                       $scope.buildings = hazardInventoryFactory.parseBuildings( pi.Rooms );
                       $location.search("pi", pi.Key_id);
                       piDefer.resolve( pi );
@@ -517,6 +516,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   },
   getHazards = function( pi )
   {         
+            $scope.hazards = null;          
             if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
             var rooms = pi.Rooms;
@@ -588,8 +588,6 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
-    //unset scope.PI so that when we call initiateInspection, we will eager load a new PI from the server
-    $scope.PI = {};
     $scope.inspection = {};
     $scope.buildings = [];
     $location.search("pi",'');
