@@ -83,8 +83,8 @@ h3, .win-type-large {
    line-height: 26px;
 }
 h4 /*, code, pre, samp*/ {
-   font-weight: 400;
-   font-size: 15px;
+   font-weight: 600;
+   font-size: 18px;
    line-height: 20px;
 }
 body, h5, legend {
