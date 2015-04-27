@@ -57,6 +57,9 @@
   padding: 0 0 5px;
   margin: 0;
 }
+.card .card-header.padding{
+  padding:10px;
+}
 .card h1.card-header i{
   font-size: 40px !important;
   margin: 20px 35px 0 0 !important;
@@ -244,7 +247,18 @@ div.fake-table .table-row > div{
   display: table-cell;
   padding:10px;
   font-size:16px;
+  vertical-align: middle;
 }
+div.fake-table.condensed .table-row > div{
+  display: table-cell;
+  padding:5px;
+  font-size:16px;
+}
+div.fake-table div.button-cell{
+  min-width: 112px;
+  width: 8%;
+}
+
 div.bordered .table-row > div {
   border-bottom: 1px solid #dddddd;
 }
@@ -413,8 +427,8 @@ div.use-log > .table-row > div:nth-of-type(6){
 }
 
 .pickup-collection > div > div{
-  margin:15px;
-  border-bottom:1px solid #ccc;
+  margin: 0 15px;
+  border-bottom: 1px solid #ccc;
   padding: 15px 0;
 }
 .pickup-collection > div > div ul{
@@ -436,7 +450,7 @@ div.use-log > .table-row > div:nth-of-type(6){
   padding:10px inherit;
 }
 .indent{
-  margin-left: 25px;
+  margin: 15px 25px 0;
 }
 .print{
   display:none !important;
@@ -446,7 +460,7 @@ div.use-log > .table-row > div:nth-of-type(6){
 }
 @media print {
   .no-print{
-    display: none;
+    display: none !important;
   }
   .print{
     display:block !important;
@@ -458,10 +472,43 @@ div.use-log > .table-row > div:nth-of-type(6){
 
   }
   .card{
-    padding:25px !important;
+    padding:5px !important;
     width:auto !important;
-    border:5px solid #999 !important;
+    border-bottom:5px solid #999 !important;
+    border-left:none !important;
+    box-shadow: none !important;
     page-break-inside: avoid;
+  }
+  .inactive{
+    text-decoration: line-through;
+  }
+  div.fake-table .table-row:hover{
+    background: none !important;
+    box-shadow: none !important; 
+  }
+  div.fake-table .table-row:hover td{
+    box-shadow: none !important; 
+  }
+  h1{
+    font-size: 20px;
+  }
+  .card h1.card-header i {
+    font-size: 30px !important;
+    margin: 7px 25px 0 0 !important;
+  }
+  .card.pickup-collection{
+    width:100% !important;
+  }
+  .pickup-collection > div > div {
+    margin: 0 15px;
+    border-bottom: 1px solid #ccc;
+    padding: 5px 0;
+  }
+  div.fake-table .table-row > div {
+    display: table-cell;
+    padding: 3px;
+    font-size: 16px;
+    vertical-align: middle;
   }
 }
 

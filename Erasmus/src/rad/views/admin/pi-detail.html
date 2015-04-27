@@ -1,14 +1,14 @@
 <div ng-if="pi" class="right-column">
 	<h1>{{pi.User.Name}}</h1>
 	<div class="card full auths" ng-click="af.setSelectedView('authorizations')">
-		<h3 class="card-header" ng-if="pi.Authorizations.length">
+		<h3 class="card-header padding" ng-if="pi.Authorizations.length">
 			<i class="icon-unlocked-2"></i>{{pi.User.Name}} has 
 			<span class="bold">
 				{{pi.Authorizations.length}} authorized rad material<span ng-if="pi.Authorizations.length != 1">s</span>
 			</span>
 			<a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Authorization</a>
 		</h3>
-		<h3 class="card-header auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <a class="btn btn-success left"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
+		<h3 class="card-header padding auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <a class="btn btn-success left"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
 		<div class="card-content" ng-if="selectedView == 'authorizations'">
 			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
 				<div class="table-header">
@@ -61,8 +61,8 @@
 		</ul>
 	</div>
 	<div class="card full pos" ng-click="af.setSelectedView('orders')">
-		<h3 class="card-header" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
-		<h3 class="card-header pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
+		<h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
+		<h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
 		<div class="card-content" ng-if="selectedView == 'orders'">
 			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
 				<div class="table-header">
@@ -94,8 +94,8 @@
 		</div>
 	</div>
 	<div class="card full parcels" ng-click="af.setSelectedView('parcels')">
-		<h3 class="card-header " ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
-		<h3 class="card-header parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+		<h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+		<h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
 		<div class="card-content" ng-if="selectedView == 'parcels'">
 			<div class="fake-table striped bordered" ng-if="pi.ActiveParcels.length">
 				<div class="table-header">
@@ -149,10 +149,10 @@
 		</div>
 	</div>
 	<div class="card full carboys" ng-click="af.setSelectedView('carboys')">
-		<h3 class="card-header " ng-if="pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has <span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
+		<h3 class="card-header padding " ng-if="pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has <span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
 			<a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
 		</h3>
-		<h3 class="card-header carboys" ng-if="!pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has no Carboys
+		<h3 class="card-header padding carboys" ng-if="!pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has no Carboys
 			<a ng-click="openModal('views/admin/admin-modals/carboy-assignment')"  class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
 		</h3>
 		<div class="card-content" ng-if="selectedView == 'carboys'">
@@ -177,10 +177,10 @@
 		</div>
 	</div>
 	<div class="card half solids-containers" ng-click="af.setSelectedView('containers')">
-		<h3 class="card-header " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>{{pi.User.Name}} has <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
+		<h3 class="card-header padding " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>{{pi.User.Name}} has <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
 			<a ng-click="openModal('views/admin/admin-modals/containers-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Assign Container</a>
 		</h3>
-		<h3 class="card-header solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>{{pi.User.Name}} has no Waste Recepticals
+		<h3 class="card-header padding solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>{{pi.User.Name}} has no Waste Recepticals
 			<a class="btn btn-success left"><i class="icon-box"></i>Assign Container</a>
 		</h3>
 		<div class="card-content" ng-if="selectedView == 'containers'">
