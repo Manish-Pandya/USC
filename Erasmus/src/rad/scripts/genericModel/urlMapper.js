@@ -26,7 +26,7 @@
         'ParcelUse'             : {getById: "getParcelUseById"      , getAll: "getAllParcelUses"      , save: "saveParcelUse"     },
         'ParcelUseAmount'       : {getById: ""                      , getAll: "getAllParcelUseAmounts", save: ""                  }, // parcelUseAmounts not meant to be directly retrieved or saved
         'Pickup'                : {getById: "getPickupById"         , getAll: "getAllPickups"         , save: "savePickup"        },
-        'PrincipalInvestigator' : {getById: "getPIById"             , getAll: "getAllRadPis"          , save: "savePI"            },
+        'PrincipalInvestigator' : {getById: "getRadPIById"          , getAll: "getAllRadPis"          , save: "savePI"            },
         'PurchaseOrder'         : {getById: "getPurchaseOrderById"  , getAll: "getAllPurchaseOrders"  , save: "savePurchaseOrder" },
         'SolidsContainer'       : {getById: "getSolidsContainerById", getAll: "getAllSolidsContainers", save: "saveSolidsContainer"},
         'User'                  : {getById: "getUserById"           , getAll: "getAllRadUsers"        , save: "saveUser"          },
