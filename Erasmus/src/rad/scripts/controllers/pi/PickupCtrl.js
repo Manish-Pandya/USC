@@ -13,7 +13,9 @@ angular.module('00RsmsAngularOrmApp')
   		$scope.af = af;
   		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
   			.then(
-  				function(pi){  					
+  				function(pi){  	
+  					console.log(pi);
+  					console.log(dataStore);
   					//pi.loadRooms();
   					if(pi.Pickups){
 	  					var i = pi.Pickups.length;
@@ -45,6 +47,7 @@ angular.module('00RsmsAngularOrmApp')
 
 			if(!pickup){
 				var pickup = new window.Pickup();
+				pickup.Is_active = true;
 			    pickup.Class="Pickup";
 			    pickup.Carboy_use_cycles = [];
 			    pickup.Scint_vial_collections = [];
@@ -57,39 +60,44 @@ angular.module('00RsmsAngularOrmApp')
 
 
 	    	//include proper objects in pickup
-	    	var i = pi.SolidsContainers.length;
-	    	while(i--){
-	    		var container = pi.SolidsContainers[i];
-	    		var j =  container.WasteBagsForPickup.length;
-	    		while(j--){
-	    			if( container.WasteBagsForPickup[j].include && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.WasteBagsForPickup[j]))pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
-	    		}
-	    	}
+	    	if(pi.SolidsContainers){
+		    	var i = pi.SolidsContainers.length;
+		    	while(i--){
+		    		var container = pi.SolidsContainers[i];
+		    		var j =  container.WasteBagsForPickup.length;
+		    		while(j--){
+		    			if( container.include && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.WasteBagsForPickup[j]))pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
+		    		}
+		    	}
+		    }
 
-	    	var i = pi.CurrentScintVialCollection.length;
-	    	while(i--){
-				pickup.Scint_vial_trays = pi.CurrentScintVialCollection[i].svTrays;
-	    		if( pi.CurrentScintVialCollection[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollection[i]) ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollection[i] );
-	    	}
+		    if(pi.CurrentScintVialCollections){
+		    	var i = pi.CurrentScintVialCollections.length;
+		    	while(i--){
+					pickup.Scint_vial_trays = pi.CurrentScintVialCollections[i].svTrays;
+		    		if( pi.CurrentScintVialCollections[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollections[i]) ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollections[i] );
+		    	}
+		    }
 
-	    	var i = pi.CarboyUseCycles.length;
-	    	while(i--){
-	    		if( pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i])  )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
-	    	}
-	    	console.log(pickup);
-	    	console.log($scope);
-	    	var modalData = {};
-	        modalData.pi = pi;
-	        modalData.pickup = pickup;
-	        af.setModalData(modalData);
-	        var modalInstance = $modal.open({
-	          templateUrl: 'views/pi/pi-modals/pickup-modal.html',
-	          controller: 'PickupModalCtrl'
-	        });
+		    if(pi.CarboyUseCycles){
+		    	var i = pi.CarboyUseCycles.length;
+		    	while(i--){
+		    		if( pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i])  )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
+		    	}
+		    	var modalData = {};
+		        modalData.pi = pi;
+		        modalData.pickup = pickup;
+		        af.setModalData(modalData);
+		        var modalInstance = $modal.open({
+		          templateUrl: 'views/pi/pi-modals/pickup-modal.html',
+		          controller: 'PickupModalCtrl'
+		        });
+		    }
 
 	    }
 
 	    $scope.solidsContainersHavePickups = function(containers){
+	    	if(!containers)return false;
 	    	var i = containers.length;
 	    	while(i--){
 	    		//if(!containers[i].WasteBagsForPickup.length)return false;
@@ -102,9 +110,10 @@ angular.module('00RsmsAngularOrmApp')
 	    $scope.hasPickupItems = function(collection){
 	    	//if(!collection.length)return false;
 	    	var hasPickupItems = false;
+	    	if(!collection)return false;
 	    	var i = collection.length;
 	    	while(i--){
-	    		if(!collection[i].Pickup_id && collection[i].Contents.length){
+		    		if(!collection[i].Pickup_id && collection[i].Contents.length){
 	    			hasPickupItems = true;
 	    		}
 
