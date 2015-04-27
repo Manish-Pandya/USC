@@ -1,4 +1,4 @@
-angular.module('convenienceMethodModule', ['ngRoute','ui.mask'])
+angular.module('convenienceMethodModule', ['ngRoute','ui.mask','roleBased'])
 .factory('convenienceMethods', function($http,$q){
 	return{
 		//
