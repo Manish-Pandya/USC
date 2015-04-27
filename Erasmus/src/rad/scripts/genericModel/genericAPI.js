@@ -13,7 +13,7 @@ angular
 
 		//Generic calls
 
-		api.fetchActionString = function( actionName, className ) {
+		api.fetchActionString = function( actionName, className, queryParam ) {
 			var urlList = urlMapper.getList();
 
 			if( !urlList[className] ) {
@@ -24,8 +24,9 @@ angular
 				console.log("ERROR: No action string for action '" + actionName + "' on class '" + className + "'!");
 				return false;
 			}
-
-			return urlList[className][actionName];
+			var actionString = urlList[className][actionName];
+			if(queryParam)actionString = actionString+'&'+queryParam+'=true';
+			return actionString;
 
 		}
 
