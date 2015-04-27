@@ -43,7 +43,7 @@ require_once '../top_view.php';
       <table class="table table-striped table-hover table-bordered large questionList" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
      		
         <tr class="blue-tr">
-          <th>Checklist Questions</th>
+          <th><h1>Checklist Questions<a style="margin: -5px 15px 0;" class="btn btn-large left" ng-click="showAll = !showAll"><i ng-class="{'icon-plus-2':!showAll,'icon-minus-2':showAll}"></i><span ng-if="!showAll">Show</span><span ng-if="showAll">Hide</span> All</a></h1></th>
           <th style="text-align:center">Edit</th>
         </tr>
 
@@ -56,8 +56,11 @@ require_once '../top_view.php';
             <h2 style="width:90%;"><span once-text="question.Text"></span><a ng-click="question.reveal" class=""><i ng-class="'icon-minus-2':question.reveal,'icon-plus-2':!question.reveal"></i></a>
             <i ng-click="question.show = !question.show;" ng-class="{'icon-plus success':!question.show,'icon-minus danger':question.show}"></i>
             </h2>
-            <div ng-if="question.show" style="clear:both">
-              <ul class="checklist-deficiencies" style="margin-top:60px; margin-left:66px">
+            <div ng-if="question.show || showAll" style="clear:both">
+              <h2 class="row" style="margin-top:40px; margin-left:36px; font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h2>
+              <h2 class="row"style="margin-left:36px;font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h2>
+
+              <ul class="checklist-deficiencies" style=" margin-left:66px">
                 <h3>Deficiencies</h3>
                 <li ng-repeat="def in question.Deficiencies">{{def.Text}}</li>
               </ul>
