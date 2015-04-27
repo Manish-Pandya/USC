@@ -27,7 +27,7 @@ homeApp.config(function($routeProvider){
 		);
 });
 
-var testController = function($location, $scope){
+var testController = function($location, $scope, $rootScope,roleBasedFactory){
 	console.log($location);
 
 	init();
@@ -38,7 +38,7 @@ var testController = function($location, $scope){
 	$scope.setRoute = function(route){
     	$location.path(route);
   	}
-
+	$rootScope.rbf = roleBasedFactory;
 
 }
 
