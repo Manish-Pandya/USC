@@ -1,0 +1,96 @@
+<div class="right-column">
+	<div class="card full wipe-tests" ng-repeat="parcel in parcels | needsWipeTest">
+		<h3 class="card-header padding">
+			<i class="icon-paper"></i> 
+			Package #: {{parcel.Rs_number}} ({{parcel.Quantity}}mCi of {{parcel.Isotope.Name}})
+		</h3>
+		<div>
+		<h4 class="indent-percent">Wipe Test</h4>
+		<div class="fake-table squeeze">
+			<div class="table-header">
+				<h3 ng-if="parcel.Wipe_test.length && !parcel.editWipeTest">Edit</h3>
+				<h3>Transportation Index</h3>
+				<h3>One Meter Reading</h3>
+				<h3>Box Reading</h3>
+				<h3 ng-if="!parcel.Wipe_test.length || parcel.editWipeTest">Save</h3>
+			</div>
+			<div class="table-row" ng-if="!parcel.Wipe_test.length || parcel.editWipeTest">
+
+				<div>
+					<input ng-model="ParcelWipeCopy.Transportation_index">
+				</div>
+				<div>
+					<input ng-model="ParcelWipeCopy.One_meter_background">
+				</div>
+				<div>
+					<input ng-model="ParcelWipeCopy.Box_background">
+				</div>
+				<div>
+					<a class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+				</div>
+
+			</div>
+
+			<div class="table-row" ng-if="parcel.Wipe_test.length && !parcel.editWipeTest">
+				<div>
+					<a class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+				</div>
+				<div>{{parcel.Wipe_test[0].Transportation_index}}</div>
+				<div>{{parcel.Wipe_test[0].One_meter_background}}</div>
+				<div>{{parcel.Wipe_test[0].Box_background}}</div>
+			</div>
+			
+		</div>
+
+		<h4 class="indent-percent">Smears</h4>
+		<div class="fake-table squeeze">
+			<div class="table-header">
+				<h3>Edit</h3>
+				<h3>Test Type</h3>
+				<h3>Test Location</h3>
+				<h3>Comments</h3>
+			</div>
+
+			<div class="table-row" ng-repeat="smear in parcel.Wipe_test.ParcelWipes">
+				<div>
+					<a class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+				</div>
+				<div>
+					<select ng-model="smear.Reading_type">
+						<option value="LSC">LSC</option>
+						<option value="Alpha/Beta">Alpha/Beta</option>
+						<option value="MCA">MCA</option>
+					</select>
+				</div>
+				<div>
+				 //combo box
+				</div>
+				<div>
+					<textarea ng-model="smear.Notes"></textarea>
+				</div>
+			</div>
+
+			<div class="table-row" ng-repeat="smear in parcel.Wipe_test.ParcelWipes">
+				<div>
+					<button ng-disabled="smear.edit" ng-click="" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+				</div>
+				<div>
+					<select ng-model="smear.Reading_type">
+						<option value="LSC">LSC</option>
+						<option value="Alpha/Beta">Alpha/Beta</option>
+						<option value="MCA">MCA</option>
+					</select>
+				</div>
+				<div>
+				 //combo box
+				</div>
+				<div>
+					<textarea ng-model="smear.Notes"></textarea>
+				</div>
+				<div>
+					<textarea ng-model="smear.Notes"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

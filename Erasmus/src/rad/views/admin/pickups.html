@@ -80,12 +80,15 @@
 						</p>
 					</div>
 				</div>
+				</div>
+			</div>
+			<div class="print-always" ng-show="pickup.show" ng-if="pickup.Notes">
+				<h3>Notes:<p>{{pickup.Notes}}</p></h3>
 			</div>
 		</div>
 	</div>
-</div>
- <!--
-<ul>
-	<li ng-repeat="pickup in pickups | activePickups"><pre>{{pickup | json}}</pre></li>
-</ul>
--->
+	 <!--
+	<ul>
+		<li ng-repeat="pickup in pickups | activePickups"><pre>{{pickup | json}}</pre></li>
+	</ul>
+	-->

@@ -8,11 +8,15 @@
 <div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="dashboard">
-   	<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
    	<div cg-busy="{promise:allPisPromise,message:'Loading Principal Investigator',backdrop:true}"></div>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="left-nav blueBg">
+				<ul class="sideNav">
+					<li><a class="wipe-tests" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
+					<li><a class="pickups" ng-click="af.setSelectedView('authorizations')"><i class="icon-box-remove"></i>Pickups</a></li>				
+				</ul>
+   				<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
 				<ul class="sideNav" ng-if="pi">
 					<li><a class="auths" ng-click="af.setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>
 					<li><a class="pos"  ng-click="af.setSelectedView('orders')"><i class="fa fa-usd"></i>Purchase Orders</a></li>

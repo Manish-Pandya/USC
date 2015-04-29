@@ -84,6 +84,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/admin-pickup-ctrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/wipe-test-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
@@ -102,6 +103,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/carboyIsAvailable.js"></script>
 <script type="text/javascript" src="./scripts/filters/parcelParser.js"></script>
 <script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
+<script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>
 
 
 <!-- framework -->
@@ -135,8 +137,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/WasteType.js"></script>
 <script src="./scripts/models/Room.js"></script>
 <script src="./scripts/models/ScintVialCollection.js"></script>
-
-
+<script src="./scripts/models/InspectionWipeTest.js"></script>
+<script src="./scripts/models/InspectionWipe.js"></script>
+<script src="./scripts/models/ParcelWipeTest.js"></script>
+<script src="./scripts/models/ParcelWipe.js"></script>
 
 <script>
   $(function() {
