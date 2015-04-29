@@ -111,6 +111,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'radmin.wipe-tests',
+                        Label: 'Radiation Administration -- Wipe Tests',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -643,7 +648,7 @@ angular
 
             af.getAllParcels = function( key_id )
             {
-                return dataSwitchFactory.getAllObjects('Parcel');
+                return dataSwitchFactory.getAllObjects('Parcel',true);
             }
 
 
@@ -1561,6 +1566,37 @@ angular
                         },
                         af.setError('The ' + label + ' could not added to the pickup.')
                     )
+            }
+
+            /****************************************************************************************
+            **
+            **          WIPE TESTS
+            **
+            ****************************************************************************************/
+
+            /*  Parcel Wipe Tests */
+            af.getAllParcelWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('ParcelWipeTest');
+            }
+
+            af.getAllParcelWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('ParcelWipe');
+            }
+
+            af.getAllInspectionWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('InspectionWipeTest');
+            }
+
+            af.getAllInspectionWipes = function(){
+                return dataSwitchFactory.getAllObjects('InspectionWipe');
+            }
+
+            af.getAllParcelWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('ParcelWipe');
+            }
+
+            af.getAllParcelWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('ParcelWipe');
             }
 
         	return af;
