@@ -93,19 +93,18 @@
 }
 .left-nav-typeahead{
   margin: 10px;
-  position: absolute;
   width: 180px;
 }
 .left-nav{
+  position: fixed;
   float: left;
   width: 200px;
   background: #343f51;
   height: 100%;
-  padding-top:58px;
 }
 .left-nav ul{
   list-style-type: none;
-  margin-left: 0;
+  margin: 10px 0 25px;
 }
 .left-nav ul li{
   //border-top: 1px solid #3D4756;
@@ -194,6 +193,16 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
 .left-nav ul li a.pickups:hover{
   background: rgb(91, 183, 91);
 }
+.card.wipe-tests{
+  border-left: rgb(107, 86, 179) solid 6px
+}
+.card.wipe-tests h1 i:first-child,.card.wipe-tests h2 i:first-child,.card.wipe-tests h3 i:first-child{color:rgb(107, 86, 179);margin: 7px 19px 0 0;}
+.left-nav ul li a.wipe-tests{
+  background: rgba(87, 69, 150, .64);
+}
+.left-nav ul li a.wipe-tests:hover{
+  background: rgb(107, 86, 179);
+}
 
 .left-nav ul li a i{
   margin: 4px 13px 0 5px;
@@ -208,12 +217,12 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
 
 
 .banner.dashboard-banner{
-  position: absolute;
+  position: fixed;
   width: 100%;
   left: 0;
 }
 .banner.radmin, .banner.radiation{
-  background: url('../img/radiation-large-icon.png') rgba(252, 255, 0, 0.34)
+  background: url('../img/radiation-large-icon.png') rgba(253, 254, 167, 1);
 }
 .banner{
   background: white;
@@ -226,6 +235,11 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
 div.fake-table{
   display: table;
   width:100%;
+}
+
+div.fake-table.squeeze{
+  width: 95%;
+  padding: 20px 2.5%;
 }
 
 div.fake-table .table-header{
@@ -451,6 +465,9 @@ div.use-log > .table-row > div:nth-of-type(6){
 }
 .indent{
   margin: 15px 25px 0;
+}
+.indent-percent{
+  margin: 15px 2.5% 0;
 }
 .print{
   display:none !important;
