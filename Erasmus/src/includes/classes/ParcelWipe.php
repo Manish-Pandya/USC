@@ -15,8 +15,10 @@ class ParcelWipe extends RadCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"curie_level"					=> "float",
+			"reading_type"					=> "text",
 			"notes"							=> "text",
 			"parcel_wipe_test_id"			=> "integer",
+			"location"						=> "text",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -27,12 +29,35 @@ class ParcelWipe extends RadCrud {
 			"created_user_id"				=> "integer"
 	);
 	
+	public function __construct(){
 	
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getParcel_wipe_test");
+		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$this->setEntityMaps($entityMaps);
+	
+	}
+	// Required for GenericCrud
+	public function getTableName() {
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData() {
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+	
+	// Accessors / Mutators
 	//access information
-	
-	
+
 	private $currie_level;
 	private $notes;
+	
+	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
+	private $reading_type;
+	
+	/** The location on the parcel that was wiped **/
+	private $location;
 	
 	private $parcel_wipe_test_id;
 	private $parcel_wipe_test;
@@ -60,5 +85,12 @@ class ParcelWipe extends RadCrud {
 		$this->parcel_wipe_test = $parcelWipeTestDAO->getById($this->parcel_wipe_test_id);
 		return $this->parcel_wipe_test;
 	}
+	public function getReading_type() {return $this->reading_type;}
+	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
+	
+	public function getLocation() {return $this->location;}
+	public function setLocation($location) {$this->location = $location;}
+	
+	
 	
 }

@@ -28,6 +28,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", ""),
 			"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", ""),
 			"getRadPIById"					=> new ActionMapping("getRadPIById", "", ""),
+			"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", ""),
+			"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", ""),
+			"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", ""),
+			"getParcelWipeById"				=> new ActionMapping("getRadPIById", "", ""),
 			
 			// get entity by relationship functions
 			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
@@ -71,6 +75,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveWasteBag"		=> new ActionMapping("saveWasteBag", "", ""),
 			"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", ""),
 			"saveSVCollection"	=> new ActionMapping("saveSVCollection", "", ""),
+			"saveInspectionWipeTest"	=> new ActionMapping("saveSVCollection", "", ""),
+			"saveInspectionWipe"	=> new ActionMapping("saveSVCollection", "", ""),
+			"saveParcelWipeTest"	=> new ActionMapping("saveSVCollection", "", ""),
+			"saveParcelWipe"	=> new ActionMapping("saveSVCollection", "", ""),
 				
 			// other functions
 			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),

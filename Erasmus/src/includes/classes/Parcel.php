@@ -39,6 +39,13 @@ class Parcel extends RadCrud {
 		"keyName"	=> "key_id",
 		"foreignKeyName" => "parcel_id"
 	);
+	
+	protected static $WIPE_TEST_RELATIONSHIP = array(
+			"className" => "ParcelWipeTest",
+			"tableName" => "parcel_wipe_test",
+			"keyName"	=> "key_id",
+			"foreignKeyName" => "parcel_id"
+	);
 
 
 	//access information
@@ -75,7 +82,9 @@ class Parcel extends RadCrud {
 	
 	/* collection of IsotopeAmountDTOs that went into scint vials for this parcel */
 	private $svIsotopeAmounts;
-
+	
+	/** wipe test done on this parcel **/
+	private $wipe_test;
 
 	public function __construct() {
 		// Define which subentities to load
@@ -85,6 +94,8 @@ class Parcel extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getIsotope");
 		$entityMaps[] = new EntityMap("eager", "getParcelUses");
 		$entityMaps[] = new EntityMap("eager", "getRemainder");
+		$entityMaps[] = new EntityMap("eager", "getWipe_test");
+		
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -198,6 +209,14 @@ class Parcel extends RadCrud {
 		if($svAmounts != NULL)$this->svIsotopeAmounts = $this->sumUsages($svAmounts);
 		return $this->svIsotopeAmounts;
 		
+	}
+	
+	public function getWipe_test() {
+		if($this->wipe_tests == null && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->wipe_tests = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WIPE_TEST_RELATIONSHIP));
+		}
+		return $this->wipe_tests;
 	}
 	
 }

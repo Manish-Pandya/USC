@@ -140,12 +140,12 @@ class Rad_ActionManager extends ActionManager {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
-
+	
 	function getWasteBagById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-
+	
 		$id = $this->getValueFromRequest('id', $id);
-
+	
 		if( $id !== NULL ) {
 			$dao = $this->getDao(new WasteBag());
 			return $dao->getById($id);
@@ -154,7 +154,63 @@ class Rad_ActionManager extends ActionManager {
 			return new ActionError("No request parameter 'id' was provided", 201);
 		}
 	}
-
+	
+	function getInspectionWipeTestById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new InspectionWipeTest());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
+	function getInspectionWipeById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new InspectionWipe());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
+	function getParcelWipeTestById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new ParcelWipeTest());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
+	function getParcelWipeById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new ParcelWipe());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
 	function getSolidsContainerById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -743,6 +799,70 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new SolidsContainer());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveInspectionWipeTest() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new InspectionWipeTest());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveInspectionWipe() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new InspectionWipe());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveParcelWipeTest() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new ParcelWipeTest());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveParcelWipe() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new ParcelWipe());
 			$decodedObject = $dao->save($decodedObject);
 			return $decodedObject;
 		}

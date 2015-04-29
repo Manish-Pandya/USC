@@ -33,10 +33,33 @@ class InspectionWipeTest extends RadCrud {
 			"foreignKeyName" => "inspection_wipe_test_id"
 	);
 	
+	public function __construct(){
+	
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getInspection");
+		$entityMaps[] = new EntityMap("eager","getInspection");
+		
+		$this->setEntityMaps($entityMaps);
+	
+	}
+	
+	// Required for GenericCrud
+	public function getTableName() {
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData() {
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+	
+	// Accessors / Mutators
 	//access information
 	
 	private $inspection_id;
 	private $inspection;
+	
+	private $inspection_wipes;
 	
 	public function getInspection_id(){return $this->inspection_id;}
 	public function setInspection_id($id){$this->inspection_id = $id;}
@@ -46,4 +69,17 @@ class InspectionWipeTest extends RadCrud {
 		$this->inspection = $inspectionDAO->getById($this->inspection_id);
 		return $this->inspection;
 	}
+	
+	public function getWipe_test() {
+		
+	}
+	
+	public function getInspection_wipes() {
+		if($this->inspection_wipe == null && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->inspection_wipe = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTION_WIPE_RELATIONSHIP));
+		}
+		return $this->inspection_wipe;	
+	}
+	
 }
