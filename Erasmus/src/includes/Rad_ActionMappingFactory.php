@@ -75,10 +75,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveWasteBag"		=> new ActionMapping("saveWasteBag", "", ""),
 			"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", ""),
 			"saveSVCollection"	=> new ActionMapping("saveSVCollection", "", ""),
-			"saveInspectionWipeTest"	=> new ActionMapping("saveSVCollection", "", ""),
-			"saveInspectionWipe"	=> new ActionMapping("saveSVCollection", "", ""),
-			"saveParcelWipeTest"	=> new ActionMapping("saveSVCollection", "", ""),
-			"saveParcelWipe"	=> new ActionMapping("saveSVCollection", "", ""),
+			"saveInspectionWipeTest"	=> new ActionMapping("saveInspectionWipeTest", "", ""),
+			"saveInspectionWipe"	=> new ActionMapping("saveInspectionWipe", "", ""),
+			"saveParcelWipeTest"	=> new ActionMapping("saveParcelWipeTest", "", ""),
+			"saveParcelWipe"	=> new ActionMapping("saveParcelWipe", "", ""),
 				
 			// other functions
 			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),
