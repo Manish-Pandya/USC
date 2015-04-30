@@ -3,7 +3,9 @@
 
 //constructor
 var ParcelWipe = function() {};
-ParcelWipe.prototype = {}
+ParcelWipe.prototype = {
+	className: "ParcelWipe",
+}
 
 // inherit from GenericModel
 extend(ParcelWipe, GenericModel);
