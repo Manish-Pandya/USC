@@ -241,6 +241,13 @@ div.fake-table.squeeze{
   width: 95%;
   padding: 20px 2.5%;
 }
+div.fake-table.auto-width{
+  width: auto;
+  padding: 20px 2.5%;
+}
+div.fake-table.wipe-test-table .table-row >div{
+  min-width:150px;
+}
 
 div.fake-table .table-header{
   display: table-header-group;
@@ -272,7 +279,13 @@ div.fake-table div.button-cell{
   min-width: 112px;
   width: 8%;
 }
-
+div.fake-table div.double-button-cell{
+  min-width: 112px;
+  width: 8%;
+}
+div.fake-table .table-row div input[class*="span"]{
+  min-height: 0;
+}
 div.bordered .table-row > div {
   border-bottom: 1px solid #dddddd;
 }
