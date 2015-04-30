@@ -16,24 +16,31 @@
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
                                    
-        'Authorization'         : {getById: "getAuthorizationById"  , getAll: "getAllAuthorizations"  , save: "saveAuthorization" }, // note that you're supposed to get authorizations by PI Id usually - "getAuthorizationsByPIId"
-        'Carboy'                : {getById: "getCarboyById"         , getAll: "getAllCarboys"         , save: "saveCarboy"        },
-        'CarboyUseCycle'        : {getById: "getCarboyUseCycleById" , getAll: "getAllCarboyUseCycles" , save: "saveCarboyUseCycle"},
-        'Drum'                  : {getById: "getDrumById"           , getAll: "getAllDrums"           , save: "saveDrum"          },
-        'Hazard'                : {getById: "getHazardById"         , getAll: "getAllHazards"         , save: "saveHazard"        },
-        'Isotope'               : {getById: "getIsotopeById"        , getAll: "getAllIsotopes"        , save: "saveIsotope"       },
-        'Parcel'                : {getById: "getParcelById"         , getAll: "getAllParcels"         , save: "saveParcel"        },
-        'ParcelUse'             : {getById: "getParcelUseById"      , getAll: "getAllParcelUses"      , save: "saveParcelUse"     },
-        'ParcelUseAmount'       : {getById: ""                      , getAll: "getAllParcelUseAmounts", save: ""                  }, // parcelUseAmounts not meant to be directly retrieved or saved
-        'Pickup'                : {getById: "getPickupById"         , getAll: "getAllPickups"         , save: "savePickup"        },
-        'PrincipalInvestigator' : {getById: "getRadPIById"          , getAll: "getAllRadPis"          , save: "savePI"            },
-        'PurchaseOrder'         : {getById: "getPurchaseOrderById"  , getAll: "getAllPurchaseOrders"  , save: "savePurchaseOrder" },
-        'SolidsContainer'       : {getById: "getSolidsContainerById", getAll: "getAllSolidsContainers", save: "saveSolidsContainer"},
-        'User'                  : {getById: "getUserById"           , getAll: "getAllRadUsers"        , save: "saveUser"          },
-        'WasteBag'              : {getById: "getWasteBagById"       , getAll: "getAllWasteBags"       , save: "saveWasteBag"      },
-        'WasteType'             : {getById: "getWasteTypeById"      , getAll: "getAllWasteTypes"      , save: "saveWasteType"     },
-        'ScintVialCollection'   : {getById: "getSVCollectionById"   , getAll: "getAllSVCollections"   , save: "saveSVCollection"  },
+        'Authorization'         : {getById: "getAuthorizationById"         , getAll: "getAllAuthorizations"      , save: "saveAuthorization"          }, // note that you're supposed to get authorizations by PI Id usually - "getAuthorizationsByPIId"
+        'Carboy'                : {getById: "getCarboyById"                , getAll: "getAllCarboys"             , save: "saveCarboy"                 },
+        'CarboyUseCycle'        : {getById: "getCarboyUseCycleById"        , getAll: "getAllCarboyUseCycles"     , save: "saveCarboyUseCycle"         },
+        'Drum'                  : {getById: "getDrumById"                  , getAll: "getAllDrums"               , save: "saveDrum"                   },
+        'Hazard'                : {getById: "getHazardById"                , getAll: "getAllHazards"             , save: "saveHazard"                 },
+        'Isotope'               : {getById: "getIsotopeById"               , getAll: "getAllIsotopes"            , save: "saveIsotope"                },
+        'Parcel'                : {getById: "getParcelById"                , getAll: "getAllParcels"             , save: "saveParcel"                 },
+        'ParcelUse'             : {getById: "getParcelUseById"             , getAll: "getAllParcelUses"          , save: "saveParcelUse"              },
+        'ParcelUseAmount'       : {getById: ""                             , getAll: "getAllParcelUseAmounts"    , save: ""                           }, // parcelUseAmounts not meant to be directly retrieved or saved
+        'Pickup'                : {getById: "getPickupById"                , getAll: "getAllPickups"             , save: "savePickup"                 },
+        'PrincipalInvestigator' : {getById: "getRadPIById"                 , getAll: "getAllRadPis"              , save: "savePI"                     },
+        'PurchaseOrder'         : {getById: "getPurchaseOrderById"         , getAll: "getAllPurchaseOrders"      , save: "savePurchaseOrder"          },
+        'SolidsContainer'       : {getById: "getSolidsContainerById"       , getAll: "getAllSolidsContainers"    , save: "saveSolidsContainer"        },
+        'User'                  : {getById: "getUserById"                  , getAll: "getAllRadUsers"            , save: "saveUser"                   },
+        'WasteBag'              : {getById: "getWasteBagById"              , getAll: "getAllWasteBags"           , save: "saveWasteBag"               },
+        'WasteType'             : {getById: "getWasteTypeById"             , getAll: "getAllWasteTypes"          , save: "saveWasteType"              },
+        'ScintVialCollection'   : {getById: "getSVCollectionById"          , getAll: "getAllSVCollections"       , save: "saveSVCollection"           },
+        'ParcelWipeTest'        : {getById: "getParcelWipeTestById"        , getAll: "getAllParcelWipeTests"     , save: "saveParcelWipeTest"         },
+        'ParcelWipe '           : {getById: "getParcelWipeById"            , getAll: "getAllParcelWipes"         , save: "saveParcelWipe"             },
+        'InspectionWipeTest'    : {getById: "getInspectionWipeTestById"    , getAll: "getAllInspectionWipeTests" , save: "saveInspectionWipe"         },
+        'InspectionWipe'        : {getById: "getInspectionWipeById"        , getAll: "getAllInspectionWipes"     , save: "saveSVCollection"           },
+        'MiscellaneousWipeTest' : {getById: "getMiscellaneousWipeTestById" , getAll: "getMiscellaneousWipeTests" , save: "saveMiscellaneousWipeTest"  },
+        'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
+
         // Forgot to add Base module entities - add as needed.
-        'Room'                  : {getById: "getRoomById"           , getAll: "getAllRooms"           , save: "saveRoom"          }
+        'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"               , save: "saveRoom"                   }
     };
  }
