@@ -1599,5 +1599,24 @@ angular
                 return dataSwitchFactory.getAllObjects('ParcelWipe');
             }
 
+            af.saveParcelWipeTest = function(parcel) {
+                af.clearError();
+                var copy = $rootScope.ParcelWipeTestCopy;
+                return this.save( copy )
+                    .then(
+                        function(returnedPWT){
+                            returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
+                            if(parcel.Wipe_test.length){
+                                angular.extend(parcel.Wipe_test[0], copy)
+                            }else{
+                                dataStoreManager.addOnSave($rootScope.ParcelWipeTestCopy);
+                                parcel.Wipe_test.push(returnedPWT)
+                            }
+                            parcel.Creating_wipe = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
         	return af;
 		});
