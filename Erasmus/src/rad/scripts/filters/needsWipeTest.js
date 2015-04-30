@@ -7,7 +7,6 @@ angular.module('00RsmsAngularOrmApp')
 
 	  		while(i--){
 	  			var parcel = parcels[i];
-	  			console.log(parcel);
   				if( parcel.Status && parcel.Status.toLowerCase() == "arrived" || parcel.Status.toLowerCase() == "pre-order" || parcel.Status.toLowerCase() == "" ){
   					parcelsThatNeedWipeTests.unshift(parcel);
 	  			}
