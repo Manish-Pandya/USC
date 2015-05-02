@@ -359,6 +359,27 @@ div.use-log > .table-row > div:nth-of-type(5) .row-fluid .span4 {
 div.use-log > .table-row > div:nth-of-type(6){
   width:11%;
 }
+.combobox ul{
+  min-width: 0;
+  width: 140px;
+  box-sizing: border-box;
+  border-top: none;
+  margin-top: 5px;
+  padding-left: 5px;
+  font-size: 14px;
+}
+.combobox input{
+  width:140px;
+}
+.combobox i.icon-arrow-down{
+  color:#cacaca;
+  position: absolute;
+  font-size: 27px;
+  margin-left: -31px;
+  margin-top: 7px;
+}
+
+
 @font-face {
   font-family: 'carboy';
   src:url('../font/carboy.eot?-5rvjwq');

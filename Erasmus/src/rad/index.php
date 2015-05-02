@@ -95,6 +95,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/hazardHubDirectives.js"></script>
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
+<script type="text/javascript" src="./scripts/directives/combobox.js"></script>
+
 
 
 <!-- filters -->

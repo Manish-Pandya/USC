@@ -2791,25 +2791,25 @@ table.roomList h2 {
   box-shadow: none !important;
 }
 
-a.btn i {
+.btn i {
 color:white !important;
 font-size: 17px !important;
 margin: 1px 2px !important;
 }
 
-a.btn.left i{
+.btn.left i{
   margin: 2px 6px 1px 2px !important;
 }
 
-a.btn.right i{
+.btn.right i{
   margin: 2px 2px 1px 6px !important;
 }
 
-a.btn-large.left i{
+.btn-large.left i{
   font-size:33px !important;
   margin: 2px 24px 1px 2px !important
 }
-a.btn-large.right i{
+.btn-large.right i{
   font-size:33px !important;
   margin: 2px 2px 1px 24px !important
 }

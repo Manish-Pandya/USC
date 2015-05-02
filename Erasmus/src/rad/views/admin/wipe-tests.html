@@ -67,7 +67,7 @@
 			</div>
 
 			<h4 ng-if="parcel.Wipe_test.length" class="indent-percent">Smears <a class="btn btn-success left" ng-click="editWipeParcelWipe(parcel.Wipe_test[0])"><i class="icon-plus-2"></i>Add Smear</a></h4>
-			<div class="fake-table bordered auto-width wipe-test-table" ng-if="parcel.Wipe_test[0].ParcelWipes.length && parcel.Wipe_test.length">
+			<div class="fake-table bordered auto-width" ng-if="parcel.Wipe_test[0].ParcelWipes.length && parcel.Wipe_test.length">
 				<div class="table-header">
 					<h3>Edit</h3>
 					<h3>Test Type</h3>
@@ -85,7 +85,7 @@
 						{{smear.Reading_type}}
 					</div>
 					<div ng-if="smear.edit">
-						<select ng-model="ParcelWipeCopy.Reading_type">
+						<select ng-model="ParcelWipeCopy.Reading_type" style="width:100px">
 							<option value="LSC">LSC</option>
 							<option value="Alpha/Beta">Alpha/Beta</option>
 							<option value="MCA">MCA</option>
@@ -95,21 +95,9 @@
 					<div ng-if="!smear.edit">
 						{{smear.Location}}
 					</div>
-					<div ng-if="smear.edit" style="position:relative">
-		   				<input class="left-nav-typeahead" typeahead-on-select='onSelectLocation($item, $model, $label)' type="text" ng-model="ParcelWipeCopy.Location" placeholder="Smear Location" typeahead="location as location for location in parcelWipeLocations | filter:$viewValue">
-						
-						<i class="icon-arrow-down" ng-click="showDropDown = {'display':'block'}"></i>
-						<input ng-model="ParcelWipeCopy.Location" ng-blur="showDropDown = {}"/>
-						<ul class="dropdown-menu" ng-style="showDropDown">
-							<li ng-click="ParcelWipeCopy.Location = 'Outside'">Outside</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Inside'">Inside</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Bag'">Bag</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Styrofoam'">Styrofoam</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Cylinder'">Cylinder</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Vial'">Vial</li>
-							<li ng-click="ParcelWipeCopy.Location = 'Lead Pig'">Lead Pig</li>
-						</ul>
-				
+					<div ng-if="smear.edit">
+
+						<combobox model="ParcelWipeCopy" modelprop="'Location'" click="test" options="parcelWipeLocations"/>
 					</div>
 
 					<div ng-if="!smear.edit">

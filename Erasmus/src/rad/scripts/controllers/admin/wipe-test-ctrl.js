@@ -75,6 +75,18 @@ angular.module('00RsmsAngularOrmApp')
 
     //Suggested/common locations for performing parcel wipes
     $scope.parcelWipeLocations = ['Outside','Inside','Bag','Styrofoam','Cylinder','Vial','Lead Pig'];
+    $scope.setPWCLocation = function(wipe, location){
+        wipe.Location = location;
+        wipe.showDropDown = false;
+    }
+
+    $scope.test = function(asdf){
+        if(asdf){
+            alert(asdf);
+            return
+        }
+        alert('called with no arg');
+    }
 
     $scope.openModal = function(templateName, object){
         var modalData = {};
