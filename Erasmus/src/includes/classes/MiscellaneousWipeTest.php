@@ -14,6 +14,9 @@ class MiscellaneousWipeTest extends RadCrud {
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(	
+			
+			"notes"							=> "text",
+			
 			//GenericCrud
 			"key_id"						=> "integer",
 			"is_active"						=> "boolean",
@@ -53,7 +56,11 @@ class MiscellaneousWipeTest extends RadCrud {
 	
 	// Accessors / Mutators
 	private $miscellaneous_wipes;
+	private $notes;
 
+	public function getNotes(){return $this->notes;}
+	public function setNotes($notes){$this->notes = $notes;}
+	
 	public function getMiscellaneous_wipes() {
 		if($this->miscellaneous_wipes == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
