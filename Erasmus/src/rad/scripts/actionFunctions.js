@@ -1637,5 +1637,45 @@ angular
                     )
             }
 
+            /* Miscellaneous Wipe Tests */
+            af.getAllMiscellaneousWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('MiscellaneousWipeTest', true);
+            }
+
+             af.saveMiscellaneousWipeTest = function(test) {
+                af.clearError();
+                console.log(test);
+                return this.save( test )
+                    .then(
+                        function(returnedMWT){
+                            returnedMWT = modelInflatorFactory.instateAllObjectsFromJson( returnedMWT );
+                            if(test.Key_id){
+                                angular.extend(test, returnedMWT);
+                            }else{
+                                dataStoreManager.store(returnedMWT);
+                            }
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveMiscellaneousWipe = function(wipeTest, copy, wipe) {
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function(returnedWipe){
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(wipe){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.Miscellaneous_wipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
         	return af;
 		});

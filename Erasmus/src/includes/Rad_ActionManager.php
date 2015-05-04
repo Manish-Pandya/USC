@@ -211,6 +211,34 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
+	function getMiscellaneousWipeTestById($id = NULL){
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		
+		$id = $this->getValueFromRequest('id', $id);
+		
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new MiscellaneousWipeTest());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
+	function getMiscellaneousWipeById($id = NULL){
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+	
+		$id = $this->getValueFromRequest('id', $id);
+	
+		if( $id !== NULL ) {
+			$dao = $this->getDao(new MiscellaneousWipe());
+			return $dao->getById($id);
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
+	
 	function getSolidsContainerById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -513,7 +541,21 @@ class Rad_ActionManager extends ActionManager {
 		$dao = $this->getDao(new SolidsContainer());
 		return $dao->getAll();
 	}
+	
+	function getAllMiscellaneousWipeTests(){
+		$dao = $this->getDao(new MiscellaneousWipeTest());
+		return $dao->getAll();
+	}
 
+	function getOpenMiscellaneousWipeTests(){
+		foreach($this->getAllMiscellaneousWipeTests() as $test){
+			$openTests = array();
+			if($test->getIs_active() == TRUE && $test->getClosoutDate() != '0000-00-00 00:00:00'){
+				$openTests[] = $test;
+			}
+		}
+		return $openTests;
+	}
 
 	/*****************************************************************************\
 	 *                              Save Functions                               *
@@ -863,6 +905,39 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new ParcelWipe());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveMiscellaneousWipeTest() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		$LOG->debug($decodedObject);
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new MiscellaneousWipeTest());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
+	
+	function saveMiscellaneousWipe() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new MiscellaneousWipe());
 			$decodedObject = $dao->save($decodedObject);
 			return $decodedObject;
 		}

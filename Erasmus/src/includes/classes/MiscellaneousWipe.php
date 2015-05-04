@@ -11,7 +11,7 @@ include_once 'RadCrud.php';
 
 class MiscellaneousWipe extends RadCrud {
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "parcel_wipe";
+	protected static $TABLE_NAME = "miscellaneous_wipe";
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -34,7 +34,7 @@ class MiscellaneousWipe extends RadCrud {
 	
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getParcel_wipe_test");
+		$entityMaps[] = new EntityMap("lazy","getMiscellaneous_wipe_test");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
 		$this->setEntityMaps($entityMaps);
 	
@@ -51,7 +51,7 @@ class MiscellaneousWipe extends RadCrud {
 	}
 	
 	// Accessors / Mutators
-	private $currie_level;
+	private $curie_level;
 	private $notes;
 	
 	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
@@ -63,19 +63,19 @@ class MiscellaneousWipe extends RadCrud {
 	private $miscellaneous_wipe_test_id;
 	private $miscellaneous_wipe_test;
 		
-	public function getCurrie_level() {return $this->currie_level;}
-	public function setCurrie_level($currie_level) {$this->currie_level = $currie_level;}
+	public function getCurie_level() {return $this->curie_level;}
+	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
 	
 	public function getNotes() {return $this->notes;}
 	public function setNotes($notes) {$this->notes = $notes;}
 	
-	public function getMiscellaneous_wipe_test_id() {return $this->parcel_wipe_test_id;}
-	public function setMiscellaneous_wipe_test_id($parcel_wipe_test_id) {$this->inspection_wipe_test_id = $parcel_wipe_test_id;}
+	public function getMiscellaneous_wipe_test_id() {return $this->miscellaneous_wipe_test_id;}
+	public function setMiscellaneous_wipe_test_id($miscellaneous_wipe_test_id) {$this->miscellaneous_wipe_test_id = $miscellaneous_wipe_test_id;}
 	
 	public function getMiscellaneous_wipe_test() {
-		$parcelWipeTestDAO = new GenericDAO(new MiscellaneousWipeTest());
-		$this->parcel_wipe_test = $parcelWipeTestDAO->getById($this->parcel_wipe_test_id);
-		return $this->parcel_wipe_test;
+		$miscWipeTestDAO = new GenericDAO(new MiscellaneousWipeTest());
+		$this->miscellaneous_wipe_test = $miscWipeTestDAO->getById($this->miscellaneous_wipe_test_id);
+		return $this->miscellaneous_wipe_test;
 	}
 	
 	public function getReading_type() {return $this->reading_type;}

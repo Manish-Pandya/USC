@@ -106,7 +106,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/parcelParser.js"></script>
 <script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
 <script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>
-
+<script type="text/javascript" src="./scripts/filters/miscWipeTests.js"></script>
 
 <!-- framework -->
 <script src="./scripts/genericModel/inheritance.js"></script>
@@ -143,15 +143,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/InspectionWipe.js"></script>
 <script src="./scripts/models/ParcelWipeTest.js"></script>
 <script src="./scripts/models/ParcelWipe.js"></script>
-
-<script>
-  $(function() {
-    $( ".sortable" ).sortable({
-      placeholder: "ui-state-highlight"
-    });
-    $( ".sortable" ).disableSelection();
-  });
-</script>
+<script src="./scripts/models/MiscellaneousWipeTest.js"></script>
+<script src="./scripts/models/MiscellaneousWipe.js"></script>
 </head>
 <body>
 

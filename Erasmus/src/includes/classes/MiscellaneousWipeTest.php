@@ -10,12 +10,13 @@ include_once 'RadCrud.php';
  */
 class MiscellaneousWipeTest extends RadCrud {
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "inspection_wipe_test";
+	protected static $TABLE_NAME = "miscellaneous_wipe_test";
 	
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(	
 			
 			"notes"							=> "text",
+			"closeout_date"					=> "date",
 			
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -57,6 +58,8 @@ class MiscellaneousWipeTest extends RadCrud {
 	// Accessors / Mutators
 	private $miscellaneous_wipes;
 	private $notes;
+	
+	private $closeout_date;
 
 	public function getNotes(){return $this->notes;}
 	public function setNotes($notes){$this->notes = $notes;}
@@ -68,4 +71,8 @@ class MiscellaneousWipeTest extends RadCrud {
 		}
 		return $this->miscellaneous_wipes;
 	}
+	
+	public function getCloseout_date() {return $this->closeout_date;}
+	public function setCloseout_date($closeout_date) {$this->closeout_date = $closeout_date;}
+	
 }

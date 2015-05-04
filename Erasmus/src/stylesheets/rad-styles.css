@@ -34,6 +34,14 @@
   width:100%;
   margin-right: 0;
 }
+.card.one-fourth{
+  width:23.6666666%;
+  margin-right:1.33333%;
+}
+.card.three-fourths{
+  width:73.666666666%;
+  margin-right:1.33333%;
+}
 .card.two-thirds{
   width:62%;
   margin-right:1.33333%;
@@ -365,11 +373,13 @@ div.use-log > .table-row > div:nth-of-type(6){
   box-sizing: border-box;
   border-top: none;
   margin-top: 5px;
-  padding-left: 5px;
+  padding-left: 0px;
   font-size: 14px;
 }
 .combobox input{
-  width:140px;
+  line-height: normal;
+  padding: 5px;
+  width: 140px;
 }
 .combobox i.icon-arrow-down{
   color:#cacaca;
