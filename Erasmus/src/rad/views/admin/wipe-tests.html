@@ -4,6 +4,8 @@
 <div cg-busy="{promise:MiscellaneousWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
+	<h1>Package Wipe Tests</h1>
+	<h3 ng-if="!wipeTestParcels.length">No packages need wipe tests.</h3>
 	<div class="card two-thirds wipe-tests" ng-repeat="parcel in (wipeTestParcels = (parcels | needsWipeTest))">
 		<h3 class="card-header padding" ng-click="parcel.show = !parcel.show">
 			<i class="icon-paper"></i> 
@@ -67,7 +69,7 @@
 			</div>
 
 			<h4 ng-if="parcel.Wipe_test.length" class="indent-percent">Smears <a class="btn btn-success left" ng-click="editWipeParcelWipe(parcel.Wipe_test[0])"><i class="icon-plus-2"></i>Add Smear</a></h4>
-			<div class="fake-table bordered auto-width" ng-if="parcel.Wipe_test[0].ParcelWipes.length && parcel.Wipe_test.length">
+			<div class="fake-table bordered auto-width" ng-if="parcel.Wipe_test[0].Parcel_wipes.length && parcel.Wipe_test.length">
 				<div class="table-header">
 					<h3>Edit</h3>
 					<h3>Test Type</h3>
@@ -76,9 +78,9 @@
 					<h3></h3>
 				</div>
 
-				<div class="table-row" ng-repeat="smear in parcel.Wipe_test[0].ParcelWipes">
+				<div class="table-row" ng-repeat="smear in parcel.Wipe_test[0].Parcel_wipes">
 					<div>
-						<button ng-disabled="smear.edit" ng-click="editWipeParcelWipe(parcel.Wipe_test[0], smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+						<a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editWipeParcelWipe(parcel.Wipe_test[0], smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
 					</div>
 
 					<div ng-if="!smear.edit">
@@ -96,7 +98,6 @@
 						{{smear.Location}}
 					</div>
 					<div ng-if="smear.edit">
-
 						<combobox model="ParcelWipeCopy" modelprop="'Location'" click="test" options="parcelWipeLocations"/>
 					</div>
 
@@ -109,12 +110,14 @@
 
 					<div style="min-width:0;">
 						<span ng-if="smear.edit">
-							<a class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
-							<a class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+							<a class="btn btn-success left" ng-click="af.saveParcelWipe(parcel.Wipe_test[0], ParcelWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+							<a class="btn btn-danger left" ng-click="cancelParcelWipeEdit(smear,parcel.Wipe_test[0])"><i class="icon-cancel-2"></i>Cancel</a>
 						</span>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<h1>Miscellaneous Wipe Tests</h1>
+	<h3 ng-if="!wipeTestParcels.length">No packages need wipe tests.</h3>
 </div>

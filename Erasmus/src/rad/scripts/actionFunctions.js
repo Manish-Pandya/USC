@@ -1606,13 +1606,32 @@ angular
                     .then(
                         function(returnedPWT){
                             returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
-                            if(parcel.Wipe_test.length){
+                            if(parcel.Wipe_test.length.Key_id){
                                 angular.extend(parcel.Wipe_test[0], copy)
                             }else{
-                                dataStoreManager.addOnSave($rootScope.ParcelWipeTestCopy);
+                                dataStoreManager.store(returnedPWT);
                                 parcel.Wipe_test.push(returnedPWT)
                             }
                             parcel.Creating_wipe = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveParcelWipe = function(wipeTest, copy, wipe) {
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function(returnedWipe){
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(wipe){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.Parcel_wipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
                         },
                         af.setError('The Wipe Test could not be saved')
                     )

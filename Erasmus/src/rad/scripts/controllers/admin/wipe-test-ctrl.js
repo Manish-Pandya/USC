@@ -51,13 +51,12 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.ParcelWipeTestCopy = {}
     }
 
-
     $scope.editWipeParcelWipe = function(wipeTest, wipe){
         $rootScope.ParcelWipeCopy = {}
-        if(!wipeTest.ParcelWipes)wipeTest.ParcelWipes = [];
-        var i = wipeTest.ParcelWipes.length;
+        if(!wipeTest.Parcel_wipes)wipeTest.Parcel_wipes = [];
+        var i = wipeTest.Parcel_wipes.length;
         while(i--){
-            $scope.wipeTest.ParcelWipes[i].edit = false;
+            wipeTest.Parcel_wipes[i].edit = false;
         }
 
         if(!wipe){
@@ -65,7 +64,8 @@ angular.module('00RsmsAngularOrmApp')
             $rootScope.ParcelWipeCopy.Parcel_wipe_test_id = wipeTest.Key_id
             $rootScope.ParcelWipeCopy.Class = "ParcelWipe";
             $rootScope.ParcelWipeCopy.edit = true;
-            wipeTest.ParcelWipes.unshift($rootScope.ParcelWipeCopy);
+            console.log($rootScope.ParcelWipeCopy);
+            wipeTest.Parcel_wipes.unshift($rootScope.ParcelWipeCopy);
         }else{
             wipe.edit = true;
             af.createCopy(wipe);
@@ -73,12 +73,19 @@ angular.module('00RsmsAngularOrmApp')
         
     }
 
+    $scope.cancelParcelWipeEdit = function(wipe,test){
+        wipe.edit = false;
+        $rootScope.ParcelWipeCopy = {};
+        var i = test.Parcel_wipes.length;
+        while(i--){
+            if(!test.Parcel_wipes[i].Key_id){
+                test.Parcel_wipes.splice(1,i);
+            }
+        }
+    }
+
     //Suggested/common locations for performing parcel wipes
     $scope.parcelWipeLocations = ['Outside','Inside','Bag','Styrofoam','Cylinder','Vial','Lead Pig'];
-    $scope.setPWCLocation = function(wipe, location){
-        wipe.Location = location;
-        wipe.showDropDown = false;
-    }
 
     $scope.test = function(asdf){
         if(asdf){
