@@ -6,13 +6,12 @@ angular
             scope: {
                 options: "=options",
                 model: "=model",
-                click: "=click",
                 modelProp: "=modelprop"
             },
             template: '<span style="position:relative" class="combobox">'+
                         '<input ng-model="model[modelProp]" ng-focus="model.showDropDown = true"/><i class="icon-arrow-down"></i>'+
                             '<ul style="width:140px" class="dropdown-menu show" ng-if="model.showDropDown">'+
-                                '<li ng-repeat="option in options" ng-click="onClick(option);">{{option}}</li>'+
+                                '<li ng-repeat="option in options"><a ng-click="onClick(option);">{{option}}</a></li>'+
                             '</ul>'+
                        '</span>',
             replace: true,
@@ -27,10 +26,8 @@ angular
                 });
 
                 scope.onClick = function (option) {
-                    if (typeof (scope.click) == 'function') {
-                        scope.model[scope.modelProp] = option;
-                        scope.model.showDropDown = false
-                    }
+                    scope.model[scope.modelProp] = option;
+                    scope.model.showDropDown = false
                 }
             }
         }
