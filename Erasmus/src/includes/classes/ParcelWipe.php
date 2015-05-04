@@ -50,7 +50,7 @@ class ParcelWipe extends RadCrud {
 	// Accessors / Mutators
 	//access information
 
-	private $currie_level;
+	private $curie_level;
 	private $notes;
 	
 	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
@@ -71,14 +71,14 @@ class ParcelWipe extends RadCrud {
 	public function getRoom_id() {return $this->room_id;}
 	public function setRoom_id($room_id) {$this->room_id = $room_id;}
 	
-	public function getCurrie_level() {return $this->currie_level;}
-	public function setCurrie_level($currie_level) {$this->currie_level = $currie_level;}
+	public function getCurie_level() {return $this->curie_level;}
+	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
 	
 	public function getNotes() {return $this->notes;}
 	public function setNotes($notes) {$this->notes = $notes;}
 	
 	public function getParcel_wipe_test_id() {return $this->parcel_wipe_test_id;}
-	public function setParcel_wipe_test_id($parcel_wipe_test_id) {$this->inspection_wipe_test_id = $parcel_wipe_test_id;}
+	public function setParcel_wipe_test_id($parcel_wipe_test_id) {$this->parcel_wipe_test_id = $parcel_wipe_test_id;}
 	
 	public function getParcel_wipe_test() {
 		$parcelWipeTestDAO = new GenericDAO(new ParcelWipeTest());
