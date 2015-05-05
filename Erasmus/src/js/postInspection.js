@@ -1,28 +1,4 @@
 angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate','ngRoute','once'])
-/*
-.directive('htmlText', function(){
-  return {
-    'restrict': 'A',
-    'require': 'ngModel',
-    'link': function(scope,element,attrs,model) {
-      console.log(model);
-      model.$formatters.push(function(val){
-        return val.Text;
-      });
-
-      model.$parsers.push(function(val){
-        model.$modelValue.Text = val;
-      });
-    } 
-  };
-})
-*/
-.run(function($rootScope, $templateCache) {
-   $rootScope.$on('$viewContentLoaded', function() {
-      $templateCache.removeAll();
-   });
-})
-
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -76,6 +52,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   var inspection = {};
   factory.recommendations = [];
   factory.observations = [];
+  factory.modalData = {};
 
   factory.getInspectionData = function(url){
     //return convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById3&id=132&callback=JSON_CALLBACK', this.onFailGet);
@@ -133,6 +110,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
         checklistHolder.biologicalHazards.checklists.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
+        console.log(checklistHolder.biologicalHazards.checklists);
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
@@ -200,7 +178,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
   factory.notAnswered = function(question)
   {
-      if(question.Responses && !question.Responses.Answer)return true
+      if(!question.Responses || question.Responses && !question.Responses.Answer)return true
       return false;
   }
 
@@ -232,28 +210,35 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 
   //calculate the inspection's scores
   factory.calculateScore = function(inspection){
+    console.log(inspection);
     if(!inspection.score)inspection.score = {};
     inspection.score.itemsInspected = 0;
     inspection.score.deficiencyItems = 0;
     inspection.score.compliantItems = 0;
     angular.forEach(inspection.Checklists, function(checklist, key){
-      angular.forEach(checklist.Questions, function(question, key){
-        inspection.score.itemsInspected++;
-        if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
-          inspection.score.deficiencyItems++;
-          var i = question.Responses.DeficiencySelections.length;
-          while(i--){
-            console.log(i);
-            if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
-              console.log(question.Responses);
-              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
-              factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
+      if(checklist.Is_active != false){
+        console.log('checklist active')
+        angular.forEach(checklist.Questions, function(question, key){
+          if(question.Responses && question.Responses.Answer){
+            console.log('question had responses');
+            inspection.score.itemsInspected++;
+            if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
+              inspection.score.deficiencyItems++;
+              var i = question.Responses.DeficiencySelections.length;
+              while(i--){
+                console.log(i);
+                if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
+                  console.log(question.Responses);
+                  factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
+                  factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
+                }
+              }
+            }else /*if(question.Responses && question.Responses.Answer)*/{
+              inspection.score.compliantItems++;
             }
           }
-        }else /*if(question.Responses && question.Responses.Answer)*/{
-          inspection.score.compliantItems++;
-        }
-      });
+        });
+      }
     });
 
     //javascript does not believe that 0 is a number in spite of my long philosophical debates with it
@@ -340,11 +325,39 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
           return false;
   }
 
+  factory.setModalData = function(data){
+    factory.modalData = convenienceMethods.copyObject(data);
+  }
+
+  factory.getModalData = function(){
+    return factory.modalData;
+  }
+
+
+  factory.submitCap = function(inspection){
+    var inspectionDto = angular.copy(inspection);
+    inspectionDto.Cap_submitted_date = convenienceMethods.setMysqlTime(Date());
+    console.log(inspectionDto);
+    var url = "../../ajaxaction.php?action=saveInspection";
+    var deferred = $q.defer();
+
+    convenienceMethods.saveDataAndDefer(url, inspectionDto).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject(promise);
+      }
+    );
+    return deferred.promise
+  }
+
   return factory;
 });
 
 mainController = function($scope, $location, postInspectionFactory,convenienceMethods){
   $scope.route = $location.path();
+  $scope.loc = $location.search();
   $scope.setRoute = function(route){
     $location.path(route);
     $scope.route = route;
@@ -421,7 +434,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
   }
 
   function isAnswered(question){
-    if(question.Responses && question.Responses.Answer)return true;
+    if(question.Responses && (question.Responses.Answer || question.Responses.Recommendations.length))return true;
     return false;
   }
 
@@ -437,7 +450,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       $scope.doneLoading = false;
       convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
         .then(function(promise){
-          $scope.inspection = promise.data;
+          $rootScope.inspection = promise.data;
           if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
           console.log(promise.data);
           //set view init values for email
@@ -447,7 +460,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
           $scope.doneLoading = true;
           // call the manager's setter to store the inspection in the local model
-          postInspectionFactory.setInspection($scope.inspection);
+          postInspectionFactory.setInspection($rootScope.inspection);
           $scope.doneLoading = true;
         });
     }else{
@@ -560,12 +573,12 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   }
 
   function onFailSetInspecitonClosed(){
-    alert("There was an issue when the system tried to set the Inspection's closeout date");
+    alert("There was an issue when the system tried to set the Inpsection's closeout date");
   }
 
 }
 
-inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory,$rootScope){
+inspectionReviewController = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal){
   $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
   function init(){
     if($location.search().inspection){
@@ -578,7 +591,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
             //set the inspection date as a javascript date object
             if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
-            $scope.inspection = postInspectionFactory.calculateScore(promise.data);
+            $rootScope.inspection = postInspectionFactory.calculateScore(promise.data);
             $scope.doneLoading = true;
             // call the manager's setter to store the inspection in the local model
             postInspectionFactory.setInspection($scope.inspection);
@@ -593,13 +606,15 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             //postInspection factory's organizeChecklists method will return a list of the checklists for this inspection
             //organized by parent hazard
             //each group of checklists will have a Questions property containing all questions for each checklist in a given category
-            $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
+            $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
+            getIsReadyToSubmit();
           });
       }else{
         $scope.inspection = postInspectionFactory.getInspection();
         $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
         $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
         $scope.doneLoading = true;
+        getIsReadyToSubmit();
       }
       $scope.options = ['Incomplete','Pending','Complete'];
     }else{
@@ -694,5 +709,239 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       return false;
   }
 
+  $scope.openModal = function(question, def){
+    console.log('test')
+    var modalData = {
+      question: question,
+      deficiency: def
+    }
+    postInspectionFactory.setModalData(modalData);
+    var modalInstance = $modal.open({
+      templateUrl: 'post-inspection-templates/corrective-action-modal.html',
+      controller: modalCtrl
+    });
 
+
+    modalInstance.result.then(function (returnedCA) {
+      if(def.CorrectiveActions.length && def.CorrectiveActions[0].Key_id){
+          angular.extend(def.CorrectiveActions[0], returnedCA)
+      }else{
+          def.CorrectiveActions.push(returnedCA);
+      }
+      getIsReadyToSubmit();
+    });
+  }
+
+  $scope.submit = function(){
+     var modalInstance = $modal.open({
+      templateUrl: 'post-inspection-templates/submit-cap.html',
+      controller: modalCtrl
+    });
+
+    modalInstance.result.then(function (returnedInspection){
+      $scope.readyToSubmit = false;
+      angular.extend($rootScope.inspection, returnedInspection);
+      postInspectionFactory.setInspection($rootScope.inspection);
+    });
+  }
+
+  function getIsReadyToSubmit(){
+      var totals = 0;
+      var pendings = 0;
+      var completes = 0;
+      console.log('adfasdfasdfasdfasdf')
+      console.log($scope.questionsByChecklist.biologicalHazards)
+      var i = $scope.questionsByChecklist.biologicalHazards.Questions.length;
+      while(i--){
+        var question = $scope.questionsByChecklist.biologicalHazards.Questions[i];
+        if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+            var j = question.Responses.DeficiencySelections.length;
+            while(j--){
+              totals++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+            }
+        }
+      }
+
+      var i = $scope.questionsByChecklist.chemicalHazards.Questions.length;
+      while(i--){
+        var question = $scope.questionsByChecklist.chemicalHazards.Questions[i];
+        console.log(question);
+        if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+            var j = question.Responses.DeficiencySelections.length;
+            while(j--){
+              totals++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+            }
+        }
+      }
+
+      var i = $scope.questionsByChecklist.generalHazards.Questions.length;
+      while(i--){
+        var question = $scope.questionsByChecklist.generalHazards.Questions[i];
+        console.log(question);
+        if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+            var j = question.Responses.DeficiencySelections.length;
+            while(j--){
+              totals++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+            }
+        }
+      }
+      if($scope.questionsByChecklist.radiationHazards.Questions){
+          var i = $scope.questionsByChecklist.radiationHazards.Questions.length;
+          while(i--){
+            var question = $scope.questionsByChecklist.radiationHazards.Questions[i];
+            console.log(question);
+            if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+                var j = question.Responses.DeficiencySelections.length;
+                while(j--){
+                  totals++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+                }
+            }
+          }
+        }
+
+      $rootScope.pendings = pendings;
+      $rootScope.completes = completes;
+      if(pendings + completes == totals){
+        if($rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00')$scope.readyToSubmit = true;
+        var modalInstance = $modal.open({
+          templateUrl: 'post-inspection-templates/submit-cap.html',
+          controller: modalCtrl
+        });
+
+        modalInstance.result.then(function (returnedInspection){
+          $scope.readyToSubmit = false;
+          angular.extend($rootScope.inspection, returnedInspection);
+          postInspectionFactory.setInspection($rootScope.inspection);
+        });
+      }
+  }
+
+  $scope.complete = function(action){
+    var copy = convenienceMethods.copyObject(action);
+    action.dirty = true;
+    copy.Completion_date = convenienceMethods.setMysqlTime(Date());
+    copy.Status = 'Complete';
+    $scope.error=''
+    //call to factory to save, return, then close modal, passing data back
+    postInspectionFactory.saveCorrectiveAction(copy)
+      .then(
+        function(returnedAction){
+          action.dirty = false;
+          angular.extend(action, returnedAction);
+        },
+        function(){
+          action.dirty = false;
+          $scope.error = "The corrective action could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
+
+}
+
+modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance){
+  var data = postInspectionFactory.getModalData();
+  $scope.options = ['Incomplete','Pending','Complete'];
+  $scope.validationError='';
+  if(data.deficiency && !data.deficiency.CorrectiveActions.length){
+    data.deficiency.CorrectiveActions[0] = {
+      Class:"CorrectiveAction",
+      Deficiency_selection_id: data.deficiency.Key_id,
+      Status: "Incomplete"
+    }
+  }
+  if(data){
+    $scope.question = data.question;
+    $scope.def      = data.deficiency;
+  }
+
+  $scope.saveCorrectiveAction = function(copy){
+    $scope.dirty = true;
+    if(copy.view_Promised_date)copy.Promised_date = convenienceMethods.setMysqlTime(copy.view_Promised_date);
+    if(copy.view_Completion_date)copy.Completion_date = convenienceMethods.setMysqlTime(copy.view_Completion_date);
+
+    $scope.validationError=''
+    //call to factory to save, return, then close modal, passing data back
+    postInspectionFactory.saveCorrectiveAction(copy)
+      .then(
+        function(returnedAction){
+          $scope.dirty = false;
+          $modalInstance.close(returnedAction);
+        },
+        function(){
+          $scope.dirty = false;
+          $scope.validationError = "The corrective action could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
+
+  $scope.getIsValid = function(){
+
+    if($scope.def.CorrectiveActions 
+      && $scope.def.CorrectiveActions.length
+      && $scope.def.CorrectiveActions[0].Text
+      ){
+
+        if($scope.def.CorrectiveActions[0].Status == "Pending" && $scope.def.CorrectiveActions[0].view_Promised_date){
+            $scope.isValid = true;
+        }
+
+        if($scope.def.CorrectiveActions[0].Status == "Complete" && $scope.def.CorrectiveActions[0].view_Completion_date){
+            $scope.isValid = true;
+        }
+    }
+  }
+
+  $scope.cancel = function(){
+    $modalInstance.dismiss();
+  }
+
+  //parse function to ensure that users cannot set the date for a corrective action before the date of the inspection
+  $scope.afterInspection = function(d){
+    var calDate = Date.parse(d);
+    //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
+    var inspectionDate = Date.parse(postInspectionFactory.getInspection().view_Date_started)-864000;
+    var now = new Date();
+    if(calDate>=inspectionDate){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.todayOrAfter = function(d){
+    var calDate = Date.parse(d);
+    //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
+    var now = new Date(),
+    then = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,0,0),
+    diff = now.getTime() - then.getTime()
+
+    var today = Date.parse(now)-diff;
+     if(calDate>=today){
+      return true;
+    }
+    return false;
+  }
+
+  $scope.closeOut = function(){
+    postInspectionFactory.submitCap($rootScope.inspection)
+      .then(
+        function(inspection){
+          $modalInstance.close(inspection);
+        },
+        function(){
+          $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
+        }
+      );
+  }
 }

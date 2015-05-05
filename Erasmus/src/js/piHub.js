@@ -169,15 +169,26 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 	}
 
 	$scope.removeRoom = function(room){
-		room.IsDirty = true;
-		roomDto = {
-		  Class: "RelationshipDto",
-	      relation_id: room.Key_id,
-	      master_id: $scope.PI.Key_id,
-	      add: false
-	    }
+		var modalInstance = $modal.open({
+	      templateUrl: 'roomConfirmation.html',
+	      controller: roomConfirmationController,
+	      resolve: {
+	        PI: function () {
+	          return $scope.PI;
+	        },
+	        room: function(){
+	        	return room;
+	        }
+	      }
+	    });
 
-	    convenienceMethods.updateObject( roomDto, room, onRemoveRoom, onFailRemoveRoom, '../../ajaxaction.php?action=savePIRoomRelation' );
+	    modalInstance.result.then(function (PI) {
+	     	$scope.PI.Rooms = [];
+	     	$scope.PI.Rooms = PI.Rooms;
+	    }, function () {
+
+	      //$log.info('Modal dismissed at: ' + new Date());
+	    });
 	}
 
 	function onRemoveRoom(returned, room){
@@ -508,6 +519,45 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 
 	function onFailRemoveUser(){
 		alert('There was a problem trying to save the user.');
+	}
+
+}
+roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInstance, convenienceMethods, $q){
+	$scope.PI = PI;
+	$scope.room = room
+	$scope.confirm = function(){
+		$scope.saving = true;
+		
+		$scope.error=false;
+
+		roomDto = {
+		  Class: "RelationshipDto",
+	      relation_id: room.Key_id,
+	      master_id: PI.Key_id,
+	      add: false
+	    }
+
+	    var url = '../../ajaxaction.php?action=savePIRoomRelation';
+		var deferred = $q.defer();
+		convenienceMethods.saveDataAndDefer(url, roomDto).then(
+			function(promise){
+				deferred.resolve(promise);
+				var idx = convenienceMethods.arrayContainsObject(PI.Rooms, room, null, true);
+				PI.Rooms.splice(idx,1);
+				$scope.saving = false;
+				$modalInstance.close(PI);
+			},
+			function(promise){
+				$scope.saving = false;
+				$scope.error = "The room could not be removed.  Please check your internet connection and try again."
+				deferred.reject();
+			}
+		);	
+
+	}
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
 	}
 
 }

@@ -1,5 +1,11 @@
 var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule','once'])
-
+.directive('tableRow', ['$window', function($window) {
+    return {
+      restrict : 'A',
+      link : function(scope, element, attributes) {
+      }
+    }
+ }])
 .config(function($routeProvider){
   $routeProvider
     .when('/pis', 
@@ -32,7 +38,87 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
     );
 })
-.factory('userHubFactory', function(convenienceMethods,$q){
+.filter('isPI',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var pis = [];             /* more code, to make code better  */
+    var i = users.length
+    while(i--){
+      if(userHubFactory.hasRole(users[i], 'principal investigator')){
+        if(users[i].PrincipalInvestigator){
+          userHubFactory.getBuildingsByPi(users[i].PrincipalInvestigator);
+          pis.unshift(users[i]);
+        }else{
+          users[i].isUncat = true;
+        }
+      }
+    }
+    return pis;
+  }
+}])
+.filter('isPersonel',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+    var i = users.length
+    while(i--){
+      var shouldPush = false;
+      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
+        shouldPush = true;
+      }
+      
+      if(userHubFactory.hasRole(users[i], 'inspector')){
+        if(users[i].Inspector){
+          shouldPush = true;
+        }else{
+          users[i].isUncat = true;
+        }
+      }
+      if(shouldPush)personnel.unshift(users[i]);
+    }
+    return personnel;
+  }
+}])
+.filter('isContact',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var contacts = [];
+    var i = users.length
+    while(i--){
+      if( userHubFactory.hasRole(users[i], 'contact') ){
+        userHubFactory.getSupervisor(users[i]);
+        contacts.unshift(users[i]);
+      }
+    }
+    return contacts;
+  }
+}])
+.filter('isUncat',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var uncat = [];
+    var i = users.length
+    while(i--){
+      if(!users[i].Roles || !users[i].Roles.length){
+        uncat.unshift(users[i]);
+      }
+      
+      if(userHubFactory.hasRole(users[i], 'principal investigator')){
+        if(!users[i].PrincipalInvestigator){
+          uncat.unshift(users[i]);
+        }
+      }
+
+      if(userHubFactory.hasRole(users[i], 'inspector')){
+         if(!users[i].Inspector){
+          uncat.unshift(users[i]);
+        }
+      }
+    }
+    return uncat;
+  }  
+}])
+.factory('userHubFactory', function(convenienceMethods,$q, $rootScope){
 
   var factory = {};
   factory.roles = [];
@@ -44,39 +130,24 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
   factory.modalData = {};
   factory.uncategorizedUsers = [];
 
-  factory.setPIs = function(pis)
-  {
-    this.pis = pis;
+  factory.getSupervisor = function(user){
+    var i = factory.users.length;
+    while(i--){
+      if(factory.users[i].PrincipalInvestigator){
+          if(user.Supervisor_id == factory.users[i].PrincipalInvestigator.Key_id)user.Supervisor = factory.users[i];
+      }
+    }
   }
 
   factory.getPIs = function(){
-    return this.pis;
-  }
-
-  factory.getAllPis = function()
-  {
-    
-    //if we don't have a the list of pis, get it from the server
-    var deferred = $q.defer();
-
-    //lazy load
-    if(factory.pis.length){
-      deferred.resolve(factory.pis);
-      return deferred.promise;
+    var pis = [];
+    var i = factory.users.length;
+    while(i--){
+      if(factory.users[i].PrincipalInvestigator)pis.unshift(factory.users[i]);
     }
-
-    var url = '../../ajaxaction.php?action=getPisForUserHub&callback=JSON_CALLBACK';
-      convenienceMethods.getDataAsDeferredPromise(url).then(
-      function(pis){
-        factory.pis = pis;
-        deferred.resolve(pis);
-      },
-      function(promise){
-        deferred.reject();
-      }
-    );
-    return deferred.promise;
+    return pis;
   }
+
 
   factory.getAllUsers = function()
   {
@@ -88,7 +159,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         return deferred.promise;
       }
 
-      var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
+      var url = '../../ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(users){
           factory.users = users;
@@ -101,40 +172,11 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       return deferred.promise;
   }
 
-
-  factory.getLabContacts = function()
-  {
-    this.labContacts = [];
-    var i = this.users.length;
-    while(i--){
-      var user = factory.users[i];
-      if(factory.hasRole(user, 'Lab Contact')){
-        factory.getRelation(user, 'Supervisor', 'Supervisor_id', factory.pis );
-        factory.labContacts.push(user);
-      }
-    }
-
-    return this.labContacts;
-  }
-
-  factory.getPersonnel = function()
-  {
-    this.personnel = [];
-    var i = this.users.length;
-    while(i--){
-      var user = factory.users[i];
-      if(factory.hasRole(user, 'admin') || factory.hasRole(user, 'inspector') || factory.hasRole(user, 'radiation'))factory.personnel.push(user);
-    }
-
-    return this.personnel;
-  }
-
   factory.hasRole = function(user, role)
   {
     var j = user.Roles.length;
     while(j--){
       var userRole = user.Roles[j];
-      console.log(role);
       if(userRole.Name.toLowerCase().indexOf(role.toLowerCase())>-1) return true
     }
     return false;
@@ -156,9 +198,17 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
   }
 
+  factory.getUserByPIId = function(id){
+      var i = factory.users.length;
+      while(i--){
+        if(factory.users[i].PrincipalInvestigator && factory.users[i].PrincipalInvestigator.Key_id == id)return factory.users[i];
+      }
+  }
+
   factory.getBuildingsByPi = function(pi)
   {
       pi.Buildings = [];
+      if(!pi.Rooms || !pi.Rooms.length)return;
       var i = pi.Rooms.length;
       var buildingIds = [];
 
@@ -237,6 +287,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       );
       return deferred.promise;
   }
+
   factory.getAllDepartments = function()
   {
       var deferred = $q.defer();
@@ -277,7 +328,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
   }
 
   factory.savePIDepartmentRelations = function(piId, departmentIds){
-    var url = "../../ajaxaction.php?action=savePIDepartmentRelations&piId="+piId+$.param({departmentIds:departmentIds});
+    var url = "../../ajaxaction.php?callback=JSON_CALLBACK&action=savePIDepartmentRelations&piId="+piId+'&'+$.param({departmentIds:departmentIds});
     var deferred = $q.defer();
       convenienceMethods.getDataAsDeferredPromise(url)
         .then(
@@ -351,47 +402,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       )
   }
 
-  factory.getUncategorizedUsers = function()
-  {
-      var defer = $q.defer();
-      factory.uncategorizedUsers = [];
-      var i = this.users.length;
-      while(i--){
-          var user = this.users[i];
-          if(!user.Roles.length){
-            factory.uncategorizedUsers.push(user);
-        }
-        else{
-            var j = user.Roles.length;
-            while(j--){
-              var role =  user.Roles[j];
-              if(role.Name.toLowerCase().indexOf('rincipal')>-1){
-                var k = factory.pis.length
-                var noPi = true;
-                while(k--){
-                  if(factory.pis[k].User_id==user.Key_id)noPi=false;
-                }
-              }
-            }
-/*
-            while(j--){
-              var role =  user.Roles[j];
-              if(role.Name.toLowerCase().indexOf('rincipal')>-1){
-                var k = factory.pis.length
-                var noInsp = true;
-                while(k--){
-                  if(factory.personnel[k].User_id==user.Key_id)noInsp=false;
-                }
-                if(noInsp)factory.uncategorizedUsers.push(user);
-              }
-            }
-            if(noPi || noInsp)factory.uncategorizedUsers.push(user);
-*/
-        }
-      }
-      defer.resolve(factory.uncategorizedUsers);
-      return defer.promise;
-  }
   factory.lookUpUser = function(string)
   {
         var url = "../../ajaxaction.php?action=lookupUser&username="+string+"&callback=JSON_CALLBACK";
@@ -408,10 +418,13 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
         return deferred.promise
   }
 
-  factory.placeUser = function(user)
+  factory.placeUser = function(user, previousFlag)
   {
       var defer = $q.defer();
       var i = user.Roles.length;
+      if(i==0 && factory.notInCollection(user, factory.uncategorizedUsers)){
+        factory.uncategorizedUsers.push(user);
+      }
       while(i--){
         if(factory.hasRole(user, 'Principal Investigator')){
           factory.getPIByUserId(user.Key_id)
@@ -429,6 +442,49 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
   }
 
+  factory.removeUserFromCollections = function(user)
+  {
+      var defer = $q.defer();
+      var i = user.Roles.length;
+
+      if(i!=0 && factory.notInCollection(user, factory.uncategorizedUsers)){
+        var j = factory.uncategorizedUsers.length;
+        while(j--){
+          if(factory.uncategorizedUsers[j].Key_id == user.Key_id)factory.uncategorizedUsers.splice(j,1);
+        }
+      }
+
+      while(i--){
+        if(!factory.hasRole(user, 'Principal Investigator')){
+          factory.getPIByUserId(user.Key_id)
+            .then(
+              function(pi){
+                //find pi in pis collection and remove
+                var j = factory.pis.length;
+                while(j--){
+                  if(factory.pis[j].Key_id == pi.Key_id)factory.pis.splice(j,1);
+                }
+              }
+            )
+        }
+        if(!factory.hasRole(user, 'admin') && !factory.hasRole(user, 'inspector') && !factory.hasRole(user, 'radiation') && !factory.notInCollection(user, factory.personnel)){
+            //find user in admin and remove
+            var j = factory.personnel.length;
+            while(j--){
+              if (factory.personnel[j].Key_id == user.Key_id)factory.personnel.splice(j,1);
+            }
+        }
+        if(!factory.hasRole(user, 'Lab Contact') && !factory.notInCollection(user, factory.labContacts)){
+            //find user in contacts and remove
+            //find user in admin and remove
+            var j = factory.labContacts.length;
+            while(j--){
+              if (factory.labContacts[j].Key_id == user.Key_id)factory.labContacts.splice(j,1);
+            } 
+        }
+      }
+  }
+
   factory.notInCollection = function(object, collection)
   {
       var i = collection.length;
@@ -438,12 +494,17 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       return true;
   }
 
+  factory.iterate = function(num){
+    return num+1;
+  }
+
   return factory
 
 });
 
 var MainUserListController = function(userHubFactory, $scope, $rootScope, $location, convenienceMethods, $route) {
-
+    $rootScope.uhf=userHubFactory;
+    $rootScope.order = 'Last_name';
 
     //----------------------------------------------------------------------
     //
@@ -453,7 +514,11 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
     $scope.setRoute = function(){
       $location.path($scope.selectedRoute);
     }
-    if($location.$$host.indexOf('graysail')<0)$rootScope.isProductionServer = true;
+    if($location.$$host.indexOf('graysail')<0){
+      $rootScope.isProductionServer = true;
+    }else{
+      $rootScope.isProductionServer = false;
+    }
 
     if(!$location.path()) {
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
@@ -500,63 +565,63 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
         }
       )
 
+    $scope.activeFilter = function(showInactive, pis){
+      return function(obj) {
+        var show = false;
+        //for pis that don't have buildings, don't filter them unless the filter has some text
+        if(!pis && obj.Is_active != showInactive)show = true;
+        if(pis && obj.PrincipalInvestigator && obj.PrincipalInvestigator.Is_active != showInactive){
+          show = true;
+        }
+        return show;
+    }
+  }
+
 
 }
 
-var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods) {
+var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods, $location) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
-    var getAllPis = function(users){
-      userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            return pis
+
+    userHubFactory.getAllUsers()
+      .then(
+          function(users){
+            console.log(users);
+            $scope.pis = userHubFactory.users;
+            $rootScope.neededUsers = true;
+            if($location.search().pi){
+              $scope.openModal(userHubFactory.getUserByPIId($location.search().pi));
+            }
+            return users;
           },
           function(){
             $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
           }
         )
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-              userHubFactory.getBuildingsByPi(pi);
-            }
-            $scope.pis = pis;
-            $rootScope.neededUsers = true;
-          }
-        )
-    }
-
-    userHubFactory.getAllUsers()
-      .then(getAllPis);
 
     $scope.openModal = function(pi){
         if(!pi){
-          pi = {Is_active: true, Is_new:true, Class:'PrincipalInvestigator', User:{Is_active:true, Roles:[], Class:'User'}, Departments:[]};
+          pi = {Is_active: true, Is_new:true, Class:'User', Roles:[], PrincipalInvestigator:{Is_active:true, Departments:[], Class:'PrincipalInvestigator'}};
           var i = userHubFactory.roles.length;
           while(i--){
-            if(userHubFactory.roles[i].Name.indexOf('Investigator')>-1)pi.User.Roles.push(userHubFactory.roles[i]);
+            if(userHubFactory.roles[i].Name.indexOf('Investigator')>-1)pi.Roles.push(userHubFactory.roles[i]);
           }
         }
         userHubFactory.setModalData(pi);
 
         var modalInstance = $modal.open({
-          templateUrl: 'piModal.html',
+          templateUrl: 'userHubPartials/piModal.html',
           controller: modalCtrl
         });
 
 
         modalInstance.result.then(function (returnedPi) {
-          if(pi.Is_new){
+          if(pi.Key_id){
             console.log(returnedPi)
-            userHubFactory.users.push(returnedPi.User);
-            userHubFactory.pis.push(returnedPi);
-            //$scope.pis.push(returnedPi);
-          }else{  
-            angular.extend(pi, returnedPi);         
+            angular.extend(pi, returnedPi);
+          }else{
+            userHubFactory.users.push(returnedPi);
           }
         });
 
@@ -564,17 +629,17 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
 
   $scope.departmentFilter = function() {
    
-    return function(pi) {
-         var show = false;
+    return function(user) {
+        var show = false;
         //for pis that don't have departments, don't filter them unless the filter has some text
-        if(!pi.Departments)pi.Departments = [];
-        if(!pi.Departments.length){
+        if(!user.PrincipalInvestigator.Departments)user.PrincipalInvestigator.Departments = [];
+        if(!user.PrincipalInvestigator.Departments.length){
           if(typeof $scope.selectedDepartment == 'undefined' || $scope.selectedDepartment.length == 0){
             show = true;
           }
         }
 
-        angular.forEach(pi.Departments, function(department, key){
+        angular.forEach(user.PrincipalInvestigator.Departments, function(department, key){
           if(typeof $scope.selectedDepartment == 'undefined'|| department.Name.toLowerCase().indexOf($scope.selectedDepartment.toLowerCase())>-1)show = true;
         });
         return show;
@@ -582,16 +647,16 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
   }
 
   $scope.buildingFilter = function() {
-    return function(pi) {
+    return function(user) {
         var show = false;
         //for pis that don't have buildings, don't filter them unless the filter has some text
-        if(!pi.Buildings)pi.Buildings = [];
-        if(!pi.Buildings.length){
+        if(!user.PrincipalInvestigator.Buildings)pi.Buildings = [];
+        if(!user.PrincipalInvestigator.Buildings.length){
           if(typeof $scope.selectedBuilding == 'undefined' || $scope.selectedBuilding.length == 0){
             show = true;
           }
         }
-        angular.forEach(pi.Buildings, function(building, key){
+        angular.forEach(user.PrincipalInvestigator.Buildings, function(building, key){
           if(typeof $scope.selectedBuilding == 'undefined' || building.Name.toLowerCase().indexOf($scope.selectedBuilding.toLowerCase())>-1)show = true;
         });
         return show;
@@ -616,7 +681,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
         )
   }
 
-  $scope.order = 'User.Last_name';
+  $scope.order = 'Last_name';
 
 }
 
@@ -625,35 +690,13 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
     $rootScope.error="";
     $scope.order = 'Last_name';
 
-    var getAllPis = function(users){
-      return userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-            }
-          },
-          function(){
-            $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
-          }
-        )
-    }
-
-    var getLabContacts = function()
-    {
-      if(userHubFactory.users.length){
-        $scope.LabContacts = userHubFactory.getLabContacts();
-        $rootScope.neededUsers = true;
-      }else{
-        $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
-      }
-    }
-
     userHubFactory.getAllUsers()
-      .then(getAllPis)
-      .then(getLabContacts)
+      .then(
+        function(users){
+          $scope.LabContacts = userHubFactory.users;;
+          $rootScope.neededUsers = true;
+        }
+      )
 
     $scope.openModal = function(user,$index){
         if(!user){
@@ -664,25 +707,15 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
           }
         }
         userHubFactory.setModalData(user);
-
         var modalInstance = $modal.open({
           templateUrl: 'labContactModal.html',
           controller: modalCtrl
         });
-
         modalInstance.result.then(function (returnedUser) {
-          console.log(returnedUser);
-          if(user.Is_new){
-            userHubFactory.getRelation(returnedUser, 'Supervisor', 'Supervisor_id', userHubFactory.pis );
+          if(user.Key_id){
+            angular.extend(user, returnedUser)
+          }else{
             userHubFactory.users.push(returnedUser);
-            $scope.LabContacts.push(returnedUser);
-          }else{ 
-            var i = userHubFactory.users.length;
-            while(i--){
-              if(userHubFactory.users[i].Key_id == user.Key_id)userHubFactory.users[i] = returnedUser;
-            }
-            userHubFactory.getRelation(returnedUser, 'Supervisor', 'Supervisor_id', userHubFactory.pis );
-            $scope.LabContacts[$index]=returnedUser;
           }
         });
 
@@ -693,18 +726,17 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
     $rootScope.neededUsers = false;
     $rootScope.order="Last_name";
     $rootScope.error="";
-    var getPersonnel = function(users)
-    { 
-      if(userHubFactory.users.length){
-        $scope.Admins = userHubFactory.getPersonnel();
-        $rootScope.neededUsers = true;
-      }else{
-        $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
-      }
-    }
 
     userHubFactory.getAllUsers()
-      .then(getPersonnel);
+      .then(
+        function(users){
+          $scope.Admins = userHubFactory.users;
+          $rootScope.neededUsers = true;
+        },
+        function(){
+          $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
+        }
+      )
 
 
     $scope.openModal = function(user,$index){
@@ -719,16 +751,10 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
         });
 
         modalInstance.result.then(function (returnedUser) {
-          console.log(returnedUser);
-          if(user.Is_new){
-            userHubFactory.personnel.push(returnedUser);
-            $scope.personnel.push(returnedUser);
-          }else{ 
-            var i = userHubFactory.personnel.length;
-            while(i--){
-              if(userHubFactory.personnel[i].Key_id == user.Key_id)userHubFactory.personnel[i] = returnedUser;
-            }
-            $scope.Admins[$index]=returnedUser;
+         if(user.Key_id){
+            angular.extend(user, returnedUser)
+          }else{
+            userHubFactory.users.push(returnedUser);
           }
         });
 
@@ -738,42 +764,23 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
     $rootScope.order="Last_name";
     $rootScope.neededUsers = false;
     $rootScope.error="";
-    var getAllPis = function(users){
-      userHubFactory.getAllPis()
-        .then(
-          function(pis){
-            return pis
-          },
-          function(){
-            $rootScope.error="There was a problem getting the list of Principal Investigators.  Please check your internet connection and try again."
-          }
-        )
-        .then(
-          function(pis){
-            var i = pis.length;
-            while(i--){
-              var pi = pis[i];
-              userHubFactory.getRelation(pi, 'User', 'User_id', userHubFactory.users);
-              userHubFactory.getBuildingsByPi(pi);
-            }
-          }
-        )
-    }
 
     var getUncategorizedUsers = function(){
       return userHubFactory.getUncategorizedUsers()
         .then(
           function(users){
-            $scope.users = users;
+            console.log(users);
+            $scope.user = userHubFactory.users;
             $rootScope.neededUsers = true;
-
           }
         )
     }
 
     userHubFactory.getAllUsers()
-      .then(getAllPis)
-      .then(getUncategorizedUsers);
+      .then(function(users){
+        $rootScope.neededUsers = true;
+        $scope.users = users;
+      });
 
 
     $scope.openModal = function(user,$index){
@@ -788,12 +795,8 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
         });
 
         modalInstance.result.then(function (returnedUser) {
-            userHubFactory.placeUser(user);
-            var i = userHubFactory.uncategorizedUsers.length;
-            while(i--){
-              var u = userHubFactory.uncategorizedUsers[i];
-              if(u.Key_id == user.Key_id)userHubFactory.uncategorizedUsers.splice(i,1);
-            };
+          console.log(returnedUser);
+          angular.extend(user, returnedUser);
         });
     }
 }
@@ -824,13 +827,11 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.savePi = function(){
       $scope.modalData.IsDirty=true;
       $scope.modalError=""
-      var pi = userHubFactory.getModalData();
       console.log($scope.modalData)
-      var userDto = $scope.modalData.User;
+      var userDto = $scope.modalData;
 
       saveUser( userDto )
         .then(saveRoles)
-        .then(getPiByUser)
         .then(savePiDepartmentRelations)
         .then(closeModal)
     }
@@ -882,20 +883,20 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         console.log(department);
         $scope.modalError=""
         var deptToAdd = convenienceMethods.copyObject(department);
-        $scope.modalData.Departments.push(deptToAdd);
+        $scope.modalData.PrincipalInvestigator.Departments.push(deptToAdd);
         if($scope.modalData.Key_id){
           deptToAdd.IsDirty=true;
-          userHubFactory.savePIDepartmentRelation($scope.modalData, deptToAdd, true)
+          userHubFactory.savePIDepartmentRelation($scope.modalData.PrincipalInvestigator, deptToAdd, true)
             .then(
               function(){
                 deptToAdd.IsDirty=false;
-                userHubFactory.setModalData($scope.modalData);
+                userHubFactory.setModalData($scope.modalData.PrincipalInvestigator);
               },
               function(){
                 deptToAdd.IsDirty=false;
-                var i = $scope.modalData.Departments;
+                var i = $scope.modalData.PrincipalInvestigator.Departments;
                 while(i--){
-                  if($scope.modalData.Departments[i].Key_id == deptToAdd.Key_id)$scope.modalData.Departments(i,1);
+                  if($scope.modalData.PrincipalInvestigator.Departments[i].Key_id == deptToAdd.Key_id)$scope.modalData.PrincipalInvestigator.Departments(i,1);
                 }
                 $scope.modalError="The department could not be added to the Principal Investigator.  Please check your internet connection and try again."
               }
@@ -906,20 +907,20 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.removeDepartment = function(department){
         $scope.modalError="";
         var pi = $scope.modalData;
-        var i = pi.Departments.length;
+        var i = pi.PrincipalInvestigator.Departments.length;
         console.log(pi);
-        if(!pi.Key_id){
+        if(!pi.PrincipalInvestigator.Key_id){
           while(i--){
-            if(pi.Departments[i].Key_id == department.Key_id)pi.Departments.splice(i,1);
+            if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id)pi.PrincipalInvestigator.Departments.splice(i,1);
           }
         }else{
           department.IsDirty = true;
-          userHubFactory.savePIDepartmentRelation(pi, department, false)
+          userHubFactory.savePIDepartmentRelation(pi.PrincipalInvestigator, department, false)
             .then(
               function(){
                   department.IsDirty = false;
                   while(i--){
-                    if(pi.Departments[i].Key_id == department.Key_id)pi.Departments.splice(i,1);
+                    if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id)pi.PrincipalInvestigator.Departments.splice(i,1);
                   }
               },
               function(){                  
@@ -957,7 +958,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     $scope.onSelectPI = function(pi,user){
       $scope.modalData.Supervisor = pi;
-      $scope.modalData.Supervisor_id = pi.Key_id;
+      $scope.modalData.Supervisor_id = pi.PrincipalInvestigator.Key_id;
     }
 
     $scope.onSelectDepartment = function(dept,user){
@@ -965,8 +966,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       $scope.modalData.Primary_department = dept;
     }
     $scope.getAuthUser = function(user){
-      console.log(userHubFactory);
-      $scope.lookingForUser = true;
+     $scope.lookingForUser = true;
+     $scope.modalError = false;
      var i = userHubFactory.users.length;
       while(i--){
         if( userHubFactory.users[i].Username && $scope.modalData.userNameForQuery.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
@@ -990,6 +991,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             }else{
               $scope.modalData=returnedUser;
               $scope.modalData.Roles = user.Roles;
+              if(user.PrincipalInvestigator)$scope.modalData.PrincipalInvestigator = user.PrincipalInvestigator;
+              if(user.Inspector)$scope.modalData.Inspector = user.Inspector;
             }
           },
           function(){
@@ -1002,6 +1005,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     function saveUser( userDto )
     {
+      /*
         var i = userHubFactory.users.length;
         while(i--){
           if( !userDto.Key_id && userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
@@ -1009,10 +1013,16 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             return;
           } 
         }
+        */
         return userHubFactory.saveUser( userDto )
           .then(
             function( returnedUser ){
+              console.log(returnedUser);
               returnedUser.Roles = userDto.Roles;
+              if(userDto.PrincipalInvestigator){
+                returnedUser.PrincipalInvestigator.Departments = userDto.PrincipalInvestigator.Departments;
+                returnedUser.PrincipalInvestigator.Rooms = userDto.PrincipalInvestigator.Rooms;
+              }
               return returnedUser;
             },
             function(){
@@ -1052,13 +1062,10 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       var userCopy, oldRoles
       var oldRoleIds = [];
       var idsToAdd = [];
-      if($scope.modalData.Class=="PrincipalInvestigator"){
-        userCopy = userHubFactory.getModalData().User;
-        oldRoles = userHubFactory.getModalData().User.Roles;
-      }else{
-        userCopy = userHubFactory.getModalData();
-        oldRoles = userHubFactory.getModalData().Roles;
-      }
+  
+      userCopy = userHubFactory.getModalData();
+      oldRoles = $scope.modalData.Roles;
+      
 
       if(!userHubFactory.getModalData().Is_new){
         //get the ids of the roles the user already had, if the user is not new
@@ -1084,6 +1091,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       return userHubFactory.saveUserRoleRelations(user.Key_id, idsToAdd)
         .then(
           function(){
+            console.log(user);
             return user;
           },
           function(){
@@ -1095,31 +1103,33 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     }
 
     function savePiDepartmentRelations(pi){
+      console.log(pi);
       console.log('saving dept relations')
       //save deparments added to pi
-      var piCopy = userHubFactory.getModalData();
       var oldDepartments = [];
       var newDepartmentIds = [];
-      var i = piCopy.Departments.length;
+      var piCopy = convenienceMethods.copyObject(pi);
+      console.log(pi)
+      var i = piCopy.PrincipalInvestigator.Departments.length;
       while(i--){
-        oldDepartments.push(piCopy.Departments[i].Key_id);
+        oldDepartments.push(piCopy.PrincipalInvestigator.Departments[i].Key_id);
       }
 
-      var j = pi.Departments.length;
+      var j = pi.PrincipalInvestigator.Departments.length;
       while(j--){
-        if(oldDepartments.indexOf(pi.Departments[j].Key_id)<0)newDepartmentIds.push(pi.Departments[j].Key_id)
+        if(oldDepartments.indexOf(pi.PrincipalInvestigator.Departments[j].Key_id)<0)newDepartmentIds.push(pi.PrincipalInvestigator.Departments[j].Key_id)
       }
-
+      console.log(newDepartmentIds);
       if(!newDepartmentIds.length){
         var defer = $q.defer();
         defer.resolve(pi);
         return defer.promise;
       }else{
-
-        return userHubFactory.savePiDepartmentRelations(pi.Key_id, newDepartmentIds)
+        return userHubFactory.savePIDepartmentRelations(pi.PrincipalInvestigator.Key_id, newDepartmentIds)
           .then(
             function(){
-              return user;
+              console.log('saved dept')
+              return pi;
             },
             function(){
               $scope.modalError = 'The PI was saved, but there was a problem adding one or more of the departments.  Please check your internet connection and try again.'

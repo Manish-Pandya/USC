@@ -148,10 +148,7 @@
                   d.setMinutes(time[1] || 0);
                   d.setSeconds(time[2] || 0);
                 }
-                console.log()
                 selected = scope.ngModel && d && datesAreEqual(d, scope.ngModel);
-                console.log(d);
-                console.log(selected);
                 today = datesAreEqual(d, new Date());
                 weeks[row].push({
                   date: d,
@@ -160,7 +157,6 @@
                   other: d.getMonth() !== scope.calendarDate.getMonth(),
                   today: today
                 });
-                console.log()
                 curDate.setDate(curDate.getDate() + 1);
               }
             }

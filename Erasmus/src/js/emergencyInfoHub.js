@@ -52,7 +52,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
         console.log(object);
         var len = object.Rooms.length;
         var displayRooms = [];
-        
+
         while( len-- ){
             var room = object.Rooms[len];
 
@@ -68,6 +68,43 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
         if(!object.Rooms)$rootScope.error = "The selected location or PI has no rooms in the system."
         $rootScope.rooms = object.Rooms;
 
+    }
+
+    factory.onSelectPI = function( pi )
+    {
+        $rootScope.gettingRoomsForPI = true;
+        this.getRoomsByPI( pi )
+          .then(
+            function( rooms ){
+                console.log(rooms);
+                pi.Rooms = rooms;
+                var displayRooms = [];
+                var len = pi.Rooms.length;
+                while( len-- ){
+                    var room = pi.Rooms[len];
+                    room.roomText = 'Room: '+room.Name;
+                    if(room.Building){
+                      room.roomText = room.roomText + ' | ' + room.Building.Name;
+                      if(room.Building.Physical_address) room.roomText = room.roomText + ' | ' + room.Building.Physical_address;
+                    }
+                }
+              $rootScope.gettingRoomsForPI = false;
+              if(!pi.Rooms)$rootScope.error = "The selected location or PI has no rooms in the system."
+              $rootScope.rooms = pi.Rooms;
+            }
+          )
+    }
+
+    factory.getRoomsByPI = function(pi)
+    {
+        var url = '../../ajaxaction.php?action=getRoomsByPIId&piId='+pi.Key_id+'&callback=JSON_CALLBACK';
+        return convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+              return promise;
+            },
+            function(promise){
+            }
+        );
     }
 
     factory.onSelectBuilding = function( building )
@@ -184,6 +221,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
         eif.getHazards( room ).
           then(
             function(rootHazard){
+              console.log(room);
               $scope.hazards = rootHazard.ActiveSubHazards;
 
               eif.getPIsByRoom(room)
@@ -197,6 +235,12 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
                       }
                       $scope.loading = false;
                       $scope.showingHazards = true;
+                      var i = $scope.buildings.length;
+                      while(i--){
+                        if(room.Building_id == $scope.buildings[i].Key_id)$scope.building = $scope.buildings[i];
+                      }                       
+
+                      $scope.room = room;
                     }
                 )
 

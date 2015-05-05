@@ -8,7 +8,7 @@
 	<span once-text="question.Text" class="questionText"></span>
 		<ul>
 			<li ng-repeat="def in question.Responses.DeficiencySelections">
-				<span style="color:#cc0000;">Deficiency:</span><span once-text="def.Deficiency.Text"></span>
+				<span style="color:#cc0000;">Deficiency:</span><span style="margin-left:10px;" once-text="def.Deficiency.Text"></span>
 				<ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0; height:25px;">
 					<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
 					<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
@@ -17,25 +17,25 @@
 		</ul>
 
 		<ul>
-			<li ng-repeat="rec in question.Responses.Recommendations">
+			<li ng-repeat="rec in question.Responses.Recommendations track by $index">
 				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="rec in question.Responses.SupplementalRecommendations">
+			<li ng-repeat="rec in question.Responses.SupplementalRecommendations | activeOnly">
 				<span style="color:#2f96b4;">Recommendation:</span><span style="margin-left:10px;" once-text="rec.Text"></span>
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="note in question.Responses.SupplementalRecommendations">
+			<li ng-repeat="note in question.Responses.Observations">
 				<span style="color:#781096;">Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
 			</li>
 		</ul>
 
 		<ul>
-			<li ng-repeat="note in question.Responses.SupplementalObservations">
+			<li ng-repeat="note in question.Responses.SupplementalObservations | activeOnly">
 				<span style="color:#781096;" >Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
 			</li>
 		</ul>

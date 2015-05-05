@@ -14,6 +14,12 @@ homeApp.config(function($routeProvider){
 				controller: adminController
 			}
 		)
+		.when('/inspections', 
+			{
+				templateUrl: '../views/rsmsCenterPartials/inspections.html', 
+				controller: adminController
+			}
+		)
 		.otherwise(
 			{
 				redirectTo: '/home'
@@ -21,7 +27,7 @@ homeApp.config(function($routeProvider){
 		);
 });
 
-var testController = function($location, $scope){
+var testController = function($location, $scope, $rootScope,roleBasedFactory){
 	console.log($location);
 
 	init();
@@ -32,7 +38,7 @@ var testController = function($location, $scope){
 	$scope.setRoute = function(route){
     	$location.path(route);
   	}
-
+	$rootScope.rbf = roleBasedFactory;
 
 }
 
@@ -54,7 +60,6 @@ var adminController = function($location, $scope){
 
 	init();
 	function init(){
-		console.log('yowza');
 		$scope.view = 'home';
 	}
 

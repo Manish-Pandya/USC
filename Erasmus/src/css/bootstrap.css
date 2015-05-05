@@ -2016,10 +2016,14 @@ table {
 .table-striped tbody tr:nth-child(even) th {
   background-color: #e7eeee;
 }
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+  background-color: #EEEcee;
+}
 
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
-  background-color: #e7e7e7;
+  background-color: #fff;
 }
 
 table td[class*="span"],

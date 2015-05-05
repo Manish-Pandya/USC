@@ -271,7 +271,7 @@ hazardHub.directive('buttongroup', ['$window', function($window) {
 hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
     var factory = {};
     factory.saveHazard = function(hazard){
-        var url = "../../ajaxaction.php?action=saveHazard";
+        var url = "../../ajaxaction.php?action=saveHazardWithoutReturningSubHazards";
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, hazard).then(
             function(promise){
@@ -473,7 +473,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     }
 
     $scope.saveEditedHazard = function(hazard){
-        console.log($scope.hazardCopy);
         if(!$scope.hazardCopy.Class){
             $scope.hazardCopy.Class = "Hazard";
         }
@@ -481,8 +480,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
             hazard.Invalid = true;
         }else{
             hazard.IsDirty = true;
-            //var url = '../../ajaxaction.php?action=saveHazard';
-           // convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
+
+            // server lazy loads subhazards, save any subhazards present to re-add manually.
+            var previousSubHazards = hazard.SubHazards;
 
             hazardHubFactory.saveHazard($scope.hazardCopy).then(
                 function(returnedHazard){
@@ -490,6 +490,13 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
                     hazard.IsDirty = false;
                     hazard.Invalid = false;
                     $scope.hazardCopy = {};
+
+                    if(previousSubHazards !== null && previousSubHazards.length !== 0) {
+                        // restore subhazards
+                        returnedHazard.SubHazards = previousSubHazards;
+                        onGetSubhazards(previousSubHazards, hazard);
+                    }
+
                     angular.extend(hazard, returnedHazard);
                     hazard.Key_id = returnedHazard.Key_id;
                 },
@@ -532,7 +539,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         $scope.hazardCopy = angular.copy(hazard);
         $scope.hazardCopy.Is_active = !$scope.hazardCopy.Is_active;
         if($scope.hazardCopy.Is_active === null)hazard.Is_active = false;
-        var url = '../../ajaxaction.php?action=saveHazard';
+        var url = '../../ajaxaction.php?action=saveHazardWithoutReturningSubHazards';
         convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
     }
 

@@ -6,49 +6,91 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 			var filtered = [];
 			while(i--){
 				var item = items[i];
-				if( item.Master_hazard.indexOf(category) > -1 )	filtered.unshift( item );
+				if( item.Master_hazard.toLowerCase().indexOf(category.toLowerCase()) > -1 )	filtered.unshift( item );
 			}
 			return filtered;
 			
 	}
 })
-.filter('evaluateChecklist', function () {
-	return function (questions, checklist) {
-		
-			checklist.completedQuestions = 0;
-			if(!checklist.Questions) return questions;
-			var i = checklist.Questions.length;
-
+.filter('countRecAndObs', function () {
+	return function ( questions ) {
+			if( !questions ) return;
+			var i = questions.length;
 			while(i--){
-				var question = checklist.Questions[i]
-				if( !question.Responses ){
-					question.isComplete = false;
-				}
-				else if( !question.Responses.Answer ){
-					question.isComplete = false;
-				}
-				else if( question.Responses.Answer.toLowerCase() == "yes" || question.Responses.Answer.toLowerCase() == "n/a" ){
-					question.isComplete = true;
-					checklist.completedQuestions++;
-				}
-				//question is answered "no"
-				else{
-					//question has no deficiencies to select
-					if( !question.Responses.DeficiencySelections ){
-						question.isComplete = false;
+				var question = questions[i];
+				question.checkedRecommendations = 0;
+				if(question.Responses && question.Responses.Recommendations)question.checkedRecommendations = question.Responses.Recommendations.length;
+				if(question.Responses && question.Responses.SupplementalRecommendations){
+					var j = question.Responses.SupplementalRecommendations.length;
+					while(j--){
+						if(question.Responses.SupplementalRecommendations[j].Is_active)question.checkedRecommendations++;
 					}
-					//question has no deficiencies selected
-					else if( !question.Responses.DeficiencySelections.length ){
-						question.isComplete = false;
-					}
-					//question has one or more deficiencies selected
-					else{
-						question.isComplete = true;
-						checklist.completedQuestions++;
+				}
+
+				question.checkedNotes = 0;
+				if(question.Responses && question.Responses.Observations)question.checkedNotes = question.Responses.Observations.length;
+				if(question.Responses && question.Responses.SupplementalObservations){
+					var j = question.Responses.SupplementalObservations.length;
+					while(j--){
+						if(question.Responses.SupplementalObservations[j].Is_active)question.checkedNotes++;
 					}
 				}
 			}
-			return checklist.Questions;
+			return questions;
+	}
+})
+.filter('evaluateChecklist', function () {
+	return function (questions, checklist) {
+			checklist.completedQuestions = 0;
+			if(!checklist.Questions) return questions;
+			var i = checklist.Questions.length;
+			checklist.activeQuestions = [];
+			while(i--){
+				var question = checklist.Questions[i];
+				if(question.Is_active){
+					if( !question.Responses ){
+						question.isComplete = false;
+					}
+					else if( !question.Responses.Answer ){
+						question.isComplete = false;
+						//question doesn't have an answer but does have one or more recommendations selected
+						if(question.Responses.Recommendations && question.Responses.Recommendations.length){
+							question.isComplete = true;
+						}
+						if(question.Responses.SupplementalRecommendations && question.Responses.SupplementalRecommendations.length){
+							var j = question.Responses.SupplementalRecommendations.length;
+							while(j--){
+								if(question.Responses.SupplementalRecommendations.Is_active)question.isComplete = true;
+							}
+						}
+						if(question.isComplete){
+							checklist.completedQuestions++;
+						}
+					}
+					else if( question.Responses.Answer.toLowerCase() == "yes" || question.Responses.Answer.toLowerCase() == "n/a" ){
+						question.isComplete = true;
+						checklist.completedQuestions++;
+					}
+					//question is answered "no"
+					else{
+						//question has no deficiencies to select
+						if( !question.Responses.DeficiencySelections ){
+							question.isComplete = false;
+						}
+						//question has no deficiencies selected
+						else if( !question.Responses.DeficiencySelections.length ){
+							question.isComplete = false;
+						}
+						//question has one or more deficiencies selected
+						else{
+							question.isComplete = true;
+							checklist.completedQuestions++;
+						}
+					}
+					checklist.activeQuestions.unshift(question);
+				}
+			}
+			return checklist.activeQuestions;
 	}
 })
 
@@ -90,7 +132,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    				return 'biohazard-largeicon.png';
 	    		}else if( category == 'Chemical Safety' ){
 	    				return 'chemical-safety-large-icon.png';
-	    		}else if( category == 'General Safety' ){
+	    		}else if( category.toLowerCase().indexOf('general') > -1 ){
 	    				return 'gen-hazard-large-icon.png';
 	    		}else{
 	    				return 'radiation-large-icon.png';
@@ -99,11 +141,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.selectCategory = function( category )
 	    {		
+	    		//if(!category)category = "Biological Safety";
 	    		$rootScope.loading = true;
 	    		$rootScope.image = factory.setImage( category );	
-				$rootScope.category = category;
 				$rootScope.inspection = factory.inspection
 				$rootScope.inspection.selectedChecklists = [];
+				$rootScope.category = category;
+				var categoryLabel = category.split(" ")[0].toLowerCase();
 
 	    		var len = factory.inspection.Checklists.length;
 	    		var counter;
@@ -115,7 +159,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		function innerFilter(){
 	    			for( counter = 0; i < len && counter < 3; counter++, i++){
 	    				var checklist = factory.inspection.Checklists[i];
-		    			if( checklist.Master_hazard == category )selectedChecklists.push( checklist );
+		    			if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  )selectedChecklists.push( checklist );
 	    			}
 
 	    			if(i == len){
@@ -138,9 +182,52 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		}
 	    }
 
-	    factory.saveResponse = function(  question )
+    	factory.showRecommendations = function( question ){
+	    	if(!question.showRecommendations)return;
+	    	if(!question.Responses){
+		    	question.showRecommendations = false;
+		    	factory.saveResponse(question)
+		    		.then(
+		    			function(){
+		    				question.showRecommendations = true;
+		    			}
+		    		)
+		    }
+	    	
+	    }
+
+	    factory.saveResponseSwitch = function( question )
 	    {
-	    		var response = question.Responses;
+	    		var defer = $q.defer();
+
+	    		if(question.Responses && question.Responses.Key_id){
+	    			defer.resolve(question.Responses.Key_id);
+	    			return defer.promise;
+	    		}
+	    		//the question doesn't have a reponse, so make a new one
+	    		else{
+	    			return factory.saveResponse( question )
+	    				.then(
+	    					function(returnedResponse){
+	    						return returnedResponse.Key_id;
+	    					}
+	    				)
+	    		}
+
+	    		
+	    }
+
+	    factory.saveResponse = function( question )
+	    {
+	    		question.error='';
+	    		if(!question.Responses){
+	    			question.Responses = {
+	    				Class: "Response",
+	    				Question_id: question.Key_id,
+	    			}
+	    		}
+    			var response = question.Responses;
+
 	    		question.IsDirty = true;
 
 	    		var url = '../../ajaxaction.php?action=saveResponse';
@@ -155,21 +242,20 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		console.log(responseDto)
 
 	    		var deferred = $q.defer();
-				convenienceMethods.saveDataAndDefer(url, responseDto).then(
+				return convenienceMethods.saveDataAndDefer(url, responseDto).then(
 					function(promise){
 						deferred.resolve(promise);
-						deferred.promise
+						return deferred.promise
 							.then(
 								function(returnedResponse){
 									question.IsDirty = false;
-									
-									console.log(question)
 									response = convenienceMethods.copyObject( returnedResponse );
 									if(!question.Responses.SupplementalObservations)question.Responses.SupplementalObservations = [];
 									if(!question.Responses.SupplementalRecommendations)question.Responses.SupplementalRecommendations = [];
 									if(!question.Responses.Observations)question.Responses.Observations = [];
 									if(!question.Responses.Observations)question.Responses.Observations = [];
 									question.Responses.Key_id = returnedResponse.Key_id;
+									return returnedResponse;
 								}
 							)
 					},
@@ -207,9 +293,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    {
 	    		console.log(deficiency);
 	    		deficiency.IsDirty = true;
-	    		question.error =  null;
-
-				if( !deficiency.InspectionRooms ) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+	    		question.error =  '';
+	    		if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
+	    		console.log(checklist.InspectionRooms);
+				if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
 				//grab a collection of room ids
 				var i = deficiency.InspectionRooms.length;
 				var roomIds = [];
@@ -225,7 +312,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 						if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
 					}
 				}
-				console.log(roomIds)
+				console.log(roomIds);
 
 				var defDto = {
 			        Class: "DeficiencySelection",
@@ -311,10 +398,11 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.handleCorrectedDurringInspection = function( deficiency, question )
 	    {
+	    	question.error='';
 	    	deficiency.IsDirty = true;
 		    var def_id = deficiency.Key_id;
-		    deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
-		    if( this.inspection.Deficiency_selections[1].indexOf(deficiency.Key_id > -1) ){
+		    //deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection
+		    if( deficiency.correctedDuringInspection ){
 		      //we set corrected during inspection
 		      var url = '../../ajaxaction.php?action=addCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
 		    }else{
@@ -325,10 +413,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 		    convenienceMethods.getDataAsPromise( url )
 		      	.then(
 		      		function(){
-		      			deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection;
 		      			deficiency.IsDirty = false;
 		      		},
 		      		function(){
+		      			deficiency.correctedDuringInspection = !deficiency.correctedDuringInspection;
 		      			question.error = 'The deficiency could not be saved.  Please check your internet connection and try again.';
 		      			deficiency.IsDirty = false;
 		      		}
@@ -386,7 +474,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	$rootScope[objectToNullify.Class] = {};
 	    }
 
-	    factory.createRecommendation = function( question )
+	    factory.createRecommendation = function( question, id )
 	    {
 	    	$rootScope.RecommendationCopy = {
 	    		Class: "Recommendation",
@@ -395,7 +483,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    		edit: true,
 	    		new: true,
 	    		push: true,
-	    		Is_active: true
+	    		Is_active: true,
 	    	}
 
 	    	this.saveRecommendation( question, $rootScope.RecommendationCopy );
@@ -440,9 +528,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	  							returnedObservation.edit = false;
 	  							returnedObservation.checked = true;
 	  							observation.IsDirty = false;
-	  							factory.saveObservationRelation( question, returnedObservation );
+	  							if(!observation.Key_id)factory.saveObservationRelation( question, returnedObservation );
 	  							question.edit = false;							
 	  							question.savingNew = false;
+	  							question.addNote = false;
 	  						},
 	  						function(error){
 	  							returnedObservation.IsDirty = false;
@@ -465,7 +554,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   							factory.objectNullifactor($rootScope.RecommendationCopy, question)
   							if(!$rootScope.RecommendationCopy.push){
   								recommendation.edit = false;
-  								angular.extend(recommendation, returnedRecommendation)
+  								angular.extend(recommendation, returnedRecommendation);
   							}
   							else{
   								returnedRecommendation.new = true;
@@ -476,9 +565,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   							returnedRecommendation.edit = false;
   							returnedRecommendation.checked = true;
   							recommendation.IsDirty = false;
-  							factory.saveRecommendationRelation( question, returnedRecommendation );
+  							if(!recommendation.Key_id)factory.saveRecommendationRelation( question, returnedRecommendation );
   							question.edit = false;							
   							question.savingNew = false;
+  							question.addRec = false;
   						},
   						function(error){
   							returnedRecommendation.IsDirty = false;
@@ -523,6 +613,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 								question.Responses.SupplementalObservations.push(returnedSupplementalObservation);
 								question.savingNew = false;
   							}
+  							question.addNote = false;
   							if($rootScope.SupplementalObservationCopy)factory.objectNullifactor($rootScope.SupplementalObservationCopy, question)
   						},
   						function(error){
@@ -557,6 +648,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   				convenienceMethods.saveDataAndDefer( url, srDto )
   					.then(
   						function( returnedSupplementalRecommendation ){
+							question.addRec = false;
   							if( sr ){
   								srDto.checked = returnedSupplementalRecommendation.Is_active
   								angular.extend(sr, returnedSupplementalRecommendation);
@@ -581,27 +673,45 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.saveRecommendationRelation = function( question, recommendation )
 	    {
-	    	recommendation.IsDirty = true;
-	    	recommendation.checked = !recommendation.checked;
-	    	question.error = ''
-	    	var relationshipDTO = {
-		        Class:          "RelationshipDto",
-		        Master_id :     question.Responses.Key_id,
-		        Relation_id:    recommendation.Key_id,
-		        add:            !recommendation.checked
-		    }
-        	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
-		    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
-  					.then(
-  						function( ){
-  							recommendation.checked = !recommendation.checked;
-  							recommendation.IsDirty = false;
-  						},
-  						function(error){
-  							recommendation.IsDirty = false;
-							question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
-  						}
-  					)
+	    	factory.saveResponseSwitch( question )
+	    		.then(function(responseId){
+	    			recommendation.IsDirty = true;
+			    	recommendation.checked = !recommendation.checked;
+			    	question.error = ''
+			    	var relationshipDTO = {
+				        Class:          "RelationshipDto",
+				        Master_id :     responseId,
+				        Relation_id:    recommendation.Key_id,
+				        add:            !recommendation.checked
+				    }
+		        	var url = '../../ajaxaction.php?action=saveRecommendationRelation';
+				    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+	  					.then(
+	  						function(){
+	  							recommendation.checked = !recommendation.checked;
+	  							//if the recommendation was checked, it should be added to the response so we can track the number of recommendations selected
+	  							if(recommendation.checked){
+	  								question.Responses.Recommendations.push(recommendation);
+	  							}
+	  							//if the recommendation was unchecked, we removed it from the response
+	  							else{
+	  								var i = question.Responses.Recommendations.length;
+	  								while(i--){
+	  									if(question.Responses.Recommendations[i].Key_id == recommendation.Key_id){
+	  										question.Responses.Recommendations.splice(i,1);
+	  									}
+	  								}
+	  							}
+	  							recommendation.IsDirty = false;
+	  							console.log(question.Responses);
+	  						},
+	  						function(error){
+	  							recommendation.IsDirty = false;
+								question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+	  						}
+	  					)
+	    		});
+	    	
 	    }
 
 	    factory.saveObservationRelation = function(question, observation)
@@ -620,6 +730,18 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
   					.then(
   						function(){
   							observation.checked = !observation.checked;
+  							if(observation.checked){
+  								question.Responses.Observations.push(observation);
+  							}
+  							//if the recommendation was unchecked, we removed it from the response
+  							else{
+  								var i = question.Responses.Observations.length;
+  								while(i--){
+  									if(question.Responses.Observations[i].Key_id == observation.Key_id){
+  										question.Responses.Observations.splice(i,1);
+  									}
+  								}
+  							}
   							observation.IsDirty = false;
   						},
   						function(error){
@@ -631,6 +753,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.getRecommendationChecked = function( question, recommendation )
 	    {
+	    	if(!question.Responses)return false;
 	    	if(recommendation.checked)return true;
 	    	if(!question.Responses.Recommendations)question.Responses.Recommendations=[];
 	    	var i = question.Responses.Recommendations.length;
@@ -647,6 +770,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
 	    factory.getObservationChecked = function( question, observation )
 	    {
+	    	if(!question.Responses)return false;
 	    	if(observation.checked)return true;
 	    	if(!question.Responses.Observations)question.Responses.Observations=[];
 	    	var i = question.Responses.Observations.length;
@@ -672,12 +796,26 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 	    	$rootScope.SupplementalObservationCopy = convenienceMethods.copyObject(observation)
 	    	this.saveSupplementalObservation( question, false, observation, true );
 	    }
-
+		factory.savePi = function(pi)
+		{
+		var url = "../../ajaxaction.php?action=savePI";
+		var deferred = $q.defer();
+		  convenienceMethods.saveDataAndDefer(url, pi)
+		    .then(
+		      function(promise){
+		        deferred.resolve(promise);
+		      },
+		      function(promise){
+		        deferred.reject();
+		      }
+		    );  
+			return deferred.promise
+		}
 
 	    return factory;
 });
 
-function checklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory) {
+function checklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory, $modal) {
 
 	$scope.cf = checklistFactory;
 
@@ -686,6 +824,7 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
       checklistFactory.getInspection( $scope.inspId )
       	.then(
       		function( inspection ){
+      			console.log(inspection);
       			checklistFactory.evaluateCategories();
       		},
       		function( error ){
@@ -719,5 +858,65 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
 		deficiency.calculatedOffset.y = y-185;
 	} 
 
+
+  $scope.openNotes = function(){
+     var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/inspection-notes-modal.html',
+        controller: commentsController
+      });
+
+      modalInstance.result.then(function () {
+
+      });
+  }
+
+
+
+}
+
+function commentsController ($scope, checklistFactory, $modalInstance, convenienceMethods, $q){
+  $scope.cf=checklistFactory;
+  console.log(checklistFactory);
+  var pi = checklistFactory.inspection.PrincipalInvestigator;
+  $scope.pi = pi;
+  console.log($scope.pi);
+  $scope.piCopy = {
+    Key_id: $scope.pi.Key_id,
+    Is_active: $scope.pi.Is_active,
+    User_id: $scope.pi.User_id,
+    Inspection_notes: $scope.pi.Inspection_notes,
+    Class:"PrincipalInvestigator"
+  };
+
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+  $scope.edit = function(state){
+    $scope.pi.editNote = state;
+    console.log($scope.editNote);
+  }
+
+  $scope.saveNote = function(){
+    $scope.savingNote = true;
+    $scope.error = null;
+
+    checklistFactory.savePi($scope.piCopy)
+      .then(
+        function(returnedPi){
+          console.log(returnedPi);
+          angular.extend(checklistFactory.inspection.PrincipalInvestigator, returnedPi);
+          $scope.savingNote = false;
+          $scope.close();
+          $scope.pi.editNote = false;
+          $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
+        },
+        function(){  
+          $scope.savingNote = false;
+          $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
 
 }

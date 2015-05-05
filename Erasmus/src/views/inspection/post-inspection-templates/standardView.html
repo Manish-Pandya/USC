@@ -25,7 +25,7 @@
 			<h3>Principal Investigator:</h3> <p>{{inspection.PrincipalInvestigator.User.Name}}</p>
 		</span>
 		<span class="span3 pull-right">
-			<h3>Inspection Date:</h3> <p>{{inspection.viewDate_started}}</p>
+			<h3>Inspection Date:</h3> <p>{{inspection.Date_started | dateToISO:inspection:'Date_started'}}</p>
 		</span>
 		</div>
 
@@ -69,12 +69,14 @@
 				<h3 style="width:177px;">EH&S Auditor(s):</h3>
 				<p class="pull-right" style="width:154px;">
 				<span style="margin-top: 0px; display: inline-block;">
-					<span ng-repeat="inspector in Inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
+					<span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
 				</span>
 				</p>
 			</span>
 		</div>
 	</div>
+	<h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
+	<a ng-if="readyToSubmit" class="btn btn-success btn-large left" style="margin:10px 0;" ng-click="submit()"><i class="icon-checkmark"></i>Submit CAP</a>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
 	<th style="width:10%">AUDIT CRITERIA</th>
 	<th colspan="2" style="width:34%;">
@@ -94,23 +96,23 @@
 		<td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td>
 	</tr>
 	<tr ng-if="questionsByChecklist.biologicalHazards.message"><td colspan="5">{{questionsByChecklist.biologicalHazards.message}}</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.biologicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 
 	<tr ng-if="questionsByChecklist.chemicalHazards.show">
 		<td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td>
 	</tr>
 	<tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="5">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.chemicalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 
 	<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
 	<tr ng-if="questionsByChecklist.generalHazards.message">
 		<td colspan="5">{{questionsByChecklist.generalHazards.message}}</td>
 	</tr>
-	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 	
 	<tr ng-if="questionsByChecklist.radiationHazards.show"><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
 	<tr ng-if="questionsByChecklist.radiationHazards.message"><td colspan="5">{{questionsByChecklist.radiationHazards.message}}</td></tr>
-	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartialMock.html'"></tr>
+	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
 	<tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>

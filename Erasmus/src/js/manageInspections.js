@@ -51,7 +51,6 @@ var getDate = function(time){
 
 
 var locationHub = angular.module('manageInspections', ['convenienceMethodModule','once','ui.bootstrap'])
-
 .filter('genericFilter', function () {
 	return function (items,search,convenienceMethods) {
 		if(search){
@@ -164,6 +163,24 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodModule'
 		while(i--){
 			if(input == monthNames2[i].val)return monthNames2[i].string;
 		}
+	};
+})
+.filter('onlyUnselected', function(){
+	return function(inspectors, selectedInspectors){
+		console.log(selectedInspectors);
+		if(!selectedInspectors)return inspectors;
+		var unselectedInspectors = [];
+		var selectedInsepctorIds = [];
+		var i = selectedInspectors.length;
+		while(i--){
+			selectedInsepctorIds.push(selectedInspectors[i].Key_id);
+		}
+
+		var j = inspectors.length;
+		while(j--){
+			if(selectedInsepctorIds.indexOf(inspectors[j].Key_id) < 0)unselectedInspectors.push(inspectors[j]);
+		}
+		return unselectedInspectors;
 	};
 })
 .factory('manageInspectionsFactory', function(convenienceMethods,$q,$rootScope){
@@ -317,7 +334,7 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodModule'
 	}
 
 	factory.scheduleInspection = function( dto, year, inspectorIndex )
-	{
+	{	
 			$rootScope.saving = true;
 			$rootScope.error = null;
 			if(!dto.Inspectors)dto.Inspectors = [];
@@ -343,9 +360,10 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodModule'
 
 
 			var url = '../../ajaxaction.php?action=scheduleInspection';
-			convenienceMethods.saveDataAndDefer(url, dto)
+			return convenienceMethods.saveDataAndDefer(url, dto)
 				.then(
 					function(inspection){
+						console.log(inspection);
 						dto.Inspections = inspection;
 						dto.Inspection_id = inspection.Key_id;
 						$rootScope.saving = false;
@@ -355,6 +373,115 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodModule'
 						$rootScope.error = "The Inspection could not be saved.  Please check your internet connection and try again."
 					}
 				);
+	}
+
+	factory.replaceInspector = function( dto, year, oldInspector, newInspector, inspector ){
+			$rootScope.saving = true;
+			console.log($rootScope.dtoCopy);
+			//find the inspector when need to replace and remove them from the copy
+			var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
+			while(i--){
+				if(inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id){
+					console.log('removing '+$rootScope.dtoCopy.Inspections.Inspectors[i].User.Name);
+					$rootScope.dtoCopy.Inspections.Inspectors.splice(i,1);
+				}
+			}
+
+			//push the replacement inspector into the list
+			console.log(JSON.parse(newInspector));
+			$rootScope.dtoCopy.Inspections.Inspectors.push(JSON.parse(newInspector));
+			console.log($rootScope.dtoCopy);
+			//save the inspection, then set the dto's inspection object to the returned inspection
+			var url = '../../ajaxaction.php?action=scheduleInspection';
+			return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
+				.then(
+					function(inspection){
+						console.log(inspection);
+						inspector.edit = false;
+						dto.Inspections.Inspectors = [];
+						dto.Inspections.Inspectors = inspection.Inspectors;
+						$rootScope.saving = false;
+						$rootScope.dtoCopy = false;
+					},
+					function(error){
+						inspector.edit=false;
+						$rootScope.dtoCopy = false;
+						$rootScope.saving = false;
+						$rootScope.error = "The Inspection could not be saved.  Please check your internet connection and try again."
+					}
+				);
+	}
+
+	factory.removeInspector = function( dto, year, inspector ){
+			$rootScope.dtoCopy = convenienceMethods.copyObject(dto);
+			$rootScope.saving = true;
+			console.log($rootScope.dtoCopy);
+			//find the inspector when need to replace and remove them from the copy
+			var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
+			while(i--){
+				if(inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id){
+					console.log('removing '+$rootScope.dtoCopy.Inspections.Inspectors[i].User.Name);
+					$rootScope.dtoCopy.Inspections.Inspectors.splice(i,1);
+				}
+			}
+
+			//save the inspection, then set the dto's inspection object to the returned inspection
+			var url = '../../ajaxaction.php?action=scheduleInspection';
+			return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
+				.then(
+					function(inspection){
+						console.log(inspection);
+						inspector.edit = false;
+						dto.Inspections.Inspectors = [];
+						dto.Inspections.Inspectors = inspection.Inspectors;
+						$rootScope.saving = false;
+						$rootScope.dtoCopy = false;
+					},
+					function(error){
+						inspector.edit=false;
+						$rootScope.dtoCopy = false;
+						$rootScope.saving = false;
+						$rootScope.error = "The Inspection could not be saved.  Please check your internet connection and try again."
+					}
+				);
+	}
+
+	factory.addInspector = function( dto, year, newInspector )
+	{	
+			$rootScope.dtoCopy = convenienceMethods.copyObject(dto);
+			$rootScope.saving = true;
+			$rootScope.error = null;
+			$rootScope.dtoCopy.Inspections.Inspectors.push(JSON.parse(newInspector));
+
+			var url = '../../ajaxaction.php?action=scheduleInspection';
+			return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
+				.then(
+					function(inspection){
+						dto.addInspector = false;
+						newInspector.edit = false;
+						dto.Inspections.Inspectors = [];
+						dto.Inspections.Inspectors = inspection.Inspectors;
+						$rootScope.saving = false;
+						$rootScope.dtoCopy = false;
+					},
+					function(error){
+						dto.addInspector = false;
+						newInspector.edit = false;
+						$rootScope.saving = false;
+						$rootScope.error = "The Inspection could not be saved.  Please check your internet connection and try again."
+					}
+				);
+	}
+
+	factory.editInspector = function(inspector, dto){
+		console.log(dto);
+		$rootScope.dtoCopy = convenienceMethods.copyObject(dto);
+		inspector.edit = true;
+	}
+
+	factory.cancelEditInspector = function(inspector){
+		inspector.edit = false;
+		$rootScope.dtoCopy = false;
 	}
 
 	return factory;

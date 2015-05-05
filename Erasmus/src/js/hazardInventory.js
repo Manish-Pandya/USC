@@ -24,53 +24,69 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
     }
 }]);
 
+hazardInventory.filter('openInspections', function () {
+  return function (inspections) {
+      if(!inspections)return;
+      var openInspections = [];
+      var i = inspections.length;
+      while(i--){
+          if(!inspections[i].Status || inspections[i].Status.toLowerCase().indexOf('close') < 0)openInspections.push(inspections[i]);
+      }
+      return openInspections;
+  };
+})
+
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
-	var factory = {};
-	var PI = {};
-	var allPis = [];
-	factory.getAllPis = function(){
+  var factory = {};
+  factory.PI = {};
+  var allPis = [];
+  factory.previousInspections = [];
+  factory.openInspections = [];
+  factory.buildings = [];
 
-		//lazy load
-		if(this.allPis)return this.allPis;
+  factory.getAllPis = function(){
 
-		//if we don't have a the list of pis, get it from the server
-		var deferred = $q.defer();
-		var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
-    	convenienceMethods.getDataAsDeferredPromise(url).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);
-		return deferred.promise;
+    //lazy load
+    if(this.allPis)return this.allPis;
+
+    //if we don't have a the list of pis, get it from the server
+    var deferred = $q.defer();
+    var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );
+    return deferred.promise;
     }
 
-	factory.getPi = function(id){
+  factory.getPi = function(id){
     console.log('id passed to getPi in factory ' + id);
 
-		//if we don't have a pi, get one from the server
-		var deferred = $q.defer();
+    //if we don't have a pi, get one from the server
+    var deferred = $q.defer();
 
     //lazy load
     if(this.PI && this.PI.Key_id == id){
       deferred.resolve( this.PI );
-		}else{
+    }else{
       //eager load
-			var url = '../../ajaxaction.php?action=getPIById&id='+id+'&callback=JSON_CALLBACK';
-	    	convenienceMethods.getDataAsDeferredPromise(url).then(
-				function(promise){
-					this.PI = promise;
-					deferred.resolve(promise);
-				},
-				function(promise){
-					deferred.reject();
-				}
-			);
-	  }
-		return deferred.promise;
-	}
+      var url = '../../ajaxaction.php?action=getPIById&id='+id+'&getRooms=true&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.PI = promise;
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );
+    }
+    return deferred.promise;
+  }
 
   factory.getHazards = function(rooms){
     //on page load, get the collection of hazards for all of the PI's rooms 
@@ -107,49 +123,56 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     return deferred.promise;
   }
 
-	factory.setAllPis = function(PIs){
-		this.PIs = PIs;
-	}
+  factory.setAllPis = function(PIs){
+    this.PIs = PIs;
+  }
 
-	factory.setPi = function(PI){
-		this.PI = PI;
-	}
+  factory.setPi = function(PI){
+    this.PI = PI;
+  }
 
-	factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
-		//if we don't have a pi, get one from the server
-		var deferred = $q.defer();
-		
-		var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds})+'&inspectionId='+inspectionId;
-		var temp = this;
-    	convenienceMethods.getDataAsDeferredPromise(url).then(
-			function( inspection ){
+  factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
+    //if we don't have a pi, get one from the server
+    var deferred = $q.defer();
+    if(!inspectorIds)inspectorIds=[10];  
+    var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds});
+    if(inspectionId) url+='&inspectionId='+inspectionId;
+    var temp = this;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+      function( inspection ){
         //if the PI doesn't have any rooms, we should reject the promise and let the controller know why
         if(!inspection.Rooms.length){
           deferred.reject(true);
         }else{
           factory.setInspection(inspection);
           //we have a good inspection with a collection of rooms
+          var j = factory.PI.Rooms.length;
+          inspection.piRooms = [];
+          while(j--){
+            inspection.piRooms[j] = {Class:"Room", Key_id:factory.PI.Rooms[j].Key_id,Name:factory.PI.Rooms[j].Name};
+          }
+          inspection.Is_new = true;
           deferred.resolve(inspection); 
         }
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise;
-	}
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise;
+  }
 
-	factory.getInspection = function(){
-		return this.Inspection
-	}
+  factory.getInspection = function(){
+    return this.Inspection
+  }
 
-	factory.setInspection = function(inspection){
+  factory.setInspection = function(inspection){
     console.log(inspection);
-		this.Inspection = inspection;
-	}
+    this.Inspection = inspection;
+  }
 
-	factory.setHazarRoomRelations = function(hazard){
-		var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
+  factory.setHazarRoomRelations = function(hazard){
+    var url = "../../ajaxaction.php?action=saveHazardRoomRelations";
       var deferred = $q.defer();
 
       convenienceMethods.saveDataAndDefer(url, hazard).then(
@@ -162,39 +185,39 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         }
       );
       return deferred.promise
-	}
+  }
 
-	factory.setSingleHazardRoomRelations = function(hazard, room, add){
-		var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
-		var deferred = $q.defer();
-		convenienceMethods.getDataAsDeferredPromise(url).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise
-	}
+  factory.setSingleHazardRoomRelations = function(hazard, room, add){
+    var url = "../../ajaxaction.php?action=saveHazardRelation&recurse=true&roomId="+room.Key_id+"&hazardId="+hazard.Key_id+"&add="+add+'&callback=JSON_CALLBACK';
+    var deferred = $q.defer();
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
 
-	factory.getSubHazards = function(hazard){
-		var url = "../../ajaxaction.php?action=getSubHazards";
-		var deferred = $q.defer();
-		convenienceMethods.saveDataAndDefer(url, hazard).then(
-			function(promise){
-				deferred.resolve(promise);
-			},
-			function(promise){
-				deferred.reject();
-			}
-		);	
-		return deferred.promise
-	}
+  factory.getSubHazards = function(hazard){
+    var url = "../../ajaxaction.php?action=getSubHazards";
+    var deferred = $q.defer();
+    convenienceMethods.saveDataAndDefer(url, hazard).then(
+      function(promise){
+        deferred.resolve(promise);
+      },
+      function(promise){
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
   //invert a collection of room objects with building properties to transform it into a collection of building objects with rooms collection properties
   factory.parseBuildings = function(rooms)
   {
-      var buildings = [];
+      buildings = [];
       var roomsLength = rooms.length;
       for(var i = 0; i < roomsLength; i++){
         var room = rooms[i];
@@ -215,8 +238,8 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         building.Rooms.push(room);
 
       }
-
-      return buildings;
+      factory.buildings = buildings;
+      return factory.buildings;
   }
 
   factory.parseHazards = function( hazards )
@@ -256,13 +279,118 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     return false;
   }
 
-	return factory;
+  factory.getPreviousInspections = function(pi)
+  {
+      var deferred = $q.defer();
+
+      if(factory.previousInspections.length){
+        deferred.resolve( factory.previousInspections );
+        return deferred.promise;
+      }
+
+      var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getInspectionsByPIId&piId="+pi.Key_id;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.previousInspections = promise;
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );  
+      return deferred.promise
+  }
+
+  factory.getOpenInspections = function(pi)
+  {
+      var deferred = $q.defer();
+
+      if(factory.openInspections.length){
+        deferred.resolve( factory.openInspections );
+        return deferred.promise;
+      }
+
+      var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getOpenInspectionsByPIId&id="+pi.Key_id;
+      convenienceMethods.getDataAsDeferredPromise(url).then(
+        function(promise){
+          factory.openInspections = promise;
+          var i = promise.length;
+          console.log(i);
+          if(i==0)deferred.resolve();
+          while(i--){
+            var inspection = factory.openInspections[i];
+            inspection.piRooms = [];
+            var j = factory.PI.Rooms.length;
+            while(j--){
+              inspection.piRooms[j] = {Class:"Room", Key_id:factory.PI.Rooms[j].Key_id,Name:factory.PI.Rooms[j].Name};
+            }
+            deferred.resolve(promise);
+          }
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );  
+      return deferred.promise
+  }
+
+  factory.saveInspectionRoomRelationship = function(inspection, room)
+  {
+    if(typeof room.checked == 'undefined')room.checked = false;
+    room.userChecked = room.checked;
+    console.log(room);
+    var deferred = $q.defer();
+    var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=saveInspectionRoomRelation&roomId="+room.Key_id+"&inspectionId="+inspection.Key_id+"&add="+room.checked;
+    room.IsDirty = true;
+
+    convenienceMethods.getDataAsDeferredPromise(url).then(
+      function(promise){
+        room.IsDirty = false;
+        deferred.resolve(room);
+      },
+      function(promise){
+        room.IsDirty = false;
+        room.checked = !room.checked;
+        deferred.reject();
+      }
+    );  
+    return deferred.promise
+  }
+
+  factory.evalInspectionRoomChecked = function(inspection, room)
+  {
+      if(room.userChecked)return room.userChecked;
+      var i = inspection.Rooms.length;
+      while(i--){
+        if(inspection.Rooms[i].Key_id == room.Key_id){
+          return true;
+        }
+      }
+      return false;
+  }
+  factory.savePi = function(pi)
+  {
+    var url = "../../ajaxaction.php?action=savePI";
+    var deferred = $q.defer();
+      convenienceMethods.saveDataAndDefer(url, pi)
+        .then(
+          function(promise){
+            deferred.resolve(promise);
+          },
+          function(promise){
+            deferred.reject();
+          }
+        );  
+    return deferred.promise
+  }
+
+  return factory;
 });
 
 controllers = {};
 
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
+controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
 
   var comboBreaker = $q.defer();
   var getAllPis = function()
@@ -282,21 +410,30 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   },
   getPi = function(piKey_id)
   {
+        $scope.error='';
         $scope.piLoading = true;
-	      var piDefer = $q.defer();
-	      hazardInventoryFactory
-	              .getPi(piKey_id)
-	                .then(function(pi){
+        var piDefer = $q.defer();
+        hazardInventoryFactory
+                .getPi(piKey_id)
+                  .then(function(pi){
                       $scope.piLoading = false;
-	                    $scope.PI = pi;
-	                    piDefer.resolve( pi );
-	                },
-	                function(fail){
+                      $rootScope.PI = pi;
+                      if(!pi.Is_active){
+                        $scope.inactive = true;
+                      }else{
+                        $scope.inactive = false;
+                      }
+                      $scope.selectPI = false;
+                      $scope.buildings = hazardInventoryFactory.parseBuildings( pi.Rooms );
+                      $location.search("pi", pi.Key_id);
+                      piDefer.resolve( pi );
+                  },
+                  function(fail){
                       $scope.piLoading = false;
-	                    piDefer.reject();
-	                    $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
-	                });
-	      return piDefer.promise;
+                      piDefer.reject();
+                      $scope.error = 'There was a problem getting the selected Principal Investigator.  Please check your internet connection.'
+                  });
+        return piDefer.promise;
   },
   setInspection = function(pi)
   {
@@ -308,7 +445,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
       //todo:  when we do user siloing, give the user a way to add another inspection
       //dummy value for inspector ids
-      inspectorIds = [1];
+      inspectorIds = [10];
 
       //if we are accessing an inspection that has already been started, we get it's get ID from the $location.search() property (AngularJS hashed get param)
       if($location.search().inspectionId){
@@ -377,14 +514,23 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
                 });
       return resetInspectionDefer.promise;
   },
-  getHazards = function(rooms)
-  {     
+  getHazards = function( pi )
+  {         
+            $scope.hazards = null;          
+            if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
+            var rooms = pi.Rooms;
             var roomIds = [];
             var roomsLength = rooms.length;
             for(var i = 0; i < roomsLength; i++){
               if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
             }
+
+            if(!rooms || !rooms.length){
+              $scope.noRoomsAssigned = true;
+              return
+            }
+
             $scope.hazardsLoading = true;
 
             var hazardDefer = $q.defer();
@@ -415,7 +561,7 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     getPi( piKey_id )
       .then( setInspection )
       .then( getHazards  );
-  };
+  }
 
 
   init();
@@ -423,9 +569,10 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   function init(){
 
     //are we loading an old inspection?
-    if($location.search().hasOwnProperty('inspectionId') && $location.search().hasOwnProperty('pi')){
+    if( $location.search().hasOwnProperty('pi') && $location.search().pi != null){
        $scope.getAll = true;
-       initiateInspection( $location.search().pi );
+       getPi( $location.search().pi )
+        .then(getHazards);
     }else{
       $scope.noPiSet = true;
     }
@@ -441,13 +588,11 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
   //callback function called when a PI is selected in the typeahead
   $scope.onSelectPi = function($item, $model, $label){
-  	//unset scope.PI so that when we call initiateInspection, we will eager load a new PI from the server
-  	$scope.PI = {};
-  	$scope.inspection = {};
-  	$scope.buildings = [];
-  	$location.search('inspectionId','');
-	  $location.search("pi",'');
-    initiateInspection($item.Key_id);
+    $scope.inspection = {};
+    $scope.buildings = [];
+    $location.search("pi",'');
+    getPi($item.Key_id)
+      .then(getHazards)
   }
 
   $scope.removeBuilding = function(building){
@@ -467,7 +612,8 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
   $scope.selectRoom = function(room,building){
     if($scope.roomsToRequest.indexOf(room) === -1){
-       $scope.roomsToRequest.push(room.Key_id);saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL)
+       $scope.roomsToRequest.push(room.Key_id);
+       saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL)
 
     }else{
        $scope.roomsToRequest.splice($scope.roomsToRequest.indexOf(room.Key_id), 1);
@@ -491,26 +637,26 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
     $scope.selectedHazard = hazard;
     calculateClickPosition(event,hazard, element);
 
-  	//do we have subHazards for this hazard?
-  	if(hazard.ActiveSubHazards && hazard.ActiveSubHazards){
-  		hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
-  	}else if(hazard.HasChildren){
-  		//we don't have subhazards for this hazard, but there are some.
-  		//get them from the server.
-  		hazard.IsDirty = true;
-  		hazardInventoryFactory.getSubHazards(hazard).then(
-  			function(promise){
-  				hazard.error = "";
-  				hazard.IsDirty = false;
-  				hazard.ActiveSubHazards = promise;
-  				hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
-  			},
-  			function(){
-  				hazard.error = "There was a problem getting the subhazards for " + hazard.Name + "Please check your internet connection and try again.";
-  				hazard.IsDirty = false;
-  			}
-  		)
-  	}
+    //do we have subHazards for this hazard?
+    if(hazard.ActiveSubHazards && hazard.ActiveSubHazards){
+      hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
+    }else if(hazard.HasChildren){
+      //we don't have subhazards for this hazard, but there are some.
+      //get them from the server.
+      hazard.IsDirty = true;
+      hazardInventoryFactory.getSubHazards(hazard).then(
+        function(promise){
+          hazard.error = "";
+          hazard.IsDirty = false;
+          hazard.ActiveSubHazards = promise;
+          hazard.showSubHazardsModal = !hazard.showSubHazardsModal;
+        },
+        function(){
+          hazard.error = "There was a problem getting the subhazards for " + hazard.Name + "Please check your internet connection and try again.";
+          hazard.IsDirty = false;
+        }
+      )
+    }
 
   }
 
@@ -680,21 +826,21 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
     //did we uncheck the last room?
     if(hazard.InspectionRooms.every(roomDoesNotContainsHazard)){
-    	hazard.IsPresent = false;
-    	$scope.handleHazardChecked(hazard);
+      hazard.IsPresent = false;
+      $scope.handleHazardChecked(hazard);
     }else{
-    	room.IsDirty = true;
-    	var add = room.ContainsHazard;
-    	hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
-    		function(promise){
-    			room.IsDirty = false;
+      room.IsDirty = true;
+      var add = room.ContainsHazard;
+      hazardInventoryFactory.setSingleHazardRoomRelations(hazard, room, add).then(
+        function(promise){
+          room.IsDirty = false;
           removeSubHazardsFromRoom(room, hazard);
-    		},
-    		function(){
-    			room.ContainsHazard = !room.ContainsHazard;
-    			$scope.error = "Room "+room.Name+" could not be removed from "+hazard.Name+".  Please check your internet conneciton and try again.";
-    		}
-    	);
+        },
+        function(){
+          room.ContainsHazard = !room.ContainsHazard;
+          $scope.error = "Room "+room.Name+" could not be removed from "+hazard.Name+".  Please check your internet conneciton and try again.";
+        }
+      );
     }
     
   }
@@ -714,25 +860,25 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
   }
 
   function roomDoesNotContainsHazard(room){
-  	if(!room.ContainsHazard)return true;
-  	return false;
+    if(!room.ContainsHazard)return true;
+    return false;
   }
 
   $scope.handleHazardChecked = function(hazard, parent){
-  	console.log(hazard);
-  	hazard.IsDirty = true;
+    console.log(hazard);
+    hazard.IsDirty = true;
     hazardInventoryFactory.setHazarRoomRelations(hazard).then(
-    	function(promise){
-    		hazard.IsDirty = false;
+      function(promise){
+        hazard.IsDirty = false;
         console.log($scope);
-    		hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
-    		hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
-    	},
-    	function(promise){
-    		console.log(promise);
-    		hazard.IsPresent = !hazard.IsPresent;
-    		$scope.error = 'There was a problem updating '+hazard.Name+' in the system.  Please check your internet connection and try again.'
-    	}
+        hazard.ActiveSubHazards = angular.copy(promise.ActiveSubHazards);
+        hazard.InspectionRooms = angular.copy(promise.InspectionRooms);
+      },
+      function(promise){
+        console.log(promise);
+        hazard.IsPresent = !hazard.IsPresent;
+        $scope.error = 'There was a problem updating '+hazard.Name+' in the system.  Please check your internet connection and try again.'
+      }
     )
 
   }
@@ -758,15 +904,15 @@ controllers.hazardAssessmentController = function ($scope, $q, hazardInventoryFa
 
 };
 
-controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope){
+
+controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope, $modal){
   
   init();
 
   function init(){
     $scope.location = $location.search();
-    $scope.selectedFooter = '';
-    $scope.inspection = hazardInventoryFactory.getInspection();
-    console.log($scope.inspection);
+    $scope.selectedFooter = '';      
+    
   }
 
   $scope.close = function(){
@@ -774,13 +920,34 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   }
 
   $scope.getArchivedReports = function(){
-    $scope.selectedFooter = 'reports';
-    if(!$scope.previousInspections){
-      $scope.waitingForInspections = false;
-      var piId = $scope.PI.Key_id;
-      var url = '../../ajaxaction.php?action=getInspectionsByPIId&piId='+piId+'&callback=JSON_CALLBACK';
-      convenienceMethods.getData( url, onGetInspections, onFailGetInspections);
-    }
+      var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/archived-reports.html',
+        controller: controllers.modalCtrl
+      });
+
+
+        modalInstance.result.then(function () {
+         locationHubFactory.getRooms()
+        .then(
+          function(rooms){
+            console.log('got rooms');
+            $scope.rooms = rooms;
+            $scope.loading = false;
+          }
+        )
+      });
+
+  } 
+
+  $scope.getContacts = function(){
+      var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/lab-personnel.html',
+        controller: contactsController
+      });
+
+
+      modalInstance.result.then(function () {});
+
   } 
 
   function onGetInspections(data){
@@ -802,6 +969,26 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     }
   }
 
+  $scope.startInspection = function()
+  {
+    var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/open-inspections.html',
+        controller: controllers.findInspectionCtrl
+      });
+
+
+        modalInstance.result.then(function () {
+         locationHubFactory.getRooms()
+        .then(
+          function(rooms){
+            console.log('got rooms');
+            $scope.rooms = rooms;
+            $scope.loading = false;
+          }
+        )
+      });
+  }
+
   onGetLabContacts = function(data){
     $scope.contacts = data.LabPersonnel;
     $scope.doneLoading = data.doneLoading;
@@ -816,10 +1003,14 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   }
 
   $scope.openNotes = function(){
-     if(!$scope.inspection)$scope.inspection = hazardInventoryFactory.getInspection();
-     $scope.newNote = angular.copy($scope.inspection.Note);
-     $scope.noteEdited = false;
-     $scope.selectedFooter = 'comments'
+     var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/inspection-notes-modal.html',
+        controller: controllers.commentsController
+      });
+
+      modalInstance.result.then(function () {
+
+      });
   }
 
   $scope.saveNoteForInspection = function(note){
@@ -853,6 +1044,25 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     $scope.selectedFooter = false;
   }
 
+}
+
+controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+  $scope.gettingInspections = true;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log(hazardInventoryFactory);
+  hazardInventoryFactory.getPreviousInspections(pi)
+    .then(
+      function(inspections){
+        $scope.previousInspections = inspections;
+        $scope.gettingInspections = false;
+      },
+      function(){
+        $scope.gettingInspections = false;
+        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+      }
+    )
+
   $scope.$watch('previousInspections', function(previousInspections, oldValue) {
     angular.forEach($scope.previousInspections, function(inspection, key){
       if(inspection.Date_created){
@@ -867,6 +1077,148 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
     });
   });
 
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
 }
+
+controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, $q){
+  $scope.hif=hazardInventoryFactory;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  $scope.buildings = hazardInventoryFactory.buildings;
+  $scope.gettingInspections = true;
+  console.log($scope.pi);
+  hazardInventoryFactory.getOpenInspections(pi)
+    .then(
+      function(inspections){
+        console.log('loaded');
+        $scope.openInspections = inspections;
+        $scope.gettingInspections = false;
+      },
+      function(){
+        $scope.gettingInspections = false;
+        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+      }
+    )
+
+  $scope.$watch('openInspections', function(previousInspections, oldValue) {
+    angular.forEach($scope.previousInspections, function(inspection, key){
+      if(inspection.Date_created){
+        var date =  convenienceMethods.getDate(inspection.Date_created);
+        inspection.startDate = date.formattedString;
+        inspection.year = date.year;
+      }
+      if(inspection.Date_started){
+        inspection.startDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
+      }
+    });
+  });
+
+  $scope.setInspection = function()
+  {
+      $scope.creatingInspection = true;
+      //now that we have a PI, we can initialize the inspection
+      var PIKeyID = hazardInventoryFactory.PI.Key_id;
+      //todo:  when we do user siloing, give the user a way to add another inspection
+      //dummy value for inspector ids
+      inspectorIds = [10];
+
+      //set up our $q object so that we can either return a promise on success or break the promise chain on error
+      var inspectionDefer = $q.defer();
+
+      hazardInventoryFactory
+            .initialiseInspection( PIKeyID, inspectorIds )
+              .then(function(inspection)
+              {
+                  $scope.creatingInspection = false;
+                  if(!$scope.openInspections)$scope.openInspections=[];
+                  console.log($scope.openInspections);
+                  $scope.openInspections.push(inspection);
+                  console.log($scope.openInspections)
+              },
+              function(noRooms)
+              {                  
+
+                  $scope.creatingInspection = false;
+                  //$scope.creatingInspection = false;
+                  if(noRooms){
+                    //there was no error, but this PI doesn't have any rooms, so we can't inspect
+                    $scope.noRoomsAssigned = true;
+                  }else{
+                    $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
+                  }
+                  //call our $q object's reject method to break the promise chain
+                  inspectionDefer.reject();
+              });
+
+      return inspectionDefer.promise;
+  }
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+}
+
+controllers.commentsController = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, $q){
+  $scope.hif=hazardInventoryFactory;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log($scope.pi);
+  $scope.piCopy = {
+    Key_id: $scope.pi.Key_id,
+    Is_active: $scope.pi.Is_active,
+    User_id: $scope.pi.User_id,
+    Inspection_notes: $scope.pi.Inspection_notes,
+    Class:"PrincipalInvestigator"
+  };
+
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+  $scope.edit = function(state){
+    $scope.pi.editNote = state;
+    console.log($scope.editNote);
+  }
+
+  $scope.saveNote = function(){
+    $scope.savingNote = true;
+    $scope.error = null;
+
+    hazardInventoryFactory.savePi($scope.piCopy)
+      .then(
+        function(returnedPi){
+          console.log(returnedPi);
+          angular.extend(hazardInventoryFactory.PI, returnedPi);
+          $scope.savingNote = false;
+          $scope.close();
+          $scope.pi.editNote = false;
+          $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
+        },
+        function(){  
+          $scope.savingNote = false;
+          $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
+        }
+      )
+  }
+
+}
+
+contactsController = function($scope, hazardInventoryFactory, $modalInstance){
+  $scope.hif=hazardInventoryFactory;
+  var pi = hazardInventoryFactory.PI;
+  $scope.pi = pi;
+  console.log($scope.pi);
+
+  $scope.close = function () {
+    $modalInstance.dismiss();
+  };
+
+}
+
 //set controller
 hazardInventory.controller( controllers );

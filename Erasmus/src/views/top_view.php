@@ -59,11 +59,45 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-infinite-scroll.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
-<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/binary-search.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 
-<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
 
+<script>
+  $(function() {
+    $( ".sortable" ).sortable({
+      placeholder: "ui-state-highlight"
+    });
+    $( ".sortable" ).disableSelection();
+  });
+</script>
 </head>
 <body>
-<!-- main navigation  ng-app ng-controller="wrapperAppController" -->
+<!-- main navigation  ng-app ng-controller="wrapperAppController"
+
+
+<div class="well">
+  <h3>Select a role</h3>
+  <ul>
+    <li ng-click="rbf.setRole('admin')">Admin</li>
+    <li ng-click="rbf.setRole('labContact')">Lab Contact</li>
+  </ul>
+  <h3>Current Role</h3>
+  <ul>
+    <li ng-repeat="role in rbf.roles">{{role}}</li>
+  </ul>
+</div> -->
+<!--
+<div class="navbar" id="nav">
+  <div class="navbar-inner">
+    <a class=" siteTitle brand" href="<?php echo WEB_ROOT?>views/RSMScenter.php">Research Safety Management System</a>
+    <ul class="nav">
+      <li class="divider-vertical"></li>
+      <li><a href="#">Link</a></li>
+      <li class="divider-vertical"></li>
+      <li><a href="#">Link</a></li>
+    </ul>
+  </div>
+</div>
+-->
 <div class="container-fluid " id="wrapper">

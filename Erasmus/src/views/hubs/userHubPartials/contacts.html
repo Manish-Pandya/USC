@@ -1,10 +1,11 @@
 	<table class="userList table table-striped table-hover piTable table-bordered"  ng-show="neededUsers">
 	<thead>
 		<tr class="greenBg">
-			<th colspan="8" class="greenBg">
+			<th colspan="9" class="greenBg">
 				<h1 class="greenBg">Lab Contacts</h1>
-				<div class="btn-group" style="margin:-22px 0 0 30px">
+				<div class="btn-group" style="margin: -18px 0 0 20px;">
 			     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+			     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
 				     <span ng-show="showInactive">Show Active Contacts</span>
 				     <span ng-hide="showInactive">Show Inactive Contacts</span>
 			     </a>
@@ -12,6 +13,8 @@
 			     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
 
 			   </div>
+   				<h2 style="margin-top:8px;float:right" class="greenBg"><span class="bold underline">{{filtered.length}}</span> Lab Contacts Displayed</h2>
+
 			</th>
 		</tr>
 		<tr>
@@ -26,11 +29,11 @@
 			</th>
 			<th>
 				<a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedPi.Supervisor.User.Name" placeholder="Filter by PI"/>
+				<input class="span2" ng-model="searchText.Supervisor.Name" placeholder="Filter by PI"/>
 			</th>
 			<th>
 				<a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
-				<input class="span2" ng-model="selectedDepartment.Primary_department.Name" placeholder="Filter by Department"/>
+				<input class="span2" ng-model="searchText.Primary_department.Name" placeholder="Filter by Department"/>
 			</th>
 			<!--<th>Lab Phone</th>-->
 			<th>Email</th>
@@ -40,44 +43,43 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="contact in LabContacts | orderBy:order:reverse | filter:searchText | filter: selectedDepartment | filter: selectedPi" ng-if="contact.Is_active != showInactive">
+		<tr ng-repeat="contact in (filtered = (LabContacts | isContact | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
 			<td style="width:18%;">
-				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)"><i class="icon-pencil"></i></a>
+				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0">Deactivate</a>
 				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0">Activate</a>
 				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 			</td>
 
-			<td style="width:12%;" once-text="contact.Last_name">
-				<!--{{contact.Last_name}}-->
+			<td style="width:12%;">
+				{{contact.Last_name}}
 			</td>
 
-			<td style="width:12%;" once-text="contact.First_name">
-				<!--{{contact.First_name}}-->
+			<td style="width:12%;">
+				{{contact.First_name}}
 			</td>
 			<td style="width:14%;" >
-				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.Key_id" once-text="contact.Supervisor.User.Name"></a>
-				<!--{{contact.Supervisor.User.Name}}-->
+				<a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.PrincipalInvestigator.Key_id" once-text="contact.Supervisor.Name"></a>
 			</td>
 
-			<td style="width:14%;" once-text="contact.Primary_department.Name">
-				<!--{{contact.Primary_department.Name}}-->
+			<td style="width:14%;">
+				{{contact.Primary_department.Name}}
 			</td>
 			<!--
 			<td style="width:12%;" once-text="contact.Lab_phone">
 			
 			</td>
 			-->
-			<td style="width:10%;" once-text="contact.Email">
-				<!--{{contact.Email}}-->
+			<td style="width:10%;">
+				{{contact.Email}}
 			</td>
 
-			<td style="width:10%;" once-text="contact.Supervisor.User.Lab_phone">
-				<!--{{contact.Emergency_phone}}-->
+			<td style="width:10%;">
+				{{contact.Emergency_phone}}
 			</td>
 
-			<td style="width:10%;" once-text="contact.Emergency_phone">
-				<!--{{contact.Emergency_phone}}-->
+			<td style="width:10%;">
+				{{contact.Emergency_phone}}
 			</td>
 
 		</tr>
@@ -152,9 +154,8 @@
 				    <div  class="control-group">
 			         <label class="control-label" for="inputEmail">Principal Investigator</label>
 			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-				   		<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-				   			<!--<p>{{modalData.Supervisor.User.Name}}</p>-->
+						<input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+				   		<input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
 				    </div>
 			    </div>
 
@@ -167,7 +168,7 @@
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				   		
 				    <ul style="margin-top:3px;">
-				    	<li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+				    	<li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 						</li>
 				    </ul>
 				   </div>
@@ -179,7 +180,6 @@
 			         <div class="controls">
 						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 						<input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-
 						<img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
 				    </div>
 			    </div>
@@ -187,8 +187,8 @@
         </div>
         <div class="modal-footer">
 			<i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
-            <a ng-if="modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-            <a ng-if="!modalData.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+            <a ng-if="modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+            <a ng-if="!modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
      </script>

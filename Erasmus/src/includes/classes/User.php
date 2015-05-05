@@ -107,7 +107,6 @@ class User extends GenericCrud{
 		$entityMaps[] = new EntityMap("lazy","getInspector");
 		$entityMaps[] = new EntityMap("lazy","getSupervisor");
 		$entityMaps[] = new EntityMap("eager","getRoles");
-		$entityMaps[] = new EntityMap("eager","getEmergency_phone");
 		$this->setEntityMaps($entityMaps);
 
 	}

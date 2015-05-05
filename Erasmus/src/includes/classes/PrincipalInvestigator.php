@@ -13,6 +13,7 @@ class PrincipalInvestigator extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//TODO: IS user a relationship?
 		"user_id" => "integer",
+		"inspection_notes" => "text",
 		//departments is a relationship
 		//rooms is a relationship
 		//lab_personnel is a relationship
@@ -55,58 +56,12 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName"	=>	"principal_investigator_id"
 	);
 
-	public static $AUTHORIZATIONS_RELATIONSHIP = array(
-		"className" =>  "Authorization",
-		"tableName" =>  "authorization",
-		"keyName"   =>  "key_id",
-		"foreignKeyName"	=> "principal_investigator_id"
-	);
-
-	public static $ACTIVEPARCELS_RELATIONSHIP = array(
-		"className" => "Parcel",
-		"tableName" => "parcel",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-
-	public static $PURCHACEORDERS_RELATIONSHIP = array(
-		"className" => "PurchaseOrder",
-		"tableName" => "purchase_order",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-
-	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
-		"className" => "CarboyUseCycle",
-		"tableName" => "carboy_use_cycle",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-	
-	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
-		"className" => "ScintVialCollection",
-		"tableName" => "scint_vial_collection",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-
-	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
-		"className" => "SolidsContainer",
-		"tableName" => "solids_container",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-
-	public static $PICKUPS_RELATIONSHIP = array(
-		"className" => "Pickup",
-		"tableName" => "pickup",
-		"keyName"   => "key_id",
-		"foreignKeyName" => "principal_investigator_id"
-	);
-
-
-
-	/** Base User object that this PI represents */
+	public static $PRINCIPAL_INVESTIGATOR_ROOMS_RELATIONSHIP = array(
+		"className"	=>	"PrincipalInvestigatorRoomRelation",
+		"tableName"	=>	"principal_investigator_room",
+		"keyName"	=>	"key_id",
+		"foreignKeyName"	=>	"principal_investigator_id"
+	);/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
 
@@ -140,6 +95,9 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of Carboy entities **/
 	private $activeCarboys;
 
+	/** Notes for inspections.   **/
+	private $inspection_notes;
+	
 	/** Array of Pickup entities **/
 	private $pickups;
 	
@@ -168,8 +126,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-		
-		
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -333,6 +290,42 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->currentScintVialCollections;
 	}
+	
+	public function getInspection_notes() {
+		return $this->inspection_notes;
+	}
+	public function setInspection_notes($inspection_notes) {
+		$this->inspection_notes = $inspection_notes;
+	}
+public function getOpenInspections(){
+		// Get the db connection
+		global $db;
+
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+
+		$queryString = "SELECT * FROM inspection WHERE principal_investigator_id =  $this->key_id AND date_closed IS NULL";
+		$stmt = $db->prepare($queryString);
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		$LOG->debug($result);
+
+		return $result;
+	}
+	public function getInspection_notes() {
+		return $this->inspection_notes;
+	}
+	public function setInspection_notes($inspection_notes) {
+		$this->inspection_notes = $inspection_notes;
+	}
+	
 
 }
 

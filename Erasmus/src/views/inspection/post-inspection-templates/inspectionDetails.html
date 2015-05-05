@@ -24,7 +24,7 @@
 		<tr ng-if="someAnswers(checklist)"> 
 			<th colspan="2" class="bioHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 	<table class="table detailsReportTable"  ng-if="questionsByChecklist.chemicalHazards.show">
@@ -37,7 +37,7 @@
 		<tr>
 			<th colspan="2" class="chemHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 	<table class="table detailsReportTable"  ng-if="questionsByChecklist.generalHazards.show">
@@ -50,7 +50,7 @@
 		<tr>
 			<th colspan="2" class="genHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 	<table class="table detailsReportTable">
@@ -63,7 +63,7 @@
 		<tr>
 			<th colspan="2" class="radHeader"><h3>{{checklist.Name}}</h3></th>
 		</tr>
-		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
+		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
 </div>

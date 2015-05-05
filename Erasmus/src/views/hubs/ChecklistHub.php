@@ -12,14 +12,14 @@ require_once '../top_view.php';
 		</li>
 	</ul>
 </div>
-<div class="container-fluid whitebg" ng-app='checklistHub' ng-controller="ChecklistHubController">
+<div class="container-fluid whitebg checklist-hub" ng-app='checklistHub' ng-controller="ChecklistHubController">
 <span class="spacer"></span>
 <span ng-if="!checklist && !noChecklist" class="loading">
   <i class="icon-spinnery-dealie spinner large"></i>
   <span>Loading Checklist</span>
 </span>
 
-	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit"><i class="icon-pencil"></i>Edit</a></h1>
+	<h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary left" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a></h1>
     <h2 ng-if="noChecklist && !checklist" style="">{{hazard.Name}}</h2>
     <a ng-if="!edit && doneLoading && !checklist"  style="margin-top:5px;" ng-click="editChecklist()" class="btn btn-primary">Create Checklist</a>
    <form ng-show="edit" style="margin-top:5px;">
@@ -30,33 +30,56 @@ require_once '../top_view.php';
     </form>
     <span ng-hide="!checklist">
         <span class="spacer"></span>
-        <a href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left">
+        <a ng-hide="!showInactive.Is_active" href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left btn-large">
          <i class="icon-plus-2"></i>Add Question
         </a>
         <Input type="hidden" ng-model="showInactive.Is_active" ng-init="showInactive.Is_active = true">
-        <a class="btn" ng-click="showInactive.Is_active = !showInactive.Is_active">
+        <a class="btn btn-large" ng-class="{'btn-danger':showInactive.Is_active,'btn-success':!showInactive.Is_active}"ng-click="showInactive.Is_active = !showInactive.Is_active">
          <span ng-show="!showInactive.Is_active">Show Active Questions</span>
          <span ng-hide="!showInactive.Is_active">Show Inactive Questions</span>
         </a>
       </h3>
       <span class="spacer"></span>
-      <table class="table table-striped table-hover table-bordered large" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
+      <table class="table table-striped table-hover table-bordered large questionList" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
      		
         <tr class="blue-tr">
-          <th>Checklist Questions</th>
-          <th>Edit</th>
+          <th><h1>Checklist Questions<a style="margin: -5px 15px 0;" class="btn btn-large left" ng-click="showAll = !showAll"><i ng-class="{'icon-plus-2':!showAll,'icon-minus-2':showAll}"></i><span ng-if="!showAll">Show</span><span ng-if="showAll">Hide</span> All</a></h1></th>
+          <th style="text-align:center">Edit</th>
         </tr>
 
-        <tr ng-repeat="question in checklist.Questions | filter: showInactive"  ng-class="{inactive: question.Is_active == false}">
-          <td>
-            <h2 once-text="question.Text"></h2>
+        <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
+          <td style="width:90%">
+            <div class="span1" style="width:40px;">
+              <button ng-disabled="$first" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
+              <button ng-disabled="$last" ng-class="{'disabled':$last}" class="btn btn-mini btn-info upvote" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></button>
+            </div>
+            <h2 style="width:90%;"><span once-text="question.Text"></span><a ng-click="question.reveal" class=""><i ng-class="'icon-minus-2':question.reveal,'icon-plus-2':!question.reveal"></i></a>
+            <i ng-click="question.show = !question.show;" ng-class="{'icon-plus success':!question.show,'icon-minus danger':question.show}"></i>
+            </h2>
+            <div ng-if="question.show || showAll" style="clear:both">
+              <h2 class="row" style="margin-top:40px; margin-left:36px; font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h2>
+              <h2 class="row"style="margin-left:36px;font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h2>
+
+              <ul class="checklist-deficiencies" style=" margin-left:66px">
+                <h3>Deficiencies</h3>
+                <li ng-repeat="def in question.Deficiencies">{{def.Text}}</li>
+              </ul>
+              <ul class="recOrObsList" style="margin-left:66px">
+                <h3>Recommendations</h3>
+                <li ng-repeat="rec in question.Recommendations">{{rec.Text}}</li>
+              </ul>
+              <ul class="recOrObsList" style="margin-left:66px">
+                <h3>Notes</h3>
+                <li ng-repeat="obs in question.Observations">{{obs.Text}}</li>
+              </ul>
+            </div>
           </td>
 
-          <td>
-              <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary"><i class="icon-pencil"></i></a>
+          <td style="width:10%; text-align:center" >
+              <a href="QuestionHub.php#?id={{question.Key_id}}"class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
               <a class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></a>
-              <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"><i class="icon-remove"></i></a>
-              <img ng-show="question.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+              <a class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
+              <i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
               <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->
           </td>
         </tr>

@@ -36,7 +36,7 @@ require_once '../top_view.php';
 					
 					<span ng-if="!building.edit">
 						<h3 ng-if="building">Rooms in {{building.Name}}	
-						<a ng-click="editBuilding(building)" class="bnt btn-mini btn-primary"><i class="icon-pencil"></i></a>
+						<a ng-click="editBuilding(building)" class="bnt btn-mini btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 						</h3>					
 						<p ng-if="!building.Rooms.length && building">{{building.Name}} doesn't have any rooms yet.</a>
 						</p>
@@ -60,7 +60,7 @@ require_once '../top_view.php';
 						<li ng-repeat="room in building.Rooms | orderBy: 'Name'">
 							<span ng-if="!room.edit">
 								<h3>{{room.Name}}
-									<a ng-click="editRoom(room)" class="bnt btn-mini btn-primary"><i class="icon-pencil"></i></a>
+									<a ng-click="editRoom(room)" class="bnt btn-mini btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
 								</h3>
 							</span>
 							<span ng-if="room.edit">

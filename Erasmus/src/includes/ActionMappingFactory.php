@@ -53,6 +53,7 @@ class ActionMappingFactory {
 				//Generic
 				"activate"=>new ActionMapping("activate", "", ""),
 				"deactivate"=>new ActionMapping("deactivate", "", ""),
+				"getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
 
 				// Users Hub
 				"getAllUsers"=>new ActionMapping("getAllUsers", "", ""),
@@ -65,6 +66,11 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
+<<<<<<< HEAD
+=======
+				"getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", ""),
+
+>>>>>>> master
 
 
 				//convenience method to split all usernames into first and last names
@@ -90,6 +96,7 @@ class ActionMappingFactory {
 				"getAllQuestions"=>new ActionMapping("getAllQuestions", "", ""),
 				"saveChecklist"=>new ActionMapping("saveChecklist", "", ""),
 				"saveQuestion"=>new ActionMapping("saveQuestion", "", ""),
+				"swapQuestions"=>new ActionMapping("swapQuestions", "", ""),
 				"setMasterHazardsForAllChecklists"=>new ActionMapping("setMasterHazardsForAllChecklists", "", ""),
 
 				// Hazards Hub
@@ -99,6 +106,7 @@ class ActionMappingFactory {
 				"getHazardById"=>new ActionMapping("getHazardById", "", ""),
 				"moveHazardToParent"=>new ActionMapping("moveHazardToParent", "", ""),
 				"saveHazard"=>new ActionMapping("saveHazard", "", ""),
+				"saveHazardWithoutReturningSubHazards"=>new ActionMapping("saveHazardWithoutReturningSubHazards", "", ""),
 				"createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", ""),
 				"setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", ""),
 				"reorderHazards"=>new ActionMapping("reorderHazards", "", ""),
@@ -126,6 +134,7 @@ class ActionMappingFactory {
 				"saveInspection"=>new ActionMapping("saveInspection", "", ""),
 				"saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", ""),
 				"getSubHazards"=>new ActionMapping("getSubHazards", "", ""),
+				"getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", ""),
 
 				"getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", ""),
 				"getRoomById"=>new ActionMapping("getRoomById", "", ""),
@@ -139,6 +148,8 @@ class ActionMappingFactory {
 				"saveRoom"=>new ActionMapping("saveRoom", "", ""),
 				"saveBuilding"=>new ActionMapping("saveBuilding", "", ""),
 				"saveCampus"=>new ActionMapping("saveCampus", "", ""),
+				"getLocationCSV"=>new ActionMapping("getLocationCSV", "", ""),
+				
 
 				// Inspection, step 2 (Hazard Assessment)
 				"getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", ""),
@@ -190,8 +201,15 @@ class ActionMappingFactory {
 				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
 
 
+<<<<<<< HEAD
 				//GENERIC RELATIONSHIPS
 				"getRelationships"=>new ActionMapping("getRelationships", "", "")
+=======
+				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", ""),
+
+				
+
+>>>>>>> master
 
 		);
 	}

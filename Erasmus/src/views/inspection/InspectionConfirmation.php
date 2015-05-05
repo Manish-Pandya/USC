@@ -20,6 +20,7 @@ require_once '../top_view.php';
 		<li><a ng-click="setRoute('/confirmation')" class="btn btn-large btn-success" ng-class="{selected: route=='/confirmation'}">Finalize Inspection</a></li>
 		<li><a ng-click="setRoute('/report')" class="btn btn-large btn-info" ng-class="{selected: route=='/report'}">Inspection Report</a></li>
 		<li><a ng-click="setRoute('/details')" class="btn btn-large btn-primary" ng-class="{selected: route=='/details'}">Inspection Details</a></li>
+		<li><a href="InspectionChecklist.php#?inspection={{loc.inspection}}" class="btn btn-large btn-danger">Return to Inspection</a></li>
 	</ul>
 	<ng-view></ng-view>
 </div>

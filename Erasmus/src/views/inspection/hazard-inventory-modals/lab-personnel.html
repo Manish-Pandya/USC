@@ -1,0 +1,40 @@
+<div class="modal-header wide-modal" style="padding:0;">
+    <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s Lab Personnel
+	   	<i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+    </h2>
+</div>
+<div class="modal-body">
+	<h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+	<h3 ng-if="!pi.LabPersonnel">No active lab personnel have been selected.</h3>
+   <span ng-if="gettingInspections" class="loading">
+   	   <i class="icon icon-spinnery-dealie spinner large"></i>
+   	   <span>Loading Inspections...</span>
+   </span>
+	<table class="table table-bordered table-striped">
+	<table ng-show="pi" class="table table-striped table-bordered">
+	<thead>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Lab Phone</th>
+			<th>Emergency Phone</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="user in pi.LabPersonnel">
+				<td once-text="user.Name"></td>
+				
+				<td once-text="user.Email" ng-if="user.Email"></td>
+				<td ng-if="!user.Email">N/A</td>	
+				
+				<td once-text="user.Lab_phone" ng-if="user.Lab_phone"></td>
+				<td ng-if="!user.Lab_phone">N/A</td>	
+	
+				<td once-text="user.Emergency_phone" ng-if="user.Emergency_phone"></td>	
+				<td ng-if="!user.Emergency_phone">N/A</td>	
+		
+			</tr>
+		</tbody>	
+	</table>	
+</div>
+<div class="modal-footer">
+	<a class="btn btn-large" ng-click="close()">Close</a>
+</div>

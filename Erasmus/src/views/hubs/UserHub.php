@@ -37,7 +37,6 @@ require_once '../top_view.php';
 	</div>
    <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
    <ng-view></ng-view>
-
 </span>
 
 <?php

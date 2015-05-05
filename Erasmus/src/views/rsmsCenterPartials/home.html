@@ -1,17 +1,17 @@
   <div class="centerIcons" >
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" roles="admin">
       <a class="bg-color-green span12" style="background: #86b32d;" ng-click="setRoute('/admin')">
         <img class="" src="../img/admin-icon.png" />
         <p>Administration</p>
       </a>
     </div>
 
-  <div class="span2 rsmsCenterIconContainer" style=" ">
-    <a class="span12" style="background: #d00;" href="inspection/hazardInventory.php">
-      <img class="" src="../img/new-inspection-icon.png" />
-      <p>Laboratory Inspection</p>
-    </a>
-  </div>
+    <div class="span2 rsmsCenterIconContainer" style=" ">
+      <a class="span12" style="background: #d00;"  ng-click="setRoute('/inspections')">
+        <img class="" src="../img/new-inspection-icon.png" />
+        <p>Laboratory Inspections</p>
+      </a>
+    </div>
 
     <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
       <a href="hubs/emergencyInformationHub.php" class="span12" style="background: #e67e1d;">

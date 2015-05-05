@@ -71,25 +71,29 @@ body {
   padding: 70px 15px !Important;
 }
 
-.noBg {
-  padding: 70px 15px !Important;
-}
-
 /* line 69, ../sass/style.scss */
-.whitebg.checklist, .noBg.checklist {
+.whitebg.checklist {
   padding: 0px !Important;
+  position: relative !important;
 }
-
-@media screen and (max-width: 1375px) {
-  /* line 73, ../sass/style.scss */
-  .whitebg.checklist, .noBg.checklist {
-    margin-left: 53px !Important;
+.checklist .navbar{
+  position:fixed;
+  left:0;
+  right:0;
+  z-index: 1040;    
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.checklist > .row-fluid{
+  padding-top: 50px;
+}
+.whitebg.checklist {
     padding: 0px !Important;
-  }
 }
 @media (min-width: 1500px) {
   /* line 80, ../sass/style.scss */
-  .whitebg, .whiteBg, .noBg {
+  .whitebg, .whiteBg {
+    background: #fff;
     padding: 70px 30px !Important;
   }
 }
@@ -108,7 +112,7 @@ body {
 
   /* line 97, ../sass/style.scss */
   body {
-    padding-top: 0 !Important;
+    padding: 0 !Important;
   }
 }
 /******************************************************************************
@@ -230,17 +234,6 @@ div.rsmsCenterIconContainer a:hover {
   -ms-transform: scale(1.06);
   text-decoration: none !Important;
 }
-div.rsmsCenterIconContainer a i{
-  width: 230px;
-  height: 230px;
-  color: white;
-  display: block;
-  margin: 20px auto 0;
-  font-size: 220px;
-  line-height: 1;
-  text-align: center;
-  overflow: hidden;
-}
 
 @media (max-width: 1200px) {
   /* line 109, ../sass/style.scss */
@@ -345,7 +338,9 @@ div.rsmsCenterIconContainer a p {
   }
   /* line 292, ../sass/style.scss */
   .centerIcons div.rsmsCenterIconContainer a img {
+    margin: 0 auto;
     height: 250px;
+    display: block;
   }
 }
 @media (min-width: 773px) and (max-width: 999px) {
@@ -400,7 +395,7 @@ div.rsmsCenterIconContainer a p {
 }
 
 .pisTable{
-  max-width:800px;
+  max-width:900px;
   margin:25px auto;
 }
 
@@ -582,6 +577,9 @@ tr.new td{
 tr.inactive td {
   background: pink !important;
 }
+h3.inactive, .unassigned{
+  color:red;
+}
 
 /* line 451, ../sass/style.scss */
 li.inactive {
@@ -717,19 +715,20 @@ tr.notedit, tr.notedit td {
   color: white !Important;
 }
 
-/* line 564, ../sass/style.scss */
-.hazardBtn i {
-  margin: 8px 4px 0 !important;
-  font-size: 25px;
-}
-
 /* line 568, ../sass/style.scss */
 a.hazardBtn {
   padding-left: 3px;
   padding-right: 8px;
   color: white !important;
 }
-
+a.hazardBtn i {
+  font-size: 35px !Important;
+  width: .8em !important;
+  margin: 3px !important;
+}
+a.hazardBtn i.icon-checkmark{
+  margin-right: 12px !important;
+}
 /* line 573, ../sass/style.scss */
 li.small a.hazardBtn span {
   display: none;
@@ -871,6 +870,14 @@ ul.questionList h3, ul.questionList h4, ul#parentHazards h3, ul#parentHazards h4
 ul.questionList li, ul#parentHazards li, ul.listWithChecks li {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+}
+
+table.questionList td h2{
+  margin-top: 10px;
+}
+table.questionList td h2 i{
+  font-size: 25px;
+  margin-top: 12px;
 }
 
 /* line 340, ../sass/style.scss */
@@ -1069,7 +1076,9 @@ img.smallLoading {
   margin: -3px 0 0 4px;
   width: 26px;
 }
-
+.modal-body {
+  border-bottom: 1px solid #ccc;
+}
 /* line 917, ../sass/style.scss */
 .subHazardModal, .roomsModal {
   padding: 0 3px;
@@ -1137,9 +1146,7 @@ img.smallLoading {
   margin: -3px 0 0 4px;
   width: 17px;
 }
-span.metro-checkbox h3{
-  margin-top:-4px;
-}
+
 /* line 960, ../sass/style.scss */
 .subHazardModal {
   min-width: 350px;
@@ -1194,9 +1201,9 @@ span.metro-checkbox h3{
 /* line 1008, ../sass/style.scss */
 div.question, li.question {
   border-bottom: 1px solid #d7d7d7;
-  padding: 10px 2%;
+  padding: 10px;
   margin: 10px 0;
-  width: 93%;
+  width: 97%;
   background: #f7f7f7;
 }
 
@@ -1283,6 +1290,14 @@ a.checklistNav span{
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
+span.recs{
+  display: inline-block;
+  width: 150px !important;
+}
+span.recs span{
+    margin-top: 0 !important;
+}
+
 /*****************************************************************
 *****            POST INSPECTION PROCESS                **********
 *****************************************************************/
@@ -1321,6 +1336,15 @@ a.checklistNav span{
 .correctiveAction {
   position: absolute;
 }
+.corrective-action > div{
+  padding:15px;
+}
+.corrective-action > div p{
+  margin-bottom:15px;
+}
+.corrective-action > div h4{
+  margin-top:15px;
+}
 
 /* line 1099, ../sass/style.scss */
 .inspectionInfo .row {
@@ -1347,7 +1371,16 @@ a.checklistNav span{
 }
 
 .inspectionReportTable td{
-  vertical-align: middle;
+  padding-top: 0px !important;
+  padding-top: 0px !important;
+}
+.inspectionReportTable td span:first-child{
+  padding: 10px 0 0;
+  display: inherit;
+}
+.inspectionReportTable td span:last-child{
+  padding: 0 0 10px;
+  display: inherit;
 }
 
 .def-table-cell{
@@ -1372,6 +1405,24 @@ a.checklistNav span{
 /* line 1124, ../sass/style.scss */
 .inspectionReportTable td .row-fluid .span6:last-child {
   border-left: 1px solid #dddddd;
+}
+.modal .quickdate-popup {
+  display: block !important;
+  position: relative !important;
+  box-shadow: none;
+}
+.modal .quickdate-button {
+  visibility: hidden !important;
+}
+.modal-body p {
+  font-size: 16px;
+}
+.Pending{
+  background: #ffffb9 !important;
+}
+.Complete{
+  background: rgb(86, 201, 86);
+  background: rgba(86, 201, 86, 0.5) !important;
 }
 
 /* line 1133, ../sass/style.scss */
@@ -1462,53 +1513,6 @@ td.reviewHeader {
 #generalSafetyHeader, .generalHazardsHeader {
   background-color: #009900;
 }
-
-/* line 1203, ../sass/style.scss */
-.Pending {
-  font-size: 14px;
-}
-
-/* line 1206, ../sass/style.scss */
-.Pending:after {
-  margin-left: 15px;
-  font-family: 'Open Sans', sans-serif !important;
-}
-
-/* line 1210, ../sass/style.scss */
-.Incomplete {
-  color: #e67e1d !important;
-}
-
-/* line 1213, ../sass/style.scss */
-.Pending {
-  color: #e67e1d !important;
-}
-
-/* line 1216, ../sass/style.scss */
-.Pending:before {
-  content: "\e13a";
-}
-
-/* line 1222, ../sass/style.scss */
-.Complete {
-  color: #090 !important;
-}
-
-/* line 1228, ../sass/style.scss */
-.Complete:before {
-  content: "\e03c";
-}
-
-/* line 1231, ../sass/style.scss */
-.Incomplete {
-  color: #900 !important;
-}
-
-/* line 1234, ../sass/style.scss */
-.Incomplete:before {
-  content: "\e03a";
-}
-
 /* line 1240, ../sass/style.scss */
 .detail {
   margin-bottom: 55px;
@@ -1745,7 +1749,7 @@ ul.key li.deficiencies span {
 }
 /* line 1385, ../sass/style.scss */
 .hazardList i, .hazardList ul i {
-  //margin: 5px 2px 0;
+  margin:2px 3px 0 3px;
   font-size: 17px;
 }
 /* line 1388, ../sass/style.scss */
@@ -1878,21 +1882,21 @@ ul.key li.deficiencies span {
 
 /* line 1499, ../sass/style.scss */
 .roomSelect {
-  margin-left: 50%;
+  border: none !important;
+  width: 100%;
   margin-top: -3px;
   z-index: 10000000000;
 }
 
 /* line 1504, ../sass/style.scss */
-.selectRooms {
-  border: none;
+.roomSelect > ul {
   z-index: 100;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   width: 224px;
   border: 2px solid #ccc;
   margin: 0;
   margin-top: 0;
-  margin-left: 9px;
+  margin-left: 89px;
   padding: 10px;
   background: white;
   position: absolute;
@@ -2096,7 +2100,10 @@ li.active a {
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(0, 0, 0, 0.2);
 }
-
+/*********************************************
+*
+*
+*********************************************/
 /* line 653, ../sass/style.scss 
 .checklist:before {
   display: block;
@@ -2111,34 +2118,60 @@ li.active a {
 .checklist ul {
   list-style: none !important;
 }
-
+.navicon {
+  padding: 0 !important;
+  margin: 24px 42px -10px 9px;
+}
+.navicon i.icon-list{
+  font-size:50px;
+  margin-left:-10px;
+  margin-right:10px;
+}
+.navicon i.icon-cancel-2{
+  font-size:30px;
+}
+#side-nav{
+  background: rgba(0,0,0,.7);
+  z-index: 1049;
+  position: fixed;
+  margin-top: 59px;
+  width: 100%;
+  min-height: 100%;
+}
+#side-nav > ul{
+  padding: 0 5px 0 0;
+  overflow-y: scroll;
+  background: white;
+  width:360px;
+  height:100%;
+}
 /* line 663, ../sass/style.scss */
 /* line 1705, ../sass/style.scss */
-#sp-nav ul li ul li a {
+#side-nav ul li ul li a {
   display: block;
   line-height: normal;
   color: black;
   margin: 0;
   border-top: 1px solid #c0c0c0;
   font-size: 17px;
-  padding: 15px 10px 15px 30px;
+  padding: 15px 5px;
   text-shadow: none;
   box-shadow: none !important;
 }
-#sp-nav ul li ul li:first-child a{
+#side-nav ul li ul li:first-child a{
   border-top:none;
 }
 /* line 674, ../sass/style.scss */
 /* line 1717, ../sass/style.scss */
-#sp-nav ul li ul{
-  padding: 0;
-  margin-top: 0;
+#side-nav ul li ul{
+  padding: 0 10px;
+  margin: 0;
   list-style:none;
 }
 
 /* line 678, ../sass/style.scss */
 /* line 1722, ../sass/style.scss */
-#sp-nav ul li ul li a.active {
+#side-nav ul li ul li a.active {
   background: white;
   color: black;
 }
@@ -2178,7 +2211,7 @@ li.active a {
 /* line 690, ../sass/style.scss */
 /* line 1739, ../sass/style.scss */
 .questionAnswerInputs {
-  float: right;
+  margin:5px 30px 0;
 }
 
 /* line 693, ../sass/style.scss */
@@ -2221,7 +2254,22 @@ li.active a {
 .menuIcon:hover:active {
   color: green !important t;
 }
-
+.checklist-deficiencies{
+  list-style-type: none;
+  padding: 10px;
+  margin: 20px 0px 0 26px;
+  border-top: 1px solid #ccc;
+  background: rgb(239, 195, 195);
+}
+.recOrObsList{
+  list-style-type: none;
+  background: #CCDEDE;
+  padding:10px;
+  margin-top:10px;
+}
+.recOrObsList h4{
+  font-weight: bold;
+}
 .recOrObsList li span.metro-checkbox span{
   margin-top:0;
 }
@@ -2262,7 +2310,7 @@ span.green {
 /* line 1804, ../sass/style.scss */
 .hazardLi {
   margin-bottom: 0px;
-  padding: 3px 0;
+  padding: 4px 0;
 }
 .hazardLi:not(.topChild){
   padding-top:10px;
@@ -2790,28 +2838,35 @@ table.roomList h2 {
 .btn:active {
   box-shadow: none !important;
 }
-
-.btn i {
-color:white !important;
-font-size: 17px !important;
-margin: 1px 2px !important;
+a.modalBtn i, .modal-footer a.btn i {
+  margin: 4px 16px 0 3px;
 }
 
-.btn.left i{
-  margin: 2px 6px 1px 2px !important;
+a.btn i {
+margin: 1px 2px;
 }
 
-.btn.right i{
-  margin: 2px 2px 1px 6px !important;
+a.btn.btn-mini i {
+  margin: 1px 2px 1px 0px;
+}
+a.btn.left i, button.btn.left i{
+  margin: 2px 6px 1px 2px;
 }
 
-.btn-large.left i{
-  font-size:33px !important;
-  margin: 2px 24px 1px 2px !important
+a.btn.right i, button.btn.right i{
+  margin: 2px 2px 1px 6px;
 }
-.btn-large.right i{
-  font-size:33px !important;
-  margin: 2px 2px 1px 24px !important
+button.btn:not(.btn-large){
+  padding-bottom:25px;
+}
+
+a.btn-large.left i{
+  font-size:33px;
+  margin: 2px 24px 1px 2px
+}
+a.btn-large.right i{
+  font-size:33px;
+  margin: 2px 2px 1px 24px
 }
 
 
@@ -2966,3 +3021,8 @@ table.large tr th{
   display: block;
   padding: 5px;
 }
+
+.success{color:#5bb75b;}
+.primary{color:#59008C;}
+.info{color:#49afcd;}
+.danger{color:#da4f49;}
