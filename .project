@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-<<<<<<< HEAD
 	<name>00_rsms</name>
-=======
 	<name>RSMS</name>
->>>>>>> master
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-<<<<<<< HEAD
-=======
 			<name>org.eclipse.wst.common.project.facet.core.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
->>>>>>> master
 			<name>org.eclipse.wst.validation.validationbuilder</name>
 			<arguments>
 			</arguments>
@@ -30,10 +24,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.php.core.PHPNature</nature>
-<<<<<<< HEAD
-	</natures>>
-=======
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
->>>>>>> master
 </projectDescription>
