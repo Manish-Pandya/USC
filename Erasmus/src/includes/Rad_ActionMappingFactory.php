@@ -32,7 +32,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", ""),
 			"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", ""),
 			"getParcelWipeById"				=> new ActionMapping("getRadPIById", "", ""),
-			
+			"getRadInspectionById"			=> new ActionMapping("getRadInspectionById", "", ""),
+				
 			// get entity by relationship functions
 			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
 			"getWasteBagsByPickupId"		=> new ActionMapping("getWasteBagsByPickupId", "", ""),

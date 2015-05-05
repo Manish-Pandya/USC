@@ -21,7 +21,7 @@ class ActionManager {
 	 * @param string $paramValue
 	 * @return string|unknown|NULL
 	 */
-	private function getValueFromRequest( $valueName, $paramValue = NULL ){
+	public function getValueFromRequest( $valueName, $paramValue = NULL ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 
 		if( $paramValue !== NULL ){
@@ -40,7 +40,7 @@ class ActionManager {
 		}
 	}
 
-	private function convertInputJson(){
+	public function convertInputJson(){
 		try{
 			$decodedObject = JsonManager::decodeInputStream();
 
@@ -56,7 +56,7 @@ class ActionManager {
 	}
 
 
-	private function getDao( $modelObject = NULL ){
+	public function getDao( $modelObject = NULL ){
 		//FIXME: Remove MockDAO
 		if( $modelObject === NULL ){
 			return new MockDAO();
@@ -1793,16 +1793,16 @@ class ActionManager {
 		}
 	}
 
-	public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL){
+	public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL,$rad = NULL){
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 
 		$inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$inspectorIds = $this->getValueFromRequest('inspectorIds', $inspectorIds);
-
+		$rad = $this->getValueFromRequest('rad', $rad);
+		
 		if( $piId !== NULL && $inspectorIds !== null ){
 
-			// Get this room
 			$inspection = new Inspection();
 			$dao = $this->getDao($inspection);
 
@@ -1810,7 +1810,11 @@ class ActionManager {
 			if (!empty($inspectionId)){
 				$inspection = $dao->getById($inspectionId);
 			}
-
+			
+			if($rad != null){
+				$inspection->setIs_rad(true);
+			}
+			
 			if($inspection->getSchedule_year() == NULL){
 				$year = $this->getCurrentYear();
 				$inspection->setSchedule_year($year);

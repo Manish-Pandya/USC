@@ -14,6 +14,31 @@ class Rad_ActionManager extends ActionManager {
 	 *                            Get Functions                                  *
 	\*****************************************************************************/
 
+	function getRadInspectionById($id = NULL) {
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+		$id = $this->getValueFromRequest('id', $id);
+
+		if( $id !== NULL ){
+			$dao = $this->getDao(new Inspection());
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy","getInspectors");
+			$entityMaps[] = new EntityMap("eager","getRooms");
+			$entityMaps[] = new EntityMap("lazy","getResponses");
+			$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
+			$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+			$entityMaps[] = new EntityMap("eager","getStatus");
+			$entityMaps[] = new EntityMap("lazy","getChecklists");
+			$entityMaps[] = new EntityMap("eager","getInspection_wipe_tests");
+				
+			$inspection =  $dao->getById($id);
+			$inspection->setEntityMaps($entity_maps);
+			return $inspection;
+		}
+		else {
+			return new ActionError("No request parameter 'id' was provided", 201);
+		}
+	}
 
 	function getIsotopeById($id = NULL) {
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );

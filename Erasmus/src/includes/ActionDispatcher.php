@@ -53,7 +53,14 @@ class ActionDispatcher {
 	
 	public function getActionMappings(){
 		if( $this->actionMappingFactory == NULL ){
-			return ActionMappingFactory::readActionConfig();
+			
+			$actionMappings = ActionMappingFactory::readActionConfig();
+			
+			if( isRadiationEnabled() ) {
+				$actionMappings = array_merge($actionMappings, Rad_ActionMappingFactory::readActionConfig());
+			}
+			
+			return $actionMappings;
 		}
 		else{
 			return $this->actionMappingFactory->getConfig();
