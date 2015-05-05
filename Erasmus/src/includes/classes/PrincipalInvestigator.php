@@ -319,13 +319,6 @@ public function getOpenInspections(){
 
 		return $result;
 	}
-	public function getInspection_notes() {
-		return $this->inspection_notes;
-	}
-	public function setInspection_notes($inspection_notes) {
-		$this->inspection_notes = $inspection_notes;
-	}
-	
 
 }
 
