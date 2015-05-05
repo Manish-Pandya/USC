@@ -63,6 +63,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/cycle.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
+
 
 <!-- Required for the ORM framework -->
 <!-- TODO include everything in certain directories by default -->
@@ -90,6 +93,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
+
 
 
 <!-- directives -->

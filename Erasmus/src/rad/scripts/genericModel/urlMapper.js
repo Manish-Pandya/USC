@@ -34,11 +34,12 @@
         'WasteType'             : {getById: "getWasteTypeById"             , getAll: "getAllWasteTypes"             , save: "saveWasteType"              },
         'ScintVialCollection'   : {getById: "getSVCollectionById"          , getAll: "getAllSVCollections"          , save: "saveSVCollection"           },
         'ParcelWipeTest'        : {getById: "getParcelWipeTestById"        , getAll: "getAllParcelWipeTests"        , save: "saveParcelWipeTest"         },
-        'ParcelWipe'           :  {getById: "getParcelWipeById"            , getAll: "getAllParcelWipes"            , save: "saveParcelWipe"             },
+        'ParcelWipe'            :  {getById: "getParcelWipeById"           , getAll: "getAllParcelWipes"            , save: "saveParcelWipe"             },
         'InspectionWipeTest'    : {getById: "getInspectionWipeTestById"    , getAll: "getAllInspectionWipeTests"    , save: "saveInspectionWipe"         },
         'InspectionWipe'        : {getById: "getInspectionWipeById"        , getAll: "getAllInspectionWipes"        , save: "saveSVCollection"           },
         'MiscellaneousWipeTest' : {getById: "getMiscellaneousWipeTestById" , getAll: "getAllMiscellaneousWipeTests" , save: "saveMiscellaneousWipeTest"  },
         'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getAllMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
+        'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
 
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   }

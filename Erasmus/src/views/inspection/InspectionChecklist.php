@@ -59,7 +59,7 @@ require_once '../top_view.php';
 		<li ng-show="chemical"><a ng-click="cf.selectCategory('Chemical Safety')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: category.indexOf('Chemical') > -1}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL</span></a></li>
 		<li ng-show="general"><a ng-click="cf.selectCategory('General Hazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL</span></a></li>
 		<li ng-show="radiation"><a ng-click="cf.selectCategory('Radiation Safety')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: category.indexOf('Radiation') > -1}"><img style="margin:1px 5px 2px 0 !important" src="../../img/radiation-large-icon.png"/><span>RADIATION</span></a></li>
-		<li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a ng-click="openNotes()" class="btn btn-large btn-info left checklistNav" ><i class="icon-clipboard-2"></i></a></li>
+		<li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a ng-click="openNotes()" class="btn btn-large btn-info checklistNav" ><i class="icon-clipboard-2" style="  font-size: 33px !important;margin: 2px 5px 3px -12px;"></i></a></li>
 	</ul>
 	<div class="loading" ng-show='loading' style="margin-left:11px;">
 	  <i class="icon-spinnery-dealie spinner large"></i> 
@@ -227,7 +227,8 @@ require_once '../top_view.php';
 		     		<div style="clear:both"></div>
 		     	</ul>
 		    </accordion-group>
-		    <a class="btn btn-large btn-success" ng-if="Inspection || inspection" style="margin:0 10px 10px" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
+		    <a class="btn btn-large btn-primary left" ng-if="Inspection.Is_rad || inspection.Is_rad" style="margin:10px" href="../../rad/#/inspection-wipes{{inspection.Key_id}}"><i class="icon-paper"></i>Wipe Test</a>
+		    <a class="btn btn-large btn-success" ng-if="Inspection || inspection" style="margin:0" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">View Interim Report</a>
 		</accordion>
 	</div>
 	</div>

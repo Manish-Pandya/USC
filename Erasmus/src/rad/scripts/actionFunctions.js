@@ -137,6 +137,10 @@ angular
                         Name:'pickups',
                         Label: 'Pickups',
                         Dashboard: true
+                    },
+                    {
+                        Name:'inspection-wipes:inspection',
+                        Label: 'Inspection Wipes'
                     }
                 ]
 
@@ -1677,5 +1681,11 @@ angular
                         af.setError('The Wipe Test could not be saved')
                     )
             }
+
+            /* Inspection Wipes */
+            af.getInspectionById = function(id){
+               return dataSwitchFactory.getObjectById("Inspection", id);
+            }
+
         	return af;
 		});

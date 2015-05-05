@@ -61,7 +61,59 @@ class PrincipalInvestigator extends GenericCrud {
 		"tableName"	=>	"principal_investigator_room",
 		"keyName"	=>	"key_id",
 		"foreignKeyName"	=>	"principal_investigator_id"
-	);/** Base User object that this PI represents */
+	);
+	
+
+	public static $AUTHORIZATIONS_RELATIONSHIP = array(
+			"className" =>  "Authorization",
+			"tableName" =>  "authorization",
+			"keyName"   =>  "key_id",
+			"foreignKeyName"	=> "principal_investigator_id"
+	);
+	
+	public static $ACTIVEPARCELS_RELATIONSHIP = array(
+			"className" => "Parcel",
+			"tableName" => "parcel",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	public static $PURCHACEORDERS_RELATIONSHIP = array(
+			"className" => "PurchaseOrder",
+			"tableName" => "purchase_order",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+			"className" => "CarboyUseCycle",
+			"tableName" => "carboy_use_cycle",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
+			"className" => "ScintVialCollection",
+			"tableName" => "scint_vial_collection",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
+			"className" => "SolidsContainer",
+			"tableName" => "solids_container",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	public static $PICKUPS_RELATIONSHIP = array(
+			"className" => "Pickup",
+			"tableName" => "pickup",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
+	/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
 

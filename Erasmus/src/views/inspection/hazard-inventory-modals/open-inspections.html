@@ -1,6 +1,7 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:5px;" class="orangeBg">{{pi.User.Name}}'s scheduled inspections
         <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2" style="color: rgba(255,255,255,.7);"></i>New Inspection</a>
+   	    <a class="btn left" ng-click="setInspection(true)"><img src="../../img/radiation-large-icon.png">New Radiation Inspection</a>
 	   	<i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>
 </div>
@@ -13,6 +14,7 @@
    <span ng-if="!gettingInspections && !openInspections.length">
 	   <h3>{{pi.User.Name}} has no pending inspections.</h3>
 	   <a class="btn left" ng-click="setInspection()"><i class="icon-plus-2"></i>New Inspection</a>
+  	   <a class="btn left" ng-click="setInspection(true)"><img src="../../img/radiation-large-icon.png">New Radiation Inspection</a>
    	   <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
    </span>
 	<table class="table table-bordered table-striped">

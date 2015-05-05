@@ -180,10 +180,6 @@ class ActionMappingFactory {
 
 
 				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", ""),
-
-				
-
-
 				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "")
 		);
 	}

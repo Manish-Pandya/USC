@@ -80,6 +80,11 @@ angular
         templateUrl: "views/pi/pickups.html",
         controller: "PickupCtrl"
       })
+      .state('inspection-wipes:inspection', {
+        url: "/inspection-wipes:inspection",
+        templateUrl: "views/inspection/inspection-wipes.html",
+        controller: "InspectionWipeCtrl"
+      })
 
       .state('testpage', {
         url: '/testpage',

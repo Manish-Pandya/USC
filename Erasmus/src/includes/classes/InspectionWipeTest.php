@@ -37,9 +37,7 @@ class InspectionWipeTest extends RadCrud {
 	
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getInspection");
-		$entityMaps[] = new EntityMap("eager","getInspection");
-		
+		$entityMaps[] = new EntityMap("lazy","getInspection");		
 		$this->setEntityMaps($entityMaps);
 	
 	}

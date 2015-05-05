@@ -131,11 +131,13 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     this.PI = PI;
   }
 
-  factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId){
+  factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId, rad){
     //if we don't have a pi, get one from the server
     var deferred = $q.defer();
     if(!inspectorIds)inspectorIds=[10];  
     var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds});
+    if(rad)url = url+"&rad=true";
+
     if(inspectionId) url+='&inspectionId='+inspectionId;
     var temp = this;
       convenienceMethods.getDataAsDeferredPromise(url).then(
@@ -1116,8 +1118,9 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
     });
   });
 
-  $scope.setInspection = function()
+  $scope.setInspection = function(rad)
   {
+      if(!rad)rad = false;
       $scope.creatingInspection = true;
       //now that we have a PI, we can initialize the inspection
       var PIKeyID = hazardInventoryFactory.PI.Key_id;
@@ -1129,14 +1132,18 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
       var inspectionDefer = $q.defer();
 
       hazardInventoryFactory
-            .initialiseInspection( PIKeyID, inspectorIds )
+            .initialiseInspection( PIKeyID, inspectorIds, null,rad )
               .then(function(inspection)
               {
-                  $scope.creatingInspection = false;
-                  if(!$scope.openInspections)$scope.openInspections=[];
-                  console.log($scope.openInspections);
-                  $scope.openInspections.push(inspection);
-                  console.log($scope.openInspections)
+                  if(!rad){
+                    $scope.creatingInspection = false;
+                    if(!$scope.openInspections)$scope.openInspections=[];
+                    $scope.openInspections.push(inspection);
+                  }else{
+                    //navigate to checklist for rad inspection.
+                    console.log(inspection);
+                    window.location = "InspectionChecklist.php#?inspection="+inspection.Key_id;
+                  }
               },
               function(noRooms)
               {                  

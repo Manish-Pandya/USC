@@ -30,7 +30,8 @@ class Inspection extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer",
-		"cap_complete"      => "integer"
+		"cap_complete"      => "integer",
+		"is_rad"			=> "boolean"
 	);
 
 	/** Relationships */
@@ -59,6 +60,13 @@ class Inspection extends GenericCrud {
 			"className"	=>	"Checklist",
 			"tableName"	=>	"inspection_checklist",
 			"keyName"	=>	"checklist_id",
+			"foreignKeyName"	=>	"inspection_id"
+	);
+	
+	public static $INSPECTION_WIPES_TESTS_RELATIONSHIP = array(
+			"className"	=>	"InspectionWipeTest",
+			"tableName"	=>	"inspection_wipe_test",
+			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"inspection_id"
 	);
 
@@ -100,9 +108,14 @@ class Inspection extends GenericCrud {
 	private $cap_complete;
 	
 	private $cap_due_date;
+	
+	/** is this a radiation inspection **/
+	private  $is_rad;
 
 	/**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
 	private $text_schedule_month;
+	
+	private $inspection_wipe_tests;
 
 	public function __construct(){
 
@@ -115,6 +128,7 @@ class Inspection extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("eager","getStatus");
 		$entityMaps[] = new EntityMap("lazy","getChecklists");
+		$entityMaps[] = new EntityMap("lazy","getInspection_wipe_tests");
 
 		$this->setEntityMaps($entityMaps);
 
@@ -323,7 +337,14 @@ class Inspection extends GenericCrud {
 		return $this->cap_due_date;
 	}
 	
+	public function getIs_rad() {return $this->is_rad;}
+	public function setIs_rad($is_rad) {$this->is_rad = $is_rad;}
 	
-
+	public function getInspection_wipe_tests() {
+		$thisDAO = new GenericDAO($this);
+		$this->inspection_wipe_tests = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTION_WIPES_TESTS_RELATIONSHIP));
+		return $this->inspection_wipe_tests;
+	}	
+	
 }
 ?>

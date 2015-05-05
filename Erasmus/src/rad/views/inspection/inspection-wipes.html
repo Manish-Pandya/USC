@@ -1,0 +1,82 @@
+<div cg-busy="{promise:InspectionPromise,message:'Loading Inspection', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div>
+	<div class="card super wipes">
+		<h3 ng-if="!inspection.Inspection_wipe_tests">
+			No Wipes yet for this inspection.<a ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0])" class="btn btn-success left"><i class="icon-plus-2"></i>Add</a>
+		</h3>
+		<h3 ng-if="inspection.Inspection_wipe_tests">
+			Wipes<a ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Add</a>
+		</h3>
+		<div ng-if="inspection.Inspection_wipe_tests" class="fake-table">
+			<div class="table-header">
+				<h3>Edit</h3>
+				<h3>Room</h3>
+				<h3>Location</h3>
+				<h3>Notes</h3>
+				<h3>Radioactivity</h3>
+				<h3>Test Type</h3>
+
+			</div>
+			<div class="table-row" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes">
+				<div>
+					<button ng-disabled="!smear.edit" class="btn btn-primary left" ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0], smear)"><i class="icon-pencil"></i>Edit</button>
+				</div>
+
+				<div ng-if="!smear.edit">
+					{{smear.Curie_level}} mCi
+				</div>
+				<div ng-if="smear.edit">
+					<label class="control-label" for="quantity">Surface:</label>
+					<div class="control-group">
+					     <div class="controls input-append">
+							<input class="span3" ng-model="smear.Curie_level">
+							<span class="add-on">mCi</span>
+						</div>
+					</div>
+				</div>
+
+				<div ng-if="!smear.edit">
+					{{smear.Room.Name}}
+				</div>
+				<div ng-if="smear.edit">
+					<select ng-model="smear.Room" ng-options="Room.Name as Room.Name for Room in inspection.Rooms track by Room.Key_id"></select>
+				</div>
+
+				<div ng-if="!smear.edit">
+					{{smear.Reading_type}}
+				</div>
+				<div ng-if="smear.edit">
+					<select ng-model="ParcelWipeCopy.Reading_type" style="width:100px">
+						<option value="LSC">LSC</option>
+						<option value="Alpha/Beta">Alpha/Beta</option>
+						<option value="MCA">MCA</option>
+					</select>
+				</div>
+
+				<div ng-if="!smear.edit">
+					{{smear.Location}}
+				</div>
+				<div ng-if="smear.edit">
+					<combobox model="ParcelWipeCopy" modelprop="'Location'" options="parcelWipeLocations"/>
+				</div>
+
+				<div ng-if="!smear.edit">
+					{{smear.Notes}}
+				</div>
+				<div ng-if="smear.edit">
+					<textarea ng-model="ParcelWipeCopy.Notes"></textarea>
+				</div>
+
+				<div style="min-width:0;">
+					<span ng-if="smear.edit">
+						<a class="btn btn-success left" ng-click="af.saveInspectionWipe(parcel.Wipe_test[0], ParcelWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+						<a class="btn btn-danger left" ng-click="cancelParcelWipeEdit(smear,parcel.Wipe_test[0])"><i class="icon-cancel-2"></i>Cancel</a>
+					</span>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<pre>{{inspection | json}}</pre>
+
