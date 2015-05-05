@@ -284,7 +284,8 @@ class Rad_ActionManager extends ActionManager {
 	public function getAllRadUsers(){
 		$dao = $this->getDao(new User());
 		$users = $dao->getAll();
-
+		$entityMaps = array();
+		
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("lazy","getInspector");
 		$entityMaps[] = new EntityMap("lazy","getSupervisor");
