@@ -6,38 +6,10 @@
  * If an error should occur, Action functions should return either NULL or
  * an instance of ActionError. (ActionError reccomended) Returning an ActionError allows the public function
  * to provide additional information about the error.
- *
- * NOTE: Anything not in the base module should go in a sepparate class extending this,
- * 		for example Rad_ActionManager.
  */
 ?><?php
 
 class ActionManager {
-
-	private $daoFactory;
-	private $isTestModeEnabled;
-
-	// during construction, can change daoFactory, for example for testing purposes
-	public function __construct( &$daoFactory = NULL) {
-		// default to factory providing GenericDao, required for normal operation
-		if( is_null($daoFactory) ) {
-			$daoFactory = new DaoFactory(new GenericDAO());
-		}
-		$this->daoFactory = $daoFactory;
-	}
-
-	public function setDaoFactory( &$newFactory ) {
-		$this->daoFactory = $newFactory;
-	}
-
-	// will determine whether ActionManager actually uses JsonManager or not.
-	public function setTestMode( $newValue ) {
-		$this->isTestModeEnabled = $newValue;
-	}
-
-	public function isTestModeEnabled() {
-		return $this->isTestModeEnabled;
-	}
 
 	/**
 	 * Chooses a return value based on the parameters. If $paramValue
@@ -49,7 +21,7 @@ class ActionManager {
 	 * @param string $paramValue
 	 * @return string|unknown|NULL
 	 */
-	public function getValueFromRequest( $valueName, $paramValue = NULL ){
+	private function getValueFromRequest( $valueName, $paramValue = NULL ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 
 		if( $paramValue !== NULL ){
@@ -68,18 +40,12 @@ class ActionManager {
 		}
 	}
 
-	public function convertInputJson(){
-
-		// if being tested, cannot use JsonManager since php://input is read-only
-		if( $this->isTestModeEnabled() ) {
-			return $_REQUEST["testInput"];
-		}
-
+	private function convertInputJson(){
 		try{
 			$decodedObject = JsonManager::decodeInputStream();
 
 			if( $decodedObject === NULL ){
-				return new ActionError('No data read from input stream', 202);
+				return new ActionError('No data read from input stream');
 			}
 
 			return $decodedObject;
@@ -90,20 +56,18 @@ class ActionManager {
 	}
 
 
-	public function getDao( $modelObject = NULL ){
+	private function getDao( $modelObject = NULL ){
 		//FIXME: Remove MockDAO
 		if( $modelObject === NULL ){
 			return new MockDAO();
 		}
 		else{
-			return $this->daoFactory->getDao($modelObject);
+			return new GenericDAO( $modelObject );
 		}
 	}
 
 	public function loginAction(){ }
 	public function logoutAction(){ }
-<<<<<<< HEAD
-=======
 	
 	public function getCurrentUser(){
 		//todo:  when a user is logged in and in session, return the currently logged in user.
@@ -146,7 +110,6 @@ class ActionManager {
 			return $decodedObject;
 		}
 	}
->>>>>>> master
 
 	// Users Hub
 	public function getAllUsers(){
@@ -169,7 +132,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -199,7 +162,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -214,7 +177,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -222,7 +185,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to User', 202);
+			return new ActionError('Error converting input stream to User');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -286,7 +249,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -306,7 +269,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -332,7 +295,7 @@ class ActionManager {
 		}
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Checklist', 202);
+			return new ActionError('Error converting input stream to Checklist');
 		}
 		else{
 			$dao = $this->getDao(new Checklist());
@@ -399,7 +362,7 @@ class ActionManager {
         	$decodedObject = $this->convertInputJson();
 		}
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Question', 202);
+			return new ActionError('Error converting input stream to Question');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -424,7 +387,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Deficiency', 202);
+			return new ActionError('Error converting input stream to Deficiency');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -440,7 +403,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation', 202);
+			return new ActionError('Error converting input stream to Observation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -456,7 +419,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Recommendation', 202);
+			return new ActionError('Error converting input stream to Recommendation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -472,7 +435,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to SupplementalObservation', 202);
+			return new ActionError('Error converting input stream to SupplementalObservation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -488,7 +451,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to SupplementalRecommendation', 202);
+			return new ActionError('Error converting input stream to SupplementalRecommendation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -543,7 +506,7 @@ class ActionManager {
 		return $hazards;
 	}
 
-	public function getHazardTreeNode( $id = NULL ){
+	public function getHazardTreeNode( $id = NULL){
 
 		// get the node hazard
 		$hazard = $this->getHazardById($id);
@@ -598,7 +561,7 @@ class ActionManager {
 			return $hazard;
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -614,7 +577,7 @@ class ActionManager {
 
 		//validate values
 		if( $hazardId === NULL || $parentHazardId === NULL ){
-			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId", 201);
+			return new ActionError("Invalid Hazard IDs specified: hazardId=$hazardId parentHazardId=$parentHazardId");
 		}
 		else{
 			$LOG->debug("Moving Hazard #$hazardId to new parent Hazard #$parentHazardId");
@@ -625,7 +588,7 @@ class ActionManager {
 			$hazard = $this->getHazardById( $hazardId );
 			$LOG->trace("Loaded Hazard to move: $hazard");
 
-			$hazard->setParent_hazard_id($parentHazardId);
+			$hazard->setParent_hazard_id=$parentHazardId;
 			// Save
 
 			$dao->save($hazard);
@@ -644,12 +607,8 @@ class ActionManager {
 		}
 
 		if( $decodedObject === NULL ){
-<<<<<<< HEAD
-			return new ActionError('Error converting input stream to Hazard', 202);
-=======
 			// that is, still null after checking input parameters *and* stream.
 			return new ActionError('Error converting input stream to Hazard');
->>>>>>> master
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -720,12 +679,6 @@ class ActionManager {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Determines if the names of a list of Hazards are in alphabetical order
-	 * @param array of Hazards
-	 * @return boolean
-	 */
-=======
 	 * Just like SaveHazard, but it only returns the single parent hazard,
 	 * without subhazards. THIS STILL SAVES SUBHAZARDS because there's an
 	 * annoying amount of complexity when saving subhazards. Thus, it's easier
@@ -775,7 +728,6 @@ class ActionManager {
 		}
 	}
 	
->>>>>>> master
 	public function getIsAlphabetized( $list ){
 		$LOG = Logger::getLogger('Action:' . __function__);
 
@@ -794,7 +746,7 @@ class ActionManager {
 		$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Hazard', 202);
+			return new ActionError('Error converting input stream to Hazard');
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -850,7 +802,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1003,7 +955,7 @@ class ActionManager {
 		$decodedObject = $this->convertInputJson();
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Building', 202);
+			return new ActionError('Error converting input stream to Building');
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -1043,7 +995,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1136,7 +1088,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1172,7 +1124,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1191,14 +1143,7 @@ class ActionManager {
 			$entityMaps[] = new EntityMap("eager","getUser");
 			$entityMaps[] = new EntityMap("lazy","getInspections");
 			$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
-<<<<<<< HEAD
-			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-			$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
-			$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
-=======
 			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
->>>>>>> master
 
 			foreach($pis as $pi){
 				$pi->setEntityMaps($entityMaps);
@@ -1266,15 +1211,8 @@ class ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
-<<<<<<< HEAD
-		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-		$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
-		$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
-=======
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 
->>>>>>> master
 
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);
@@ -1307,17 +1245,12 @@ class ActionManager {
 			// initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
 			// necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
 			$roomMaps = array();
-			$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+			$roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
 			$roomMaps[] = new EntityMap("lazy","getHazards");
 			$roomMaps[] = new EntityMap("lazy","getBuilding");
 			$roomMaps[] = new EntityMap('eager', 'getBuilding_id');
 			$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
-<<<<<<< HEAD
-			$roomMaps[] = new EntityMap("lazy","getCarboys");
-
-=======
 			$roomMaps[] = new EntityMap("lazy","getHas_hazards");
->>>>>>> master
 
 			$piMaps = array();
 			$piMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -1326,15 +1259,7 @@ class ActionManager {
 			$piMaps[] = new EntityMap("eager","getDepartments");
 			$piMaps[] = new EntityMap("eager","getUser");
 			$piMaps[] = new EntityMap("lazy","getInspections");
-<<<<<<< HEAD
-			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-			$entityMaps[] = new EntityMap("lazy", "getActiveCarboys");
-			$entityMaps[] = new EntityMap("lazy", "getActiveCarboyUseCycles");
-			$LOG->debug($room->getPrincipalInvestigators());
-=======
 			$piMaps[] = new EntityMap("lazy","getOpenInspections");
->>>>>>> master
 
 			foreach($room->getPrincipalInvestigators() as $pi){
 				$pi->setEntityMaps($piMaps);
@@ -1396,7 +1321,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1425,7 +1350,7 @@ class ActionManager {
 			$decodedObject = $pi;
 		}
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation', 202);
+			return new ActionError('Error converting input stream to Observation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1445,7 +1370,7 @@ class ActionManager {
 			$decodedObject = $inspector;
 		}
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Observation', 202);
+			return new ActionError('Error converting input stream to Observation');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -1536,11 +1461,6 @@ class ActionManager {
 	public function savePIDepartmentRelations($piId = NULL, $departmentIds = NULL){
 		$piId = $this->getValueFromRequest('piId', $piId);
 		$departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-<<<<<<< HEAD
-
-		foreach($roleIds as $roleId){
-			$this->savePIDepartmentRelation($piId ,$departmentIds,true);
-=======
 		$LOG = Logger::getLogger( 'Action:' . __function__ );
 		$LOG->debug($this->getValueFromRequest('departmentIds', $departmentIds));
 		foreach($departmentIds as $departmentId){
@@ -1549,7 +1469,6 @@ class ActionManager {
 			$relation->setRelation_id($departmentId);
 			$relation->setAdd(true);
 			$this->savePIDepartmentRelation($relation);
->>>>>>> master
 		}
 		return true;
 	}
@@ -1727,7 +1646,7 @@ class ActionManager {
 			return $roomDto;
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1756,7 +1675,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -1769,7 +1688,7 @@ class ActionManager {
 		}
 
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Hazard', 202);
+			return new ActionError('Error converting input stream to Hazard');
 		}
 		else if( $decodedObject instanceof ActionError ){
 			return $decodedObject;
@@ -1842,7 +1761,7 @@ class ActionManager {
 			return $dao->getById($id);
 		}
 		else{
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2024,7 +1943,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Inspection', 202);
+			return new ActionError('Error converting input stream to Inspection');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2099,7 +2018,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Inspection', 202);
+			return new ActionError('Error converting input stream to Inspection');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2368,7 +2287,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 	public function getHazardRoomRelations( $roomIds = NULL ){
@@ -2629,7 +2548,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2637,7 +2556,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to Response', 202);
+			return new ActionError('Error converting input stream to Response');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2666,7 +2585,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to DeficiencySelection', 202);
+			return new ActionError('Error converting input stream to DeficiencySelection');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2708,7 +2627,7 @@ class ActionManager {
 		$LOG = Logger::getLogger('Action:' . __function__);
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ){
-			return new ActionError('Error converting input stream to CorrectiveAction', 202);
+			return new ActionError('Error converting input stream to CorrectiveAction');
 		}
 		else if( $decodedObject instanceof ActionError){
 			return $decodedObject;
@@ -2794,7 +2713,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2876,10 +2795,25 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
+
+	public function getDeficiencySelectionById( $id = NULL ){
+		$LOG = Logger::getLogger( 'Action:' . __function__ );
+
+		$id = $this->getValueFromRequest('id', $id);
+
+		if( $id !== NULL ){
+			$dao = $this->getDao();
+			return $dao->getDeficiencySelectionById($id);
+		}
+		else{
+			//error
+			return new ActionError("No request parameter 'id' was provided");
+		}
+	}
 
 	// Inspection, step 4 (Review, deficiency report)
 	public function getDeficiencySelectionsForResponse( $responseId = NULL){
@@ -2898,7 +2832,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2915,7 +2849,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2937,7 +2871,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2952,7 +2886,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2979,7 +2913,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -2998,7 +2932,7 @@ class ActionManager {
 		}
 		else{
 			//error
-			return new ActionError("No request parameter 'id' was provided", 201);
+			return new ActionError("No request parameter 'id' was provided");
 		}
 	}
 
@@ -3272,7 +3206,6 @@ class ActionManager {
 
 		$dao = $this->getDao(new Inspection());
 		$inspectionSchedules = $dao->getInspectionsByYear($year);
-		return $inspectionSchedules;
 
 		foreach ($inspectionSchedules as &$is){
 			if ($is->getInspection_id() !== null){
@@ -3442,42 +3375,9 @@ class ActionManager {
 		return date("Y");
 	}
 
-	public function getRelationships( $class1 = NULL, $class2 = NULL ){
-		$LOG = Logger::getLogger( 'Action:' . __function__ );
-
-		if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
-		if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
-
-		// make sure first letter of class name is capitalized.
-		$class1 = ucfirst($class1);
-		$class2 = ucfirst($class2);
-
-		$relationshipFactory = new RelationshipMappingFactory();
-		// get name of the table containing those two classes
-		$tableName = $relationshipFactory->getTableName($class1, $class2);
-
-		// get class name of the DTO that will contain the resulting relationships
-		$className = $relationshipFactory->getClassName($class1, $class2);
-
-		if( $tableName instanceof ActionError ) {
-			return $tableName;
-		}
-
-		// GenericDAO must recieve an entity class, but will not use it in this case.
-		$dao = new GenericDAO(new Isotope);
-
-		$relationships = $dao->getRelationships($tableName, $className);
-		$LOG->debug($relationships);
-		return $relationships;
-	}
-
-
-
 	public function getAllSupplementalObservations(){
 		$dao = $this->getDao(new SupplementalObservation());
 		return $dao->getAll();
 	}
-
-
 }
 ?>

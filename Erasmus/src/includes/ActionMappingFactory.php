@@ -1,10 +1,7 @@
 <?php
 
-
 /**
  * Class that wraps a static accessor that returns all Action Mappings
- * NOTE: Anything not in the base module should go in a sepparate class extending this,
- * 		for example Rad_ActionMappingFactory.
  *
  * @author Mitch
  */
@@ -16,24 +13,10 @@ class ActionMappingFactory {
 	public static function readActionConfig(){
 		$mappings = new ActionMappingFactory();
 
-		$config = array();
-
-		// get additional Radiaton modules, if enabled
-		if(isRadiationEnabled()) {
-			$config = Rad_ActionMappingFactory::readActionConfig();
-		}
-
-		$config = array_merge($config, $mappings->getConfig());
-
-		return $config;
+		return $mappings->getConfig();
 	}
 
-	public function __construct(){
-        // if using the radiation safety module, include these extra actions
-        if(isRadiationEnabled()) {
-                require_once "Rad_ActionMappingFactory.php";
-        }
-	}
+	public function __construct(){ }
 
 	/**
 	 * Retrieves array of ActionMappings
@@ -42,7 +25,6 @@ class ActionMappingFactory {
 	 */
 	public function getConfig(){
 		return array(
-
 				//TODO: Correct action names
 				//TODO: Assign locations
 				//TODO: Assign roles
@@ -66,11 +48,8 @@ class ActionMappingFactory {
 				"saveInspector"=>new ActionMapping("saveInspector", "", ""),
 				"getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", ""),
 				"getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-<<<<<<< HEAD
-=======
 				"getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", ""),
 
->>>>>>> master
 
 
 				//convenience method to split all usernames into first and last names
@@ -171,7 +150,6 @@ class ActionMappingFactory {
 				"saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", ""),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", ""),
 				"saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", ""),
-				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", ""),
 				"saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", ""),
 				"getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", ""),
 				"getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", ""),
@@ -201,16 +179,12 @@ class ActionMappingFactory {
 				"scheduleInspection"=>new ActionMapping("scheduleInspection", "", ""),
 
 
-<<<<<<< HEAD
-				//GENERIC RELATIONSHIPS
-				"getRelationships"=>new ActionMapping("getRelationships", "", "")
-=======
 				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", ""),
 
 				
 
->>>>>>> master
 
+				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "")
 		);
 	}
 }
