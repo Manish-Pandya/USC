@@ -12,6 +12,7 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.$state = $state;
 
     var getAllAuthorizations = function(){
         return actionFunctionsFactory.getAllAuthorizations()
