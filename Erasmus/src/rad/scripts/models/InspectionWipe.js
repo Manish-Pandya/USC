@@ -11,7 +11,9 @@ InspectionWipe.prototype = {
 	],
 
 	loadRoom: function(){
+		console.log(dataStore.Room);
 		dataLoader.loadChildObject(this, 'Room', 'Room', this.Room_id);
+		console.log(this.Room);
 	}
 }
 
