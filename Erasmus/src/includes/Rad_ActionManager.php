@@ -25,14 +25,14 @@ class Rad_ActionManager extends ActionManager {
 			$entityMaps[] = new EntityMap("lazy","getInspectors");
 			$entityMaps[] = new EntityMap("eager","getRooms");
 			$entityMaps[] = new EntityMap("lazy","getResponses");
-			$entityMaps[] = new EntityMap("eager","getDeficiency_selections");
-			$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+			$entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+			$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
 			$entityMaps[] = new EntityMap("eager","getStatus");
 			$entityMaps[] = new EntityMap("lazy","getChecklists");
 			$entityMaps[] = new EntityMap("eager","getInspection_wipe_tests");
 				
 			$inspection =  $dao->getById($id);
-			$inspection->setEntityMaps($entity_maps);
+			$inspection->setEntityMaps($entityMaps);
 			return $inspection;
 		}
 		else {

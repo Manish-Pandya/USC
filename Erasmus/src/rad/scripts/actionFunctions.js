@@ -1684,7 +1684,48 @@ angular
 
             /* Inspection Wipes */
             af.getInspectionById = function(id){
-               return dataSwitchFactory.getObjectById("Inspection", id);
+               return dataSwitchFactory.getObjectById("Inspection", id, true);
+            }
+
+            af.saveInspectionWipeTest = function(copy, test)
+            {
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function(returnedWipe){
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(test){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                var inspection = dataStoreManager.getById("Inspection", returnedWipe.Inspection_id)
+                                if(!inspection.Inspection_wipe_tests)inspection.Inspection_wipe_tests = [];
+                                inspection.Inspection_wipe_tests.push(returnedWipe);
+                            }
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveInspectionWipe = function(copy, wipe, wipeTest)
+            {
+                console.log(copy)
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function(returnedWipe){
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(wipe){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.Miscellaneous_wipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
             }
 
         	return af;

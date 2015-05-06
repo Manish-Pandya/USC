@@ -8,18 +8,17 @@
  * Controller of the 00RsmsAngularOrmApp Radmin PI dashboard
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('InspectionWipeCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $modal) {
+  .controller('InspectionWipeCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $q) {
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
 
     var getInspection = function(){
 
-
        return af.getInspectionById($stateParams.inspection)
             .then(
                 function(inspection){
-                    $rootScope.inspection = dataStore.Inspection;
+                    $scope.inspection = dataStoreManager.getById('Inspection',$stateParams.inspection);
                     return inspection;
                 }
             );  
@@ -27,60 +26,87 @@ angular.module('00RsmsAngularOrmApp')
 
     $rootScope.InspectionPromise = getInspection();
 
-    $scope.editWipeParcelWipeTest = function(parcel, test){
-        $rootScope.ParcelWipeTestCopy = {}
+    $scope.editWipeInspectionWipeTest = function(inspection, test){
+        $rootScope.InspectionWipeTestCopy = {}
 
         if(!test){
-            $rootScope.ParcelWipeTestCopy = new window.ParcelWipeTest();
-            $rootScope.ParcelWipeTestCopy.Parcel_id = parcel.Key_id
-            $rootScope.ParcelWipeTestCopy.Class = "ParcelWipeTest";
-            $rootScope.ParcelWipeTestCopy.Is_active = true;
+            $rootScope.InspectionWipeTestCopy = new window.ParcelWipeTest();
+            $rootScope.InspectionWipeTestCopy.Inspection_id = inspection.Key_id
+            $rootScope.InspectionWipeTestCopy.Class = "InspectionWipeTest";
+            $rootScope.InspectionWipeTestCopy.Is_active = true;
         }else{
             af.createCopy(test);
         }
-
-        var i = $scope.wipeTestParcels.length
-        while(i--){
-            $scope.wipeTestParcels[i].Creating_wipe = false;
-        }
-        parcel.Creating_wipe = true;
-        
+        $scope.editWipeTest = true;
     }
 
     $scope.cancelParcelWipeTestEdit = function(parcel){
-        parcel.Creating_wipe = false;
-        $rootScope.ParcelWipeTestCopy = {}
+        $scope.editWipeTest = false;
+        $rootScope.InspectionWipeTestCopy = {}
     }
 
-    $scope.editWipeParcelWipe = function(wipeTest, wipe){
-        $rootScope.ParcelWipeCopy = {}
-        if(!wipeTest.Parcel_wipes)wipeTest.Parcel_wipes = [];
-        var i = wipeTest.Parcel_wipes.length;
-        while(i--){
-            wipeTest.Parcel_wipes[i].edit = false;
+    $scope.editInspectionWipe = function(wipeTest, wipe){
+
+        var testPromise = $q.defer();
+
+        //  if there is already a wipetest, resolve the promise with it
+        if(wipeTest){
+            testPromise.resolve(wipeTest);
+        }
+        // if not, create a new one and save it
+        else{
+            console.log($scope.inspection);
+            var wipeTest = new window.InspectionWipeTest();
+            wipeTest.Inspection_id = $scope.inspection.Key_id;
+            wipeTest.Class = "InspectionWipeTest";
+            console.log(wipeTest);
+            af.saveInspectionWipeTest(wipeTest)
+                .then(function(returnedWipeTest){
+                    $scope.inspection.Inspection_wipe_tests.push(returnedWipeTest);
+                    testPromise.resolve(returnedWipeTest);
+                    return testPromise.promise;
+                },
+                function(){
+                    testPromise.reject();
+                });
         }
 
-        if(!wipe){
-            $rootScope.ParcelWipeCopy = new window.ParcelWipe();
-            $rootScope.ParcelWipeCopy.Parcel_wipe_test_id = wipeTest.Key_id
-            $rootScope.ParcelWipeCopy.Class = "ParcelWipe";
-            $rootScope.ParcelWipeCopy.edit = true;
-            $rootScope.ParcelWipeCopy.Is_active = true;
-            wipeTest.Parcel_wipes.unshift($rootScope.ParcelWipeCopy);
-        }else{
-            wipe.edit = true;
-            af.createCopy(wipe);
-        }
+        testPromise.promise
+            .then(
+                function(test){
+                    var i = test.Inspection_wipes.length;
+                    while(i--){
+                        wipeTest.Inspection_wipes[i].edit = false;
+                    }
+
+                    if(!wipe){
+                        $rootScope.InspectionWipeCopy = new window.ParcelWipe();
+                        $rootScope.InspectionWipeCopy.Inspection_wipe_test_id = test.Key_id
+                        $rootScope.InspectionWipeCopy.Class = "InspectionWipe";
+                        $rootScope.InspectionWipeCopy.edit = true;
+                        $rootScope.InspectionWipeCopy.Is_active = true;
+                        test.Inspection_wipes.unshift($rootScope.InspectionWipeCopy);
+                    }else{
+                        $rootScope.InspectionWipeCopy = {};
+                        var i = test.Inspection_wipes.length;
+                        while(i--){
+                            test.Inspection_wipes[i].edit = false;
+                        }
+                        wipe.edit = true;
+                        af.createCopy(wipe);
+                    }
+                }
+            )
         
     }
 
-    $scope.cancelParcelWipeEdit = function(wipe,test){
+    $scope.cancelInspectionWipeEdit = function(wipe,test){
         wipe.edit = false;
-        $rootScope.ParcelWipeCopy = {};
-        var i = test.Parcel_wipes.length;
+        $rootScope.InspectionWipeCopy = {};
+        var i = test.Inspection_wipes.length;
         while(i--){
-            if(!test.Parcel_wipes[i].Key_id){
-                test.Parcel_wipes.splice(i,1);
+            if(!test.Inspection_wipes[i].Key_id){
+                test.Inspection_wipes.splice(i,1);
             }
         }
     }

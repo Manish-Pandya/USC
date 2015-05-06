@@ -3,7 +3,9 @@
 
 //constructor
 var InspectionWipeTest = function() {};
-InspectionWipeTest.prototype = {}
+InspectionWipeTest.prototype = {
+	className: "InspectionWipeTest"
+}
 
 // inherit from GenericModel
 extend(InspectionWipeTest, GenericModel);

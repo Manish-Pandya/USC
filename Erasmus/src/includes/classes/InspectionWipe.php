@@ -55,12 +55,14 @@ class InspectionWipe extends RadCrud {
 	private $room_id;
 	private $room;
 	
-	private $currie_level;
+	private $curie_level;
 	
 	private $notes;
 	
 	private $inspection_wipe_test_id;
 	private $inspection_wipe_test;
+	
+	private  $reading_type;
 	
 	/** location within the room where this wipe was performed **/
 	private $location;
@@ -68,8 +70,8 @@ class InspectionWipe extends RadCrud {
 	public function getRoom_id() {return $this->room_id;}
 	public function setRoom_id($room_id) {$this->room_id = $room_id;}
 	
-	public function getCurrie_level() {return $this->currie_level;}
-	public function setCurrie_level($currie_level) {$this->currie_level = $currie_level;}
+	public function getCurie_level() {return $this->curie_level;}
+	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
 	
 	public function getNotes() {return $this->notes;}
 	public function setNotes($notes) {$this->notes = $notes;}
@@ -85,6 +87,9 @@ class InspectionWipe extends RadCrud {
 	
 	public function getLocation() {return $this->location;}
 	public function setLocation($location) {$this->location = $location;}
+	
+	public function getReading_type() {return $this->reading_type;}
+	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
 	
 	
 }

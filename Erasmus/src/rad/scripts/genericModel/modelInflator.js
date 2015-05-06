@@ -34,7 +34,7 @@ angular
                         inflator.dynamicallyCreateClass( objectFlavor );
                     } 
 
-
+                    console.log(objectFlavor);
                     //instantiate an object of Class objectFlavor
                     var modelledObject = new window[objectFlavor]( );
                     modelledObject.setApi( genericAPIFactory );
