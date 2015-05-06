@@ -1701,6 +1701,7 @@ angular
                                 var inspection = dataStoreManager.getById("Inspection", returnedWipe.Inspection_id)
                                 if(!inspection.Inspection_wipe_tests)inspection.Inspection_wipe_tests = [];
                                 inspection.Inspection_wipe_tests.push(returnedWipe);
+                                return returnedWipe;
                             }
                         },
                         af.setError('The Wipe Test could not be saved')
@@ -1709,18 +1710,23 @@ angular
 
             af.saveInspectionWipe = function(copy, wipe, wipeTest)
             {
-                console.log(copy)
                 af.clearError();
                 return this.save( copy )
                     .then(
                         function(returnedWipe){
                             returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
-                            if(wipe){
+                            if(wipe.Key_id){
                                 angular.extend(wipe, copy)
                             }else{
+                                console.log(returnedWipe);
                                 dataStoreManager.store(returnedWipe);
-                                wipeTest.Miscellaneous_wipes.push(returnedWipe);
-                                copy = {};
+                                wipeTest.Inspection_wipes.push(returnedWipe);
+                                var i = wipeTest.Inspection_wipes.length;
+                                while(i--){
+                                    if(!wipeTest.Inspection_wipes[i].Key_id)wipeTest.Inspection_wipes.splice(i,1);
+                                }
+                                $rootScope.InspectionWipeCopy = {};
+                                console.log($rootScope);
                             }
                             wipe.edit = false;
                         },
