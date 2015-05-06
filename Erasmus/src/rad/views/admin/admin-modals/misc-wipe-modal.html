@@ -1,5 +1,8 @@
 <div class="modal-header" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.User.Name}}</h2>
+    <h2 ng-show="!addRoom" style="padding:5px; background: rgb(107, 86, 179)" class="blueBg">
+    	<span ng-if="modalData.MiscellaneousWipeTest.Key_id">Edit</span>
+    	<span ng-if="!modalData.MiscellaneousWipeTest.Key_id">Add</span> Miscellaneous Wipe
+    </h2>
 </div>
 <div class="modal-body">
   <div class="control-group">

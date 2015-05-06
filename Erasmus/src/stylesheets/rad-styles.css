@@ -21,7 +21,6 @@
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
   margin-top: 10px;
   float:left;
-  overflow: auto;
   box-sizing:border-box;
 }
 .card:after {
