@@ -4,13 +4,14 @@
 
 <div>
 	<div class="card super wipes">
-		<h3 class="card-header padding" ng-if="!inspection.Inspection_wipe_tests[0]">
-			No Wipes yet for this inspection.<a ng-click="editInspectionWipe(null, null, inspection)" class="btn btn-success left"><i class="icon-plus-2"></i>Add</a>
+		<h3 class="card-header padding">
+			<span ng-if="!inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
+				No Wipes yet for this inspection.
+			</span>
+			<span ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">Wipes</span>
+			<a ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0], null, inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Add</a>
 		</h3>
-		<h3 class="card-header padding" ng-if="inspection.Inspection_wipe_tests[0]">
-			Wipes<a ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Add</a>
-		</h3>
-		<div class="fake-table">
+		<div class="fake-table inspection-wipe-table" ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
 			<div class="table-header">
 				<h3>Edit</h3>
 				<h3>Room</h3>
@@ -18,8 +19,9 @@
 				<h3>Notes</h3>
 				<h3>Radioactivity</h3>
 				<h3>Test Type</h3>
+				<h3></h3>
 			</div>
-			<div class="table-row" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes">
+			<div class="table-row" ng-class="{'edit':smear.edit}" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes">
 				<div>
 					<button ng-disabled="smear.edit" class="btn btn-primary left" ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0], smear)"><i class="icon-pencil"></i>Edit</button>
 				</div>
@@ -28,7 +30,7 @@
 					{{smear.Room.Name}}
 				</div>
 				<div ng-if="smear.edit">
-					<select ng-model="InspectionWipeCopy.Room_id">
+					<select style="width:60px" ng-model="InspectionWipeCopy.Room_id">
 						<option ng-repeat="room in inspection.Rooms" value="{{room.Key_id}}">{{room.Name}}</option>
 					</select>
 				</div>
@@ -37,7 +39,7 @@
 					{{smear.Location}}
 				</div>
 				<div ng-if="smear.edit">
-					<input ng-model="InspectionWipeCopy.Location"/>
+					<textarea ng-model="InspectionWipeCopy.Location" placeholder="Location"></textarea>
 				</div>
 
 				<div ng-if="!smear.edit">
@@ -51,7 +53,6 @@
 					{{smear.Curie_level}} mCi
 				</div>
 				<div ng-if="smear.edit">
-					<label class="control-label" for="quantity">Surface:</label>
 					<div class="control-group">
 					     <div class="controls input-append">
 							<input style="width:40px" ng-model="InspectionWipeCopy.Curie_level">
@@ -65,22 +66,20 @@
 				</div>
 				<div ng-if="smear.edit">
 					<select ng-model="InspectionWipeCopy.Reading_type" style="width:100px">
+						<option selected="selected">Select Reading Type</option>
 						<option value="LSC">LSC</option>
 						<option value="Alpha/Beta">Alpha/Beta</option>
 						<option value="MCA">MCA</option>
 					</select>
 				</div>
 
-				<div style="min-width:0;">
+				<div>
 					<span ng-if="smear.edit">
 						<a class="btn btn-success left" ng-click="af.saveInspectionWipe(InspectionWipeCopy, smear,inspection.Inspection_wipe_tests[0])"><i class="icon-checkmark"></i>Save</a>
 						<a class="btn btn-danger left" ng-click="cancelInspectionWipeEdit(smear,inspection.Inspection_wipe_tests[0])"><i class="icon-cancel-2"></i>Cancel</a>
 					</span>
 				</div>
-
 			</div>
 		</div>
 	</div>
 </div>
-<pre>{{inspection.Inspection_wipe_tests[0]|json}}</pre>
-

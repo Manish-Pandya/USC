@@ -51,11 +51,11 @@ angular.module('00RsmsAngularOrmApp')
 
         //  if there is already a wipetest, resolve the promise with it
         if(wipeTest){
+            console.log(wipeTest);
             testPromise.resolve(wipeTest);
         }
         // if not, create a new one and save it
         else{
-            console.log($scope.inspection);
             var wipeTest = new window.InspectionWipeTest();
             wipeTest.Inspection_id = $scope.inspection.Key_id;
             wipeTest.Class = "InspectionWipeTest";
@@ -64,6 +64,7 @@ angular.module('00RsmsAngularOrmApp')
                 .then(function(returnedWipeTest){
                     $scope.inspection.Inspection_wipe_tests.push(returnedWipeTest);
                     testPromise.resolve(returnedWipeTest);
+                    console.log(returnedWipeTest);
                     return testPromise.promise;
                 },
                 function(){
@@ -73,24 +74,25 @@ angular.module('00RsmsAngularOrmApp')
 
         testPromise.promise
             .then(
-                function(test){
-                    var i = test.Inspection_wipes.length;
+                function(wipeTest){
+                    if(!wipeTest.Inspection_wipes)wipeTest.Inspection_wipes = [];
+                    var i = wipeTest.Inspection_wipes.length;
                     while(i--){
                         wipeTest.Inspection_wipes[i].edit = false;
                     }
 
                     if(!wipe){
-                        $rootScope.InspectionWipeCopy = new window.ParcelWipe();
-                        $rootScope.InspectionWipeCopy.Inspection_wipe_test_id = test.Key_id
+                        $rootScope.InspectionWipeCopy = new window.InspectionWipe();
+                        $rootScope.InspectionWipeCopy.Inspection_wipe_test_id = wipeTest.Key_id
                         $rootScope.InspectionWipeCopy.Class = "InspectionWipe";
                         $rootScope.InspectionWipeCopy.edit = true;
                         $rootScope.InspectionWipeCopy.Is_active = true;
-                        test.Inspection_wipes.unshift($rootScope.InspectionWipeCopy);
+                        wipeTest.Inspection_wipes.unshift($rootScope.InspectionWipeCopy);
                     }else{
                         $rootScope.InspectionWipeCopy = {};
-                        var i = test.Inspection_wipes.length;
+                        var i = wipeTest.Inspection_wipes.length;
                         while(i--){
-                            test.Inspection_wipes[i].edit = false;
+                            wipeTest.Inspection_wipes[i].edit = false;
                         }
                         wipe.edit = true;
                         af.createCopy(wipe);
