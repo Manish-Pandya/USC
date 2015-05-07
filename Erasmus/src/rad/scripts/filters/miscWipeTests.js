@@ -8,11 +8,9 @@ angular.module('00RsmsAngularOrmApp')
 	  		while(i--){
 	  			var test = tests[i];
   				if(test.Is_active == true && (!test.Closeout_date || test.Closeout_date == "0000-00-00 00:00:00") ){
-  					console.log(test)
   					availableTests.push(test);
 	  			}
 	  		}
-	  		console.log(availableTests);
 	  		return availableTests;
 	  };
 	})
