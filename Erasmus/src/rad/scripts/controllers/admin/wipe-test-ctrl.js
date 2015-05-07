@@ -27,7 +27,8 @@ angular.module('00RsmsAngularOrmApp')
         return af.getAllMiscellaneousWipeTests()
             .then(
                 function(tests){
-                    $scope.miscellaneousWipeTests = dataStore.MiscellaneousWipeTest;
+                    if(!dataStore.MiscellaneousWipeTest)dataStore.MiscellaneousWipeTest=[];
+                    $rootScope.miscellaneousWipeTests = dataStore.MiscellaneousWipeTest;
                 }
             )
     }
