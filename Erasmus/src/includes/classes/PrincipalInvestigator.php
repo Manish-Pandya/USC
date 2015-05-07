@@ -349,7 +349,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function setInspection_notes($inspection_notes) {
 		$this->inspection_notes = $inspection_notes;
 	}
-public function getOpenInspections(){
+	public function getOpenInspections(){
 		// Get the db connection
 		global $db;
 
