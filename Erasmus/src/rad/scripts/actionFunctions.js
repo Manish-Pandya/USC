@@ -41,7 +41,7 @@ angular
                     $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
                         .then(
                             function( returnedPromise ){
-                                if(typeof returnedPromise === 'object')object = returnedPromise;
+                                if(typeof returnedPromise === 'object')angular.extend(object, returnedPromise);
                                 return true;
                             },
                             function( error )
@@ -141,6 +141,12 @@ angular
                     {
                         Name:'inspection-wipes:inspection',
                         Label: 'Inspection Wipes'
+                    }
+                    ,
+                    {
+                        Name:'radmin.disposals',
+                        Label: 'Disposals',
+                        Dashboard: true
                     }
                 ]
 
@@ -1646,7 +1652,7 @@ angular
                 return dataSwitchFactory.getAllObjects('MiscellaneousWipeTest', true);
             }
 
-             af.saveMiscellaneousWipeTest = function(test) {
+            af.saveMiscellaneousWipeTest = function(test) {
                 af.clearError();
                 console.log(test);
                 return this.save( test )
@@ -1732,6 +1738,10 @@ angular
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
+            }
+
+            af.getAllScintVialCollections = function(){
+                return dataSwitchFactory.getAllObjects('ScintVialCollection');
             }
 
         	return af;
