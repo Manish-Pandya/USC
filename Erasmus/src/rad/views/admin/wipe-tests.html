@@ -149,11 +149,12 @@
 		
 		<div class="card full wipe-tests" ng-repeat="test in miscellaneousWipeTests | miscWipeTests">
 			<h3 class="card-header padding">
-				<span class="span8">
+				<i class="icon-paper"></i>
+				<span>
 					{{test.Notes}} started on {{test.Date_created | dateToISO}} 
 				</span>
-				<span class='pull-right span4'>
-					<a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> <a ng-disabled="smear.edit" ng-click="editMiscWipe(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Wipe</a> <a ng-click="clouseOutMWT(test)" class="btn btn-danger left"><i class="icon-cancel-2"></i>Close</a>
+				<span class='pull-right' style="width:394px;">
+					<a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> <a ng-disabled="smear.edit" ng-click="editMiscWipe(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Wipe</a> <a ng-click="clouseOutMWT(test)" class="btn btn-info left"><i class="icon-exit"></i>Close</a><a style="margin-left:6px" ng-click="af.setObjectActiveState(test)" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 				</span>
 				<span class="clearfix"></span>
 			</h3>
