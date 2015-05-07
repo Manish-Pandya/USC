@@ -44,6 +44,11 @@ angular
         url: "/wipe-tests",
         templateUrl: "views/admin/wipe-tests.html",
         controller: "WipeTestController"
+      })      
+      .state('radmin.disposals', {
+        url: "/disposals",
+        templateUrl: "views/admin/disposals.html",
+        controller: "disposalCtrl"
       })
       .state('admin-pickups', {
         url: "/admin/pickups",

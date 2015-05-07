@@ -94,6 +94,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
 
 
 

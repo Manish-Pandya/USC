@@ -15,7 +15,7 @@
 				<ul class="sideNav">
 					<li><a class="wipe-tests" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
 					<li><a class="pickups" ng-click="af.setSelectedView('authorizations')"><i class="icon-box-remove"></i>Pickups</a></li>
-					<li><a class="waste"><i class="icon-trashcan"></i>Disposals</a></li>				
+					<li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>				
 				</ul>
    				<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
 				<ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
