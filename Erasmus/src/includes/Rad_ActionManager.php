@@ -288,15 +288,17 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
 		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
 		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-		$entityMaps[] = new EntityMap("lazy", "getPickups");
-		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-		
+		$entityMaps[] = new EntityMap("lazy","getActiveParcels");
+		$entityMaps[] = new EntityMap("lazy","getPurchaseOrders");
+		$entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+		$entityMaps[] = new EntityMap("lazy","getPickups");
+		$entityMaps[] = new EntityMap("lazy","getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getCurrentScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getInspection_notes");
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");				
 
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);
@@ -315,7 +317,6 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getInspector");
 		$entityMaps[] = new EntityMap("lazy","getSupervisor");
 		$entityMaps[] = new EntityMap("lazy","getRoles");
-		$entityMaps[] = new EntityMap("eager","getEmergency_phone");
 
 		foreach($users as $user){
 			$user->setEntityMaps($entityMaps);
@@ -358,6 +359,12 @@ class Rad_ActionManager extends ActionManager {
 		$LOG->debug($pi);
 		return $pi;
 
+	}
+	
+	public function getAllSVCollections(){
+		$dao = $this->getDao(new ScintVialCollection());
+		$collections = $dao->getAll();
+		return $collections;
 	}
 
 	/*****************************************************************************\

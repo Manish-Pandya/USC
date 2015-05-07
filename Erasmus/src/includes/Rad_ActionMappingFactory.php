@@ -63,6 +63,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getAllMiscellaneousWipeTests"	=> new ActionMapping("getAllMiscellaneousWipeTests", "", ""),
 			"getMiscellaneousWipeTests"		=> new ActionMapping("getMiscellaneousWipeTests", "", ""),
 			"getOpenMiscellaneousWipeTests"	=> new ActionMapping("getOpenMiscellaneousWipeTests", "", ""),
+			"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", ""),
 				
 				
 
