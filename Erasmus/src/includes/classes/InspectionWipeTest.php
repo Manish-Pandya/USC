@@ -15,7 +15,8 @@ class InspectionWipeTest extends RadCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"inspection_id"					=> "integer",
-	
+			"reading_type"					=> "text",
+				
 			//GenericCrud
 			"key_id"						=> "integer",
 			"is_active"						=> "boolean",
@@ -57,6 +58,9 @@ class InspectionWipeTest extends RadCrud {
 	private $inspection_id;
 	private $inspection;
 	
+	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
+	private $reading_type;
+	
 	private $inspection_wipes;
 	
 	public function getInspection_id(){return $this->inspection_id;}
@@ -71,6 +75,9 @@ class InspectionWipeTest extends RadCrud {
 	public function getWipe_test() {
 		
 	}
+	
+	public function getReading_type() {return $this->reading_type;}
+	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
 	
 	public function getInspection_wipes() {
 		if($this->inspection_wipe == null && $this->hasPrimaryKeyValue()) {

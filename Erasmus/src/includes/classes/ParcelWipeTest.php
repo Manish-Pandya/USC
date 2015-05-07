@@ -18,7 +18,8 @@ class ParcelWipeTest extends RadCrud {
 			"transportation_index"			=> "float",
 			"box_background"				=> "float",
 			"one_meter_background"			=> "float",
-	
+			"reading_type"					=> "text",
+				
 			//GenericCrud
 			"key_id"						=> "integer",
 			"is_active"						=> "boolean",
@@ -63,6 +64,9 @@ class ParcelWipeTest extends RadCrud {
 	private $box_background;
 	private $one_meter_background;
 	
+	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
+	private $reading_type;
+	
 	public function getParcel_id(){return $this->parcel_id;}
 	public function setParcel_id($id){$this->parcel_id = $id;}
 	
@@ -79,11 +83,16 @@ class ParcelWipeTest extends RadCrud {
 		}
 		return $this->parcel_wipes;
 	}
+	public function setParcel_wipes($wipes){$this->parcel_wipes = $wipes;}
+	
 	public function getTransportation_index() {return $this->transportation_index;}
 	public function setTransportation_index($transportation_index) {	$this->transportation_index = $transportation_index;}
 	
 	public function getBox_background() {return $this->box_background;}
 	public function setBox_background($box_background) {$this->box_background = $box_background;}
+	
+	public function getReading_type() {return $this->reading_type;}
+	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
 	
 	public function getOne_meter_background() {return $this->one_meter_background;}
 	public function setOne_meter_background($one_meter_background) {$this->one_meter_background = $one_meter_background;}

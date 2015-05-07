@@ -17,7 +17,8 @@ class MiscellaneousWipeTest extends RadCrud {
 			
 			"notes"							=> "text",
 			"closeout_date"					=> "date",
-			
+			"reading_type"					=> "text",
+				
 			//GenericCrud
 			"key_id"						=> "integer",
 			"is_active"						=> "boolean",
@@ -59,6 +60,9 @@ class MiscellaneousWipeTest extends RadCrud {
 	private $miscellaneous_wipes;
 	private $notes;
 	
+	/** Wipe test readings can be done with LSC, Alpha/Beta or MCA counters  **/
+	private $reading_type;
+	
 	private $closeout_date;
 
 	public function getNotes(){return $this->notes;}
@@ -74,5 +78,8 @@ class MiscellaneousWipeTest extends RadCrud {
 	
 	public function getCloseout_date() {return $this->closeout_date;}
 	public function setCloseout_date($closeout_date) {$this->closeout_date = $closeout_date;}
+	
+	public function getReading_type() {return $this->reading_type;}
+	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
 	
 }
