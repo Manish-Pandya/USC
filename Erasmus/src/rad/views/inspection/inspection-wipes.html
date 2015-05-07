@@ -3,8 +3,9 @@
 <div cg-busy="{promise:InspectionWipeTestSaving,message:'Creating Wipe Test', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div>
-	<div class="card super wipes">
+	<div class="card super wipe-tests">
 		<h3 class="card-header padding">
+			<i class="icon-paper"></i>
 			<span ng-if="!inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
 				No Wipes yet for this inspection.
 			</span>
@@ -65,8 +66,7 @@
 					{{smear.Reading_type}}
 				</div>
 				<div ng-if="smear.edit">
-					<select ng-model="InspectionWipeCopy.Reading_type" style="width:100px">
-						<option selected="selected">Select Reading Type</option>
+					<select ng-model="InspectionWipeCopy.Reading_type" style="width:110px">
 						<option value="LSC">LSC</option>
 						<option value="Alpha/Beta">Alpha/Beta</option>
 						<option value="MCA">MCA</option>
