@@ -68,9 +68,6 @@ class ParcelWipe extends RadCrud {
 		return $this->room;
 	}
 	
-	public function getRoom_id() {return $this->room_id;}
-	public function setRoom_id($room_id) {$this->room_id = $room_id;}
-	
 	public function getCurie_level() {return $this->curie_level;}
 	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
 	
