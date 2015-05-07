@@ -261,7 +261,7 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
   position: fixed;
   width: 100%;
   left: 0;
-  z-index:1040;
+  z-index:900;
 }
 .banner.radmin, .banner.radiation{
   background: url('../img/radiation-large-icon.png') rgba(253, 254, 167, 1);
