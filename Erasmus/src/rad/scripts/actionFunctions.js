@@ -1615,12 +1615,26 @@ angular
                 return this.save( copy )
                     .then(
                         function(returnedPWT){
-                            returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
                             if(parcel.Wipe_test.length.Key_id){
+                                returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
                                 angular.extend(parcel.Wipe_test[0], copy)
                             }else{
+                                returnedPWT.Parcel_wipes = [];
+                                //by default, ParcelWipeTests have a collection of 6 ParcelWipes, hence the magic number
+                                var i = 6
+                                while(i--){
+                                    var parcelWipe = new window.ParcelWipe();
+                                    parcelWipe.Parcel_wipe_test_id = returnedPWT.Key_id;
+                                    parcelWipe.Class = "ParcelWipe";
+                                    parcelWipe.edit = true;
+                                    returnedPWT.Parcel_wipes.push(parcelWipe);
+                                }
+
+                                returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
+                                console.log(returnedPWT);
+                                returnedPWT.Parcel_wipes[0].Location = "Background";
                                 dataStoreManager.store(returnedPWT);
-                                parcel.Wipe_test.push(returnedPWT)
+                                parcel.Wipe_test.push(returnedPWT);
                             }
                             parcel.Creating_wipe = false;
                         },
@@ -1630,6 +1644,7 @@ angular
 
             af.saveParcelWipe = function(wipeTest, copy, wipe) {
                 af.clearError();
+                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedWipe){
@@ -1642,6 +1657,20 @@ angular
                                 copy = {};
                             }
                             wipe.edit = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveParcelWipes = function( test ) {
+                af.clearError();
+                console.log(test);
+                return genericAPIFactory.save( test, 'saveParcelWipes' )
+                    .then(
+                        function(returnedWipes){
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes );
+                            dataStoreManager.store(returnedWipes);
+                            test.loadParcel_wipes();
                         },
                         af.setError('The Wipe Test could not be saved')
                     )

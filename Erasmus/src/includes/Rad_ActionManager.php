@@ -895,6 +895,30 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
+	function saveInspectionWipes() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+	
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else if( $decodedObject->getMiscellaneous_wipes() == null) {
+			return new ActionError('No Parcel wipes were passed', 202);
+		}
+		else {
+			$wipes = array();
+			foreach($decodedObject->getMiscellaneous_wipes() as $wipe){
+				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
+				$dao = $this->getDao(new InspectionWipe());
+				$wipes[] = $dao->save($wipe);
+			}
+			return $wipes;
+		}
+	}
+	
 	function saveInspectionWipe() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
@@ -924,6 +948,30 @@ class Rad_ActionManager extends ActionManager {
 			$dao = $this->getDao(new ParcelWipeTest());
 			$decodedObject = $dao->save($decodedObject);
 			return $decodedObject;
+		}
+	}
+	
+	function saveParcelWipes() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else if( $decodedObject->getParcel_wipes() == null) {
+			return new ActionError('No Parcel wipes were passed', 202);
+		}
+		else {
+			$wipes = array();
+			foreach($decodedObject->getParcel_wipes() as $wipe){
+				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
+				$dao = $this->getDao(new ParcelWipe());
+				$wipes[] = $dao->save($wipe);
+			}
+			return $wipes;
 		}
 	}
 	
@@ -957,6 +1005,30 @@ class Rad_ActionManager extends ActionManager {
 			$dao = $this->getDao(new MiscellaneousWipeTest());
 			$decodedObject = $dao->save($decodedObject);
 			return $decodedObject;
+		}
+	}
+	
+	function saveMiscellaneousWipes() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+	
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else if( $decodedObject->getMiscellaneous_wipes() == null) {
+			return new ActionError('No Parcel wipes were passed', 202);
+		}
+		else {
+			$wipes = array();
+			foreach($decodedObject->getMiscellaneous_wipes() as $wipe){
+				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
+				$dao = $this->getDao(new MiscellaneousWipe());
+				$wipes[] = $dao->save($wipe);
+			}
+			return $wipes;
 		}
 	}
 	
