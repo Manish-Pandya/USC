@@ -1668,7 +1668,7 @@ angular
                 return genericAPIFactory.save( test, 'saveParcelWipes' )
                     .then(
                         function(returnedWipes){
-                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes );
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
                             test.loadParcel_wipes();
                         },
@@ -1691,6 +1691,18 @@ angular
                             if(test.Key_id){
                                 angular.extend(test, returnedMWT);
                             }else{
+                                 //by default, Miscellaneous have a collection of 6 ParcelWipes, hence the magic number
+                                var i = 10
+                                while(i--){
+                                    var miscellaneousWipe = new window.MiscellaneousWipe();
+                                    miscellaneousWipe.Miscellaneous_wipe_test_id = returnedMWT.Key_id;
+                                    miscellaneousWipe.Class = "MiscellaneousWipe";
+                                    miscellaneousWipe.edit = true;
+                                    returnedMWT.Miscellaneous_wipes.push(miscellaneousWipe);
+                                }
+
+                                returnedMWT = modelInflatorFactory.instateAllObjectsFromJson( returnedMWT );
+                                console.log(returnedMWT);
                                 dataStoreManager.store(returnedMWT);
                             }
                         },
@@ -1715,6 +1727,26 @@ angular
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
+            }
+
+            af.saveMiscellaneousWipes = function( test ) {
+                af.clearError();
+                console.log(test);
+                return genericAPIFactory.save( test, 'saveMiscellaneousWipes' )
+                    .then(
+                        function(returnedWipes){
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
+                            console.log(returnedWipes);
+                            dataStoreManager.store(returnedWipes);
+                            test.loadMiscellaneous_wipes();
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            /* Miscellaneous Wipe Tests */
+            af.getAllMiscellaneousWipeTests = function(){
+                return dataSwitchFactory.getAllObjects('MiscellaneousWipeTest', true);
             }
 
             /* Inspection Wipes */
