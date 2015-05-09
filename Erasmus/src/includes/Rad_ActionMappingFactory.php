@@ -89,7 +89,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", ""),
 			"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", ""),
 			"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", ""),
-			"saveMiscellaneousWipes"		=> new ActionMapping("saveMiscellaneousWipes", "", ""),
+			"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", ""),
 				
 				
 			// other functions

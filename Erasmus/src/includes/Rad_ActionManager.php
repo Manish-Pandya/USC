@@ -968,8 +968,11 @@ class Rad_ActionManager extends ActionManager {
 			$wipes = array();
 			foreach($decodedObject->getParcel_wipes() as $wipe){
 				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
-				$dao = $this->getDao(new ParcelWipe());
-				$wipes[] = $dao->save($wipe);
+				//there will be a collection of at least 6 ParcelWipes.  User intends only to save those with Location provided
+				if($wipe->getLocation() != null){
+					$dao = $this->getDao(new ParcelWipe());
+					$wipes[] = $dao->save($wipe);
+				}
 			}
 			return $wipes;
 		}
@@ -1011,7 +1014,6 @@ class Rad_ActionManager extends ActionManager {
 	function saveMiscellaneousWipes() {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
-	
 		if( $decodedObject === NULL ) {
 			return new ActionError('Error converting input stream to WasteType', 202);
 		}
@@ -1019,7 +1021,7 @@ class Rad_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 		else if( $decodedObject->getMiscellaneous_wipes() == null) {
-			return new ActionError('No Parcel wipes were passed', 202);
+			return new ActionError('No Misc wipes were passed', 202);
 		}
 		else {
 			$wipes = array();
@@ -1028,6 +1030,7 @@ class Rad_ActionManager extends ActionManager {
 				$dao = $this->getDao(new MiscellaneousWipe());
 				$wipes[] = $dao->save($wipe);
 			}
+			$LOG->debug($wipes);
 			return $wipes;
 		}
 	}
