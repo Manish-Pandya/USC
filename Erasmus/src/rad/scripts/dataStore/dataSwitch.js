@@ -141,8 +141,8 @@ angular
                 while(i--){
                     for(var prop in instatedObjects[i]){
                         if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] ){
-                            instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataStoreManager.store(instatedObjects[i][prop]);
+                            instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);
                         }
                     }
