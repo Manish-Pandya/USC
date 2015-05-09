@@ -75,6 +75,7 @@ class MiscellaneousWipeTest extends RadCrud {
 		}
 		return $this->miscellaneous_wipes;
 	}
+	public function setMiscellaneous_wipes($wipes){$this->miscellaneous_wipes = $wipes;}
 	
 	public function getCloseout_date() {return $this->closeout_date;}
 	public function setCloseout_date($closeout_date) {$this->closeout_date = $closeout_date;}
