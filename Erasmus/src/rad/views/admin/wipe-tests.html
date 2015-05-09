@@ -2,6 +2,8 @@
 <div cg-busy="{promise:ParcelWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:MiscellaneousWipeTestSaving,message:'Saving Wipe Test', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:MiscellaneousWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:MiscellaneousWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 
 <div class="right-column">
 	<div class="well three-fourths">
@@ -132,13 +134,13 @@
 						</div>
 
 
-						<div ng-if="!smear.edit">
+						<div>
 							{{smear.Notes}}
 							<span ng-if="!smear.Notes">N/A</span>
 						</div>
 						<div ng-if="smear.edit">
-							<textarea ng-if="ParcelWipeCopy" ng-model="ParcelWipeCopy.Notes"></textarea>
-							<textarea ng-if="!ParcelWipeCopy" ng-model="smear.Notes"></textarea>
+							<textarea ng-if="ParcelWipeCopy" placeholder="Notes" ng-model="ParcelWipeCopy.Notes"></textarea>
+							<textarea ng-if="!ParcelWipeCopy" placeholder="Notes" ng-model="smear.Notes"></textarea>
 						</div>
 
 						<div style="min-width:0;">
@@ -149,7 +151,7 @@
 						</div>
 					</div>
 					<div class="table-row">
-						<div>
+						<div class="hover-white">
 							<a class="btn btn-large left btn-success" ng-click="af.saveParcelWipes(parcel.Wipe_test[0])"><i class="icon-checkmark"></i>Save Smears</a>
 						</div>
 					</div>
@@ -176,9 +178,9 @@
 			<div class="fake-table" ng-if="test.Miscellaneous_wipes.length">
 				<div class="table-header">
 					<h3>Edit</h3>
-					<h3>Radioactivity</h3>
-					<h3>Test Type</h3>
 					<h3>Test Location</h3>
+					<h3>Instrument</h3>
+					<h3>Radioactivity</h3>
 					<h3>Comments</h3>
 					<h3></h3>
 				</div>
@@ -188,48 +190,50 @@
 						<a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editMiscWipe(test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
 					</div>
 
+
+					<div ng-if="!smear.edit">
+						{{smear.Location}}
+					</div>
+					<div ng-if="smear.edit">
+						<textarea placeholder="Location" ng-if="MiscellaneousWipeCopy" ng-model="MiscellaneousWipeCopy.Location"></textarea>
+						<textarea placeholder="Location" ng-if="!MiscellaneousWipeCopy" ng-model="smear.Location"></textarea>
+					</div>
+
+					<div>
+						{{test.Reading_type}}
+					</div>
+
 					<div ng-if="!smear.edit">
 						{{smear.Curie_level}} DPM
 					</div>
 					<div ng-if="smear.edit">
 						<div class="control-group">
 						     <div class="controls input-append">
-								<input class="span3" ng-model="MiscellaneousWipeCopy.Curie_level">
+								<input class="span3" ng-if="MiscellaneousWipeCopy" ng-model="MiscellaneousWipeCopy.Curie_level">
+								<input class="span3" ng-if="!MiscellaneousWipeCopy" ng-model="smear.Curie_level">
 								<span class="add-on">DPM</span>
 							</div>
 						</div>
 					</div>
 
 					<div ng-if="!smear.edit">
-						{{smear.Reading_type}}
-					</div>
-					<div ng-if="smear.edit">
-						<select ng-model="MiscellaneousWipeCopy.Reading_type" style="width:100px">
-							<option value="LSC">LSC</option>
-							<option value="Alpha/Beta">Alpha/Beta</option>
-							<option value="MCA">MCA</option>
-						</select>
-					</div>
-
-					<div ng-if="!smear.edit">
-						{{smear.Location}}
-					</div>
-					<div ng-if="smear.edit">
-						<combobox model="MiscellaneousWipeCopy" modelprop="'Location'" options="parcelWipeLocations"/>
-					</div>
-
-					<div ng-if="!smear.edit">
 						{{smear.Notes}}
 					</div>
 					<div ng-if="smear.edit">
-						<textarea ng-model="MiscellaneousWipeCopy.Notes"></textarea>
+						<textarea placeholder="Notes" ng-if="MiscellaneousWipeCopy" ng-model="MiscellaneousWipeCopy.Notes"></textarea>
+						<textarea placeholder="Notes" ng-if="!MiscellaneousWipeCopy" ng-model="smear.Notes"></textarea>
 					</div>
 
-					<div style="min-width:0;">
+					<div style="min-width:0;" ng-if="MiscellaneousWipeCopy">
 						<span ng-if="smear.edit">
-							<a class="btn btn-success left" ng-click="af.saveMiscellaneousWipe(test, MiscellaneousWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
-							<a class="btn btn-danger left" ng-click="cancelMiscWipeEdit(test, smear)"><i class="icon-cancel-2"></i>Cancel</a>
+							<a class="btn btn-success left"  ng-click="af.saveMiscellaneousWipe(test, MiscellaneousWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+							<a class="btn btn-danger left" placeholder="Notes" ng-click="cancelMiscWipeEdit(test, smear)"><i class="icon-cancel-2"></i>Cancel</a>
 						</span>
+					</div>
+				</div>
+				<div class="table-row">
+					<div class="hover-white">
+						<a class="btn btn-large left btn-success" ng-click="af.saveMiscellaneousWipes(test)"><i class="icon-checkmark"></i>Save Smears</a>
 					</div>
 				</div>
 			</div>

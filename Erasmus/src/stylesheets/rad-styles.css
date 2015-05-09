@@ -16,6 +16,9 @@
   margin:0 -70px;
   padding-top: 65px;
 }
+.hover-white:hover{
+  background:white !important;
+}
 .card{
   background:white;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
