@@ -145,6 +145,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/WasteType.js"></script>
 <script src="./scripts/models/Room.js"></script>
 <script src="./scripts/models/ScintVialCollection.js"></script>
+<script src="./scripts/models/Inspection.js"></script>
 <script src="./scripts/models/InspectionWipeTest.js"></script>
 <script src="./scripts/models/InspectionWipe.js"></script>
 <script src="./scripts/models/ParcelWipeTest.js"></script>

@@ -21,6 +21,7 @@ class Drum extends RadCrud {
 		"date_closed"					=> "timestamp",
 		"pickup_date"					=> "timestamp",
 		"shipping_info"					=> "text",
+		"label"							=> "text",
 		
 		
 		//GenericCrud
@@ -38,6 +39,13 @@ class Drum extends RadCrud {
 			"tableName" => "waste_bag",
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "drum_id"
+	);
+	
+	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
+			"className" => "ScintVialCollection",
+			"tableName" => "scint_vial_collection",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "drum_id"
 	);
 	
 	//access information
@@ -63,6 +71,14 @@ class Drum extends RadCrud {
 	/** Array of Waste Bags that filled this drum*/
 	private $wasteBags;
 	
+	/** Array of Scint Vial collections in this drum */
+	private $scintVialCollections; 
+	
+	
+	/** IsotopeAmountDTOs in this drum **/
+	private $contents;
+	
+	private $label;
 	
 	public function __construct() {
 		
@@ -92,6 +108,9 @@ class Drum extends RadCrud {
 	public function getStatus() { return $this->status; }
 	public function setStatus($newStatus) { $this->status = $newStatus; }
 	
+	public function getLabel() { return $this->label; }
+	public function letLabel($label) { $this->label = $label;}
+	
 	public function getDate_closed() { return $this->date_closed; }
 	public function setDate_closed($newDate) { $this->date_closed = $newDate; }
 	
@@ -111,5 +130,44 @@ class Drum extends RadCrud {
 	public function setWasteBags($newBags) {
 		$this->wasteBags = $newBags;
 	}
+	
+	public function getScintVialCollections(){
+		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->scintVialCollections = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTION_RELATIONSHIP)
+			);
+		}
+		return $this->scintVialCollections;
+	}
+	public function setScintVialCollections($collections) {
+		$this->scintVialCollections = $collections;
+	}
+	
+	public function getContents(){
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug('getting contents for drum');
+		$amounts = array();
+		foreach($this->getWasteBags() as $bag){
+			if($bag->getParcel_use_amounts() != NULL){		
+				array_push($amounts, $bag->getParcelUseAmounts());
+			}
+		}
+		foreach($this->getScintVialCollections() as $collection){
+			$LOG->debug($collection);
+
+			if($collection->getParcel_use_amounts() != NULL){
+				array_push($amounts, $collection->getParcel_use_amounts());
+			}
+		}
+		$this->contents = $this->sumUsages($amounts);
+		return $this->contents;
+	}
+	
+	
 }
 ?>

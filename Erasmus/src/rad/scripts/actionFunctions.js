@@ -1615,7 +1615,7 @@ angular
                 return this.save( copy )
                     .then(
                         function(returnedPWT){
-                            if(parcel.Wipe_test.length.Key_id){
+                            if(parcel.Wipe_test.length){
                                 returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
                                 angular.extend(parcel.Wipe_test[0], copy)
                             }else{
@@ -1631,6 +1631,7 @@ angular
                                 }
 
                                 returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
+                                returnedPWT.adding = true;
                                 console.log(returnedPWT);
                                 returnedPWT.Parcel_wipes[0].Location = "Background";
                                 dataStoreManager.store(returnedPWT);
@@ -1665,12 +1666,13 @@ angular
             af.saveParcelWipes = function( test ) {
                 af.clearError();
                 console.log(test);
-                return genericAPIFactory.save( test, 'saveParcelWipes' )
+                return $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveParcelWipes' )
                     .then(
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
                             test.loadParcel_wipes();
+                            test.adding = false;
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
@@ -1691,7 +1693,8 @@ angular
                             if(test.Key_id){
                                 angular.extend(test, returnedMWT);
                             }else{
-                                 //by default, Miscellaneous have a collection of 6 ParcelWipes, hence the magic number
+                                //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+                                if(!returnedMWT.Miscellaneous_wipes)returnedMWT.Miscellaneous_wipes = [];
                                 var i = 10
                                 while(i--){
                                     var miscellaneousWipe = new window.MiscellaneousWipe();
@@ -1704,6 +1707,7 @@ angular
                                 returnedMWT = modelInflatorFactory.instateAllObjectsFromJson( returnedMWT );
                                 console.log(returnedMWT);
                                 dataStoreManager.store(returnedMWT);
+                                returnedMWT.adding = true;
                             }
                         },
                         af.setError('The Wipe Test could not be saved')
@@ -1732,13 +1736,14 @@ angular
             af.saveMiscellaneousWipes = function( test ) {
                 af.clearError();
                 console.log(test);
-                return genericAPIFactory.save( test, 'saveMiscellaneousWipes' )
+                return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveMiscellaneousWipes' )
                     .then(
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             console.log(returnedWipes);
                             dataStoreManager.store(returnedWipes);
                             test.loadMiscellaneous_wipes();
+                            test.adding = false;
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
@@ -1754,21 +1759,39 @@ angular
                return dataSwitchFactory.getObjectById("Inspection", id, true);
             }
 
-            af.saveInspectionWipeTest = function(copy, test)
+            af.saveInspectionWipeTest = function(copy, test, inspection)
             {
+                console.log(inspection);
                 af.clearError();
+                if(!copy){
+                    copy = new window.InspectionWipeTest();
+                    copy.Inspection_id = inspection.Key_id;
+                }
+
                 return this.save( copy )
                     .then(
-                        function(returnedWipe){
-                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                        function(returnedIWT){
+                            returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                             if(test){
                                 angular.extend(wipe, copy)
                             }else{
-                                dataStoreManager.store(returnedWipe);
-                                var inspection = dataStoreManager.getById("Inspection", returnedWipe.Inspection_id)
+                                returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                                 if(!inspection.Inspection_wipe_tests)inspection.Inspection_wipe_tests = [];
-                                inspection.Inspection_wipe_tests.push(returnedWipe);
-                                return returnedWipe;
+                                //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+                                if(!returnedIWT.Inspection_wipes)returnedIWT.Inspection_wipes = [];
+                                var i = 10
+                                while(i--){
+                                    var inspectionWipe = new window.InspectionWipe();
+                                    inspectionWipe.Inspection_wipe_test_id = returnedIWT.Key_id;
+                                    inspectionWipe.Class = "InspectionWipe";
+                                    inspectionWipe.edit = true;
+                                    returnedIWT.Inspection_wipes.push(inspectionWipe);
+                                }
+                                returnedIWT.adding = true;
+                                inspection.Inspection_wipe_tests = [];
+                                inspection.Inspection_wipe_tests.push(returnedIWT);
+                                dataStoreManager.store(returnedIWT);
+                                return returnedIWT;
                             }
                         },
                         af.setError('The Wipe Test could not be saved')
@@ -1801,8 +1824,49 @@ angular
                     )
             }
 
+
+            af.saveInspectionWipes = function( test ) {
+                af.clearError();
+                console.log(test);
+                return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveInspectionWipes' )
+                    .then(
+                        function(returnedWipes){
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data, true );
+                            dataStoreManager.store(returnedWipes);
+                            test.loadInspection_wipes();
+                            test.adding = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+             }
+
             af.getAllScintVialCollections = function(){
                 return dataSwitchFactory.getAllObjects('ScintVialCollection');
+            }
+
+            /************************************************
+            **
+            **          DISPOSALS
+            **
+            ************************************************/
+            af.saveDrum = function(drum,copy){
+                af.clearError();
+
+                this.save(copy)
+                    .then(
+                        function(returnedDrum){
+                            returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
+                            if(drum.Key_id){
+                                angular.extend(drum, copy)
+                            }else{
+                                dataStoreManager.store(returnedDrum);
+                                $rootScope.DrumCopy = {};
+                            }
+                            drum.edit = false;
+                        },
+                        af.setError('The Drum could not be saved')
+
+                    )
             }
 
         	return af;

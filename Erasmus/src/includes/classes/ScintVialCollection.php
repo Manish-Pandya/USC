@@ -18,6 +18,7 @@ class ScintVialCollection extends RadCrud{
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"pickup_id"						=> "integer",
 			"principal_investigator_id"		=> "integer",
+			"drum_id"						=> "integer",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -56,6 +57,9 @@ class ScintVialCollection extends RadCrud{
 	
 	private $pickup_id;
 	private $pickup;
+	
+	private $drum_id;
+	private $drum;
 	
 	// Required for GenericCrud
 	public function getTableName() {
@@ -127,6 +131,18 @@ class ScintVialCollection extends RadCrud{
 	public function setPickup($newPickup) {
 		$this->pickup = $newPickup;
 	}
+	
+	public function getDrum_id(){return $this->drum_id;}
+	public function setDrum_id($id){$this->drum_id = $id;}
+	
+	public function getDrum(){
+		if($this->drum == NULL){
+			$drumDao = new GenericDAO(new Drum());
+			$this->drum = $drumDao->getById($this->drum_id);
+		}
+		return $this->drum;
+	}
+	
 	
 }
 
