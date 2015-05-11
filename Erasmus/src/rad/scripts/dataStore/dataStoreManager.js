@@ -34,24 +34,23 @@ dataStoreManager.store = function( object, trusted, flavor )
             //add name of object or collection our list of collections in the cache
             if( !flavor ){
                 dataStoreManager.addToCollection( object[0].Class, trusted );
-
                 //this collection hasn't been created yet.  create it and add everything we've passed.
                 if(!dataStore[object[0].Class]){
                     //console.log(object[0].Class);
-                    dataStore[object[0].Class] = object;
+                    dataStore[object[0].Class] = [];
+                    dataStore[object[0].Class] = dataStore[object[0].Class].concat(object);
+                    dataStoreManager.mapCache(object[0].Class);
                 }
                 //this collection already exists.  add only the unique indices to it.
                 else{
                     var i = object.length;
                     while(i--){
                         if(!dataStoreManager.getById(object[i].Class, object[i].Key_id)){
-                            dataStore[object[0].Class].push(object[i]);
-                        }else{
-                            object[i] = dataStoreManager.getById(object[i].Class, object[i].Key_id);
+                            dataStoreManager.pushIntoCollection(object[i]);
                         }
+                        object[i] = dataStoreManager.getById(object[i].Class, object[i].Key_id);
                     }
                 }
-                  dataStoreManager.mapCache(object[0].Class);
             }else{
                 dataStoreManager.addToCollection( flavor );
                 if(!dataStore[flavor]){
@@ -60,7 +59,6 @@ dataStoreManager.store = function( object, trusted, flavor )
                     var i = object.length;
                     while(i--){
                         if(!dataStoreManager.getById(object[i].Class, object[i].Key_id)){
-                            console.log(object[i].Class)
                             dataStore[object[0].Class][dataStore[object[0].Class].length] = object[i];
                         }else{
                             object[i] = dataStoreManager.getById(object[i].Class, object[i].Key_id);

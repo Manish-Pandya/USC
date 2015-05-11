@@ -120,14 +120,12 @@ angular
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                            dataStoreManager.store(instatedObjects);
-                            deferred.resolve(instatedObjects);
+                            console.log(instatedObjects);
                             if(recurse){
                                 dataSwitch.recursivelyInstantiate([instatedObjects]);
                             }
-                            // TODO should we cache individually-loaded things?
-                            //console.log('NOTE: Recieved object of flavor ' + className +
-                                    //' and id ' + id + ', but not caching it');
+                            dataStoreManager.store(instatedObjects);
+                            deferred.resolve(instatedObjects);
                         });
 
                     }
@@ -140,9 +138,10 @@ angular
                 var i = instatedObjects.length;
                 while(i--){
                     for(var prop in instatedObjects[i]){
-                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop][0] && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] ){
-                            dataStoreManager.store(instatedObjects[i][prop]);
+                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] ){
+                            console.log(instatedObjects[i]);
                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
+                            dataStoreManager.store(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);
                         }
                     }

@@ -66,9 +66,8 @@ angular
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
-
-
-                       while(i--){
+                        console.log(json);
+                        while(i--){
                             var currentJsonObj = json[i];
                             //if we have haven't passed a string, get the the class name of the object 
                             if( !objectFlavor ) objectFlavor = currentJsonObj.Class;
@@ -78,11 +77,9 @@ angular
                         return models;
 
                     } else {
-
-                            //if we have haven't passed a string, get the the class name of the object 
-                            if( !objectFlavor ) objectFlavor = json.Class;
-                            return inflator.instantiateObjectFromJson( json, objectFlavor );
-
+                        //if we have haven't passed a string, get the the class name of the object 
+                        if( !objectFlavor ) objectFlavor = json.Class;
+                        return inflator.instantiateObjectFromJson( json, objectFlavor );
                     }
             }
 

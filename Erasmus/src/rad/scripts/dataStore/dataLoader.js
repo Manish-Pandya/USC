@@ -30,6 +30,7 @@ dataLoader.loadOneToManyRelationship = function( parent, property, relationship,
     // if the required data is already cached get it from there.
     else if( dataStore[relationship.className]) {
         if(!whereClause)whereClause = false;
+        parent[property] = [];
         parent[property] = dataStoreManager.getChildrenByParentProperty(
                 relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
     }

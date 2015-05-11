@@ -73,6 +73,8 @@ angular
 
 		api.save = function( object, urlFragment, saveChildren )
 		{
+				//all the client-side classes have className properties.  When we instantiate one to save, we shouldn't need to manually set it's class.
+				if(!object.Class && object.className)object.Class = object.className;
 				if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );	
 				var url = api.buildRequestUrl( urlFragment, false );
 				console.log(url);
