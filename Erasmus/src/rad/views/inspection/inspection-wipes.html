@@ -1,37 +1,68 @@
 <div cg-busy="{promise:InspectionPromise,message:'Loading Inspection', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:InspectionWipeSaving,message:'Saving Wipe', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:InspectionWipeSaving,message:'Saving Snear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:InspectionWipeTestSaving,message:'Creating Wipe Test', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:SavingSmears,message:'Saving Smears', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
-<div>
-	<div class="card super wipe-tests">
+<div class="inspection-well super well">
+	<h1 ng-if="inspection.PrincipalInvestigator">Inspection of {{inspection.PrincipalInvestigator.User.Name}}'s Labs started on {{inspection.Date_started|dateToISO}}</h1>
+	<div class="card super wipe-tests" ng-if="inspection.PrincipalInvestigator">
+		
 		<h3 class="card-header padding">
-			<i class="icon-paper"></i>
-			<span ng-if="!inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
-				No Wipes yet for this inspection.
-			</span>
-			<span ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">Wipes</span>
-			<a ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0], null, inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Add</a>
+			<i class="icon-paper"></i>Wipe Test
+
+   			<form class="form-inline" style="display:inline-block; margin:0 10px;" ng-if="inspection.Inspection_wipe_tests[0].edit">
+				<label class="bold">Instrument: </label>
+				<select ng-model="InspectionWipeTestCopy.Reading_type" style="width:110px">
+					<option value="LSC">LSC</option>
+					<option value="Alpha/Beta">Alpha/Beta</option>
+					<option value="MCA">MCA</option>
+				</select>
+
+				<a ng-if="!InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, null, inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Create Wipe Test</a>
+
+				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, inspection.Inspection_wipe_tests[0], inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Save Wipe Test</a>
+
+				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="cancelEditInspectionWipeTest(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Save Wipe Test</a>
+
+			</form>
+
+			<a ng-if="!inspection.Inspection_wipe_tests[0].edit" class="btn btn-primary left" ng-click="editInspectionWipeTest(inspection.Inspection_wipe_tests[0])"><i class="icon-pencil"></i>Edit</a>
+
+			<a ng-if="inspection.Inspection_wipe_tests[0].Key_id && !inspection.Inspection_wipe_tests[0].adding" ng-click="addWipes(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Add Smears</a>
 		</h3>
-		<div class="fake-table inspection-wipe-table" ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
+
+		<h3 class="padding" ng-if="inspection.Inspection_wipe_tests[0].Key_id">
+			<span ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
+				Smears
+			</span>
+			<span ng-if="!inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
+				No Smears yet for this inspection.
+			</span>
+		</h3>
+		<div class="fake-table" ng-if="inspection.Inspection_wipe_tests[0].Inspection_wipes.length">
 			<div class="table-header">
 				<h3>Edit</h3>
 				<h3>Room</h3>
 				<h3>Location</h3>
-				<h3>Notes</h3>
+				<h3>Instrument</h3>
 				<h3>Radioactivity</h3>
-				<h3>Test Type</h3>
+				<h3>Notes</h3>
 				<h3></h3>
 			</div>
-			<div class="table-row" ng-class="{'edit':smear.edit}" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes">
+			<div class="table-row" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes | orderBy:'Key_id'">
 				<div>
-					<button ng-disabled="smear.edit" class="btn btn-primary left" ng-click="editInspectionWipe(inspection.Inspection_wipe_tests[0], smear)"><i class="icon-pencil"></i>Edit</button>
+					<button ng-disabled="smear.edit" class="btn btn-primary left" ng-click="editInspectionWipe(smear)"><i class="icon-pencil"></i>Edit</button>
 				</div>
 
 				<div ng-if="!smear.edit">
-					{{smear.Room.Name}}
+					{{smear.Room_id}} | {{smear.Room.Name}} 
 				</div>
 				<div ng-if="smear.edit">
-					<select style="width:60px" ng-model="InspectionWipeCopy.Room_id">
+					<select style="width:60px" ng-if="InspectionWipeCopy" ng-model="InspectionWipeCopy.Room_id">
+						<option ng-repeat="room in inspection.Rooms" value="{{room.Key_id}}">{{room.Name}}</option>
+					</select>
+
+					<select style="width:60px" ng-if="!InspectionWipeCopy" ng-model="smear.Room_id">
 						<option ng-repeat="room in inspection.Rooms" value="{{room.Key_id}}">{{room.Name}}</option>
 					</select>
 				</div>
@@ -39,47 +70,60 @@
 				<div ng-if="!smear.edit">
 					{{smear.Location}}
 				</div>
+
 				<div ng-if="smear.edit">
-					<textarea ng-model="InspectionWipeCopy.Location" placeholder="Location"></textarea>
+					<textarea ng-if="InspectionWipeCopy" ng-model="InspectionWipeCopy.Location" placeholder="Location"></textarea>
+					<textarea ng-if="!InspectionWipeCopy" ng-model="smear.Location" placeholder="Location"></textarea>
 				</div>
+
+				<div>{{inspection.Inspection_wipe_tests[0].Reading_type}}</div>
+				
+				<div ng-if="!smear.edit">
+					{{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
+				</div>
+				<div ng-if="smear.edit">
+					<div ng-if="InspectionWipeCopy" class="control-group">
+					     <div class="controls input-append">
+							<input style="width:40px" ng-model="InspectionWipeCopy.Curie_level">
+							<span class="add-on">DPM</span>
+						</div>
+					</div>
+
+					<div ng-if="!InspectionWipeCopy" class="control-group">
+					     <div class="controls input-append">
+							<input style="width:40px" ng-model="smear.Curie_level">
+							<span class="add-on">DPM</span>
+						</div>
+					</div>
+				</div>
+
 
 				<div ng-if="!smear.edit">
 					{{smear.Notes}}
 				</div>
 				<div ng-if="smear.edit">
-					<textarea ng-model="InspectionWipeCopy.Notes"></textarea>
-				</div>
-
-				<div ng-if="!smear.edit">
-					{{smear.Curie_level}} mCi
-				</div>
-				<div ng-if="smear.edit">
-					<div class="control-group">
-					     <div class="controls input-append">
-							<input style="width:40px" ng-model="InspectionWipeCopy.Curie_level">
-							<span class="add-on">mCi</span>
-						</div>
-					</div>
-				</div>
-
-				<div ng-if="!smear.edit">
-					{{smear.Reading_type}}
-				</div>
-				<div ng-if="smear.edit">
-					<select ng-model="InspectionWipeCopy.Reading_type" style="width:110px">
-						<option value="LSC">LSC</option>
-						<option value="Alpha/Beta">Alpha/Beta</option>
-						<option value="MCA">MCA</option>
-					</select>
+					<textarea ng-if="InspectionWipeCopy" ng-model="InspectionWipeCopy.Notes"></textarea>
+					<textarea ng-if="!InspectionWipeCopy" ng-model="smear.Notes"></textarea>
 				</div>
 
 				<div>
-					<span ng-if="smear.edit">
+					<span ng-if="smear.edit && InspectionWipeCopy">
 						<a class="btn btn-success left" ng-click="af.saveInspectionWipe(InspectionWipeCopy, smear,inspection.Inspection_wipe_tests[0])"><i class="icon-checkmark"></i>Save</a>
 						<a class="btn btn-danger left" ng-click="cancelInspectionWipeEdit(smear,inspection.Inspection_wipe_tests[0])"><i class="icon-cancel-2"></i>Cancel</a>
 					</span>
 				</div>
 			</div>
+			<div class="table-row hover-white" ng-if="inspection.Inspection_wipe_tests[0].adding">
+					<div class="hover-white">
+						<a class="btn btn-large left btn-success" ng-click="af.saveInspectionWipes(inspection.Inspection_wipe_tests[0])"><i class="icon-checkmark"></i>Save Smears</a>
+					</div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+				</div>
 		</div>
 	</div>
 </div>

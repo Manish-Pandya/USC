@@ -12,12 +12,27 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.dataStore = dataStore;
 
     var getInspection = function(){
 
        return af.getInspectionById($stateParams.inspection)
             .then(
                 function(inspection){
+                    console.log(inspection);
+                    inspection.loadPrincipalInvestigator();
+
+                    //if if the inspection doesn't have an inspection wipe test, create one on page load
+                    if(!inspection.Inspection_wipe_tests || !inspection.Inspection_wipe_tests.length){
+                        inspection.Inspection_wipe_tests = [];
+                        $rootScope.InspectionWipeTestCopy = new window.InspectionWipeTest();
+                        $rootScope.InspectionWipeTestCopy.Inspection_id = inspection.Key_id;
+                        $rootScope.InspectionWipeTestCopy.Class = "InspectionWipeTest";
+                        $rootScope.InspectionWipeTestCopy.Reading_type = "Alpha/Beta";
+                        $rootScope.InspectionWipeTestCopy.edit = true;
+                        inspection.Inspection_wipe_tests.push($rootScope.InspectionWipeTestCopy);
+                    }
+
                     $scope.inspection = dataStoreManager.getById('Inspection',$stateParams.inspection);
                     return inspection;
                 }
@@ -26,80 +41,39 @@ angular.module('00RsmsAngularOrmApp')
 
     $rootScope.InspectionPromise = getInspection();
 
-    $scope.editWipeInspectionWipeTest = function(inspection, test){
-        $rootScope.InspectionWipeTestCopy = {}
-
-        if(!test){
-            $rootScope.InspectionWipeTestCopy = new window.ParcelWipeTest();
-            $rootScope.InspectionWipeTestCopy.Inspection_id = inspection.Key_id
-            $rootScope.InspectionWipeTestCopy.Class = "InspectionWipeTest";
-            $rootScope.InspectionWipeTestCopy.Is_active = true;
-        }else{
-            af.createCopy(test);
-        }
-        $scope.editWipeTest = true;
-    }
-
     $scope.cancelParcelWipeTestEdit = function(parcel){
         $scope.editWipeTest = false;
         $rootScope.InspectionWipeTestCopy = {}
     }
 
-    $scope.editInspectionWipe = function(wipeTest, wipe){
-
-        var testPromise = $q.defer();
-
-        //  if there is already a wipetest, resolve the promise with it
-        if(wipeTest){
-            console.log(wipeTest);
-            testPromise.resolve(wipeTest);
+    $scope.addWipes = function(test){
+        $rootScope.InspectionWipeCopy = false;
+        //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+        if(!test.Inspection_wipes)test.Inspection_wipes = [];
+        var i = 10
+        while(i--){
+            var inspectionWipe = new window.InspectionWipe();
+            inspectionWipe.Inspection_wipe_test_id = test.Key_id;
+            inspectionWipe.Class = "InspectionWipe";
+            inspectionWipe.edit = true;
+            test.Inspection_wipes.push(inspectionWipe);
         }
-        // if not, create a new one and save it
-        else{
-            var wipeTest = new window.InspectionWipeTest();
-            wipeTest.Inspection_id = $scope.inspection.Key_id;
-            wipeTest.Class = "InspectionWipeTest";
-            console.log(wipeTest);
-            af.saveInspectionWipeTest(wipeTest)
-                .then(function(returnedWipeTest){
-                    $scope.inspection.Inspection_wipe_tests.push(returnedWipeTest);
-                    testPromise.resolve(returnedWipeTest);
-                    console.log(returnedWipeTest);
-                    return testPromise.promise;
-                },
-                function(){
-                    testPromise.reject();
-                });
-        }
+        test.adding = true;
+    }
 
-        testPromise.promise
-            .then(
-                function(wipeTest){
-                    if(!wipeTest.Inspection_wipes)wipeTest.Inspection_wipes = [];
-                    var i = wipeTest.Inspection_wipes.length;
-                    while(i--){
-                        wipeTest.Inspection_wipes[i].edit = false;
-                    }
+    $scope.editInspectionWipe = function(wipe){
+        wipe.edit = true;
+        af.createCopy(wipe);
+    }
 
-                    if(!wipe){
-                        $rootScope.InspectionWipeCopy = new window.InspectionWipe();
-                        $rootScope.InspectionWipeCopy.Inspection_wipe_test_id = wipeTest.Key_id
-                        $rootScope.InspectionWipeCopy.Class = "InspectionWipe";
-                        $rootScope.InspectionWipeCopy.edit = true;
-                        $rootScope.InspectionWipeCopy.Is_active = true;
-                        wipeTest.Inspection_wipes.unshift($rootScope.InspectionWipeCopy);
-                    }else{
-                        $rootScope.InspectionWipeCopy = {};
-                        var i = wipeTest.Inspection_wipes.length;
-                        while(i--){
-                            wipeTest.Inspection_wipes[i].edit = false;
-                        }
-                        wipe.edit = true;
-                        af.createCopy(wipe);
-                    }
-                }
-            )
-        
+    $scope.editInspectionWipeTest = function(test){
+        test.edit = true;
+        af.createCopy(test);
+    }
+
+    $scope.cancelEditInspectionWipeTest = function(test){
+        test.edit = false;
+        $rootScope.InspectionWipeTestCopy = false;
     }
 
     $scope.cancelInspectionWipeEdit = function(wipe,test){

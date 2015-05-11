@@ -26,7 +26,7 @@ class Rad_ActionManager extends ActionManager {
 			$entityMaps[] = new EntityMap("eager","getRooms");
 			$entityMaps[] = new EntityMap("lazy","getResponses");
 			$entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
-			$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+			$entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 			$entityMaps[] = new EntityMap("eager","getStatus");
 			$entityMaps[] = new EntityMap("lazy","getChecklists");
 			$entityMaps[] = new EntityMap("eager","getInspection_wipe_tests");
@@ -905,15 +905,17 @@ class Rad_ActionManager extends ActionManager {
 		else if( $decodedObject instanceof ActionError) {
 			return $decodedObject;
 		}
-		else if( $decodedObject->getMiscellaneous_wipes() == null) {
-			return new ActionError('No Parcel wipes were passed', 202);
+		else if( $decodedObject->getInspection_wipes() == null) {
+			return new ActionError('No Inspection wipes were passed', 202);
 		}
 		else {
 			$wipes = array();
-			foreach($decodedObject->getMiscellaneous_wipes() as $wipe){
+			foreach($decodedObject->getInspection_wipes() as $wipe){
 				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
-				$dao = $this->getDao(new InspectionWipe());
-				$wipes[] = $dao->save($wipe);
+				if($wipe->getLocation() != NULL){
+					$dao = $this->getDao(new InspectionWipe());
+					$wipes[] = $dao->save($wipe);
+				}
 			}
 			return $wipes;
 		}
@@ -1027,8 +1029,11 @@ class Rad_ActionManager extends ActionManager {
 			$wipes = array();
 			foreach($decodedObject->getMiscellaneous_wipes() as $wipe){
 				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
-				$dao = $this->getDao(new MiscellaneousWipe());
-				$wipes[] = $dao->save($wipe);
+				//there will be a collection of at least 10 MiscellaneousWipes.  User intends only to save those with Location provided
+				if($wipe->getLocation() != null){
+					$dao = $this->getDao(new MiscellaneousWipe());
+					$wipes[] = $dao->save($wipe);
+				}
 			}
 			$LOG->debug($wipes);
 			return $wipes;

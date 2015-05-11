@@ -3,6 +3,7 @@
 <div cg-busy="{promise:MiscellaneousWipeTestSaving,message:'Saving Wipe Test', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:MiscellaneousWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:MiscellaneousWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise: SavingSmears, message: 'Saving Smears', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 
 <div class="right-column">
@@ -13,8 +14,7 @@
 		<div class="card full wipe-tests" ng-repeat="parcel in (wipeTestParcels = (parcels | needsWipeTest))">
 			<h3 class="card-header padding" ng-click="parcel.show = !parcel.show">
 				<i class="icon-paper"></i> 
-				Package #: {{parcel.Rs_number}} ({{parcel.Quantity}}DPM of {{parcel.Isotope.Name}})
-				{{parcel.PrincipalInvestigator.User.Name}}
+				Package #: {{parcel.Rs_number}} for {{parcel.Principal_investigator.User.Name}} ({{parcel.Quantity}}DPM of {{parcel.Isotope.Name}})
 				<span class="pull-right">
 					<span ng-if="!parcel.Wipe_test[0].Parcel_wipes.length">No</span>
 					<span ng-if="parcel.Wipe_test[0].Parcel_wipes.length > 0">{{parcel.Wipe_test[0].Parcel_wipes.length}}</span>
@@ -23,7 +23,7 @@
 			</h3>
 			<div ng-if="parcel.show">
 				<div class="spacer small"></div>
-				<h4 class="padding">Wipe Test <a ng-if="!parcel.Wipe_test.length && !parcel.Creating_wipe" class="btn-success btn left" ng-click="editWipeParcelWipeTest(parcel)"><i class="icon-plus-2"></i>Create Wipe Test</a></h4>
+				<h4 class="padding">Wipe Test <a ng-if="!parcel.Wipe_test.length && !parcel.Creating_wipe" class="btn-success btn left" ng-click="editWipeParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
 				<div class="fake-table bordered" ng-if="parcel.Wipe_test.length || parcel.Creating_wipe">
 					<div class="table-header">
 						<h3>Edit</h3>
@@ -121,7 +121,7 @@
 						</div>
 
 						<div ng-if="!smear.edit">
-							{{smear.Curie_level}} DPM
+							{{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
 						</div>
 						<div ng-if="smear.edit">
 							<div class="control-group">
@@ -150,7 +150,7 @@
 							</span>
 						</div>
 					</div>
-					<div class="table-row">
+					<div class="table-row hover-white" ng-if="parcel.Wipe_test[0].adding">
 						<div class="hover-white">
 							<a class="btn btn-large left btn-success" ng-click="af.saveParcelWipes(parcel.Wipe_test[0])"><i class="icon-checkmark"></i>Save Smears</a>
 						</div>
@@ -161,17 +161,17 @@
 	</div>
 
 	<div class="well three-fourths">
-		<h1 style="clear:both">Miscellaneous Wipe Tests <a ng-click="openModal()" class="btn btn-success left"><i class="icon-plus-2"></i>Add</a></h1>
+		<h1 style="clear:both">Miscellaneous Wipe Tests <a ng-click="openModal()" class="btn btn-success left"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h1>
 		<!--<h3 ng-if="!miscellaneousWipeTests.length"> </h3>-->
 		
 		<div class="card full wipe-tests" ng-repeat="test in miscellaneousWipeTests | miscWipeTests">
 			<h3 class="card-header padding">
 				<i class="icon-paper"></i>
 				<span>
-					{{test.Notes}} started on {{test.Date_created | dateToISO}} 
+					{{test.Notes}} started on {{test.Date_created | dateToISO}}
 				</span>
-				<span class='pull-right' style="width:394px;">
-					<a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> <a ng-disabled="smear.edit" ng-click="editMiscWipe(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Wipe</a> <a ng-click="clouseOutMWT(test)" class="btn btn-info left"><i class="icon-exit"></i>Close</a><a style="margin-left:6px" ng-click="af.setObjectActiveState(test)" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+				<span class='pull-right' style="width:411px;">
+					<a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> <a ng-disabled="smear.edit" ng-click="addMiscWipes(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Smears</a> <a ng-click="clouseOutMWT(test)" class="btn btn-info left"><i class="icon-exit"></i>Close</a><a style="margin-left:6px" ng-click="af.setObjectActiveState(test)" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 				</span>
 				<span class="clearfix"></span>
 			</h3>
@@ -185,7 +185,7 @@
 					<h3></h3>
 				</div>
 
-				<div class="table-row" ng-repeat="smear in test.Miscellaneous_wipes">
+				<div class="table-row" ng-repeat="smear in test.Miscellaneous_wipes | orderBy:'Key_id'">
 					<div>
 						<a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editMiscWipe(test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
 					</div>
@@ -204,7 +204,7 @@
 					</div>
 
 					<div ng-if="!smear.edit">
-						{{smear.Curie_level}} DPM
+						{{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
 					</div>
 					<div ng-if="smear.edit">
 						<div class="control-group">
@@ -231,10 +231,15 @@
 						</span>
 					</div>
 				</div>
-				<div class="table-row">
+				<div class="table-row hover-white" ng-if="test.adding">
 					<div class="hover-white">
 						<a class="btn btn-large left btn-success" ng-click="af.saveMiscellaneousWipes(test)"><i class="icon-checkmark"></i>Save Smears</a>
 					</div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
+					<div class="hover-white"></div>
 				</div>
 			</div>
 		</div>

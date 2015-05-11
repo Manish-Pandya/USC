@@ -13,10 +13,9 @@ MiscellaneousWipeTest.prototype = {
         paramName: 'id'
     },
 	loadMiscellaneous_wipes: function(){
-		alert('yo')
 		this.Miscellaneous_wipes = [];
-		console.log(dataStore);
-        dataLoader.loadManyToManyRelationship( this, 'Miscellaneous_wipes', this.MiscellaneousWipeRelationship );
+		console.log(this.Miscellaneous_wipes);
+        dataLoader.loadOneToManyRelationship( this, 'Miscellaneous_wipes', this.MiscellaneousWipeRelationship );
 	}
 }
 

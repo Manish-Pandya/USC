@@ -16,8 +16,12 @@ ParcelWipeTest.prototype = {
     },
 	loadParcel_wipes: function(){
 		this.Parcel_wipes = [];
-        dataLoader.loadManyToManyRelationship( this, 'Parcel_wipes', this.ParcelWipesRelationship );
-	}
+        dataLoader.loadOneToManyRelationship( this, 'Parcel_wipes', this.ParcelWipesRelationship );
+	},
+
+    loadPrincipal_investigator: function(){
+        
+    }
 }
 
 // inherit from GenericModel

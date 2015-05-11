@@ -50,6 +50,8 @@ Parcel.prototype = {
     loadPrincipalInvestigator: function() {
         if(!this.PrincipalInvestigator) {
             dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
+            console.log(this);            
+            console.log(dataStore);
         }
     },
 

@@ -4,7 +4,19 @@
 //constructor
 var InspectionWipeTest = function() {};
 InspectionWipeTest.prototype = {
-	className: "InspectionWipeTest"
+	className: "InspectionWipeTest",
+	InspectionWipesRelationship: {
+
+        className:    'InspectionWipe',
+        keyReference:  'Inspection_wipe_test_id',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+	loadInspection_wipes: function(){
+		alert('load wipes')
+		this.Inspection_wipes = [];
+        dataLoader.loadOneToManyRelationship( this, 'Inspection_wipes', this.InspectionWipesRelationship );
+	},
 }
 
 // inherit from GenericModel

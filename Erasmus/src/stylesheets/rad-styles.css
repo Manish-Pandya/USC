@@ -17,7 +17,12 @@
   padding-top: 65px;
 }
 .hover-white:hover{
+  background:white !important;  
+  box-shadow: none !important;
+}
+.hover-white:hover div{
   background:white !important;
+  box-shadow: none !important;
 }
 .card{
   background:white;
@@ -62,7 +67,7 @@
   width: 48%;
   margin-right: 1.5%;
 }
-.dashboard .well{
+.dashboard .well, .inspection-well.well{
   background: rgba(255,255,255,.2);
   /* background: none; */
   border: 2px solid #CDCDCD;
@@ -70,6 +75,9 @@
   display: inline-block;
   box-sizing: border-box;
   border-radius: 3px;
+}
+.inspection-well.well{
+  max-width: 100% !important;
 }
 .dashboard .well .alert{
   box-sizing: border-box;

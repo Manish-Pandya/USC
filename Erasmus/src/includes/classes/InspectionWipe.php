@@ -70,6 +70,12 @@ class InspectionWipe extends RadCrud {
 	public function getRoom_id() {return $this->room_id;}
 	public function setRoom_id($room_id) {$this->room_id = $room_id;}
 	
+	public function getRoom(){
+		$inspectionWipeTestDAO = new GenericDAO(new Room());
+		$this->room = $inspectionWipeTestDAO->getById($this->room_id);
+		return $this->room;
+	}
+	
 	public function getCurie_level() {return $this->curie_level;}
 	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
 	

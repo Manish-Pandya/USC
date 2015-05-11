@@ -17,6 +17,10 @@ angular.module('00RsmsAngularOrmApp')
        return af.getAllParcels()
             .then(
                 function(parcels){
+                    var i = parcels.length;
+                    while(i--){
+                        parcels[i].loadPrincipalInvestigator();
+                    }
                     $rootScope.parcels = dataStore.Parcel;
                     return parcels;
                 }
@@ -81,6 +85,20 @@ angular.module('00RsmsAngularOrmApp')
             af.createCopy(wipe);
         }
         
+    }
+
+    $scope.addMiscWipes = function(test){
+         //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+        if(!test.Miscellaneous_wipes)test.Miscellaneous_wipes = [];
+        var i = 10
+        while(i--){
+            var miscellaneousWipe = new window.MiscellaneousWipe();
+            miscellaneousWipe.Miscellaneous_wipe_test_id = test.Key_id;
+            miscellaneousWipe.Class = "MiscellaneousWipe";
+            miscellaneousWipe.edit = true;
+            test.Miscellaneous_wipes.push(miscellaneousWipe);
+        }
+        test.adding = true;
     }
 
     $scope.cancelParcelWipeEdit = function(wipe,test){

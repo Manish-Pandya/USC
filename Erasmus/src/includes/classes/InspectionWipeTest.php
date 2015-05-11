@@ -80,11 +80,12 @@ class InspectionWipeTest extends RadCrud {
 	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
 	
 	public function getInspection_wipes() {
-		if($this->inspection_wipe == null && $this->hasPrimaryKeyValue()) {
+		if($this->inspection_wipes == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->inspection_wipe = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTION_WIPE_RELATIONSHIP));
+			$this->inspection_wipes = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTION_WIPE_RELATIONSHIP));
 		}
-		return $this->inspection_wipe;	
+		return $this->inspection_wipes;	
 	}
+	public function setInspection_wipes($wipes){$this->inspection_wipes = $wipes;}
 	
 }
