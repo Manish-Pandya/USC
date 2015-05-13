@@ -24,6 +24,7 @@ class CarboyUseCycle extends RadCrud {
 		"pour_date"						=> "timestamp",
 		"room_id"						=> "integer",
 		"pickup_id"						=> "integer",
+		"reading"						=> "float",
 
 
 		//GenericCrud
@@ -59,7 +60,10 @@ class CarboyUseCycle extends RadCrud {
 
 	/** timestamp containing the date this carboy was emptied. */
 	private $pour_date;
-
+	
+	/** date this carboy can be poured **/
+	private $pour_allowed_date;
+	
 	/** Reference to the room this carboy was sent to. */
 	private $room;
 	private $room_id;
@@ -74,12 +78,15 @@ class CarboyUseCycle extends RadCrud {
 	/* currie level of each isotope in this carboy **/
 	private $contents;
 	
+	/** reading taken when carboy is returned to RSO after pickup*/
+	private $reading;
+		
 
 	public function __construct() {
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager", "getCarboy");
+		$entityMaps[] = new EntityMap("lazy", "getCarboy");
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("eager", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
@@ -187,9 +194,55 @@ class CarboyUseCycle extends RadCrud {
 		$this->parcel_use_amounts = $parcel_use_amounts;
 	}
 	
+	public function getReading(){return $this->reading;}
+	public function setReading($reading){$this->reading = $reading;}
+	
+	
 	public function getContents(){
 		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
 		return $this->contents;
+	}
+	
+	public function getPour_allowed_date(){
+		$LOG = Logger::getLogger(__CLASS__);
+		$this->pour_allowed_date = null;
+		$contents = $this->getContents();
+		$hotroomDate = $this->getHotroom_date();
+		$reading = $this->getReading();
+		
+		$longestHalfLife = 0;
+		$totalMCi = 0;
+		foreach($contents as $content){
+			$isotopDao = new GenericDAO(new Isotope());
+			$isotope = $isotopDao->getById($content->getIsotope_id());	
+			//find the isotope with the longest half life
+			if($isotope->getHalf_life() > $longestHalfLife){
+				$releventIsotope = $isotope;
+				$longestHalfLife = $isotope->getHalf_life();
+				$totalMCi = $totalMCi + $content->getCurie_level();
+			}
+		}
+
+		if($releventIsotope != null){
+			$daysToDecay = $this->getDecayTime($releventIsotope->getHalf_life(), $totalMCi);
+			$LOG->debug($daysToDecay);
+			
+			$now = new DateTime();
+			//the front end parses timestamps nicely, so we return this as one
+			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
+			$LOG->debug($this);
+		}
+		return $this->pour_allowed_date;
+		
+		
+	}
+	
+	//get the time to decay to .01 mCi in days (or whatever unit we are storing half-lives in)
+	private function getDecayTime($halfLife, $mCi){
+		$LOG = Logger::getLogger(__CLASS__);
+		$targetMCI = .01;
+		//the time in days to decay.  we always round up to make sure that the carboy is fully decayed.
+		return ceil(($halfLife/-0.693147) * log($targetMCI/$mCi));
 	}
 	
 }
