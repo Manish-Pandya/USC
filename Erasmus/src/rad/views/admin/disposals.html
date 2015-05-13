@@ -20,10 +20,10 @@
 				</div>
 
 				<div ng-if="!drum.edit">
-					{{drum.label}}
+					{{drum.Label}}
 				</div>
 				<div ng-if='drum.edit'>
-					<input ng-model="DrumCopy.lable">
+					<input ng-model="DrumCopy.Label">
 				</div>
 
 				<div>
@@ -39,14 +39,74 @@
 			</div>
 		</div>
 	</div>
-	<div class="well full">
-		solid waste
-		<pre>{{wasteBags}}</pre>
-		<pre>{{svCollections}}</pre>
+	<div class="well half">
+		<h1>Solid Waste</h1>
+		<div class="card full">
+			<div class="fake-table disposals">
+				<div class="table-header">
+					<h3>Pickup Date</h3>
+					<h3>Description</h3>
+					<h3>Contents</h3>
+					<h3>Add to Drum</h3>
+				</div>
+				<div class="table-row" ng-repeat="bag in wasteBags | disposalSolids">
+					<div>
+						{{bag.Pickup.Requested_date | dateToISO}}
+					</div>
+					<div>
+						<p ng-repeat="content in bag.Contents">
+							{{content.Curie_level}} mCi of {{content.Isotope_name}}
+						</p>
+					</div>
+					<div>
+						<a class="btn btn-success btn-left" ng-click="assignDrum(bag)"><i class="icon-checkmark"></i></a>
+					</div>
+				</div>
+				<div class="table-row" ng-repeat="collection in svCollections | disposalSolids">
+					<div>
+						{{collection.Pickup.Requested_date | dateToISO}}
+					</div>
+					<div>
+						<p ng-repeat="content in collection.Contents">
+							{{content.Curie_level}} mCi of {{content.Isotope_name}}
+						</p>
+					</div>
+					<div>
+						<a class="btn btn-success btn-left" ng-click="assignDrum(collection)"><i class="icon-checkmark"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="well full">
-		carboy poor stuff
-		<pre>{{carboys}}</pre>
+	<div class="well half">
+		<h1 class="carboys"><i class="icon-carboy"></i>Carboys</h1>
+		<div class="card full carboys">
+			<div class="fake-table">
+				<div class="table-header">
+					<h3>Carboy Number</h3>
+					<h3>Reading</h3>
+					<h3>Contents</h3>
+					<h3>Pour Date</h3>
+					<h3>Poor</h3>
+				</div>
+				<div class="table-row" ng-repeat="cycle in cycles | disposalCycles">
+					<div>
+						{{cycle.Carboy.Carboy_number}}
+					</div>
+					<div>
+						<p ng-repeat="content in cycle.Contents">
+							{{content.Curie_level}} mCi of {{content.Isotope_name}}
+						</p>
+					</div>
+					<div>
+						{{cycle.Pour_date}}
+					</div>
+					<div>
+						<button ng-disabled="" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>

@@ -113,6 +113,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
 <script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>
 <script type="text/javascript" src="./scripts/filters/miscWipeTests.js"></script>
+<script type="text/javascript" src="./scripts/filters/disposalCycles.js"></script>
+<script type="text/javascript" src="./scripts/filters/disposalSolids.js"></script>
+
 
 <!-- framework -->
 <script src="./scripts/genericModel/inheritance.js"></script>

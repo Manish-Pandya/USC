@@ -629,6 +629,16 @@ angular
                 return dataSwitchFactory.getAllObjects('Drum');
             }
 
+            af.replaceDrum = function(drum){
+                var segment = "getDrumById&id="+drum.Key_id;
+                return genericAPIFactory.read(segment)
+                        .then(
+                            function(returnedDrum){
+                                angular.extend(drum, returnedDrum);
+                            }
+                        )
+            }
+
 
 
             /********************************************************************
@@ -1863,6 +1873,44 @@ angular
                                 $rootScope.DrumCopy = {};
                             }
                             drum.edit = false;
+                        },
+                        af.setError('The Drum could not be saved')
+
+                    )
+            }
+
+            af.saveWasteBag = function(bag, copy){
+              af.clearError();
+                return this.save(copy)
+                    .then(
+                        function(returnedBag){
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                            if(bag.Key_id){
+                                angular.extend(bag, copy)
+                            }else{
+                                dataStoreManager.store(returnedBag);
+                                $rootScope.WasteBagCopy = {};
+                            }
+                            return returnedBag;
+                        },
+                        af.setError('The Drum could not be saved')
+
+                    )
+            }
+
+            af.saveSVCollection = function(collection, copy){
+              af.clearError();
+                return this.save(copy)
+                    .then(
+                        function(returnedBag){
+                            returnedCollection = modelInflatorFactory.instateAllObjectsFromJson( returnedCollection );
+                            if(collection.Key_id){
+                                angular.extend(collection, copy)
+                            }else{
+                                dataStoreManager.store(returnedCollection);
+                                $rootScope.ScintVialCollectionCopy = {};
+                            }
+                            return returnedCollection;
                         },
                         af.setError('The Drum could not be saved')
 
