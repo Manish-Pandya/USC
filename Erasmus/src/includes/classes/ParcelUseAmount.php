@@ -68,12 +68,15 @@ include_once 'RadCrud.php';
     
     /* The name of the isotope up in this ParcelUseAmount */
     private $isotope_name;
+    
+    /* The key_id of the isotope up in this ParcelUseAmount */
+    private $isotope_id;
 
     public function __construct() {
 
     	// Define which subentities to load
     	$entityMaps = array();
-    	$entityMaps[] = new EntityMap("eager", "getCarboy");
+    	$entityMaps[] = new EntityMap("lazy", "getCarboy");
     	$entityMaps[] = new EntityMap("eager", "getWaste_type");
     	$entityMaps[] = new EntityMap("eager", "getContainer_name");
     	$this->setEntityMaps($entityMaps);
@@ -152,6 +155,15 @@ include_once 'RadCrud.php';
 		$isotope = $parcel->getIsotope();
 		$this->isotope_name = $isotope->getName();
 		return $this->isotope_name;
+	}
+	
+	public function getIsoptope_id(){
+		$useDao = new GenericDAO(new ParcelUse());
+		$use = $useDao->getById($this->getParcel_use_id());
+		$parcel = $use->getParcel();
+		$isotope = $parcel->getIsotope();
+		$this->isotope_id = $isotope->getKey_id();
+		return $this->isotope_id;
 	}
     
 }
