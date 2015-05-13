@@ -19,6 +19,7 @@ class ScintVialCollection extends RadCrud{
 			"pickup_id"						=> "integer",
 			"principal_investigator_id"		=> "integer",
 			"drum_id"						=> "integer",
+			"date_removed"					=> "timestamp",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -35,6 +36,8 @@ class ScintVialCollection extends RadCrud{
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
+		$entityMaps[] = new EntityMap("lazy", "getDrum");
+		
 		$entityMaps[] = new EntityMap("eager", "getContents");
 		
 		$this->setEntityMaps($entityMaps);
