@@ -20,11 +20,16 @@ abstract class RadCrud extends GenericCrud {
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('logging usages');
 		$isotopeAmounts = array();
+		$LOG->debug($useAmounts);
+		
 		foreach($useAmounts as $amount){
-			$isotopeName = $amount->getIsotope_name();			
+			
+			$isotopeName = $amount->getIsotope_name();
+			$isotopeId   = $amount->getIsoptope_id();		
 			if(!array_key_exists($isotopeName, $isotopeAmounts)){
 				$isotopeAmount = new IsotopeAmountDTO();
 				$isotopeAmount->setIsotope_name($isotopeName);
+				$isotopeAmount->setIsotope_id($isotopeId);				
 				$isotopeAmount->setCurie_level($amount->getCurie_level());
 				$isotopeAmounts[$isotopeName] = $isotopeAmount;
 			}else{				
