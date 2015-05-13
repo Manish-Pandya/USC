@@ -15,9 +15,7 @@ Carboy.prototype = {
     
     // TODO eager accessors, relationships, method names.
     loadCarboyUseCycles:function(){
-    	if(!this.CarboyUseCycles){
-            return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
-    	}
+        return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
     }
 }
 
