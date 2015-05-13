@@ -153,7 +153,7 @@ class Drum extends RadCrud {
 		$LOG->debug('getting contents for drum');
 		$amounts = array();
 		foreach($this->getWasteBags() as $bag){
-			if($bag->getParcel_use_amounts() != NULL){		
+			if($bag->getParcelUseAmounts() != NULL){		
 				array_push($amounts, $bag->getParcelUseAmounts());
 			}
 		}
