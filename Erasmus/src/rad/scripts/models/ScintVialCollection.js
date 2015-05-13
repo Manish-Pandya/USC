@@ -7,6 +7,12 @@ var ScintVialCollection = function(){};
 
 ScintVialCollection.prototype = {
     className: "ScintVialCollection",
+    loadPickup: function() {
+        if(!this.Pickup && this.Pickup_id) {
+            dataLoader.loadChildObject(this, 'Pickup', 'Pickup', this.Pickup_id);
+        }
+    },
+
 
 }
 
