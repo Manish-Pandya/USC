@@ -36,6 +36,14 @@ class Carboy extends RadCrud {
 		$this->setEntityMaps($entityMaps);
 
 	}
+	
+	/** Relationships */
+	protected static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+			"className" => "CarboyUseCycle",
+			"tableName" => "carboy_use_cycle",
+			"keyName"	=> "key_id",
+			"foreignKeyName"	=> "carboy_id"
+	);
 	//access information
 
 	/** timestamp with the date this carboy was made */
@@ -46,7 +54,12 @@ class Carboy extends RadCrud {
 	/** timestamp with the date this carboy should be thrown away */
 	private $retirement_date;
 
+	/** all use cycles this carboy has ever had **/
 	private $caboy_use_cycles;
+	
+	/** the carboy use cycle this carboy is currently in */
+	private $current_carboy_use_cycle;
+
 	
 	// Required for GenericCrud
 	public function getTableName() {
@@ -75,16 +88,29 @@ class Carboy extends RadCrud {
 	    $this->carboy_number = $carboy_number;
 	}
 
-
-	public function getCarboy_use_cycles()
-	{
-		//todo make relationship
-	    return array();
+	public function getCarboy_use_cycles(){
+		if($this->carboy_use_cycles === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->carboy_use_cycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CABOY_USE_CYCLES_RELATIONSHIP));
+		}
+		return $this->carboy_use_cycles;
 	}
-
 	public function setCarboy_use_cycles($cycles)
 	{
 	    $this->carboy_use_cycles = $cycles;
+	}
+	
+	public function getCurrent_carboy_use_cycle(){
+		$cycles = $this->getCarboy_use_cycles();
+		foreach($cycles as $cycle){
+			$cycle = new CarboyUseCycle();
+			//the cycle is the current one if it hasn't been poured 
+			if($cycle->getPour_date() == NULL 
+					&& (strtolower($cycle->getStatus()) == "in use" || strtolower($cycle->getStatus()) == "in use")){
+				$this->current_carboy_use_cycle = $cycle;
+				return $cycle;
+			}
+		}
 	}
 	
 }
