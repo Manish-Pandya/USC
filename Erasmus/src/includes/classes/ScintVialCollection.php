@@ -19,7 +19,6 @@ class ScintVialCollection extends RadCrud{
 			"pickup_id"						=> "integer",
 			"principal_investigator_id"		=> "integer",
 			"drum_id"						=> "integer",
-			"date_removed"					=> "timestamp",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
