@@ -4,9 +4,19 @@
 //constructor
 var Pickup = function() {};
 Pickup.prototype = {
+	className: "Pickup",
 
-	className: "Pickup"
-    // Future eager accessors or loader functions go here.
+	eagerAccessors:[
+		{method:"loadPrincipalInvestigator", boolean:"Principal_investigator_id"},
+	],	
+
+	loadPrincipalInvestigator: function()
+	{
+        // not all users have a supervisor, don't try to load something that doesn't exist.
+        if(!this.PrincipalInvestigator && this.Principal_investigator_id) {
+            dataLoader.loadChildObject(this, 'PrincipalInvestigator', 'PrincipalInvestigator', this.Principal_investigator_id);
+        }
+	}
 
 }
 

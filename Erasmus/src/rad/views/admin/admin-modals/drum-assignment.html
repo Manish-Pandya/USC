@@ -1,5 +1,5 @@
 <div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:rgb(122, 6, 109); color:white">Select Drum</h2>
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Select Drum</h2>
 </div>
 
 <div class="modal-body">
@@ -7,9 +7,8 @@
 	<select ng-if="modalData.WasteBagCopy" ng-model="modalData.WasteBagCopy.Drum_id">
 		<option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
 	</select>	
-	<pre>{{modalData.WasteBagCopy | json }}</pre>
-	<select ng-if="modalData.ScintVialCollectionCopy" ng-model="ScintVialCollectionCopy.Drum_id">
-		<option ng-repeat="drum in Drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
+	<select ng-if="modalData.ScintVialCollectionCopy" ng-model="modalData.ScintVialCollectionCopy.Drum_id">
+		<option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
 	</select>		
 </div>
 

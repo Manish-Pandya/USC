@@ -83,6 +83,31 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.drumModal = function(object){
+        console.log(object);
+        var modalData = {};
+        if(object)modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+          templateUrl: 'views/admin/admin-modals/drum-shipment.html',
+          controller: 'DrumShipCtrl'
+        });
+    }
+
+    $scope.editCycle = function(cycle){
+        cycle.edit=true;
+        af.createCopy(cycle);
+    }
+    $scope.cancelEditCycle = function(cycle){
+        cycle.edit = false;
+        $rootScope.CarboyUseCycleCopy = {}
+    }
+
+    $scope.pour = function(cycle){
+        af.createCopy(cycle);
+        af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle, true)
+    }
+
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
@@ -91,15 +116,15 @@ angular.module('00RsmsAngularOrmApp')
         console.log($scope.modalData);
 
         $scope.saveWasteBag = function(bag, copy){
+            $scope.close();
             $rootScope.saving = af.saveWasteBag(bag, copy)
                                     .then(reloadDrum)
-                                    .then($scope.close);
         }
 
         $scope.saveSVCollection = function(collection, copy){
+            $scope.close();
             $rootScope.saving = af.saveSVCollection(collection, copy)
                                     .then(reloadDrum)
-                                    .then($scope.close);
         }
 
         var reloadDrum = function(obj){
@@ -118,4 +143,20 @@ angular.module('00RsmsAngularOrmApp')
         }
 
   }])
-  
+  .controller('DrumShipCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
+        var af = actionFunctionsFactory;
+        $scope.af = af;
+        $scope.modalData = af.getModalData();
+        console.log($scope.modalData);
+                    $scope.close();
+
+        $scope.shipDrum = function(drum, copy){
+            $rootScope.saving = af.saveDrum(drum, copy)
+        }
+
+        $scope.close = function(){
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
+  }])

@@ -634,7 +634,8 @@ angular
                 return genericAPIFactory.read(segment)
                         .then(
                             function(returnedDrum){
-                                angular.extend(drum, returnedDrum);
+                                console.log(returnedDrum.data);
+                                angular.extend(drum, returnedDrum.data);
                             }
                         )
             }
@@ -1336,6 +1337,28 @@ angular
                     )
             }
 
+            af.saveCarboyUseCycle = function( copy, cycle, poured )
+            {
+                af.clearError();
+                if(poured){
+                    copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
+                    copy.Status = "Available";
+                }
+                return this.save( copy )
+                    .then(
+                        function(returnedCycle){
+                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
+                            if(cycle){
+                                angular.extend(cycle, copy);
+                                cycle.edit = false;
+                            }else{
+                                dataStoreManager.addOnSave(returnedCycle);
+                            }
+                        },
+                        af.setError('The Carboy could not be saved')
+                    )
+            }
+
             af.removeCarboyFromLab = function(cycle){
                 af.clearError();
                 cycle.Status = 'Decaying';
@@ -1902,7 +1925,7 @@ angular
               af.clearError();
                 return this.save(copy)
                     .then(
-                        function(returnedBag){
+                        function(returnedCollection){
                             returnedCollection = modelInflatorFactory.instateAllObjectsFromJson( returnedCollection );
                             if(collection.Key_id){
                                 angular.extend(collection, copy)
@@ -1911,6 +1934,25 @@ angular
                                 $rootScope.ScintVialCollectionCopy = {};
                             }
                             return returnedCollection;
+                        },
+                        af.setError('The Drum could not be saved')
+
+                    )
+            }
+
+            af.saveDrum = function(drum, copy){
+              af.clearError();
+                return this.save(copy)
+                    .then(
+                        function(returnedDrum){
+                            returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
+                            if(drum.Key_id){
+                                angular.extend(drum, copy)
+                            }else{
+                                dataStoreManager.store(returnedDrum);
+                                $rootScope.DrumCopy = {};
+                            }
+                            return returnedDrum;
                         },
                         af.setError('The Drum could not be saved')
 

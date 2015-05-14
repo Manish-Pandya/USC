@@ -314,6 +314,9 @@ div.fake-table .table-header > h3{
 div.fake-table .table-row{
   display: table-row;
 }
+div.fake-table .table-row.new div{
+  background:rgba(91, 183, 91, 0.35) !important
+}
 div.fake-table.striped .table-row:nth-of-type(odd){
   background:rgba(221, 221, 221, 0.4);
 }
@@ -344,6 +347,12 @@ div.bordered .table-row > div {
 }
 div.fake-table.bordered .table-row > div:first-child{
  // border:none;
+}
+.well >h1 > i {
+  margin-right: 10px;
+  font-size: 35px;
+  width: auto;
+  line-height: 53px;
 }
 .table-header > h3 {
   border-top: 3px solid #ddd;
