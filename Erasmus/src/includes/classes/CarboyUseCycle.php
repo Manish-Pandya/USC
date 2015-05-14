@@ -90,6 +90,7 @@ class CarboyUseCycle extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("eager", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
+		$entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -205,36 +206,49 @@ class CarboyUseCycle extends RadCrud {
 	
 	public function getPour_allowed_date(){
 		$LOG = Logger::getLogger(__CLASS__);
-		$this->pour_allowed_date = null;
+		$this->pour_allowed_date = NULL;
 		$contents = $this->getContents();
 		$hotroomDate = $this->getHotroom_date();
 		$reading = $this->getReading();
-		
-		$longestHalfLife = 0;
-		$totalMCi = 0;
-		foreach($contents as $content){
-			$isotopDao = new GenericDAO(new Isotope());
-			$isotope = $isotopDao->getById($content->getIsotope_id());	
-			//find the isotope with the longest half life
-			if($isotope->getHalf_life() > $longestHalfLife){
-				$releventIsotope = $isotope;
-				$longestHalfLife = $isotope->getHalf_life();
-				$totalMCi = $totalMCi + $content->getCurie_level();
+		$LOG->debug($reading);
+		if($reading != NULL){
+			$longestHalfLife = 0;
+			$totalMCi = 0;
+			foreach($contents as $content){
+				$isotopDao = new GenericDAO(new Isotope());
+				$isotope = $isotopDao->getById($content->getIsotope_id());	
+				$LOG->debug($content);
+				
+				//find the isotope with the longest half life
+				if($isotope->getHalf_life() > $longestHalfLife){
+					$releventIsotope = $isotope;
+					$longestHalfLife = $isotope->getHalf_life();
+				}
+			}
+	
+			if($releventIsotope != null){
+				
+				$daysToDecay = $this->getDecayTime($releventIsotope->getHalf_life(), $this->getReading());
+				$now = new DateTime();
+				
+				//if the reading is zero, pour can be done today
+				if($reading == 0){
+					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
+					return $this->pour_allowed_date;
+				}
+				
+				//the front end parses timestamps nicely, so we return this as one
+				if($daysToDecay > 0){
+					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
+				}else{
+					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
+						
+				}
+				$LOG->debug($daysToDecay);
+				$LOG->debug($this);
 			}
 		}
-
-		if($releventIsotope != null){
-			$daysToDecay = $this->getDecayTime($releventIsotope->getHalf_life(), $totalMCi);
-			$LOG->debug($daysToDecay);
-			
-			$now = new DateTime();
-			//the front end parses timestamps nicely, so we return this as one
-			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
-			$LOG->debug($this);
-		}
 		return $this->pour_allowed_date;
-		
-		
 	}
 	
 	//get the time to decay to .01 mCi in days (or whatever unit we are storing half-lives in)
