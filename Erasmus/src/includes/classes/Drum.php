@@ -109,7 +109,7 @@ class Drum extends RadCrud {
 	public function setStatus($newStatus) { $this->status = $newStatus; }
 	
 	public function getLabel() { return $this->label; }
-	public function letLabel($label) { $this->label = $label;}
+	public function setLabel($label) { $this->label = $label;}
 	
 	public function getDate_closed() { return $this->date_closed; }
 	public function setDate_closed($newDate) { $this->date_closed = $newDate; }
@@ -153,15 +153,16 @@ class Drum extends RadCrud {
 		$LOG->debug('getting contents for drum');
 		$amounts = array();
 		foreach($this->getWasteBags() as $bag){
+			$LOG->debug($bag);
 			if($bag->getParcelUseAmounts() != NULL){		
-				array_push($amounts, $bag->getParcelUseAmounts());
+				$amounts = array_merge($amounts, $bag->getParcelUseAmounts());
 			}
 		}
 		foreach($this->getScintVialCollections() as $collection){
 			$LOG->debug($collection);
 
 			if($collection->getParcel_use_amounts() != NULL){
-				array_push($amounts, $collection->getParcel_use_amounts());
+				$amounts = array_merge($amounts, $collection->getParcel_use_amounts());
 			}
 		}
 		$this->contents = $this->sumUsages($amounts);
