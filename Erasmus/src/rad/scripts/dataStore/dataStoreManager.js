@@ -207,7 +207,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
                 if(getIt)collectionToReturn.push( current );
             }
-
+            console.log(collectionToReturn);
             return collectionToReturn;
 
         }
