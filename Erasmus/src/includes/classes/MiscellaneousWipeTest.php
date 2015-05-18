@@ -18,6 +18,8 @@ class MiscellaneousWipeTest extends RadCrud {
 			"notes"							=> "text",
 			"closeout_date"					=> "date",
 			"reading_type"					=> "text",
+			"background_level"				=> "float",
+			"lab_background_level"			=> "float",
 				
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -64,6 +66,9 @@ class MiscellaneousWipeTest extends RadCrud {
 	private $reading_type;
 	
 	private $closeout_date;
+	
+	private $background_level;
+	private $lab_background_level;
 
 	public function getNotes(){return $this->notes;}
 	public function setNotes($notes){$this->notes = $notes;}
@@ -82,5 +87,11 @@ class MiscellaneousWipeTest extends RadCrud {
 	
 	public function getReading_type() {return $this->reading_type;}
 	public function setReading_type($reading_type) {$this->reading_type = $reading_type;}
+	
+	public function getBackground_level() {return $this->background_level;}
+	public function setBackground_level($background_level) {$this->background_level = $background_level;}
+	
+	public function getLab_background_level() {return $this->lab_background_level;}
+	public function setLab_background_level($lab_background_level) {$this->lab_background_level = $lab_background_level;}
 	
 }
