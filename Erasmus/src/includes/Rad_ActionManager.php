@@ -1073,6 +1073,22 @@ class Rad_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 	}
+	
+	function saveCarboyUseReading($reading = null){
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to WasteType', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new CarboyReadingAmount());
+			$decodedObject = $dao->save($decodedObject);
+			return $decodedObject;
+		}
+	}
 
 
 	/*****************************************************************************\
