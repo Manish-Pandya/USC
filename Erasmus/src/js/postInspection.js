@@ -110,7 +110,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
         checklistHolder.biologicalHazards.checklists.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
-        console.log(checklistHolder.biologicalHazards.checklists);
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
@@ -352,6 +351,20 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
     return deferred.promise
   }
 
+  factory.getHotWipes = function( inspection ){
+      var i = inspection.Inspection_wipe_tests[0].Inspection_wipes.length;
+      inspection.hotWipes = 0;
+      while(i--){
+        //if a wipe is 3 times background level, it is hot
+        if(inspection.Inspection_wipe_tests[0].Inspection_wipes[i].Curie_level >= (inspection.Inspection_wipe_tests[0].Background_level * 3)){
+          //if the wipe has had a rewipe, and that rewipe is not 3 times the lab's background level, it is no longer hot
+          if(!inspection.Inspection_wipe_tests[0].Lab_background_level || inspection.Inspection_wipe_tests[0].Inspection_wipes[i].Lab_curie_level >= (inspection.Inspection_wipe_tests[0].Lab_background_level *3)){
+            inspection.hotWipes++;
+          }
+        }
+      }
+  }
+
   return factory;
 });
 
@@ -587,8 +600,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         $scope.doneLoading = false;
         convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
           .then(function(promise){
-            console.log(promise.data);
-
+            postInspectionFactory.getHotWipes(promise.data);
             //set the inspection date as a javascript date object
             if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
             $rootScope.inspection = postInspectionFactory.calculateScore(promise.data);
@@ -614,6 +626,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
         $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
         $scope.doneLoading = true;
+        postInspectionFactory.getHotWipes($scope.inspection);
         getIsReadyToSubmit();
       }
       $scope.options = ['Incomplete','Pending','Complete'];
@@ -767,7 +780,6 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       var i = $scope.questionsByChecklist.chemicalHazards.Questions.length;
       while(i--){
         var question = $scope.questionsByChecklist.chemicalHazards.Questions[i];
-        console.log(question);
         if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
             var j = question.Responses.DeficiencySelections.length;
             while(j--){

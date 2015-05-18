@@ -16,6 +16,8 @@ class InspectionWipeTest extends RadCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"inspection_id"					=> "integer",
 			"reading_type"					=> "text",
+			"background_level"				=> 'float',
+			"lab_background_level"			=> 'float',
 				
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -63,6 +65,12 @@ class InspectionWipeTest extends RadCrud {
 	
 	private $inspection_wipes;
 	
+	/** background level reading done by RSO staff */
+	private $background_level;
+	
+	/** background level reading done by Lab for corrective action, when an inspection has hot wipes */
+	private $lab_background_level;
+	
 	public function getInspection_id(){return $this->inspection_id;}
 	public function setInspection_id($id){$this->inspection_id = $id;}
 	
@@ -87,5 +95,12 @@ class InspectionWipeTest extends RadCrud {
 		return $this->inspection_wipes;	
 	}
 	public function setInspection_wipes($wipes){$this->inspection_wipes = $wipes;}
+	
+	public function getBackground_level() {return $this->background_level;}
+	public function setBackground_level($background_level) {$this->background_level = $background_level;}
+	
+	public function getLab_background_level() {return $this->lab_background_level;}
+	public function setLab_background_level($lab_background_level) {$this->lab_background_level = $lab_background_level;}
+	
 	
 }
