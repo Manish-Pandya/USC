@@ -1484,7 +1484,7 @@ td.reviewHeader {
 /* line 1177, ../sass/style.scss */
 #biologicalMaterialsHeader img, #chemicalSafetyHeader img, #radiationSafetyHeader img, #generalSafetyHeader img {
   width: 38px;
-  margin: 0 5px 8px 0;
+  margin: 2px 5px 3px 0;
 }
 
 /* line 1182, ../sass/style.scss */
@@ -1504,11 +1504,22 @@ td.reviewHeader {
   background-color: #6600cc;
   background-size: 40px 40px;
 }
-/* line 1196, ../sass/style.scss */
+
+.reviewHeader i {
+  font-weight: bold;
+  font-size: 20px;
+  width: auto;
+  margin: 9px 3px 0 11px;
+}
+i.icon-paper{
+    font-weight: bold;
+
+}
+/* line 1196, ../sass/style.scss 
 #radiationSafetyHeader img {
   margin: -8px 5px 8px 0 !important;
 }
-
+*/
 /* line 1200, ../sass/style.scss */
 #generalSafetyHeader, .generalHazardsHeader {
   background-color: #009900;

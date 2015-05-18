@@ -13,18 +13,17 @@ angular.module('00RsmsAngularOrmApp')
   				{  	
 
   					if(cycle.Pour_allowed_date){
-  						var date = new Date();
-  						console.log(Date.parse(date));
-  						var pourSeconds = Date.parse(convenienceMethods.getDate(cycle.Pour_allowed_date));
-  						console.log(pourSeconds);
+  						pourDay = convenienceMethods.getDate(cycle.Pour_allowed_date)
+  						var pourSeconds = pourDay.getTime();
   						var now = new Date(),
-					    then = new Date(
-					        now.getFullYear(),
-					        now.getMonth(),
-					        now.getDate(),
-					        0,0,0),
-					    diff = now.getTime() - then.getTime()
-  						if(pourSeconds-diff <= date)cycle.pourable = true;
+					    beginningOfPourDay = new Date(
+					        pourDay.getFullYear(),
+					        pourDay.getMonth(),
+					        pourDay.getDate(),
+					        0,0,0);
+
+					    console.log(now.getTime());
+  						if(beginningOfPourDay.getTime() <= now.getTime())cycle.pourable = true;
   					}
 
   					disposalCycles.unshift(cycle);
