@@ -9,10 +9,10 @@ include_once 'RadCrud.php';
  * @author GrayBeard Entity Generator
  * @author Matt Breeden
  */
- class CarboyUseAmount extends RadCrud {
+ class CarboyReadingAmount extends RadCrud {
 
     /** Name of the DB Table */
-    protected static $TABLE_NAME = "carboy_use_amount";
+    protected static $TABLE_NAME = "carboy_reading_amount";
 
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -51,7 +51,7 @@ include_once 'RadCrud.php';
     /** My own private isotope */
 	private $isotope;
     
-    /* The key_id of the isotope up in this ParcelUseAmount */
+    /* The key_id of the isotope up in this CarboyUsageAmount */
     private $isotope_id;
 
     public function __construct() {
@@ -59,8 +59,7 @@ include_once 'RadCrud.php';
     	// Define which subentities to load
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("lazy", "getCarboy");
-    	$entityMaps[] = new EntityMap("eager", "getWaste_type");
-    	$entityMaps[] = new EntityMap("eager", "getContainer_name");
+    	$entityMaps[] = new EntityMap("lazy", "getIsotope");
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -76,7 +75,6 @@ include_once 'RadCrud.php';
     // Accessors / Mutators
     public function getCurie_level() { return $this->curie_level; }
     public function setCurie_level($newValue) { $this->curie_level = $newValue; }
-
 
     public function getCarboy() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.

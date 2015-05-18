@@ -81,6 +81,7 @@ class CarboyUseCycle extends RadCrud {
 	/** reading taken when carboy is returned to RSO after pickup*/
 	private $reading;
 		
+	private $carboy_reading_amounts;
 
 	public function __construct() {
 
@@ -108,6 +109,13 @@ class CarboyUseCycle extends RadCrud {
 	protected static $USEAMOUNTS_RELATIONSHIP = array(
 			"className" => "ParcelUseAmount",
 			"tableName" => "parcel_use_amount",
+			"keyName"	=> "key_id",
+			"foreignKeyName"	=> "carboy_id"
+	);
+	
+	protected static $CarboyReadingAmountS_RELATIONSHIP = array(
+			"className" => "CarboyReadingAmount",
+			"tableName" => "carboy_use_amount",
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "carboy_id"
 	);
@@ -204,6 +212,14 @@ class CarboyUseCycle extends RadCrud {
 		return $this->contents;
 	}
 	
+	public function getCarboy_reading_amounts(){
+		if($this->carboy_reading_amounts === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->carboy_reading_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$CarboyReadingAmountS_RELATIONSHIP));
+		}
+		return $this->carboy_reading_amounts;
+	}
+	
 	public function getPour_allowed_date(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$this->pour_allowed_date = NULL;
@@ -236,15 +252,24 @@ class CarboyUseCycle extends RadCrud {
 					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
 					return $this->pour_allowed_date;
 				}
+				$LOG->debug($daysToDecay);
 				
 				//the front end parses timestamps nicely, so we return this as one
-				if($daysToDecay > 0){
+				
+				//apparently, PHP believes -0 is a thing.
+				// https://bugs.php.net/bug.php?id=54842 (signed 0)
+				if($daysToDecay == -0){
+					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
+				}
+				//the pour allowed date has passed.  carboy can be poured
+				elseif($daysToDecay < 0){
+					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.abs($daysToDecay.'D')))->getTimestamp());
+				}
+				//pour date is in the future.
+				else{
 					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
-				}else{
-					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
 						
 				}
-				$LOG->debug($daysToDecay);
 				$LOG->debug($this);
 			}
 		}
@@ -254,7 +279,7 @@ class CarboyUseCycle extends RadCrud {
 	//get the time to decay to .01 mCi in days (or whatever unit we are storing half-lives in)
 	private function getDecayTime($halfLife, $mCi){
 		$LOG = Logger::getLogger(__CLASS__);
-		$targetMCI = .01;
+		$targetMCI = .04;
 		//the time in days to decay.  we always round up to make sure that the carboy is fully decayed.
 		return ceil(($halfLife/-0.693147) * log($targetMCI/$mCi));
 	}
