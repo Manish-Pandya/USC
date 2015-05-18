@@ -16,6 +16,7 @@ class InspectionWipe extends RadCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 			"room_id"					    => "integer",
 			"curie_level"					=> "float",
+			"lab_curie_level"				=> "float",
 			"notes"							=> "text",
 			"inspection_wipe_test_id"		=> "integer",
 			"reading_type"					=> "text",
@@ -55,7 +56,11 @@ class InspectionWipe extends RadCrud {
 	private $room_id;
 	private $room;
 	
+	/*  the radioactivity of this wipe as read by RSO staff */
 	private $curie_level;
+	
+	/** the radioactivity of this wipe as read by lab staff, if the wipe was hot and a new wipe was required*/
+	private $lab_curie_level;
 	
 	private $notes;
 	
@@ -78,6 +83,9 @@ class InspectionWipe extends RadCrud {
 	
 	public function getCurie_level() {return $this->curie_level;}
 	public function setCurie_level($curie_level) {$this->curie_level = $curie_level;}
+	
+	public function getLab_curie_level() {return $this->lab_curie_level;}
+	public function setLab_curie_level($lab_curie_level) {$this->lab_curie_level = $lab_curie_level;}
 	
 	public function getNotes() {return $this->notes;}
 	public function setNotes($notes) {$this->notes = $notes;}

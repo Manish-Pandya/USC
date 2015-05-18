@@ -24,6 +24,10 @@
   background:white !important;
   box-shadow: none !important;
 }
+.form-icon {
+  margin-top: -4px;
+  margin-left: 11px;
+}
 .card{
   background:white;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
@@ -301,20 +305,17 @@ div.fake-table.auto-width{
 div.fake-table.wipe-test-table .table-row >div{
   min-width:150px;
 }
-
 div.fake-table .table-header{
   display: table-header-group;
 }
-
 div.fake-table .table-header > h3{
   display: table-cell;
   padding:10px;
 }
-
 div.fake-table .table-row{
   display: table-row;
 }
-div.fake-table .table-row.new div{
+div.fake-table .table-row.new > div{
   background:rgba(91, 183, 91, 0.35) !important
 }
 div.fake-table.striped .table-row:nth-of-type(odd){

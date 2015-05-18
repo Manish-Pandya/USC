@@ -912,7 +912,17 @@ class Rad_ActionManager extends ActionManager {
 			$wipes = array();
 			foreach($decodedObject->getInspection_wipes() as $wipe){
 				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
-				if($wipe->getLocation() != NULL){
+				if($wipe->getLocation() != NULL){						
+					//if this is the background wipe, set the parent InspectionWipe's background_level and lab_background_level properties
+					if($wipe->getLocation() == "Background"){
+						$LOG->debug('background');
+						$wipeTest = $wipe->getInspection_wipe_test();
+						$wipeTest->setBackground_level($wipe->getCurie_level());
+						$wipeTest->setLab_background_level($wipe->getLab_curie_level());
+						$wipeTestDao = $this->getDao(new InspectionWipeTest());
+						$wipeTestDao->save($wipeTest);
+					}
+					
 					$dao = $this->getDao(new InspectionWipe());
 					$wipes[] = $dao->save($wipe);
 				}
@@ -933,6 +943,14 @@ class Rad_ActionManager extends ActionManager {
 		else {
 			$dao = $this->getDao(new InspectionWipe());
 			$decodedObject = $dao->save($decodedObject);
+			//if this is the background wipe, set the parent InspectionWipe's background_level and lab_background_level properties
+			if($decodedObject->getLocation() == "Background"){
+				$wipeTest = $decodedObject->getInspection_wipe_test();
+				$wipeTest->setBackground_level($decodedObject->getCurie_level());
+				$wipeTest->setLab_background_level($decodedObject->getLab_curie_level());
+				$wipeTestDao = $this->getDao(new InspectionWipeTest());
+				$wipeTestDao->save($wipeTest);
+			}
 			return $decodedObject;
 		}
 	}

@@ -110,7 +110,12 @@
 	</tr>
 	<tr ng-repeat="question in questionsByChecklist.generalHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 	
-	<tr ng-if="questionsByChecklist.radiationHazards.show"><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
+	<tr ng-if="questionsByChecklist.radiationHazards.show">
+		<td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>
+		RADIATION SAFETY 
+		<i class="icon-paper"></i><span ng-if="inspection.hotWipes>0">{{inspection.hotWipes}}</span><span ng-if="inspection.hotWipes<1">No</span> Hot Wipe<span ng-if="inspection.hotWipes!=1">s</span> <a class="btn" href="../../rad/#/inspection-wipes{{inspection.Key_id}}">Inspection Wipes</a>
+		</td>
+	</tr>
 	<tr ng-if="questionsByChecklist.radiationHazards.message"><td colspan="5">{{questionsByChecklist.radiationHazards.message}}</td></tr>
 	<tr ng-repeat="question in questionsByChecklist.radiationHazards.Questions" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tr>
 </table>

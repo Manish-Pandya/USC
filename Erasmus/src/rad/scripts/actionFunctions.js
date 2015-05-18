@@ -1349,7 +1349,9 @@ angular
                         function(returnedCycle){
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
                             if(cycle){
-                                angular.extend(cycle, copy);
+                                console.log(returnedCycle);
+                                angular.extend(cycle, returnedCycle);
+
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
@@ -1704,6 +1706,7 @@ angular
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
+                            console.log(dataStore);
                             test.loadParcel_wipes();
                             test.adding = false;
                         },
@@ -1820,6 +1823,7 @@ angular
                                     inspectionWipe.edit = true;
                                     returnedIWT.Inspection_wipes.push(inspectionWipe);
                                 }
+                                returnedIWT.Inspection_wipes[0].Location = "Background";
                                 returnedIWT.adding = true;
                                 inspection.Inspection_wipe_tests = [];
                                 inspection.Inspection_wipe_tests.push(returnedIWT);
@@ -1839,7 +1843,14 @@ angular
                         function(returnedWipe){
                             returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
                             if(wipe.Key_id){
-                                angular.extend(wipe, copy)
+                                angular.extend(wipe, returnedWipe);
+
+                                //if this is the background wipe, set the parent wipe's background level and lab background level
+                                if(wipe.Location == "Background"){
+                                    var parent = dataStoreManager.getById("InspectionWipeTest", wipe.Inspection_wipe_test_id);
+                                    parent.Background_level = wipe.Curie_level;
+                                    parent.Lab_background_level = wipe.Lab_curie_level;
+                                }
                             }else{
                                 console.log(returnedWipe);
                                 dataStoreManager.store(returnedWipe);
@@ -1864,10 +1875,20 @@ angular
                 return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveInspectionWipes' )
                     .then(
                         function(returnedWipes){
-                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data, true );
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
                             test.loadInspection_wipes();
                             test.adding = false;
+
+                            //set the background_level for the parent inspection wipe
+                            var parent = dataStoreManager.getById("InspectionWipeTest", returnedWipes[0].Inspection_wipe_test_id);
+                            var i = returnedWipes.length;
+                            while(i--){
+                                if(returnedWipes[i].Location == "Background"){
+                                    parent.Background_level = returnedWipes[i].Curie_level;
+                                }
+                            }
+
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
