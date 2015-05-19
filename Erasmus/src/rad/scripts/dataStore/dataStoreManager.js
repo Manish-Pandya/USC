@@ -280,6 +280,6 @@ dataStoreManager.pushIntoCollection = function(object){
     if(!dataStoreManager.getById(object.Class, object.Key_id)){
         dataStore[object.Class].push(object);
         if(!dataStore[object.Class+'Map'])dataStore[object.Class+'Map'] = [];
-        dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class+'Map'].length;
+        dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class+'Map'].length-1;
     }
 }
