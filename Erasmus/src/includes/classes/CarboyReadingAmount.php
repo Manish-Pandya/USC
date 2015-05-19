@@ -17,7 +17,7 @@ include_once 'RadCrud.php';
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
         "curie_level"          		=> "float",
-        "carboy_id"          		=> "integer",
+        "carboy_use_cycle_id"       => "integer",
     	"isotope_id"				=> "integer",
     		
         //GenericCrud
@@ -43,22 +43,21 @@ include_once 'RadCrud.php';
     /** Float amount of radiation in curies */
     private $curie_level;
 
-    /** Reference to the carboy containing this amount. Null if not liquid waste. */
-    private $carboy;
-    private $carboy_id;
+    /** Reference to the CarboyUseCycle containing this amount. */
+    private $carboy_use_cycle;
+    private $carboy_use_cycle_id;
 
+    /* The key_id of the isotope up in this CarboyUsageAmount */
     private $isotope_id;
     /** My own private isotope */
 	private $isotope;
     
-    /* The key_id of the isotope up in this CarboyUsageAmount */
-    private $isotope_id;
-
+	
     public function __construct() {
 
     	// Define which subentities to load
     	$entityMaps = array();
-    	$entityMaps[] = new EntityMap("lazy", "getCarboy");
+    	$entityMaps[] = new EntityMap("lazy", "getCarboy_use_cycle");
     	$entityMaps[] = new EntityMap("lazy", "getIsotope");
     	$this->setEntityMaps($entityMaps);
     }
@@ -76,25 +75,25 @@ include_once 'RadCrud.php';
     public function getCurie_level() { return $this->curie_level; }
     public function setCurie_level($newValue) { $this->curie_level = $newValue; }
 
-    public function getCarboy() {
+    public function getCarboy_use_cycle() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
-    	if($this->carboy == NULL && $this->getCarboy_id() != null) {
-    		$carboyDao = new GenericDAO(new Carboy());
-    		$this->carboy = $carboyDao->getById($this->getCarboy_id());
+    	if($this->carboy_use_cycle == NULL && $this->getCarboy_use_cycle_id() != null) {
+    		$carboyDao = new GenericDAO(new CarboyUseCycle());
+    		$this->carboy_use_cycle = $carboyDao->getById($this->getCarboy_use_cycle_id());
     	}
-    	return $this->carboy;
+    	return $this->carboy_use_cycle;
     }
-    public function setCarboy($newCarboy) {$this->carboy = $newCarboy;}
+    public function setCarboy_use_cycle($newCarboy) {$this->carboy_use_cycle = $newCarboy;}
 
-    public function getCarboy_id() { 
+    public function getCarboy_use_cycle_id() { 
     	$LOG = Logger::getLogger(__CLASS__);
-    	$LOG->debug('carboy id is '.$this->carboy_id);
+    	$LOG->debug('carboy id is '.$this->carboy_use_cycle_id);
     	 
-    	return $this->carboy_id; 
+    	return $this->carboy_use_cycle_id; 
     }
-    public function setCarboy_id($newValue) { $this->carboy_id = $newValue; }
+    public function setCarboy_use_cycle_id($newValue) { $this->carboy_use_cycle_id = $newValue; }
 
-	public function getIsoptope_id(){return $this->isotope_id;}
+	public function getIsotope_id(){return $this->isotope_id;}
 	public function setIsotope_id($id){$this->isotope_id = $id;}
     
 }

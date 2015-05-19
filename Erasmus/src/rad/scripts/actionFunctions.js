@@ -26,10 +26,17 @@ angular
 
             }
 
-            af.cancelEdit = function( object )
+            af.createCopy = function(obj)
             {
-                    object.Edit = false;
-                    store.replaceWithCopy( object );
+                obj.edit = true;
+                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
+            }
+
+            af.cancelEdit = function( obj )
+            {   
+                    obj.edit = false;
+                    $rootScope[obj.Class+'Copy'] = {};
+                    //store.replaceWithCopy( object );
             }
 
             af.setObjectActiveState = function( object )
@@ -189,11 +196,6 @@ angular
             af.deleteModalData = function()
             {
                 dataStore.modalData = [];
-            }
-
-            af.createCopy = function(obj)
-            {
-                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
             }
 
         	/********************************************************************
@@ -594,7 +596,7 @@ angular
 
             af.getAllCarboyUseCycles = function( key_id )
             {
-                return dataSwitchFactory.getAllObjects('CarboyUseCycle');
+                return dataSwitchFactory.getAllObjects('CarboyUseCycle', true);
             }
 
 
@@ -1976,6 +1978,43 @@ angular
                             return returnedDrum;
                         },
                         af.setError('The Drum could not be saved')
+
+                    )
+            }
+
+            af.saveCarboyReadingAmount = function(cycle, copy){
+                af.clearError();
+                return $rootScope.saving = this.save(copy)
+                    .then(
+                        function(returnedCycle){
+                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
+                            var i = returnedCycle.Carboy_reading_amounts.length;
+                            while(i--){
+                                if(dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id)){
+                                    var reading = dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id);
+                                    angular.extend(reading, returnedCycle.Carboy_reading_amounts[i]);
+                                }else{
+                                    var reading = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle.Carboy_reading_amounts[i]);
+                                    dataStoreManager.store(reading);
+                                    reading = dataStoreManager.getById("CarboyReadingAmount", reading.Key_id);
+                                    cycle.Carboy_reading_amounts.push(reading);
+                                }
+                                reading.edit = false;
+
+                                $rootScope.CarboyReadingAmountCopy = {};
+                                reading.loadIsotope();
+                            }
+
+                            //remove the edited copy
+                            var i = cycle.Carboy_reading_amounts.length;
+                            while(i--){
+                                if(!cycle.Carboy_reading_amounts[i].Key_id){
+                                    cycle.Carboy_reading_amounts.splice(i,1);
+                                }
+                            }
+                            return cycle;
+                        },
+                        af.setError('The reading could not be saved')
 
                     )
             }

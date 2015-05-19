@@ -1,3 +1,5 @@
+<div cg-busy="{promise:CarboyReadingAmountSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 <div class="right-column">
 	<div class="well two-thirds">
 		<h1><i class="icon-remove-2"></i>Solid Waste</h1>
@@ -74,13 +76,13 @@
 					</div>
 					<div ng-if="cycle.edit">
 						<div class="control-group">
-							     <div class="controls input-append">
-									<input style="width:40px;" ng-model="CarboyUseCycleCopy.Reading">
-									<span class="add-on">mCi</span>
-									<i ng-click="af.saveCarboyUseCycle( CarboyUseCycleCopy, cycle)" class="success icon-checkmark form-icon"></i>						
-									<i ng-click="cancelEditCycle(cycle)" class="danger icon-cancel form-icon"></i>
-								</div>
+						     <div class="controls input-append">
+								<input style="width:40px;" ng-model="CarboyUseCycleCopy.Reading">
+								<span class="add-on">mCi</span>
+								<i ng-click="af.saveCarboyUseCycle( CarboyUseCycleCopy, cycle)" class="success icon-checkmark form-icon"></i>						
+								<i ng-click="cancelEditCycle(cycle)" class="danger icon-cancel form-icon"></i>
 							</div>
+						</div>
 					</div>
 
 					<div>
@@ -96,7 +98,7 @@
 					</div>
 				</div>
 			</div>
-
+			<button ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus"></i>Add Reading</button>
 			<!-- this carboy's readings -->
 			<div class="fake-table bordered">
 				<div class="table-header">
@@ -105,24 +107,35 @@
 					<h3>Reading</h3>
 					<h3></h3>
 				</div>
-				<div class="table-row" ng-repeat="reading in cycle.Carboy_use_readings">
+				<div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
 					<div>
-						<button ng-disabled="reading.edit" class="btn btn-primary"><i class="icon-pencil"></i>Edit</a>
+						<button ng-click="af.createCopy(reading)" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
 					</div>
 
+					<div ng-if="!reading.edit">
+						{{reading.Isotope.Name}}
+					</div>
+					<div ng-if="reading.edit">
+						<select ng-model="CarboyReadingAmountCopy.Isotope_id">
+							<option ng-repeat="isotope in isotopes | orderBy:'Key_id'" ng-selected="CarboyReadingAmountCopy.Isotope_id == isotope.Key_id" value="{{isotope.Key_id}}">{{isotope.Name}}</option>
+						</select>
+					</div>
 
 					<div ng-if="!reading.edit">
 						{{reading.Curie_level}}
 					</div>
 					<div ng-if="reading.edit">
-						<input ng-model="CaroyUseReadingCopy.Curie_level">
+						<div class="control-group">
+						     <div class="controls input-append">
+								<input style="width:40px;" ng-model="CarboyReadingAmountCopy.Curie_level">
+								<span class="add-on">DPM</span>
+							</div>
+						</div>					
 					</div>
 
-					<div ng-if="!reading.edit">
-						
-					</div>
-					<div ng-if="reading.edit">
-						save
+					<div>
+						<button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
+						<button class="btn btn-danger left" ng-click="af.cancelEdit(reading)" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
 					</div>
 
 				</div>
@@ -176,4 +189,4 @@
 	</div>
 </div>
 
-<div cg-busy="{promise:saving,message:'Saving', minDuration:5000, backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>

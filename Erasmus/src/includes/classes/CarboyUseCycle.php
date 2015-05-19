@@ -113,11 +113,11 @@ class CarboyUseCycle extends RadCrud {
 			"foreignKeyName"	=> "carboy_id"
 	);
 	
-	protected static $CarboyReadingAmountS_RELATIONSHIP = array(
+	protected static $CABOY_READING_AMOUNTS_RELATIONSHIP = array(
 			"className" => "CarboyReadingAmount",
-			"tableName" => "carboy_use_amount",
+			"tableName" => "carboy_reading_amount",
 			"keyName"	=> "key_id",
-			"foreignKeyName"	=> "carboy_id"
+			"foreignKeyName"	=> "carboy_use_cycle_id"
 	);
 	
 	// Accessors / Mutators
@@ -215,8 +215,11 @@ class CarboyUseCycle extends RadCrud {
 	public function getCarboy_reading_amounts(){
 		if($this->carboy_reading_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->carboy_reading_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$CarboyReadingAmountS_RELATIONSHIP));
+			$this->carboy_reading_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$CABOY_READING_AMOUNTS_RELATIONSHIP));
 		}
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug("getting reading amounts");
+		$LOG->debug($this->carboy_reading_amounts);
 		return $this->carboy_reading_amounts;
 	}
 	

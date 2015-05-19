@@ -1074,7 +1074,7 @@ class Rad_ActionManager extends ActionManager {
 		}
 	}
 	
-	function saveCarboyUseReading($reading = null){
+	function saveCarboyReadingAmount($reading = null){
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson();
 		if( $decodedObject === NULL ) {
@@ -1086,7 +1086,10 @@ class Rad_ActionManager extends ActionManager {
 		else {
 			$dao = $this->getDao(new CarboyReadingAmount());
 			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
+			$cycle = $decodedObject->getCarboy_use_cycle();
+			$LOG->debug($cycle);
+			$cycle->getCarboy_reading_amounts()[0]->setIsotope_id(2);
+			return $cycle;
 		}
 	}
 

@@ -1,7 +1,6 @@
 angular.module('00RsmsAngularOrmApp')
 	.filter('disposalCycles', function(convenienceMethods) {
 	  return function(cycles) {
-	  		console.log(convenienceMethods);
 	  		if(!cycles) return;
 	  		var disposalCycles = [];
 	  		var i = cycles.length;
