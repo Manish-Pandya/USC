@@ -66,7 +66,6 @@ angular
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
-                        console.log(json);
                         while(i--){
                             var currentJsonObj = json[i];
                             //if we have haven't passed a string, get the the class name of the object 
