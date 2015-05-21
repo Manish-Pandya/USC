@@ -1088,7 +1088,6 @@ class Rad_ActionManager extends ActionManager {
 			$decodedObject = $dao->save($decodedObject);
 			$cycle = $decodedObject->getCarboy_use_cycle();
 			$LOG->debug($cycle);
-			$cycle->getCarboy_reading_amounts()[0]->setIsotope_id(2);
 			return $cycle;
 		}
 	}
