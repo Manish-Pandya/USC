@@ -25,7 +25,7 @@ class CarboyUseCycle extends RadCrud {
 		"room_id"						=> "integer",
 		"pickup_id"						=> "integer",
 		"reading"						=> "float",
-
+		"volume"						=> "float",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -80,6 +80,9 @@ class CarboyUseCycle extends RadCrud {
 	
 	/** reading taken when carboy is returned to RSO after pickup*/
 	private $reading;
+	
+	/** the volume of the liquid in ml in this graduated carboy estimated by RSO staff to calculate decay time */
+	private $volume;
 		
 	private $carboy_reading_amounts;
 
@@ -225,57 +228,22 @@ class CarboyUseCycle extends RadCrud {
 	
 	public function getPour_allowed_date(){
 		$LOG = Logger::getLogger(__CLASS__);
-		$this->pour_allowed_date = NULL;
-		$contents = $this->getContents();
-		$hotroomDate = $this->getHotroom_date();
-		$reading = $this->getReading();
-		$LOG->debug($reading);
-		if($reading != NULL){
-			$longestHalfLife = 0;
-			$totalMCi = 0;
-			foreach($contents as $content){
-				$isotopDao = new GenericDAO(new Isotope());
-				$isotope = $isotopDao->getById($content->getIsotope_id());	
-				$LOG->debug($content);
+
+		$readings = $this->getCarboy_reading_amounts();
+		if($readings == NULL)return NULL;
+		
+		//find the CarboyReadingAmount with furthest Pour_allowed_date
+		$initDate = date("Y-m-d H:i:s" ,0);
+		foreach ($readings as $reading){
+			$LOG->debug($initDate);
 				
-				//find the isotope with the longest half life
-				if($isotope->getHalf_life() > $longestHalfLife){
-					$releventIsotope = $isotope;
-					$longestHalfLife = $isotope->getHalf_life();
-				}
+			if($reading->getPour_allowed_date() > $initDate){
+				$initDate = $reading->getPour_allowed_date();
+				$this->pour_allowed_date = $reading->getPour_allowed_date();
 			}
-	
-			if($releventIsotope != null){
-				
-				$daysToDecay = $this->getDecayTime($releventIsotope->getHalf_life(), $this->getReading());
-				$now = new DateTime();
-				
-				//if the reading is zero, pour can be done today
-				if($reading == 0){
-					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
-					return $this->pour_allowed_date;
-				}
-				$LOG->debug($daysToDecay);
-				
-				//the front end parses timestamps nicely, so we return this as one
-				
-				//apparently, PHP believes -0 is a thing.
-				// https://bugs.php.net/bug.php?id=54842 (signed 0)
-				if($daysToDecay == -0){
-					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
-				}
-				//the pour allowed date has passed.  carboy can be poured
-				elseif($daysToDecay < 0){
-					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.abs($daysToDecay.'D')))->getTimestamp());
-				}
-				//pour date is in the future.
-				else{
-					$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
-						
-				}
-				$LOG->debug($this);
-			}
+			$LOG->debug(  $reading->getPour_allowed_date()  );
 		}
+		$LOG->debug($this->pour_allowed_date);
 		return $this->pour_allowed_date;
 	}
 	
@@ -286,6 +254,9 @@ class CarboyUseCycle extends RadCrud {
 		//the time in days to decay.  we always round up to make sure that the carboy is fully decayed.
 		return ceil(($halfLife/-0.693147) * log($targetMCI/$mCi));
 	}
+	public function getVolume() {return $this->volume;}
+	public function setVolume($volume) {$this->volume = $volume;}
+	
 	
 }
 ?>
