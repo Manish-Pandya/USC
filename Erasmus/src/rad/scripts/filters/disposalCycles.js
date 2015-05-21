@@ -6,6 +6,7 @@ angular.module('00RsmsAngularOrmApp')
 	  		var i = cycles.length;
 	  		while(i--){
 	  			var cycle = cycles[i];
+	  			cycle.pourable = false;
   				if(cycle.Status.toLowerCase() == "decaying" 
   					|| cycle.Status.toLowerCase() == "at rso" 
   					|| cycle.Status.toLowerCase() == "picked up")

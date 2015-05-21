@@ -1341,6 +1341,7 @@ angular
 
             af.saveCarboyUseCycle = function( copy, cycle, poured )
             {
+                console.log(copy);
                 af.clearError();
                 if(poured){
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
@@ -1351,8 +1352,12 @@ angular
                         function(returnedCycle){
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
                             if(cycle){
-                                console.log(returnedCycle);
-                                angular.extend(cycle, returnedCycle);
+                                var i = returnedCycle.Carboy_reading_amounts.length;
+                                while(i--){
+                                    dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                                }
+                                cycle.Volume = returnedCycle.Volume;
+                                cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
 
                                 cycle.edit = false;
                             }else{
@@ -1984,6 +1989,7 @@ angular
 
             af.saveCarboyReadingAmount = function(cycle, copy){
                 af.clearError();
+                copy.Date_read = convenienceMethods.setMysqlTime(new Date());
                 return $rootScope.saving = this.save(copy)
                     .then(
                         function(returnedCycle){
@@ -2000,7 +2006,6 @@ angular
                                     cycle.Carboy_reading_amounts.push(reading);
                                 }
                                 reading.edit = false;
-
                                 $rootScope.CarboyReadingAmountCopy = {};
                                 reading.loadIsotope();
                             }
@@ -2012,11 +2017,29 @@ angular
                                     cycle.Carboy_reading_amounts.splice(i,1);
                                 }
                             }
+                            cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
                             return cycle;
                         },
                         af.setError('The reading could not be saved')
 
                     )
+            }
+
+            //use this method to loop through a collection of child objects returned from the server and update the cached copies of them
+            af.updateChildren = function(obj, childProp){
+                var i = obj[childProp].length;
+                while(i--){
+                    //to do angular.extend the right local obj from the servers copy
+                    if(dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id)){
+                        var cachedObj = dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id);
+                        for(var prop in cachedObj){
+                            console.log(obj[childProp][i][prop]);
+                            console.log(obj[childProp][i][prop]);
+                            if(obj[childProp][i][prop])obj[childProp][i][prop] = obj[childProp][i][prop];
+                            obj[childProp][i] = cachedObj[prop];
+                        }
+                    }
+                }
             }
 
         	return af;
