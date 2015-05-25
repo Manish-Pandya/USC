@@ -39,7 +39,7 @@
 	</div>
 
 	<div class="card full parcels" ng-if="pi">
-		<h3 class="card-header">Package Usages <a ng-click="addUsage(parcel)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</a></h3>
+		<h3 class="card-header padding">Package Usages <a ng-click="addUsage(parcel)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</a></h3>
 		<div class="card-content">
 			<div class="fake-table striped bordered use-log">
 				<div class="table-header">
@@ -169,13 +169,10 @@
 												<input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
 												<span class="add-on">mCi</span>	
 											</div>
-										    
-
 										</div>
 										<div class="control-group">
-											<label class="control-label" for="vial-curies">Comments:</label>
 											<div class="controls">
-												<textarea maxlength='60' ng-model="other.Comments"></textarea>
+												<textarea maxlength='60' placeholder="Comments" ng-model="other.Comments"></textarea>
 											</div>
 										</div>
 									</div>

@@ -2878,15 +2878,18 @@ button.btn:not(.btn-large){
   padding-bottom:25px;
 }
 
-a.btn-large.left i{
+.btn-large.left i{
   font-size:33px !important;
   margin: 2px 24px 1px 2px !important;
 }
-a.btn-large.right i{
+.btn-large.right i{
   font-size:33px;
   margin: 2px 2px 1px 24px !important;
 }
-
+.btn.left i.icon-list-2 {
+  margin-right: 14px !important;
+  margin-left: -5px !important;
+}
 
 .spacer{
   height:40px;
