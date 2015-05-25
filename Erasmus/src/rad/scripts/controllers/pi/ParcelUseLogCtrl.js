@@ -34,6 +34,7 @@ angular.module('00RsmsAngularOrmApp')
                               .then(getParcel);
 
       $scope.addUsage = function(parcel){
+          if(!$scope.parcel.ParcelUses)$scope.parcel.ParcelUses = [];
           var i = $scope.parcel.ParcelUses.length;
           while(i--){
             $scope.parcel.ParcelUses[i].edit=false
