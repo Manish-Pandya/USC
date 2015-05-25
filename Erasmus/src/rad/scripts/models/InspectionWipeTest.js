@@ -13,7 +13,6 @@ InspectionWipeTest.prototype = {
         paramName: 'id'
     },
 	loadInspection_wipes: function(){
-		alert('load wipes')
 		this.Inspection_wipes = [];
         dataLoader.loadOneToManyRelationship( this, 'Inspection_wipes', this.InspectionWipesRelationship );
 	},

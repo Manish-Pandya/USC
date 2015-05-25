@@ -98,17 +98,18 @@ angular
             }
 
             dataSwitch.getObjectById = function(className, id, recurse, queryParam) {
-
                 // should always return a promise
                 var deferred = $q.defer();
 
-                if( dataSwitch.promises[className] ) {
+                if( dataSwitch.promises[className] && dataSwitch.promises[className].state == 'pending' ) {
+                    console.log(dataSwitch.promises[className].state);
                     return dataSwitch.promises[className].promise;
                 }
                 else {
                     dataSwitch.promises[className] = deferred;
                     //check cache first
                     if( dataStoreManager.checkCollection(className) ) {
+                        console.log(dataStoreManager.getById(className, id));
                         deferred.resolve( dataStoreManager.getById(className, id) );
                     }
                     else {
@@ -120,7 +121,6 @@ angular
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                            console.log(instatedObjects);
                             if(recurse){
                                 dataSwitch.recursivelyInstantiate([instatedObjects]);
                             }
@@ -139,7 +139,6 @@ angular
                 while(i--){
                     for(var prop in instatedObjects[i]){
                         if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] ){
-                            console.log(instatedObjects[i]);
                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataStoreManager.store(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);

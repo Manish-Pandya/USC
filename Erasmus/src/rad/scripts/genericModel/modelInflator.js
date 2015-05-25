@@ -27,7 +27,7 @@ angular
                     }
 
                     //does this class exist? if not, make it on the fly
-                    if( !window[objectFlavor] ) {
+                    if( !window[objectFlavor] || objectFlavor == "Response" ) {
                         //if we don't have the class, for now we just return the json
                         return json;
                         console.log("WARNING! Creating Class " + objectFlavor + ' dynamically. THIS SHOULD NOT HAVE TO HAPPEN!');
@@ -39,6 +39,7 @@ angular
                     modelledObject.setApi( genericAPIFactory );
                     modelledObject.setRootScope( $rootScope );
                     modelledObject.setInflator( this );
+
                     //modelledObject.setApi( genericAPIFactory );
                     //add all the json's properties to the object
                     angular.extend( modelledObject, json );
@@ -66,7 +67,6 @@ angular
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
-                        console.log(json);
                         while(i--){
                             var currentJsonObj = json[i];
                             //if we have haven't passed a string, get the the class name of the object 

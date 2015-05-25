@@ -133,6 +133,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/Authorization.js"></script>
 <script src="./scripts/models/Carboy.js"></script>
 <script src="./scripts/models/CarboyUseCycle.js"></script>
+<script src="./scripts/models/CarboyReadingAmount.js"></script>
 <script src="./scripts/models/Drum.js"></script>
 <script src="./scripts/models/Hazard.js"></script>
 <script src="./scripts/models/Isotope.js"></script>
@@ -155,6 +156,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/ParcelWipe.js"></script>
 <script src="./scripts/models/MiscellaneousWipeTest.js"></script>
 <script src="./scripts/models/MiscellaneousWipe.js"></script>
+
 </head>
 <body>
 

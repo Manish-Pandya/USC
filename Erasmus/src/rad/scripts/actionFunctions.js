@@ -26,10 +26,17 @@ angular
 
             }
 
-            af.cancelEdit = function( object )
+            af.createCopy = function(obj)
             {
-                    object.Edit = false;
-                    store.replaceWithCopy( object );
+                obj.edit = true;
+                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
+            }
+
+            af.cancelEdit = function( obj )
+            {   
+                    obj.edit = false;
+                    $rootScope[obj.Class+'Copy'] = {};
+                    //store.replaceWithCopy( object );
             }
 
             af.setObjectActiveState = function( object )
@@ -189,11 +196,6 @@ angular
             af.deleteModalData = function()
             {
                 dataStore.modalData = [];
-            }
-
-            af.createCopy = function(obj)
-            {
-                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
             }
 
         	/********************************************************************
@@ -594,7 +596,7 @@ angular
 
             af.getAllCarboyUseCycles = function( key_id )
             {
-                return dataSwitchFactory.getAllObjects('CarboyUseCycle');
+                return dataSwitchFactory.getAllObjects('CarboyUseCycle', true);
             }
 
 
@@ -1339,6 +1341,7 @@ angular
 
             af.saveCarboyUseCycle = function( copy, cycle, poured )
             {
+                console.log(copy);
                 af.clearError();
                 if(poured){
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
@@ -1349,7 +1352,13 @@ angular
                         function(returnedCycle){
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
                             if(cycle){
-                                angular.extend(cycle, copy);
+                                var i = returnedCycle.Carboy_reading_amounts.length;
+                                while(i--){
+                                    dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                                }
+                                cycle.Volume = returnedCycle.Volume;
+                                cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
+
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
@@ -1704,6 +1713,7 @@ angular
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
+                            console.log(dataStore);
                             test.loadParcel_wipes();
                             test.adding = false;
                         },
@@ -1820,6 +1830,7 @@ angular
                                     inspectionWipe.edit = true;
                                     returnedIWT.Inspection_wipes.push(inspectionWipe);
                                 }
+                                returnedIWT.Inspection_wipes[0].Location = "Background";
                                 returnedIWT.adding = true;
                                 inspection.Inspection_wipe_tests = [];
                                 inspection.Inspection_wipe_tests.push(returnedIWT);
@@ -1839,7 +1850,14 @@ angular
                         function(returnedWipe){
                             returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
                             if(wipe.Key_id){
-                                angular.extend(wipe, copy)
+                                angular.extend(wipe, returnedWipe);
+
+                                //if this is the background wipe, set the parent wipe's background level and lab background level
+                                if(wipe.Location == "Background"){
+                                    var parent = dataStoreManager.getById("InspectionWipeTest", wipe.Inspection_wipe_test_id);
+                                    parent.Background_level = wipe.Curie_level;
+                                    parent.Lab_background_level = wipe.Lab_curie_level;
+                                }
                             }else{
                                 console.log(returnedWipe);
                                 dataStoreManager.store(returnedWipe);
@@ -1864,10 +1882,20 @@ angular
                 return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveInspectionWipes' )
                     .then(
                         function(returnedWipes){
-                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data, true );
+                            returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
                             test.loadInspection_wipes();
                             test.adding = false;
+
+                            //set the background_level for the parent inspection wipe
+                            var parent = dataStoreManager.getById("InspectionWipeTest", returnedWipes[0].Inspection_wipe_test_id);
+                            var i = returnedWipes.length;
+                            while(i--){
+                                if(returnedWipes[i].Location == "Background"){
+                                    parent.Background_level = returnedWipes[i].Curie_level;
+                                }
+                            }
+
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
@@ -1957,6 +1985,61 @@ angular
                         af.setError('The Drum could not be saved')
 
                     )
+            }
+
+            af.saveCarboyReadingAmount = function(cycle, copy){
+                af.clearError();
+                copy.Date_read = convenienceMethods.setMysqlTime(new Date());
+                return $rootScope.saving = this.save(copy)
+                    .then(
+                        function(returnedCycle){
+                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
+                            var i = returnedCycle.Carboy_reading_amounts.length;
+                            while(i--){
+                                if(dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id)){
+                                    var reading = dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id);
+                                    angular.extend(reading, returnedCycle.Carboy_reading_amounts[i]);
+                                }else{
+                                    var reading = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle.Carboy_reading_amounts[i]);
+                                    dataStoreManager.store(reading);
+                                    reading = dataStoreManager.getById("CarboyReadingAmount", reading.Key_id);
+                                    cycle.Carboy_reading_amounts.push(reading);
+                                }
+                                reading.edit = false;
+                                $rootScope.CarboyReadingAmountCopy = {};
+                                reading.loadIsotope();
+                            }
+
+                            //remove the edited copy
+                            var i = cycle.Carboy_reading_amounts.length;
+                            while(i--){
+                                if(!cycle.Carboy_reading_amounts[i].Key_id){
+                                    cycle.Carboy_reading_amounts.splice(i,1);
+                                }
+                            }
+                            cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
+                            return cycle;
+                        },
+                        af.setError('The reading could not be saved')
+
+                    )
+            }
+
+            //use this method to loop through a collection of child objects returned from the server and update the cached copies of them
+            af.updateChildren = function(obj, childProp){
+                var i = obj[childProp].length;
+                while(i--){
+                    //to do angular.extend the right local obj from the servers copy
+                    if(dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id)){
+                        var cachedObj = dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id);
+                        for(var prop in cachedObj){
+                            console.log(obj[childProp][i][prop]);
+                            console.log(obj[childProp][i][prop]);
+                            if(obj[childProp][i][prop])obj[childProp][i][prop] = obj[childProp][i][prop];
+                            obj[childProp][i] = cachedObj[prop];
+                        }
+                    }
+                }
             }
 
         	return af;

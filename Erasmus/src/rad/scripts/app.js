@@ -23,7 +23,7 @@ angular
     'convenienceMethodModule'
     //'ngMockE2E'
   ])
-  .config(function ($stateProvider, $urlRouterProvider,$qProvider, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
+  .config(function ($stateProvider, $urlRouterProvider,$qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
     $urlRouterProvider.otherwise("/home");
     $stateProvider
       .state('rad-home', {
@@ -96,6 +96,24 @@ angular
         templateUrl: 'views/testpage.php',
         controller: "TestCtrl"
       })
+
+       $provide.decorator('$q', function ($delegate) {
+        var defer = $delegate.defer;
+        $delegate.defer = function() {
+          var deferred = defer();
+
+          deferred.promise.state = deferred.state = 'pending';
+
+          deferred.promise.then(function() {
+            deferred.promise.state = deferred.state = 'fulfilled';
+          }, function () {
+            deferred.promise.state = deferred.state = 'rejected';
+          }); 
+
+          return deferred;
+        };
+        return $delegate;
+      });
 
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {

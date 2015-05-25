@@ -1,9 +1,112 @@
+<div cg-busy="{promise:CarboyReadingAmountSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 <div class="right-column">
+	<div class="well two-thirds">
+		<h1 class="carboys"><i class="icon-carboy"></i>Carboys</h1>
+		<h3 ng-show="!pourCarboys.length">No carboys in hot room.</h3>
+		<div class="card full carboys" ng-repeat="cycle in (pourCarboys = (cycles | disposalCycles))" ng-show="pourCarboys.length">
+			<div class="fake-table bordered">
+				<div class="table-header">
+					<h3>Carboy Number</h3>
+					<h3>Status</h3>
+					<h3>Volume</h3>
+					<h3>Pour Date</h3>
+					<h3>Pour</h3>
+				</div>
+				<div class="table-row" ng-class="{'new':cycle.pourable}">
+					<div>
+						{{cycle.Carboy.Carboy_number}}
+					</div>
+					<div>
+						{{cycle.Status}}
+					</div>
+
+					<div ng-if="!cycle.edit">
+						{{cycle.Volume}}<span ng-if="cycle.Volume">ml</span>
+						<span ng-if="!cycle.Volume">N/A</span>
+						<i ng-click="editCycle(cycle)" class="primary icon-pencil"></i>
+					</div>
+					<div ng-if="cycle.edit">
+						<div class="control-group">
+						     <div class="controls input-append">
+								<input style="  width: 50px;padding: 0px 3px;" ng-model="CarboyUseCycleCopy.Volume">
+								<span class="add-on">ml</span>
+								<i ng-click="af.saveCarboyUseCycle( CarboyUseCycleCopy, cycle)" class="success icon-checkmark form-icon"></i> 	
+								<i ng-click="cancelEditCycle(cycle)" class="danger icon-cancel form-icon"></i>
+							</div>
+						</div>
+					</div>
+					<!--
+					<div>
+						<p ng-repeat="content in cycle.Contents">
+							{{content.Curie_level}} mCi of {{content.Isotope_name}}
+						</p>
+					</div>
+					-->
+					<div>
+						{{cycle.Pour_allowed_date | dateToISO}}
+					</div>
+					<div>
+						<button ng-click="pour(cycle)" ng-disabled="cycle.edit || !cycle.pourable" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
+					</div>
+				</div>
+			</div>
+			<h3 class="card-header padding">Readings<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Reading</a></h3>
+			<!-- this carboy's readings -->
+			<div class="fake-table bordered" ng-if="cycle.Carboy_reading_amounts.length">
+				<div class="table-header">
+					<h3>Edit</h3>
+					<h3>Isotope</h3>
+					<h3>Reading</h3>
+					<h3>Decay Date</h3>
+					<h3></h3>
+				</div>
+				<div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
+					<div>
+						<button ng-click="af.createCopy(reading)" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+					</div>
+
+					<div ng-if="!reading.edit">
+						{{reading.Isotope.Name}}
+					</div>
+					<div ng-if="reading.edit">
+						<select ng-model="CarboyReadingAmountCopy.Isotope_id">
+							<option ng-repeat="isotope in isotopes | orderBy:'Key_id'" ng-selected="CarboyReadingAmountCopy.Isotope_id == isotope.Key_id" value="{{isotope.Key_id}}">{{isotope.Name}}</option>
+						</select>
+					</div>
+
+					<div ng-if="!reading.edit">
+						{{reading.Curie_level}}
+					</div>
+					<div ng-if="reading.edit">
+						<div class="control-group">
+						     <div class="controls input-append">
+								<input style="width:40px;" ng-model="CarboyReadingAmountCopy.Curie_level">
+								<span class="add-on">DPM</span>
+							</div>
+						</div>					
+					</div>
+
+					<div>
+						{{reading.Pour_allowed_date | dateToISO}}
+					</div>
+
+					<div>
+						<button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
+						<button class="btn btn-danger left" ng-click="af.cancelEdit(reading)" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
 	<div class="well two-thirds">
 		<h1><i class="icon-remove-2"></i>Solid Waste</h1>
 		<h3 ng-show="!collections.length && !bags.length">No solid waste to dispose</h3>
 		<div class="card full solids-containers" ng-show="collections.length || bags.length">
-			<div class="fake-table disposals">
+			<div class="fake-table bordered disposals">
 				<div class="table-header">
 					<h3>Pickup Date</h3>
 					<h3>Description</h3>
@@ -45,101 +148,49 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="well  two-thirds">
-		<h1 class="carboys"><i class="icon-carboy"></i>Carboys</h1>
-		<h3 ng-show="!pourCarboys.length">No carboys in hot room.</h3>
-		<div class="card full carboys" ng-show="pourCarboys.length">
-			<div class="fake-table">
-				<div class="table-header">
-					<h3>Carboy Number</h3>
-					<h3>Status</h3>
-					<h3>Reading</h3>
-					<h3>Contents</h3>
-					<h3>Pour Date</h3>
-					<h3>Pour</h3>
-				</div>
-				<div class="table-row" ng-repeat="cycle in (pourCarboys = (cycles | disposalCycles))" ng-class="{'new':cycle.pourable}">
-					<div>
-						{{cycle.Carboy.Carboy_number}}
-					</div>
-					<div>
-						{{cycle.Status}}
-					</div>
-
-					<div ng-if="!cycle.edit">
-						{{cycle.Reading}} 
-						<span ng-if="!cycle.Reading">N/A</span>
-						<i ng-click="editCycle(cycle)" ng-class="{'primary icon-pencil':cycle.Reading,'icon-plus success':!cycle.Reading}"></i>
-					</div>
-					<div ng-if="cycle.edit">
-						<div class="control-group">
-							     <div class="controls input-append">
-									<input ng-model="CarboyUseCycleCopy.Reading">
-									<span class="add-on">mCi</span>
-									<i ng-click="af.saveCarboyUseCycle( CarboyUseCycleCopy, cycle)" class="success icon-checkmark"></i>						
-									<i ng-click="cancelEditCycle(cycle)" class="danger icon-cancel"></i>
-								</div>
-							</div>
-					</div>
-
-					<div>
-						<p ng-repeat="content in cycle.Contents">
-							{{content.Curie_level}} mCi of {{content.Isotope_name}}
-						</p>
-					</div>
-					<div>
-						{{cycle.Pour_allowed_date | dateToISO}}
-					</div>
-					<div>
-						<button ng-click="pour(cycle)" ng-disabled="cycle.edit || !cycle.pourable" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	<div class="well two-thirds">
 		<h1 class="disposals"><i class="icon-database"></i>Drums</h1>
-		<div class="fake-table">
-			<div class="table-header">
-				<h3>Label</h3>
-				<h3>Contents</h3>
-				<h3>Shipment Info</h3>
-				<h3>Ship</h3>
-			</div>
-			<div class="table-row" ng-repeat="drum in drums">
-				<!--
-				<div>
-					<button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+		<div class="card full">
+			<div class="fake-table bordered">
+				<div class="table-header">
+					<h3>Label</h3>
+					<h3>Contents</h3>
+					<h3>Shipment Info</h3>
+					<h3>Ship</h3>
 				</div>
-				-->
-				<div ng-if="!drum.edit">
-					{{drum.Label}}
-				</div>
-				<div ng-if='drum.edit'>
-					<input ng-model="DrumCopy.Label">
-				</div>
-
-				<div>
-					<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}</p>
-				</div>
-
-				<div>
-					{{drum.Shipping_info}}
-				</div>
-
-				<div>
-					<button ng-click="drumModal(drum)" class="btn btn-success left"><i class="icon-out-2"></i>Ship Drum</button>
+				<div class="table-row" ng-repeat="drum in drums">
 					<!--
-					<button ng-click="af.saveDrum(drum,copy)" ng-if="drum.edit" class="btn btn-success left"><i class="icon-checkmark"></i>Save</button>
-					<button ng-click="cancelEditDrum(drum)" ng-if="drum.edit" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</button>
+					<div>
+						<button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+					</div>
 					-->
-				</div>
+					<div ng-if="!drum.edit">
+						{{drum.Label}}
+					</div>
+					<div ng-if='drum.edit'>
+						<input ng-model="DrumCopy.Label">
+					</div>
 
+					<div>
+						<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}</p>
+					</div>
+
+					<div>
+						{{drum.Shipping_info}}
+					</div>
+
+					<div>
+						<button ng-click="drumModal(drum)" class="btn btn-success left"><i class="icon-out-2"></i>Ship Drum</button>
+						<!--
+						<button ng-click="af.saveDrum(drum,copy)" ng-if="drum.edit" class="btn btn-success left"><i class="icon-checkmark"></i>Save</button>
+						<button ng-click="cancelEditDrum(drum)" ng-if="drum.edit" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</button>
+						-->
+					</div>
+
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div cg-busy="{promise:saving,message:'Saving', minDuration:5000, backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>

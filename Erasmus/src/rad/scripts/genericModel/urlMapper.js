@@ -40,6 +40,7 @@
         'MiscellaneousWipeTest' : {getById: "getMiscellaneousWipeTestById" , getAll: "getAllMiscellaneousWipeTests" , save: "saveMiscellaneousWipeTest"  },
         'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getAllMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
         'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
+        'CarboyReadingAmount'   : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
 
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   }

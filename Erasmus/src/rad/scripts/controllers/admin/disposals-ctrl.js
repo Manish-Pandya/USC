@@ -67,7 +67,19 @@ angular.module('00RsmsAngularOrmApp')
             )
     }
 
+    var getIsotopes = function(){
+        return af.getAllIsotopes()
+            .then(
+                function(isotopes){
+                    console.log(isotopes);
+                    $rootScope.isotopes = dataStore.Isotope;
+                    return isotopes;
+                }
+            )
+    }
+
     getAllWasteBags()
+        .then(getIsotopes)
         .then(getSVCollections)
         .then(getAllDrums)
         .then(getCycles);
@@ -106,6 +118,18 @@ angular.module('00RsmsAngularOrmApp')
     $scope.pour = function(cycle){
         af.createCopy(cycle);
         af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle, true)
+    }
+
+    $scope.editReading = function(reading){
+        reading.edit = true;
+        af.createCopy(reading);
+    }
+
+    $scope.addReading = function(cycle){
+        $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
+        $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
+        $rootScope.CarboyReadingAmountCopy.edit = true;
+        cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }
 
   })

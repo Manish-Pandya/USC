@@ -24,6 +24,10 @@
   background:white !important;
   box-shadow: none !important;
 }
+.form-icon {
+  margin-top: -4px;
+  margin-left: 11px;
+}
 .card{
   background:white;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
@@ -301,20 +305,17 @@ div.fake-table.auto-width{
 div.fake-table.wipe-test-table .table-row >div{
   min-width:150px;
 }
-
 div.fake-table .table-header{
   display: table-header-group;
 }
-
 div.fake-table .table-header > h3{
   display: table-cell;
   padding:10px;
 }
-
 div.fake-table .table-row{
   display: table-row;
 }
-div.fake-table .table-row.new div{
+div.fake-table .table-row.new > div{
   background:rgba(91, 183, 91, 0.35) !important
 }
 div.fake-table.striped .table-row:nth-of-type(odd){
@@ -538,7 +539,7 @@ div.fake-table.inspection-wipe-table{
   margin-bottom: 5px;
 }
 .use-amount.solids {
-  width: 32%;
+  width: 24%;
 }
 .use-amount.liquids {
   width: 21%;
@@ -547,7 +548,17 @@ div.fake-table.inspection-wipe-table{
   width: 11%;
 }
 .use-amount.others {
-  width: 32%;
+  width: 40%;
+}
+.use-amount.others div.control-group{
+  float:left;
+}
+.use-amount.others div.control-group:nth-of-type(1){
+  width:20%;
+  min-width:75px;
+}
+.use-amount.others div.control-group:nth-of-type(2){
+  width:80%;
 }
 .use-amount input {
   padding-left: 4px;

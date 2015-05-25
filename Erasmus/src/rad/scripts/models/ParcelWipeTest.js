@@ -9,7 +9,6 @@ ParcelWipeTest.prototype = {
 
         className:    'ParcelWipe',
         keyReference:  'Parcel_wipe_test_id',
-        methodString:  'getAuthorizationsByPIId',
         paramValue: 'Key_id',
         paramName: 'id'
 

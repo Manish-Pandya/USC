@@ -14,12 +14,13 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = af;
     $scope.dataStore = dataStore;
 
+    console.log($q, "<br>", angular.$q);
+
     var getInspection = function(){
 
        return af.getInspectionById($stateParams.inspection)
             .then(
                 function(inspection){
-                    console.log(inspection);
                     inspection.loadPrincipalInvestigator();
 
                     //if if the inspection doesn't have an inspection wipe test, create one on page load
@@ -32,6 +33,10 @@ angular.module('00RsmsAngularOrmApp')
                         $rootScope.InspectionWipeTestCopy.edit = true;
                         inspection.Inspection_wipe_tests.push($rootScope.InspectionWipeTestCopy);
                     }
+                    if(inspection.Inspection_wipe_tests[0].Key_id && !inspection.Inspection_wipe_tests[0].Inspection_wipes.length){
+                        $scope.addWipes(inspection.Inspection_wipe_tests[0]);
+                        inspection.Inspection_wipe_tests[0].Inspection_wipes[0].Location = "Background";
+                    }
 
                     $scope.inspection = dataStoreManager.getById('Inspection',$stateParams.inspection);
                     return inspection;
@@ -39,8 +44,10 @@ angular.module('00RsmsAngularOrmApp')
             );  
     }
 
-    $rootScope.InspectionPromise = getInspection();
 
+    $rootScope.InspectionPromise = getInspection();
+    
+    //
     $scope.cancelParcelWipeTestEdit = function(parcel){
         $scope.editWipeTest = false;
         $rootScope.InspectionWipeTestCopy = {}

@@ -10,11 +10,24 @@ CarboyUseCycle.prototype = {
 		{method:"loadCarboy", boolean: 'Carboy_id'},
 	],
 
+    CarboyReadingAmountsRelationship: {
+
+        className:    'CarboyReadingAmount',
+        keyReference:  'Carboy_use_cycle_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
     // TODO eager accessors, relationships, method names.
     loadCarboy:function(){
     	if(!this.Carboy){
             dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
         }
+    },
+
+    loadCarboy_reading_amounts:function(){
+        dataLoader.loadOneToManyRelationship( this, 'Carboy_reading_amounts', this.CarboyReadingAmountsRelationship);
     }
 }
 

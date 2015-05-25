@@ -1,10 +1,11 @@
 <div cg-busy="{promise:InspectionPromise,message:'Loading Inspection', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:InspectionWipeSaving,message:'Saving Snear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:InspectionWipeSaving,message:'Saving Smear', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:InspectionWipeTestSaving,message:'Creating Wipe Test', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:SavingSmears,message:'Saving Smears', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-
 <div class="inspection-well super well">
-	<h1 ng-if="inspection.PrincipalInvestigator">Inspection of {{inspection.PrincipalInvestigator.User.Name}}'s Labs started on {{inspection.Date_started|dateToISO}}</h1>
+	<h1 ng-if="inspection.PrincipalInvestigator">Inspection of {{inspection.PrincipalInvestigator.User.Name}}'s Labs started on {{inspection.Date_started|dateToISO}}
+	<a class="btn btn-info btn-large"  href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Inspection Report</a>
+	</h1>
 	<div class="card super wipe-tests" ng-if="inspection.PrincipalInvestigator">
 		
 		<h3 class="card-header padding">
@@ -26,9 +27,9 @@
 
 			</form>
 
-			<a ng-if="!inspection.Inspection_wipe_tests[0].edit" class="btn btn-primary left" ng-click="editInspectionWipeTest(inspection.Inspection_wipe_tests[0])"><i class="icon-pencil"></i>Edit</a>
+			<a ng-if="!inspection.Inspection_wipe_tests[0].edit && !inspection.Notification_date" class="btn btn-primary left" ng-click="editInspectionWipeTest(inspection.Inspection_wipe_tests[0])"><i class="icon-pencil"></i>Edit</a>
 
-			<a ng-if="inspection.Inspection_wipe_tests[0].Key_id && !inspection.Inspection_wipe_tests[0].adding" ng-click="addWipes(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Add Smears</a>
+			<a ng-if="inspection.Inspection_wipe_tests[0].Key_id && !inspection.Inspection_wipe_tests[0].adding && !inspection.Notification_date" ng-click="addWipes(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Add Smears</a>
 		</h3>
 
 		<h3 class="padding" ng-if="inspection.Inspection_wipe_tests[0].Key_id">
@@ -46,18 +47,23 @@
 				<h3>Location</h3>
 				<h3>Instrument</h3>
 				<h3>Radioactivity</h3>
+				<h3 ng-if="inspection.Notification_date">Rewipe Reading</h3>
 				<h3>Notes</h3>
 				<h3></h3>
 			</div>
-			<div class="table-row" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes | orderBy:'Key_id'">
+			<!-- row should have a red background if it is hot.  A wipe is hot if it's Curie_level is 3 or more times its background level, or its Lab_background_level is three or more times its Lab_curie_level-->
+			<div class="table-row" ng-class="{'new': smear.Lab_curie_level && smear.Lab_curie_level < (inspection.Inspection_wipe_tests[0].Lab_background_level * 3) && smear.Location != 'Background','inactive':smear.Curie_level >= (inspection.Inspection_wipe_tests[0].Background_level * 3) && (!smear.Lab_curie_level || smear.Lab_curie_level >= (inspection.Inspection_wipe_tests[0].Lab_background_level * 3))}" ng-repeat="smear in inspection.Inspection_wipe_tests[0].Inspection_wipes | orderBy:'Key_id'">
 				<div>
-					<button ng-disabled="smear.edit" class="btn btn-primary left" ng-click="editInspectionWipe(smear)"><i class="icon-pencil"></i>Edit</button>
+					<button ng-disabled="smear.edit || (smear.Location != 'Background' && inspection.Notification_date && smear.Curie_level < (inspection.Inspection_wipe_tests[0].Background_level * 3))" class="btn btn-primary left" ng-click="editInspectionWipe(smear)"><i class="icon-pencil"></i>Edit</button>
 				</div>
 
-				<div ng-if="!smear.edit">
-					{{smear.Room_id}} | {{smear.Room.Name}} 
+				<div ng-if="!smear.edit  || smear.Location == 'Background'">
+					{{smear.Room.Name}}
+					<span ng-if="smear.Location == 'Background'"> 
+						N/A
+					</span>
 				</div>
-				<div ng-if="smear.edit">
+				<div ng-if="smear.edit && smear.Location != 'Background'">
 					<select style="width:60px" ng-if="InspectionWipeCopy" ng-model="InspectionWipeCopy.Room_id">
 						<option ng-repeat="room in inspection.Rooms" value="{{room.Key_id}}">{{room.Name}}</option>
 					</select>
@@ -67,21 +73,21 @@
 					</select>
 				</div>
 
-				<div ng-if="!smear.edit">
+				<div ng-if="!smear.edit || smear.Location == 'Background'">
 					{{smear.Location}}
 				</div>
 
-				<div ng-if="smear.edit">
+				<div ng-if="smear.edit && smear.Location != 'Background'">
 					<textarea ng-if="InspectionWipeCopy" ng-model="InspectionWipeCopy.Location" placeholder="Location"></textarea>
 					<textarea ng-if="!InspectionWipeCopy" ng-model="smear.Location" placeholder="Location"></textarea>
 				</div>
 
 				<div>{{inspection.Inspection_wipe_tests[0].Reading_type}}</div>
 				
-				<div ng-if="!smear.edit">
+				<div ng-if="!smear.edit || inspection.Notification_date">
 					{{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
 				</div>
-				<div ng-if="smear.edit">
+				<div ng-if="smear.edit && !inspection.Notification_date">
 					<div ng-if="InspectionWipeCopy" class="control-group">
 					     <div class="controls input-append">
 							<input style="width:40px" ng-model="InspectionWipeCopy.Curie_level">
@@ -92,6 +98,25 @@
 					<div ng-if="!InspectionWipeCopy" class="control-group">
 					     <div class="controls input-append">
 							<input style="width:40px" ng-model="smear.Curie_level">
+							<span class="add-on">DPM</span>
+						</div>
+					</div>
+				</div>
+
+				<div ng-if="!smear.edit && inspection.Notification_date">
+					{{smear.Lab_curie_level}} <span ng-if="smear.Lab_curie_level != null">DPM</span><span ng-if="smear.Lab_curie_level == null">N/A</span>
+				</div>
+				<div ng-if="smear.edit && inspection.Notification_date">
+					<div ng-if="InspectionWipeCopy" class="control-group">
+					     <div class="controls input-append">
+							<input style="width:40px" ng-model="InspectionWipeCopy.Lab_curie_level">
+							<span class="add-on">DPM</span>
+						</div>
+					</div>
+
+					<div ng-if="!InspectionWipeCopy" class="control-group">
+					     <div class="controls input-append">
+							<input style="width:40px" ng-model="smear.Lab_curie_level">
 							<span class="add-on">DPM</span>
 						</div>
 					</div>
