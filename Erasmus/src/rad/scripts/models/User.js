@@ -6,7 +6,7 @@
 var User = function( api ){};
 
 User.prototype = {
-
+	className: "User",
 	loadSupervisor: function()
 	{
         // not all users have a supervisor, don't try to load something that doesn't exist.
