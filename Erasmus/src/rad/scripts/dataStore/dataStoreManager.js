@@ -127,7 +127,8 @@ dataStoreManager.setIsDirty = function( object )
 
 dataStoreManager.createCopy = function( object )
 {   
-        dataStore[object.Class+'Copy'] =  $.extend(true,{},object);
+        dataStore[object.Class+'Copy'] =  $.extend(null,{},object);
+        console.log(dataStore[object.Class+'Copy']);
         return dataStore[object.Class+'Copy'];
 }
 

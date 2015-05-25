@@ -343,7 +343,7 @@ div.fake-table div.double-button-cell{
 div.fake-table .table-row div input[class*="span"]{
   min-height: 0;
 }
-div.bordered .table-row > div {
+div.bordered .table-row {
   border-bottom: 1px solid #dddddd;
 }
 div.fake-table.bordered .table-row > div:first-child{
@@ -376,7 +376,7 @@ div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div input{
 }
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div select{
   width:67%;
-  min-width:145px;
+  min-width: 139px;
 }
 div.fake-table .table-row.top-align div{
   vertical-align: top;
@@ -554,8 +554,8 @@ div.fake-table.inspection-wipe-table{
   float:left;
 }
 .use-amount.others div.control-group:nth-of-type(1){
-  width:20%;
-  min-width:75px;
+  width: 10%;
+  min-width: 25px;
 }
 .use-amount.others div.control-group:nth-of-type(2){
   width:80%;

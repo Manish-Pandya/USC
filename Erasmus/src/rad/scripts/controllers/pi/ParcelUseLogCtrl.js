@@ -95,7 +95,6 @@ angular.module('00RsmsAngularOrmApp')
             console.log(otherUsageAmount)
           }
 
-
           use.edit = true;
       }
 
@@ -138,6 +137,28 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.ParcelUseCopy = {};
       }
 
+      $scope.validateRemainder = function(parcel) {
+          var uses = parcel.ParcelUses;
+          parcel.inValid = false;
+          var total = 0;
+          var i = uses.length;
+          while(i--){
+            console.log(uses[i].Quantity);
+            total += parseInt(uses[i].Quantity);
+          }
+
+          total += parseInt($rootScope.ParcelUseCopy.Quantity);
+          //if we are editing, subtract the total from the copied use so that it's total isn't included twice
+          if($rootScope.ParcelUseCopy.Key_id){
+            total = total - parseInt(dataStoreManager.getById("ParcelUse", $rootScope.ParcelUseCopy.Key_id).Quantity);
+          }
+
+          if(total > parcel.Quantity){
+            parcel.inValid = true;
+            $rootScope.error = 'Total usages must not be more than package quantity.';
+          }
+
+      }
 
       //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
       //which if you think about it, has sort of become an MVCVM

@@ -1449,6 +1449,7 @@ angular
             }
 
             af.saveParcelUse = function(parcel, copy, use){
+                console.log(copy);
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
@@ -1471,6 +1472,13 @@ angular
                                 parcel.ParcelUses.push(returnedUse)
                             }
                             $rootScope.ParcelUseCopy = {};
+                            var uses = parcel.ParcelUses;
+                            var total = 0;
+                            var i = uses.length;
+                            while(i--){
+                                total += parseInt(uses[i].Quantity);
+                            }
+                            parcel.Quantity = parcel.Quantity-total;
                             use.edit = false;
                             af.clearError();
                             return parcel;
