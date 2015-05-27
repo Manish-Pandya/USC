@@ -113,6 +113,13 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 	
+	public static $QUARTERLY_INVENTORIES_RELATIONSHIP = array(
+			"className" => "QuarterlyInventory",
+			"tableName" => "quarterly_inventory",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
 	/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
@@ -161,6 +168,9 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** collections of scint vials that haven't been picked up **/
 	private $currentScintVialCollections;
+	
+	/** QuarterlyInventories for this PI **/
+	private $quarterly_inventories;
 
 	public function __construct(){
 
@@ -179,6 +189,8 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+		
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -371,6 +383,18 @@ class PrincipalInvestigator extends GenericCrud {
 
 		return $result;
 	}
+	
+	public function getQuarterly_inventories(  ){
+		$LOG = Logger::getLogger(__CLASS__);
+		if($this->quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			/** quarterly inventories should be sorted by date */
+			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), "date_last_modified", true);
+		}
+		return $this->quarterly_inventories;
+	}
+
+	
 
 }
 
