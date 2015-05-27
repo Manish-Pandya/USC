@@ -113,17 +113,25 @@ include_once 'RadCrud.php';
 	public function getDate_read(){return $this->date_read;}
 	public function setDate_read($date_read){$this->date_read = $date_read;}
 	
-	public function getPour_allowed_date(){		
-		$LOG = Logger::getLogger(__CLASS__);
+	public function getPour_allowed_date(){	
 		date_default_timezone_set('America/New_York');
+		
+		$LOG = Logger::getLogger(__CLASS__);
+		
+		//the date this reading happened
+		$originalDate = new DateTime();
+		$originalDate->setTimestamp(time($this->getDate_read()));
+		
 		//get the volume of the carboy containing this amount
 		$volume =  $this->getCarboy_use_cycle()->getVolume();
 		$isotope = $this->getIsotope();
 		//if we don't have a volume or isotope, return NULL
 		if($volume == NULL || $isotope == NULL)return;
 		
-		//multiply this sample's dpm by 1000, because the sample is 1/1000th the volume of the scint vial
-		$scintVialDpm = $this->getCurie_level() * 1000;
+		//multiply this sample's dpm by 100, because the sample is 1/100th of a ml
+		$dpmPerML = $this->getCurie_level() * 100;
+		//convert the dpm to MCi
+		$sampleMci = $dpmPerML * (4.5 * pow(10,-10));
 		
 		//multiply the result by the volume of the carboy to get the total dpm for this isotope in the whole thing
 		$caboyDpm = $scintVialDpm * $volume;
@@ -131,31 +139,37 @@ include_once 'RadCrud.php';
 		//convert the dmp to mCi (dpm * (4.50x10^-10) = mCi)
 		$carboyMci = $caboyDpm * (4.5 * pow(10,-10));
 		
-		$daysToDecay = $this->getDecayTime($isotope->getHalf_life(), $carboyMci);
-		
-		//get the date this amount can be poured on
-		
-		//the front end parses timestamps nicely, so we return this as one
-		
-		$now = new DateTime();
-		//apparently, PHP believes -0 is a thing.
-		// https://bugs.php.net/bug.php?id=54842 (signed 0)
-		
-		//180 days is the max time allowed for keeping waste on hand.  Set accordingly?
-		if($daysToDecay >= 180)$daysToDecay = 180;
-		
-		$originalDate = new DateTime();
-		$originalDate->setTimestamp(time($this->getDate_read()));
-		$LOG->debug($originalDate);
+		$daysToDecay = $this->getDecayTime($isotope->getHalf_life(), $sampleMci);
 		$LOG->debug($daysToDecay);
-		if($daysToDecay == -0){
-			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->getTimestamp());
+
+		//18 months is the max time allowed for keeping waste on hand.
+		$maxDate = clone $originalDate;
+		$maxDate = $maxDate->add(new DateInterval("P18M"));
+		
+		//get the number of days between the date the reading was taken and 18 months from now
+		$diff = $maxDate->diff($originalDate)->format('%a');
+
+		if($daysToDecay >= $diff){
+			//high energy isotope with short half-life, defined by RSO as those with half-lives longer than 120 days (must decay as much as possible)
+			if($isotope->getHalf_life() < 120){
+				$daysToDecay = $diff;
+			}
+			//low energy isotope with long half-life (can be poured immediately)
+			else{
+				$daysToDecay = 0;
+			}
+		}
+		
+
+		$LOG->debug($daysToDecay);
+		if($daysToDecay == 0 ){
+			$this->pour_allowed_date  = date("Y-m-d H:i:s",$originalDate->getTimestamp());
 		}
 		//the pour allowed date has passed.  amount can be poured
 		elseif($daysToDecay < 0){
 			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.abs($daysToDecay).'D'))->getTimestamp());
 		}
-		//pour date is in the future.
+		//pour date is in the future or now.
 		else{
 			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $originalDate->add(new DateInterval('P'.$daysToDecay.'D'))->getTimestamp());
 		}
@@ -166,10 +180,11 @@ include_once 'RadCrud.php';
 	}
 	
 	private function getDecayTime($halfLife, $mCi){
-		if($mCi < .05)return 0;
-		$targetMCI = .05;
-		//the time in days to decay.  we always round up to make sure that the carboy is fully decayed.
-		return ceil(($halfLife/-log(2)) * log($targetMCI/$mCi));
+		$LOG = Logger::getLogger(__CLASS__);
+		if($mCi < .00005)return 0;
+		$targetMCI = .00005;
+		//the time in days(because half-lives are stored in the database in days) to decay.  we always round up to make sure that the carboy is fully decayed.
+		return ceil(($halfLife/-(log(2))) * log($targetMCI/$mCi));
 	}
 	
 }

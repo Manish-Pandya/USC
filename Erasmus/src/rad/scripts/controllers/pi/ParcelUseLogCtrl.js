@@ -18,7 +18,6 @@ angular.module('00RsmsAngularOrmApp')
     			.then(
     				function(){
               $scope.pi = af.getById('PrincipalInvestigator',$stateParams.pi);
-              $scope.pi.loadWasteBags();
               return $scope.pi;
     				},
     				function(){}
