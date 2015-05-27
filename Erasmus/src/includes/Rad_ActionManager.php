@@ -1363,8 +1363,65 @@ class Rad_ActionManager extends ActionManager {
 		return $newPickup;
 	}
 
+	/**
+	 * Creates, saves, and returns a collection of QuarterlyInventories for all PIs who have Rad Auths
+	 * 
+	 */
 
-
+	function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		
+		$startDate = $this->getValueFromRequest('startDate', $startDate);		
+		$endDate = $this->getValueFromRequest('id', $endDate);
+		
+		
+		if( $startDate = NULL && $endDate == NULL ) {
+			return new ActionError("Request parameters 'startDate' and 'endDate' were not provided");
+		}
+		if( $startDate = NULL ) {
+			return new ActionError("No request parameter 'startDate' was provided");
+		}
+		if( $endDate = NULL ) {
+			return new ActionError("No request parameter 'endDate' was provided");
+		}
+		
+		$pis = $this->getAllRadPis();
+		$inventories = array();
+		
+		foreach($pis as $pi){
+			if($pi->getAuthorizations() != NULL){
+				$inventory = new QuarterlyInventory();
+				
+				$inventory->setStart_date($startDate);
+				$inventory->setEnd_date($endDate);
+				$inventory->setPrincipal_investigator_id($pi->getKey_id());
+				
+				$inventoryDao = $this->getDao(new QuarterlyInventory());
+				//$inventory = $inventoryDao->save($inventory);
+				
+				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
+				//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
+				
+				
+				$mostRecentIntentory = end($pi->getQuarterly_inventories());
+				$LOG->debug( $mostRecentIntentory->getQuarterly_isotope_amounts() );
+				
+				foreach($pi->getAuthorizations() as $authorization){
+					$authorization = new Authorization();
+					$isotopeId = $authorization->getIsotope_id();
+					
+					
+					
+				}
+				
+				
+				
+				$inventories[] = $inventory;
+			}
+		}
+		return $inventories;	
+	}
+	
 	/*****************************************************************************\
 	 *                            Utility Functions                              *
 	 *         Not exposed to frontend, just helpful for internal use.           *

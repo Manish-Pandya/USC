@@ -99,7 +99,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getWasteAmountsByParcelId"		 => new ActionMapping("getWasteAmountsByParcelId", "", ""),
 			"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", ""),
 			"getTotalWasteFromPI"			 => new ActionMapping("getTotalWasteFromPI", "", ""),
-			"getWasteFromPISinceDate"        => new ActionMapping("getWastefRomPISinceDate", "", "")
+			"getWasteFromPISinceDate"        => new ActionMapping("getWastefRomPISinceDate", "", ""),
+				
+			"createQuarterlyInventories"	 => new ActionMapping("createQuarterlyInventories", "", "")
 		);
 	}
 }
