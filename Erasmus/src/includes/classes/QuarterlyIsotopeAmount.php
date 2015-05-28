@@ -17,7 +17,8 @@ include_once 'RadCrud.php';
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
         "quarterly_inventory_id"    => "integer",
-    	"quantity"					=> "float", 
+    	"starting_amount"			=> "float", 
+    	"ending_amount"				=> "float",
     	"isotope_id"				=> "int",   	
     		
         //GenericCrud
@@ -35,8 +36,11 @@ include_once 'RadCrud.php';
 	/** id of the QuarterlyInventory that is the parent of this amount **/
 	private $quarterly_inventory_id;
 	
-	/** id of the user who signed off on this inventory **/
-	private $quantity;
+	/** amount of the isotope in inventory at the beginning of the quarter */
+	private $starting_amount;
+	
+	/** amount of the isotope in inventory at the end of the quarter */
+	private $ending_amount;
 	
 	private $isotope_id;
 	
@@ -66,17 +70,25 @@ include_once 'RadCrud.php';
 		$this->quarterly_inventory_id = $quarterly_inventory_id;
 	}
 	
-	public function getQuantity() {
-		return $this->quantity;
-	}
-	public function setQuantity($quantity) {
-		$this->quantity = $quantity;
-	}
 	public function getIsotope_id() {
 		return $this->isotope_id;
 	}
 	public function setIsotope_id($isotope_id) {
 		$this->isotope_id = $isotope_id;
+	}
+	
+	public function getStarting_amount() {
+		return $this->starting_amount;
+	}
+	public function setStarting_amount($starting_amount) {
+		$this->starting_amount = $starting_amount;
+	}
+	
+	public function getEnding_amount() {
+		return $this->ending_amount;
+	}
+	public function setEnding_amount($ending_amount) {
+		$this->ending_amount = $ending_amount;
 	}
 	
 	

@@ -1399,16 +1399,39 @@ class Rad_ActionManager extends ActionManager {
 				$inventoryDao = $this->getDao(new QuarterlyInventory());
 				//$inventory = $inventoryDao->save($inventory);
 				
-				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
 				//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
+				//$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
+				$mostRecentIntentory = end($pi->getQuarterly_inventories());				
 				
-				
-				$mostRecentIntentory = end($pi->getQuarterly_inventories());
-				$LOG->debug( $mostRecentIntentory->getQuarterly_isotope_amounts() );
-				
+				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
 				foreach($pi->getAuthorizations() as $authorization){
-					$authorization = new Authorization();
-					$isotopeId = $authorization->getIsotope_id();
+					
+					//boolean to determine if this isotope has been accounted for
+					$isotopeFound = false;
+					
+					//find the matching isotope in the previous inventory, if it exists, so we can get its amount at that time
+					foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){						
+						if($amount->getIsotope_id() == $authorization->getIsotope_id()){
+							//create the new amount 
+							$newAmount = new QuarterlyIsotopeAmount();
+							$newAmount->setIsotope_id($amount->getIsotope_id());
+							$newAmount->setStarting_amount($amount->getEnding_amount());
+							$quarterlyAmountDao = $this->getDao();
+							
+							$isotopeFound = true;
+						}
+					}
+					
+					//there wasn't an record of this isotope for the previous quarter, so we create a new one from scratch for this quarter
+					if($isotopeFound == false){
+						//get the amount we had of this isotope before this quarter
+						//get the amount we've had, ever
+						$parcels = $pi->getActiveParcels();
+						//subtract all the parcel uses from before this quarter
+						//presto amounto
+					}
+					
+					//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
 					
 					
 					
