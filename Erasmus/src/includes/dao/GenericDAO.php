@@ -181,6 +181,46 @@ class GenericDAO {
 	function getAllActive(){
 		return $this->getAll( null, false, true );
 	}
+	
+	/**
+	 * 
+	 * Retrieves all entities of this type matching the where clause
+	 * 
+	 * @param WhereClauseGroup $whereClause
+	 * @return Array:
+	 */
+	function getAllWhere( $whereClauseGroup ){
+		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+		// Get the db connection
+		global $db;
+		$className = get_class($this);
+		
+		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
+		$whereClauses = $whereClauseGroup->getClauses();
+		
+		foreach($whereClauses as $key=>$clause){
+			if($key == 0){
+				$sql .= 'WHERE ' . $clause->getCol() . ' ' . $clause->getOperator() . ' ' . $clause->getVal();
+			}else{
+				$sql .= ' AND ' . $clause->getCol() . ' ' . $clause->getOperator() . ' ' . $clause->getVal();
+			}
+		}
+		$this->LOG->debug($sql);
+		//Prepare to query all from the table
+		$stmt = $db->prepare($sql);
+		
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
+			// ... otherwise, generate error message to be returned
+		} else {
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
+		
+		return $result;
+	}
 
 	/**
 	 * Commits the values of this entity to the database
@@ -298,6 +338,7 @@ class GenericDAO {
 			$this->LOG->debug( "... returned " . count($keys) . " related records.");
 		// ... otherwise, return an error
 		} else {
+			$this->LOG->debug($queryString);
 			$error = $stmt->errorInfo();
 			$queryError = new QueryError($error);
 			$this->LOG->error("statement failed, returning QueryError with message: " . $queryError->getMessage());
