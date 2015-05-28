@@ -50,6 +50,11 @@ angular
         templateUrl: "views/admin/disposals.html",
         controller: "disposalCtrl"
       })
+      .state('radmin.inventories', {
+        url: "/inventories",
+        templateUrl: "views/admin/inventories.html",
+        controller: "inventoriesCtrl"
+      })
       .state('admin-pickups', {
         url: "/admin/pickups",
         templateUrl: "views/admin/pickups.html",

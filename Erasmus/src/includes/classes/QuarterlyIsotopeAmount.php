@@ -16,7 +16,7 @@ include_once 'RadCrud.php';
 
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
-        "quarterly_inventory_id"    => "integer",
+        "pi_quarterly_inventory_id" => "integer",
     	"starting_amount"			=> "float", 
     	"ending_amount"				=> "float",
     	"isotope_id"				=> "int",   	
@@ -33,8 +33,8 @@ include_once 'RadCrud.php';
     
     //access information
 
-	/** id of the QuarterlyInventory that is the parent of this amount **/
-	private $quarterly_inventory_id;
+	/** id of the PIQuarterlyInventory that is the parent of this amount **/
+	private $pi_quarterly_inventory_id;
 	
 	/** amount of the isotope in inventory at the beginning of the quarter */
 	private $starting_amount;
@@ -61,13 +61,13 @@ include_once 'RadCrud.php';
         return self::$COLUMN_NAMES_AND_TYPES;
     }
     
-	public function getQuarterly_inventory_id() {
+	public function getPi_Quarterly_inventory_id() {
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->DEBUG($this);
-		return $this->quarterly_inventory_id;
+		return $this->pi_quarterly_inventory_id;
 	}
-	public function setQuarterly_inventory_id($quarterly_inventory_id) {
-		$this->quarterly_inventory_id = $quarterly_inventory_id;
+	public function setPi_Quarterly_inventory_id($quarterly_inventory_id) {
+		$this->pi_quarterly_inventory_id = pi_quarterly_inventory_id;
 	}
 	
 	public function getIsotope_id() {

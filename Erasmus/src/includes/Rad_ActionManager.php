@@ -1362,6 +1362,10 @@ class Rad_ActionManager extends ActionManager {
 		$newPickup->getWasteBags();
 		return $newPickup;
 	}
+	
+	function getInventoriesByDateRanges(){
+		
+	}
 
 	/**
 	 * Creates, saves, and returns a collection of QuarterlyInventories for all PIs who have Rad Auths
@@ -1388,37 +1392,49 @@ class Rad_ActionManager extends ActionManager {
 		$pis = $this->getAllRadPis();
 		$inventories = array();
 		
+		//create a master inventory, since all pis will have one with the same dates
+		$inventoryDao = $this->getDao(new QuarterlyInventory());
+		$inventory = new QuarterlyInventory();
+		$inventory->setStart_date($startDate);
+		$inventory->setEnd_date($endDate);
+		
+		$inventory = $inventoryDao->save($inventory);
+		
+		$LOG->debug($inventory);
+		
 		foreach($pis as $pi){
 			if($pi->getAuthorizations() != NULL){
-				$inventory = new QuarterlyInventory();
+				$piInventory = new PIQuarterlyInventory();
 				
-				$inventory->setStart_date($startDate);
-				$inventory->setEnd_date($endDate);
-				$inventory->setPrincipal_investigator_id($pi->getKey_id());
+				$piInventory->setQuarterly_inventory_id($inventory->getKey_id());
+				$piInventory->setPrincipal_investigator_id($pi->getKey_id());
 				
-				$inventoryDao = $this->getDao(new QuarterlyInventory());
-				//$inventory = $inventoryDao->save($inventory);
+				$piInventoryDao = $this->getDao($piInventory);
+				$piInventory = $inventoryDao->save($piInventoryDao);
 				
 				//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
 				//$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
 				$mostRecentIntentory = end($pi->getQuarterly_inventories());				
 				
+				//it seems we are supposed to loop through
 				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
 				foreach($pi->getAuthorizations() as $authorization){
 					
 					//boolean to determine if this isotope has been accounted for
 					$isotopeFound = false;
 					
-					//find the matching isotope in the previous inventory, if it exists, so we can get its amount at that time
-					foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){						
-						if($amount->getIsotope_id() == $authorization->getIsotope_id()){
-							//create the new amount 
-							$newAmount = new QuarterlyIsotopeAmount();
-							$newAmount->setIsotope_id($amount->getIsotope_id());
-							$newAmount->setStarting_amount($amount->getEnding_amount());
-							$quarterlyAmountDao = $this->getDao();
-							
-							$isotopeFound = true;
+					//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+					if($mostRecentIntentory != null){
+						foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){						
+							if($amount->getIsotope_id() == $authorization->getIsotope_id()){
+								//create the new amount 
+								$newAmount = new QuarterlyIsotopeAmount();
+								$newAmount->setIsotope_id($amount->getIsotope_id());
+								$newAmount->setStarting_amount($amount->getEnding_amount());
+								$quarterlyAmountDao = $this->getDao($newAmount);
+								$quarterlyAmountDao;
+								$isotopeFound = true;
+							}
 						}
 					}
 					
@@ -1426,7 +1442,16 @@ class Rad_ActionManager extends ActionManager {
 					if($isotopeFound == false){
 						//get the amount we had of this isotope before this quarter
 						//get the amount we've had, ever
-						$parcels = $pi->getActiveParcels();
+						$whereClauseGroup = new WhereClauseGroup();
+						$clauses = array(
+								new WhereClause('isotope_id','=', $authorization->getIsotope_id() ),
+								new WhereClause('principal_investigator_id', '=', $pi->getKey_id())
+						);
+						
+						$whereClauseGroup->setClauses($clauses);
+						$parcelDao = $this->getDao(new Parcel());						
+ 						$LOG->debug($parcels);
+						
 						//subtract all the parcel uses from before this quarter
 						//presto amounto
 					}

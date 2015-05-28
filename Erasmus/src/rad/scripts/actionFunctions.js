@@ -1977,7 +1977,7 @@ angular
             }
 
             af.saveDrum = function(drum, copy){
-              af.clearError();
+                af.clearError();
                 return this.save(copy)
                     .then(
                         function(returnedDrum){
@@ -2048,6 +2048,36 @@ angular
                         }
                     }
                 }
+            }
+
+
+            /********************************************************************************
+            **
+            **      QUARTERLY INVENTORIES
+            **
+            *********************************************************************************/
+
+            af.getQuartleryInventoriesByDateRange = function(startDate, endDate){
+
+            }
+
+            af.saveQuarterlyInventory = function( inventory, copy ){
+                af.clearError();
+                return this.save(copy)
+                    .then(
+                        function(returnedInventory){
+                            returnedInventory = modelInflatorFactory.instateAllObjectsFromJson( returnedInventory );
+                            if(drum.Key_id){
+                                angular.extend(inventory, returnedInventory)
+                            }else{
+                                dataStoreManager.store(returnedInventory);
+                            }
+                            $rootScope.QuarterlyInventory = {};
+                            return returnedInventory;
+                        },
+                        af.setError('The Quarterly Inventory could not be saved')
+
+                    )
             }
 
         	return af;

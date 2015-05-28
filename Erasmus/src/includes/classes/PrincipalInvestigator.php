@@ -114,8 +114,8 @@ class PrincipalInvestigator extends GenericCrud {
 	);
 	
 	public static $QUARTERLY_INVENTORIES_RELATIONSHIP = array(
-			"className" => "QuarterlyInventory",
-			"tableName" => "quarterly_inventory",
+			"className" => "PIQuarterlyInventory",
+			"tableName" => "pi_quarterly_inventory",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
