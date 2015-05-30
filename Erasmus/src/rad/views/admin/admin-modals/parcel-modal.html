@@ -17,6 +17,16 @@
   </div>
 
   <div class="control-group">
+     <label class="control-label">Authorization</label>
+     <div class="controls">
+        <select data-ng-model="modalData.ParcelCopy.Authorization_id">
+            <option selected="selected" value="">Select an authorization</option>
+            <option ng-repeat="auth in modalData.pi.Authorizations" value="{{auth.Key_id}}">{{auth.Isotope.Name}}: ({{auth.Form}})</option>
+        </select>
+     </div>
+  </div>
+
+  <div class="control-group">
      <label class="control-label">R.S. Number</label>
      <div class="controls">
          <input ng-model="modalData.ParcelCopy.Rs_number" />

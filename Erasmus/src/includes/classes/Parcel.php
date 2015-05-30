@@ -22,6 +22,7 @@ class Parcel extends RadCrud {
 		"arrival_date"					=> "timestamp",
 		"quantity"						=> "float",
 		"rs_number"						=> "text",
+		"authorization_id"				=> "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -85,6 +86,9 @@ class Parcel extends RadCrud {
 	
 	/** wipe test done on this parcel **/
 	private $wipe_test;
+	
+	/** id of the authorization that allows PI to have this parcel **/
+	private $authorization_id;
 
 	public function __construct() {
 		// Define which subentities to load
@@ -218,6 +222,10 @@ class Parcel extends RadCrud {
 		}
 		return $this->wipe_tests;
 	}
+	
+	public function getAuthorization_id() {return $this->authorization_id;}
+	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
+	
 	
 }
 ?>

@@ -1420,6 +1420,9 @@ class Rad_ActionManager extends ActionManager {
 				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
 				foreach($pi->getAuthorizations() as $authorization){
 					
+					$newAmount = new QuarterlyIsotopeAmount();
+					$newAmount->setIsotope_id($authorization->getIsotope_id());
+					
 					//boolean to determine if this isotope has been accounted for
 					$isotopeFound = false;
 					
@@ -1427,19 +1430,15 @@ class Rad_ActionManager extends ActionManager {
 					if($mostRecentIntentory != null){
 						foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){						
 							if($amount->getIsotope_id() == $authorization->getIsotope_id()){
-								//create the new amount 
-								$newAmount = new QuarterlyIsotopeAmount();
-								$newAmount->setIsotope_id($amount->getIsotope_id());
 								$newAmount->setStarting_amount($amount->getEnding_amount());
-								$quarterlyAmountDao = $this->getDao($newAmount);
-								$quarterlyAmountDao;
 								$isotopeFound = true;
 							}
 						}
 					}
 					
-					//there wasn't an record of this isotope for the previous quarter, so we create a new one from scratch for this quarter
+					//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
 					if($isotopeFound == false){
+						
 						//get the amount we had of this isotope before this quarter
 						//get the amount we've had, ever
 						$whereClauseGroup = new WhereClauseGroup();
@@ -1456,8 +1455,13 @@ class Rad_ActionManager extends ActionManager {
 						//presto amounto
 					}
 					
-					//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
+					$quarterlyAmountDao = $this->getDao($newAmount);
+					$quarterlyAmountDao->save($newAmount);
 					
+					//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
+					//get solid amounts
+					//get liquid amounts
+					//get scint vial amounts
 					
 					
 				}

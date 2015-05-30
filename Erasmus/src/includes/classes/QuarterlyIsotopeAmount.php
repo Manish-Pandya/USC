@@ -44,6 +44,15 @@ include_once 'RadCrud.php';
 	
 	private $isotope_id;
 	
+	
+	private $solid_waste;
+	
+	private $liquid_waste;
+	
+	private $scint_vial_waste;
+	
+	private $other_waste;
+	
     public function __construct() {
 
     	// Define which subentities to load
@@ -90,6 +99,36 @@ include_once 'RadCrud.php';
 	public function setEnding_amount($ending_amount) {
 		$this->ending_amount = $ending_amount;
 	}
+	
+	
+	public function getSolid_waste() {
+		return $this->solid_waste;
+	}
+	public function setSolid_waste($solid_waste) {
+		$this->solid_waste = $solid_waste;
+	}
+	
+	public function getLiquid_waste() {
+		return $this->liquid_waste;
+	}
+	public function setLiquid_waste($liquid_waste) {
+		$this->liquid_waste = $liquid_waste;
+	}
+	
+	public function getScint_vial_waste() {
+		return $this->scint_vial_waste;
+	}
+	public function setScint_vial_waste($scint_vial_waste) {
+		$this->scint_vial_waste = $scint_vial_waste;
+	}
+	
+	public function getOther_waste() {
+		return $this->other_waste;
+	}
+	public function setOther_waste($other_waste) {
+		$this->other_waste = $other_waste;
+	}
+	
 	
 	
 }
