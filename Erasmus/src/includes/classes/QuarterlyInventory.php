@@ -79,17 +79,16 @@ include_once 'RadCrud.php';
 		$this->end_date = $end_date;
 	}
 	    
-
 	public function getPi_quarterly_inventories(){
 		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->debug($this);
 		if($this->pi_quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->pi_quarterly_inventories = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$PI_QUARTERLY_INVENTORIES_RELATIONSHIP));
 		}
-		
 		return $this->pi_quarterly_inventories;
 	}
+	
+	public function setPi_quarterly_inventories($inventories){$this->pi_quarterly_inventories = $inventories;}
 	
 }
 ?>

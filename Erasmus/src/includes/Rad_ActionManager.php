@@ -1374,104 +1374,268 @@ class Rad_ActionManager extends ActionManager {
 
 	function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-		
+
 		$startDate = $this->getValueFromRequest('startDate', $startDate);		
-		$endDate = $this->getValueFromRequest('id', $endDate);
+		$endDate = $this->getValueFromRequest('endDate', $endDate);
 		
-		
-		if( $startDate = NULL && $endDate == NULL ) {
+		if( $startDate == NULL && $endDate == NULL ) {
 			return new ActionError("Request parameters 'startDate' and 'endDate' were not provided");
 		}
-		if( $startDate = NULL ) {
+		if( $startDate == NULL ) {
 			return new ActionError("No request parameter 'startDate' was provided");
 		}
-		if( $endDate = NULL ) {
+		if( $endDate == NULL ) {
 			return new ActionError("No request parameter 'endDate' was provided");
 		}
 		
 		$pis = $this->getAllRadPis();
-		$inventories = array();
 		
 		//create a master inventory, since all pis will have one with the same dates
 		$inventoryDao = $this->getDao(new QuarterlyInventory());
-		$inventory = new QuarterlyInventory();
-		$inventory->setStart_date($startDate);
-		$inventory->setEnd_date($endDate);
 		
-		$inventory = $inventoryDao->save($inventory);
+		//make sure we only have one inventory for the given start and end dates
+		$whereClauseGroup = new WhereClauseGroup();
+		$clauses = array(
+				new WhereClause('start_date','=', $startDate ),
+				new WhereClause('end_date', '=', $endDate)
+		);	
+		$whereClauseGroup->setClauses($clauses);
+		$inventories = $inventoryDao->getAllWhere($whereClauseGroup);		
 		
-		$LOG->debug($inventory);
+		//do we already have a master inventory for this period?
+		if($inventories != NULL){
+			$inventory = $inventories[0];
+		}
+		//we don't have one, so make one
+		else{
+			$inventory = new QuarterlyInventory();
+			$inventory->setStart_date($startDate);
+			$inventory->setEnd_date($endDate);
+			$inventory->setIs_active(true);
+			$inventory = $inventoryDao->save($inventory);
+		}
 		
-		foreach($pis as $pi){
-			if($pi->getAuthorizations() != NULL){
-				$piInventory = new PIQuarterlyInventory();
-				
-				$piInventory->setQuarterly_inventory_id($inventory->getKey_id());
-				$piInventory->setPrincipal_investigator_id($pi->getKey_id());
-				
-				$piInventoryDao = $this->getDao($piInventory);
-				$piInventory = $inventoryDao->save($piInventoryDao);
-				
-				//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
-				//$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
-				$mostRecentIntentory = end($pi->getQuarterly_inventories());				
-				
-				//it seems we are supposed to loop through
-				//build the QuarterlyIsotopeAmounts for each isotope the PI could have
-				foreach($pi->getAuthorizations() as $authorization){
-					
-					$newAmount = new QuarterlyIsotopeAmount();
-					$newAmount->setIsotope_id($authorization->getIsotope_id());
-					
-					//boolean to determine if this isotope has been accounted for
-					$isotopeFound = false;
-					
-					//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
-					if($mostRecentIntentory != null){
-						foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){						
-							if($amount->getIsotope_id() == $authorization->getIsotope_id()){
-								$newAmount->setStarting_amount($amount->getEnding_amount());
-								$isotopeFound = true;
-							}
-						}
-					}
-					
-					//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
-					if($isotopeFound == false){
-						
-						//get the amount we had of this isotope before this quarter
-						//get the amount we've had, ever
-						$whereClauseGroup = new WhereClauseGroup();
-						$clauses = array(
-								new WhereClause('isotope_id','=', $authorization->getIsotope_id() ),
-								new WhereClause('principal_investigator_id', '=', $pi->getKey_id())
-						);
-						
-						$whereClauseGroup->setClauses($clauses);
-						$parcelDao = $this->getDao(new Parcel());						
- 						$LOG->debug($parcels);
-						
-						//subtract all the parcel uses from before this quarter
-						//presto amounto
-					}
-					
-					$quarterlyAmountDao = $this->getDao($newAmount);
-					$quarterlyAmountDao->save($newAmount);
-					
-					//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
-					//get solid amounts
-					//get liquid amounts
-					//get scint vial amounts
-					
-					
-				}
-				
-				
-				
-				$inventories[] = $inventory;
+		$piInventories = array();
+		
+		foreach($pis as $pi){		
+			$piInventory = $this->getPiInventory( $pi->getKey_id(), $inventory->getKey_id() );
+			if($piInventory != NULL){
+				$piInventories[] = $piInventory;
 			}
 		}
-		return $inventories;	
+		$LOG->debug($piInventories);
+		
+		$inventory->setPi_quarterly_inventories($piInventories);
+		return $inventory;	
+	}
+	
+	public function getPiInventory( $piId = NULL, $inventoryId = NULL ){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		
+		$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
+		$piId = $this->getValueFromRequest('piId', $piId);
+		
+		if( $inventoryId == NULL && $piId == NULL ) {
+			return new ActionError("Request parameters 'piId' and 'inventoryId' were not provided");
+		}
+		elseif( $inventoryId == NULL ) {
+			return new ActionError("No request parameter 'inventoryId' was provided");
+		}
+		elseif( $piId == NULL ) {
+			return new ActionError("No request parameter 'piId' was provided");
+		}else{
+			
+			$inventoryDao = $this->getDao(new QuarterlyInventory());
+			$inventory = $inventoryDao->getById($inventoryId);
+			$pi = $this->getPIById($piId, false);			
+			
+		}
+	
+		if($pi->getAuthorizations() == NULL)return NULL;
+		//make sure we only have one inventory for this pi for this period
+		$piInventoryDao = $this->getDao(new PIQuarterlyInventory());
+	
+		$whereClauseGroup = new WhereClauseGroup();
+		$clauses = array(
+				new WhereClause('principal_investigator_id','=', $pi->getKey_id() ),
+				new WhereClause('quarterly_inventory_id', '=', $inventory->getKey_id())
+		);
+		$whereClauseGroup->setClauses($clauses);
+		$LOG->debug($whereClauseGroup);
+	
+		$pastPiInventories = $piInventoryDao->getAllWhere($whereClauseGroup);
+		if($pastPiInventories != NULL){
+			$piInventory = $pastPiInventories[0];
+		}
+		else{
+			$piInventory = new PIQuarterlyInventory();
+			$piInventory->setQuarterly_inventory_id($inventory->getKey_id());
+			$piInventory->setPrincipal_investigator_id($pi->getKey_id());
+			$piInventory->setIs_active(true);
+		}
+	
+	
+		$piInventory = $piInventoryDao->save($piInventory);
+	
+		//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
+		//$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
+		$mostRecentIntentory = end($pi->getQuarterly_inventories());
+	
+		//build the QuarterlyIsotopeAmounts for each isotope the PI could have
+		$amounts = array();
+		foreach($pi->getAuthorizations() as $authorization){
+			$quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+	
+			//do we already have a QuarterlyIsotopeAmount?
+			$whereClauseGroup = new WhereClauseGroup();
+			$clauses = array(
+					new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+					new WhereClause('quarterly_inventory_id','=', $piInventory ->getKey_id() ),
+			);
+				
+			$whereClauseGroup->setClauses($clauses);
+			$amounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+				
+			if($amounts != NULL){
+				$newAmount = $amounts[0];
+			}else{
+				$newAmount = new QuarterlyIsotopeAmount();
+			}
+				
+			$newAmount->setAuthorization_id($authorization->getKey_id());
+				
+			//boolean to determine if this isotope has been accounted for
+			$isotopeFound = false;
+				
+			//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+			if($mostRecentIntentory != null){
+				foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+					if($amount->getIsotope_id() == $authorization->getIsotope_id()){
+						$newAmount->setStarting_amount($amount->getEnding_amount());
+						$isotopeFound = true;
+					}
+				}
+			}
+				
+			//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
+			if($isotopeFound == false){
+				$newAmount->setStarting_amount(0);
+			}
+			$newAmount->setIs_active(true);
+				
+			$newAmount = $quarterlyAmountDao->save($newAmount);
+				
+			//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
+			$solidSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setSolid_waste($solidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 4));
+				
+			//get liquid amounts
+			$liquidSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setLiquid_waste($liquidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 1));
+				
+			//get scint vial amounts
+			$svSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setLiquid_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
+	
+			$amounts[] = $newAmount;
+				
+		}
+		
+		$piInventory->setQuarterly_isotope_amounts($amounts);
+		return $piInventory;
+	}
+	
+	public function getCurrentPIInventory($piId){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		
+		$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
+		$piId = $this->getValueFromRequest('piId', $piId);
+		
+		if( $piId == NULL ) {
+			return new ActionError("No request parameter 'piId' was provided");
+		}else{
+			$pi = $this->getPIById($piId, false);	
+		}
+		$piInventoryDao = $this->getDao(new PIQuarterlyInventory());
+		$LOG->debug($pi);		
+		$inventory = end($pi->getQuarterly_inventories());
+		if($inventory == NULL){
+			return NULL;
+		}		
+						
+		//build the QuarterlyIsotopeAmounts for each isotope the PI could have
+		$amounts = array();
+		foreach($pi->getAuthorizations() as $authorization){
+			$quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+		
+			//do we already have a QuarterlyIsotopeAmount?
+			$whereClauseGroup = new WhereClauseGroup();
+			$clauses = array(
+					new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+					new WhereClause('quarterly_inventory_id','=', $inventory->getKey_id() ),
+			);
+		
+			$whereClauseGroup->setClauses($clauses);
+			$amounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+		
+			if($amounts != NULL){
+				$newAmount = $amounts[0];
+			}else{
+				$newAmount = new QuarterlyIsotopeAmount();
+			}
+		
+			$newAmount->setAuthorization_id($authorization->getKey_id());
+		
+			//boolean to determine if this isotope has been accounted for
+			$isotopeFound = false;
+		
+			//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+			if($mostRecentIntentory != null){
+				foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+					if($amount->getIsotope_id() == $authorization->getIsotope_id()){
+						$newAmount->setStarting_amount($amount->getEnding_amount());
+						$isotopeFound = true;
+					}
+				}
+			}
+		
+			//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
+			if($isotopeFound == false){
+				$newAmount->setStarting_amount(0);
+			}
+		
+			$newAmount = $quarterlyAmountDao->save($newAmount);
+		
+			//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
+			$solidSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setSolid_waste($solidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 4));
+		
+			//get liquid amounts
+			$liquidSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setLiquid_waste($liquidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 1));
+		
+			//get scint vial amounts
+			$svSumDao = $this->getDao(new ParcelUseAmount());
+			$newAmount->setLiquid_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
+		
+			$newAmount->getAuthorization();
+			
+			$amounts[] = $newAmount;
+		
+		}
+		$inventory->setQuarterly_isotope_amounts($amounts);
+		
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
+		$entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
+		
+		$qIEntityMaps = array();
+		$qIEntityMaps[] = new EntityMap("lazy", "getPi_quarterly_inventories");
+		
+		$inventory->getQuarterly_inventory()->setEntityMaps($qIEntityMaps);
+		$inventory->setEntityMaps($entityMaps);
+		
+		return $inventory;
 	}
 	
 	/*****************************************************************************\

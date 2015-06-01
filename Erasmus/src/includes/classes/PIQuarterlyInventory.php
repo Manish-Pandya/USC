@@ -37,7 +37,7 @@ include_once 'RadCrud.php';
     		"className" => "QuarterlyIsotopeAmount",
     		"tableName" => "quarterly_isotope_amount",
     		"keyName"	=> "key_id",
-    		"foreignKeyName"	=> "pi_quarterly_inventory_id"
+    		"foreignKeyName"	=> "quarterly_inventory_id"
     );
 	/** date the lab signed off on this inventory **/
 	private $sign_off_date;
@@ -51,6 +51,7 @@ include_once 'RadCrud.php';
 	
 	/** id of the QuarterlyInventory parent **/
 	private $quarterly_inventory_id;
+	private $quarterly_inventory;
 	
 	/** Isotopes and quantities for each isotope the PI had on hand at the end of the last inventory **/
 	private $quarterly_isotope_amounts;
@@ -66,6 +67,7 @@ include_once 'RadCrud.php';
     	// Define which subentities to load
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
+    	$entityMaps[] = new EntityMap("lazy", "getQuarterly_inventory");
     	 
     	$this->setEntityMaps($entityMaps);
     }
@@ -118,12 +120,21 @@ include_once 'RadCrud.php';
 		
 		return $this->quarterly_isotope_amounts;
 	}
+	public function setQuarterly_isotope_amounts($amounts){$this->quarterly_isotope_amounts = $amounts;}
 	
 	public function getQuarterly_inventory_id() {
 		return $this->quarterly_inventory_id;
 	}
 	public function setQuarterly_inventory_id($quarterly_inventory_id) {
 		$this->quarterly_inventory_id = $quarterly_inventory_id;
+	}
+	
+	public function getQuarterly_inventory(){
+		if($this->quarterly_inventory == NULL && $this->hasPrimaryKeyValue()){
+			$inventoryDao = new GenericDAO(new QuarterlyInventory());
+			$this->quarterly_inventory = $inventoryDao->getById($this->quarterly_inventory_id);
+		}
+		return $this->quarterly_inventory;
 	}
 	
 	
