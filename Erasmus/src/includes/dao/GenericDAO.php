@@ -190,7 +190,10 @@ class GenericDAO {
 	 * @return Array:
 	 */
 	function getAllWhere( $whereClauseGroup ){
-		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+		$this->LOG->debug("where query");
+		$this->LOG->debug($this->modelClassName);
+		$this->LOG->debug($whereClauseGroup);
+		
 		// Get the db connection
 		global $db;
 		$className = get_class($this);
@@ -200,9 +203,9 @@ class GenericDAO {
 		
 		foreach($whereClauses as $key=>$clause){
 			if($key == 0){
-				$sql .= 'WHERE ' . $clause->getCol() . ' ' . $clause->getOperator() . ' ' . $clause->getVal();
+				$sql .= "WHERE " . $clause->getCol() . " " . $clause->getOperator() . " '" . $clause->getVal()."'";
 			}else{
-				$sql .= ' AND ' . $clause->getCol() . ' ' . $clause->getOperator() . ' ' . $clause->getVal();
+				$sql .= " AND " . $clause->getCol() . " " . $clause->getOperator() . " '" . $clause->getVal()."'";
 			}
 		}
 		$this->LOG->debug($sql);
@@ -221,6 +224,46 @@ class GenericDAO {
 		
 		return $result;
 	}
+	
+	/**
+	 * Gets the sum of ParcelUseAmounts for a given authorization for a given date range with a given waste type
+	 *
+	 * @param integer $authorization_id
+	 * @param string $startDate mysql timestamp formatted date representing beginning of the period
+	 * @param string $enddate mysql timestamp formatted date representing end of the period
+	 * @param integer $wasteTypeId Key id of the appropriate waste type
+	 * 	 * @return int
+	 */
+	public function getUsageAmounts( $authorization, $startDate, $endDate, $wasteTypeId ){
+		
+		$this->LOG->debug($authorization);
+		
+		$sql = "SELECT SUM(`curie_level`) 
+				FROM `parcel_use_amount`
+				WHERE `parcel_use_id` IN 
+				(select key_id from `parcel_use` WHERE `parcel_id` 
+				IN (select key_id from `parcel` WHERE `authorization_id` = ?))
+				AND `date_last_modified` BETWEEN ? AND ? 
+				AND `waste_type_id` = ?";
+
+		// Get the db connection
+		global $db;
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(1, $authorization->getKey_id());
+		$stmt->bindValue(2, $startDate);
+		$stmt->bindValue(3, $endDate);
+		$stmt->bindValue(4, $wasteTypeId);
+
+
+		$stmt->execute();
+		
+		$total = $stmt->fetch(PDO::FETCH_NUM);
+		$this->LOG->debug($total);
+		$sum = $total[0]; // 0 is the first array. here array is only one.
+		$this->LOG->debug($sum);
+		if($sum == NULL)$sum = 0;
+		return $sum;
+	}
 
 	/**
 	 * Commits the values of this entity to the database
@@ -230,7 +273,8 @@ class GenericDAO {
 	 */
 	function save(GenericCrud $object = NULL){
 		$this->LOG->debug("$this->logprefix Saving entity");
-
+		$this->LOG->debug($object);
+		
 		//Make sure we have an object to save
 		if( $object == NULL ){
 			$object = $this->modelObject;
@@ -585,8 +629,6 @@ class GenericDAO {
 			$error = $stmt->errorInfo();
 			die($error[2]);
 		}
-
-
 
 		return $result;
 	}

@@ -16,10 +16,10 @@ include_once 'RadCrud.php';
 
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
-        "pi_quarterly_inventory_id" => "integer",
+        "quarterly_inventory_id" => "integer",
     	"starting_amount"			=> "float", 
     	"ending_amount"				=> "float",
-    	"isotope_id"				=> "int",   	
+    	"authorization_id"				=> "int",   	
     		
         //GenericCrud
         "key_id"                    => "integer",
@@ -42,9 +42,9 @@ include_once 'RadCrud.php';
 	/** amount of the isotope in inventory at the end of the quarter */
 	private $ending_amount;
 	
-	private $isotope_id;
-	
-	
+	private $authorization_id;
+	private $authorization;
+		
 	private $solid_waste;
 	
 	private $liquid_waste;
@@ -70,20 +70,31 @@ include_once 'RadCrud.php';
         return self::$COLUMN_NAMES_AND_TYPES;
     }
     
-	public function getPi_Quarterly_inventory_id() {
+	public function getQuarterly_inventory_id() {
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->DEBUG($this);
 		return $this->pi_quarterly_inventory_id;
 	}
-	public function setPi_Quarterly_inventory_id($quarterly_inventory_id) {
+	public function setQuarterly_inventory_id($quarterly_inventory_id) {
 		$this->pi_quarterly_inventory_id = pi_quarterly_inventory_id;
 	}
 	
-	public function getIsotope_id() {
-		return $this->isotope_id;
+	public function getAuthorization_id() {
+		return $this->authorization_id;
 	}
-	public function setIsotope_id($isotope_id) {
-		$this->isotope_id = $isotope_id;
+	public function setAuthorization_id($authorization_id) {
+		$this->authorization_id = $authorization_id;
+	}
+	
+	public function getAuthorization(){
+		$LOG = Logger::getLogger(__CLASS__);
+		if($this->authorization == NULL  && $this->hasPrimaryKeyValue()){
+			$authDao = new GenericDAO(new Authorization());
+			$this->authorization = $authDao->getById($this->authorization_id);
+		}
+		$LOG->debug($this->authorization);
+		
+		return $this->authorization;
 	}
 	
 	public function getStarting_amount() {
