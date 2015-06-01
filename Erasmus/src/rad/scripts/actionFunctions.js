@@ -148,11 +148,15 @@ angular
                     {
                         Name:'inspection-wipes:inspection',
                         Label: 'Inspection Wipes'
-                    }
-                    ,
+                    },
                     {
                         Name:'radmin.disposals',
                         Label: 'Disposals',
+                        Dashboard: true
+                    },
+                    {
+                        Name:'quarterly-inventory',
+                        Label: 'Quarterly Inventory',
                         Dashboard: true
                     }
                 ]
@@ -2079,6 +2083,52 @@ angular
 
                     )
             }
+
+            af.getQuartleryInventory = function(piKeyid)
+            {
+                var urlSegment = 'getCurrentPIInventory&piId=' + piKeyid;
+                return genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            returnedPromise.data.Quarterly_isotope_amounts[0] = {
+                                                                            Class: "QuarterlyIsotopeAmount",
+                                                                            Quarterly_inventory_id: null,
+                                                                            Authorization_id: "2",
+                                                                            Starting_amount: "129",
+                                                                            Ordered: "20",
+                                                                            Ending_amount: 80.9,
+                                                                            Solid_waste: 29,
+                                                                            Liquid_waste: 31.4,
+                                                                            Scint_vial_waste: 22.1,
+                                                                            Other_waste: null,
+                                                                            Transfer_in: 14.4,
+                                                                            Key_id: "2",
+                                                                            Date_created: "2015-06-01 03:37:47",
+                                                                            Date_last_modified: "2015-06-01 03:37:47",
+                                                                            Last_modified_user_id: null,
+                                                                            Created_user_id: null,
+                                                                            Is_active: false,
+                                                                            Authorization: {
+                                                                                Class: "Authorization",
+                                                                                Isotope_id: "2",
+                                                                                Isotope: {Name:"I-125"},
+                                                                                Principal_investigator_id: "1",
+                                                                                Max_quantity: "300",
+                                                                                Approval_date: null,
+                                                                                Revocation_date: null,
+                                                                                Form: null,
+                                                                                Key_id: "2",
+                                                                                Date_created: "0000-00-00 00:00:00",
+                                                                                Date_last_modified: "2015-05-30 20:21:58",
+                                                                                Last_modified_user_id: null,
+                                                                                Created_user_id: null,
+                                                                                Is_active: true
+                                                                            },
+                                                                        }
+
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+            }
+   
 
         	return af;
 		});

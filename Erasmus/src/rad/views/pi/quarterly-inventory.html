@@ -1,0 +1,75 @@
+<div cg-busy="{promise:inventoryPromise,message:'Loading Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div class="neg-marg dashboard" ng-if="pi">
+
+	<div class="well almost-full">
+		<div class="card almost-full parcels">
+			<h3 class="card-header padding parcels"><i class="icon-calendar"></i>Quarterly Inventory for {{inventory.Quarterly_inventory.Start_date | dateToISO}} - {{inventory.Quarterly_inventory.End_date | dateToISO}}</h3>
+		<div class="fake-table striped bordered">
+			<div class="table-header">
+				<h3 style="width: 7%;">Authorized Isotopes</h3>
+				<h3>Limits</h3>
+				<h3>Last Quarter Amount</h3>				
+				<h3>Total Ordered</h3>
+				<h3>Transfer In</h3>
+				<h3>Transfer Out</h3>
+				<h3>Solid Waste</h3>
+				<h3>Liquid Waste</h3>
+				<h3>Scintillation Vial Waste</h3>
+				<h3>Other Waste</h3>
+				<h3>Actual Amount on Hand</h3>
+			</div>
+
+			<div class="table-row" ng-repeat="amount in inventory.Quarterly_isotope_amounts">
+			<!--Class: "QuarterlyIsotopeAmount",
+                                                                            Quarterly_inventory_id: null,
+                                                                            Authorization_id: "2",
+                                                                            Starting_amount: "129",
+                                                                            Ordered: "20",
+                                                                            Ending_amount: null,
+                                                                            Solid_waste: 29,
+                                                                            Liquid_waste: 31.4,
+                                                                            Scint_vial_waste: 22.1,
+                                                                            Other_waste: null,
+                                                                            Transfer_in: 14.4,
+                                                                            Key_id: "2",
+                                                                            Date_created: "2015-06-01 03:37:47",
+                                                                            Date_last_modified: "2015-06-01 03:37:47",
+                                                                            Last_modified_user_id: null,
+                                                                            Created_user_id: null,
+                                                                            Is_active: false,
+                                                                            Authorization: {
+                                                                                Class: "Authorization",
+                                                                                Isotope_id: "2",
+                                                                                Isotope: {Name:"I-125"},
+                                                                                Principal_investigator_id: "1",
+                                                                                Max_quantity: "300",
+                                                                                Approval_date: null,
+                                                                                Revocation_date: null,
+                                                                                Form: null,
+                                                                                Key_id: "2",
+                                                                                Date_created: "0000-00-00 00:00:00",
+                                                                                Date_last_modified: "2015-05-30 20:21:58",
+                                                                                Last_modified_user_id: null,
+                                                                                Created_user_id: null,
+                                                                                Is_active: true
+                                                                            }-->
+				<div>{{amount.Authorization.Isotope.Name}}</div>
+				<div>{{amount.Authorization.Max_quantity}} mCi</div>
+				<div>{{amount.Starting_amount}} mCi</div>
+				<div>{{amount.Ordered}} mCi</div>
+				<div>{{amount.Transfer_in}} mCi</div>
+				<div>0 mCi</div>
+				<div>{{amount.Solid_waste}} mCi</div>
+				<div>{{amount.Liquid_waste}} mCi</div>
+				<div>{{amount.Scint_vial_waste}} mCi</div>
+				<div>{{amount.Other_waste}} 0 mCi</div>
+				<div>{{amount.Ending_amount}}</div>
+			</div>
+					</div>
+
+		</div>
+	
+</div>
+
+
+	</div>

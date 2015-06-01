@@ -75,6 +75,11 @@ angular
         templateUrl: "views/pi/parcel-use-log.html",
         controller: "ParcelUseLogCtrl"
       })
+      .state('quarterly-inventory', {
+        url:'/my-lab:pi/quarterly-inventory',
+        templateUrl: "views/pi/quarterly-inventory.html",
+        controller: "QuarterlyInventoryCtrl"
+      })
       .state('solids', {
         url:'/my-lab:pi/waste-recepticals',
         templateUrl: "views/pi/recepticals.html",
