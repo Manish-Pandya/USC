@@ -17,6 +17,7 @@
 					<li><a class="pickups" ng-click="af.setSelectedView('authorizations')"><i class="icon-box-remove"></i>Pickups</a></li>
 					<li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>				
 				</ul>
+				<h4 class="section-header"><img src="http://erasmus.graysail.com/Erasmus/src/img/pi-icon.png"/>Search by PI</h4>
    				<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
 				<ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
 					<li><a class="auths" ng-click="af.setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>

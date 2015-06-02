@@ -194,6 +194,17 @@
 .card.pos h1 i:first-child,.card.pos h2 i:first-child,.card.pos h3 i:first-child{
   color:rgba(26, 95, 40, 1);
 }
+.left-nav .section-header{
+  /* border-bottom: 2px solid white; */
+  padding-top: 15px;
+  margin-bottom: 1px;
+  background: rgba(0, 154, 255,.5);
+}
+.left-nav .section-header img{
+    margin-left: -4px;
+    margin-top: -20px;
+    width: 61px;
+}
 .left-nav ul li a.pos{
   background: rgba(0, 128, 0, 0.5);
 }
