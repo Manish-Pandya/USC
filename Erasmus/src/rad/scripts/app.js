@@ -53,7 +53,7 @@ angular
       .state('radmin.inventories', {
         url: "/inventories",
         templateUrl: "views/admin/inventories.html",
-        controller: "inventoriesCtrl"
+        controller: "InventoriesCtrl"
       })
       .state('admin-pickups', {
         url: "/admin/pickups",

@@ -123,6 +123,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'radmin.inventories',
+                        Label: 'Radiation Administration -- Quarterly Inventories',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -2060,7 +2065,18 @@ angular
             **      QUARTERLY INVENTORIES
             **
             *********************************************************************************/
-
+            af.getMostRecentInventory = function(){
+                var urlSegment = 'getMostRecentInventory';
+                return genericAPIFactory.read( urlSegment )
+                    .then(
+                        function(returned){
+                            var returnedInventory = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                            dataStoreManager.store(returnedInventory);
+                            console.log(returnedInventory);
+                            return dataStoreManager.getById("QuarterlyInventory", returnedInventory.Key_id);
+                        }
+                    )
+            }
             af.getQuartleryInventoriesByDateRange = function(startDate, endDate){
 
             }
@@ -2122,7 +2138,7 @@ angular
                                                                                 Last_modified_user_id: null,
                                                                                 Created_user_id: null,
                                                                                 Is_active: true
-                                                                            },
+                                                                            }
                                                                         }
 
                             return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );

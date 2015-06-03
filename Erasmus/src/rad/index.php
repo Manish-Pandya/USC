@@ -88,6 +88,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/admin-pickup-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/wipe-test-ctrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
+
+
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
@@ -96,7 +100,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
 
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
 
 
 <!-- directives -->
@@ -116,7 +119,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/miscWipeTests.js"></script>
 <script type="text/javascript" src="./scripts/filters/disposalCycles.js"></script>
 <script type="text/javascript" src="./scripts/filters/disposalSolids.js"></script>
-
+<script type="text/javascript" src="./scripts/filters/inventoryStatus.js"></script>
 
 <!-- framework -->
 <script src="./scripts/genericModel/inheritance.js"></script>

@@ -18,6 +18,7 @@ include_once 'RadCrud.php';
     protected static $COLUMN_NAMES_AND_TYPES = array(
     	"start_date"				=> "timestamp",
     	"end_date"					=> "timestamp",
+    	"due_date"					=> "timestamp",
 
         //GenericCrud
         "key_id"                    => "integer",
@@ -45,6 +46,9 @@ include_once 'RadCrud.php';
 	
 	/** End of date range for this inventory **/
 	private $end_date;
+	
+	/** Due date for all PIs for this inventory **/
+	private $due_date;
 	
     public function __construct() {
 
@@ -79,6 +83,9 @@ include_once 'RadCrud.php';
 		$this->end_date = $end_date;
 	}
 	    
+	public function getDue_date(){return $this->due_date;}
+	public function setDue_date($date){$this->due_date = $date;}
+	
 	public function getPi_quarterly_inventories(){
 		$LOG = Logger::getLogger(__CLASS__);
 		if($this->pi_quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {

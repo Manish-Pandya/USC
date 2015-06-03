@@ -1638,6 +1638,14 @@ class Rad_ActionManager extends ActionManager {
 		return $inventory;
 	}
 	
+	public function getMostRecentInventory(){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		
+		$inventoryDao = $this->getDao(new QuarterlyInventory());
+		$LOG->debug(end($inventoryDao->getAll("end_date")));
+		return end($inventoryDao->getAll("end_date"));
+	}
+	
 	/*****************************************************************************\
 	 *                            Utility Functions                              *
 	 *         Not exposed to frontend, just helpful for internal use.           *

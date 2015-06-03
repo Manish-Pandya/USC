@@ -336,6 +336,9 @@ div.fake-table .table-row.new > div{
 div.fake-table.striped .table-row:nth-of-type(odd){
   background:rgba(221, 221, 221, 0.4);
 }
+div.fake-table.striped .table-row:nth-of-type(even){
+  background:rgba(255, 255, 255, 0.4);
+}
 div.fake-table .table-row > div{
   display: table-cell;
   padding:10px;

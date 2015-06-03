@@ -11,10 +11,10 @@ angular.module('00RsmsAngularOrmApp')
   .controller('InventoriesCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
   		var af = actionFunctionsFactory;
   		$scope.af = af;
-  		$rootScope.piPromise = af.getAllQuarterlyInventories()
+  		$rootScope.inventoryPromise = af.getMostRecentInventory()
   			.then(
-  				function(inventories){
-  					$scope.inventories = dataStore.QuarterlyInventory;
+  				function(inventory){
+  					$scope.inventory = inventory;
   				},
   				function(){}
   			)

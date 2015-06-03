@@ -13,12 +13,14 @@
 		<div class="row-fluid">
 			<div class="left-nav blueBg">
 				<ul class="sideNav">
+					<li><a class="inventories" ui-sref="radmin.inventories"><i class="icon-calendar"></i>Inventories</a></li>
 					<li><a class="wipe-tests" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
 					<li><a class="pickups" ng-click="af.setSelectedView('authorizations')"><i class="icon-box-remove"></i>Pickups</a></li>
 					<li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>				
 				</ul>
-				<h4 class="section-header"><img src="http://erasmus.graysail.com/Erasmus/src/img/pi-icon.png"/>Search by PI</h4>
+				<h4 class="section-header"><img src="http://erasmus.graysail.com/Erasmus/src/img/pi-icon.png"/>Search by PI
    				<input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
+   				</h4>
 				<ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
 					<li><a class="auths" ng-click="af.setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>
 					<li><a class="pos"  ng-click="af.setSelectedView('orders')"><i class="fa fa-usd"></i>Purchase Orders</a></li>
