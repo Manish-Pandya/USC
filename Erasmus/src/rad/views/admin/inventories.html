@@ -1,0 +1,49 @@
+<div cg-busy="{promise:inventoryPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div class="right-column">
+	<div class="well half search-tools">
+		by pi
+	</div>
+	<div class="well two-thirds">
+		<h1><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h1>
+		<div class="card full">
+			<div class="fake-table striped bordered">
+				<div class="table-header">
+					<h3>Start Date</h3>
+					<h3>End Date</h3>
+					<h3>Due Date</h3>
+				</div>
+
+				<div class="table-row">
+					<div>{{inventory.Start_date | dateToISO}}</div>
+					<div>{{inventory.End_date | dateToISO}}</div>
+					<div>{{inventory.Due_date | dateToISO}}</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="card full">
+			<div class="fake-table striped bordered">
+				<div class="table-header">
+					<h3>Principal Investigator</h3>
+					<h3>Status</h3>
+					<h3>Sign Off Date</h3>
+					<h3>View Inventory</h3>
+				</div>
+				<div class="table-row" ng-repeat="piInventory in inventory.Pi_quarterly_inventories | inventoryStatus:inventory">
+					<div>{{piInventory.Principal_investigator.User.Name}}</div>
+					<div>
+						{{piInventory.Status}}
+					</div>
+					<div>
+						{{piInventory.Sign_off_date | dateToISO}}
+					</div>
+					<div><a ui-sref="quarterly-inventory({ pi: piInventory.Principal_investigator.Key_id})" class="btn btn-info left"><i class="icon-out"></i>View Inventory</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+			<pre>{{inventory | json}}</pre>
+
+</div>
+
