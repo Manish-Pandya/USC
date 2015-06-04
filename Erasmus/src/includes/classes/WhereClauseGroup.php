@@ -13,6 +13,12 @@ class WhereClauseGroup {
 	/** an array of WhereClauses objects **/
 	private $clauses;
 	
+	public function __construct( $clauses = null ){
+		if($clauses != NULL && is_array($clauses)){
+			$this->clauses = $clauses;
+		}
+	}
+	
 	public function getClauses(){return $this->clauses;}
 	public function setClauses($clauses){$this->clauses = $clauses;}
 	
