@@ -186,7 +186,7 @@ class GenericDAO {
 	 * 
 	 * Retrieves all entities of this type matching the where clause
 	 * 
-	 * @param WhereClauseGroup $whereClause
+	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array:
 	 */
 	function getAllWhere( $whereClauseGroup ){
