@@ -23,7 +23,7 @@ angular
     'convenienceMethodModule'
     //'ngMockE2E'
   ])
-  .config(function ($stateProvider, $urlRouterProvider,$qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
     $urlRouterProvider.otherwise("/home");
     $stateProvider
       .state('rad-home', {

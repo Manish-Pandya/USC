@@ -1,8 +1,10 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:piInventoriesPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 
 <div class="right-column">
 	<div class="well half search-tools">
-		by pi
+		<input class="left-nav-typeahead" typeahead-on-select='getInventoriesByPiId($item.Key_id)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
 	</div>
 	<div class="well two-thirds">
 		<h1><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h1>
@@ -19,7 +21,6 @@
 					<div>{{inventory.End_date | dateToISO}}</div>
 					<div>{{inventory.Due_date | dateToISO}}</div>
 				</div>
-
 			</div>
 		</div>
 		<div class="card full">
@@ -43,7 +44,7 @@
 			</div>
 		</div>
 	</div>
-			<pre>{{inventory | json}}</pre>
+			<pre>{{piInventories | json}}</pre>
 
 </div>
 

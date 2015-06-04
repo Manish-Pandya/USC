@@ -2066,15 +2066,16 @@ angular
             **
             *********************************************************************************/
             af.getMostRecentInventory = function(){
+                af.clearError();
                 var urlSegment = 'getMostRecentInventory';
                 return genericAPIFactory.read( urlSegment )
                     .then(
                         function(returned){
                             var returnedInventory = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
                             dataStoreManager.store(returnedInventory);
-                            console.log(returnedInventory);
                             return dataStoreManager.getById("QuarterlyInventory", returnedInventory.Key_id);
-                        }
+                        },
+                        af.setError('The Quarterly Inventory could not be saved')
                     )
             }
             af.getQuartleryInventoriesByDateRange = function(startDate, endDate){
@@ -2098,6 +2099,19 @@ angular
                         af.setError('The Quarterly Inventory could not be saved')
 
                     )
+            }
+
+            af.getInventoriesByPiId = function(id){
+                af.clearError();
+                var urlSegment = 'getInventoriesByPiId&piId=' + id;
+                return genericAPIFactory.read(urlSegment)
+                        .then(
+                            function(returned){
+                                var inventories = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                                return inventories;
+                            },
+                            af.setError("Couldn't get Quarterly Inventories for the selected Principal Investigator.")
+                        )
             }
 
             af.getQuartleryInventory = function(piKeyid)

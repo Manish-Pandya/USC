@@ -270,7 +270,15 @@ i.solids-containers{color:rgb(151, 49, 58) !important}
 .left-nav ul li a.wipe-tests:hover{
   background: rgb(107, 86, 179);
 }
-
+.card.inventories{
+  border-left: rgb(255,145,0) solid 6px
+}
+.left-nav ul li a.inventories {
+  background: rgba(255,145,0,.85);
+}
+.left-nav ul li a.inventories:hover {
+  background: rgba(255,145,0,1);
+}
 .left-nav ul li a i{
   margin: 4px 13px 0 5px;
   width: 12px;

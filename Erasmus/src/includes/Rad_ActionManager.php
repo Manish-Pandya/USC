@@ -1646,6 +1646,17 @@ class Rad_ActionManager extends ActionManager {
 		return end($inventoryDao->getAll("end_date"));
 	}
 	
+	public function getInventoriesByPiId( $piId = NULL ){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$piId = $this->getValueFromRequest("piId", $piId);
+		
+		$inventoriesDao = $this->getDao(new PIQuarterlyInventory());
+		$clauses = array(new WhereClause("principal_investigator_id", "=", $piId));
+		$whereClauseGroup = new WhereClauseGroup($clauses);
+		return $inventoriesDao->getAllWhere($whereClauseGroup);
+	}
+
+	
 	/*****************************************************************************\
 	 *                            Utility Functions                              *
 	 *         Not exposed to frontend, just helpful for internal use.           *
