@@ -1,9 +1,8 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div class="neg-marg dashboard" ng-if="pi">
-
 	<div class="well almost-full">
 		<div class="card almost-full parcels">
-			<h3 class="card-header padding parcels"><i class="icon-calendar"></i>Quarterly Inventory for {{inventory.Quarterly_inventory.Start_date | dateToISO}} - {{inventory.Quarterly_inventory.End_date | dateToISO}}</h3>
+			<h3 class="card-header padding parcels"><i class="icon-calendar"></i>Quarterly Inventory for {{pi_inventory.Quarterly_inventory.Start_date | dateToISO}} - {{pi_inventory.Quarterly_inventory.End_date | dateToISO}}</h3>
 		<div class="fake-table striped bordered">
 			<div class="table-header">
 				<h3 style="width: 7%;">Authorized Isotopes</h3>
@@ -19,7 +18,7 @@
 				<h3>Actual Amount on Hand</h3>
 			</div>
 
-			<div class="table-row" ng-repeat="amount in inventory.Quarterly_isotope_amounts">
+			<div class="table-row" ng-repeat="amount in pi_inventory.Quarterly_isotope_amounts">
 			<!--Class: "QuarterlyIsotopeAmount",
                                                                             Quarterly_inventory_id: null,
                                                                             Authorization_id: "2",

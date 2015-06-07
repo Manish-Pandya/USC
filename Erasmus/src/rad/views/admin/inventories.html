@@ -1,13 +1,9 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:piInventoriesPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
-
 <div class="right-column">
-	<div class="well half search-tools">
-		<input class="left-nav-typeahead" typeahead-on-select='getInventoriesByPiId($item.Key_id)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
-	</div>
-	<div class="well two-thirds">
-		<h1><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h1>
+	<div class="well half">
+		<h2><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h2>
 		<div class="card full">
 			<div class="fake-table striped bordered">
 				<div class="table-header">
@@ -44,7 +40,29 @@
 			</div>
 		</div>
 	</div>
-			<pre>{{piInventories | json}}</pre>
 
+	<div class="well half search-tools">
+		<h2><i class="fa fa-calendar"></i>Find Inventories by P.I.</h2>
+		<input class="left-nav-typeahead" typeahead-on-select='getInventoriesByPiId($item.Key_id)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
+
+		<div ng-if="piInventories" class="card full">
+			<div class="fake-table striped bordered">
+				<div class="table-header">
+					<h3>Start Date</h3>
+					<h3>End Date</h3>
+					<h3>Sign Off Date</h3>
+					<h3>Status</h3>
+					<h3>Details</h3>
+				</div>
+				<div class="table-row" ng-repeat="inventory in piInventories">
+					<div>{{inventory.Quarterly_inventory.Start_date | dateToISO   }}</div>
+					<div>{{inventory.Quarterly_inventory.End_date | dateToISO   }}</div>
+					<div>{{inventory.Sign_off_date | dateToISO   }}</div>
+					<div>{{inventory.Status}}</div>
+					<div><a class="btn btn-info left" ui-sref="radmin-quarterly-inventory({pi_inventory: inventory.Key_id})"><i class="icon-out"></i>View</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 

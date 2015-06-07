@@ -128,6 +128,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'radmin-quarterly-inventory',
+                        Label: 'Radiation Administration -- Quarterly Inventories',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -2075,7 +2080,7 @@ angular
                             dataStoreManager.store(returnedInventory);
                             return dataStoreManager.getById("QuarterlyInventory", returnedInventory.Key_id);
                         },
-                        af.setError('The Quarterly Inventory could not be saved')
+                        af.setError('The Quarterly Inventory could not be retrieved.')
                     )
             }
             af.getQuartleryInventoriesByDateRange = function(startDate, endDate){
@@ -2108,6 +2113,20 @@ angular
                         .then(
                             function(returned){
                                 var inventories = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                                return inventories;
+                            },
+                            af.setError("Couldn't get Quarterly Inventories for the selected Principal Investigator.")
+                        )
+            }
+
+            af.getPIInventoryIdById = function(id){
+                af.clearError();
+                var urlSegment = 'getPIInventoryIdById&piId=' + id;
+                return genericAPIFactory.read(urlSegment)
+                        .then(
+                            function(returned){
+                                var inventories = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                                dataStoreManager.store(inventories);
                                 return inventories;
                             },
                             af.setError("Couldn't get Quarterly Inventories for the selected Principal Investigator.")

@@ -50,9 +50,16 @@ angular
         templateUrl: "views/admin/disposals.html",
         controller: "disposalCtrl"
       })
+      //admin overview for a QuarterlyInventories
       .state('radmin.inventories', {
         url: "/inventories",
         templateUrl: "views/admin/inventories.html",
+        controller: "InventoriesCtrl"
+      })
+      //detail admin view for a single PIQuarterlyInventory
+      .state('radmin-quarterly-inventory', {
+        url:'/admin/pi-quarterly-inventory:pi_inventory',
+        templateUrl: "views/pi/quarterly-inventory.html",
         controller: "InventoriesCtrl"
       })
       .state('admin-pickups', {
