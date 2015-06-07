@@ -1653,7 +1653,17 @@ class Rad_ActionManager extends ActionManager {
 		$inventoriesDao = $this->getDao(new PIQuarterlyInventory());
 		$clauses = array(new WhereClause("principal_investigator_id", "=", $piId));
 		$whereClauseGroup = new WhereClauseGroup($clauses);
-		return $inventoriesDao->getAllWhere($whereClauseGroup);
+		$inventories=  $inventoriesDao->getAllWhere($whereClauseGroup);
+		
+    	$entityMaps = array();
+    	$entityMaps[] = new EntityMap("lazy", "getQuarterly_isotope_amounts");
+    	$entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
+    	 
+    	foreach($inventories as $inventory){
+    		$inventory->setEntityMaps($entityMaps);
+    	}
+		
+    	return $inventories;
 	}
 
 	
