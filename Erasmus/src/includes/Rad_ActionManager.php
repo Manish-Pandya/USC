@@ -1486,7 +1486,7 @@ class Rad_ActionManager extends ActionManager {
 		$amounts = array();
 		foreach($pi->getAuthorizations() as $authorization){
 			$quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
-	
+
 			//do we already have a QuarterlyIsotopeAmount?
 			$whereClauseGroup = new WhereClauseGroup();
 			$clauses = array(
@@ -1495,10 +1495,10 @@ class Rad_ActionManager extends ActionManager {
 			);
 				
 			$whereClauseGroup->setClauses($clauses);
-			$amounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+			$oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
 	
-			if($amounts != NULL){
-				$newAmount = $amounts[0];
+			if($oldAmounts != NULL){
+				$newAmount = $oldAmounts[0];
 			}else{
 				$newAmount = new QuarterlyIsotopeAmount();
 			}				
@@ -1520,31 +1520,72 @@ class Rad_ActionManager extends ActionManager {
 			if($isotopeFound == false){
 				$newAmount->setStarting_amount(0);
 			}
+		
 			$newAmount->setIs_active(true);
-			$LOG->debug($piInventory);
 			$newAmount->setAuthorization_id($authorization->getKey_id());
 			$newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
 			
 			$newAmount = $quarterlyAmountDao->save($newAmount);
-				
-			//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
-			$solidSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setSolid_waste($solidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 4));
-				
-			//get liquid amounts
-			$liquidSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setLiquid_waste($liquidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 1));
-				
-			//get scint vial amounts
-			$svSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setLiquid_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
+			
+			//calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+			$newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
+
+			$amounts[] = $newAmount;				
 	
-			$amounts[] = $newAmount;
-				
 		}
-		$LOG->debug($amounts);
+		
 		$piInventory->setQuarterly_isotope_amounts($amounts);
 		return $piInventory;
+	}
+	
+	/**
+	 * * calculate the values for the decorator properties of a QuarterlyInventoryAmount
+	 * @param QuarterlyIsotopeAmount $amount
+	 * @param string $startDate
+	 * @param string $endDate
+	 */
+	private function calculateQuarterlyAmount($amount, $startDate, $endDate){
+		
+		//get the total ordered since the previous inventory
+		$ordersDao = $this->getDao($amount);
+		//get parcels for this QuarterlyIsotopsAmount's authorization that have an RS ID for the given dates 
+		$amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, true));
+		
+		
+		//get the total transfered in since the previous inventory
+		$transferInDao = $this->getDao($amount);
+		//get parcels for this QuarterlyIsotopsAmount's authorization that DON'T have an RSID for the given dates
+		$amount->setTransfer_in($transferInDao->getTransferAmounts($startDate, $endDate, false));
+		
+		
+		//get the total transfered out since the previous inventory
+		//??what is a tranfer out?
+		$amount->setTransfer_out(0);
+		
+		//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
+		$solidSumDao = $this->getDao($amount);
+		$amount->setSolid_waste($solidSumDao->getUsageAmounts( $startDate, $endDate, 4));
+		
+		//get liquid amounts
+		$liquidSumDao = $this->getDao($amount);
+		$amount->setLiquid_waste($liquidSumDao->getUsageAmounts( $startDate, $endDate, 1));
+		
+		//get scint vial amounts
+		$svSumDao = $this->getDao($amount);
+		$amount->setScint_vial_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 3));
+		
+		//get other amounts
+		$svSumDao = $this->getDao($amount);
+		$amount->setOther_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 5));
+		
+		//calculate the amount currently on hand
+		$totalIn = $amount->getStarting_amount() + $amount->getTransfer_in() + $amount->getTotal_ordered();
+		$totalOut = $amount->getTransfer_out() + $amount->getSolid_waste() + $amount->getLiquid_waste() + $amount->getOther_waste() + $amount->getScint_vial_waste();
+		
+		$amount->setOn_hand($totalIn - $totalOut);
+		
+		return $amount;
+		
 	}
 	
 	public function getCurrentPIInventory($piId){
@@ -1612,20 +1653,13 @@ class Rad_ActionManager extends ActionManager {
 		
 			$newAmount = $quarterlyAmountDao->save($newAmount);
 		
-			//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
-			$solidSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setSolid_waste($solidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 4));
+			//calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+			$newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
 		
-			//get liquid amounts
-			$liquidSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setLiquid_waste($liquidSumDao->getUsageAmounts($authorization, $startDate, $endDate, 1));
-		
-			//get scint vial amounts
-			$svSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setScint_vial_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
-		
-			$newAmount->getAuthorization();
-			
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("eager", "getIsotope");
+			$newAmount->getAuthorization()->setEntityMaps($entityMaps);
+				
 			$amounts[] = $newAmount;
 		
 		}

@@ -16,10 +16,10 @@ include_once 'RadCrud.php';
 
     /** Key/Value array listing column names and their types */
     protected static $COLUMN_NAMES_AND_TYPES = array(
-        "quarterly_inventory_id" => "integer",
+        "quarterly_inventory_id" 	=> "integer",
     	"starting_amount"			=> "float", 
     	"ending_amount"				=> "float",
-    	"authorization_id"				=> "int",   	
+    	"authorization_id"			=> "int",   	
     		
         //GenericCrud
         "key_id"                    => "integer",

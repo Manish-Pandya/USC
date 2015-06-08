@@ -111,8 +111,6 @@ include_once 'RadCrud.php';
 	}	    
 
 	public function getQuarterly_isotope_amounts(){
-		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->debug($this);
 		if($this->quarterly_isotope_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			$this->quarterly_isotope_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$ISOTOPE_AMOUNTS_RELATIONSHIP));
