@@ -261,7 +261,7 @@ class GenericDAO {
 		$this->LOG->debug($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		$this->LOG->debug($sum);
-		if($sum == NULL)$sum = 0;
+		if($sum == NULL)$sum = "0";
 		return $sum;
 	}
 

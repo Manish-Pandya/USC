@@ -2138,6 +2138,7 @@ angular
                 var urlSegment = 'getCurrentPIInventory&piId=' + piKeyid;
                 return genericAPIFactory.read( urlSegment )
                         .then( function( returnedPromise ) {
+                            /*
                             returnedPromise.data.Quarterly_isotope_amounts[0] = {
                                                                             Class: "QuarterlyIsotopeAmount",
                                                                             Quarterly_inventory_id: null,
@@ -2173,7 +2174,7 @@ angular
                                                                                 Is_active: true
                                                                             }
                                                                         }
-
+                            */
                             return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                         });
             }

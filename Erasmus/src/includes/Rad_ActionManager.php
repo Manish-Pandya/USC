@@ -1423,7 +1423,6 @@ class Rad_ActionManager extends ActionManager {
 				$piInventories[] = $piInventory;
 			}
 		}
-		$LOG->debug($piInventories);
 		
 		$inventory->setPi_quarterly_inventories($piInventories);
 		return $inventory;	
@@ -1447,6 +1446,8 @@ class Rad_ActionManager extends ActionManager {
 			
 			$inventoryDao = $this->getDao(new QuarterlyInventory());
 			$inventory = $inventoryDao->getById($inventoryId);
+			$startDate = $inventory->getStart_date();
+			$endDate = $inventory->getEnd_date();
 			$pi = $this->getPIById($piId, false);			
 			
 		}
@@ -1495,22 +1496,20 @@ class Rad_ActionManager extends ActionManager {
 				
 			$whereClauseGroup->setClauses($clauses);
 			$amounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
-				
+	
 			if($amounts != NULL){
 				$newAmount = $amounts[0];
 			}else{
 				$newAmount = new QuarterlyIsotopeAmount();
-			}
-				
-			$newAmount->setAuthorization_id($authorization->getKey_id());
-				
+			}				
+			
 			//boolean to determine if this isotope has been accounted for
 			$isotopeFound = false;
 				
 			//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
 			if($mostRecentIntentory != null){
 				foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-					if($amount->getIsotope_id() == $authorization->getIsotope_id()){
+					if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
 						$newAmount->setStarting_amount($amount->getEnding_amount());
 						$isotopeFound = true;
 					}
@@ -1522,7 +1521,10 @@ class Rad_ActionManager extends ActionManager {
 				$newAmount->setStarting_amount(0);
 			}
 			$newAmount->setIs_active(true);
-				
+			$LOG->debug($piInventory);
+			$newAmount->setAuthorization_id($authorization->getKey_id());
+			$newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
+			
 			$newAmount = $quarterlyAmountDao->save($newAmount);
 				
 			//subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
@@ -1540,7 +1542,7 @@ class Rad_ActionManager extends ActionManager {
 			$amounts[] = $newAmount;
 				
 		}
-		
+		$LOG->debug($amounts);
 		$piInventory->setQuarterly_isotope_amounts($amounts);
 		return $piInventory;
 	}
@@ -1559,6 +1561,9 @@ class Rad_ActionManager extends ActionManager {
 		$piInventoryDao = $this->getDao(new PIQuarterlyInventory());
 		$LOG->debug($pi);		
 		$inventory = end($pi->getQuarterly_inventories());
+		$qinventory = $inventory->getQuarterly_inventory();
+		$startDate = $qinventory->getStart_date();
+		$endDate = $qinventory->getEnd_date();
 		if($inventory == NULL){
 			return NULL;
 		}		
@@ -1598,6 +1603,7 @@ class Rad_ActionManager extends ActionManager {
 					}
 				}
 			}
+
 		
 			//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
 			if($isotopeFound == false){
@@ -1616,7 +1622,7 @@ class Rad_ActionManager extends ActionManager {
 		
 			//get scint vial amounts
 			$svSumDao = $this->getDao(new ParcelUseAmount());
-			$newAmount->setLiquid_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
+			$newAmount->setScint_vial_waste($svSumDao->getUsageAmounts($authorization, $startDate, $endDate, 3));
 		
 			$newAmount->getAuthorization();
 			

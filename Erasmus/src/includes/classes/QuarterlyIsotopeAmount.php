@@ -45,6 +45,12 @@ include_once 'RadCrud.php';
 	private $authorization_id;
 	private $authorization;
 		
+	private $total_ordered;
+	
+	private $transfer_in;
+	
+	private $transfer_out;
+		
 	private $solid_waste;
 	
 	private $liquid_waste;
@@ -52,6 +58,8 @@ include_once 'RadCrud.php';
 	private $scint_vial_waste;
 	
 	private $other_waste;
+	
+	private $on_hand;
 	
     public function __construct() {
 
@@ -76,7 +84,7 @@ include_once 'RadCrud.php';
 		return $this->pi_quarterly_inventory_id;
 	}
 	public function setQuarterly_inventory_id($quarterly_inventory_id) {
-		$this->pi_quarterly_inventory_id = pi_quarterly_inventory_id;
+		$this->pi_quarterly_inventory_id = $quarterly_inventory_id;
 	}
 	
 	public function getAuthorization_id() {
@@ -103,6 +111,16 @@ include_once 'RadCrud.php';
 	public function setStarting_amount($starting_amount) {
 		$this->starting_amount = $starting_amount;
 	}
+	
+	
+	public function getTotal_ordered(){return $this->total_ordered;}
+	public function setTotal_ordered($total_ordered){$this->total_ordered = $total_ordered;}
+		
+	public function getTransfer_in(){return $this->transfer_in;}
+	public function setTransfer_in($transfer_in){$this->transfer_in = $transfer_in;}
+	
+	public function getTransfer_out(){return $this->transfer_out;}
+	public function setTransfer_out($transfer_out){$this->transfer_out = $transfer_out;}
 	
 	public function getEnding_amount() {
 		return $this->ending_amount;
@@ -140,7 +158,12 @@ include_once 'RadCrud.php';
 		$this->other_waste = $other_waste;
 	}
 	
-	
+	public function getOn_hand() {
+		return $this->on_hand;
+	}
+	public function setOn_hand($on_hand) {
+		$this->on_hand = $on_hand;
+	}
 	
 }
 ?>

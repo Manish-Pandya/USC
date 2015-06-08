@@ -30,7 +30,7 @@ angular.module('00RsmsAngularOrmApp')
         return af.getQuartleryInventory(pi.Key_id)
                   .then(
                     function(inventory){
-                      $scope.inventory = inventory;
+                      $scope.pi_inventory = inventory;
                     }
                   )
       }
