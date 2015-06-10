@@ -1,10 +1,30 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:piInventoriesPromise,message:'Loading Quarterly Inventories',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:QuarterlyInventorySaving,message:'Creating Quarterly Inventory',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
 	<div class="well half">
-		<h2><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h2>
-		<div class="card full">
+		<h2><i class="fa fa-calendar"></i>Create Quarterly Inventory</h2>
+			<form class="form form-inline full" style="padding:20px; 0">
+				<div class="control-group" style="width:33%">
+				     <label class="control-label" for="inputEmail">End of quarter:</label>
+				     <div class="controls" style="width:33%">
+						<input ng-model="endDate">
+				        <span class="help-block" style="">mm/dd/yy</span>
+					</div>
+				</div>
+				<div class="control-group">
+				     <label class="control-label" for="inputEmail">Due Date:</label>
+				     <div class="controls">
+						<input ng-model="dueDate">
+				        <span class="help-block" style="">mm/dd/yy</span>
+					</div>
+				</div>
+				
+				<a style="margin: 23px 16px;" ng-click="createInventory(endDate, dueDate)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
+			</form>		
+		<h2 ng-if="inventory"><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h2>
+		<div ng-if="inventory" class="card full">
 			<div class="fake-table striped bordered">
 				<div class="table-header">
 					<h3>Start Date</h3>
@@ -19,7 +39,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="card full">
+		<div class="card full" ng-if="inventory">
 			<div class="fake-table striped bordered">
 				<div class="table-header">
 					<h3>Principal Investigator</h3>

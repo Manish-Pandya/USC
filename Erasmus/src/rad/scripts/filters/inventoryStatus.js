@@ -4,6 +4,10 @@ angular.module('00RsmsAngularOrmApp')
 	  		if(!piInventories)return;
 	  		var i = piInventories.length;
 	  		if(inventory.Due_date)var dueDate = convenienceMethods.getDate(inventory.Due_date);
+			if(!dueDate){
+				alert('no due date');
+				return piInventories;
+			}
 			var curDate = new Date();
 	  		while(i--){
 	  			var piInventory = piInventories[i];

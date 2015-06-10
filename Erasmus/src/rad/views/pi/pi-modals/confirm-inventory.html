@@ -1,0 +1,10 @@
+<div class="modal-header pickups" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px;">Confirm Quarterly Inventory</h2>
+</div>
+  <div class="modal-body">
+      <p>By clicking Confirm, you affirm that the Quarterly Inventory presented on this page accurately reflects the amounts of each authorized isotope present in your lab(s), and that liquid, solid, scintillation vial, and other waste amounts are accurate for each authorized isotope.  If any of these values is incorrect, please visit your <a ui-sref="use-log({pi: modalData.PIQuarterlyInventory.Principal_investigator.Key_id})">use log</a> to make corrections.</p>
+  </div>
+<div class="modal-footer">
+  <a class="btn btn-large btn-success left" ng-click="savePiQuarterlyInventory(modalData.PIQuarterlyInventory, modalData.PIQuarterlyInventoryCopy)"><i class="icon-checkmark"></i>Confirm</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

@@ -13,6 +13,7 @@ PrincipalInvestigator.prototype = {
 		{method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
+        {method:"loadWasteBags", boolean:"SolidsContainers"},
 		{method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
 	],
 

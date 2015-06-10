@@ -107,7 +107,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 			"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", ""),
 			"getPiInventory"				 => new ActionMapping("getPiInventory", "", ""),
 			"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", ""),
-			"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","")
+			"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","",""),
+			"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","",""),
 		);
 	}
 }

@@ -1,41 +1,46 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div class="neg-marg dashboard" ng-if="pi">
+<div cg-busy="{promise:PIQuarterlyInventorySaving,message:'Saving Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div class="neg-marg dashboard" ng-if="pi_inventory">
 	<div class="well almost-full">
-		<div class="card almost-full parcels">
-			<h3 class="card-header padding parcels"><i class="icon-calendar"></i>Quarterly Inventory for {{pi_inventory.Quarterly_inventory.Start_date | dateToISO}} - {{pi_inventory.Quarterly_inventory.End_date | dateToISO}}</h3>
-		<div class="fake-table striped bordered">
-			<div class="table-header">
-				<h3 style="width: 7%;">Authorized Isotopes</h3>
-				<h3>Limits</h3>
-				<h3>Last Quarter Amount</h3>				
-				<h3>Total Ordered</h3>
-				<h3>Transfer In</h3>
-				<h3>Transfer Out</h3>
-				<h3>Solid Waste</h3>
-				<h3>Liquid Waste</h3>
-				<h3>Scintillation Vial Waste</h3>
-				<h3>Other Waste</h3>
-				<h3>Actual Amount on Hand</h3>
-			</div>
+		<h2 class="card-header padding parcels">
+			<i class="fa fa-calendar-o"></i>{{pi_inventory.Principal_investigator.User.Name}}'s Quarterly Inventory for {{pi_inventory.Quarterly_inventory.Start_date | dateToISO}} - {{pi_inventory.Quarterly_inventory.End_date | dateToISO}}
+			<a ng-if="!pi_inventory.Sign_off_date" class="btn btn-success left" ng-click="openModal(pi_inventory)"><i class="icon-checkmark"></i>Confirm Inventory</a>
+			<a class="btn btn-info left" ui-sref="use-log({pi: pi_inventory.Principal_investigator.Key_id})"><i class="icon-list-2"></i>Use Logs</a>
+		</h2>
+		<h2 ng-if="pi_inventory.Sign_off_date" class="alert almost-full alert-success">Inventory Confirmed {{pi_inventory.Sign_off_date | dateToISO}}</h2>
 
-			<div class="table-row" ng-repeat="amount in pi_inventory.Quarterly_isotope_amounts">
-				<div>{{amount.Authorization.Isotope.Name}}</div>
-				<div>{{amount.Authorization.Max_quantity}} mCi</div>
-				<div>{{amount.Starting_amount}} mCi</div>
-				<div>{{amount.Ordered}} mCi</div>
-				<div>{{amount.Transfer_in}} mCi</div>
-				<div>0 mCi</div>
-				<div>{{amount.Solid_waste}} mCi</div>
-				<div>{{amount.Liquid_waste}} mCi</div>
-				<div>{{amount.Scint_vial_waste}} mCi</div>
-				<div>{{amount.Other_waste}} mCi</div>
-				<div>{{amount.On_hand}} mCi</div>
-			</div>
-					</div>
+		<div class="card almost-full parcels">			
 
+			<div class="fake-table striped bordered">
+				<div class="table-header">
+					<h3 style="width: 7%;">Authorized Isotopes</h3>
+					<h3>Limits</h3>
+					<h3>Last Quarter Amount</h3>				
+					<h3>Total Ordered</h3>
+					<h3>Transfer In</h3>
+					<h3>Transfer Out</h3>
+					<h3>Solid Waste</h3>
+					<h3>Liquid Waste</h3>
+					<h3>Scintillation Vial Waste</h3>
+					<h3>Other Waste</h3>
+					<h3>Actual Amount on Hand</h3>
+				</div>
+
+				<div class="table-row" ng-repeat="amount in pi_inventory.Quarterly_isotope_amounts">
+					<div>{{amount.Authorization.Isotope.Name}} ({{amount.Authorization.Form}})</div>
+					<div>{{amount.Authorization.Max_quantity}} mCi</div>
+					<div>{{amount.Starting_amount}} mCi</div>
+					<div>{{amount.Total_ordered}} mCi</div>
+					<div>{{amount.Transfer_in}} mCi</div>
+					<div>0 mCi</div>
+					<div>{{amount.Solid_waste}} mCi</div>
+					<div>{{amount.Liquid_waste}} mCi</div>
+					<div>{{amount.Scint_vial_waste}} mCi</div>
+					<div>{{amount.Other_waste}} mCi</div>
+					<div>{{amount.On_hand}} mCi</div>
+				</div>
+			</div>
 		</div>
-	
-</div>
-
-
 	</div>
+</div>

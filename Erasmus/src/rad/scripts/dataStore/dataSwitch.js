@@ -120,6 +120,7 @@ angular
 
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
+                            console.log(returnedPromise.data.Class);
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
                             if(recurse){
                                 dataSwitch.recursivelyInstantiate([instatedObjects]);
@@ -136,9 +137,10 @@ angular
 
             dataSwitch.recursivelyInstantiate = function(instatedObjects){
                 var i = instatedObjects.length;
+                console.log(instatedObjects);
                 while(i--){
                     for(var prop in instatedObjects[i]){
-                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] ){
+                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] && !(instatedObjects[i][prop][0] instanceof window[instatedObjects[i][prop][0].Class])){
                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataStoreManager.store(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);

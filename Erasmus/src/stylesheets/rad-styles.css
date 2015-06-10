@@ -5,6 +5,19 @@
 *   RAD STYLES;
 *
 **********************************************************/
+.form-inline .control-group{
+  float:left;
+}
+.rsmsCenterIconContainer a {
+  text-align: center;
+}
+.rsmsCenterIconContainer a i {
+  width: auto;
+  height: 250px;
+  color: white;
+  font-size: 220px;
+  line-height: normal;
+}
 .neg-marg{
   margin:0 -30px;
 }
@@ -14,7 +27,7 @@
 }
 .dashboard{
   margin:0 -70px;
-  padding-top: 65px;
+  padding-top: 75px;
 }
 .hover-white:hover{
   background:white !important;  
@@ -324,6 +337,9 @@ div.fake-table.auto-width{
   width: auto;
   padding: 20px 2.5%;
 }
+div.fake-table .table-row > div{
+  font-weight: 500px;
+}
 div.fake-table.wipe-test-table .table-row >div{
   min-width:150px;
 }
@@ -351,6 +367,7 @@ div.fake-table .table-row > div{
   padding:10px;
   font-size:16px;
   vertical-align: middle;
+  font-weight: 600 !important;
 }
 div.fake-table.condensed .table-row > div{
   display: table-cell;
@@ -371,8 +388,12 @@ div.fake-table .table-row div input[class*="span"]{
 div.bordered .table-row {
   border-bottom: 1px solid #dddddd;
 }
-div.fake-table.bordered .table-row > div:first-child{
- // border:none;
+div.fake-table.bordered .table-row > div, div.fake-table.bordered .table-header > h3 {
+  border-left: 2px solid #E4E4E4;
+  border-bottom: 2px solid #E4E4E4;
+}
+div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .table-header > h3:first-child {
+  border-left: none;
 }
 .well >h1 > i {
   margin-right: 10px;
@@ -389,6 +410,7 @@ div.fake-table.bordered .table-row > div:first-child{
 .table-header > h3 {
   border-top: 3px solid #ddd;
   border-bottom: 3px solid #ddd;
+  vertical-align: bottom;
 }
 div.fake-table.no-bg .table-row, div.fake-table.no-bg .table-row div {
   padding-top: 0;

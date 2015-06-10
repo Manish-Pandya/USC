@@ -45,7 +45,7 @@ angular
                     angular.extend( modelledObject, json );
 
                     //create our getters and setters, if we don't already have them
-                    modelledObject = inflator.createEntityAccessors( modelledObject );
+                    //modelledObject = inflator.createEntityAccessors( modelledObject );
 
                     // call each of this object's eager accessors
                     if(modelledObject.eagerAccessors){
@@ -67,7 +67,9 @@ angular
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
+                        console.log(json);
                         while(i--){
+                            console.log(i);
                             var currentJsonObj = json[i];
                             //if we have haven't passed a string, get the the class name of the object 
                             if( !objectFlavor ) objectFlavor = currentJsonObj.Class;

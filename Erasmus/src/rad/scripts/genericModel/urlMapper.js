@@ -41,6 +41,7 @@
         'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getAllMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
         'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
         'CarboyReadingAmount'   : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
+        'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"    },
 
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   }

@@ -12,20 +12,28 @@ angular.module('00RsmsAngularOrmApp')
 
   		var af = actionFunctionsFactory;
       var getInventory = function(){
+        /*
         console.log($state);
         $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", $state.params.pi_inventory);
         console.log($scope.pi_inventory);
+        */
+        af.getQuartleryInventory(1)
+          .then(
+            function(){                      
+              $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory",1);
+            }
+          )
       }
   		$scope.af = af;
   		$scope.inventoryPromise = af.getMostRecentInventory()
   			.then(
   				function(inventory){
   					$scope.inventory = inventory;
+            console.log(inventory);
   				},
   				function(){}
   			)
 
-      console.log($state.current);
       if($state.current.name == 'radmin-quarterly-inventory'){
         getInventory();
       }
@@ -40,5 +48,15 @@ angular.module('00RsmsAngularOrmApp')
             )
       }
 
+      $scope.createInventory = function(endDate, dueDate){
+        af.createQuarterlyInventory(endDate, dueDate)
+          .then(
+            function(inventory){
+              $scope.inventory = inventory;
+              console.log(inventory);
+            },
+            function(){}          
+          );
+      }
 
-  });
+  });IY6

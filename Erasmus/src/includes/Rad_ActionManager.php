@@ -345,14 +345,15 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
-		$entityMaps[] = new EntityMap("eager", "getActiveParcels");
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
 		$entityMaps[] = new EntityMap("eager", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 		
+		$entityMaps[] = new EntityMap("eager", "getActiveParcels");		
 				
 		$pi->setEntityMaps($entityMaps);
 		$LOG = Logger::getLogger(__CLASS__);
@@ -1372,17 +1373,17 @@ class Rad_ActionManager extends ActionManager {
 	 * 
 	 */
 
-	function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
+	function createQuarterlyInventories( $dueDate = NULL, $endDate = null ){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
-		$startDate = $this->getValueFromRequest('startDate', $startDate);		
+		$dueDate = $this->getValueFromRequest('dueDate', $dueDate);		
 		$endDate = $this->getValueFromRequest('endDate', $endDate);
 		
-		if( $startDate == NULL && $endDate == NULL ) {
-			return new ActionError("Request parameters 'startDate' and 'endDate' were not provided");
+		if( $dueDate == NULL && $endDate == NULL ) {
+			return new ActionError("Request parameters 'dueDate' and 'endDate' were not provided");
 		}
-		if( $startDate == NULL ) {
-			return new ActionError("No request parameter 'startDate' was provided");
+		if( $dueDate == NULL ) {
+			return new ActionError("No request parameter 'dueDate' was provided");
 		}
 		if( $endDate == NULL ) {
 			return new ActionError("No request parameter 'endDate' was provided");
@@ -1393,10 +1394,10 @@ class Rad_ActionManager extends ActionManager {
 		//create a master inventory, since all pis will have one with the same dates
 		$inventoryDao = $this->getDao(new QuarterlyInventory());
 		
-		//make sure we only have one inventory for the given start and end dates
+		//make sure we only have one inventory for the given due and end dates
 		$whereClauseGroup = new WhereClauseGroup();
 		$clauses = array(
-				new WhereClause('start_date','=', $startDate ),
+				new WhereClause('due_date','=', $dueDate ),
 				new WhereClause('end_date', '=', $endDate)
 		);	
 		$whereClauseGroup->setClauses($clauses);
@@ -1409,7 +1410,20 @@ class Rad_ActionManager extends ActionManager {
 		//we don't have one, so make one
 		else{
 			$inventory = new QuarterlyInventory();
-			$inventory->setStart_date($startDate);
+			//get the last inventory so we can set the start date, if there is one
+			$inventoryDao = $this->getDao(new QuarterlyInventory());
+			$previousInventory = end($inventoryDao->getAll());
+			if($previousInventory == NULL){
+				$LOG->debug('was null');
+				$time = strtotime("-1 year", time());
+				$inventory->setStart_date(date('Y-m-d H:i:s', $time));
+			}else{
+				$LOG->debug('was not null');
+				
+				$inventory->setStart_date($previousInventory->getEnd_date());
+			}
+			
+			$inventory->setDue_date($dueDate);
 			$inventory->setEnd_date($endDate);
 			$inventory->setIs_active(true);
 			$inventory = $inventoryDao->save($inventory);
@@ -1591,7 +1605,6 @@ class Rad_ActionManager extends ActionManager {
 	public function getCurrentPIInventory($piId){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		
-		$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
 		$piId = $this->getValueFromRequest('piId', $piId);
 		
 		if( $piId == NULL ) {
@@ -1599,13 +1612,16 @@ class Rad_ActionManager extends ActionManager {
 		}else{
 			$pi = $this->getPIById($piId, false);	
 		}
-		$piInventoryDao = $this->getDao(new PIQuarterlyInventory());
-		$LOG->debug($pi);		
-		$inventory = end($pi->getQuarterly_inventories());
-		$qinventory = $inventory->getQuarterly_inventory();
+
+		$pi_inventory = end($pi->getQuarterly_inventories());
+		$qinventory = $pi_inventory->getQuarterly_inventory();
 		$startDate = $qinventory->getStart_date();
 		$endDate = $qinventory->getEnd_date();
-		if($inventory == NULL){
+		//get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
+		//$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
+		$mostRecentIntentory = end($pi->getQuarterly_inventories());
+		
+		if($pi_inventory == NULL){
 			return NULL;
 		}		
 						
@@ -1618,40 +1634,38 @@ class Rad_ActionManager extends ActionManager {
 			$whereClauseGroup = new WhereClauseGroup();
 			$clauses = array(
 					new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-					new WhereClause('quarterly_inventory_id','=', $inventory->getKey_id() ),
+					new WhereClause('quarterly_inventory_id','=', $pi_inventory->getKey_id() ),
 			);
 		
 			$whereClauseGroup->setClauses($clauses);
-			$amounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
-		
-			if($amounts != NULL){
-				$newAmount = $amounts[0];
+			$oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);			
+			
+			if($oldAmounts != NULL){
+				$newAmount = $oldAmounts[0];
 			}else{
 				$newAmount = new QuarterlyIsotopeAmount();
-			}
-		
-			$newAmount->setAuthorization_id($authorization->getKey_id());
-		
-			//boolean to determine if this isotope has been accounted for
-			$isotopeFound = false;
-		
-			//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
-			if($mostRecentIntentory != null){
-				foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-					if($amount->getIsotope_id() == $authorization->getIsotope_id()){
-						$newAmount->setStarting_amount($amount->getEnding_amount());
-						$isotopeFound = true;
+				//boolean to determine if this isotope has been accounted for
+				$isotopeFound = false;
+				
+				//if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+				if($mostRecentIntentory != null){
+					foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+						if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
+							$newAmount->setStarting_amount($amount->getEnding_amount());
+							$isotopeFound = true;
+						}
 					}
 				}
+				
+				//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
+				if($isotopeFound == false){
+					$newAmount->setStarting_amount(0);
+				}
+				
+				$newAmount = $quarterlyAmountDao->save($newAmount);
 			}
-
-		
-			//there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
-			if($isotopeFound == false){
-				$newAmount->setStarting_amount(0);
-			}
-		
-			$newAmount = $quarterlyAmountDao->save($newAmount);
+			
+			$LOG->debug($newAmount);
 		
 			//calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
 			$newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
@@ -1663,8 +1677,8 @@ class Rad_ActionManager extends ActionManager {
 			$amounts[] = $newAmount;
 		
 		}
-		$inventory->setQuarterly_isotope_amounts($amounts);
 		
+		$pi_inventory->setQuarterly_isotope_amounts($amounts);
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
 		$entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
@@ -1672,10 +1686,10 @@ class Rad_ActionManager extends ActionManager {
 		$qIEntityMaps = array();
 		$qIEntityMaps[] = new EntityMap("lazy", "getPi_quarterly_inventories");
 		
-		$inventory->getQuarterly_inventory()->setEntityMaps($qIEntityMaps);
-		$inventory->setEntityMaps($entityMaps);
+		$pi_inventory->getQuarterly_inventory()->setEntityMaps($qIEntityMaps);
+		$pi_inventory->setEntityMaps($entityMaps);
 		
-		return $inventory;
+		return $pi_inventory;
 	}
 	
 	public function getMostRecentInventory(){
@@ -1685,6 +1699,7 @@ class Rad_ActionManager extends ActionManager {
 		$LOG->debug(end($inventoryDao->getAll("end_date")));
 		return end($inventoryDao->getAll("end_date"));
 	}
+	
 	
 	public function getInventoriesByPiId( $piId = NULL ){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
@@ -1705,6 +1720,43 @@ class Rad_ActionManager extends ActionManager {
 		
     	return $inventories;
 	}
+	
+	public function getPIInventoryById( $piId = NULL ){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$piId = $this->getValueFromRequest("piId", $piId);
+	
+		$inventoriesDao = $this->getDao(new PIQuarterlyInventory());
+		$clauses = array(new WhereClause("principal_investigator_id", "=", $piId));
+		$whereClauseGroup = new WhereClauseGroup($clauses);
+		$inventories=  $inventoriesDao->getAllWhere($whereClauseGroup);
+	
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getQuarterly_isotope_amounts");
+		$entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
+	
+		foreach($inventories as $inventory){
+			$inventory->setEntityMaps($entityMaps);
+		}
+	
+		return $inventories;
+	}
+	
+	
+	public function savePIQuarterlyInventory($inventory = NULL){
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to PIQuarterlyInventory', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new PIQuarterlyInventory());
+			$piq = $dao->save($decodedObject);
+			return $piq;
+		}
+	}
+
 
 	
 	/*****************************************************************************\

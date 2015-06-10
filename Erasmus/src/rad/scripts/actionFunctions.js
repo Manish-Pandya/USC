@@ -949,160 +949,8 @@ angular
 
             af.getRadPIById = function(id)
             {   
-                //no PI has been cached
-                if(!store.checkCollection( 'PrincipalInvestigator' )){
-                    //var segment = "getRadPIById&id="+id+"&rooms=true";
-                    return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
-                    return genericAPIFactory.read(segment)
-                        .then( function( returnedPromise) {
-                            var pi = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            store.store(pi);
-                            if(pi.Rooms && pi.Rooms.length){
-                                var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
-                                store.store(rooms);
-                                pi.Rooms = store.get('Room');  
-                            }
-                            if(pi.SolidsContainers && pi.SolidsContainers.length){
-                                var i = pi.SolidsContainers.length;
-                                while(i--){
-                                    var bags = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers[i].WasteBags );
-                                    store.store(bags);
-                                    console.log(store.get("WasteBag"));
-                                }
-
-                                var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
-                                store.store(containers);
-                                pi.SolidsContainers = store.get('SolidsContainer');
-                            }
-                            if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
-                                var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
-                                store.store(cycles);
-                                pi.CarboyUseCycles = store.get('CarboyUseCycle');
-                                var i = pi.CarboyUseCycles.length;
-                                var carboys = [];
-                                while(i--){
-                                    pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
-                                    carboys.push(pi.CarboyUseCycles[i].Carboy);
-                                }
-                                store.store(carboys);
-                            }
-                            if(pi.Authorizations && pi.Authorizations.length){
-                                var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
-                                store.store(auths);
-                                pi.Authorizations = store.get('Authorization');
-                            }
-                            if(pi.ActiveParcels && pi.ActiveParcels.length){
-                                var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
-                                store.store(parcels);
-                                pi.ActiveParcels = store.get('Parcel');
-                                var allUses = [];
-                                var allAmounts = [];
-                                var i = pi.ActiveParcels.length;
-                                while(i--){
-                                    if(pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length){
-                                        pi.ActiveParcels[i].ParcelUses = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses );
-                                        var j = pi.ActiveParcels[i].ParcelUses.length
-                                        while(j--){                                            
-                                            pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts );
-                                            allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts);
-                                        }
-                                        allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses);
-                                    }
-                                    if(allUses.length)store.store(allUses);
-                                    if(allAmounts.length)store.store(allAmounts);
-                                }
-
-                            }
-                            if(pi.PurchaseOrders && pi.PurchaseOrders.length){
-                                var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
-                                store.store(orders);
-                                pi.PurchaseOrders = store.get('PurchaseOrder');                            
-                            }
-                            if(pi.Pickups && pi.Pickups.length){
-                                var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
-                                store.store(pickups);
-                                pi.Pickups = store.get('Pickup');   
-                            }   
-                            if(pi.CurrentScintVialCollection && pi.CurrentScintVialCollection.length){
-                                var collections = modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollection );
-                                store.store(collections);
-                                pi.loadCurrentScintVialCollection();  
-                            }
-                            console.log(pi);
-                            store.store(pi);
-                            return pi;
-                        });
-
-                    }
-                    //PI has been cached
-                    else{
-                        var pi = store.getById('PrincipalInvestigator',id);
-                        if(pi.Rooms && pi.Rooms.length){
-                            var rooms = modelInflatorFactory.instateAllObjectsFromJson( pi.Rooms );
-                            store.store(rooms);
-                            pi.Rooms = store.get('Room');  
-                        }
-                        if(pi.SolidsContainers && pi.SolidsContainers.length){
-                            var containers = modelInflatorFactory.instateAllObjectsFromJson( pi.SolidsContainers );
-                            store.store(containers);
-                            pi.SolidsContainers = store.get('SolidsContainer');                             
-                        }
-                        if(pi.CarboyUseCycles && pi.CarboyUseCycles.length){
-                            var cycles = modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles );
-                            store.store(cycles);
-                            pi.CarboyUseCycles = store.get('CarboyUseCycle');
-                            var i = pi.CarboyUseCycles.length;
-                            var carboys = [];
-                            while(i--){
-                                pi.CarboyUseCycles[i].Carboy = modelInflatorFactory.instateAllObjectsFromJson(  pi.CarboyUseCycles[i].Carboy );
-                                carboys.push(pi.CarboyUseCycles[i].Carboy);
-                            }
-                            store.store(carboys);
-                        }
-                        if(pi.Authorizations && pi.Authorizations.length){
-                            var auths = modelInflatorFactory.instateAllObjectsFromJson( pi.Authorizations );
-                            store.store(auths);
-                            pi.Authorizations = store.get('Authorization');
-                        }
-                        if(pi.ActiveParcels && pi.ActiveParcels.length){
-                            var parcels = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels );
-                            store.store(parcels);
-                            pi.ActiveParcels = store.get('Parcel');
-                            var allUses = [];
-                            var allAmounts = [];
-                            var i = pi.ActiveParcels.length;
-                            while(i--){
-                                if(pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length){
-                                    pi.ActiveParcels[i].ParcelUses = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses );
-                                    var j = pi.ActiveParcels[i].ParcelUses.length
-                                    while(j--){                                            
-                                        pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts = modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts );
-                                        allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts);
-                                    }
-                                    allUses = allUses.concat(pi.ActiveParcels[i].ParcelUses);
-                                }
-                                if(allUses.length)store.store(allUses);
-                                if(allAmounts.length)store.store(allAmounts);
-                            }
-
-                        }
-                        if(pi.PurchaseOrders && pi.PurchaseOrders.length){
-                            var orders = modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders );
-                            store.store(orders);
-                            pi.PurchaseOrders = store.get('PurchaseOrder');                            
-                        }
-                        if(pi.Pickups && pi.Pickups.length){
-                            var pickups = modelInflatorFactory.instateAllObjectsFromJson( pi.Pickups );
-                            store.store(pickups);
-                            pi.Pickups = store.get('Pickup');   
-                        }
-                        console.log(pi)
-                        //return a promise so return type is consistent
-                        var defer = $q.defer();
-                        defer.resolve(pi);
-                        return defer.promise;
-                    }
-
+                //var segment = "getRadPIById&id="+id+"&rooms=true";
+                return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
             }
 
             af.getParcelUses = function(parcel)
@@ -2070,6 +1918,22 @@ angular
             **      QUARTERLY INVENTORIES
             **
             *********************************************************************************/
+            af.createQuarterlyInventory = function($endDate, $dueDate){
+                console.log($endDate);
+                console.log($dueDate);
+                var endDate = convenienceMethods.setMysqlTime(af.getDate($endDate));
+                var dueDate = convenienceMethods.setMysqlTime(af.getDate($dueDate));
+
+                var urlSegment = "createQuarterlyInventories&endDate="+endDate+"&dueDate="+dueDate;
+                return genericAPIFactory.read( urlSegment )
+                        .then(
+                            function(returned){
+                                console.log(returned);
+                                return  modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                            }
+                        )
+            }
+
             af.getMostRecentInventory = function(){
                 af.clearError();
                 var urlSegment = 'getMostRecentInventory';
@@ -2113,6 +1977,7 @@ angular
                         .then(
                             function(returned){
                                 var inventories = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                                store.store(inventories);
                                 return inventories;
                             },
                             af.setError("Couldn't get Quarterly Inventories for the selected Principal Investigator.")
@@ -2138,45 +2003,25 @@ angular
                 var urlSegment = 'getCurrentPIInventory&piId=' + piKeyid;
                 return genericAPIFactory.read( urlSegment )
                         .then( function( returnedPromise ) {
-                            /*
-                            returnedPromise.data.Quarterly_isotope_amounts[0] = {
-                                                                            Class: "QuarterlyIsotopeAmount",
-                                                                            Quarterly_inventory_id: null,
-                                                                            Authorization_id: "2",
-                                                                            Starting_amount: "129",
-                                                                            Ordered: "20",
-                                                                            Ending_amount: 80.9,
-                                                                            Solid_waste: 29,
-                                                                            Liquid_waste: 31.4,
-                                                                            Scint_vial_waste: 22.1,
-                                                                            Other_waste: null,
-                                                                            Transfer_in: 14.4,
-                                                                            Key_id: "2",
-                                                                            Date_created: "2015-06-01 03:37:47",
-                                                                            Date_last_modified: "2015-06-01 03:37:47",
-                                                                            Last_modified_user_id: null,
-                                                                            Created_user_id: null,
-                                                                            Is_active: false,
-                                                                            Authorization: {
-                                                                                Class: "Authorization",
-                                                                                Isotope_id: "2",
-                                                                                Isotope: {Name:"I-125"},
-                                                                                Principal_investigator_id: "1",
-                                                                                Max_quantity: "300",
-                                                                                Approval_date: null,
-                                                                                Revocation_date: null,
-                                                                                Form: null,
-                                                                                Key_id: "2",
-                                                                                Date_created: "0000-00-00 00:00:00",
-                                                                                Date_last_modified: "2015-05-30 20:21:58",
-                                                                                Last_modified_user_id: null,
-                                                                                Created_user_id: null,
-                                                                                Is_active: true
-                                                                            }
-                                                                        }
-                            */
-                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            var inventory = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            store.store(inventory);
+                            return inventory;
                         });
+            }
+
+            af.savePiQuarterlyInventory = function(inventory, copy)
+            {
+                af.clearError();                
+                copy.Sign_off_date = convenienceMethods.setMysqlTime(new Date());
+                return this.save(copy)
+                    .then(
+                        function(returnedPIQ){
+                            inventory.Sign_off_date = returnedPIQ.Sign_off_date;
+                            return returnedPIQ;
+                        },
+                        af.setError('The Inventory could not be saved')
+
+                    )
             }
    
 

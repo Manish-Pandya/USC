@@ -99,9 +99,7 @@ class Parcel extends RadCrud {
 		$entityMaps[] = new EntityMap("eager", "getParcelUses");
 		$entityMaps[] = new EntityMap("eager", "getRemainder");
 		$entityMaps[] = new EntityMap("eager", "getWipe_test");
-		
 		$this->setEntityMaps($entityMaps);
-
 	}
 
 	// Required for GenericCrud
