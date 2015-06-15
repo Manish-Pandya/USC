@@ -14,7 +14,7 @@ define('LOGIN_PAGE', 'login.php');
 if(isProduction()){
 	define('WEB_ROOT', '/rsms/');
 }else{
-	define('WEB_ROOT', '/Erasmus/src/');
+	define('WEB_ROOT', '/rsms/src/');
 }
 
 ////////////////////////////////////////////////////////////////////////////////
