@@ -4,7 +4,7 @@ session_start();
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
-	require_once('../Erasmus/src/Application.php');
+	require_once('../rsms/src/Application.php');
 }else{
     require_once('../../Application.php');
 }
