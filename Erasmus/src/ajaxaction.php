@@ -11,6 +11,7 @@
 
 //Setup basic action data
 //	$sessionDataSource and $actionName are defined here
+session_start();
 require_once( dirname(__FILE__) . '/action_setup.php');
 
 // Create Dispatcher (based on $_SESSION)

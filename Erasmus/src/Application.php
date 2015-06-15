@@ -62,7 +62,7 @@ ErrorHandler::init();
 
 //Check session for Admin flag
 function isAdminUser(){
-	return isset($_SESSION['USSER']) && $_SESSION['ADMIN'] == 'Y';
+	return isset($_SESSION['USER']) && $_SESSION['ADMIN'] == 'Y';
 }
 
 function securityCheck(){

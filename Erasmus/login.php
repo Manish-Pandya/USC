@@ -5,7 +5,7 @@ include('src/views/top_view.php');
 <form class="form form-horizontal" method="post" action="src/action.php" style="padding:20px; background:white;">
 	<?php if ($_SESSION['errors'] != null){ ?>
 		<div class="alert"><?php echo $_SESSION['errors']; ?></div>
-	<? }
+	<?php }
 	?>
 	<input type="hidden" name="action" value="loginAction">
 	<div class="form-group">
@@ -20,3 +20,6 @@ include('src/views/top_view.php');
 	    <button type="submit" name="submit" class="btn btn-large btn-success" id="password" style="padding:0 20px;">Login</button>
  	</div>
 </form>
+<?php
+include('src/views/top_view.php');
+?>

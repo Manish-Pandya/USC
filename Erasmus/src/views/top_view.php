@@ -1,10 +1,12 @@
 <?php
+session_start();
+
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
-	require_once('../Application.php');
+    require_once('../Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
-	require_once('Application.php');
+	require_once('../Erasmus/src/Application.php');
 }else{
-	require_once('../../Application.php');
+    require_once('../../Application.php');
 }
 
 echo '<script type="text/javascript">
@@ -12,7 +14,9 @@ var isProductionServer;';
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
+
 ?>
+
 </script>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,13 +38,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/jquery-ui.css">
 
-<!-- included fonts 
+<!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 -->
-<!-- included javascript libraries 
+<!-- included javascript libraries
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
-  
+
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 <!--
 <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
@@ -62,42 +66,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 
-
-<script>
-  $(function() {
-    $( ".sortable" ).sortable({
-      placeholder: "ui-state-highlight"
-    });
-    $( ".sortable" ).disableSelection();
-  });
-</script>
 </head>
 <body>
-<!-- main navigation  ng-app ng-controller="wrapperAppController"
 
-
-<div class="well">
-  <h3>Select a role</h3>
-  <ul>
-    <li ng-click="rbf.setRole('admin')">Admin</li>
-    <li ng-click="rbf.setRole('labContact')">Lab Contact</li>
-  </ul>
-  <h3>Current Role</h3>
-  <ul>
-    <li ng-repeat="role in rbf.roles">{{role}}</li>
-  </ul>
-</div> -->
-<!--
-<div class="navbar" id="nav">
-  <div class="navbar-inner">
-    <a class=" siteTitle brand" href="<?php echo WEB_ROOT?>views/RSMScenter.php">Research Safety Management System</a>
-    <ul class="nav">
-      <li class="divider-vertical"></li>
-      <li><a href="#">Link</a></li>
-      <li class="divider-vertical"></li>
-      <li><a href="#">Link</a></li>
-    </ul>
-  </div>
-</div>
--->
 <div class="container-fluid " id="wrapper">

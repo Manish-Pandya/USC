@@ -82,11 +82,11 @@ class ActionManager {
             // Make sure they're an Erasmus user by username lookup
             $dao = $this->getDao(new User());
             $user = $this->getUserById(1);
-			$LOG->debug($user);
             if ($user != null) {
                 // put the USER and ROLE into session
-                $_SESSION['USER'] = $user;
+                $_SESSION['USER'] = $user;                
                 $_SESSION['ROLE'] = $user->getRoles();
+                $LOG->debug($_SESSION);
                 //return $this->getCurrentUserRoles();
                 // return true to indicate success
                 return true;
