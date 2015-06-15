@@ -94,38 +94,40 @@ class ActionManager {
                 // successful LDAP login, but not an authorized Erasmus user, return false
                 return false;
             }
+        }else{
+        	// Hardcoded username and password for "emergency accounts"
+        	if($username === "EmergencyUser" && $password === "RSMS911") {
+        		$emergencyAccount = true;
+        	}
+        	else {
+        		$emergencyAccount = false;
+        	}
+        	
+        	
+        	$ldap = new LDAP();
+        	
+        	// if successfully authenticates by LDAP:
+        	if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
+        	
+        		// Make sure they're an Erasmus user by username lookup
+        		$dao = $this->getDao(new User());
+        	
+        		$user = $dao->getUserByUsername($username);
+        	
+        		if ($user != null) {
+        			// put the USER and ROLE into session
+        			$_SESSION['USER'] = $user;
+        			$_SESSION['ROLE'] = $user->getRole();
+        			// return true to indicate success
+        			return true;
+        		} else {
+        			// successful LDAP login, but not an authorized Erasmus user, return false
+        			return false;
+        		}
+        	}
         }
 
-        // Hardcoded username and password for "emergency accounts"
-        if($username === "EmergencyUser" && $password === "RSMS911") {
-            $emergencyAccount = true;
-        }
-        else {
-            $emergencyAccount = false;
-        }
-
-
-        $ldap = new LDAP();
-
-        // if successfully authenticates by LDAP:
-        if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
-
-            // Make sure they're an Erasmus user by username lookup
-            $dao = $this->getDao(new User());
-
-            $user = $dao->getUserByUsername($username);
-
-            if ($user != null) {
-                // put the USER and ROLE into session
-                $_SESSION['USER'] = $user;
-                $_SESSION['ROLE'] = $user->getRole();
-                // return true to indicate success
-                return true;
-            } else {
-                // successful LDAP login, but not an authorized Erasmus user, return false
-                return false;
-            }
-        }
+        
 
         // otherwise, return false to indicate failure
         return false;
