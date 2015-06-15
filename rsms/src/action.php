@@ -24,7 +24,6 @@ if ($actionResult->statusCode != 200){
 	header ("HTTP/1.1 " . $actionResult->statusCode . " Action Error");
 }
 // Send to the proper URL
-$location = $actionResult->destinationPage . '?session_id=' . session_id();
-header("location: $location");
+header("location: $actionResult->destinationPage");
 
 ?>
