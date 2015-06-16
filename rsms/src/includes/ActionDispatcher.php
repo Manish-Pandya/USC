@@ -232,7 +232,7 @@ class ActionDispatcher {
 		$grantAccess = empty($allowed_roles);
 		
 		//Are any of the currently logged in user's roles in the allowed roles for the ActionManager method we called?
-		if( !$grantAccess ) $grantAccess = array_intersect($allowed_roles, $user_roles)[0] != NULL;
+		if( !$grantAccess ) $grantAccess = count( array_intersect($allowed_roles, $user_roles) > 0);
 
 		
 		return $grantAccess;
