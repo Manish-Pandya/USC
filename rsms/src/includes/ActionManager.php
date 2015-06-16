@@ -73,7 +73,7 @@ class ActionManager {
         }
     }
 
- public function loginAction($username,$password) {
+ 	public function loginAction($username,$password) {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $username = $this->getValueFromRequest('username', $username);
@@ -89,16 +89,16 @@ class ActionManager {
                 $_SESSION['USER'] = $user;
                 // ROLE assignment will be based on username, if it directly matches a role name
                 $roles = array();
-                foreach(getAllRoles() as $role){
+                foreach($this->getAllRoles() as $role) {
                 	$roles[] = $role->getName();
                 }
-                if ( in_array($username, $roles )) {
-                	$_SESSION['ROLE'] = $username;
+                if ( in_array($username, $roles) ) {
+                	$_SESSION['ROLE'] = [$username];
                 } else {
                 	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 }
                 
-                $LOG->debug($_SESSION);
+                $LOG->debug($_SESSION['ROLE']);
                 //return $this->getCurrentUserRoles();
                 // return true to indicate success
                 return true;
@@ -308,7 +308,7 @@ class ActionManager {
         return new ActionError('Could not save');
     }
 
-    public function getAllRoles(){
+    public function getAllRoles() {
         $rolesDao = $this->getDao( new Role() );
         $allRoles = $rolesDao->getAll();
         return $allRoles;
