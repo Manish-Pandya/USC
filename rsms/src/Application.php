@@ -100,10 +100,9 @@ function logout() {
 ////////////////////////////////////////////////////////////////////////////////
 
 function isProduction(){
-	if(strpos($_SERVER['HTTP_HOST'], "graysail")){
+	if(strstr($_SERVER['HTTP_HOST'], "graysail")){
 		return false;
 	}
-	
 	return true;
 }
 
