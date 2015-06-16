@@ -89,7 +89,7 @@ class ActionManager {
                 $_SESSION['USER'] = $user;
                 // ROLE assignment will be based on username, if it directly matches a role name
                 $roles = array();
-                foreach($user->getRoles() as $role){
+                foreach(getAllRoles() as $role){
                 	$roles[] = $role->getName();
                 }
                 if ( in_array($username, $roles )) {
