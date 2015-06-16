@@ -15,11 +15,11 @@ angular
                             '</ul>'+
                        '</span>',
             replace: true,
-            transclude: false,  
+            transclude: false,
             link: function (scope, element, attrs, controller) {
                 //pseudo-blur.  if we click outside the parent element, hide the dropdown.  This way we don't cancel the click event on the li
-                $("body").on('click',function(e) {
-                    if (!$(e.target).hasClass('combobox') && !$(e.target).parents('.combobox').size()) { 
+                $("body").on('click blur focus focusin focusout',function(e) {
+                    if (!$(e.target).hasClass('combobox') && !$(e.target).parents('.combobox').size()) {
                        scope.model.showDropDown = false;
                        scope.$apply();
                     }
