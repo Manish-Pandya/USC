@@ -86,8 +86,17 @@ class ActionManager {
             if ($user != null) {
             	
                 // put the USER and ROLES into session
-                $_SESSION['USER'] = $user;                
-                $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                $_SESSION['USER'] = $user;
+                // ROLE assignment will be based on username, if it directly matches a role name
+                $roles = array();
+                foreach($user->getRoles() as $role){
+                	$roles[] = $role->getName();
+                }
+                if ( in_array($username, $roles )) {
+                	$_SESSION['ROLE'] = $username;
+                } else {
+                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                }
                 
                 $LOG->debug($_SESSION);
                 //return $this->getCurrentUserRoles();
