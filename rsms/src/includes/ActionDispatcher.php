@@ -231,7 +231,12 @@ class ActionDispatcher {
 		//Check that we need any roles at all
 		$grantAccess = empty($allowed_roles);
 		
+		
+		
 		if( !$grantAccess ){
+			
+			$grantAccess = !empty(array_intersect($allowed_roles, $user_roles));
+			/*
 			//Check that user has allowed role(s)
 			foreach( $allowed_roles as $role){
 				$grantAccess = in_array($role, $user_roles);
@@ -240,7 +245,7 @@ class ActionDispatcher {
 				if( $grantAccess ){
 					break;
 				}
-			}
+			}*/
 		}
 		
 		return $grantAccess;

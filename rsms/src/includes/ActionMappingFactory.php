@@ -6,18 +6,16 @@
  * @author Mitch
  */
 class ActionMappingFactory {
-
+	
     /**
      * Static accessor method to retrieve action mappings.
      */
     public static function readActionConfig(){
         $mappings = new ActionMappingFactory();
-
         return $mappings->getConfig();
     }
 
     public function __construct(){ }
-
     /**
      * Retrieves array of ActionMappings
      *
@@ -31,7 +29,7 @@ class ActionMappingFactory {
                 //TODO: Assign response codes        		
                 "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", "../login.php"),        		
                 "logoutAction"=>new ActionMapping("logoutAction", "login.php", "login.php"),
-
+        		
                 //Generic
                 "activate"=>new ActionMapping("activate", "", ""),
                 "deactivate"=>new ActionMapping("deactivate", "", ""),

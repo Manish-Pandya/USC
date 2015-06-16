@@ -55,11 +55,12 @@ class ActionManager {
         }
     }
 
-    public function getCurrentUserRoles(){
-        //to do:  use roles of user who is currently logged in
-
-        return $_SESSION['ROLE'];
-
+    public function getCurrentUserRoles($user){
+    	$roles = array();
+    	foreach($user->getRoles() as $role){
+    		$roles[] = $role->getName();
+    	}
+        return $roles;
     }
 
     public function getDao( $modelObject = NULL ){
@@ -83,9 +84,11 @@ class ActionManager {
             $dao = $this->getDao(new User());
             $user = $this->getUserById(1);
             if ($user != null) {
-                // put the USER and ROLE into session
+            	
+                // put the USER and ROLES into session
                 $_SESSION['USER'] = $user;                
-                $_SESSION['ROLE'] = $user->getRoles();
+                $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                
                 $LOG->debug($_SESSION);
                 //return $this->getCurrentUserRoles();
                 // return true to indicate success
@@ -111,13 +114,12 @@ class ActionManager {
         	
         		// Make sure they're an Erasmus user by username lookup
         		$dao = $this->getDao(new User());
-        	
         		$user = $dao->getUserByUsername($username);
         	
         		if ($user != null) {
-        			// put the USER and ROLE into session
+        			// put the USER and ROLES into session
         			$_SESSION['USER'] = $user;
-        			$_SESSION['ROLE'] = $user->getRole();
+					$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
         			// return true to indicate success
         			return true;
         		} else {
@@ -131,7 +133,8 @@ class ActionManager {
 
         // otherwise, return false to indicate failure
         return false;
-    }    public function logoutAction(){ }
+    }    
+    public function logoutAction(){ }
 
     public function getCurrentUser(){
         //todo:  when a user is logged in and in session, return the currently logged in user.

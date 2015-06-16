@@ -13,7 +13,7 @@
 session_start();
 require_once( dirname(__FILE__) . '/action_setup.php');
 
-// Create Dispatcher (based on $_SESSION)
+// Create Dispatcher (based on $_REQUEST)
 $actionDispatcher = new ActionDispatcher($sessionDataSource);
 
 // Attempt to dispatch to the requested action
