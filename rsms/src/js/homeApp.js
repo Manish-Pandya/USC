@@ -1,4 +1,4 @@
-var homeApp = angular.module('homeApp', ['ui.bootstrap','convenienceMethodModule']);
+var homeApp = angular.module('homeApp', ['ui.bootstrap','convenienceMethodWithRoleBasedModule']);
 
 homeApp
     .config(function($routeProvider){
@@ -27,18 +27,8 @@ homeApp
                 }
             );
     })
-    .run(function(roleBasedFactory, $rootScope){
-        var rbf = roleBasedFactory;
-        rbf.getCurrentRoles()
-            .then(
-                function(roles){
-                    console.log(roles);
-                    //$rootScope.roles = roles;
-                }
-            )
-    });
 
-var testController = function($location, $scope, $rootScope){
+var testController = function($location, $scope, $rootScope, roleBasedFactory){
     $scope.setRoute = function(route){
         $location.path(route);
     }
@@ -46,7 +36,9 @@ var testController = function($location, $scope, $rootScope){
         $location.path(route);
     }
 
-    $rootScope.roles = GLOBAL_SESSION_ROLES;
+    $scope.rbf = roleBasedFactory;
+    $scope.roles = roleBasedFactory.roles;
+
 }
 
 var homeController = function($location, $scope, $rootScope){

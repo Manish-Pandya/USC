@@ -1,43 +1,36 @@
-var roleBased = angular.module('roleBased', ['ui.bootstrap','convenienceMethodModule'])
+var roleBased = angular.module('roleBased', ['ui.bootstrap','convenienceMethodWithRoleBasedModule'])
     .directive('uiRoles', ['roleBasedFactory', function(roleBasedFactory) {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attrs, test) {
-           console.log(scope);
-           console.log(elem);
-           console.log(test);
-        }
-     }
+        return {
+            restrict: 'A',
+            link: function(scope, elem, attrs, test) {
+               console.log(scope);
+               console.log(elem);
+               console.log(test);
+            }
+         }
     }])
 
     .factory('roleBasedFactory', function(convenienceMethods, $q, $rootScope, $http){
         var factory = {};
-        factory.roles = [];
+        factory.roles = GLOBAL_SESSION_ROLES;
 
-        factory.getCurrentRoles = function()
-        {
-            var deferred = $q.defer();
-            //lazy load
-            if(factory.roles.length){
-
-                deferred.resolve(factory.roles);
-                //return deferred.promise;
+        factory.sumArray = function(array){
+            console.log(array);
+            var i = array.length;
+            var total = 0;
+            while(i--){
+                console.log(array[i]);
+                if(typeof array[i] != "number")return;
+                total += array[i];
             }
-
-            var url = '../ajaxaction.php?action=getCurrentUserRoles';
-            $http.get(url)
-                .success( function(data) {
-                    console.log(data);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status, headers, config){
-                });
-
-            return deferred.promise;
+            return total;
         }
 
-        factory.setRole = function(role){
-            factory.roles = [role];
+        var tempRoles = [2,4,8];
+        tempRoles['Admin'] == 1 //true;
+        alert(tempRoles[0]);
+        factory.getHasPermission = function( elementRoles ){
+            return factory.sumArray(elementRoles) & factory.sumArray(tempRoles);
         }
 
         return factory;
