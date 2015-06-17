@@ -33,25 +33,23 @@ homeApp
             .then(
                 function(roles){
                     console.log(roles);
-                    $rootScope.roles = roles;
+                    //$rootScope.roles = roles;
                 }
             )
     });
 
-var testController = function($location, $scope, $rootScope, roleBasedFactory){
-
-    init();
-    function init(){}
-
+var testController = function($location, $scope, $rootScope){
     $scope.setRoute = function(route){
         $location.path(route);
     }
-    $rootScope.rbf = roleBasedFactory;
+    $scope.setRoute = function(route){
+        $location.path(route);
+    }
 
+    $rootScope.roles = GLOBAL_SESSION_ROLES;
 }
 
-var homeController = function($location, $scope, $rootScope, roleBasedFactory){
-    var rbf = roleBasedFactory;
+var homeController = function($location, $scope, $rootScope){
     $scope.view = 'home';
     $scope.setRoute = function(route){
         $location.path(route);
@@ -59,7 +57,6 @@ var homeController = function($location, $scope, $rootScope, roleBasedFactory){
 }
 
 var adminController = function($location, $scope){
-    var rbf = roleBasedFactory;
     $scope.view = 'home';
     $scope.setRoute = function(route){
         $location.path(route);

@@ -9,14 +9,20 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../../Application.php');
 }
 
-echo '<script type="text/javascript">
-var isProductionServer;';
+?>
+<!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
+<script>
+    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>
+</script>
+
+<script type="text/javascript">
+var isProductionServer;
+<?php
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
 
 ?>
-
 </script>
 <!DOCTYPE html>
 <html lang="en">
