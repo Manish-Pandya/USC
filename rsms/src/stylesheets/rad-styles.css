@@ -30,7 +30,7 @@
   padding-top: 75px;
 }
 .hover-white:hover{
-  background:white !important;  
+  background:white !important;
   box-shadow: none !important;
 }
 .hover-white:hover div{
@@ -90,7 +90,7 @@
 }
 *[class~='well']:last-child:after, *[class~='card']:last-child:after{
   clear:both;
-} 
+}
 .dashboard .well, .inspection-well.well{
   background: rgba(255,255,255,.7);
   border: 2px solid #CDCDCD;
@@ -574,7 +574,7 @@ div.fake-table.inspection-wipe-table{
 }
 .table .btn, .fake-table .btn{
   margin-bottom:3px;
-} 
+}
 .fixed-full{
   position:fixed;
   top:10%;
@@ -656,7 +656,7 @@ div.fake-table.inspection-wipe-table{
 }
 .pickup-collection span.metro-checkbox span{
   margin-top:0;
-} 
+}
 .pickup-collection > div > div p{
   font-size:14px;
 }
@@ -701,10 +701,10 @@ div.fake-table.inspection-wipe-table{
   }
   div.fake-table .table-row:hover{
     background: none !important;
-    box-shadow: none !important; 
+    box-shadow: none !important;
   }
   div.fake-table .table-row:hover td{
-    box-shadow: none !important; 
+    box-shadow: none !important;
   }
   h1{
     font-size: 20px;
