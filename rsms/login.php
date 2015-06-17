@@ -9,15 +9,15 @@ include('src/views/top_view.php');
 	?>
 	<input type="hidden" name="action" value="loginAction">
 	<div class="form-group">
-	    <label for="LDAPID">Username</label>
-	    <input type="text" class="form-control" name="ldapID" id="exampleInputEmail1" placeholder="Enter Username">
+	    <label for="username">Username</label>
+	    <input type="text" class="form-control" name="username" placeholder="Enter Username">
   	</div>
  	<div class="form-group">
 	    <label for="exampleInputPassword1">Password</label>
 	    <input type="password" name="password" class="form-control" id="password" placeholder="Password">
  	</div>
  	<div class="form-group" style="margin-top:20px;">
-	    <button type="submit" name="submit" class="btn btn-large btn-success" id="password" style="padding:0 20px;">Login</button>
+	    <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
  	</div>
 </form>
 <?php
