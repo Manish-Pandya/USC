@@ -72,7 +72,6 @@ class ActionManager {
     		$user = $_SESSION['USER'];
     	}
     	 
-    	 
     	$roles = array();
     	foreach($user->getRoles() as $role){
     		$LOG->debug($role);
@@ -107,7 +106,7 @@ class ActionManager {
 					
                 	$user->setFirst_name($username);
                 	$user->setRoles($fakeRoles);              	 
-                	$_SESSION['ROLE'] = $fakeRoles;
+                	$_SESSION['ROLE'] = $this->getCurrentUserRoles();
 
                 } 
                 //the name of a real role was NOT input in the form, get the actual user's roles
