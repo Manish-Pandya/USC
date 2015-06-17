@@ -24,7 +24,8 @@ class Role extends GenericCrud{
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"created_user_id"	=> "integer"
+		"created_user_id"	=> "integer",
+		"bit_value" => "integer"
 	);
 	
 	/** Relationships */
@@ -77,6 +78,9 @@ class Role extends GenericCrud{
 	
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+	
+	public function getBit_value(){ return $this->bit_value; }
+	public function setBit_value($bitValue){ $this->bit_value = $bitValue; }
 	
 }
 ?>
