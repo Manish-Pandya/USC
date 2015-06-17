@@ -4,7 +4,7 @@ session_start();
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
-	require_once('../rsms/src/Application.php');
+    require_once('../rsms/src/Application.php');
 }else{
     require_once('../../Application.php');
 }
@@ -35,7 +35,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/jquery-ui.css">
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
