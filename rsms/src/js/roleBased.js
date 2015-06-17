@@ -1,47 +1,45 @@
 var roleBased = angular.module('roleBased', ['ui.bootstrap','convenienceMethodModule'])
-	.directive('roles', ['roleBasedFactory', function(roleBasedFactory) {
+    .directive('uiRoles', ['roleBasedFactory', function(roleBasedFactory) {
     return {
         restrict: 'A',
         link: function(scope, elem, attrs, test) {
            console.log(scope);
-           console.log(roleBasedFactory);
            console.log(elem);
            console.log(test);
-	    }
-	 }
-	}])
+        }
+     }
+    }])
 
-	.factory('roleBasedFactory', function(convenienceMethods,$q, $rootScope){
-		var factory = {};
-		factory.roles = [];
+    .factory('roleBasedFactory', function(convenienceMethods, $q, $rootScope, $http){
+        var factory = {};
+        factory.roles = [];
 
-		factory.getCurrentRoles = function()
-		{
-		  var deferred = $q.defer();
-		  //lazy load
-		  if(factory.users.length){
-		    deferred.resolve(factory.users);
-		    return deferred.promise;
-		  }
+        factory.getCurrentRoles = function()
+        {
+            var deferred = $q.defer();
+            //lazy load
+            if(factory.roles.length){
 
-		  var url = '../../ajaxaction.php?action=getCurrentUser&callback=JSON_CALLBACK';
-		    convenienceMethods.getDataAsDeferredPromise(url).then(
-		    function(user){
-		      roles = user.Roles;
-		      deferred.resolve(roles);
-		      $rootScope.roles = roles;
-		    },
-		    function(promise){
-		      deferred.reject();
-		    }
-		  );
-		  return deferred.promise;
-		}
+                deferred.resolve(factory.roles);
+                //return deferred.promise;
+            }
 
-		factory.setRole = function(role){
-			factory.roles = [role];
-		}
+            var url = '../ajaxaction.php?action=getCurrentUserRoles';
+            $http.get(url)
+                .success( function(data) {
+                    console.log(data);
+                    deferred.resolve(data);
+                })
+                .error(function(data, status, headers, config){
+                });
 
-		return factory;
-	})
+            return deferred.promise;
+        }
+
+        factory.setRole = function(role){
+            factory.roles = [role];
+        }
+
+        return factory;
+    })
 
