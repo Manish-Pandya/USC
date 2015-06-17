@@ -55,14 +55,6 @@ class ActionManager {
         }
     }
 
-    public function getCurrentUserRoles($user){
-    	$roles = array();
-    	foreach($user->getRoles() as $role){
-    		$roles[] = $role->getName();
-    	}
-        return $roles;
-    }
-
     public function getDao( $modelObject = NULL ){
         //FIXME: Remove MockDAO
         if( $modelObject === NULL ){
@@ -72,33 +64,61 @@ class ActionManager {
             return new GenericDAO( $modelObject );
         }
     }
-
- 	public function loginAction($username,$password) {
+    
+    public function getCurrentUserRoles( $user = NULL ){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	 
+    	if($_SESSION['USER'] != NULL) {
+    		$user = $_SESSION['USER'];
+    	}
+    	 
+    	 
+    	$roles = array();
+    	foreach($user->getRoles() as $role){
+    		$LOG->debug($role);
+    		$roles[] = $role->getName();
+    	}
+    	return $roles;
+    }
+    
+ 	public function loginAction( $username = NULL ,$password = NULL ) {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-
+                
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
 
         if(!isProduction()){
+        	 
             // Make sure they're an Erasmus user by username lookup
             $dao = $this->getDao(new User());
             $user = $this->getUserById(1);
+            
             if ($user != null) {
-            	
-                // put the USER and ROLES into session
-                $_SESSION['USER'] = $user;
                 // ROLE assignment will be based on username, if it directly matches a role name
                 $roles = array();
                 foreach($this->getAllRoles() as $role) {
                 	$roles[] = $role->getName();
                 }
-                if ( in_array($username, $roles) ) {
-                	$_SESSION['ROLE'] = [$username];
-                } else {
+                //the name of a real role was input in the form
+                if ( in_array($username, $roles) ) {                	
+                	$roleDao = $this->getDao(new Role());
+                	$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+                	$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+					
+                	$user->setFirst_name($username);
+                	$user->setRoles($fakeRoles);              	 
+                	$_SESSION['ROLE'] = $fakeRoles;
+
+                } 
+                //the name of a real role was NOT input in the form, get the actual user's roles
+                else {
                 	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 }
                 
-                $LOG->debug($_SESSION['ROLE']);
+                // put the USER and ROLES into session
+                $_SESSION['USER'] = $user;
+                $LOG->debug($_SESSION);
+                
                 //return $this->getCurrentUserRoles();
                 // return true to indicate success
                 return true;
