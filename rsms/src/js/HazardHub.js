@@ -1,4 +1,4 @@
-var hazardHub = angular.module('hazardHub', ['convenienceMethodModule','infinite-scroll','once']);
+var hazardHub = angular.module('hazardHub', ['convenienceMethodWithRoleBasedModule','infinite-scroll','once']);
 
 hazardHub.filter('makeUppercase', function () {
   return function (item) {
@@ -55,8 +55,8 @@ hazardHub.directive('yaTree', function () {
                         // Iterate the children at the current level
                         for (i=0; i < n; ++i) {
 
-                            // We will compare the cached element to the element in 
-                            // at the destination index. If it does not match, then 
+                            // We will compare the cached element to the element in
+                            // at the destination index. If it does not match, then
                             // the cached element is being moved into this position.
                             cursor = parentNode.childNodes[i];
 
@@ -68,7 +68,7 @@ hazardHub.directive('yaTree', function () {
                             cached = lookup(child);
 
                             // If the parentScope no longer matches, we've moved.
-                            // We'll have to transclude again so that scopes 
+                            // We'll have to transclude again so that scopes
                             // and controllers are properly inherited
                             if (cached && cached.parentScope !== parentScope) {
                                 cache.push(cached);
@@ -90,7 +90,7 @@ hazardHub.directive('yaTree', function () {
                                         branch: clone.find(branchExpr)[0]
                                     };
 
-                                    // This had to happen during transclusion so inherited 
+                                    // This had to happen during transclusion so inherited
                                     // controllers, among other things, work properly
                                     if (!cursor) parentNode.appendChild(cached.element);
                                     else parentNode.insertBefore(cached.element, cursor);
@@ -106,7 +106,7 @@ hazardHub.directive('yaTree', function () {
                             // Lets's set some scope values
                             childScope = cached.scope;
 
-                            // Store the current depth on the scope in case you want 
+                            // Store the current depth on the scope in case you want
                             // to use it (for good or evil, no judgment).
                             childScope.$depth = depth;
 
@@ -120,9 +120,9 @@ hazardHub.directive('yaTree', function () {
                             // the old cache at the end of the walk.
                             currentCache.push(cached);
 
-                            // If the child has children of its own, recurse 'em.    
-                            if(child) grandchildren = child[childrenExpr];    
-                           
+                            // If the child has children of its own, recurse 'em.
+                            if(child) grandchildren = child[childrenExpr];
+
                            // console.log(childrenExpr);
                             if (grandchildren && grandchildren.length) {
                                 walk(grandchildren, cached.branch, childScope, depth + 1);
@@ -185,7 +185,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
                 }
 
             });
-            
+
             //note the item="{{child}}" attribute on line 17
             options.isAllowed = function(item, parent) {
                 if (!parent) return false;
@@ -201,7 +201,7 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
 
         }
     };
-}]);  
+}]);
 
 hazardHub.directive('buttongroup', function ($window) {
      return {
@@ -275,13 +275,13 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, hazard).then(
             function(promise){
-            	console.log(promise);
+                console.log(promise);
                 deferred.resolve(promise);
             },
             function(promise){
                 deferred.reject();
             }
-        );  
+        );
         return deferred.promise;
     }
     return factory;
@@ -290,7 +290,7 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
 hazardHub.controller('TreeController', function ($scope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory) {
 
     init();
-  
+
     //call the method of the factory to get users, pass controller function to set data inot $scope object
     //we do it this way so that we know we get data before we set the $scope object
     //
@@ -303,13 +303,13 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     function onGetHazards (data) {
         delete data.doneLoading;
         $scope.SubHazards = data;
-        $scope.doneLoading = true; 
+        $scope.doneLoading = true;
     }
 
     function onFailGet(){
         $scope.doneLoading = "failed";
         if(confirm('There was a problem when loading the Hazard Tree.  Try Again?')){
-            window.location.reload();  
+            window.location.reload();
         }
     }
 
@@ -328,25 +328,25 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     function onGetSubhazards (data, hazard, adding){
         hazard.loadingChildren = false;
         console.log(data);
-       
+
         hazard.SubHazardsHolder = data;
         hazard.numberOfPossibleSubs = hazard.SubHazardsHolder.length;
         hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].lastSub = true;
 
         console.log( hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].Name);
-        $scope.openedHazard = hazard;  
+        $scope.openedHazard = hazard;
 
         var counter = Math.min(hazard.SubHazardsHolder.length-1, 2000 );
         if(adding)buildSubsArray(hazard, 0, counter, adding);
         if(!adding)buildSubsArray(hazard, 0, counter);
        // sorticus(hazard,adding);
-       
+
     }
 
     function onFailGetSubhazards(){
         $scope.doneLoading = "failed";
         if(confirm('There was a problem when loading the Hazard Tree.  Try Again?')){
-            window.location.reload();  
+            window.location.reload();
         }
     }
 
@@ -355,7 +355,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         if($scope.openedHazard && hazard.SubHazardsHolder){
 
             if(!$scope.openedHazard.SubHazards)$scope.openedHazard.SubHazards = [];
-                
+
             //get the number of subhazards loaded, get the number of possible subhazards
             //if they are the same, do nothing because we have loaded all possible hazards
             if(hazard.SubHazardsHolder.length > hazard.SubHazards.length){
@@ -363,7 +363,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
                     hazard.firstIndex += 5;
                     var numberOfHazardsLeftToPush = hazard.SubHazardsHolder.length - (hazard.firstIndex+15);
                     var start = hazard.numberOfPossibleSubs-(hazard.firstIndex+15);
-                   
+
                     if(numberOfHazardsLeftToPush < 15){
                         start = hazard.SubHazardsHolder.length-15;
                     }else{
@@ -372,22 +372,22 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
 
                     limit = start + 14;
                     buildSubsArray(hazard, start, limit);
-                    
+
                 }
- 
+
              if(handlerCheck == 'addToTop'){
 
                    if(hazard.firstIndex > 4){
-                      hazard.firstIndex -= 5;  
+                      hazard.firstIndex -= 5;
                     }else{
                       hazard.firstIndex = 0;
                     }
                     var numberOfHazardsLeftToPush = hazard.SubHazardsHolder.length - (hazard.firstIndex+15);
                     var start = hazard.firstIndex;
-                   
+
                     limit = start + Math.min(15,hazard.SubHazardsHolder.length);
                     buildSubsArray(hazard, start, limit);
-                }               
+                }
             }
         }
     }
@@ -406,7 +406,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     $scope.SubHazards = {
         SubHazards: []
     }
-  
+
     $scope.remove = function (child) {
         function walk(target) {
             var children = target.SubHazards,
@@ -521,10 +521,10 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     function onFailSave(obj){
         alert('There was a problem saving '+obj.Name);
     }
-   
+
 
     $scope.cancelHazardEdit = function(hazard, $index){
-    	console.log(hazard);
+        console.log(hazard);
         if(hazard.isNew === true){
             return  $scope.parentHazardForSplice.SubHazards.splice( $scope.parentHazardForSplice.SubHazards.indexOf( hazard ), 1 );
         }
@@ -550,7 +550,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         //return true for all hazards if $scope.SubHazards.activeMatch is null or undefined
         if(!$scope.SubHazards[$scope.SubHazards.length-1].activeMatch) hazard.show = true;
         //if we have a $scope.activeMatch, return true for the hazards that have a matchin Is_active property.
-        //i.e. display only hazards with a FALSE for Is_active if $scope.SubHazards.activeMatch is false 
+        //i.e. display only hazards with a FALSE for Is_active if $scope.SubHazards.activeMatch is false
         //The server will give us 0 or 1 boolean for these values.  0 and 1 are not actual boolean values in JS, so we must to a two step check here.
         if(hazard.Is_active == 0 || hazard.Is_active == false && $scope.SubHazards[$scope.SubHazards.length-1].activeMatch === false){
             hazard.show = true;
@@ -561,12 +561,12 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
             return;
         }
         console.log(hazard);
-       
+
     }
 
     $scope.hazardFilter = function(hazard){
       if($scope.hazardFilterSetting.Is_active == 'both'){
-        return true;  
+        return true;
       }else if($scope.hazardFilterSetting.Is_active == 'active'){
         if(hazard.Is_active == true)return true;
       }else if($scope.hazardFilterSetting.Is_active == 'inactive'){
@@ -605,7 +605,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
 
         //if we are moving the hazard down to the last spot, the index for the before hazard will out of range, so we can't get a key_id
         if(afterHazardIdx < filteredSubHazards.length){
-            var afterHazardId = filteredSubHazards[afterHazardIdx].Key_id;  
+            var afterHazardId = filteredSubHazards[afterHazardIdx].Key_id;
        }else{
             var afterHazardId = null;
        }
@@ -623,7 +623,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
             },
             function(){
                 filteredSubHazards.error = true;
-                $scope.error="The hazard could not be moved.  Please check your internet connection.";  
+                $scope.error="The hazard could not be moved.  Please check your internet connection.";
             }
         );
     }
@@ -632,4 +632,4 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     $scope.order = function(hazard){
         return parseFloat(hazard.Order_index);
     }
-});  
+});

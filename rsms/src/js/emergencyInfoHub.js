@@ -1,4 +1,4 @@
-var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenienceMethodModule'])
+var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenienceMethodWithRoleBasedModule'])
 
 .factory('emergencyInfoFactory', function( convenienceMethods, $q, $rootScope ){
 
@@ -130,7 +130,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
     factory.getPIsByRoom = function( room )
     {
-      
+
         var url = '../../ajaxaction.php?action=getPIsByRoomId&id='+room.Key_id+'&callback=JSON_CALLBACK';
         return convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
@@ -148,7 +148,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
     }
 
     factory.hazardIsNotPresent = function( hazard )
-    {   
+    {
         console.log(hazard);
         if(!hazard.IsPresent)return true;
         return false;
@@ -164,7 +164,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
   $scope.eif = eif;
 
   init();
-  
+
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
   //
@@ -206,7 +206,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
           $scope.selectedBuilding = building;
         }
       });
-      
+
     }
 
   }
@@ -238,7 +238,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
                       var i = $scope.buildings.length;
                       while(i--){
                         if(room.Building_id == $scope.buildings[i].Key_id)$scope.building = $scope.buildings[i];
-                      }                       
+                      }
 
                       $scope.room = room;
                     }

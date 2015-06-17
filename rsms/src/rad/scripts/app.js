@@ -20,7 +20,7 @@ angular
     'once',
     'ui.router',
     'modalPosition',
-    'convenienceMethodModule'
+    'convenienceMethodWithRoleBasedModule'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
@@ -44,7 +44,7 @@ angular
         url: "/wipe-tests",
         templateUrl: "views/admin/wipe-tests.html",
         controller: "WipeTestController"
-      })      
+      })
       .state('radmin.disposals', {
         url: "/disposals",
         templateUrl: "views/admin/disposals.html",
@@ -71,7 +71,7 @@ angular
         url:'/my-lab:pi',
         templateUrl: "views/pi/pi-rad-home.html",
         controller: "PiRadHomeCtrl"
-      })     
+      })
       .state('use-log', {
         url:'/my-lab:pi/use-log',
         templateUrl: "views/pi/use-log.html",
@@ -125,7 +125,7 @@ angular
             deferred.promise.state = deferred.state = 'fulfilled';
           }, function () {
             deferred.promise.state = deferred.state = 'rejected';
-          }); 
+          });
 
           return deferred;
         };
@@ -137,7 +137,7 @@ angular
     $rootScope.$on('$stateChangeStart ',function(){
       $rootScope.loading = true;
     });
-    $rootScope.$on('$stateChangeSuccess', 
+    $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams, fromState, fromParams){
             $rootScope.loading = false;
             var viewMap = actionFunctionsFactory.getViewMap($state.current);
@@ -147,5 +147,5 @@ angular
             $rootScope.noHead = viewMap.NoHead;
             console.log($rootScope);
           });
-   
+
   });;

@@ -1,4 +1,4 @@
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodModule','once']);
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once']);
 
 inspectionChecklist.run(function($rootScope, $templateCache) {
    $rootScope.$on('$viewContentLoaded', function() {
@@ -49,7 +49,7 @@ inspectionChecklist.run(function($rootScope, $templateCache) {
 
       factory.evaluateDeficiecnyRooms = function( question, checklist )
       {
- 
+
           var i = question.Deficiencies.length;
 
           while(i--){
@@ -117,7 +117,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   function onFailGetUser(){
     alert("There was a problem retrieving your user information");
   }
-  
+
   //grab set user list data into the $scope object
   var onGetChecklists = function(checklists){
     var len = checklists.checklists.length;
@@ -131,7 +131,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         var question = questions[x];
         if(question.Responses && question.Responses.Answer){
           //set a previous response object for each question that has been answered so that the question can be "unanswered" by a user
-          question.Responses.previous = angular.copy(question.Responses.Answer); 
+          question.Responses.previous = angular.copy(question.Responses.Answer);
           question = evaluateQuestionComplete(question);
           evaluateRecommendationsAndObservations(question);
         }
@@ -156,7 +156,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       }else{
         question.isComplete = false;
       }
-    } 
+    }
     return question;
   }
 
@@ -184,7 +184,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
   function onFailGetInsp(){
     $scope.Inspection = '';
     $scope.checklists = true;
-    $scope.error = 'There was an error getting the checklists for this inspection.  Check your internet connection and try again.'; 
+    $scope.error = 'There was an error getting the checklists for this inspection.  Check your internet connection and try again.';
   }
 
   $scope.imgNumber = "1";
@@ -282,7 +282,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
           var def = question.Deficiencies[i];
           def.selected = false;
           while(j--){
-              if(def.Key_id == question.Responses.Deficiencies[j].Key_id)def.selected = true; 
+              if(def.Key_id == question.Responses.Deficiencies[j].Key_id)def.selected = true;
           }
 
       }
@@ -308,13 +308,13 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
  }
 
   function evaluateRecsAndObs(question){
-    
+
     if(question.Responses && question.Responses.Recommendations.length > 0){
       angular.forEach(question.Recommendations, function(rec, key){
        // //console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec)) {
-           rec.checked = true; 
-        }    
+           rec.checked = true;
+        }
       });
     }
 
@@ -322,10 +322,10 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
       angular.forEach(question.Observations, function(obs, key){
        // //console.log(convenienceMethods.arrayContainsObject(question.Responses.Recommendations, rec,false));
         if(convenienceMethods.arrayContainsObject(question.Responses.Observations, obs)) {
-           obs.checked = true; 
-        }    
+           obs.checked = true;
+        }
       });
-    } 
+    }
   }
 
   function onFailSaveResponse(){
@@ -354,7 +354,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
 
 
 
-  $scope.createNewNoteOrRec = function(question, response, persist, type){  
+  $scope.createNewNoteOrRec = function(question, response, persist, type){
     question.savingNew = true;
     if(question.noteText != null && type == 'observation'){
 
@@ -371,12 +371,12 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         obsDto.Question_id = question.Key_id;
         var url = '../../ajaxaction.php?action=saveObservation';
       }
-     
+
       convenienceMethods.updateObject( obsDto, question, onSaveObs, onFailSaveObs, url);
     }
 
      if(question.recommendationText != null && type == 'recommendation'){
-      
+
       obsDto = {
         Text:  question.recommendationText
       }
@@ -460,7 +460,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     if(!deficiency.InspectionRooms){
         var rooms = convenienceMethods.copyObject(checklist.InspectionRooms);
         deficiency.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
-    
+
     }
     var RoomIds = [];
     var atLeastOneChecked = true;
@@ -505,7 +505,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
               //$scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
               var atLeastOneChecked = false;
               if(!deficiency.InspectionRooms)deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
-             
+
               var i = deficiency.InspectionRooms.length
 
               while(i--){
@@ -546,7 +546,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
         if( question.Responses.DeficiencySelections[i].Deficiency_id == defDto.Deficiency_id ){
           defDto.Key_id = question.Responses.DeficiencySelections[i].Key_id;
           var defSelectIdx = i;
-        } 
+        }
       }
 
       var url = '../../ajaxaction.php?action=removeDeficiencySelection';
@@ -555,7 +555,7 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
              console.log(checklist);
               //push the def selections deficiency_id into the inspections array of deficiency Key_ids
               //$scope.inspection.Deficiency_selections[0].push(deficiency.Key_id)
-              var atLeastOneChecked = false;             
+              var atLeastOneChecked = false;
               var i = deficiency.InspectionRooms.length
               while(i--){
                 var room = deficiency.InspectionRooms[i];
@@ -598,13 +598,13 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     var idx = convenienceMethods.arrayContainsObject(question.Responses.DeficiencySelections, deficiency, null, true);
     //if we find the deficiency selection, remove it
     if(idx)question.Responses.DeficiencySelections.splice(idx, 1);
-  
+
     //also remove the key id of the deficiency selection from the Inspection's array of deficiency selections
     $scope.inspection.Deficiency_selections[0].splice($scope.inspection.Deficiency_selections[0].indexOf(deficiency.Deficiency_id,1));
 
     //determine if the question is completely answered
     evaluateQuestionComplete(question);
-  
+
     //count the checklists answers
     countAnswers(checklist);
 
@@ -669,10 +669,10 @@ function ChecklistController($scope,  $location, $anchorScroll, convenienceMetho
     deficiency.calculatedOffset = {};
     deficiency.calculatedOffset.x = x-110;
     deficiency.calculatedOffset.y = y-185;
-  } 
+  }
 
   function onSaveDefSelect(returnedDeficiencySelection, question, checklist, deficiency){
-   
+
   }
 
   function onFailSaveDefSelect(){

@@ -1,4 +1,4 @@
-var hazardInventory = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodModule','once']);
+var hazardInventory = angular.module('hazardAssesment', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','once']);
 
 hazardInventory.directive('hazardLi', ['$window', function($window) {
     return {
@@ -89,7 +89,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   }
 
   factory.getHazards = function(rooms){
-    //on page load, get the collection of hazards for all of the PI's rooms 
+    //on page load, get the collection of hazards for all of the PI's rooms
     var deferred = $q.defer();
     var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
     var temp = this;
@@ -100,17 +100,17 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       function(promise){
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise;
   }
 
   factory.resetInspectionRooms = function(roomIds, inspectionId){
 
-    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
+    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards
     var deferred = $q.defer();
-    
+
     var url = '../../ajaxaction.php?action=resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
-    
+
     var temp = this;
     convenienceMethods.getDataAsDeferredPromise(url).then(
       function(promise){
@@ -119,7 +119,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       function(promise){
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise;
   }
 
@@ -134,7 +134,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   factory.initialiseInspection = function(PIKeyID, inspectorIds, inspectionId, rad){
     //if we don't have a pi, get one from the server
     var deferred = $q.defer();
-    if(!inspectorIds)inspectorIds=[10];  
+    if(!inspectorIds)inspectorIds=[10];
     var url = '../../ajaxaction.php?callback=JSON_CALLBACK&action=initiateInspection&piId='+PIKeyID+'&'+$.param({inspectorIds:inspectorIds});
     if(rad)url = url+"&rad=true";
 
@@ -154,13 +154,13 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
             inspection.piRooms[j] = {Class:"Room", Key_id:factory.PI.Rooms[j].Key_id,Name:factory.PI.Rooms[j].Name};
           }
           inspection.Is_new = true;
-          deferred.resolve(inspection); 
+          deferred.resolve(inspection);
         }
       },
       function(promise){
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise;
   }
 
@@ -199,7 +199,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       function(promise){
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise
   }
 
@@ -213,7 +213,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       function(promise){
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise
   }
   //invert a collection of room objects with building properties to transform it into a collection of building objects with rooms collection properties
@@ -235,7 +235,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         var building = buildings[idx];
 
         building.IsChecked = true;
-        
+
         if(!building.Rooms)building.Rooms = [];
         building.Rooms.push(room);
 
@@ -267,11 +267,11 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
   }
 
   factory.roomDoesNotContainHazard = function( room ){
-    
+
     if(room.ContainsHazard != true){
       //console.log( room );
       return true;
-    } 
+    }
     //console.log( room );
     return false;
   }
@@ -299,7 +299,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         function(promise){
           deferred.reject();
         }
-      );  
+      );
       return deferred.promise
   }
 
@@ -332,7 +332,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         function(promise){
           deferred.reject();
         }
-      );  
+      );
       return deferred.promise
   }
 
@@ -355,7 +355,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
         room.checked = !room.checked;
         deferred.reject();
       }
-    );  
+    );
     return deferred.promise
   }
 
@@ -382,7 +382,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -517,8 +517,8 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
       return resetInspectionDefer.promise;
   },
   getHazards = function( pi )
-  {         
-            $scope.hazards = null;          
+  {
+            $scope.hazards = null;
             if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
             var rooms = pi.Rooms;
@@ -567,7 +567,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
 
 
   init();
-  
+
   function init(){
 
     //are we loading an old inspection?
@@ -684,7 +684,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   }
 /*
   function modalHazards(){
-    $dialog.dialog({}).open('hazards-modal.html');  
+    $dialog.dialog({}).open('hazards-modal.html');
   }
 */
   //set a boolean flag to determine if rooms are shown beneath a hazard
@@ -766,7 +766,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
     });
   },true);
 
- 
+
   //recursively step through a hazard and its children
   $scope.walkhazard = function(hazard){
 
@@ -775,14 +775,14 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
       var children = hazard.ActiveSubHazards;
 
       angular.forEach(children, function(child, key){
-        
+
       //if a hazard has been selected, make sure we only show ITS rooms or hazards, closing all the other modals
       if($scope.selectedHazard){
          if(child.Key_Id !== $scope.selectedHazard.Key_Id){
            child.showRoomsModal = false;
            child.showSubHazardsModal = false;
          }
-       } 
+       }
 
         //don't allow hazards whose parents are not present to be present
         if(!hazard.IsPresent){
@@ -816,7 +816,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
         //recurse down the tree
         $scope.walkhazard(child);
     });
-  } 
+  }
     //If at least one room contains the hazard, but not all rooms, set property of hazard so that rooms can be displayed
    // $scope.getShowRooms(hazard);
 }
@@ -844,7 +844,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
         }
       );
     }
-    
+
   }
 
   function removeSubHazardsFromRoom(room, hazard){
@@ -908,13 +908,13 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
 
 
 controllers.footerController = function($scope, $location, $filter, convenienceMethods,hazardInventoryFactory, $rootScope, $modal){
-  
+
   init();
 
   function init(){
     $scope.location = $location.search();
-    $scope.selectedFooter = '';      
-    
+    $scope.selectedFooter = '';
+
   }
 
   $scope.close = function(){
@@ -939,7 +939,7 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
         )
       });
 
-  } 
+  }
 
   $scope.getContacts = function(){
       var modalInstance = $modal.open({
@@ -950,7 +950,7 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
       modalInstance.result.then(function () {});
 
-  } 
+  }
 
   function onGetInspections(data){
     $scope.previousInspections = data;
@@ -1072,7 +1072,7 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
         inspection.startDate = date.formattedString;
         inspection.year = date.year;
       }
-        
+
       if(inspection.Date_closed){
         inspection.endDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
       }
@@ -1146,7 +1146,7 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
                   }
               },
               function(noRooms)
-              {                  
+              {
 
                   $scope.creatingInspection = false;
                   //$scope.creatingInspection = false;
@@ -1206,7 +1206,7 @@ controllers.commentsController = function($scope, hazardInventoryFactory, $modal
           $scope.pi.editNote = false;
           $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
         },
-        function(){  
+        function(){
           $scope.savingNote = false;
           $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
         }

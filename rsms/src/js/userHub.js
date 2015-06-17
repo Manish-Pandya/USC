@@ -1,4 +1,4 @@
-var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModule','once'])
+var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','once'])
 .directive('tableRow', ['$window', function($window) {
     return {
       restrict : 'A',
@@ -8,27 +8,27 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
  }])
 .config(function($routeProvider){
   $routeProvider
-    .when('/pis', 
+    .when('/pis',
       {
-        templateUrl: 'userHubPartials/pis.html', 
+        templateUrl: 'userHubPartials/pis.html',
         controller: piController
       }
     )
-    .when('/contacts', 
+    .when('/contacts',
       {
-        templateUrl: 'userHubPartials/contacts.html', 
+        templateUrl: 'userHubPartials/contacts.html',
         controller: labContactController
       }
-    )   
-    .when('/EHSPersonnel', 
+    )
+    .when('/EHSPersonnel',
       {
-        templateUrl: 'userHubPartials/EHSPersonnel.html', 
+        templateUrl: 'userHubPartials/EHSPersonnel.html',
         controller: personnelController
       }
-    )    
-    .when('/uncategorized', 
+    )
+    .when('/uncategorized',
       {
-        templateUrl: 'userHubPartials/uncategorized.html', 
+        templateUrl: 'userHubPartials/uncategorized.html',
         controller: uncatController
       }
     )
@@ -66,7 +66,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
         shouldPush = true;
       }
-      
+
       if(userHubFactory.hasRole(users[i], 'inspector')){
         if(users[i].Inspector){
           shouldPush = true;
@@ -102,7 +102,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       if(!users[i].Roles || !users[i].Roles.length){
         uncat.unshift(users[i]);
       }
-      
+
       if(userHubFactory.hasRole(users[i], 'principal investigator')){
         if(!users[i].PrincipalInvestigator){
           uncat.unshift(users[i]);
@@ -116,7 +116,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
       }
     }
     return uncat;
-  }  
+  }
 }])
 .factory('userHubFactory', function(convenienceMethods,$q, $rootScope){
 
@@ -234,7 +234,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -250,7 +250,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -323,7 +323,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -338,7 +338,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -361,7 +361,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -384,7 +384,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
           function(promise){
             deferred.reject();
           }
-        );  
+        );
     return deferred.promise
   }
 
@@ -414,7 +414,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
               function(promise){
                 deferred.reject();
               }
-            );  
+            );
         return deferred.promise
   }
 
@@ -480,7 +480,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodModu
             var j = factory.labContacts.length;
             while(j--){
               if (factory.labContacts[j].Key_id == user.Key_id)factory.labContacts.splice(j,1);
-            } 
+            }
         }
       }
   }
@@ -554,7 +554,7 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
         function(){
           $rootScope.error = 'The system could not retrieve the list of roles.  Please check your internet connection and try again.'
         }
-      )    
+      )
     userHubFactory.getAllDepartments()
       .then(
         function(departments){
@@ -628,7 +628,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
     }
 
   $scope.departmentFilter = function() {
-   
+
     return function(user) {
         var show = false;
         //for pis that don't have departments, don't filter them unless the filter has some text
@@ -868,7 +868,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
           if(!user.Roles)user.Roles = [];
           user.Roles.push(role);
        }
-    } 
+    }
 
     $scope.saveUser = function(){
       $scope.modalData.IsDirty = true;
@@ -923,7 +923,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
                     if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id)pi.PrincipalInvestigator.Departments.splice(i,1);
                   }
               },
-              function(){                  
+              function(){
                 department.IsDirty = false;
                 $scope.modalError = "The department could not be removed.  Please check your internet connection and try again.";
               }
@@ -948,7 +948,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
                     if(user.Roles[i].Key_id == role.Key_id)user.Roles.splice(i,1);
                   }
               },
-              function(){                  
+              function(){
                 role.IsDirty = false;
                 $scope.modalError = "The role could not be removed.  Please check your internet connection and try again.";
               }
@@ -973,7 +973,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         if( userHubFactory.users[i].Username && $scope.modalData.userNameForQuery.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
           $scope.modalError='The username '+$scope.modalData.userNameForQuery+' is already taken by another user in the system.';
           return;
-        } 
+        }
       }
       userHubFactory.lookUpUser($scope.modalData.userNameForQuery)
         .then(
@@ -1011,7 +1011,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
           if( !userDto.Key_id && userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
             $scope.modalError='This username is already taken by another user in the system.';
             return;
-          } 
+          }
         }
         */
         return userHubFactory.saveUser( userDto )
@@ -1062,10 +1062,10 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       var userCopy, oldRoles
       var oldRoleIds = [];
       var idsToAdd = [];
-  
+
       userCopy = userHubFactory.getModalData();
       oldRoles = $scope.modalData.Roles;
-      
+
 
       if(!userHubFactory.getModalData().Is_new){
         //get the ids of the roles the user already had, if the user is not new

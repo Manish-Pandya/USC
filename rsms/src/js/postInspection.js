@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ngQuickDate','ngRoute','once'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once'])
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -22,23 +22,23 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
 .config(function($routeProvider){
 
   $routeProvider
-  .when('/confirmation', 
+  .when('/confirmation',
     {
-      templateUrl: 'post-inspection-templates/inspectionConfirmation.html', 
+      templateUrl: 'post-inspection-templates/inspectionConfirmation.html',
       controller: inspectionConfirmationController
     }
   )
-  .when('/report', 
+  .when('/report',
     {
-      templateUrl: 'post-inspection-templates/standardView.html', 
-      controller: inspectionReviewController 
+      templateUrl: 'post-inspection-templates/standardView.html',
+      controller: inspectionReviewController
     }
   )
-  
-  .when('/details', 
+
+  .when('/details',
     {
-      templateUrl: 'post-inspection-templates/inspectionDetails.html', 
-      controller: inspectionDetailsController 
+      templateUrl: 'post-inspection-templates/inspectionDetails.html',
+      controller: inspectionDetailsController
     }
   )
   .otherwise(
@@ -253,7 +253,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodModule','ng
   }
 
   factory.setRecommendationsAndObservations = function()
-  {   
+  {
 
         var defer = $q.defer();
 
@@ -435,7 +435,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
   }
   init();
 
-  
+
   function onFailGetInspeciton(){
     $scope.doneLoading = true;
     $scope.error="The system couldn't find the inspection.  Check your internet connection."
@@ -539,7 +539,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   function onSendEmail(data){
     $scope.sending = false;
     $scope.emailSent = 'success';
-    
+
     console.log($rootScope.inspection);
     evaluateCloseInspection();
 
@@ -896,7 +896,7 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
 
   $scope.getIsValid = function(){
 
-    if($scope.def.CorrectiveActions 
+    if($scope.def.CorrectiveActions
       && $scope.def.CorrectiveActions.length
       && $scope.def.CorrectiveActions[0].Text
       ){

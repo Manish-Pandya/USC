@@ -1,25 +1,25 @@
-var buildingHub = angular.module('buildingHub', ['ui.bootstrap','convenienceMethodModule']);
+var buildingHub = angular.module('buildingHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule']);
 
 
 //called on page load, gets initial user data to list users
 function buildingHubController($scope, $routeParams,$browser,$sniffer,$rootElement,$location, convenienceMethods) {
   $scope.users = [];
-  
+
   init();
-  
+
   //call the method of the factory to get users, pass controller function to set data inot $scope object
   //we do it this way so that we know we get data before we set the $scope object
-  
+
   function init(){
     $scope.newRoom = false;
     //get a building list
-	  convenienceMethods.getData('../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
+      convenienceMethods.getData('../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK',onGetBuildings,onFailGet);
   };
 
   //grab set user list data into the $scope object
   function onGetBuildings(data) {
     $scope.error = '';
-	  $scope.Buildings = data;
+      $scope.Buildings = data;
     $scope.building = false;
     if($location.search().building){
       angular.forEach($scope.Buildings, function(building, key){

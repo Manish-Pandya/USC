@@ -27,8 +27,6 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap','convenienceMethodWi
         }
 
         var tempRoles = [2,4,8];
-        tempRoles['Admin'] == 1 //true;
-        alert(tempRoles[0]);
         factory.getHasPermission = function( elementRoles ){
             return factory.sumArray(elementRoles) & factory.sumArray(tempRoles);
         }
