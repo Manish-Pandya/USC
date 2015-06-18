@@ -1,41 +1,42 @@
 <div class="centerIcons" >
-    <h3 class="">Administration</h3>
-       <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <h3 class="rsms-center-header">Administration</h3>
+
+    <div class="span2 rsmsCenterIconContainer" style="margin-bottom:30px;">
       <a ng-click="setRoute('home')" class="span12 purpleBg" >
         <img class="" src="../img/home-icon-large.png" />
         <p>Home</p>
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])">
       <a href="hubs/HazardHub.php" class="span12" style="background: #e67e1d;">
         <img class="" src="../img/hazard-icon.png" />
         <p>Hazard Hub</p>
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])">
       <a href="hubs/UserHub.php" class="span12 bg-color-green " style="background: #86b32d;">
         <img class="" src="../img/user-icon.png" />
         <p>User Hub</p>
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])">
       <a href="hubs/PIHub.php" class="span12 bg-color-blue" >
         <img class="pull-right" src="../img/pi-icon.png" />
         <p>PI Hub</p>
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])">
       <a href="hubs/locationHub.php" class="span12" style="background: #49afcd;">
         <img class="" src="../img/building-hub-large-icon.png" />
         <p>Location Hub</p>
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])">
       <a href="hubs/departmentHub.php" class="span12 purpleBg">
         <img class="" src="../img/department-hub-icon.png" />
         <p>Department Hub</p>

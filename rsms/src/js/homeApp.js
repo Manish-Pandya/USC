@@ -36,9 +36,6 @@ var testController = function($location, $scope, $rootScope, roleBasedFactory){
         $location.path(route);
     }
 
-    $scope.rbf = roleBasedFactory;
-    $scope.roles = roleBasedFactory.roles;
-
 }
 
 var homeController = function($location, $scope, $rootScope){

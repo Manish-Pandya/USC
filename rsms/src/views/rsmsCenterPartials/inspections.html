@@ -1,5 +1,5 @@
 <div class="centerIcons" >
-    <h3 class="">Inspections</h3>
+    <h3 class="rsms-center-header">Inspections</h3>
 
     <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
       <a ng-click="setRoute('home')" class="span12 purpleBg" >
@@ -8,7 +8,7 @@
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector']])">
       <a href="inspection/manageInspections.php" style="background: #d00;" class="span12">
         <img class="" src="../img/manage-inspections-icon.png" />
         <p>Manage Inspections</p>
