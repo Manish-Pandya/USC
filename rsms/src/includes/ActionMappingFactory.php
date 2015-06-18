@@ -28,7 +28,7 @@ class ActionMappingFactory {
                 //TODO: Assign roles
                 //TODO: Assign response codes        		
                 "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", "../login.php"),        		
-                "logoutAction"=>new ActionMapping("logoutAction", "login.php", "login.php"),
+                "logoutAction"=>new ActionMapping("logoutAction", "../login.php", "../login.phplogin.php"),
         		
                 //Generic
                 "activate"=>new ActionMapping("activate", "", ""),

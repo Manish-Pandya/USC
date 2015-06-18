@@ -67,17 +67,29 @@ class ActionManager {
     
     public function getCurrentUserRoles( $user = NULL ){
     	$LOG = Logger::getLogger('Action:' . __function__);
-    	 
+    	
     	if($_SESSION['USER'] != NULL) {
     		$user = $_SESSION['USER'];
     	}
-    	 
-    	$roles = array();
+    	$LOG->debug($user);
+    	$roles = [];
+    	$roles["allRoles"] = [];
+    	//put an array of all possible roles into the session so we can use it for comparison on the client
+    	foreach($this->getAllRoles() as $role){
+    		$LOG->debug($role);
+    		$roles["allRoles"][] = array($role->getName() => $role->getBit_value());
+    	}
+    	
+    	
+    	//sum up the users roles into a single integer to represent their permission set
+    	$roles['userPermissions'] = 0;
     	foreach($user->getRoles() as $role){
     		$LOG->debug($role);
-    		$roles[] = $role->getName();
+    		$roles['userPermissions'] += $role->getBit_value();
     	}
+    	
     	return $roles;
+    	
     }
     
  	public function loginAction( $username = NULL ,$password = NULL ) {
@@ -104,9 +116,11 @@ class ActionManager {
                 	$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
                 	$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
 					
-                	$user->setFirst_name($username);
-                	$user->setRoles($fakeRoles);              	 
-                	$_SESSION['ROLE'] = $this->getCurrentUserRoles();
+                	$user->setFirst_name("Test user with role: ");
+                	$user->setLast_name($username);
+                	 
+                	$user->setRoles($fakeRoles);        	 
+                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
 
                 } 
                 //the name of a real role was NOT input in the form, get the actual user's roles
@@ -114,11 +128,9 @@ class ActionManager {
                 	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 }
                 
-                // put the USER and ROLES into session
+                // put the USER into session
                 $_SESSION['USER'] = $user;
-                $LOG->debug($_SESSION);
                 
-                //return $this->getCurrentUserRoles();
                 // return true to indicate success
                 return true;
             } else {
@@ -156,13 +168,14 @@ class ActionManager {
         		}
         	}
         }
-
         
-
         // otherwise, return false to indicate failure
         return false;
     }    
-    public function logoutAction(){ }
+    public function logoutAction(){ 
+    	session_destroy();
+    	return true;
+    }
 
     public function getCurrentUser(){
         //todo:  when a user is logged in and in session, return the currently logged in user.
