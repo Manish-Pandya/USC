@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
@@ -8,13 +6,20 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 }else{
     require_once('../../Application.php');
 }
+session_start();
 
 ?>
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
+  <?php if($_SESSION != NULL){?>
 <script>
-    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>
+    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
+    //grab usable properties from the session user object
+    var GLOBAL_SESSION_USER = {
+        Name:    '<?php echo $_SESSION['USER']->getName(); ?>',
+        Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+    }
 </script>
-
+<?php } ?>
 <script type="text/javascript">
 var isProductionServer;
 <?php
@@ -42,17 +47,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 
-<!-- included fonts
- <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
--->
-<!-- included javascript libraries
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
+
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
 
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
-<!--
-<script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
--->
+
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
@@ -72,5 +71,12 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 </head>
 <body>
-
-<div class="container-fluid " id="wrapper">
+    <?php if($_SESSION['USER'] != NULL){ ?>
+        <div class="user-info" ng-controller="roleBasedCtrl">
+            <div>
+                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
+                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
+            </div>
+        </div>
+    <?php }?>
+<div class="container-fluid " id="wrapper" style="margin-top:25px;">
