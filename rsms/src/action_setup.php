@@ -33,7 +33,7 @@ $actionName = "login";
 	$actionName = $_REQUEST["action"];
 	
 	//$sessionDataSource = $_SESSION;
-	$sessionDataSource = $_REQUEST;
+	$dataSource = $_REQUEST;
 //}
 
 //TODO: additional setup?
