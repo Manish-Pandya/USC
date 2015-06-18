@@ -1,5 +1,5 @@
 angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased'])
-.factory('convenienceMethods', function($http,$q){
+.factory('convenienceMethods', function($http,$q,$rootScope){
     return{
         //
         /**
@@ -152,6 +152,10 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     deferred.resolve(data);
                 })
                 .error(function(data, status){
+                    if(data.Class && data.Class == "ActionError"){
+                       $rootScope.requestError = data.Message;
+                        alert(data.Message);
+                    }
                     deferred.reject(data);
                 });
             console.log(deferred.promise);
