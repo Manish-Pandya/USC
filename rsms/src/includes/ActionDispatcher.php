@@ -7,6 +7,7 @@
 class ActionDispatcher {
 	
 	private $dataSource;
+	private $sessionSource;
 	private $actionMappingFactory;
 	private $defaultErrorPage = 'forbidden.php';
 	//TODO: Revisit default error code
@@ -27,8 +28,9 @@ class ActionDispatcher {
 	 * @param string $defaultErrorPage: Optional field to specify the default
 	 * error page. 
 	 */
-	public function __construct(Array $dataSource, $actionMappingFactory = NULL){
+	public function __construct(Array $dataSource, Array $sessionSource = NULL, s$actionMappingFactory = NULL){
 		$this->dataSource = $dataSource;
+		if($sessionSource != NULL)$this->sessionSource = $sessionSource;
 		$this->actionMappingFactory = $actionMappingFactory;
 		
 		$this->LOG = Logger::getLogger(__CLASS__);
@@ -219,22 +221,23 @@ class ActionDispatcher {
 	 * @return boolean
 	 */
 	public function checkRoles( ActionMapping $actionMapping ){
+		$LOG = Logger::getLogger(__CLASS__);
 		//Get roles allowed from mapping
 		$allowed_roles = $actionMapping->roles;
-		
+		$LOG->debug($allowed_roles);
 		//Get user's role from our data source
 		$user_roles = array();
-		if( array_key_exists("ROLE", $this->dataSource) ){
-			$user_roles = $this->dataSource["ROLE"];
+		if( array_key_exists("ROLE", $this->sessionSource) ){
+			$user_roles = $this->sessionSource["ROLE"]["userRoles"];
 		}
+		$LOG->debug($this->sessionSource["ROLE"]["userRoles"]);
 		
 		//Check that we need any roles at all
 		$grantAccess = empty($allowed_roles);
 		
 		//Are any of the currently logged in user's roles in the allowed roles for the ActionManager method we called?
-		if( !$grantAccess ) $grantAccess = count( array_intersect($allowed_roles, $user_roles) > 0);
+		if( !$grantAccess ) $grantAccess = count( array_intersect($allowed_roles, $user_roles)) > 0;
 
-		
 		return $grantAccess;
 	}
 	
