@@ -83,9 +83,11 @@ class ActionManager {
     	
     	//sum up the users roles into a single integer to represent their permission set
     	$roles['userPermissions'] = 0;
+    	$roles['userRoles'] = [];
     	foreach($user->getRoles() as $role){
     		$LOG->debug($role);
     		$roles['userPermissions'] += $role->getBit_value();
+    		$roles['userRoles'][] = $role->getName();
     	}
     	
     	return $roles;
@@ -116,7 +118,7 @@ class ActionManager {
                 	$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
                 	$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
 					
-                	$user->setFirst_name("Test user with role: ");
+                	$user->setFirst_name("Test user with role:  	");
                 	$user->setLast_name($username);
                 	 
                 	$user->setRoles($fakeRoles);        	 
