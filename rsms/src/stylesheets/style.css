@@ -1,5 +1,16 @@
 @CHARSET "ISO-8859-1";
 /*****************variables***********/
+.user-info{
+  box-shadow: 0px 3px 3px rgba(0,0,0,.2);
+  z-index: 1040;
+  background: white;
+  position: fixed;
+  height: 22px;
+  width: 100%;
+  margin-top: -25px;
+  padding: 1px 13px;
+  box-sizing: border-box;
+}
 /* line 13, ../sass/style.scss */
 .blueBg {
   background-color: #49afcd;
@@ -80,7 +91,7 @@ body {
   position:fixed;
   left:0;
   right:0;
-  z-index: 1040;    
+  z-index: 1040;
   margin-bottom: 0;
   margin-top: 0;
 }
@@ -237,6 +248,10 @@ RSMS Center specific styles
 *************************************************************/
 /* line 103, ../sass/style.scss */
 /* line 196, ../sass/style.scss */
+.rsms-center-header{
+  margin-top: -25px;
+  margin-bottom: 13px;
+}
 div.rsmsCenterIconContainer a {
   padding-top: 5px;
   position: relative;
@@ -809,7 +824,7 @@ li.minimized ol {
 }
 
 /*****************************************************************
-*   LOCATION HUB             
+*   LOCATION HUB
 ******************************************************************/
 a.selected{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
@@ -1532,7 +1547,7 @@ i.icon-paper{
     font-weight: bold;
 
 }
-/* line 1196, ../sass/style.scss 
+/* line 1196, ../sass/style.scss
 #radiationSafetyHeader img {
   margin: -8px 5px 8px 0 !important;
 }
@@ -2132,7 +2147,7 @@ li.active a {
 *
 *
 *********************************************/
-/* line 653, ../sass/style.scss 
+/* line 653, ../sass/style.scss
 .checklist:before {
   display: block;
   content: " ";
@@ -2994,7 +3009,7 @@ table.large tr th{
     transform: rotate(360deg);
   }
 }
-.spinner {  
+.spinner {
   -webkit-animation: anim-rotate 1s infinite steps(10);
   -moz-animation: anim-rotate 1s infinite steps(9);
   -ms-animation: anim-rotate 1s infinite steps(9);
