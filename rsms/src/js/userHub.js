@@ -118,7 +118,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return uncat;
   }
 }])
-.factory('userHubFactory', function(convenienceMethods,$q, $rootScope){
+.factory('userHubFactory', function(convenienceMethods,$q, $rootScope, roleBasedFactory){
 
   var factory = {};
   factory.roles = [];
