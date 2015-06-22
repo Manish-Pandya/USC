@@ -36,11 +36,12 @@
 		</tr>
 	</thead>
 	<tbody>
-			<tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive, true) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
+			<tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
 			<td style="width:8%;">
-				<a ng-hide="pi.edit" class="edit btn btn btn-primary" ng-click="openModal(pi)"  alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handlePiActive(pi.PrincipalInvestigator)" ng-show="pi.PrincipalInvestigator.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="handlePiActive(pi.PrincipalInvestigator)" ng-show="!pi.PrincipalInvestigator.Is_active"><i class="icon-checkmark"></i></a>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(pi,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active"><i class="icon-remove"></i></button>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="!pi.Is_active"><i class="icon-checkmark"></i></button>
+				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
 			</td>
 			

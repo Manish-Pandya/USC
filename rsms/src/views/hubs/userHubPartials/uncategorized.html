@@ -27,9 +27,10 @@
 	<tbody>
 		<tr ng-repeat="contact in (filtered = (users | isUncat | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
 			<td style="width:12%;">
-				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openModal(contact)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && !contact.edit">Deactivate</a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active && !contact.edit">Activate</a>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0"><i class="icon-remove"></i></button>
+				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0"><i class="icon-checkmark"></i></button>
+				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
 				<i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position: absolute;" ng-show="contact.IsDirty"/></i>
 			</td>
 
