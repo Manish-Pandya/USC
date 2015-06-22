@@ -56,6 +56,5 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
         return factory;
     })
     .controller('roleBasedCtrl', function ($scope, $rootScope) {
-        alert('alsdkjf')
     });
 
