@@ -72,8 +72,8 @@ class ActionManager {
     		$user = $_SESSION['USER'];
     	}
     	$LOG->debug($user);
-    	$roles = [];
-    	$roles["allRoles"] = [];
+    	$roles = array();
+    	$roles["allRoles"] = array();
     	//put an array of all possible roles into the session so we can use it for comparison on the client
     	foreach($this->getAllRoles() as $role){
     		$LOG->debug($role);
@@ -83,7 +83,7 @@ class ActionManager {
     	
     	//sum up the users roles into a single integer to represent their permission set
     	$roles['userPermissions'] = 0;
-    	$roles['userRoles'] = [];
+    	$roles['userRoles'] = array();
     	foreach($user->getRoles() as $role){
     		$LOG->debug($role);
     		$roles['userPermissions'] += $role->getBit_value();
@@ -157,7 +157,7 @@ class ActionManager {
         		// Make sure they're an Erasmus user by username lookup
         		$dao = $this->getDao(new User());
         		$user = $dao->getUserByUsername($username);
-        	
+        		$LOG->debug($user);
         		if ($user != null) {
         			// put the USER and ROLES into session
         			$_SESSION['USER'] = $user;
@@ -1278,16 +1278,24 @@ class ActionManager {
 
             if($user->getPrincipalInvestigator() != null){
                 $pi = $user->getPrincipalInvestigator();
+                $piMaps = array();
+				$piMaps[] = new EntityMap("eager","getLabPersonnel");
+				$piMaps[] = new EntityMap("lazy","getRooms");
+				$piMaps[] = new EntityMap("eager","getDepartments");
+				$piMaps[] = new EntityMap("eager","getUser");
+				$piMaps[] = new EntityMap("lazy","getInspections");
+				$piMaps[] = new EntityMap("lazy","getAuthorizations");
+				$piMaps[] = new EntityMap("lazy", "getActiveParcels");
+				$piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+				$piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+				$piMaps[] = new EntityMap("lazy", "getSolidsContainers");
+				$piMaps[] = new EntityMap("lazy", "getPickups");
+				$piMaps[] = new EntityMap("lazy", "getScintVialCollections");
+				$piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+				$piMaps[] = new EntityMap("lazy","getOpenInspections");
+				$piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 
-                $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-                $entityMaps[] = new EntityMap("eager","getRooms");
-                $entityMaps[] = new EntityMap("eager","getDepartments");
-                $entityMaps[] = new EntityMap("lazy","getUser");
-                $entityMaps[] = new EntityMap("lazy","getInspections");
-                $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
-                $entityMaps[] = new EntityMap("lazy","getOpenInspections");
-
-                $pi->setEntityMaps($entityMaps);
+                $pi->setEntityMaps($piMaps);
             }
 
             $user->setEntityMaps($entityMaps);

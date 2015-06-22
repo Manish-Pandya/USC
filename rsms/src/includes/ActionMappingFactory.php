@@ -27,8 +27,8 @@ class ActionMappingFactory {
                 //TODO: Assign locations
                 //TODO: Assign roles
                 //TODO: Assign response codes        		
-                "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", "../login.php"),        		
-                "logoutAction"=>new ActionMapping("logoutAction", "../login.php", "../login.phplogin.php"),
+                "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php"),        		
+                "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."../login.php", WEB_ROOT."../login.php"),
         		
                 //Generic
                 "activate"=>new ActionMapping("activate", "", ""),
@@ -47,7 +47,7 @@ class ActionMappingFactory {
                 "saveInspector"=>new ActionMapping("saveInspector", "", "", array("Admin", "Radiation Admin")),
                 "getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", "", array("Admin", "Radiation Admin")),
                 "getPIByUserId"=>new ActionMapping("getPIByUserId", "", ""),
-                "getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", "", array("Admin", "Radiation Admin")),
+                "getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", "", array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector")),
 
 
 
