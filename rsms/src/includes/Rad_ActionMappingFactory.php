@@ -1,114 +1,115 @@
 <?php
 /**
  * Class that wraps a static accessor that returns all Radiation Safety Action Mappings
- * 
+ *
  * @author Perry
  */
 class Rad_ActionMappingFactory extends ActionMappingFactory {
-	
+
 	public static function readActionConfig() {
 		$mappings = new Rad_ActionMappingFactory();
-		
+
 		return $mappings->getConfig();
-		
+
 	}
+
 	public function getConfig() {
 		return array(
 
-			// get functions
-			"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", ""),
-			"getCarboyById" 				=> new ActionMapping("getCarboyById", "", ""),
-			"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", ""),
-			"getDrumById" 					=> new ActionMapping("getDrumById", "", ""),
-			"getParcelById" 				=> new ActionMapping("getParcelById", "", ""),
-			"getParcelUseById" 				=> new ActionMapping("getParcelUseById", "", ""),
-			"getPickupById"    				=> new ActionMapping("getPickupById", "", ""),
-			"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", ""),
-			"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", ""),
-			"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", ""),
-			"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", ""),
-			"getRadPIById"					=> new ActionMapping("getRadPIById", "", ""),
-			"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", ""),
-			"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", ""),
-			"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", ""),
-			"getParcelWipeById"				=> new ActionMapping("getRadPIById", "", ""),
-			"getRadInspectionById"			=> new ActionMapping("getRadInspectionById", "", ""),
-				
-			// get entity by relationship functions
-			"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", ""),
-			"getWasteBagsByPickupId"		=> new ActionMapping("getWasteBagsByPickupId", "", ""),
-			"getResultingDrumsByPickupId" 	=> new ActionMapping("getResultingDrumsByPickupId", "", ""),
-			"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", ""),
-			"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", ""),
-			"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", ""),
-			"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", ""),
-				
-			// getAll functions
-			"getAllAuthorizations"			=> new ActionMapping("getAllAuthorizations", "", ""),
-			"getAllCarboys"                 => new ActionMapping("getAllCarboys", "", ""),
-			"getAllCarboyUseCycles"			=> new ActionMapping("getAllCarboyUseCycles", "", ""),
-			"getAllDrums"					=> new ActionMapping("getAllDrums", "", ""),
-			"getAllIsotopes"				=> new ActionMapping("getAllIsotopes", "", ""),
-            "getAllParcels"					=> new ActionMapping("getAllParcels", "", ""),
-            "getAllParcelUses"				=> new ActionMapping("getAllParcelUses", "", ""),
-            "getAllParcelUseAmounts"		=> new ActionMapping("getAllParcelUseAmounts", "", ""),
-            "getAllPickups"					=> new ActionMapping("getAllPickups", "", ""),
-            "getAllPurchaseOrders"			=> new ActionMapping("getAllPurchaseOrders", "", ""),
-			"getAllWasteBags"				=> new ActionMapping("getAllWasteBags", "", ""),
-			"getAllWasteTypes"				=> new ActionMapping("getAllWasteTypes", "", ""),
-			"getAllSolidsContainers"		=> new ActionMapping("getAllSolidsContainers", "", ""),
-			"getAllRadPis"					=> new ActionMapping("getAllRadPis", "", ""),
-			"getAllRadUsers"				=> new ActionMapping("getAllRadUsers", "", ""),
-			"getAllActivePickups"			=> new ActionMapping("getAllActivePickups", "", ""),
-			"getAllMiscellaneousWipeTests"	=> new ActionMapping("getAllMiscellaneousWipeTests", "", ""),
-			"getMiscellaneousWipeTests"		=> new ActionMapping("getMiscellaneousWipeTests", "", ""),
-			"getOpenMiscellaneousWipeTests"	=> new ActionMapping("getOpenMiscellaneousWipeTests", "", ""),
-			"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", ""),
-				
-				
+				// get functions
+				"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getCarboyById" 				=> new ActionMapping("getCarboyById", "", "",$this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getDrumById" 					=> new ActionMapping("getDrumById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelById" 				=> new ActionMapping("getParcelById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelUseById" 				=> new ActionMapping("getParcelUseById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getPickupById"    				=> new ActionMapping("getPickupById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getRadPIById"					=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelWipeById"				=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getRadInspectionById"			=> new ActionMapping("getRadInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
-			// save functions
-			"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", ""),
-			"saveIsotope"				=> new ActionMapping("saveIsotope", "", ""),
-			"saveCarboy"				=> new ActionMapping("saveCarboy", "", ""),
-			"saveCarboyUseCycle"		=> new ActionMapping("saveCarboyUseCycle", "", ""),
-			"saveDrum"					=> new ActionMapping("saveDrum", "", ""),
-			"saveParcel"				=> new ActionMapping("saveParcel", "", ""),
-			"saveParcelUse"				=> new ActionMapping("saveParcelUse", "", ""),
-			"savePickup"				=> new ActionMapping("savePickup", "", ""),
-			"savePurchaseOrder"			=> new ActionMapping("savePurchaseOrder", "", ""),
-			"saveWasteType"				=> new ActionMapping("saveWasteType", "", ""),
-			"saveWasteBag"				=> new ActionMapping("saveWasteBag", "", ""),
-			"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", ""),
-			"saveSVCollection"			=> new ActionMapping("saveSVCollection", "", ""),
-			"saveInspectionWipeTest"	=> new ActionMapping("saveInspectionWipeTest", "", ""),
-			"saveInspectionWipe"		=> new ActionMapping("saveInspectionWipe", "", ""),
-			"saveInspectionWipes"		=> new ActionMapping("saveInspectionWipes", "", ""),
-			"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", ""),
-			"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", ""),
-			"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", ""),
-			"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", ""),
-			"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", ""),
-			"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", ""),
-			"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", ""),
-				
-				
-			// other functions
-			"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", ""),
-			"disposeParcelRemainder" 	   	 => new ActionMapping("disposeParcelRemainder", "",""),
-			"getWasteAmountsByParcelId"		 => new ActionMapping("getWasteAmountsByParcelId", "", ""),
-			"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", ""),
-			"getTotalWasteFromPI"			 => new ActionMapping("getTotalWasteFromPI", "", ""),
-			"getWasteFromPISinceDate"        => new ActionMapping("getWastefRomPISinceDate", "", ""),
-			"getInventoriesByDateRanges"	 => new ActionMapping("getInventoriesByDateRanges", "", ""),
-				
-				
-			"createQuarterlyInventories"	 => new ActionMapping("createQuarterlyInventories", "", ""),
-			"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", ""),
-			"getPiInventory"				 => new ActionMapping("getPiInventory", "", ""),
-			"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", ""),
-			"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","",""),
-			"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","",""),
+				// get entity by relationship functions
+				"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getWasteBagsByPickupId"		=> new ActionMapping("getWasteBagsByPickupId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getResultingDrumsByPickupId" 	=> new ActionMapping("getResultingDrumsByPickupId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelUsesByParcelId"		=> new ActionMapping("getParcelUsesByParcelId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
+				// getAll functions
+				"getAllAuthorizations"			=> new ActionMapping("getAllAuthorizations", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllCarboys"                 => new ActionMapping("getAllCarboys", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllCarboyUseCycles"			=> new ActionMapping("getAllCarboyUseCycles", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllDrums"					=> new ActionMapping("getAllDrums", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllIsotopes"				=> new ActionMapping("getAllIsotopes", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllParcels"					=> new ActionMapping("getAllParcels", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllParcelUses"				=> new ActionMapping("getAllParcelUses", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllParcelUseAmounts"		=> new ActionMapping("getAllParcelUseAmounts", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllPickups"					=> new ActionMapping("getAllPickups", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllPurchaseOrders"			=> new ActionMapping("getAllPurchaseOrders", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllWasteBags"				=> new ActionMapping("getAllWasteBags", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllWasteTypes"				=> new ActionMapping("getAllWasteTypes", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllSolidsContainers"		=> new ActionMapping("getAllSolidsContainers", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllRadPis"					=> new ActionMapping("getAllRadPis", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllRadUsers"				=> new ActionMapping("getAllRadUsers", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllActivePickups"			=> new ActionMapping("getAllActivePickups", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllMiscellaneousWipeTests"	=> new ActionMapping("getAllMiscellaneousWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getMiscellaneousWipeTests"		=> new ActionMapping("getMiscellaneousWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getOpenMiscellaneousWipeTests"	=> new ActionMapping("getOpenMiscellaneousWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
+
+
+				// save functions
+				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveIsotope"				=> new ActionMapping("saveIsotope", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveCarboy"				=> new ActionMapping("saveCarboy", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveCarboyUseCycle"		=> new ActionMapping("saveCarboyUseCycle", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveDrum"					=> new ActionMapping("saveDrum", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveParcel"				=> new ActionMapping("saveParcel", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveParcelUse"				=> new ActionMapping("saveParcelUse", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePickup"				=> new ActionMapping("savePickup", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePurchaseOrder"			=> new ActionMapping("savePurchaseOrder", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveWasteType"				=> new ActionMapping("saveWasteType", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveWasteBag"				=> new ActionMapping("saveWasteBag", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveSVCollection"			=> new ActionMapping("saveSVCollection", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveInspectionWipeTest"	=> new ActionMapping("saveInspectionWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveInspectionWipe"		=> new ActionMapping("saveInspectionWipe", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"saveInspectionWipes"		=> new ActionMapping("saveInspectionWipes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+
+
+				// other functions
+				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"disposeParcelRemainder" 	   	 => new ActionMapping("disposeParcelRemainder", "","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getWasteAmountsByParcelId"		 => new ActionMapping("getWasteAmountsByParcelId", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getParcelUseAmountByParcelUseId"=> new ActionMapping("getParcelUseWaste", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getTotalWasteFromPI"			 => new ActionMapping("getTotalWasteFromPI", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getWasteFromPISinceDate"        => new ActionMapping("getWastefRomPISinceDate", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getInventoriesByDateRanges"	 => new ActionMapping("getInventoriesByDateRanges", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+
+
+				"createQuarterlyInventories"	 => new ActionMapping("createQuarterlyInventories", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getPiInventory"				 => new ActionMapping("getPiInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 		);
 	}
 }
