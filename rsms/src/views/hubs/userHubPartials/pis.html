@@ -1,86 +1,86 @@
 <table class="userList table table-striped table-hover piTable table-bordered" ng-show="neededUsers">
-	<thead>
-		<tr>
-			<th colspan="10" class="blueBg">
-				<h1 class="blueBg">Principal Investigators</h1>
-				<div class="btn-group" style="margin: -18px 0 0 20px;">
-				     <a class="btn btn-large" ng-click="showInactive = !showInactive">
-				     	 <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
-					     <span ng-show="showInactive">Show Active PI</span>
-					     <span ng-hide="showInactive">Show Inactive PI</span>
-				     </a>
-				     <a class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add PI</a>
-			     </div>
-			     <h2 class="blueBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Principal Investigators Displayed</h2>
-			</th>
-		</tr>
-		<tr>
-			<th>Edit PI</th>
-			<th>
-				<a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
-				<input ng-model="searchText" style="width:125px;" placeholder="Filter by Name"/>
-			</th>
-			<th>First Name</th>
-			<th>
-				Department(s)<br>
-				<input ng-model="selectedDepartment" style="width:165px;" placeholder="Filter by Department"/>
-			</th>
-			<th>Office Phone</th>
-			<th>Lab Phone</th>
-			<th>
-				Building(s)<br>
-				<input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
-			</th>
-			<th><a ng-click="order = 'Email'; reverse=!reverse">Email</a></th>
-			<th>Emergency Phone</th>
-		</tr>
-	</thead>
-	<tbody>
-			<tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
-			<td style="width:8%;">
-				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(pi,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
-				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active"><i class="icon-remove"></i></button>
-				<button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="!pi.Is_active"><i class="icon-checkmark"></i></button>
-				<i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
-				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
-			</td>
-			
-			<td style="width:9%;">
-				{{pi.Last_name}}
-			</td>
+    <thead>
+        <tr>
+            <th colspan="10" class="blueBg">
+                <h1 class="blueBg">Principal Investigators</h1>
+                <div class="btn-group" style="margin: -18px 0 0 20px;">
+                     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+                          <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
+                         <span ng-show="showInactive">Show Active PI</span>
+                         <span ng-hide="showInactive">Show Inactive PI</span>
+                     </a>
+                     <a ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add PI</a>
+                 </div>
+                 <h2 class="blueBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Principal Investigators Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>Edit PI</th>
+            <th>
+                <a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
+                <input ng-model="searchText" style="width:125px;" placeholder="Filter by Name"/>
+            </th>
+            <th>First Name</th>
+            <th>
+                Department(s)<br>
+                <input ng-model="selectedDepartment" style="width:165px;" placeholder="Filter by Department"/>
+            </th>
+            <th>Office Phone</th>
+            <th>Lab Phone</th>
+            <th>
+                Building(s)<br>
+                <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
+            </th>
+            <th><a ng-click="order = 'Email'; reverse=!reverse">Email</a></th>
+            <th>Emergency Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
+            <td style="width:8%;">
+                <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(pi,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active"><i class="icon-remove"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="!pi.Is_active"><i class="icon-checkmark"></i></button>
+                <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
+            </td>
+            
+            <td style="width:9%;">
+                {{pi.Last_name}}
+            </td>
 
-			<td style="width:9%;">
-				{{pi.First_name}}
-			</td>
+            <td style="width:9%;">
+                {{pi.First_name}}
+            </td>
 
-			<td style="width:20%;">
-				<ul>
-					<li ng-repeat="department in pi.PrincipalInvestigator.Departments" once-text="department.Name"><!--{{department.Name}}--></li>
-				</ul>
-			</td>
+            <td style="width:20%;">
+                <ul>
+                    <li ng-repeat="department in pi.PrincipalInvestigator.Departments" once-text="department.Name"><!--{{department.Name}}--></li>
+                </ul>
+            </td>
 
-			<td style="width:9%;">
-				{{pi.Office_phone}}
-			</td>
+            <td style="width:9%;">
+                {{pi.Office_phone}}
+            </td>
 
-			<td style="width:9%;">
-				{{pi.Lab_phone}}
-			</td>
+            <td style="width:9%;">
+                {{pi.Lab_phone}}
+            </td>
 
-			<td style="width:17%;">
-				<ul>
-					<li ng-repeat="building in pi.PrincipalInvestigator.Buildings" once-text="building.Name"></li>
-				</ul>
-			</td>
+            <td style="width:17%;">
+                <ul>
+                    <li ng-repeat="building in pi.PrincipalInvestigator.Buildings" once-text="building.Name"></li>
+                </ul>
+            </td>
 
-			<td style="width:12%;">
-				{{pi.Email}}
-			</td>
+            <td style="width:12%;">
+                {{pi.Email}}
+            </td>
 
-			<td style="width:7%;">
-				{{pi.Emergency_phone}}
-			</td>
+            <td style="width:7%;">
+                {{pi.Emergency_phone}}
+            </td>
 
-		</tr>
-	</tbody>
+        </tr>
+    </tbody>
 </table>
