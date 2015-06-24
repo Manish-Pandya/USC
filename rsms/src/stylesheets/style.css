@@ -96,7 +96,7 @@ body {
   margin-top: 0;
 }
 .checklist > .row-fluid{
-  padding-top: 60px;
+  padding-top: 50px;
 }
 .whitebg.checklist {
     padding: 0px !Important;
@@ -188,6 +188,62 @@ a {
   border-bottom: dashed 2px #bfccd3;
 }
 
+/* line 2161, ../sass/style.scss */
+.btn {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
+  color:#f7f7f7;
+}
+
+/* line 2165, ../sass/style.scss */
+.btn:hover {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.36) !important;
+}
+
+/* line 2170, ../sass/style.scss */
+.btn:active {
+  box-shadow: none !important;
+}
+a.modalBtn i, .modal-footer a.btn i {
+  margin: 4px 16px 0 3px;
+}
+
+a.btn i {
+  margin: 1px 2px;
+  color:white !important;
+  font-size: 16px !Important;
+}
+
+a.btn.btn-mini i {
+  margin: 1px 2px 1px 0px;
+}
+.btn.left i{
+  margin: 2px 6px 1px 2px !important
+}
+.btn.left img{
+  margin: -1px 6px -2px 2px !important;
+}
+.btn img{
+  width:25px;
+}
+a.btn.right i, button.btn.right i{
+  margin: 2px 2px 1px 6px!important;
+}
+button.btn:not(.btn-large){
+  padding-bottom:25px;
+}
+
+.btn-large.left i{
+  font-size:33px !important;
+  margin: 2px 24px 1px 2px !important;
+}
+.btn-large.right i{
+  font-size:33px;
+  margin: 2px 2px 1px 24px !important;
+}
+.btn.left i.icon-list-2 {
+  margin-right: 14px !important;
+  margin-left: -5px !important;
+}
 /**************************************************************
 ************* Utility CLASSES
 **************************************************************/
@@ -2864,63 +2920,6 @@ table.roomList h2 {
 /* line 2157, ../sass/style.scss */
 .modal.in {
   margin-top: 10px !Important;
-}
-
-/* line 2161, ../sass/style.scss */
-.btn {
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
-  color:#f7f7f7;
-}
-
-/* line 2165, ../sass/style.scss */
-.btn:hover {
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.36) !important;
-}
-
-/* line 2170, ../sass/style.scss */
-.btn:active {
-  box-shadow: none !important;
-}
-a.modalBtn i, .modal-footer a.btn i {
-  margin: 4px 16px 0 3px;
-}
-
-a.btn i {
-  margin: 1px 2px;
-  color:white !important;
-  font-size: 16px !Important;
-}
-
-a.btn.btn-mini i {
-  margin: 1px 2px 1px 0px;
-}
-.btn.left i{
-  margin: 2px 6px 1px 2px !important
-}
-.btn.left img{
-  margin: -1px 6px -2px 2px !important;
-}
-.btn img{
-  width:25px;
-}
-a.btn.right i, button.btn.right i{
-  margin: 2px 2px 1px 6px!important;
-}
-button.btn:not(.btn-large){
-  padding-bottom:25px;
-}
-
-.btn-large.left i{
-  font-size:33px !important;
-  margin: 2px 24px 1px 2px !important;
-}
-.btn-large.right i{
-  font-size:33px;
-  margin: 2px 2px 1px 24px !important;
-}
-.btn.left i.icon-list-2 {
-  margin-right: 14px !important;
-  margin-left: -5px !important;
 }
 
 .spacer{
