@@ -94,11 +94,14 @@ class ActionManager {
     	
     }
     
- 	public function loginAction( $username = NULL ,$password = NULL ) {
+ 	public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
                 
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
+        $destination = $this->getValueFromRequest('destination', $destination);
+        
+        if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
         if(!isProduction()){
         	 
@@ -118,7 +121,7 @@ class ActionManager {
                 	$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
                 	$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
 					
-                	$user->setFirst_name("Test user with role:  	");
+                	$user->setFirst_name("Test user with role:");
                 	$user->setLast_name($username);
                 	 
                 	$user->setRoles($fakeRoles);        	 
@@ -133,11 +136,24 @@ class ActionManager {
                 // put the USER into session
                 $_SESSION['USER'] = $user;
                 
+                $LOG->debug($_SESSION['ROLE']['userRoles']);
+                
+                //get the proper destination based on the user's role
+                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMScenter.php';	 
+                }
+                else{
+                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+                }
+                
                 // return true to indicate success
                 return true;
             } else {
                 // successful LDAP login, but not an authorized Erasmus user, return false
-                return false;
+            	$_SESSION['DESTINATION'] = 'login.php';
+        		return false;
             }
         }else{
         	// Hardcoded username and password for "emergency accounts"
@@ -148,6 +164,49 @@ class ActionManager {
         		$emergencyAccount = false;
         	}
         	
+        	// ROLE assignment will be based on username, if it directly matches a role name
+        	$roles = array();
+        	foreach($this->getAllRoles() as $role) {
+        		$roles[] = $role->getName();
+        	}
+        	//the name of a real role was input in the form
+        	if ( in_array($username, $roles) ) {
+        		
+        		$LOG->debug('here');
+        		if($password != "correcthorsebatterystaple"){
+        			return false;
+        		}
+        	
+        		$user = $this->getUserById(1);
+        		$roleDao = $this->getDao(new Role());
+        		$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+        		$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+        	
+        		$user->setFirst_name("Test user with role:");
+        		$user->setLast_name($username);
+        		 
+        		$user->setRoles($fakeRoles);
+        		$LOG->debug($user);
+        		$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+        		// put the USER into session
+        		$_SESSION['USER'] = $user;
+        		 
+        		$LOG->debug($_SESSION['ROLE']['userRoles']);
+        		 
+        		//get the proper destination based on the user's role
+        		$nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+        		$LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+        		if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMScenter.php';
+        		}
+        		else{
+        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+        		}
+        		$LOG->debug($_SESSION);
+        		// return true to indicate success
+        		return true;
+        	
+        	}
         	
         	$ldap = new LDAP();
         	
@@ -159,21 +218,45 @@ class ActionManager {
         		$user = $dao->getUserByUsername($username);
         		$LOG->debug($user);
         		if ($user != null) {
-        			// put the USER and ROLES into session
-        			$_SESSION['USER'] = $user;
-					$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-        			// return true to indicate success
-        			return true;
+        			// ROLE assignment will be based on username, if it directly matches a role name
+	                $roles = array();
+	                foreach($this->getAllRoles() as $role) {
+	                	$roles[] = $role->getName();
+	                }
+	                
+	                //the name of a real role was NOT input in the form, get the actual user's roles
+                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+	                
+	                // put the USER into session
+	                $_SESSION['USER'] = $user;
+	                
+	                $LOG->debug($_SESSION['ROLE']['userRoles']);
+	                
+	                //get the proper destination based on the user's role
+	                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+	                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+	                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+	                	$_SESSION["DESTINATION"] = 'views/RSMScenter.php';	 
+	                }
+	                else{
+	                	$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+	                }
+	                
+	                // return true to indicate success
+	                return true;
         		} else {
         			// successful LDAP login, but not an authorized Erasmus user, return false
-        			return false;
+        			 $_SESSION['DESTINATION'] = 'login.php';
+        			 return false;
         		}
         	}
         }
         
         // otherwise, return false to indicate failure
+        $_SESSION['DESTINATION'] = 'login.php';
         return false;
     }    
+    
     public function logoutAction(){ 
     	session_destroy();
     	return true;
@@ -3401,8 +3484,8 @@ class ActionManager {
 
     public function getLocationCSV(){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-
-        $rooms = $this->getAllRooms();
+		$roomDao = $this->getDao(new Room());
+		$rooms = $roomDao->getAll(NULL,NULL,true);
 
         usort($rooms, function($a, $b)
         {
