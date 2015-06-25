@@ -183,6 +183,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         });
 
         modalInstance.result.then(function (PI) {
+            console.log(PI);
              $scope.PI.Rooms = [];
              $scope.PI.Rooms = PI.Rooms;
         }, function () {
@@ -230,7 +231,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
     $scope.showHazards = function(room){
         console.log(room);
-        
+
           var modalInstance = $modal.open({
           templateUrl: 'roomHazardsModal.html',
           controller: hazardDisplayModalInstanceController,
@@ -298,7 +299,7 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         }
 
         //room.piHasRel = !room.piHasRel;
-        
+
         piHubFactory.addRoom(roomDto).then(
             function(promise){
                 console.log(room);
@@ -324,14 +325,14 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
             }
         )
 
-        
+
 
     }
 
     function onSaveRoomRelation(data,room,building){
         console.log(data);
         console.log(room);
-        
+
 
         /*
         angular.forEach(building.Rooms, function(room, key){
@@ -395,7 +396,7 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
 }
 
 piHubRoomController = function($scope, $location, convenienceMethods){
-    
+
     init();
     function init(){
         //var url = '../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
@@ -454,7 +455,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
         if(!convenienceMethods.arrayContainsObject($scope.PI.LabPersonnel, data)){
             $scope.PI.LabPersonnel.push(data);
         }
-        
+
     }
 
     function onFailSaveUser(){
@@ -524,10 +525,11 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 }
 roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInstance, convenienceMethods, $q){
     $scope.PI = PI;
-    $scope.room = room
+    $scope.room = room;
+
     $scope.confirm = function(){
         $scope.saving = true;
-        
+
         $scope.error=false;
 
         roomDto = {
@@ -536,21 +538,19 @@ roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInst
           master_id: PI.Key_id,
           add: false
         }
-
+        console.log(PI);
         var url = '../../ajaxaction.php?action=savePIRoomRelation';
-        var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
-            function(promise){
-                deferred.resolve(promise);
+            function(){
                 var idx = convenienceMethods.arrayContainsObject(PI.Rooms, room, null, true);
                 PI.Rooms.splice(idx,1);
+                console.log(PI)
                 $scope.saving = false;
-                $modalInstance.close(PI);
+                $modalInstance.dismiss();
             },
-            function(promise){
+            function(){
                 $scope.saving = false;
                 $scope.error = "The room could not be removed.  Please check your internet connection and try again."
-                deferred.reject();
             }
         );
 
@@ -630,7 +630,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
         convenienceMethods.updateObject( piDTO, $item, onAddDepartment, onFailAddDepartment, '../../ajaxaction.php?action=savePIDepartmentRelation',null, $item );
     }
 
-    
+
     function onAddDepartment(returned,dept){
         $scope.selectedDepartment.IsDirty = false;
         if(!convenienceMethods.arrayContainsObject($scope.PI.Departments,dept))$scope.PI.Departments.push(dept);
@@ -700,7 +700,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
   }
 
   hazardDisplayModalInstanceController = function( $scope, $modalInstance, room, convenienceMethods ){
-      
+
       $scope.room = room;
     //the server expects an array of roomIds, but we are only going to send one, so wrap it in an array;
     var rooms = [room.Key_id];
