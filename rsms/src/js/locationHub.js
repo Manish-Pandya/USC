@@ -515,6 +515,7 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory){
 }
 
 modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMethods){
+    $rootScope.validationError='';
 
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
@@ -526,6 +527,8 @@ modalCtrl = function($scope, locationHubFactory, $modalInstance, convenienceMeth
 
 
     $scope.cancel = function () {
+                $rootScope.validationError='';
+
       $modalInstance.dismiss();
     };
 
