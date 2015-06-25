@@ -6,6 +6,8 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
 
         factory.archivedInspections = [];
         factory.openInspections = [];
+        factory.previousInspections = [];
+        factory.user = {};
 
         factory.getOpenInspections = function(id)
         {
@@ -20,6 +22,7 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
           convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
               factory.openInspections = promise;
+              deferred.resolve(factory.openInspections);
             },
             function(promise){
               deferred.reject();
@@ -37,7 +40,7 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
             return deferred.promise;
           }
 
-          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getInspectionsByPIId&piId="+id;
+          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getArchivedInspectionsByPIId&piId="+id;
           convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
               factory.previousInspections = promise;
@@ -50,15 +53,76 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
           return deferred.promise
         }
 
+        factory.getCurrentUser = function(id){
+            var deferred = $q.defer();
 
+            if(factory.user.length){
+                deferred.resolve( factory.user );
+                return deferred.promise;
+            }
+            var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getCurrentUser";
+            convenienceMethods.getDataAsDeferredPromise(url).then(
+                function(promise){
+                  factory.user = promise;
+                  deferred.resolve(promise);
+                },
+                function(promise){
+                  deferred.reject();
+                }
+            );
+            return deferred.promise
+        }
 
         return factory;
 });
 
 function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, roleBasedFactory) {
-    var mlf =myLabFactory
+    var mlf = myLabFactory
     $scope.mlf = mlf;
 
+    //GLOBAL_SESSION_USER
+
     console.log(roleBasedFactory);
+
+    var getUser = function(){
+        return mlf.getCurrentUser()
+        .then(
+            function(user){
+                console.log(user);
+                $scope.user = user;
+                //if this user is a PI, we get their own PI record.  If not, we get their supervisor's record
+                if(user.Principal_investigator_id){
+                    return user.Principal_investigator_id;
+                }else{
+                    return user.Supervisor_id;
+                }
+            }
+        )
+    }
+
+    var getOpenInspections = function(id){
+       return  mlf.getOpenInspections(id)
+            .then(
+                function(openInspections){
+                    console.log(openInspections);
+                    $scope.openInspections = openInspections;
+                    return id;
+                }
+            )
+    }
+
+    var getPreviousInspections = function(id){
+        return mlf.getPreviousInspections(id)
+            .then(
+                function(previousInspections){
+                    $scope.previousInspections = previousInspections;
+                }
+            )
+    }
+
+    //init call
+    getUser()
+        .then(getOpenInspections)
+        .then(getPreviousInspections);
 
 }
