@@ -187,7 +187,7 @@ class GenericDAO {
 	 * Retrieves all entities of this type matching the where clause
 	 * 
 	 * @param WhereClauseGroup $whereClauseGroup
-	 * @return Array:
+	 * @return Array $result
 	 */
 	function getAllWhere( $whereClauseGroup ){
 		$this->LOG->debug("where query");
@@ -201,17 +201,64 @@ class GenericDAO {
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
 		$whereClauses = $whereClauseGroup->getClauses();
 		
+		//White lists for queries to safeguard against injection
+		$columnWhiteList = $this->modelObject->getColumnData();
+		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
+		$operatorWhiteList = array("=", "IS", "IS NOT", "BETWEEN", "AND", "<", "<=", ">", ">=");
+		
 		foreach($whereClauses as $key=>$clause){
+			
+			//Verify that the speficied column and operator are in the whitelist.  If not, return an error and log the possible attempt at sql injection
+			$column  =  $clause->getCol();
+			$operator = $clause->getOperator();
+			//Neither the column nor the operator where in the whitelist
+			if(!array_key_exists($column, $columnWhiteList) && !in_array($operator, $operatorWhiteList)){
+				$this->LOG->fatal("The operator, $operator, used was not in the white list.");
+				$this->LOG->fatal("Query attempted on column, $column, not in white list");
+				return new ActionError("MySQL Error");
+			}
+			//The operator wasn't in the whitelist
+			elseif(!in_array($clause->getOperator(), $operatorWhiteList)){
+				$this->LOG->fatal("The operator, $operator, used was not in the white list.");
+				return new ActionError("MySQL Error");
+			}
+			//The column wasn't in the whitelist
+			elseif(!array_key_exists($column, $columnWhiteList)){
+				$this->LOG->fatal("Query attempted on column, $column, not in white list");
+				return new ActionError("MySQL Error");
+			}
+
 			if($key == 0){
-				$sql .= "WHERE " . $clause->getCol() . " " . $clause->getOperator() . " '" . $clause->getVal()."'";
+				$sql .= "WHERE " . $clause->getCol() . " " . $clause->getOperator() ;
+				//if the operator is "IS" or "IS NOT" we are NULL checking
+				//in this case we don't use user input for the value
+				// -- "It depends upon what the meaning of the word 'is' is." --  Bill Clinton
+				if(strstr($clause->getOperator(), "IS")){
+					$sql .= " NULL";
+				}else{
+					$sql .= " ?";
+				}
 			}else{
-				$sql .= " AND " . $clause->getCol() . " " . $clause->getOperator() . " '" . $clause->getVal()."'";
+				$sql .= " AND " . $clause->getCol() . " " . $clause->getOperator();
+				//if the operator is "IS" or "IS NOT" we are NULL checking
+				//in this case we don't use user input for the value
+				// -- "It depends upon what the meaning of the word 'is' is." --  Bill Clinton
+				if(strstr($clause->getOperator(), "IS")){
+					$sql .= " NULL";
+				}else{
+					$sql .= " ?";
+				}
 			}
 		}
+		
 		$this->LOG->debug($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		
+		foreach($whereClauses as $key=>$clause){
+			$stmt->bindValue($key+1, $clause->getVal());
+		}
+			
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
