@@ -184,7 +184,7 @@ class GenericDAO {
 	
 	/**
 	 * 
-	 * Retrieves all entities of this type matching the WhereClause objects that comprise the WhereClauseGroup
+	 * Retrieves all entities of this $this->modelObject's type matching the WhereClause objects that comprise the WhereClauseGroup
 	 * 
 	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array $result
