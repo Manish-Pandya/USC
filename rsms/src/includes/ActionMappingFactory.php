@@ -126,7 +126,7 @@ class ActionMappingFactory {
                 "saveInspection"=>new ActionMapping("saveInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getSubHazards"=>new ActionMapping("getSubHazards", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
                 "getRoomDtoByRoomId"=>new ActionMapping("getRoomDtoByRoomId", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getRoomById"=>new ActionMapping("getRoomById", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -151,7 +151,7 @@ class ActionMappingFactory {
                 "resetInspectionRooms"=>new ActionMapping("resetInspectionRooms", "", "", $this::$ROLE_GROUPS["EHS"]),
 
                 // Inspection, step 3 (Checklist)
-                "resetChecklists"=>new ActionMapping("resetChecklists","","", $this::$ROLE_GROUPS["EHS"]),
+                "resetChecklists"=>new ActionMapping("resetChecklists","","", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveResponse"=>new ActionMapping("saveResponse", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeResponse"=>new ActionMapping("removeResponse", "", "",  $this::$ROLE_GROUPS["EHS"],"200","404"),
@@ -165,7 +165,8 @@ class ActionMappingFactory {
                 "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", ""),
+                "getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+        		"getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),        		
                 "getDeficiencySelectionByInspectionIdAndDeficiencyId"=>new ActionMapping("getDeficiencySelectionByInspectionIdAndDeficiencyId", "", "", $this::$ROLE_GROUPS["EHS"]),
 
         		

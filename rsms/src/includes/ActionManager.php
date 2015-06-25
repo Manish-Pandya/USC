@@ -123,6 +123,11 @@ class ActionManager {
 					
                 	$user->setFirst_name("Test user with role:");
                 	$user->setLast_name($username);
+                    if($username != "Principal Investigator"){
+        				$user->setSupervisor_id(1);
+	        		}else{
+	        			$user->setPrincipal_investigator_id(1);
+	        		}
                 	 
                 	$user->setRoles($fakeRoles);        	 
                 	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
@@ -184,6 +189,12 @@ class ActionManager {
         	
         		$user->setFirst_name("Test user with role:");
         		$user->setLast_name($username);
+        		
+        		if($username != "Principal Investigator"){
+        			$user->setSupervisor_id(1);
+        		}else{
+        			$user->setPrincipal_investigator_id(1);
+        		}
         		 
         		$user->setRoles($fakeRoles);
         		$LOG->debug($user);
@@ -264,8 +275,7 @@ class ActionManager {
 
     public function getCurrentUser(){
         //todo:  when a user is logged in and in session, return the currently logged in user.
-        $userDao = $this->getDao(new User());
-        return $userDao->getById();
+        return $_SESSION['USER'];
     }
 
     public function activate(){
@@ -2940,6 +2950,28 @@ class ActionManager {
             //error
             return new ActionError("No request parameter 'inspectionId' was provided");
         }
+    }
+    
+    public function getArchivedInspectionsByPIId( $id = NULL ){
+    	//Get responses for Inspection
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    
+    	$piId = $this->getValueFromRequest('piId', $piId);
+    
+    	if( $piId !== NULL ){
+    
+    		$pi = $this->getPIById($piId);
+    
+    		$inspectionsDao = $this->getDao(new Inspection);
+    		$whereClauseGroup = new WhereClauseGroup( array( new WhereClause("cap_submitted_date","IS NOT", "NULL") ) );
+    		$inspections = $inspectionsDao->getAllWhere($whereClauseGroup);
+    		
+    		return $inspections;
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'inspectionId' was provided");
+    	}
     }
 
     public function resetChecklists( $id = NULL ){
