@@ -129,6 +129,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   factory.personnel = [];
   factory.modalData = {};
   factory.uncategorizedUsers = [];
+  factory.openedModal = false;
 
   factory.getSupervisor = function(user){
     var i = factory.users.length;
@@ -590,7 +591,8 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
             console.log(users);
             $scope.pis = userHubFactory.users;
             $rootScope.neededUsers = true;
-            if($location.search().pi){
+            if($location.search().pi && !userHubFactory.openedModal){
+              userHubFactory.openedModal = true;
               $scope.openModal(userHubFactory.getUserByPIId($location.search().pi));
             }
             return users;
