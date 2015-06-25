@@ -5,6 +5,7 @@ require_once '../top_view.php';
 
 <h1>My Laboratory</h1>
 <div ng-app="myLab" ng-controller="myLabController">
+    <div cg-busy="{promise:inspectionPromise,message:'Loading', backdrop:true,templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
     <div class="well half">
         <h2><i class="icon-search-2"></i>Pending Reports</h2>
         <div class="fake-table">

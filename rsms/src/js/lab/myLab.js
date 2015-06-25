@@ -1,4 +1,4 @@
-var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once'])
+var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','cgBusy'])
 
 .factory('myLabFactory', function(convenienceMethods,$q,$rootScope){
 
@@ -121,8 +121,8 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
     }
 
     //init call
-    getUser()
-        .then(getOpenInspections)
-        .then(getPreviousInspections);
+    $scope.inspectionPromise = getUser()
+                                .then(getOpenInspections)
+                                .then(getPreviousInspections);
 
 }
