@@ -4,7 +4,7 @@
             <th colspan="10" class="blueBg">
                 <h1 class="blueBg">Principal Investigators</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
-                     <a class="btn btn-large" ng-click="showInactive = !showInactive">
+                     <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                           <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                          <span ng-show="showInactive">Show Active PI</span>
                          <span ng-hide="showInactive">Show Inactive PI</span>
@@ -44,7 +44,7 @@
                 <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
                 <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
             </td>
-            
+
             <td style="width:9%;">
                 {{pi.Last_name}}
             </td>

@@ -4,7 +4,7 @@
             <th colspan="9" class="purpleBg">
                 <h1 class="purpleBg">EHS Personnel</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
-                 <a class="btn btn-large" ng-click="showInactive = !showInactive">
+                 <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                       <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                      <span ng-show="showInactive">Show Active Personnel</span>
                      <span ng-hide="showInactive">Show Inactive Personnel</span>
@@ -95,7 +95,7 @@
                     <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" disabled="disabled" ng-model="modalData.Username" placeholder="Username">
                  </div>
                 </div>
-                
+
                 <div class="control-group">
                  <label class="control-label" for="inputEmail">First Name</label>
                  <div class="controls">
@@ -151,14 +151,14 @@
                      <div class="controls">
                         <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
                         <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-                           
+
                     <ul style="margin-top:3px;">
                         <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<i ng-show="role.IsDirty" class="small spinner icon-spinnery-dealie" src="../../img/loading.gif"></i>
                         </li>
                     </ul>
                    </div>
                 </div>
-                
+
             </form>
         </div>
         <div class="modal-footer">

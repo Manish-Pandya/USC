@@ -4,7 +4,7 @@
             <th colspan="9" class="greenBg">
                 <h1 class="greenBg">Lab Contacts</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
-                 <a class="btn btn-large" ng-click="showInactive = !showInactive">
+                 <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                       <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                      <span ng-show="showInactive">Show Active Contacts</span>
                      <span ng-hide="showInactive">Show Inactive Contacts</span>
@@ -67,7 +67,7 @@
             </td>
             <!--
             <td style="width:12%;" once-text="contact.Lab_phone">
-            
+
             </td>
             -->
             <td style="width:10%;">
@@ -108,7 +108,7 @@
                      <input type="hidden" ng-model="modalData.Username"/>
                  </div>
                 </div>
-                
+
                 <div class="control-group">
                  <label class="control-label" for="inputEmail">First Name</label>
                  <div class="controls">
@@ -166,7 +166,7 @@
                         <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
                         <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
                         <img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-                           
+
                     <ul style="margin-top:3px;">
                         <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
                         </li>
