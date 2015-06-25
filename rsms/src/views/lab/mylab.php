@@ -5,5 +5,43 @@ require_once '../top_view.php';
 
 <h1>My Laboratory</h1>
 <div ng-app="myLab" ng-controller="myLabController">
+    <div class="well half">
+        <h2><i class="icon-search-2"></i>Pending Reports</h2>
+        <div class="fake-table">
+            <div class="table-header">
+                <h3>Inspection Date</h3>
+                <h3>Inspector(s)</h3>
+                <h3>Report</h3>
+            </div>
+            <div class="table-row" ng-repeat="inspection in openInspections">
+                <div>{{inspection.Date_started | dateToISO}}</div>
+                <div>
+                    <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-if="!$last">, </span></span>
+                </div>
+                <div>
+                    <a class="btn btn-info left" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i class="icon-clipboard-2"></i>Inspection Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="well half">
+        <h2><i class="icon-search-2"></i>Archived Reports</h2>
+        <div class="fake-table">
+            <div class="table-header">
+                <h3>Inspection Date</h3>
+                <h3>Inspector(s)</h3>
+                <h3>Report</h3>
+            </div>
+            <div class="table-row" ng-repeat="inspection in previousInspections">
+                <div>{{inspection.Date_started | dateToISO}}</div>
+                <div>
+                    <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-if="!$last">, </span></span>
+                </div>
+                <div>
+                    <a class="btn btn-info left" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i class="icon-clipboard-2"></i>Inspection Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
