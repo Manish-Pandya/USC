@@ -7,6 +7,12 @@
  */
 class JsonManager {
 	
+	private $LOG;
+	
+	public function __construct(){
+
+	}
+	
 	/** Names of functions JsonManager should ignore when converting to JSON */
 	public static $JSON_IGNORE_FUNCTION_NAMES = array(
 		'getTableName',
@@ -33,12 +39,11 @@ class JsonManager {
 	 * or an array of such information that can be easily JSON-encoded. 
 	 */
 	public static function buildJsonableValue($value){
-		$LOG = Logger::getLogger( __CLASS__ );
 		$jsonable = $value;
 		
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
-			//$LOG->trace( 'Building a JsonableValue for simple ' . $input );
+			////$this->LOG->trace( 'Building a JsonableValue for simple ' . $input );
 			//Simply convert the object
 			$jsonable = JsonManager::objectToBasicArray($value);
 		}
@@ -73,17 +78,17 @@ class JsonManager {
 	 * @return Ambigous <object, NULL>|NULL
 	 */
 	public static function decodeInputStream( $stream='php://input' ){
-		$LOG = Logger::getLogger( __CLASS__ );
+
 		
 		if( empty( $stream ) ){
-			$LOG->error("No stream specified; cannot decode JSON");
+			//$this->LOG->error("No stream specified; cannot decode JSON");
 			return NULL;
 		}
 		
 		//read JSON from input stream
 		$input = file_get_contents( $stream );
 		
-		$LOG->trace( 'Data read from input stream: ' . $input );
+		//$this->LOG->trace( 'Data read from input stream: ' . $input );
 		
 		//Only attempt to convert if data is read from the stream
 		if( !empty( $input) ){
@@ -92,7 +97,7 @@ class JsonManager {
 			try{
 				$decodedObject = JsonManager::decode($input);
 				
-				$LOG->trace( 'Decoded to: ' . $decodedObject);
+				//$this->LOG->trace( 'Decoded to: ' . $decodedObject);
 				
 				return $decodedObject;
 			}
@@ -102,7 +107,7 @@ class JsonManager {
 		}
 		else{
 			//No data read from input stream.
-			$LOG->error( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			//$this->LOG->error( "Nothing to JSON-decode; no data read from input stream: $stream" );
 			return NULL;
 		}
 	}
@@ -117,10 +122,10 @@ class JsonManager {
 	 * @see DtoManager
 	 */
 	public static function jsonToObject($json, $object = NULL){
-		$LOG = Logger::getLogger( __CLASS__ );
+
 		
 		//Decode the json to associative array
-		$LOG->trace("Decoding JSON: $json");
+		//$this->LOG->trace("Decoding JSON: $json");
 		$decodedJsonArray = json_decode($json, true);
 		
 		return JsonManager::assembleObjectFromDecodedArray($decodedJsonArray, $object);
@@ -136,7 +141,7 @@ class JsonManager {
 	 * @return Object populated by the array
 	 */
 	public static function assembleObjectFromDecodedArray($decodedJsonArray, $object = NULL){
-		$LOG = Logger::getLogger( __CLASS__ );
+
 		
 		//if object is null, pull ["Class"] from decode to infer type
 		$object = JsonManager::buildModelObject($decodedJsonArray, $object);
@@ -144,7 +149,7 @@ class JsonManager {
 		//Make sure we have a base object
 		if( $object == NULL ){
 			// We have a problem!
-			$LOG->error("Error assembling object from decoded JSON - NULL base object");
+			//$this->LOG->error("Error assembling object from decoded JSON - NULL base object");
 			return NULL;
 		}
 		
@@ -182,13 +187,13 @@ class JsonManager {
 	 * @return unknown|string
 	 */
 	public static function buildModelObject($decodedJsonArray, $object = NULL){
-		$LOG = Logger::getLogger( __CLASS__ );
+
 		
 		if( $object == NULL && array_key_exists('Class', $decodedJsonArray) ){
 			//Pull class name from decoded array
 			$classname = $decodedJsonArray['Class'];
 			
-			$LOG->trace("Inferring object type: '$classname'");
+			//$this->LOG->trace("Inferring object type: '$classname'");
 			
 			//Instantiate a new object
 			$inferredObject = new $classname();
@@ -220,13 +225,13 @@ class JsonManager {
 	 * @return Array
 	 */
 	public static function callObjectAccessors($object){
-		$LOG = Logger::getLogger( __CLASS__ );
+
 		
 		$classname = get_class($object);
 
 		$functions = get_class_methods( $classname);
 		
-		$LOG->trace("Calling accessors on $classname");
+		//$this->LOG->trace("Calling accessors on $classname");
 		
 		//Retain the object's type in the json
 		$objectVars = array('Class'=>$classname);
@@ -252,12 +257,12 @@ class JsonManager {
 				}
 				
 				if(!$skip){
-					$LOG->trace("Calling $classname#$func()");
+					//$this->LOG->trace("Calling $classname#$func()");
 					//Call function to get value
 					$value = $object->$func();
-					//$LOG->trace("#func() returns [$value]");
+					////$this->LOG->trace("#func() returns [$value]");
 				} else {
-					$LOG->trace("Skipping (lazy loading) $classname#$func()");
+					//$this->LOG->trace("Skipping (lazy loading) $classname#$func()");
 					//Call function to get value
 					$value = null;
 				}

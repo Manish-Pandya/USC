@@ -79,7 +79,7 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function getById($id){
-		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
+		//$this->LOG->trace("$this->logprefix Looking up entity with keyid $id");
 
 			// Get the db connection
 			global $db;
@@ -94,7 +94,7 @@ class GenericDAO {
 
 				// $result being false indicates no rows returned.
 				if(!$result) {
-					$this->LOG->debug('No Rows returned. Returning ActionError');
+					//$this->LOG->trace('No Rows returned. Returning ActionError');
 					//return;
 					return new ActionError('No rows returned');
 				}
@@ -139,7 +139,7 @@ class GenericDAO {
 	 */
 	function getAll( $sortColumn = NULL, $sortDescending = FALSE, $activeOnly = FALSE ){
 
-		$this->LOG->debug("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+		//$this->LOG->trace("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
 		// Get the db connection
 		global $db;
@@ -190,9 +190,6 @@ class GenericDAO {
 	 * @return Array $result
 	 */
 	function getAllWhere( $whereClauseGroup ){
-		$this->LOG->debug("where query");
-		$this->LOG->debug($this->modelClassName);
-		$this->LOG->debug($whereClauseGroup);
 		
 		// Get the db connection
 		global $db;
@@ -250,8 +247,7 @@ class GenericDAO {
 				}
 			}
 		}
-		
-		$this->LOG->debug($sql);
+	
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		
@@ -302,9 +298,7 @@ class GenericDAO {
 		$stmt->execute();
 		
 		$total = $stmt->fetch(PDO::FETCH_NUM);
-		$this->LOG->debug($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
-		$this->LOG->debug($sum);
 		if($sum == NULL)$sum = 0;
 		return $sum;
 	}
@@ -340,9 +334,7 @@ class GenericDAO {
 		$stmt->execute();
 		
 		$total = $stmt->fetch(PDO::FETCH_NUM);
-		$this->LOG->debug($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
-		$this->LOG->debug('getting sum for parcels' .$sum);
 		if($sum == NULL)$sum = 0;
 		return $sum;
 	}
@@ -354,8 +346,8 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function save(GenericCrud $object = NULL){
-		$this->LOG->debug("$this->logprefix Saving entity");
-		$this->LOG->debug($object);
+		//$this->LOG->trace("$this->logprefix Saving entity");
+		//$this->LOG->trace($object);
 		
 		//Make sure we have an object to save
 		if( $object == NULL ){
@@ -407,15 +399,15 @@ class GenericDAO {
 		// Look for db errors
 		// If no errors, update and return the object
 		if($object->getKey_Id() > 0) {
-			$this->LOG->debug("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+			//$this->LOG->trace("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
-			$this->LOG->debug("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
+			//$this->LOG->trace("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
 			$object = $this->getById( $object->getKey_Id() );
 
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
-			$this->LOG->debug("$this->logprefix Object had a key_id of " . $object->getKey_Id());
+			//$this->LOG->trace("$this->logprefix Object had a key_id of " . $object->getKey_Id());
 			$errorInfo = $stmt->errorInfo();
 			$object = new ModifyError($errorInfo[2], $object);
 			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
@@ -454,14 +446,14 @@ class GenericDAO {
 		$queryString = "SELECT " . $keyName . " FROM " . $tableName . " WHERE " . $foreignKeyName . " = ?";
 		if($activeOnly != null){$queryString .= " AND is_active = 1 ";}
 		if ($sortColumn != null){ $queryString .= " ORDER BY " . $sortColumn;}
-		$this->LOG->debug($queryString . " [? == $id] ...");
+		//$this->LOG->trace($queryString . " [? == $id] ...");
 		$stmt = $db->prepare($queryString);
 		$stmt->bindParam(1,$id,PDO::PARAM_INT);
 
 		// Query the db and return an array of key_ids for matching records
 		if ($stmt->execute() ) {
 			$keys = $stmt->fetchAll();
-			$this->LOG->debug( "... returned " . count($keys) . " related records.");
+			//$this->LOG->trace( "... returned " . count($keys) . " related records.");
 		// ... otherwise, return an error
 		} else {
 			$this->LOG->debug($queryString);
@@ -489,7 +481,7 @@ class GenericDAO {
 			}
 
 		}
-		$this->LOG->debug("$this->logprefix returning" . count($resultList)  . "related records");
+		//$this->LOG->trace("$this->logprefix returning" . count($resultList)  . "related records");
 
 		return $resultList;
 	}
@@ -503,7 +495,7 @@ class GenericDAO {
 	 * @return unknown
 	 */
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
-		$this->LOG->debug("$this->logprefix Inserting new related item for entity with id=$foreignKey_id");
+		//$this->LOG->trace("$this->logprefix Inserting new related item for entity with id=$foreignKey_id");
 
 		// Get the db connection
 		global $db;
@@ -517,7 +509,7 @@ class GenericDAO {
 
 		$sql = "INSERT INTO  $tableName ($foreignKeyName, $keyName) VALUES (:foreignKey_id, :key_id) ";
 
-		$this->LOG->debug("Preparing insert statement [$sql]");
+		//$this->LOG->trace("Preparing insert statement [$sql]");
 
 		$stmt = $db->prepare($sql);
 		// Bind the params.
@@ -526,7 +518,7 @@ class GenericDAO {
 
 		// Insert the record and return true
 		if ($stmt->execute() ) {
-			$this->LOG->debug( "Inserted new related item with key_id [$key_id]");
+			//$this->LOG->trace( "Inserted new related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate error message to be returned
 		} else {
@@ -554,7 +546,7 @@ class GenericDAO {
 
 		$sql = "DELETE FROM $tableName WHERE $foreignKeyName =  :foreignKey_id AND $keyName = :key_id";
 
-		$this->LOG->debug("DELETE FROM $tableName WHERE $foreignKeyName =  $foreignKey_id AND $keyName = $key_id");
+		//$this->LOG->trace("DELETE FROM $tableName WHERE $foreignKeyName =  $foreignKey_id AND $keyName = $key_id");
 
 		$stmt = $db->prepare($sql);
 		// Bind the params.
@@ -563,7 +555,7 @@ class GenericDAO {
 
 		// Delete the record and return true
 		if ($stmt->execute() ) {
-			$this->LOG->debug( "Remove related item with key_id [$key_id]");
+			//$this->LOG->trace( "Remove related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate an error message to be returned
 		} else {
@@ -616,7 +608,7 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= ")";
 
-		$this->LOG->debug("Preparing insert statement [$sql]");
+		//$this->LOG->trace("Preparing insert statement [$sql]");
 
 		$stmt = $db->prepare($sql);
 		//var_export($stmt->queryString);
@@ -671,7 +663,7 @@ class GenericDAO {
 
 	function getInspectionsByYear($year){
 
-		$this->LOG->debug("$this->logprefix Looking up inspections for $year");
+		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
 		global $db;
@@ -705,7 +697,7 @@ class GenericDAO {
 			foreach($result as $row){
 				$row->passFlag = true;
 			}
-			$this->LOG->debug($result);
+			//$this->LOG->trace($result);
 			// ... otherwise, die and echo the db error
 		} else {
 			$error = $stmt->errorInfo();
