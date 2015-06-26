@@ -588,7 +588,6 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
     userHubFactory.getAllUsers()
       .then(
           function(users){
-            console.log(users);
             $scope.pis = userHubFactory.users;
             $rootScope.neededUsers = true;
             if($location.search().pi && !userHubFactory.openedModal){

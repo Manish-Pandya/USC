@@ -37,7 +37,6 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
         $rootScope.U = GLOBAL_SESSION_USER;
 
         factory.sumArray = function(array){
-            console.log(array);
             var i = array.length;
             var total = 0;
             while(i--){
@@ -48,8 +47,6 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
         }
 
         factory.getHasPermission = function( elementRoles ){
-            console.log(factory.sumArray(elementRoles));
-            console.log(factory.userPermissions);
             return factory.sumArray(elementRoles) & factory.userPermissions;
         }
 
