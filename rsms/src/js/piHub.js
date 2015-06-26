@@ -165,6 +165,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
     //callback function called when a PI is selected in the typeahead
     $scope.onSelectPi = function($item, $model, $label){
+        $location.search("pi", $item.Key_id);
         getPi($item.Key_id);
     }
 

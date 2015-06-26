@@ -59,7 +59,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 }
 
                 if(search.purpose){
-                    if( item.Class == 'Room' && item.Purpose && item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item.matched = false;
+                    if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item.matched = false;
                 }
 
                 if( search.campus ) {
@@ -74,7 +74,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 }
 
                 if(search.pi || search.department && item.PrincipalInvestigators){
-                    console.log('has pis property')
                     if(!item.PrincipalInvestigators.length){
                         console.log('no pis in room '+item.Name);
                         item.PrincipalInvestigators = [{Class:"PrincipalInvestigator",User:{Name: 'Unassigned', Class:"User"}, Departments:[{Name: 'Unassigned'}] }];
