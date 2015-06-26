@@ -26,7 +26,8 @@ class Room extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"created_user_id"	=> "integer"
+		"created_user_id"	=> "integer",
+		"purpose"	=>	"text"
 							);
 
 
@@ -59,6 +60,8 @@ class Room extends GenericCrud {
 	);
 
 	private $name;
+	
+	private $purpose;
 
 	/** Reference to the Building entity that contains this Room */
 	private $building_id;
@@ -110,6 +113,9 @@ class Room extends GenericCrud {
 	// Accessors / Mutators
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+	
+	public function getPurpose(){ return $this->purpose; }
+	public function setPurpose($purpose){ $this->purpose = $purpose; }
 
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
