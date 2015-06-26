@@ -7,7 +7,7 @@ return array(
 			'logFileAppender',
 			'htmlFileAppender',
 		),
-		'level' => 'DEBUG'
+		'level' => 'FATAL'
 	),
 	//Other loggers
 	'loggers' => array(

@@ -4,115 +4,130 @@
   <span>Getting Lab Locations...</span>
 </div>
 <table class="userList table table-striped table-hover piTable table-bordered locationTable" ng-if="rooms && !loading">
-	<thead>
-		<tr class="blueBg">
-			<th colspan="8" class="blueBg">
-				<h1 class="blueBg">Laboratory Locations</h1>
-				<div class="btn-group" style="margin:-22px 0 0 30px">
-			     <a class="btn-large btn" ng-click="openRoomModal()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
-			     <a style="  margin: 3px 0px 0 6px !important;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
-			   </div>
-   				<h2 class="blueBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Laboratory Locations Displayed</h2>
-			</th>
-		</tr>
-		<tr>
-			<th clas="temp">Edit</th>
-			<th>
-				Building<br>
-				<input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
-			</th>
-			<th>
-				Lab Room
-				<input class="span2" ng-model="search.room" placeholder="Filter by Lab Room"/>
-			</th>
-			<th style="width:12.6%">
-				Lab PI
-				<input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
-			</th>
-			<th style="width:15.4%;">
-				<a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<br>
-				<input class="span2" ng-model="search.department" placeholder="Filter by Department"/>
-			</th>
-			<th>
-				Campus
-				<input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
-			</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr class="blueBg">
+            <th colspan="8" class="blueBg">
+                <h1 class="blueBg">Laboratory Locations</h1>
+                <div class="btn-group" style="margin:-22px 0 0 30px">
+                 <a class="btn-large btn" ng-click="openRoomModal()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
+                 <a style="  margin: 3px 0px 0 6px !important;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
+               </div>
+                   <h2 class="blueBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Laboratory Locations Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th clas="temp">Edit</th>
+            <th>
+                Building<br>
+                <input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
+            </th>
+            <th>
+                Lab Room
+                <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room"/>
+            </th>
+            <th>
+                Room Use
+                <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use"/>
+            </th>
+            <th style="width:12.6%">
+                Lab PI
+                <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
+            </th>
+            <th style="width:15.4%;">
+                <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<br>
+                <input class="span2" ng-model="search.department" placeholder="Filter by Department"/>
+            </th>
+            <th>
+                Campus
+                <input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
+            </th>
+        </tr>
+    </thead>
 
-	<tbody>
-		<tr ng-repeat="room in (filtered = (rooms |  orderBy:['index', 'Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search))" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
-			<td style="width:6%;">
-				<a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
-				<a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
-				<a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></a>
-				<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
-			</td>
+    <tbody>
+        <tr ng-repeat="room in (filtered = (rooms |  orderBy:['index', 'Building.Campus.Name','Building.Name', 'Name'] | genericFilter:search))" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
+            <td style="width:6%;">
+                <a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
+                <a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
+                <a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></a>
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
+            </td>
 
-			<td style="width:15%"> 
-				{{lhf.getBuildingByRoom(room).Name}}
-			</td>
+            <td style="width:15%">
+                {{lhf.getBuildingByRoom(room).Name}}
+            </td>
 
-			<td once-text="room.Name" style="width:10%;">
-			</td>
-			<td colspan="2" style="width:28%">
-				<ul ng-if="room.PrincipalInvestigators.length">
-					<li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}"> 
-						<span once-text="pi.User.Name"></span>
-						<ul>
-							<li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
-							<li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
-						</ul>
-					</li>
-				</ul>
-				<ul ng-if="!room.PrincipalInvestigators.length">
-					<li>
-						<span style="color:#f00;">Unassigned</span>
-						<ul>
-							<li><span style="color:#f00;">Unassigned</span></li>
-						</ul>
+            <td once-text="room.Name" style="width:10%;">
+            </td>
 
-					</li>
-				</ul>
-			</td>
+            <td once-text="room.Purpose" style="width:10%;">
+            </td>
 
-			<td style="width:15%" once-text="room.Building.Campus.Name">
-			</td>
-		</tr>
-	</tbody>
+            <td colspan="2" style="width:28%">
+                <ul ng-if="room.PrincipalInvestigators.length">
+                    <li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
+                        <span once-text="pi.User.Name"></span>
+                        <ul>
+                            <li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
+                            <li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul ng-if="!room.PrincipalInvestigators.length">
+                    <li>
+                        <span style="color:#f00;">Unassigned</span>
+                        <ul>
+                            <li><span style="color:#f00;">Unassigned</span></li>
+                        </ul>
+
+                    </li>
+                </ul>
+            </td>
+
+            <td style="width:15%" once-text="room.Building.Campus.Name">
+            </td>
+        </tr>
+    </tbody>
 </table>
 
 <script type="text/ng-template" id="rooms-modal.html">
         <div class="modal-header" style="padding:0;" class="">
             <h2 style="padding:5px" ng-if="modalData.Key_id" class="greenBg">Editing {{nonEdtiable.Name}}<span ng-if="!modalData.Name">Unnamed Room</span></h2>
-        	<h2 style="padding:5px" ng-if="!modalData.Key_id" class="greenBg">Create a New Room</h2>
+            <h2 style="padding:5px" ng-if="!modalData.Key_id" class="greenBg">Create a New Room</h2>
         </div>
         <div class="modal-body">
-        	<h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
-        	<form class="form-horizontal form">
-			    <div class="" style="padding:3px 0;">
-				    <div  class="control-group">
-			         <label class="control-label" for="inputEmail">Building</label>
-			         <div class="controls">
-						<input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-				  	 </div>
-			    </div>
+            <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
+            <form class="form-horizontal form">
+                <div class="" style="padding:3px 0;">
+                    <div  class="control-group">
+                     <label class="control-label" for="inputEmail">Building</label>
+                     <div class="controls">
+                        <input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
+                       </div>
+                </div>
 
-			    <div class="control-group">
-		         <label class="control-label" for="inputEmail">Room Number</label>
-		         <div class="controls">
-		         	<input type="text" id="inputEmail" ng-model="modalData.Name" placeholder="Room Number">
-		         </div>
-			    </div>
+                <div class="control-group">
+                 <label class="control-label" for="inputRoomNumber">Room Number</label>
+                 <div class="controls">
+                     <input type="text" id="inputRoomNumber" ng-model="modalData.Name" placeholder="Room Number">
+                 </div>
+                </div>
 
-        	</form>
+                <div class="control-group">
+                 <label class="control-label" for="inputRoomPurpose">Room Use</label>
+                 <div class="controls">
+                     <input type="text" class="span4" id="inputRoomPurpose" ng-model="modalData.Purpose" placeholder="Room Purpose">
+                 </div>
+                </div>
+
+            </form>
         </div>
         <div class="modal-footer">
-			<i class="icon-spinnery-dealie spinner small" ng-if="modalData.IsDirty"></i>
+            <i class="icon-spinnery-dealie spinner small" ng-if="modalData.IsDirty"></i>
             <a ng-if="modalData.Name && modalData.Building.Name && !needsConfirmation" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
             <a ng-if="modalData.Name && modalData.Building.Name && needsConfirmation" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData, true)"><i class="icon-checkmark"></i>Confirm</a>
 
             <a ng-if="!modalData.Name || !modalData.Building.Name" class="btn btn-success hazardBtn btn-large" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
-            <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+            <a class="btn btn-danger hazardBtn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
         </div>
      </script>
