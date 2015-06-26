@@ -58,6 +58,10 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                     if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item.matched = false;
                 }
 
+                if(search.purpose){
+                    if( item.Class == 'Room' && item.Purpose && item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item.matched = false;
+                }
+
                 if( search.campus ) {
                     if( !item.Building || !item.Building.Campus ){
                         item.matched = false;
