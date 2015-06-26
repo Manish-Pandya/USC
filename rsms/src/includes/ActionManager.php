@@ -1773,7 +1773,7 @@ class ActionManager {
 
                 // Get a DAO
                 $dao = $this->getDao(new User());
-                // if add is true, add this role to this PI
+                // if add is true, add this role to this USER
                 if ($add){
                     if(!in_array($roleToAdd, $roles)){
                         // only add the role if the user doesn't already have it
