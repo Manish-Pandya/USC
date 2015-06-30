@@ -159,7 +159,6 @@ class GenericDAO {
 		}
 
 		return $result;
-
 	}
 
 	/**
@@ -189,7 +188,7 @@ class GenericDAO {
 	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array $result
 	 */
-	function getAllWhere( $whereClauseGroup ){
+	function getAllWhere( $whereClauseGroup, $junction = "AND" ){
 		
 		// Get the db connection
 		global $db;
@@ -201,10 +200,10 @@ class GenericDAO {
 		//White lists for queries to safeguard against injection
 		$columnWhiteList = $this->modelObject->getColumnData();
 		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
-		$operatorWhiteList = array("=", "IS", "IS NOT", "BETWEEN", "AND", "<", "<=", ">", ">=");
+		$operatorWhiteList = array("=", "IS", "IS NOT", "BETWEEN", "AND", "&&", "<", "<=", ">", ">=", "IN");
+		$junctionWhiteList = array("AND", "&&", "OR", "||");
 		
 		foreach($whereClauses as $key=>$clause){
-			
 			//Verify that the speficied column and operator are in the whitelist.  If not, return an error and log the possible attempt at sql injection
 			$column  =  $clause->getCol();
 			$operator = $clause->getOperator();
@@ -236,7 +235,11 @@ class GenericDAO {
 					$sql .= " ?";
 				}
 			}else{
-				$sql .= " AND " . $clause->getCol() . " " . $clause->getOperator();
+				if ( !in_array($junction, $junctionWhiteList) ) {
+					$this->LOG->fatal("The junction, $junction, used was not in the white list.");
+					return new ActionError("MySQL Error");
+				}
+				$sql .= " " . $junction . " " . $clause->getCol() . " " . $clause->getOperator();
 				//if the operator is "IS" or "IS NOT" we are NULL checking
 				//in this case we don't use user input for the value
 				// -- "It depends upon what the meaning of the word 'is' is." --  Bill Clinton
@@ -247,12 +250,16 @@ class GenericDAO {
 				}
 			}
 		}
-	
+		
+		$this->LOG->debug("DIG: $sql");
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
-		
 		foreach($whereClauses as $key=>$clause){
-			$stmt->bindValue($key+1, $clause->getVal());
+			if($clause->getOperator() == "IN"){
+				//
+			}else{
+				$stmt->bindValue($key+1, $clause->getVal());
+			}
 		}
 			
 		// Query the db and return an array of $this type of object

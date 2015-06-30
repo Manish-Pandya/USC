@@ -1333,11 +1333,15 @@ class ActionManager {
 
     public function getAllPIs($rooms = null){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-
+        
         $rooms = $this->getValueFromRequest("rooms", $rooms);
 
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
+        /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
+       /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
+        $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
+        
         if($rooms != null){
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getLabPersonnel");
@@ -1354,7 +1358,6 @@ class ActionManager {
         }
 
         return $pis;
-
     }
 
     public function getUsersForUserHub(){
