@@ -36,16 +36,25 @@ html[xmlns] .clearfix {
    height: 1%;
 }
 
-
-
+.navbar.fixed{
+    top:10px;
+}
 .container-fluid {
    padding-left: 70px;
    padding-right: 70px;
 }
+.navbar.fixed, form.fixed, span.fixed{
+    left:70px;
+    right: 70px;
+}
 @media(max-width: 1365px) {
    .container-fluid {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+   }
+   .navbar.fixed, form.fixed, span.fixed{
+        left:0px;
+        right: 0px;
    }
 }
 

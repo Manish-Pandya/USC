@@ -403,18 +403,43 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return activeObjects;
     };
 })
-.directive('scrollTable', ['$window', function($window) {
+.directive('scrollTable', ['$window', '$location', '$rootScope', function($window, $location, $rootScope) {
     return {
         restrict: 'C',
-        link: function(scope, $(), attrs) {
+        link: function(scope, elem, attrs) {
+            
+             $('.fixed').width($('.container:first').width());
+
              $(window).load(function() {
                 var firstRow = elem.find('tbody').find('tr:first');
                 //TODO
                 //make tbody display block.  set its top position down.  fix position of other elements.  give everything backgrounds
                 $(elem).find('thead').find("th").each(function(index) {
-                    $(this).css("width",firstRow.find("td").eq(index-1).width());
+                    $(this).width(firstRow.find("td").eq(index-1).width());
+                                        console.log(firstRow.find("td").eq(index-1).width());
+
                 });
+                
            });
+            scope.$location = location;
+             $rootScope.$watch('renderDone', function(renderDone) {
+                 console.log(elem);
+                var firstRow = elem.find('tbody').find('tr:last');
+                $(elem).find('thead').find("th").each(function(index) {
+                    //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
+                    console.log(firstRow.find("td").eq(index-1).width());
+                    $(this).width(firstRow.find("td").eq(index-1).width());
+                });            
+             });
+            
+            angular.element($window).bind('resize', function() {
+                var firstRow = elem.find('tbody').find('tr:last');
+                $(elem).find('thead').find("th").each(function(index) {
+                    //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
+                    console.log(firstRow.find("td").eq(index-1).width());
+                    $(this).width(firstRow.find("td").eq(index-1).width());
+                }); 
+            })
         }
     }
 }]);

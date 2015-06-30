@@ -13,8 +13,8 @@
 }
 /* line 13, ../sass/style.scss */
 .blueBg {
-  background-color: #49afcd;
-  border-color: #49afcd;
+  background-color: #49afcd !important;
+  border-color: #49afcd !important;
   color: white;
 }
 
@@ -27,21 +27,21 @@
 
 /* line 23, ../sass/style.scss */
 .greyBg {
-  background-color: #cccccc;
-  border-color: #cccccc;
+  background-color: #cccccc !important;
+  border-color: #cccccc !important;
 }
 
 /* line 27, ../sass/style.scss */
 .orangeBg {
-  background-color: #cc0000;
-  border-color: #cc0000;
+  background-color: #cc0000 !important;
+  border-color: #cc0000 !important;
   color: white;
 }
 
 /* line 32, ../sass/style.scss */
 .purpleBg {
-  background-color: #781096;
-  border-color: #781096;
+  background-color: #781096 !important;
+  border-color: #781096 !important;
   color: white;
 }
 
@@ -3328,11 +3328,20 @@ background:#BDC3C7;
 }
 
 .fixed{
-  top:0;
   position:fixed;
   width:auto;
  // display:none;
   border:none;
+}
+.scrollTable thead{
+    position:fixed;
+}
+.scrollTable tbody{
+display: block;
+  margin-top: 135px;
+}
+.scrollTable th{
+    background:white;
 }
 
 .scrollMore{

@@ -3,7 +3,7 @@ require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
 <span ng-app="locationHub" >
-<div class="navbar">
+<div class="navbar fixed">
 	<ul class="nav pageMenu blueBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">
 		<li class="span3" style="margin-left:0">
 			<img src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" class="pull-left" style="height:50px" />
@@ -13,6 +13,7 @@ require_once '../top_view.php';
 		</li>
 		<div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
 	</ul>
+</div>
 	<div class="whitebg" style="padding:70px 70px;" >
 
 		<div class="btn-group" id="piButtons" ng-controller="routeCtrl" style="margin-left:-9px;">

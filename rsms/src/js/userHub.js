@@ -584,7 +584,7 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
 var piController = function($scope, $modal, userHubFactory, $rootScope, convenienceMethods, $location) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
-
+    $rootScope.renderDone = false;
     userHubFactory.getAllUsers()
       .then(
           function(users){
@@ -594,6 +594,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
               userHubFactory.openedModal = true;
               $scope.openModal(userHubFactory.getUserByPIId($location.search().pi));
             }
+            $rootScope.renderDone = true;
             return users;
           },
           function(){
@@ -690,12 +691,15 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
     $rootScope.neededUsers = false;
     $rootScope.error="";
     $scope.order = 'Last_name';
+    $rootScope.renderDone = false;
+
 
     userHubFactory.getAllUsers()
       .then(
         function(users){
           $scope.LabContacts = userHubFactory.users;;
           $rootScope.neededUsers = true;
+          $rootScope.renderDone = true;
         }
       )
 
@@ -723,16 +727,20 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
     }
 }
 
-var personnelController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods) {
+var personnelController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout) {
     $rootScope.neededUsers = false;
     $rootScope.order="Last_name";
     $rootScope.error="";
+    $rootScope.renderDone = false;
 
     userHubFactory.getAllUsers()
       .then(
         function(users){
           $scope.Admins = userHubFactory.users;
           $rootScope.neededUsers = true;
+          $timeout(function() {          
+                $rootScope.renderDone = true;
+            }, 300);
         },
         function(){
           $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";

@@ -3,7 +3,7 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/userHub.js"></script>
 
-<div class="navbar">
+<div class="navbar fixed">
 	<ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
 		<li class="">
 			<img src="../../img/user-icon.png" class="pull-left" style="height:50px" />
@@ -15,8 +15,8 @@ require_once '../top_view.php';
 	<div class="clearfix"></div>
 </div>
 
-<span ng-app="userList" ng-controller="MainUserListController" style="clear:both">
-    <form class="form-horizontal" style="margin: 10px 0 0;">
+<span ng-app="userList"  ng-controller="MainUserListController" style="clear:both; display: block; margin-top:100px">
+    <form class="form-horizontal fixed" style="margin: -31px 0 0;  background: rgb(221, 221, 221);">
       <div class="control-group">
          <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
          <div class="controls" style="margin-left:128px;">
@@ -25,7 +25,6 @@ require_once '../top_view.php';
 			  <option value="/contacts">Laboratory Contacts</option>
 			  <option value="/EHSPersonnel">EHS Personnel</option>
   			  <option value="/uncategorized">Uncategorized Users</option>
-
 		   </select>
          </div>
       </div>
@@ -35,7 +34,7 @@ require_once '../top_view.php';
 	  <i class="icon-spinnery-dealie spinner large"></i> 
 	  <span>Loading Users...</span>
 	</div>
-   <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
+   <h2 class="alert alert-danger fixed" ng-if="error">{{error}}</h2>
    <ng-view></ng-view>
 </span>
 
