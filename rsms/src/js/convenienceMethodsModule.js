@@ -403,3 +403,18 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return activeObjects;
     };
 })
+.directive('scrollTable', ['$window', function($window) {
+    return {
+        restrict: 'C',
+        link: function(scope, $(), attrs) {
+             $(window).load(function() {
+                var firstRow = elem.find('tbody').find('tr:first');
+                //TODO
+                //make tbody display block.  set its top position down.  fix position of other elements.  give everything backgrounds
+                $(elem).find('thead').find("th").each(function(index) {
+                    $(this).css("width",firstRow.find("td").eq(index-1).width());
+                });
+           });
+        }
+    }
+}]);
