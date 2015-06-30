@@ -275,6 +275,48 @@ class GenericDAO {
 		return $result;
 	}
 	
+	/*
+	 * 
+	 *  Returns an array of objects that are active, have not null collections of related objects, or both
+	 * 
+	 * 	@param DataRelationship $relationship  The relationship, defined in $this->modelObject
+	 *  @return Array $result   A bunch of objects of $this->modelObject's type
+	 */
+	
+	public function getAllWith(DataRelationship $relationship){
+		
+		// Get the db connection
+		global $db;
+		$this->LOG->debug('hey dickhead');
+		$this->LOG->debug($relationship);
+		// get the relationship parameters needed to build the query
+		$className		= $relationship->getClassName();
+		$tableName		= $relationship->getTableName();
+		$keyName		= $relationship->getKeyName();
+		$foreignKeyName	= $relationship->getForeignKeyName();
+		$modelObject    = $this->modelObject;
+		
+	
+		//$this->LOG->trace($queryString . " [? == $id] ...");
+		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE IS_ACTIVE = 1 OR ".$modelObject->getTableName().".key_id IN(SELECT $foreignKeyName FROM $tableName)";
+		
+		$this->LOG->fatal($sql);
+		$stmt = $db->prepare($sql);
+		
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
+			// ... otherwise, generate error message to be returned
+		} else {
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
+				
+		return $result;
+		
+	}
+	
 	/**
 	 * Gets the sum of ParcelUseAmounts for a given authorization for a given date range with a given waste type
 	 *
