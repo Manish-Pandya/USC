@@ -1337,7 +1337,7 @@ class ActionManager {
         $rooms = $this->getValueFromRequest("rooms", $rooms);
 
         $dao = $this->getDao(new PrincipalInvestigator());
-        $pis = $dao->getAll();
+        $pis = $dao->getAllWith(DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
         /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
