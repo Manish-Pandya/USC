@@ -282,25 +282,20 @@ class GenericDAO {
 	 * 	@param DataRelationship $relationship  The relationship, defined in $this->modelObject
 	 *  @return Array $result   A bunch of objects of $this->modelObject's type
 	 */
-	
 	public function getAllWith(DataRelationship $relationship){
-		
 		// Get the db connection
 		global $db;
-		$this->LOG->debug('hey dickhead');
-		$this->LOG->debug($relationship);
+		
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
 		$tableName		= $relationship->getTableName();
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
 		$modelObject    = $this->modelObject;
-		
 	
 		//$this->LOG->trace($queryString . " [? == $id] ...");
 		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE IS_ACTIVE = 1 OR ".$modelObject->getTableName().".key_id IN(SELECT $foreignKeyName FROM $tableName)";
 		
-		$this->LOG->fatal($sql);
 		$stmt = $db->prepare($sql);
 		
 		// Query the db and return an array of $this type of object
@@ -314,7 +309,6 @@ class GenericDAO {
 		}
 				
 		return $result;
-		
 	}
 	
 	/**
