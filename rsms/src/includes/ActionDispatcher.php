@@ -28,7 +28,7 @@ class ActionDispatcher {
 	 * @param string $defaultErrorPage: Optional field to specify the default
 	 * error page. 
 	 */
-	public function __construct(Array $dataSource, Array $sessionSource = NULL, s$actionMappingFactory = NULL){
+	public function __construct(Array $dataSource, Array $sessionSource = NULL, $actionMappingFactory = NULL){
 		$this->dataSource = $dataSource;
 		if($sessionSource != NULL)$this->sessionSource = $sessionSource;
 		$this->actionMappingFactory = $actionMappingFactory;
@@ -125,14 +125,22 @@ class ActionDispatcher {
 	 * @param string $actionName
 	 * @param Array $actionConfig
 	 * @param ActionResult $result
+	 * 
 	 */
-	public function dispatchValidAction($actionName, &$actionConfig, &$result){
+	public function dispatchValidAction($actionName, &$actionConfig, &$result, $checkRoles = true){
 		// We have a valid action name, so retrieve the details from the config
 		$actionMapping = $actionConfig[$actionName];
 		$action_function = $actionMapping->actionFunctionName;
 		
 		$this->LOG->debug("Checking user roles for action $actionName");
-		$allowActionExecution = $this->checkRoles($actionMapping);
+		
+		if($actionMapping->checkRoles == true){
+			$allowActionExecution = $this->checkRoles($actionMapping);
+		}else{
+			$allowActionExecution = true;
+		}
+		
+		
 		$allowStr = $allowActionExecution ? "TRUE" : "FALSE";
 		$this->LOG->debug("Granting user access to $actionName: $allowStr" );
 		

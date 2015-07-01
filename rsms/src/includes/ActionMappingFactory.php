@@ -41,8 +41,8 @@ class ActionMappingFactory {
                 //TODO: Assign locations
                 //TODO: Assign roles
                 //TODO: Assign response codes        		
-                "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php"),        		
-                "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."../login.php", WEB_ROOT."../login.php"),
+                "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php", array(), false),        		
+                "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."../login.php", WEB_ROOT."../login.php", array(), false),
         		
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -53,7 +53,7 @@ class ActionMappingFactory {
                 // Users Hub
                 "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),
-                "saveUser"=>new ActionMapping("saveUser", "", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveUser"=>new ActionMapping("saveUser", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
                 "saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveUserRoleRelations"=>new ActionMapping("saveUserRoleRelations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
