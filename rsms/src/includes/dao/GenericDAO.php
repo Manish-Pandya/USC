@@ -81,31 +81,31 @@ class GenericDAO {
 	function getById($id){
 		//$this->LOG->trace("$this->logprefix Looking up entity with keyid $id");
 
-			// Get the db connection
-			global $db;
+		// Get the db connection
+		global $db;
 
-			//Prepare to query the table by key_id
-			$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
-			$stmt = $db->prepare($sql);
-			$stmt->bindParam(1,$id,PDO::PARAM_INT);
-			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
-			if ($stmt->execute()) {
-				$result = $stmt->fetch();
+		//Prepare to query the table by key_id
+		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$id,PDO::PARAM_INT);
+		$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
+		if ($stmt->execute()) {
+			$result = $stmt->fetch();
 
-				// $result being false indicates no rows returned.
-				if(!$result) {
-					//$this->LOG->trace('No Rows returned. Returning ActionError');
-					//return;
-					return new ActionError('No rows returned');
-				}
-			// ... otherwise, generate error message to be returned
-			} else {
-				$error = $stmt->errorInfo();
-				$result = new QueryError($error);
-				$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			// $result being false indicates no rows returned.
+			if(!$result) {
+				//$this->LOG->trace('No Rows returned. Returning ActionError');
+				//return;
+				return new ActionError('No rows returned');
 			}
+		// ... otherwise, generate error message to be returned
+		} else {
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
 
-			return $result;
+		return $result;
 	}
 
 	/**
@@ -293,8 +293,7 @@ class GenericDAO {
 		$foreignKeyName	= $relationship->getForeignKeyName();
 		$modelObject    = $this->modelObject;
 	
-		//$this->LOG->trace($queryString . " [? == $id] ...");
-		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE IS_ACTIVE = 1 OR ".$modelObject->getTableName().".key_id IN(SELECT $foreignKeyName FROM $tableName)";
+		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE is_active = 1 OR key_id IN(SELECT $foreignKeyName FROM $tableName)";
 		
 		$stmt = $db->prepare($sql);
 		
@@ -462,23 +461,60 @@ class GenericDAO {
 	}
 
 	/**
-	 * Retrieves a list of related items for the entity of this type
-	 * with the givevn ID.
+	 * Retrieves a list of related items for the entity of this type with the given ID.
 	 *
 	 * @param unknown $id
 	 * @param DataRelationship $relationship
+	 * @param String $sortColumn
+	 * @param Boolean $activeOnly
+	 * @param Boolean $activeOnlyRelated
 	 * @return Array:
 	 */
-	function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = NULL, $activeRelated = NULL){
+	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = false, $activeOnlyRelated = false){
+		if (empty($id)) { return array();}
+		
+		// Get the db connection
+		global $db;
+	
+		// get the relationship parameters needed to build the query
+		$className		= $relationship->getClassName();
+		$classInstance  = new $className();
+		$tableName		= $relationship->getTableName();
+		$keyName		= $relationship->getKeyName();
+		$foreignKeyName	= $relationship->getForeignKeyName();
+		$modelObject    = $this->modelObject;
+		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
+		
+		$whereTag = $activeOnly ? " WHERE is_active = 1 OR " : " WHERE ";
+		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
+		$sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
+		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
+		
+		if ($sortColumn != null){ $sql .= " ORDER BY " . $sortColumn;}
+		$this->LOG->error("DIG: " . $sql);
+		$stmt = $db->prepare($sql);
+	
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $className);
+			// ... otherwise, generate error message to be returned
+		} else {
+			$result = array();
+			$error = $stmt->errorInfo();
+			$resultError = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
+		}
+	
+		return $result;
+	}
+	/*function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = NULL, $activeRelated = NULL){
 		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
 		// make sure there's an id
 		if (empty($id)) { return array();}
 
-
 		// Get the db connection
 		global $db;
 
-		//print_r($relationship);
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
 		$tableName		= $relationship->getTableName();
@@ -489,14 +525,12 @@ class GenericDAO {
 		$queryString = "SELECT " . $keyName . " FROM " . $tableName . " WHERE " . $foreignKeyName . " = ?";
 		if($activeOnly != null){$queryString .= " AND is_active = 1 ";}
 		if ($sortColumn != null){ $queryString .= " ORDER BY " . $sortColumn;}
-		//$this->LOG->trace($queryString . " [? == $id] ...");
 		$stmt = $db->prepare($queryString);
 		$stmt->bindParam(1,$id,PDO::PARAM_INT);
 
 		// Query the db and return an array of key_ids for matching records
 		if ($stmt->execute() ) {
 			$keys = $stmt->fetchAll();
-			//$this->LOG->trace( "... returned " . count($keys) . " related records.");
 		// ... otherwise, return an error
 		} else {
 			$this->LOG->debug($queryString);
@@ -524,10 +558,9 @@ class GenericDAO {
 			}
 
 		}
-		//$this->LOG->trace("$this->logprefix returning" . count($resultList)  . "related records");
 
 		return $resultList;
-	}
+	}*/
 
 	/**
 	 * Save a new related item with the given values described by the given DataRelationship
