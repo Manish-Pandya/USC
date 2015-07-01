@@ -491,7 +491,6 @@ class GenericDAO {
 		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
 		
 		if ($sortColumn != null){ $sql .= " ORDER BY " . $sortColumn;}
-		$this->LOG->error("DIG: " . $sql);
 		$stmt = $db->prepare($sql);
 	
 		// Query the db and return an array of $this type of object
@@ -507,60 +506,6 @@ class GenericDAO {
 	
 		return $result;
 	}
-	/*function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = NULL, $activeRelated = NULL){
-		$this->LOG->debug("$this->logprefix Retrieving related items for " . get_class($this->modelObject) . " entity with id=$id");
-		// make sure there's an id
-		if (empty($id)) { return array();}
-
-		// Get the db connection
-		global $db;
-
-		// get the relationship parameters needed to build the query
-		$className		= $relationship->getClassName();
-		$tableName		= $relationship->getTableName();
-		$keyName		= $relationship->getKeyName();
-		$foreignKeyName	= $relationship->getForeignKeyName();
-
-		//Query the related table using the foreign key
-		$queryString = "SELECT " . $keyName . " FROM " . $tableName . " WHERE " . $foreignKeyName . " = ?";
-		if($activeOnly != null){$queryString .= " AND is_active = 1 ";}
-		if ($sortColumn != null){ $queryString .= " ORDER BY " . $sortColumn;}
-		$stmt = $db->prepare($queryString);
-		$stmt->bindParam(1,$id,PDO::PARAM_INT);
-
-		// Query the db and return an array of key_ids for matching records
-		if ($stmt->execute() ) {
-			$keys = $stmt->fetchAll();
-		// ... otherwise, return an error
-		} else {
-			$this->LOG->debug($queryString);
-			$error = $stmt->errorInfo();
-			$queryError = new QueryError($error);
-			$this->LOG->error("statement failed, returning QueryError with message: " . $queryError->getMessage());
-			return $queryError;
-		}
-
-		$resultList = array();
-
-		//Iterate the rows
-		foreach ($keys as $record){
-			//Create a new instance and sync it for each row
-			$item = new $className();
-			$itemDao = new GenericDAO( $item );
-			$item = $itemDao->getById( $record[$keyName] );
-
-			if($activeRelated != null){
-				// Add the results to an array
-				if($item->getIs_active() == true)array_push($resultList, $item);
-			}else{
-				// Add the results to an array
-				array_push($resultList, $item);
-			}
-
-		}
-
-		return $resultList;
-	}*/
 
 	/**
 	 * Save a new related item with the given values described by the given DataRelationship
@@ -584,7 +529,6 @@ class GenericDAO {
 		$foreignKeyName	= $relationship->getForeignKeyName();
 
 		$sql = "INSERT INTO  $tableName ($foreignKeyName, $keyName) VALUES (:foreignKey_id, :key_id) ";
-
 		//$this->LOG->trace("Preparing insert statement [$sql]");
 
 		$stmt = $db->prepare($sql);
@@ -621,7 +565,6 @@ class GenericDAO {
 		$foreignKeyName	= $relationship->getForeignKeyName();
 
 		$sql = "DELETE FROM $tableName WHERE $foreignKeyName =  :foreignKey_id AND $keyName = :key_id";
-
 		//$this->LOG->trace("DELETE FROM $tableName WHERE $foreignKeyName =  $foreignKey_id AND $keyName = $key_id");
 
 		$stmt = $db->prepare($sql);
@@ -689,7 +632,6 @@ class GenericDAO {
 		$stmt = $db->prepare($sql);
 		//var_export($stmt->queryString);
 		return $stmt;
-
 	}
 
 	function createUpdateStatement ($db,$object){
@@ -706,11 +648,9 @@ class GenericDAO {
 		$stmt = $db->prepare($sql);
 		//var_export($stmt->queryString);
 		return $stmt;
-
 	}
 
 	function getUserByUsername($username){
-
 		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
 
 		// Get the db connection
@@ -733,12 +673,9 @@ class GenericDAO {
 		}
 
 		return $result;
-
-
 	}
 
 	function getInspectionsByYear($year){
-
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
@@ -806,7 +743,6 @@ class GenericDAO {
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
-
 	}
 
 
