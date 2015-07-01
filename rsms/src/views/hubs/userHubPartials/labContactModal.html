@@ -1,0 +1,107 @@
+<form name="form" ng-submit="saveUser()">
+    <div class="modal-header" style="padding:0;" class="">
+        <h2 style="padding:5px" ng-show="modalData.Key_id" class="greenBg">Editing {{modalData.Name}}</h2>
+        <h2 style="padding:5px" ng-hide="modalData.Key_id" class="greenBg">Create a New Lab Contact</h2>
+    </div>
+    <div class="modal-body">
+        <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
+        <form class="form-horizontal form">
+
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">Username</label>
+             <div class="controls">
+
+                 <div class="input-append" ng-if="isProductionServer && !modalData.Username">
+                     <input type="text" name="userName" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username" required>
+                     <a class="add-on greenBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
+                      <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
+                  </div>
+                <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" name="userName" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
+                 <input type="hidden" name="userName" ng-model="modalData.Username" required/>
+             </div>
+            </div>
+
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">First Name</label>
+             <div class="controls">
+                 <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="First Name" required>
+                <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="!isProductionServer || modalData.Username" placeholder="First Name" required>
+             </div>
+            </div>
+
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">Last Name</label>
+             <div class="controls">
+                 <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Last Name" required>
+                <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="!isProductionServer || modalData.Username" placeholder="Last Name" required>
+             </div>
+            </div>
+
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">Email</label>
+             <div class="controls">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required>
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required>
+             </div>
+            </div>
+            <!--
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">Lab Phone</label>
+             <div class="controls">
+                <input type="text" id="inputEmail" ng-model="modalData.Lab_phone" placeholder="Lab Phone" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                <input type="text" id="inputEmail" ng-model="modalData.Lab_phone" placeholder="Lab Phone" ng-if="!isProductionServer || modalData.Username">
+
+             </div>
+            </div>
+            -->
+            <div class="control-group">
+             <label class="control-label" for="inputEmail">Emergency Phone</label>
+             <div class="controls">
+                 <input type="text" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                <input type="text" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || modalData.Username">
+             </div>
+            </div>
+
+             <div class=""style="padding:3px 0">
+                <div  class="control-group">
+                 <label class="control-label" for="inputEmail">Principal Investigator</label>
+                 <div class="controls">
+                    <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                       <input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
+                </div>
+            </div>
+
+            <div class="" style="padding:3px 0;">
+                <div  class="control-group">
+                 <label class="control-label" for="inputEmail">Roles(s)</label>
+                 <div class="controls">
+                    <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                    <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
+                    <img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+
+                <ul style="margin-top:3px;">
+                    <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+                    </li>
+                </ul>
+               </div>
+            </div>
+
+              <div class=""style="padding:3px 0">
+                <div  class="control-group">
+                 <label class="control-label" for="inputEmail">Department</label>
+                 <div class="controls">
+                    <input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                    <input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
+                    <img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
+        <!--a ng-if="modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
+        <a ng-if="!modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a-->
+        <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark"/>Save</button>
+        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+    </div>
+</form>

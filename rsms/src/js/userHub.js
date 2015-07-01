@@ -713,7 +713,7 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
         }
         userHubFactory.setModalData(user);
         var modalInstance = $modal.open({
-          templateUrl: 'labContactModal.html',
+          templateUrl: 'userHubPartials/labContactModal.html',
           controller: modalCtrl
         });
         modalInstance.result.then(function (returnedUser) {
@@ -738,7 +738,7 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
         function(users){
           $scope.Admins = userHubFactory.users;
           $rootScope.neededUsers = true;
-          $timeout(function() {          
+          $timeout(function() {
                 $rootScope.renderDone = true;
             }, 300);
         },
