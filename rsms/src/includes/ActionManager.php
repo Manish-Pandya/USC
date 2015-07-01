@@ -65,11 +65,13 @@ class ActionManager {
         }
     }
     
-    public function getCurrentUserRoles( $user = NULL ){
+    public function getCurrentUserRoles($user = NULL){
     	$LOG = Logger::getLogger('Action:' . __function__);
     	
-    	if($_SESSION['USER'] != NULL) {
+    	if(array_key_exists("USER", $_SESSION) && $_SESSION['USER'] != NULL) {
     		$user = $_SESSION['USER'];
+    	} else {
+    		$_SESSION['USER'] = $user;
     	}
     	$LOG->debug($user);
     	$roles = array();
@@ -91,7 +93,6 @@ class ActionManager {
     	}
     	
     	return $roles;
-    	
     }
     
  	public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {

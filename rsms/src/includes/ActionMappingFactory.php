@@ -53,7 +53,7 @@ class ActionMappingFactory {
                 // Users Hub
                 "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),
-                "saveUser"=>new ActionMapping("saveUser", "", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveUser"=>new ActionMapping("saveUser", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
                 "saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveUserRoleRelations"=>new ActionMapping("saveUserRoleRelations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
