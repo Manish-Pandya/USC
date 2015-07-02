@@ -1,4 +1,4 @@
-angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased'])
+angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased','ui.select','ngSanitize'])
 .factory('convenienceMethods', function($http,$q,$rootScope){
     return{
         //
@@ -407,7 +407,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
     return {
         restrict: 'C',
         link: function(scope, elem, attrs) {
-            
+
              $('.fixed').width($('.container:first').width());
 
              $(window).load(function() {
@@ -419,7 +419,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                                         console.log(firstRow.find("td").eq(index-1).width());
 
                 });
-                
+
            });
             scope.$location = location;
              $rootScope.$watch('renderDone', function(renderDone) {
@@ -429,17 +429,48 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
                     console.log(firstRow.find("td").eq(index-1).width());
                     $(this).width(firstRow.find("td").eq(index-1).width());
-                });            
+                });
              });
-            
+
             angular.element($window).bind('resize', function() {
                 var firstRow = elem.find('tbody').find('tr:last');
                 $(elem).find('thead').find("th").each(function(index) {
                     //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
                     console.log(firstRow.find("td").eq(index-1).width());
                     $(this).width(firstRow.find("td").eq(index-1).width());
-                }); 
+                });
             })
         }
     }
-}]);
+}])
+.filter('propsFilter', function() {
+  return function(items, props) {
+    var out = [];
+    if (angular.isArray(items)) {
+      items.forEach(function(item) {
+        var itemMatches = false;
+        var keys = Object.keys(props);
+        if(keys[0].indexOf(".") > 0){
+            var properties = keys[0].split('.');
+        }else{
+            var properties = keys;
+        }
+
+        var myResultItem = item;
+        for(var i = 0; i < properties.length; i++){
+            myResultItem = myResultItem[ properties[i] ];
+        }
+        var text = props[properties.join('.')].toLowerCase();
+        if(myResultItem.toString().toLowerCase().indexOf(text) !== -1)itemMatches = true;
+
+        if (itemMatches) {
+          out.push(item);
+        }
+      });
+    } else {
+      // Let the output be the input untouched
+      out = items;
+    }
+    return out;
+  }
+});
