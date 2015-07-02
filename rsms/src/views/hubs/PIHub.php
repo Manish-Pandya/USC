@@ -24,7 +24,7 @@ require_once '../top_view.php';
                        <i class="icon-spinnery-dealie spinner small asbolute" style="margin-left:-258px; margin-top:-5px;"></i>
                </span>
                <span ng-if="PIs && buildings" class="span4 nopad no-pad" style="margin-left:0">
-                    <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled">
+                    <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
                       <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
