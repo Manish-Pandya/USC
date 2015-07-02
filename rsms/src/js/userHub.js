@@ -630,20 +630,22 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
     }
 
   $scope.departmentFilter = function() {
-
+    if(!$scope.search)$scope.search = {};
     return function(user) {
+        console.log(user);
         var show = false;
         //for pis that don't have departments, don't filter them unless the filter has some text
         if(!user.PrincipalInvestigator.Departments)user.PrincipalInvestigator.Departments = [];
         if(!user.PrincipalInvestigator.Departments.length){
-          if(typeof $scope.selectedDepartment == 'undefined' || $scope.selectedDepartment.length == 0){
+          if(typeof $scope.search.selectedDepartment == 'undefined' || $scope.search.selectedDepartment.length == 0){
             show = true;
           }
         }
 
         angular.forEach(user.PrincipalInvestigator.Departments, function(department, key){
-          if(typeof $scope.selectedDepartment == 'undefined'|| department.Name.toLowerCase().indexOf($scope.selectedDepartment.toLowerCase())>-1)show = true;
+          if(typeof $scope.search.selectedDepartment == 'undefined'|| department.Name.toLowerCase().indexOf($scope.search.selectedDepartment.toLowerCase())>-1)show = true;
         });
+        console.log()
         return show;
     }
   }
