@@ -755,7 +755,7 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
         userHubFactory.setModalData(user);
 
         var modalInstance = $modal.open({
-          templateUrl: 'personnelModal.html',
+          templateUrl: 'userHubPartials/personnelModal.html',
           controller: modalCtrl
         });
 
@@ -815,6 +815,11 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
     $scope.order="Last_name";
+    $scope.phoneNumberPattern = /^\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
+    $scope.phoneNumberErrorMsg = "Please match pattern 123-555-5555 or (123)555-5555";
+    $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+    $scope.emailErrorMsg = "Invalid email address";
+
     userHubFactory.getAllRoles()
       .then(
         function(roles){
@@ -844,8 +849,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         .then(savePiDepartmentRelations)
         .then(closeModal)
     }
-
-
 
     $scope.onSelectRole = function(role, $model, $label, id){
       $scope.modalError=""
@@ -963,6 +966,16 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
               }
             )
         }
+    }
+
+    $scope.isPIRequired = function(user) {
+        for (var i = 0; i < user.Roles.length; i++) {
+            if (user.Roles[i].Name == "Lab Contact" || user.Roles[i].Name == "Lab Personnel") {
+                return true;
+            }
+            console.log("DIG: " + user.Roles[i].Name);
+        }
+        return false;
     }
 
     $scope.onSelectPI = function(pi,user){

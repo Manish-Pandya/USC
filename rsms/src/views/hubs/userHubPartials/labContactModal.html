@@ -17,7 +17,6 @@
                       <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
                   </div>
                 <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" name="userName" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
-                 <input type="hidden" name="userName" ng-model="modalData.Username" required/>
              </div>
             </div>
 
@@ -40,8 +39,9 @@
             <div class="control-group">
              <label class="control-label" for="inputEmail">Email</label>
              <div class="controls">
-                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required>
-                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required>
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
+                 <span class="error" ng-show="form.email.$error.pattern">{{emailErrorMsg}}</span>
              </div>
             </div>
             <!--
@@ -57,8 +57,9 @@
             <div class="control-group">
              <label class="control-label" for="inputEmail">Emergency Phone</label>
              <div class="controls">
-                 <input type="text" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                <input type="text" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || modalData.Username">
+                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="(___)___-____" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" placeholder="(___)___-____" ng-if="!isProductionServer || modalData.Username" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
+                 <span class="error" ng-show="form.phone.$error.pattern">{{phoneNumberErrorMsg}}</span>
              </div>
             </div>
 
@@ -66,8 +67,8 @@
                 <div  class="control-group">
                  <label class="control-label" for="inputEmail">Principal Investigator</label>
                  <div class="controls">
-                    <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                       <input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
+                    <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
+                       <input style="" class="span4" placeholder="Select A PI" typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="modalData.Supervisor" typeahead="pi as pi.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username" ng-required="isPIRequired(modalData)">
                 </div>
             </div>
 
@@ -99,8 +100,6 @@
     </div>
     <div class="modal-footer">
         <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
-        <!--a ng-if="modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-        <a ng-if="!modalData.Key_id" class="btn btn-success left btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a-->
         <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark"/>Save</button>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
     </div>
