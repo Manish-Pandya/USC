@@ -7,8 +7,8 @@
     <tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
     <tr>
         <td colspan="5">
-            <a href="#roomModal" data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large left">Assign Room</a>
-            <a href="locationhub.php" class="btn btn-primary btn-large left">Create Room</a>
+            <a data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large left">Assign Room</a>
+            <a class="btn btn-primary btn-large left">Create Room</a>
         </td>
     </tr>
     <tr>
@@ -36,7 +36,14 @@
         <div class="control-group">
          <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls">
-            <input style="width:315px;" ng-if="buildings" type="text"  typeahead-on-select='onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select Building" typeahead="building as building.Name for building in buildings | filter:$viewValue | limitTo: 9">
+
+             <ui-select ng-model="building.selected" theme="selectize" ng-disabled="disabled" style="width:315px;" on-select="onSelectBuilding($item)">
+                    <ui-select-match placeholder="Select or search for a Buidling">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
+                      <div ng-bind-html="building.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+            </ui-select>
+
             <span ng-if="!buildings">
                 <input class="span4" style="background:white;border-color:#999; width:315px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
                    <img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
@@ -49,7 +56,7 @@
                <li ng-repeat="room in chosenBuilding.Rooms | orderBy:'Name'">
                    <label class="checkbox inline">
                     <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
-                    <span class="metro-checkbox">{{room.Name}}<img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
+                    <span class="metro-checkbox">{{room.Name}} <span ng-if="room.Purpose">({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
                 </label>
                </li>
        </ul>
