@@ -63,8 +63,13 @@
 
 	<div class="well half search-tools">
 		<h2><i class="fa fa-calendar"></i>Find Inventories by P.I.</h2>
-		<input class="left-nav-typeahead" typeahead-on-select='getInventoriesByPiId($item.Key_id)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
-
+            <ui-select ng-show="!PI || selectPI" class="span8" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="getInventoriesByPiId($item.Key_id)
+">
+                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
+                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
 		<div ng-if="piInventories" class="card full">
 			<div class="fake-table striped bordered">
 				<div class="table-header">
