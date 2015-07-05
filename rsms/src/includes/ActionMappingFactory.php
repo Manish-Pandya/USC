@@ -137,10 +137,10 @@ class ActionMappingFactory {
                 "getAllBuildings"=>new ActionMapping("getAllBuildings", "", ""),
                 "getAllCampuses"=>new ActionMapping("getAllCampuses", "", ""),
                 "getBuildingById"=>new ActionMapping("getBuildingById", "", ""),
-                "saveRoom"=>new ActionMapping("saveRoom", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveBuilding"=>new ActionMapping("saveBuilding", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveCampus"=>new ActionMapping("saveCampus", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getLocationCSV"=>new ActionMapping("getLocationCSV", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveRoom"=>new ActionMapping("saveRoom", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "saveBuilding"=>new ActionMapping("saveBuilding", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "saveCampus"=>new ActionMapping("saveCampus", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "getLocationCSV"=>new ActionMapping("getLocationCSV", "", "", $this::$ROLE_GROUPS["EHS"]),
 
 
                 // Inspection, step 2 (Hazard Assessment)
