@@ -2,7 +2,7 @@
 /*****************variables***********/
 .user-info{
   box-shadow: 0px 3px 3px rgba(0,0,0,.2);
-  z-index: 1040;
+  z-index: 1060;
   background: white;
   position: fixed;
   height: 22px;
@@ -562,7 +562,6 @@ div.rsmsCenterIconContainer a p {
 /* line 145, ../sass/style.scss */
 /* line 370, ../sass/style.scss */
 .userList {
-  background: white;
   max-width: 100%;
   overflow-x: scroll;
 }
@@ -578,9 +577,8 @@ div.rsmsCenterIconContainer a p {
 }
 /* line 383, ../sass/style.scss */
 .userList tr th {
-  font-size: 18px;
+  font-size: .9vw;
 }
-
 /* line 147, ../sass/style.scss */
 /* line 388, ../sass/style.scss */
 .userList tr td {
@@ -913,15 +911,27 @@ a.selected:hover{
 }
 .locationTable ul li > span{
     width:45%;
+    display:inline-block;
 }
 
-.locationTable ul li ul{
-    border-left: 1px solid #d7d7d7;
-    margin-left: 45%;
-    margin-top: -35px;
-    margin-bottom: -15px;
-    padding: 10px 5px 20px;
+.locationTable ul li ul, .locationTable th ul {
+  list-style-type: none;
+  border-left: 1px solid #d7d7d7;
+  margin-left: 45%;
+  margin-top: -35px;
+  margin-bottom: -15px;
+  padding: 10px 5px 20px;
 }
+.locationTable th ul{
+  float: left;
+  width: 45%;
+  margin-left: 45%;
+  margin-bottom: -20px;
+  display: inline;
+  padding-top: 3px;
+}
+.locationTable th span{
+margin-bottom: -30px;}
 .locationTable th input{
   width:90%;
 }
@@ -2860,6 +2870,7 @@ table.roomList h2 {
 /* line 2112, ../sass/style.scss */
 #piButtons {
   width: 100%;
+  margin-top: 52px;
 }
 
 /* line 2116, ../sass/style.scss */
@@ -3334,18 +3345,25 @@ background:#BDC3C7;
   border:none;
 }
 .scrollTable thead{
-    position:fixed;
+  z-index: 1050;
+  position: fixed;
+  background: white;
 }
 .scrollTable tbody{
-display: block;
-  margin-top: 135px;
+    display:block;
 }
-.scrollTable th{
-    background:white;
+.scrollTable td, .scrollTable th{padding:8px;padding-right:0}
+.scrollTable th input, .scrollTable th input {
+  width: 98% !important;
+  max-width: 250px;
 }
-
-.scrollMore{
-  margin-top:600px;
+.hidey-thing {
+  top:0;
+  height: 230px;
+  background-color: rgb(221, 221, 221);
+  width: 100%;
+  position: fixed;
+  z-index:1043;
 }
 
 .up{

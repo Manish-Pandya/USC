@@ -37,6 +37,7 @@ html[xmlns] .clearfix {
 }
 
 .navbar.fixed{
+    z-index:1046;
     top:10px;
 }
 .container-fluid {

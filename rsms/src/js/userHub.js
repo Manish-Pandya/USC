@@ -632,7 +632,6 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
   $scope.departmentFilter = function() {
     if(!$scope.search)$scope.search = {};
     return function(user) {
-        console.log(user);
         var show = false;
         //for pis that don't have departments, don't filter them unless the filter has some text
         if(!user.PrincipalInvestigator.Departments)user.PrincipalInvestigator.Departments = [];

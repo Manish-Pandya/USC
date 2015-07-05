@@ -14,9 +14,8 @@ require_once '../top_view.php';
 		<div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
 	</ul>
 </div>
-	<div class="whitebg" style="padding:70px 70px;" >
 
-		<div class="btn-group" id="piButtons" ng-controller="routeCtrl" style="margin-left:-9px;">
+		<div class="btn-group fixed" id="piButtons" ng-controller="routeCtrl" style="margin-left:-9px;z-index:1045">
 			<a ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" id="editPI" class="btn btn-large btn-info">Manage Lab Rooms</a>
 			<a ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" class="btn btn-large btn-success">Manage Buildings</a>
 			<a ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" class="btn btn-large btn-primary">Manage Campuses</a>
@@ -25,7 +24,6 @@ require_once '../top_view.php';
 		<span ng-hide="locations">
 			<ng-view></ng-view>
 		</span>
-	</div>
 </span>
 
 <?php

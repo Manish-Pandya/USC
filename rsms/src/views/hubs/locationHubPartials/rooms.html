@@ -1,9 +1,9 @@
 <h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
-<div class="container loading" ng-if="loading">
+<div class="loading" ng-if="loading" style="margin-top: 140px;">
   <i class="icon-spinnery-dealie spinner large"></i>
   <span>Getting Lab Locations...</span>
 </div>
-<table class="userList table table-striped table-hover piTable table-bordered locationTable" ng-if="rooms && !loading">
+<table class="userList table table-striped table-hover piTable table-bordered locationTable" scroll-table watch="filtered.length" ng-if="rooms && !loading" style="margin-top: 140px;">
     <thead>
         <tr class="blueBg">
             <th colspan="8" class="blueBg">
@@ -30,12 +30,15 @@
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use"/>
             </th>
             <th style="width:12.6%">
-                Lab PI
-                <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
-            </th>
-            <th style="width:15.4%;">
-                <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<br>
-                <input class="span2" ng-model="search.department" placeholder="Filter by Department"/>
+                <label style="margin-bottom: -21px;width: 45%;display: inline-block;">
+                    Lab PI
+                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
+                </label>
+                <ul>
+                    <li>  <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)</a><br>
+                <input class="span2" ng-model="search.department" placeholder="Filter by Department"/></li>
+                </ul>
+                  
             </th>
             <th>
                 Campus
@@ -46,7 +49,7 @@
 
     <tbody>
         <tr ng-repeat="room in (filtered = (rooms |  orderBy:['index', 'Building.Campus.Name', 'Building.Name', 'Name'] | genericFilter:search))" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
-            <td style="width:6%;">
+            <td style="width:8%;">
                 <a ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                 <a class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
                 <a class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></a>
@@ -57,13 +60,13 @@
                 {{lhf.getBuildingByRoom(room).Name}}
             </td>
 
-            <td once-text="room.Name" style="width:10%;">
+            <td once-text="room.Name" style="width:12%;">
             </td>
 
-            <td once-text="room.Purpose" style="width:10%;">
+            <td once-text="room.Purpose" style="width:17%;">
             </td>
 
-            <td colspan="2" style="width:28%">
+            <td  style="width:32%">
                 <ul ng-if="room.PrincipalInvestigators.length">
                     <li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
                         <span><a once-href="'PIHub.php#/personnel?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>
@@ -80,11 +83,10 @@
                             <li><span style="color:#f00;">Unassigned</span></li>
                         </ul>
 
-                    </li>
                 </ul>
             </td>
 
-            <td style="width:15%" once-text="room.Building.Campus.Name">
+            <td style="width:16%" once-text="room.Building.Campus.Name">
             </td>
         </tr>
     </tbody>

@@ -28,7 +28,7 @@ require_once '../top_view.php';
 	      <option value="">-- select year --</option>
   	</select>
 
-	<table ng-if="dtos" class="table table-striped table-bordered userList">
+	<table ng-if="dtos" class="table table-striped table-bordered userList" scroll-table watch="dtos.length">
 		<tr>
 			<th>
 				Investigator<br>

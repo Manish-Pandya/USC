@@ -403,43 +403,35 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return activeObjects;
     };
 })
-.directive('scrollTable', ['$window', '$location', '$rootScope', function($window, $location, $rootScope) {
+.directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
-        restrict: 'C',
+        restrict: 'A',
+        scope: {
+            watch: "="
+        },
         link: function(scope, elem, attrs) {
-
-             $('.fixed').width($('.container:first').width());
-
-             $(window).load(function() {
-                var firstRow = elem.find('tbody').find('tr:first');
-                //TODO
-                //make tbody display block.  set its top position down.  fix position of other elements.  give everything backgrounds
+             $(document).find('.container-fluid').prepend(
+                '<div class="hidey-thing"></div>'
+             )
+             $(elem[0]).addClass('scrollTable');
+             $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
+             var setWidths = function(test){
+                var firstRow = firstRow = elem.find('tbody').find('tr:first');
                 $(elem).find('thead').find("th").each(function(index) {
-                    $(this).width(firstRow.find("td").eq(index-1).width());
-                                        console.log(firstRow.find("td").eq(index-1).width());
-
+                    $(this).width(firstRow.children("td").eq(index-1).width());
                 });
+             }            
+             $(window).load(function() {setWidths();});
 
-           });
-            scope.$location = location;
-             $rootScope.$watch('renderDone', function(renderDone) {
-                 console.log(elem);
-                var firstRow = elem.find('tbody').find('tr:last');
-                $(elem).find('thead').find("th").each(function(index) {
-                    //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
-                    console.log(firstRow.find("td").eq(index-1).width());
-                    $(this).width(firstRow.find("td").eq(index-1).width());
-                });
+             scope.$watch('watch', function() {
+                 //console.log('length changed')
+                 $timeout(function(){
+                    console.log('woh');
+                    setWidths(true);
+                },100)
+            
              });
-
-            angular.element($window).bind('resize', function() {
-                var firstRow = elem.find('tbody').find('tr:last');
-                $(elem).find('thead').find("th").each(function(index) {
-                    //$(this).css("width",firstRow.find("td").eq(index-1).outerWidth()+"px");
-                    console.log(firstRow.find("td").eq(index-1).width());
-                    $(this).width(firstRow.find("td").eq(index-1).width());
-                });
-            })
+             angular.element($window).bind('resize', function() {setWidths();})
         }
     }
 }])

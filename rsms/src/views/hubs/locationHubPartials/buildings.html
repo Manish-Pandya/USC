@@ -1,9 +1,9 @@
 <h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
-<div class="container loading" ng-if="loading">
+<div class="loading" ng-if="loading" style="margin-top: 140px;">
 	<i class="icon-spinnery-dealie spinner large"></i>  
 	<span>Getting Buildings...</span>
 </div>
-<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="buildings && !loading" style="max-width:1300px;">
+<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="buildings && !loading" style="max-width:1300px; margin-top:140px;" scroll-table watch="filtered.length">
 	<thead>
 		<tr class="greenBg">
 			<th colspan="4" class="greenBg">

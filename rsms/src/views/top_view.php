@@ -72,6 +72,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
+
+    
 </head>
 <body>
     <?php if($_SESSION['USER'] != NULL){ ?>
