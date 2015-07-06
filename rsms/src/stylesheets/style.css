@@ -3369,3 +3369,12 @@ background:#BDC3C7;
 .up{
   cursor:pointer;
 }
+.modal-backdrop, .modal-backdrop.fade.in {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  z-index: 1051 !important;
+}
+.modal.fade.in{z-index: 1052 !important;}
+button.btn-large{
+  height: 50px;
+}
