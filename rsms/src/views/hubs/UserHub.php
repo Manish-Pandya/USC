@@ -16,7 +16,7 @@ require_once '../top_view.php';
 </div>
 
 <span ng-app="userList"  ng-controller="MainUserListController" style="clear:both; display: block; margin-top:100px">
-    <form class="form-horizontal fixed" style="margin: -31px 0 0;  background: rgb(221, 221, 221);">
+    <form class="form-horizontal fixed" style="margin: -42px 0 0;background: rgb(221, 221, 221);z-index: 1047;">
       <div class="control-group">
          <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
          <div class="controls" style="margin-left:128px;">

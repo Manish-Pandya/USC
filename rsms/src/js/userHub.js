@@ -817,7 +817,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
     $scope.order="Last_name";
     $scope.phoneNumberPattern = /^\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
-    $scope.phoneNumberErrorMsg = "Please match pattern 123-555-5555 or (123)555-5555";
+    $scope.phoneNumberErrorMsg = "E.G. 123-555-5555 or (123)555-5555";
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
     $scope.emailErrorMsg = "Invalid email address";
 
@@ -1042,7 +1042,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             function( returnedUser ){
               console.log(returnedUser);
               returnedUser.Roles = userDto.Roles;
-              if(userDto.PrincipalInvestigator){
+              if(userDto.PrincipalInvestigator && returnedUser.PrincipalInvestigator){
                 returnedUser.PrincipalInvestigator.Departments = userDto.PrincipalInvestigator.Departments;
                 returnedUser.PrincipalInvestigator.Rooms = userDto.PrincipalInvestigator.Rooms;
               }
