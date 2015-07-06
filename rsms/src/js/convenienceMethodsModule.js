@@ -428,7 +428,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                  $timeout(function(){
                     console.log('woh');
                     setWidths(true);
-                },100)
+                },300)
             
              });
              angular.element($window).bind('resize', function() {setWidths();})
