@@ -415,21 +415,20 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
              )
              $(elem[0]).addClass('scrollTable');
              $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
-             var setWidths = function(test){
-                var firstRow = firstRow = elem.find('tbody').find('tr:first');
+             var setWidths = function(){
+                var firstRow = elem.find('tbody').find('tr:first');
                 $(elem).find('thead').find("th").each(function(index) {
-                    $(this).width(firstRow.children("td").eq(index-1).width());
+                    $(this).width( firstRow.children("td").eq(index-1).width() );
                 });
-             }            
+             }
              $(window).load(function() {setWidths();});
 
              scope.$watch('watch', function() {
                  //console.log('length changed')
                  $timeout(function(){
-                    console.log('woh');
-                    setWidths(true);
+                    setWidths();
                 },300)
-            
+
              });
              angular.element($window).bind('resize', function() {setWidths();})
         }
