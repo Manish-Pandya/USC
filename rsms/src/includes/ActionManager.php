@@ -1377,7 +1377,7 @@ class ActionManager {
                 $pi = $user->getPrincipalInvestigator();
                 $piMaps = array();
 				$piMaps[] = new EntityMap("eager","getLabPersonnel");
-				$piMaps[] = new EntityMap("lazy","getRooms");
+				$piMaps[] = new EntityMap("eager","getRooms");
 				$piMaps[] = new EntityMap("eager","getDepartments");
 				$piMaps[] = new EntityMap("eager","getUser");
 				$piMaps[] = new EntityMap("lazy","getInspections");
