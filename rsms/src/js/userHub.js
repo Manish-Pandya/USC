@@ -650,17 +650,19 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
   }
 
   $scope.buildingFilter = function() {
+    if(!$scope.search)$scope.search = {};
+
     return function(user) {
         var show = false;
         //for pis that don't have buildings, don't filter them unless the filter has some text
         if(!user.PrincipalInvestigator.Buildings)pi.Buildings = [];
         if(!user.PrincipalInvestigator.Buildings.length){
-          if(typeof $scope.selectedBuilding == 'undefined' || $scope.selectedBuilding.length == 0){
+          if(typeof $scope.search.selectedBuilding == 'undefined' || $scope.search.selectedBuilding.length == 0){
             show = true;
           }
         }
         angular.forEach(user.PrincipalInvestigator.Buildings, function(building, key){
-          if(typeof $scope.selectedBuilding == 'undefined' || building.Name.toLowerCase().indexOf($scope.selectedBuilding.toLowerCase())>-1)show = true;
+          if(typeof $scope.search.selectedBuilding == 'undefined' || building.Name.toLowerCase().indexOf($scope.search.selectedBuilding.toLowerCase())>-1)show = true;
         });
         return show;
     }
