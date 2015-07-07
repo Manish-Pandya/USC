@@ -397,30 +397,46 @@ class ActionManager {
         else{
             $dao = $this->getDao( new User() );
             $user = $dao->save( $decodedObject );
-            $pi = $user->getPrincipalInvestigator();
-            $inspector = $user->getInspector();
-            if($decodedObject->getPrincipalInvestigator() != null && $pi == NULL){
-                $pi = $decodedObject->getPrincipalInvestigator();
-                $pi->setUser_id($user->getKey_id());
-                $LOG->debug($pi);
-                $this->savePI($pi);
-            }elseif($pi != null){
-                //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-                $pi->setIs_active($user->getIs_active());
-                $piDao  = $this->getDao(new PrincipalInvestigator());
-                $piDao->save($pi);
+            $LOG->fatal($decodedObject);
+            //see if we need to save a PI or Inspector object
+            if($decodedObject->getRoles() != NULL){
+            	foreach($decodedObject->getRoles() as $role){
+            		$role = $this->getRoleById($role['Key_id']);
+            		if($role->getName() == "Principal Investigator")$savePI 	   = true;
+            		if($role->getName() == "Safety Inspector")      $saveInspector = true;
+            	}
             }
-
-            if($decodedObject->getInspector() != null && $pi == NULL){
-                $inspector = $decodedObject->getInspector();
-                $inspector->setUser_id($user->getKey_id());
-                $LOG->debug($inspector);
-                $this->savePI($inspector);
-            }elseif($inspector != null){
-                //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-                $inspector->setIs_active($user->getIs_active());
-                $inspectorDao  = $this->getDao(new Inspector());
-                $inspectorDao->save($inspector);
+            
+            //user was sent from client with Principal Investigator in roles array
+            if(isset($savePI)){
+	             //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+	            if($user->getPrincipalInvestigator() != null){
+	            	$pi = $user->getPrincipalInvestigator();
+	                $pi->setIs_active($user->getIs_active());
+	                $piDao  = $this->getDao(new PrincipalInvestigator());
+	                $piDao->save($pi);
+	            }else{
+	            	$pi = new PrincipalInvestigator();
+	            	$pi->setUser_id($user->getKey_id());
+	            }     
+	            $user = new User();       	
+                $user->setPrincipalInvestigator($this->savePI($pi));
+            }            
+           
+            //user was sent from client with Saftey Inspector in roles array
+            if(isset($saveInspector)){
+                
+                //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+                if($user->getInspector() != null){
+                	$inspector = $user->getInspector();
+                	$inspector->setIs_active($user->getIs_active());
+                	$inspectorDao  = $this->getDao(new Inspector());
+                }else{
+                	$inspector = $decodedObject->getInspector();
+                	$inspector->setUser_id($user->getKey_id());
+                }
+                
+                $user->setInspector($this->saveInspector($inspector));
             }
 
             if($user->getKey_id()>0){
@@ -429,6 +445,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspector");
                 $entityMaps[] = new EntityMap("lazy","getSupervisor");
                 $entityMaps[] = new EntityMap("eager","getRoles");
+              	
                 $user->setEntityMaps($entityMaps);
                 return $user;
             }
