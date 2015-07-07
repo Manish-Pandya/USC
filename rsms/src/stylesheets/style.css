@@ -910,7 +910,6 @@ a.selected:hover{
   padding-top:5px;
 }
 .locationTable ul li > span{
-    width:45%;
     display:inline-block;
 }
 
