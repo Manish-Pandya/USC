@@ -148,7 +148,7 @@ class ActionManager {
                 $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
                 $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
                 if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMScenter.php';	 
+                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
                 }
                 else{
                 	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
@@ -209,7 +209,7 @@ class ActionManager {
         		$nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
         		$LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
         		if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMScenter.php';
+        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
         		}
         		else{
         			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
@@ -248,7 +248,7 @@ class ActionManager {
 	                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
 	                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
 	                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-	                	$_SESSION["DESTINATION"] = 'views/RSMScenter.php';	 
+	                	$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
 	                }
 	                else{
 	                	$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
