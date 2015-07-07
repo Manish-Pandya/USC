@@ -45,18 +45,16 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Office Phone</label>
                 <div class="controls">
-                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-pattern="phoneNumberPattern" ng-required="form.officePhone.$error.pattern">
-                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-pattern="phoneNumberPattern" ng-required="form.officePhone.$error.pattern">
-                    <span class="help-block" ng-show="form.officePhone.$error.pattern">{{phoneNumberErrorMsg}}</span>
+                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username">
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Emergency Phone</label>
                 <div class="controls">
-                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-pattern="phoneNumberPattern" ng-required="form.emergencyPhone.$error.pattern">
-                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-pattern="phoneNumberPattern" ng-required="form.emergencyPhone.$error.pattern">
-                    <span class="help-block" ng-show="form.emergencyPhone.$error.pattern">{{phoneNumberErrorMsg}}</span>
+                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username">
                 </div>
             </div>
 

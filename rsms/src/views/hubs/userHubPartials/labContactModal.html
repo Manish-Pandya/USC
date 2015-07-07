@@ -47,17 +47,15 @@
              <div class="control-group">
              <label class="control-label" for="inputEmail">Emergency Phone</label>
              <div class="controls">
-                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
-                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
-                 <span class="help-block" ng-show="form.phone.$error.pattern">{{phoneNumberErrorMsg}}</span>
+                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username">
              </div>
             </div>
             <div class="control-group">
              <label class="control-label" for="inputEmail">Lab Phone</label>
              <div class="controls">
-                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
-                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-pattern="phoneNumberPattern" ng-required="form.phone.$error.pattern">
-                 <span class="help-block" ng-show="form.phone.$error.pattern">{{phoneNumberErrorMsg}}</span>
+                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username">
              </div>
             </div>
 
