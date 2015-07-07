@@ -4,11 +4,11 @@
             <th colspan="9" class="purpleBg">
                 <h1 class="purpleBg">EHS Personnel</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
-                 <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
-                      <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
-                     <span ng-show="showInactive">Show Active Personnel</span>
-                     <span ng-hide="showInactive">Show Inactive Personnel</span>
-                 </a>
+                     <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
+                          <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
+                         <span ng-show="showInactive">Show Active Personnel</span>
+                         <span ng-hide="showInactive">Show Inactive Personnel</span>
+                     </a>
                  <a  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add EHS Staff</a>
                </div>
                    <h2 class="purpleBg" style="float:right; margin-top:8px;"><span class="bold underline">{{filtered.length}}</span> EHS Personnel Displayed</h2>
