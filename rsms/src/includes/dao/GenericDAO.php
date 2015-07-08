@@ -485,7 +485,7 @@ class GenericDAO {
 		$modelObject    = $this->modelObject;
 		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
 		
-		$whereTag = $activeOnly ? " WHERE is_active = 1 OR " : " WHERE ";
+		$whereTag = $activeOnly ? " WHERE is_active = 1 AND " : " WHERE ";
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
