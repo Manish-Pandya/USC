@@ -93,7 +93,24 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             return checklist.activeQuestions;
     }
 })
-
+.directive("otherDeficiency",['$scope',function($scope){
+    return {
+        restrict: "E"  , //E = element, A = attribute, C = class, M = comment
+        replace: true,
+        scope:{
+            //scope variables we pass from view
+            // i.e.  thing: '=' means that scope.thing, within the scope of the directive will be whatever you set the thing attribute of the directive markup to (<other-dificiency thing="someStuffFromTheViewScope")
+            // thing: "="  //local scope.thing is a two-way bound reference to view scope
+            // thing: "@"  //local scope.thing is bound one way and our local scope is isolated from the view
+            // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
+        },
+        templateUrl:''  //path to template
+        link:function(){
+            //stuff we want to do to the view
+            //jQuery style DOM manipulation
+        },
+    }
+}])
 .factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout,$location,$anchorScroll){
 
         var factory = {};
