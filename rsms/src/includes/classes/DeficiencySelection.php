@@ -19,6 +19,7 @@ class DeficiencySelection extends GenericCrud {
 		//rooms is a relationship
 		//deficiency is a relationship
 		"deficiency_id"	=>	"integer",
+		"other_text"	=>  "text",
 		//deficiency root causes are relationships
 		//corrective actions are relationships
 
@@ -54,6 +55,8 @@ class DeficiencySelection extends GenericCrud {
 	/** Reference to the Deficiency entity that was selected */
 	private $deficiency;
 	private $deficiency_id;
+	
+	private $other_text;
 
 	/** Array of Room entities in which the associated Deficiency applies */
 	private $rooms;
@@ -143,5 +146,8 @@ class DeficiencySelection extends GenericCrud {
 
 	public function getShow_rooms(){return $this->show_rooms;}
 	public function setShow_rooms($show_rooms){$this->show_rooms = $show_rooms;}
+	
+	public function getOther_text(){return $this->other_text;}
+	public function setOther_text($other_text){$this->other_text = $other_text;}
 }
 ?>
