@@ -107,7 +107,6 @@ class Question extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getResponses");
 		$this->setEntityMaps($entityMaps);
 
-
 	}
 
 	// Required for GenericCrud
@@ -158,6 +157,12 @@ class Question extends GenericCrud {
 		if($this->deficiencies === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
+			
+			//also get the Other Defiency, for all questions
+			$defDao = new GenericDAO(new Deficiency());
+			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("text","=","Other")));
+			$otherDeficiency = $defDao->getAllWhere($whereClauseGroup);
+			$this->deficiencies = array_merge($this->deficiencies, $otherDeficiency);
 		}
 		return $this->deficiencies;
 	}
