@@ -413,6 +413,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
              $(document).find('.container-fluid').prepend(
                 '<div class="hidey-thing"></div>'
              )
+             $('body').css({"minHeight":0});
              $(elem[0]).addClass('scrollTable');
              $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
              var setWidths = function(){
@@ -451,9 +452,10 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         for(var i = 0; i < properties.length; i++){
             myResultItem = myResultItem[ properties[i] ];
         }
-        var text = props[properties.join('.')].toLowerCase();
-        if(myResultItem.toString().toLowerCase().indexOf(text) !== -1)itemMatches = true;
-
+        if(myResultItem){
+            var text = props[properties.join('.')].toLowerCase();
+            if(myResultItem.toString().toLowerCase().indexOf(text) !== -1)itemMatches = true;
+        }
         if (itemMatches) {
           out.push(item);
         }
