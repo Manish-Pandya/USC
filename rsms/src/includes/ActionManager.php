@@ -396,8 +396,11 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao( new User() );
+            //if this user is new, make sure it's active
+            if($decodedObject->getKey_id() == NULL){
+            	$decodedObject->setIs_active(true);
+            }            
             $user = $dao->save( $decodedObject );
-            $LOG->fatal($decodedObject);
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
             	foreach($decodedObject->getRoles() as $role){
@@ -3239,7 +3242,7 @@ class ActionManager {
         if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
             $user->setFirst_name(ucfirst(strtolower($ldapData["givenName"])));
             $user->setLast_name(ucfirst(strtolower($ldapData["sn"])));
-            $user->setEmail($ldapData["mail"]);
+            $user->setEmail(strtolower($ldapData["mail"]));
             $user->setUsername($ldapData["cn"]);
         } else {
             return false;
