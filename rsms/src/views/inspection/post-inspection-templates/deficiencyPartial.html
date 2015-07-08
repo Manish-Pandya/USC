@@ -1,77 +1,74 @@
 <td><span once-text="question.Text"></span></td>
 <td colspan="2" style="padding:0;">
 <!--<pre>{{question | json}}</pre>-->
-	<div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unknown Deficiency</div>
-	<div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections" >
+    <div class="row-fluid" ng-if="!question.Responses.DeficiencySelections.length">Unknown Deficiency</div>
+    <div class="row-fluid" ng-repeat="def in question.Responses.DeficiencySelections" >
 
-		<span class="span6" ng-if="def.Deficiency.Text">
-			<span once-text="def.Deficiency.Text"></span>
-			<ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0">
-				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
-				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
-			</ul>
-		</span>
-		<span class="span6" ng-if="!def.Deficiency.Text">
-			Unknown Deficiency
-			<ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
-				<li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
-				<li ng-repeat="room in def.Rooms">{{room.Name}}</li>
-			</ul>
-		</span>			
+        <span class="span6" ng-if="def.Deficiency.Text">
+            <span ng-if="def.Deficiency.Text != 'Other'" once-text="def.Deficiency.Text"></span>
+            <span ng-if="def.Deficiency.Text == 'Other'" once-text="def.Other_text"></span>
+            <ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0">
+                <li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
+                <li ng-repeat="room in def.Rooms">{{room.Name}}</li>
+            </ul>
+        </span>
+        <span class="span6" ng-if="!def.Deficiency.Text">
+            Unknown Deficiency
+            <ul ng-if="def.Rooms.length < getNumberOfRoomsForQuestionByChecklist(question)" class="subRooms" style="margin-left:0">
+                <li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
+                <li ng-repeat="room in def.Rooms">{{room.Name}}</li>
+            </ul>
+        </span
 
-		<span class="span6 {{def.CorrectiveActions[0].Status}}">
-			<span ng-if="!def.Deficiency.Text">
-				Unknown Deficiency
-			</span>
-			<span ng-if="def.Deficiency.Text">
-				<span ng-if="def.Corrected_in_inspection < 1" class="corrective-action">
-					<div class="" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == 'Incomplete'">
-						<div>
-							<a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
-								<i class="icon-plus-2"></i>Add Corrective Action
-							</a>
-						</div>						
-					</div>
+        <span class="span6 {{def.CorrectiveActions[0].Status}}">
+            <span ng-if="!def.Deficiency.Text">
+                Unknown Deficiency
+            </span>
+            <span ng-if="def.Deficiency.Text">
+                <span ng-if="def.Corrected_in_inspection < 1" class="corrective-action">
+                    <div class="" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == 'Incomplete'">
+                        <div>
+                            <a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
+                                <i class="icon-plus-2"></i>Add Corrective Action
+                            </a>
+                        </div>
+                    </div>
 
-					<div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Pending'">
-						<a class="btn btn-primary left" ng-click="openModal(question, def)">
-							<i class="icon-pencil"></i>Edit
-						</a>
-						<a ng-click="complete(def.CorrectiveActions[0])" class="btn btn-success left">
-							<i class="icon-checkmark"></i>Complete
-						</a>
-						<i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
+                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Pending'">
+                        <a class="btn btn-primary left" ng-click="openModal(question, def)">
+                            <i class="icon-pencil"></i>Edit
+                        </a>
+                        <a ng-click="complete(def.CorrectiveActions[0])" class="btn btn-success left">
+                            <i class="icon-checkmark"></i>Complete
+                        </a>
+                        <i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
 
-						<h4 class="bold">Pending Corrective Action:</h4>
-						<p>{{def.CorrectiveActions[0].Text}}</p>
+                        <h4 class="bold">Pending Corrective Action:</h4>
+                        <p>{{def.CorrectiveActions[0].Text}}</p>
 
-						<h4 class="bold">Anticipated Completion Date:</h4>
-						<p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>					
-					</div>
+                        <h4 class="bold">Anticipated Completion Date:</h4>
+                        <p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
+                    </div>
 
-					<div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Complete'">
-						<a ng-click="openModal(question, def)" class="btn btn-primary left">
-							<i class="icon-pencil"></i>Edit
-						</a>
-						<h4 class="bold">Completed Corrective Action:</h4>
-						<p>{{def.CorrectiveActions[0].Text}}</p>
+                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Complete'">
+                        <a ng-click="openModal(question, def)" class="btn btn-primary left">
+                            <i class="icon-pencil"></i>Edit
+                        </a>
+                        <h4 class="bold">Completed Corrective Action:</h4>
+                        <p>{{def.CorrectiveActions[0].Text}}</p>
 
-						<h4 class="bold">Completion Date:</h4>
-						<p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
-							
-					</div>
-				</span>
-			</span>
-	
-				<h3 ng-if="def.Corrected_in_inspection > 0" class="bold">
-					Corrected during inspection
-				</h3>
-		</span>
+                        <h4 class="bold">Completion Date:</h4>
+                        <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
 
-	</div>
+                    </div>
+                </span>
+            </span>
 
-		
-
+                <h3 ng-if="def.Corrected_in_inspection > 0" class="bold">
+                    Corrected during inspection
+                </h3>
+        </span>
+    </div>
 </span>
 </td>
 <td once-text="question.Description"></td>
