@@ -105,7 +105,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
             selectionChange:"&",
             selected:"@",
-            title:"@",
+            selectedTitle:"@",
+            unselectedTitle:"@",
             textAreaContent:"@"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
