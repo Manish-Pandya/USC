@@ -93,7 +93,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             return checklist.activeQuestions;
     }
 })
-.directive("otherDeficiency",['$scope',function($scope){
+.directive("otherDeficiency",["checklistFactory", function(checklistFactory){
     return {
         restrict: "E"  , //E = element, A = attribute, C = class, M = comment
         replace: true,
@@ -103,12 +103,29 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "="  //local scope.thing is a two-way bound reference to view scope
             // thing: "@"  //local scope.thing is bound one way and our local scope is isolated from the view
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
+            selectionChange:"&"
         },
-        templateUrl:''  //path to template
+        templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
             //stuff we want to do to the view
             //jQuery style DOM manipulation
         },
+        controller: function($scope, checklistFactory){
+            $scope.freeText = $scope.textAreaContent = 'Testing';
+            $scope.selected = false;
+
+            $scope.checkboxChanged = function() {
+                $scope.freeText = $scope.selected ? $scope.textAreaContent : "";
+                if ($scope.freeText.length) {
+                    // run save logic
+                    console.log("saving!");
+                } else {
+                    console.log("Not saving!");
+                }
+
+                $scope.selectionChange();
+            }
+        }
     }
 }])
 .factory('checklistFactory', function(convenienceMethods,$q,$rootScope,$timeout,$location,$anchorScroll){
@@ -141,6 +158,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             )
             return deferred.promise;
 
+        }
+
+        factory.conditionallySaveOtherDeficiency = function( isSelected )
+        {
+            if (isSelected) {
+                console.log("I am selected");
+            }
         }
 
         factory.setImage = function( category )

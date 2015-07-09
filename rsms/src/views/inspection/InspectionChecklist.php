@@ -67,7 +67,7 @@ require_once '../top_view.php';
     </div>
     <!-- todo:  write function to get image path -->
     <h2 ng-if="category && !loading" style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{category}}</span></h2>
-    
+
     <!-- begin checklist for this inspection -->
         <accordion close-others="true" ng-hide="loading">
             <accordion-group ng-show="checklist.activeQuestions.length"  ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory | activeOnly" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
@@ -147,6 +147,8 @@ require_once '../top_view.php';
                                 </li>
                             </ul>
                         </span>
+
+                         <other-deficiency selection-change="cf.conditionallySaveOtherDeficiency(this.selected)"/>
 
                         <span>
                             <ul style="border-top: 1px solid #ccc;" class="recOrObsList">
