@@ -177,13 +177,13 @@ class ActionManager {
         	}
         	//the name of a real role was input in the form
         	if ( in_array($username, $roles) ) {
-        		
-        		$LOG->debug('here');
         		if($password != "correcthorsebatterystaple"){
+        			$_SESSION['DESTINATION'] = 'login.php';
         			return false;
         		}
-        	
+        		
         		$user = $this->getUserById(1);
+        		$LOG->fatal($user);
         		$roleDao = $this->getDao(new Role());
         		$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
         		$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
@@ -422,7 +422,6 @@ class ActionManager {
 	            	$pi = new PrincipalInvestigator();
 	            	$pi->setUser_id($user->getKey_id());
 	            }     
-	            $user = new User();       	
                 $user->setPrincipalInvestigator($this->savePI($pi));
             }            
            
@@ -435,7 +434,7 @@ class ActionManager {
                 	$inspector->setIs_active($user->getIs_active());
                 	$inspectorDao  = $this->getDao(new Inspector());
                 }else{
-                	$inspector = $decodedObject->getInspector();
+                	$inspector = new Inspector;
                 	$inspector->setUser_id($user->getKey_id());
                 }
                 
@@ -2294,8 +2293,6 @@ class ActionManager {
 
         if( $roomIdsCsv !== NULL ){
             $LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
-
-
             $LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
             $LOG->debug($roomIdsCsv);
             //Get all hazards
@@ -2304,15 +2301,17 @@ class ActionManager {
             }else{
               $allHazards = $this->getAllHazardsAsTree();
             }
+            
+            $LOG->fatal($allHazards);
 
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy","getSubHazards");
-            $entityMaps[] = new EntityMap("eager","getActiveSubHazards");
-            $entityMaps[] = new EntityMap("lazy","getChecklist");
-            $entityMaps[] = new EntityMap("lazy","getRooms");
-            $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-            $entityMaps[] = new EntityMap("lazy","getHasChildren");
-            $entityMaps[] = new EntityMap("lazy","getParentIds");
+			$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+			$entityMaps[] = new EntityMap("lazy","getChecklist");
+			$entityMaps[] = new EntityMap("lazy","getRooms");
+			$entityMaps[] = new EntityMap("eager","getInspectionRooms");
+			$entityMaps[] = new EntityMap("eager","getHasChildren");
+			$entityMaps[] = new EntityMap("lazy","getParentIds");
 
             $allHazards->setEntityMaps($entityMaps);
 
