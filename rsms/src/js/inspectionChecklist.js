@@ -104,7 +104,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "@"  //local scope.thing is bound one way and our local scope is isolated from the view
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
             selectionChange:"&",
-            selected:"@"
+            selected:"@",
+            title:"@",
+            textAreaContent:"@"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
@@ -129,7 +131,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.getInspection = function( id )
         {
-
             var deferred = $q.defer();
             //lazy load
             if(this.inspection.length){

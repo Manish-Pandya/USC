@@ -148,7 +148,7 @@ require_once '../top_view.php';
                             </ul>
                         </span>
 
-                         <other-deficiency selection-change="cf.conditionallySaveOtherDeficiency(this)"/>
+                         <other-deficiency title="Other" text-area-content="Sample text" selection-change="cf.conditionallySaveOtherDeficiency(this)"/>
 
                         <span>
                             <ul style="border-top: 1px solid #ccc;" class="recOrObsList">
