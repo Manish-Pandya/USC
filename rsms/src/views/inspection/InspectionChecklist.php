@@ -148,7 +148,7 @@ require_once '../top_view.php';
                             </ul>
                         </span>
 
-                         <other-deficiency selection-change="cf.conditionallySaveOtherDeficiency(this.selected)"/>
+                         <other-deficiency selection-change="cf.conditionallySaveOtherDeficiency(this)"/>
 
                         <span>
                             <ul style="border-top: 1px solid #ccc;" class="recOrObsList">

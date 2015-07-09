@@ -103,7 +103,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "="  //local scope.thing is a two-way bound reference to view scope
             // thing: "@"  //local scope.thing is bound one way and our local scope is isolated from the view
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
-            selectionChange:"&"
+            selectionChange:"&",
+            selected:"@"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
@@ -116,14 +117,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
             $scope.checkboxChanged = function() {
                 $scope.freeText = $scope.selected ? $scope.textAreaContent : "";
-                if ($scope.freeText.length) {
-                    // run save logic
-                    console.log("saving!");
-                } else {
-                    console.log("Not saving!");
-                }
-
-                $scope.selectionChange();
+                $scope.selectionChange($scope);
             }
         }
     }
@@ -160,10 +154,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.conditionallySaveOtherDeficiency = function( isSelected )
+        factory.conditionallySaveOtherDeficiency = function( localScope )
         {
-            if (isSelected) {
-                console.log("I am selected");
+            if (localScope.selected) {
+                console.log("I am selected", localScope.freeText);
+            } else {
+                console.log("I am NOT selected", localScope.freeText);
             }
         }
 
