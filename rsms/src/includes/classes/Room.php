@@ -86,7 +86,10 @@ class Room extends GenericCrud {
 	
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
-
+	
+	/** Boolean to indicate whether this Room has relationships with more than 1 PrincipalInvestigator */
+	private $hasMultiplePIs;
+	
 	public function __construct(){
 
 		// Define which subentities to load
@@ -204,6 +207,14 @@ class Room extends GenericCrud {
 	
 	public function setSolidsContainers($newContainers) {
 		$this->solidsContainers = $newContainers;
+	}
+	
+	public function getHasMultiplePIs(){
+		if($this->hasMultiplePIs == NULL){
+			$this->hasMultiplePIs = false;
+			if(count($this->getPrincipalInvestigators()) > 1) $this->hasMultiplePIs = true;
+		}
+		return $this->hasMultiplePIs;
 	}
 
 
