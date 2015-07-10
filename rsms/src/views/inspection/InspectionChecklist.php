@@ -147,8 +147,7 @@ require_once '../top_view.php';
                                 <li><other-deficiency title="Other" param="question" selection-change="cf.conditionallySaveOtherDeficiency(this)"/></li>
                             </ul>
                         </span>
-
-
+                         <other-deficiency selected-title="" unselected-title="Other" text-area-content="Sample text" selection-change="cf.conditionallySaveOtherDeficiency(this)"/>
                         <span>
                             <ul style="border-top: 1px solid #ccc;" class="recOrObsList">
                                 <h4>Recommendations:<a ng-if="!question.addRec" style="margin-left: 5px" class="btn btn-mini btn-success" ng-click="question.addRec = true"><i class="icon-plus-2"></i></a></h4>

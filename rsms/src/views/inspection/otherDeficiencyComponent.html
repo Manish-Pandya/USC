@@ -2,8 +2,7 @@
 
     <label class="checkbox inline">
         <input type="checkbox" ng-model="selected" ng-change="checkboxChanged()" />
-        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span style="margin-top:0">{{title}}</span></span>
+        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span style="margin-top:0">{{selected ? selectedTitle : unselectedTitle}}</span></span>
     </label>
-    <br/>
     <textarea ng-hide="!selected" rows="4" cols="50" form="form" name="textArea" ng-model="textAreaContent"></textarea>
 </form>
