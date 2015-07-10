@@ -187,9 +187,19 @@ class Question extends GenericCrud {
 	public function setObservations($observations){ $this->observations = $observations; }
 
 	public function getResponses(){
-		$thisDAO = new GenericDAO($this);
-		$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
-		return $this->filterResponsesByInspection($this->responses);
+		$LOG = Logger::getLogger(__Class__);
+		if(!empty($this->inspectionId)) {
+			$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
+		
+			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
+			$responsesDao = new GenericDAO(new Response);
+			$this->responses = array_shift($responsesDao->getAllWhere($whereClauseGroup));
+
+		}else{
+			$thisDAO = new GenericDAO($this);
+			$this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
+		}
+		return $this->responses;
 	}
 	public function setResponses($responses){ $this->responses = $responses; }
 
@@ -198,15 +208,14 @@ class Question extends GenericCrud {
 
 	private function filterResponsesByInspection($responses){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-		$LOG->debug("about to filter ".  count($responses) . " responses");
+		$LOG->fatal("about to filter ".  count($responses) . " responses");
 		if(!empty($this->inspectionId)) {
-			$LOG->debug("Inspection Id " . $this->inspectionId . " found.");
-			foreach ($responses as $responseKey => $response){
-				if ($response->getInspection_id() != $this->inspectionId) {
-					unset($responses[$responseKey]);
-				}
-			}
-
+			$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
+				
+			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
+			$responsesDao = new GenericDAO(new Response);
+			$responses = $responsesDao->getAllWhere($whereClauseGroup);
+		
 			if (!empty($responses)){
 				return array_shift($responses);
 			} else {
