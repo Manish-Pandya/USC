@@ -108,7 +108,7 @@ require_once '../top_view.php';
                         <span ng-hide="!question.activeDeficiencies.length" ng-switch on="question.Responses.Answer">
                             <ul class="checklist-deficiencies" ng-show="question.Responses.Answer == 'no'">
                                 <h3>Deficiencies:</h3>
-                                <li ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )">
+                                <li ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )" ng-if="deficiency.Text != 'Other'">
                                     <label class="checkbox inline">
                                         <input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency.Key_id )"/>
                                         <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span style="margin-top:0" once-text="deficiency.Text"></span></span>
@@ -143,12 +143,11 @@ require_once '../top_view.php';
                                             </label>
                                         </li>
                                     </ul>
-
                                 </li>
+                                <li><other-deficiency title="Other" param="question" selection-change="cf.conditionallySaveOtherDeficiency(this)"/></li>
                             </ul>
                         </span>
 
-                         <other-deficiency title="Other" text-area-content="Sample text" selection-change="cf.conditionallySaveOtherDeficiency(this)"/>
 
                         <span>
                             <ul style="border-top: 1px solid #ccc;" class="recOrObsList">
