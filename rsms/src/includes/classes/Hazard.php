@@ -77,6 +77,8 @@ class Hazard extends GenericCrud {
 
 	/** Hazards will be ordered by order_index in hazard hub **/
 	private $order_index;
+	
+	/** Is this Hazard in a room owned by multiple PIs? **/
 
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -206,9 +208,7 @@ class Hazard extends GenericCrud {
 		foreach($this->inspectionRooms as $room){
 			$rooms[] = $room->getKey_id();
 		}
-		foreach($rooms as $room){
-			$LOG->debug("the room is: ".$room);
-		}
+
 		$roomIds = implode (',',$rooms);
 		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->key_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
