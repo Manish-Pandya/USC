@@ -107,7 +107,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             selected:"@",
             selectedTitle:"@",
             unselectedTitle:"@",
-            textAreaContent:"@"
+            textAreaContent:"@",
+            param:"=",
+            checkedOnInit:"&"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
@@ -115,12 +117,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             //jQuery style DOM manipulation
         },
         controller: function($scope, checklistFactory){
-            $scope.freeText = $scope.textAreaContent = 'Testing';
+            $scope.checkedOnInit();
+            $scope.freeText = '';
             $scope.selected = false;
-
             $scope.checkboxChanged = function() {
                 $scope.freeText = $scope.selected ? $scope.textAreaContent : "";
-                $scope.selectionChange($scope);
+                $scope.selectionChange();
             }
         }
     }
@@ -129,6 +131,18 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         var factory = {};
         factory.inspection = [];
+
+        factory.getHasOtherDeficiency  = function(question){
+            if(question.Responses && question.Responses.DeficiencySelections){
+                var i = question.Responses.DeficiencySelections.length;
+                while(i--){
+                    if(question.Responses.DeficiencySelections.Other_text){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         factory.getInspection = function( id )
         {
