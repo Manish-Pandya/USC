@@ -1,11 +1,18 @@
 <form name="form">
-
-    <label class="checkbox inline">
-        <input type="checkbox" ng-model="selected" ng-change="checkboxChanged()" />
-        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="selected" style="margin-top:0">{{selected ? selectedTitle : unselectedTitle}}</span>
+    <!-- this should be here until a thing is saved-->
+    <label class="checkbox inline" ng-show="!param.saved">
+        <input type="checkbox" ng-model="selected" ng-checked="checkedOnInit()" ng-change="checkboxChanged()" />
+        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="selected" style="margin-top:0">{{unselectedTitle}}</span>
             <div ng-hide="!selected">
-                <textarea placeholder="{{unselectedTitle}}" rows="4" cols="50" form="form" name="textArea" ng-model="textAreaContent"></textarea>
+                <textarea placeholder="{{textareaPlaceholder}}" rows="4" cols="50" form="form" name="textArea" ng-model="textAreaContent"></textarea>
             </div>
+        </span>
+    </label>
+
+    <!-- this should be here after a thing is saved -->
+    <label class="checkbox inline" ng-show="param.saved">
+        <input type="checkbox" ng-model="selected" ng-checked="checkedOnInit()" ng-change="checkboxChanged()" ng-checked=""/>
+        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="selected" style="margin-top:0">{{param.activeDeficiencies[param.activeDeficiencies.length-1].Other_text}}</span>
         </span>
     </label>
 

@@ -105,11 +105,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
             selectionChange:"&",
             selected:"@",
-            selectedTitle:"@",
-            unselectedTitle:"@",
+            selectedTitle:"=",
+            unselectedTitle:"=",
             textAreaContent:"@",
             param:"=",
-            checkedOnInit:"&"
+            checkedOnInit:"&",
+            textareaPlaceholder:"@"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
@@ -117,13 +118,15 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             //jQuery style DOM manipulation
         },
         controller: function($scope, checklistFactory){
-            $scope.checkedOnInit();
             $scope.freeText = '';
             $scope.selected = false;
             $scope.checkboxChanged = function() {
                 $scope.freeText = $scope.selected ? $scope.textAreaContent : "";
                 $scope.selectionChange();
             }
+            $scope.$watch("selectedTitle", function(){
+                console.log('changed to ' + $scope.selectedTitle);
+            })
         }
     }
 }])
@@ -136,8 +139,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             if(question.Responses && question.Responses.DeficiencySelections){
                 var i = question.Responses.DeficiencySelections.length;
                 while(i--){
-                    if(question.Responses.DeficiencySelections.Other_text){
-                        return true;
+                    if(question.Responses.DeficiencySelections[i].Other_text){
+                        question.activeDeficiencies[question.activeDeficiencies.length-1].Other_text = question.Responses.DeficiencySelections[i].Other_text;
+                        question.saved = true;
+                        if(question.Responses.DeficiencySelections[i].Is_active)return true;
                     }
                 }
             }
