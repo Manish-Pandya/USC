@@ -3377,3 +3377,6 @@ background:#BDC3C7;
 button.btn-large{
   height: 50px;
 }
+.radio.inline + .radio.inline, .checkbox.inline:not(.disallowed) + .checkbox.inline:not(.disallowed) {
+  margin-left: 0; 
+}
