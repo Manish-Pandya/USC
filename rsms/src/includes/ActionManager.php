@@ -2860,7 +2860,50 @@ class ActionManager {
 
         }
     }
-
+    
+    
+    public function saveOtherDeficiencySelection(DeficiencySelection $deficiencySelection = NULL  ){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	$decodedObject = $this->convertInputJson();
+    	$LOG->fatal($decodedObject);
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to DeficiencySelection');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		// check to see if the roomIds array is populated
+    		$roomIds = $decodedObject->getRoomIds();
+    
+    		// start by saving or updating the object.
+    		$dao = $this->getDao(new DeficiencySelection());
+    		$ds = $dao->save($decodedObject);
+    
+    		// remove the old rooms. if any
+    		foreach ($ds->getRooms() as $room){
+    			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+    		}
+    
+    		// if roomIds were provided then save them
+    		if (!empty($roomIds)){
+    			foreach ($roomIds as $id){
+    				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+    			}
+    			// else if no roomIds were provided, then just deactivate this DeficiencySelection
+    		} else {
+    			$ds->setIs_active(false);
+    			$dao->save($ds);
+    		}
+    		$LOG->fatal($ds);
+    		$selection = $dao->getById($ds->getKey_id());
+    		$LOG->fatal($selection);
+    
+    		return $selection;
+    
+    	}
+    }
+    
     public function saveCorrectiveAction(){
         $LOG = Logger::getLogger('Action:' . __function__);
         $decodedObject = $this->convertInputJson();

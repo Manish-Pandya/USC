@@ -104,29 +104,40 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             // thing: "@"  //local scope.thing is bound one way and our local scope is isolated from the view
             // thing: "&"  //use this when passing a method of the view scope that you want to call in the directive
             selectionChange:"&",
-            selected:"@",
             selectedTitle:"=",
-            unselectedTitle:"=",
+            unselectedTitle:"@",
             textAreaContent:"@",
             param:"=",
             checkedOnInit:"&",
-            textareaPlaceholder:"@"
+            textareaPlaceholder:"@",
+            saveCall: "&"
         },
         templateUrl:'otherDeficiencyComponent.html',  //path to template
         link:function(){
             //stuff we want to do to the view
             //jQuery style DOM manipulation
         },
-        controller: function($scope, checklistFactory){
-            $scope.freeText = '';
-            $scope.selected = false;
+        controller: function($scope, checklistFactory, $parse){
+            $scope.selectionChange = $parse($scope.selectionChange);
+            //create a referenceless copy of the thing we want to edit
             $scope.checkboxChanged = function() {
-                $scope.freeText = $scope.selected ? $scope.textAreaContent : "";
                 $scope.selectionChange();
             }
             $scope.$watch("selectedTitle", function(){
                 console.log('changed to ' + $scope.selectedTitle);
+                $scope.param.Other_text = $scope.selectedTitle;
             })
+            
+            $scope.edit = function(){
+                $scope.param.edit = true;
+                $scope.param.freeText = $scope.param.Other_text;
+            }
+            
+            $scope.cancel = function(){
+                alert('cancel');
+                $scope.param.edit = false;
+                $scope.param.selected = false;
+            }
         }
     }
 }])
@@ -140,8 +151,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 var i = question.Responses.DeficiencySelections.length;
                 while(i--){
                     if(question.Responses.DeficiencySelections[i].Other_text){
-                        question.activeDeficiencies[question.activeDeficiencies.length-1].Other_text = question.Responses.DeficiencySelections[i].Other_text;
+                        question.Other_text = question.Responses.DeficiencySelections[i].Other_text;
                         question.saved = true;
+                        question.selected = question.Responses.DeficiencySelections[i].Is_active;
                         if(question.Responses.DeficiencySelections[i].Is_active)return true;
                     }
                 }
@@ -175,13 +187,86 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.conditionallySaveOtherDeficiency = function( localScope )
+        factory.conditionallySaveOtherDeficiency = function( question, room )
         {
-            if (localScope.selected) {
-                console.log("I am selected", localScope.freeText);
-            } else {
-                console.log("I am NOT selected", localScope.freeText);
+            var deficiency = question.activeDeficiencies[question.activeDeficiencies.length -1];
+            //set saving flag so view displays spinner
+            question.saving = true;
+            
+            //find the right DeficiencySelection and update it's other text or Is_active property
+            var i = question.Responses.DeficiencySelections.length;
+            while(i--){
+                if(question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id){
+                    var defSelection = question.Responses.DeficiencySelections[i];
+                }
             }
+            
+            
+            //grab a collection of room ids
+            if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
+            var i = deficiency.InspectionRooms.length;
+            var roomIds = [];
+            if(!room){
+                //we haven't passed in a room, so we should set relationships for all possible rooms
+                while(i--){
+                    roomIds.push( deficiency.InspectionRooms[i].Key_id );
+                }
+            }
+            else{
+                this.room = room;
+                while(i--){
+                    if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
+                }
+            }
+            console.log(question);
+            if (defSelection) {
+                console.log("I am saved", question.freeText);
+                //find the right DeficiencySelection and update it's other text or Is_active property
+                var i = question.Responses.DeficiencySelections.length;            
+                if(question.selected){
+                    defSelection.Is_active = true;
+                }else{
+                    defSelection.Is_active = false;
+                }
+                
+            } else {
+                console.log("I am NOT saved", question.freeText);
+                //no deficiency selection yet, build one
+                var defSelection = {
+                    Class: "DeficiencySelection",
+                    Response_id: question.Responses.Key_id,
+                    Deficiency_id: deficiency.Key_id,
+                    Is_active: true,
+                    Show_rooms: false
+                }
+                
+            }
+            defSelection.Other_text = question.freeText ? question.freeText : defSelection.Other_text;
+            defSelection.RoomIds = roomIds;
+            console.log(defSelection);
+            question.edit = false;
+            
+            //make save call
+            var url = '../../ajaxaction.php?action=saveOtherDeficiencySelection';
+             return convenienceMethods.saveDataAndDefer(url, defSelection).then(
+                    function(returnedSelection){
+                        console.log(returnedSelection);
+                        if(!question.saved){
+                            question.Responses.DeficiencySelections.push(returnedSelection);
+                            factory.inspection.Deficiency_selections[0].push(returnedSelection.Deficiency_id);
+                            var i = returnedSelection.Rooms.length;
+                            while(i--){
+                                returnedSelection.Rooms[i].checked = true;
+                            }
+                        }
+                        question.edit = false;
+                        question.freeText = returnedSelection.Other_text;
+                        question.Other_text = returnedSelection.Other_text;
+                        question.saving = false;
+                        question.saved = true;
+                        question.selected = returnedSelection.Is_active;
+                    });
+ 
         }
 
         factory.setImage = function( category )
@@ -379,10 +464,24 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     Response_id: question.Responses.Key_id,
                     Inspection_id: this.inspection.Key_id,
                     Show_rooms:  deficiency.Show_rooms
-                  }
-
-                if( deficiency.selected ){
-
+                }
+                
+                //make sure we are persisting the state of Other deficiency selections
+                if(deficiency.Text == "Other"){
+                    //find the right DeficiencySelection and update it's other text or Is_active property
+                    var i = question.Responses.DeficiencySelections.length;
+                    while(i--){
+                        if(question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id){
+                           defDto = question.Responses.DeficiencySelections[i];
+                           defDto.Show_rooms = deficiency.Show_rooms;
+                           defDto.RoomIds    = roomIds;
+                        }
+                    }
+                }
+                
+               
+                if( deficiency.selected || deficiency.Text == "Other"  /*we never delete "Other" deficiency selections, only deactivate them*/){
+                        alert('yo')
                         if(question.Responses && question.Responses.DeficiencySelections){
                             var j = question.Responses.DeficiencySelections.length;
                             while(j--){
@@ -391,7 +490,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                             }
                         }
 
-                          var url = '../../ajaxaction.php?action=saveDeficiencySelection';
+                        var url = '../../ajaxaction.php?action=saveDeficiencySelection';
                         convenienceMethods.saveDataAndDefer(url, defDto)
                             .then(
                                 function(returnedDeficiency){

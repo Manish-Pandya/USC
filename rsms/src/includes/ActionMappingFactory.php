@@ -156,6 +156,7 @@ class ActionMappingFactory {
                 "saveResponse"=>new ActionMapping("saveResponse", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeResponse"=>new ActionMapping("removeResponse", "", "",  $this::$ROLE_GROUPS["EHS"],"200","404"),
                 "saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
+        		"saveOtherDeficiencySelection"=>new ActionMapping("saveOtherDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),

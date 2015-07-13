@@ -1,20 +1,23 @@
 <form name="form">
     <!-- this should be here until a thing is saved-->
-    <label class="checkbox inline" ng-show="!param.saved">
-        <input type="checkbox" ng-model="selected" ng-checked="checkedOnInit()" ng-change="checkboxChanged()" />
-        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="selected" style="margin-top:0">{{unselectedTitle}}</span>
-            <div ng-hide="!selected">
-                <textarea placeholder="{{textareaPlaceholder}}" rows="4" cols="50" form="form" name="textArea" ng-model="textAreaContent"></textarea>
-            </div>
+    <label class="checkbox inline" ng-show="!param.saved" ng-disabled="param.otherSelected">
+        <input type="checkbox" ng-disabled="param.edit" ng-model="param.edit" ng-checked="checkedOnInit()"/>
+        <span class="metro-checkbox"><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="param.otherSelected" style="margin-top:0">{{unselectedTitle}}</span>
         </span>
     </label>
 
     <!-- this should be here after a thing is saved -->
     <label class="checkbox inline" ng-show="param.saved">
-        <input type="checkbox" ng-model="selected" ng-checked="checkedOnInit()" ng-change="checkboxChanged()" ng-checked=""/>
-        <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="selected" style="margin-top:0">{{param.activeDeficiencies[param.activeDeficiencies.length-1].Other_text}}</span>
+        <input type="checkbox" ng-model="param.selected" ng-checked="checkedOnInit()" ng-change="checkboxChanged()"/>
+        <span class="metro-checkbox"><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="param.edit" style="margin-top:0">{{param.Other_text}}</span>
         </span>
     </label>
-
+    <i class="icon-pencil primary edit" ng-click="edit()" ng-if="param.saved && !param.edit"></i>
+        
+    <div ng-hide="!param.edit">
+        <textarea required placeholder="{{textareaPlaceholder}}" rows="2" cols="50" form="form" name="textArea" ng-model="param.freeText"></textarea>
+         <a class="btn btn-danger left" ng-click="cancel(false)"><i class="icon-cancel-2"></i>Cancel</a>
+         <button ng-disabled="!form.$valid" type="submit" class="btn btn-success left" ng-click="checkboxChanged()"><i class="icon-checkmark"></i>Save</button><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i>
+    </div>
 </form>
 
