@@ -3380,3 +3380,7 @@ button.btn-large{
 .radio.inline + .radio.inline, .checkbox.inline:not(.disallowed) + .checkbox.inline:not(.disallowed) {
   margin-left: 0; 
 }
+.other-deficiency-form, .other-deficiency-form > div{display:inline}
+.other-deficiency-form > div{
+    padding-top:10px;
+}
