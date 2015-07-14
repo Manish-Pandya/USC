@@ -13,7 +13,7 @@
         </span>
     </label>
     <i class="icon-pencil primary edit" ng-click="edit()" ng-if="param.saved && !param.edit"></i>
-        
+
     <div ng-hide="!param.edit">
         <textarea required placeholder="{{textareaPlaceholder}}" rows="2" cols="50" form="form" name="textArea" ng-model="param.freeText"></textarea>
          <a class="btn btn-danger left" ng-click="cancel(false)"><i class="icon-cancel-2"></i>Cancel</a>

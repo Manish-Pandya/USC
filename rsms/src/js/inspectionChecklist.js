@@ -127,14 +127,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 console.log('changed to ' + $scope.selectedTitle);
                 $scope.param.Other_text = $scope.selectedTitle;
             })
-            
+
             $scope.edit = function(){
                 $scope.param.edit = true;
                 $scope.param.freeText = $scope.param.Other_text;
             }
-            
+
             $scope.cancel = function(){
-                alert('cancel');
                 $scope.param.edit = false;
                 $scope.param.selected = false;
             }
@@ -192,7 +191,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             var deficiency = question.activeDeficiencies[question.activeDeficiencies.length -1];
             //set saving flag so view displays spinner
             question.saving = true;
-            
+
             //find the right DeficiencySelection and update it's other text or Is_active property
             var i = question.Responses.DeficiencySelections.length;
             while(i--){
@@ -200,8 +199,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     var defSelection = question.Responses.DeficiencySelections[i];
                 }
             }
-            
-            
+
+
             //grab a collection of room ids
             if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
             var i = deficiency.InspectionRooms.length;
@@ -222,13 +221,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             if (defSelection) {
                 console.log("I am saved", question.freeText);
                 //find the right DeficiencySelection and update it's other text or Is_active property
-                var i = question.Responses.DeficiencySelections.length;            
+                var i = question.Responses.DeficiencySelections.length;
                 if(question.selected){
                     defSelection.Is_active = true;
                 }else{
                     defSelection.Is_active = false;
                 }
-                
+
             } else {
                 console.log("I am NOT saved", question.freeText);
                 //no deficiency selection yet, build one
@@ -239,13 +238,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     Is_active: true,
                     Show_rooms: false
                 }
-                
+
             }
             defSelection.Other_text = question.freeText ? question.freeText : defSelection.Other_text;
             defSelection.RoomIds = roomIds;
-            console.log(defSelection);
-            question.edit = false;
-            
             //make save call
             var url = '../../ajaxaction.php?action=saveOtherDeficiencySelection';
              return convenienceMethods.saveDataAndDefer(url, defSelection).then(
@@ -266,7 +262,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         question.saved = true;
                         question.selected = returnedSelection.Is_active;
                     });
- 
+
         }
 
         factory.setImage = function( category )
@@ -465,7 +461,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     Inspection_id: this.inspection.Key_id,
                     Show_rooms:  deficiency.Show_rooms
                 }
-                
+
                 //make sure we are persisting the state of Other deficiency selections
                 if(deficiency.Text == "Other"){
                     //find the right DeficiencySelection and update it's other text or Is_active property
@@ -478,10 +474,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
                     }
                 }
-                
-               
+
+
                 if( deficiency.selected || deficiency.Text == "Other"  /*we never delete "Other" deficiency selections, only deactivate them*/){
-                        alert('yo')
                         if(question.Responses && question.Responses.DeficiencySelections){
                             var j = question.Responses.DeficiencySelections.length;
                             while(j--){

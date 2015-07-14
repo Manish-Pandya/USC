@@ -3378,9 +3378,17 @@ button.btn-large{
   height: 50px;
 }
 .radio.inline + .radio.inline, .checkbox.inline:not(.disallowed) + .checkbox.inline:not(.disallowed) {
-  margin-left: 0; 
+  margin-left: 0;
 }
-.other-deficiency-form, .other-deficiency-form > div{display:inline}
+.other-deficiency-form{display:inline}
 .other-deficiency-form > div{
-    padding-top:10px;
+    margin-top: -20px;
+    width: 100%;
+    max-width:1000px;
+    margin-left: 28px;
+}
+.other-deficiency-form textarea{
+    display:block;
+    width:90%;
+    max-width: 900px;
 }
