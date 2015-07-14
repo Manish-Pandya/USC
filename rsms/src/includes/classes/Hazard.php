@@ -95,6 +95,8 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+		
+		
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -262,10 +264,8 @@ class Hazard extends GenericCrud {
 
 	public function getPrincipal_investigators(){
 		if($this->principal_investigators == NULL){
-			$this->principal_investigators = array();
-			foreach($this->getRooms() as $room){
-				$this->principal_investigators = array_merge($this->principal_investigators, $room->getPrincipalInvestigators());
-			}
+			$thisDao = new GenericDAO($this);
+			$this->principal_investigators = $thisDao->getPIsByHazard();
 		}
 		return $this->principal_investigators;
 	}

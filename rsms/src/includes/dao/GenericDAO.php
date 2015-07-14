@@ -719,6 +719,35 @@ class GenericDAO {
 
 		return $result;
 	}
+	
+	function getPIsByHazard(){
+		// Get the db connection
+		global $db;
+		
+		// get the relationship parameters needed to build the query
+		$hazard = $this->modelObject;
+		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
+		
+		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
+		$sql = "SELECT * FROM principal_investigator WHERE key_id 
+				IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id 
+				IN(SELECT * FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
+		
+		$stmt = $db->prepare($sql);
+		
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
+			// ... otherwise, generate error message to be returned
+		} else {
+			$result = array();
+			$error = $stmt->errorInfo();
+			$resultError = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
+		}
+		
+		return $result;
+	}
 
 	function getAllLocations(){
 		$LOG = Logger::getLogger(__CLASS__);
