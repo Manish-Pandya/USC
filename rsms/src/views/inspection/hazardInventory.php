@@ -141,7 +141,7 @@ require_once '../top_view.php';
                                </div>
                                <div class="roomsForBuidling span6">
                                    <ul>
-                                       <li ng-class="{greyedOut: !room.IsSelected}" ng-repeat="(key, room) in building.Rooms" once-text="room.Name"></li>
+                                       <li ng-class="{greyedOut: !room.IsSelected}" ng-repeat="(key, room) in building.Rooms"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                    </ul>
                                </div>
                                </li>
@@ -189,7 +189,10 @@ require_once '../top_view.php';
                             <!--<h4 class="">-->
                             <label class="checkbox inline">
                                 <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-                                <span class="metro-checkbox targetHaz" once-text="child.Name">
+
+                                <!-- THIS IS UNFINISHED STUB CODE-->
+                                <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
+
                                     <!--<span once-text="child.Name" class="nudge-up"></span>-->
 
                                     <img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>

@@ -370,6 +370,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       }
       return false;
   }
+
   factory.savePi = function(pi)
   {
     var url = "../../ajaxaction.php?action=savePI";
@@ -392,7 +393,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 controllers = {};
 
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element ) {
+controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element, $modal) {
 
   var comboBreaker = $q.defer();
   var getAllPis = function()
@@ -904,6 +905,15 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
     });
   }
 
+  $scope.openMultiplePIsModal = function(room) {
+      // Figure out how to pass room to the modal instance.
+    var modalInstance = $modal.open({
+        templateUrl: 'hazard-inventory-modals/multiple-PIs-modal.html',
+        controller: controllers.modalCtrl,
+        resolve: {room:room}
+    });
+}
+
 };
 
 
@@ -1048,7 +1058,7 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
 }
 
-controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods){
+controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, room){
   $scope.gettingInspections = true;
   var pi = hazardInventoryFactory.PI;
   $scope.pi = pi;
@@ -1080,6 +1090,7 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
   });
 
   $scope.close = function () {
+      console.log("DIG:", room);
     $modalInstance.dismiss();
   };
 
@@ -1181,7 +1192,6 @@ controllers.commentsController = function($scope, hazardInventoryFactory, $modal
     Inspection_notes: $scope.pi.Inspection_notes,
     Class:"PrincipalInvestigator"
   };
-
 
   $scope.close = function () {
     $modalInstance.dismiss();
