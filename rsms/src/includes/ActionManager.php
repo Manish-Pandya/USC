@@ -721,7 +721,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
         $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-        
+
         foreach ($hazards as &$hazard){
             $hazard->setEntityMaps($entityMaps);
         }
@@ -937,7 +937,7 @@ class ActionManager {
             $newEntityMaps[] = new EntityMap("eager","getHasChildren");
             $newEntityMaps[] = new EntityMap("lazy","getParentIds");
             $newEntityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-            
+
             $savedHazard->setEntityMaps($newEntityMaps);
 
             $chklstMaps = array();
@@ -1562,7 +1562,6 @@ class ActionManager {
     }
 
     public function getPIsByRoomId( $id = NULL ){
-
         $id = $this->getValueFromRequest('id', $id);
 
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1572,6 +1571,27 @@ class ActionManager {
             $dao = $this->getDao(new Room());
             $room =  $dao->getById($id);
             return $room->getPrincipalInvestigators();
+        }
+        else{
+            return new ActionError("No request parameter 'id' was provided");
+        }
+    }
+
+    public function getPIsByClassInstanceId( $className = NULL, $id = NULL ){
+        $className = $this->getValueFromRequest('className', $className);
+        $id = $this->getValueFromRequest('id', $id);
+
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG->trace('getting hazard');
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new $className);
+            $instance =  $dao->getById($id);
+            if ( method_exists($instance, "getPrincipalInvestigators") ) {
+                return $instance->getPrincipalInvestigators();
+            } else {
+                return new ActionError("No method in instance to fetch PIs");
+            }
         }
         else{
             return new ActionError("No request parameter 'id' was provided");
@@ -2314,7 +2334,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
             $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-            
+
             $allHazards->setEntityMaps($entityMaps);
 
             $rooms = array();
@@ -2338,7 +2358,7 @@ class ActionManager {
                     $entityMaps[] = new EntityMap("eager","getHasChildren");
                     $entityMaps[] = new EntityMap("lazy","getParentIds");
                     $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-                    
+
                     $subhazard->setEntityMaps($entityMaps);
                     //Skip General Hazards
                     $this->filterHazards($subhazard,$rooms);
@@ -2373,7 +2393,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
         $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-        
+
 
         $hazard->setInspectionRooms($rooms);
         $hazard->filterRooms();
@@ -2430,7 +2450,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getHasChildren");
                 $entityMaps[] = new EntityMap("lazy","getParentIds");
                 $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-                
+
                 $subhazard->setEntityMaps($entityMaps);
             }
 
@@ -2522,7 +2542,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getParentIds");
                 $entityMaps[] = new EntityMap("lazy","getHasChildren");
                 $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-                
+
                 foreach ($hazards as &$hazard){
                     $hazard->setEntityMaps($entityMaps);
                     $parentIds = array();
@@ -2590,7 +2610,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
             $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-            
+
             $hazard->setEntityMaps($entityMaps);
 
             $LOG->debug($hazard);
@@ -2644,7 +2664,7 @@ class ActionManager {
                         $subEntityMaps[] = new EntityMap("eager","getInspectionRooms");
                         $subEntityMaps[] = new EntityMap("eager","getHasChildren");
                         $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-                        
+
                         $subhazard->setEntityMaps($subEntityMaps);
                     }
 
@@ -2770,7 +2790,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
             $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-            
+
             $hazard->setEntityMaps($entityMaps);
             $hazard->filterRooms();
 

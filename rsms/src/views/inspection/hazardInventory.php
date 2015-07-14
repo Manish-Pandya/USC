@@ -207,6 +207,10 @@ require_once '../top_view.php';
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
+                            <span ng-show="child.HasMultiplePIs">
+                                <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
+                            </span>
+
                             <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px">
                                 <h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
                                 <ul>

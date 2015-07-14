@@ -6,7 +6,7 @@
  * @author Mitch
  */
 class ActionMappingFactory {
-	
+
     /**
      * Static accessor method to retrieve action mappings.
      */
@@ -14,19 +14,19 @@ class ActionMappingFactory {
         $mappings = new ActionMappingFactory();
         return $mappings->getConfig();
     }
-    
+
     /**
      * Mapping for common groups of roles permitted to do an action
-     * 
+     *
      */
-    
+
     protected static $ROLE_GROUPS = array(
-    		"ADMIN" 				=> array("Admin", "Radiation Admin"),
-    		"EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
-    		"EHS_AND_LAB"			=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
-    		"ALL_RAD_USERS"				=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector"),
-    		"LAB_PERSONNEL"			=> array("Lab Contact", "Principal Investigator", "Radiation User"),
-    		"EXCLUDE_READ_ONLY"		=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User")
+            "ADMIN" 				=> array("Admin", "Radiation Admin"),
+            "EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
+            "EHS_AND_LAB"			=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
+            "ALL_RAD_USERS"			=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector"),
+            "LAB_PERSONNEL"			=> array("Lab Contact", "Principal Investigator", "Radiation User"),
+            "EXCLUDE_READ_ONLY"		=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User")
     );
 
     public function __construct(){ }
@@ -40,10 +40,10 @@ class ActionMappingFactory {
                 //TODO: Correct action names
                 //TODO: Assign locations
                 //TODO: Assign roles
-                //TODO: Assign response codes        		
-                "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php", array(), false),        		
+                //TODO: Assign response codes
+                "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php", array(), false),
                 "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."../login.php", WEB_ROOT."../login.php", array(), false),
-        		
+
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "deactivate"=>new ActionMapping("deactivate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -156,7 +156,7 @@ class ActionMappingFactory {
                 "saveResponse"=>new ActionMapping("saveResponse", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeResponse"=>new ActionMapping("removeResponse", "", "",  $this::$ROLE_GROUPS["EHS"],"200","404"),
                 "saveDeficiencySelection"=>new ActionMapping("saveDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
-        		"saveOtherDeficiencySelection"=>new ActionMapping("saveOtherDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "saveOtherDeficiencySelection"=>new ActionMapping("saveOtherDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -167,10 +167,10 @@ class ActionMappingFactory {
                 "saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-        		"getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),        		
+                "getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getDeficiencySelectionByInspectionIdAndDeficiencyId"=>new ActionMapping("getDeficiencySelectionByInspectionIdAndDeficiencyId", "", "", $this::$ROLE_GROUPS["EHS"]),
 
-        		
+
                 // Inspection, step 4 (Review, deficiency report)
                 "getDeficiencySelectionsForResponse"=>new ActionMapping("getDeficiencySelectionsForResponse", "", "",$this::$ROLE_GROUPS["EXCLUDE_READ_ONLY"] ),
                 "getRecommendationsForResponse"=>new ActionMapping("getRecommendationsForResponse", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -195,7 +195,10 @@ class ActionMappingFactory {
 
 
                 "getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "", $this::$ROLE_GROUPS["EHS"])
+                "getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "", $this::$ROLE_GROUPS["EHS"]),
+
+                // GENERIC
+                "getPIsByClassInstanceId"=>new ActionMapping("getPIsByClassInstanceId", "", "")
         );
     }
 }

@@ -905,12 +905,12 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
     });
   }
 
-  $scope.openMultiplePIsModal = function(room) {
+  $scope.openMultiplePIsModal = function(instanceWithPIs) {
       // Figure out how to pass room to the modal instance.
     var modalInstance = $modal.open({
         templateUrl: 'hazard-inventory-modals/multiple-PIs-modal.html',
         controller: controllers.modalCtrl,
-        resolve: {room:function() {return room;} }
+        resolve: {instanceWithPIs:function() {return instanceWithPIs;} }
     });
 }
 
@@ -1058,15 +1058,15 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
 }
 
-controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, room){
-    if (room && room.HasMultiplePIs) {
+controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, instanceWithPIs){
+    if (instanceWithPIs && instanceWithPIs.HasMultiplePIs) {
         // We have room with multiple PIs, so get PIs for room
-        $scope.room = room;
-        var url = '../../ajaxaction.php?action=getPIsByRoomId&id=' + room.Key_id + '&callback=JSON_CALLBACK';
+        $scope.instanceWithPIs = instanceWithPIs;
+        var url = '../../ajaxaction.php?action=getPIsByClassInstanceId&className=' + instanceWithPIs.Class + '&id=' + instanceWithPIs.Key_id + '&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
             function(pis) {
                 $scope.error = null;
-                room.PrincipalInvestigators = pis;
+                instanceWithPIs.PrincipalInvestigators = pis;
             }, function() {
                 $scope.error = "PIs failed to load";
             }
