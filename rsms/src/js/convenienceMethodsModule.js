@@ -369,7 +369,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             //if( !dateString || isNaN(dateString) )return;
             var t = new Date(1970,0,1);
             t.setTime(seconds);
-            console.log(t);
             return t;
         }
     };
