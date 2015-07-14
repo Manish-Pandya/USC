@@ -1860,6 +1860,7 @@ ul.key li.deficiencies span {
 .hazardList i, .hazardList ul i {
   margin:2px 3px 0 3px;
   font-size: 17px;
+  cursor: pointer;
 }
 /* line 1388, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
