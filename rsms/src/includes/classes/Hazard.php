@@ -80,6 +80,9 @@ class Hazard extends GenericCrud {
 	
 	/** The PIs who have relationships with rooms that have relationships with this hazard**/
 	private $principal_investigators;
+	
+	/** Boolean to indicate whether this Hazard has relationships with any Rooms that have more than 1 PrincipalInvestigator */
+	private $hasMultiplePIs;
 
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -268,6 +271,14 @@ class Hazard extends GenericCrud {
 			$this->principal_investigators = $thisDao->getPIsByHazard();
 		}
 		return $this->principal_investigators;
+	}
+	
+	public function getHasMultiplePIs(){
+		if($this->hasMultiplePIs == NULL){
+			$this->hasMultiplePIs = false;
+			if(count($this->getPrincipalInvestigators()) > 1) $this->hasMultiplePIs = true;
+		}
+		return $this->hasMultiplePIs;
 	}
 }
 
