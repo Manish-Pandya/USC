@@ -910,7 +910,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
     var modalInstance = $modal.open({
         templateUrl: 'hazard-inventory-modals/multiple-PIs-modal.html',
         controller: controllers.modalCtrl,
-        resolve: {room:room}
+        resolve: {room:function() {return room;} }
     });
 }
 
@@ -1059,20 +1059,32 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 }
 
 controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, room){
-  $scope.gettingInspections = true;
-  var pi = hazardInventoryFactory.PI;
-  $scope.pi = pi;
-  console.log(hazardInventoryFactory);
-  hazardInventoryFactory.getPreviousInspections(pi)
+    if (room && room.HasMultiplePIs) {
+        // We have room with multiple PIs, so get PIs for room
+        $scope.room = room;
+        var url = '../../ajaxaction.php?action=getPIsByRoomId&id=' + room.Key_id + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(pis) {
+                $scope.error = null;
+                room.PrincipalInvestigators = pis;
+            }, function() {
+                $scope.error = "PIs failed to load";
+            }
+        );
+    }
+    $scope.gettingInspections = true;
+    var pi = hazardInventoryFactory.PI;
+    $scope.pi = pi;
+    hazardInventoryFactory.getPreviousInspections(pi)
     .then(
-      function(inspections){
-        $scope.previousInspections = inspections;
-        $scope.gettingInspections = false;
-      },
-      function(){
-        $scope.gettingInspections = false;
-        $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
-      }
+        function(inspections){
+            $scope.previousInspections = inspections;
+            $scope.gettingInspections = false;
+        },
+        function(){
+            $scope.gettingInspections = false;
+            $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
+        }
     )
 
   $scope.$watch('previousInspections', function(previousInspections, oldValue) {
@@ -1090,7 +1102,6 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
   });
 
   $scope.close = function () {
-      console.log("DIG:", room);
     $modalInstance.dismiss();
   };
 
@@ -1106,7 +1117,6 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   hazardInventoryFactory.getOpenInspections(pi)
     .then(
       function(inspections){
-        console.log('loaded');
         $scope.openInspections = inspections;
         $scope.gettingInspections = false;
       },

@@ -62,7 +62,7 @@ require_once '../top_view.php';
             <ul ng-if="getShowRooms(child)" class="subRooms">
                 <li>Rooms:</li>
                 <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
-                    {{room.Name}}
+                    <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>
                 </li>
             </ul>
 
@@ -235,7 +235,9 @@ require_once '../top_view.php';
 
                             <ul ng-if="getShowRooms(child)" class="subRooms">
                                 <li>Rooms:</li>
-                                <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}" once-text="room.Name"></li>
+                                <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
+                                    <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>
+                                </li>
                             </ul>
                             <ul>
                                 <li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
