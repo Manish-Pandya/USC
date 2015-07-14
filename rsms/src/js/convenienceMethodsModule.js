@@ -208,7 +208,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
 
           for (var localI=0;localI<array.length;localI++) {
               if (array[localI][props[0]] === obj[props[1]]) {
-                  console.log(array[localI][props[0]]+' | '+obj[props[1]]);
                 if(returnIdx)return localI;
                 return true;
             }
