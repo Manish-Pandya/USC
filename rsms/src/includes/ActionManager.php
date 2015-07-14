@@ -64,214 +64,213 @@ class ActionManager {
             return new GenericDAO( $modelObject );
         }
     }
-    
+
     public function getCurrentUserRoles($user = NULL){
-    	$LOG = Logger::getLogger('Action:' . __function__);
-    	
-    	if(array_key_exists("USER", $_SESSION) && $_SESSION['USER'] != NULL) {
-    		$user = $_SESSION['USER'];
-    	} else {
-    		$_SESSION['USER'] = $user;
-    	}
-    	$LOG->debug($user);
-    	$roles = array();
-    	$roles["allRoles"] = array();
-    	//put an array of all possible roles into the session so we can use it for comparison on the client
-    	foreach($this->getAllRoles() as $role){
-    		$LOG->debug($role);
-    		$roles["allRoles"][] = array($role->getName() => $role->getBit_value());
-    	}
-    	
-    	
-    	//sum up the users roles into a single integer to represent their permission set
-    	$roles['userPermissions'] = 0;
-    	$roles['userRoles'] = array();
-    	foreach($user->getRoles() as $role){
-    		$LOG->debug($role);
-    		$roles['userPermissions'] += $role->getBit_value();
-    		$roles['userRoles'][] = $role->getName();
-    	}
-    	
-    	return $roles;
+        $LOG = Logger::getLogger('Action:' . __function__);
+
+        if(array_key_exists("USER", $_SESSION) && $_SESSION['USER'] != NULL) {
+            $user = $_SESSION['USER'];
+        } else {
+            $_SESSION['USER'] = $user;
+        }
+        $LOG->debug($user);
+        $roles = array();
+        $roles["allRoles"] = array();
+        //put an array of all possible roles into the session so we can use it for comparison on the client
+        foreach($this->getAllRoles() as $role){
+            $LOG->debug($role);
+            $roles["allRoles"][] = array($role->getName() => $role->getBit_value());
+        }
+
+
+        //sum up the users roles into a single integer to represent their permission set
+        $roles['userPermissions'] = 0;
+        $roles['userRoles'] = array();
+        foreach($user->getRoles() as $role){
+            $LOG->debug($role);
+            $roles['userPermissions'] += $role->getBit_value();
+            $roles['userRoles'][] = $role->getName();
+        }
+
+        return $roles;
     }
-    
- 	public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
+
+     public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-                
+
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
         $destination = $this->getValueFromRequest('destination', $destination);
-        
+
         if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
         if(!isProduction()){
-        	 
+
             // Make sure they're an Erasmus user by username lookup
             $dao = $this->getDao(new User());
             $user = $this->getUserById(1);
-            
+
             if ($user != null) {
                 // ROLE assignment will be based on username, if it directly matches a role name
                 $roles = array();
                 foreach($this->getAllRoles() as $role) {
-                	$roles[] = $role->getName();
+                    $roles[] = $role->getName();
                 }
                 //the name of a real role was input in the form
-                if ( in_array($username, $roles) ) {                	
-                	$roleDao = $this->getDao(new Role());
-                	$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-                	$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-					
-                	$user->setFirst_name("Test user with role:");
-                	$user->setLast_name($username);
-                    if($username != "Principal Investigator"){
-        				$user->setSupervisor_id(1);
-	        		}else{
-	        			$user->setPrincipal_investigator_id(1);
-	        		}
-                	 
-                	$user->setRoles($fakeRoles);        	 
-                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                if ( in_array($username, $roles) ) {
+                    $roleDao = $this->getDao(new Role());
+                    $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+                    $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
 
-                } 
+                    $user->setFirst_name("Test user with role:");
+                    $user->setLast_name($username);
+                    if($username != "Principal Investigator"){
+                        $user->setSupervisor_id(1);
+                    }else{
+                        $user->setPrincipal_investigator_id(1);
+                    }
+
+                    $user->setRoles($fakeRoles);
+                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+
+                }
                 //the name of a real role was NOT input in the form, get the actual user's roles
                 else {
-                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 }
-                
+
                 // put the USER into session
                 $_SESSION['USER'] = $user;
-                
+
                 $LOG->debug($_SESSION['ROLE']['userRoles']);
-                
+
                 //get the proper destination based on the user's role
                 $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
                 $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
                 if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
                 }
                 else{
-                	if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
                 }
-                
+
                 // return true to indicate success
                 return true;
             } else {
                 // successful LDAP login, but not an authorized Erasmus user, return false
-            	$_SESSION['DESTINATION'] = 'login.php';
-        		return false;
+                $_SESSION['DESTINATION'] = 'login.php';
+                return false;
             }
         }else{
-        	// Hardcoded username and password for "emergency accounts"
-        	if($username === "EmergencyUser" && $password === "RSMS911") {
-        		$emergencyAccount = true;
-        	}
-        	else {
-        		$emergencyAccount = false;
-        	}
-        	
-        	// ROLE assignment will be based on username, if it directly matches a role name
-        	$roles = array();
-        	foreach($this->getAllRoles() as $role) {
-        		$roles[] = $role->getName();
-        	}
-        	//the name of a real role was input in the form
-        	if ( in_array($username, $roles) ) {
-        		if($password != "correcthorsebatterystaple"){
-        			$_SESSION['DESTINATION'] = 'login.php';
-        			return false;
-        		}
-        		
-        		$user = $this->getUserById(1);
-        		$LOG->fatal($user);
-        		$roleDao = $this->getDao(new Role());
-        		$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-        		$fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-        	
-        		$user->setFirst_name("Test user with role:");
-        		$user->setLast_name($username);
-        		
-        		if($username != "Principal Investigator"){
-        			$user->setSupervisor_id(1);
-        		}else{
-        			$user->setPrincipal_investigator_id(1);
-        		}
-        		 
-        		$user->setRoles($fakeRoles);
-        		$LOG->debug($user);
-        		$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-        		// put the USER into session
-        		$_SESSION['USER'] = $user;
-        		 
-        		$LOG->debug($_SESSION['ROLE']['userRoles']);
-        		 
-        		//get the proper destination based on the user's role
-        		$nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-        		$LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-        		if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-        		}
-        		else{
-        			if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
-        		}
-        		$LOG->debug($_SESSION);
-        		// return true to indicate success
-        		return true;
-        	
-        	}
-        	
-        	$ldap = new LDAP();
-        	
-        	// if successfully authenticates by LDAP:
-        	if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
-        	
-        		// Make sure they're an Erasmus user by username lookup
-        		$dao = $this->getDao(new User());
-        		$user = $dao->getUserByUsername($username);
-        		$LOG->debug($user);
-        		if ($user != null) {
-        			// ROLE assignment will be based on username, if it directly matches a role name
-	                $roles = array();
-	                foreach($this->getAllRoles() as $role) {
-	                	$roles[] = $role->getName();
-	                }
-	                
-	                //the name of a real role was NOT input in the form, get the actual user's roles
-                	$_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-	                
-	                // put the USER into session
-	                $_SESSION['USER'] = $user;
-	                
-	                $LOG->debug($_SESSION['ROLE']['userRoles']);
-	                
-	                //get the proper destination based on the user's role
-	                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-	                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-	                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-	                	$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-	                }
-	                else{
-	                	$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
-	                }
-	                
-	                // return true to indicate success
-	                return true;
-        		} else {
-        			// successful LDAP login, but not an authorized Erasmus user, return false
-        			 $_SESSION['DESTINATION'] = 'login.php';
-        			 return false;
-        		}
-        	}
+            // Hardcoded username and password for "emergency accounts"
+            if($username === "EmergencyUser" && $password === "RSMS911") {
+                $emergencyAccount = true;
+            }
+            else {
+                $emergencyAccount = false;
+            }
+
+            // ROLE assignment will be based on username, if it directly matches a role name
+            $roles = array();
+            foreach($this->getAllRoles() as $role) {
+                $roles[] = $role->getName();
+            }
+            //the name of a real role was input in the form
+            if ( in_array($username, $roles) ) {
+                if($password != "correcthorsebatterystaple"){
+                    $_SESSION['DESTINATION'] = 'login.php';
+                    return false;
+                }
+
+                $user = $this->getUserById(1);
+                $roleDao = $this->getDao(new Role());
+                $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+                $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+
+                $user->setFirst_name("Test user with role:");
+                $user->setLast_name($username);
+
+                if($username != "Principal Investigator"){
+                    $user->setSupervisor_id(1);
+                }else{
+                    $user->setPrincipal_investigator_id(1);
+                }
+
+                $user->setRoles($fakeRoles);
+                $LOG->debug($user);
+                $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                // put the USER into session
+                $_SESSION['USER'] = $user;
+
+                $LOG->debug($_SESSION['ROLE']['userRoles']);
+
+                //get the proper destination based on the user's role
+                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                }
+                else{
+                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+                }
+                $LOG->debug($_SESSION);
+                // return true to indicate success
+                return true;
+
+            }
+
+            $ldap = new LDAP();
+
+            // if successfully authenticates by LDAP:
+            if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
+
+                // Make sure they're an Erasmus user by username lookup
+                $dao = $this->getDao(new User());
+                $user = $dao->getUserByUsername($username);
+                $LOG->debug($user);
+                if ($user != null) {
+                    // ROLE assignment will be based on username, if it directly matches a role name
+                    $roles = array();
+                    foreach($this->getAllRoles() as $role) {
+                        $roles[] = $role->getName();
+                    }
+
+                    //the name of a real role was NOT input in the form, get the actual user's roles
+                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+
+                    // put the USER into session
+                    $_SESSION['USER'] = $user;
+
+                    $LOG->debug($_SESSION['ROLE']['userRoles']);
+
+                    //get the proper destination based on the user's role
+                    $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+                    $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+                    if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+                        $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                    }
+                    else{
+                        $_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+                    }
+
+                    // return true to indicate success
+                    return true;
+                } else {
+                    // successful LDAP login, but not an authorized Erasmus user, return false
+                     $_SESSION['DESTINATION'] = 'login.php';
+                     return false;
+                }
+            }
         }
-        
+
         // otherwise, return false to indicate failure
         $_SESSION['DESTINATION'] = 'login.php';
         return false;
-    }    
-    
-    public function logoutAction(){ 
-    	session_destroy();
-    	return true;
+    }
+
+    public function logoutAction(){
+        session_destroy();
+        return true;
     }
 
     public function getCurrentUser(){
@@ -398,46 +397,46 @@ class ActionManager {
             $dao = $this->getDao( new User() );
             //if this user is new, make sure it's active
             if($decodedObject->getKey_id() == NULL){
-            	$decodedObject->setIs_active(true);
-            }            
+                $decodedObject->setIs_active(true);
+            }
             $user = $dao->save( $decodedObject );
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
-            	foreach($decodedObject->getRoles() as $role){
-            		$role = $this->getRoleById($role['Key_id']);
-            		if($role->getName() == "Principal Investigator")$savePI 	   = true;
-            		if($role->getName() == "Safety Inspector")      $saveInspector = true;
-            	}
+                foreach($decodedObject->getRoles() as $role){
+                    $role = $this->getRoleById($role['Key_id']);
+                    if($role->getName() == "Principal Investigator")$savePI 	   = true;
+                    if($role->getName() == "Safety Inspector")      $saveInspector = true;
+                }
             }
-            
+
             //user was sent from client with Principal Investigator in roles array
             if(isset($savePI)){
-	             //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-	            if($user->getPrincipalInvestigator() != null){
-	            	$pi = $user->getPrincipalInvestigator();
-	                $pi->setIs_active($user->getIs_active());
-	                $piDao  = $this->getDao(new PrincipalInvestigator());
-	                $piDao->save($pi);
-	            }else{
-	            	$pi = new PrincipalInvestigator();
-	            	$pi->setUser_id($user->getKey_id());
-	            }     
+                 //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+                if($user->getPrincipalInvestigator() != null){
+                    $pi = $user->getPrincipalInvestigator();
+                    $pi->setIs_active($user->getIs_active());
+                    $piDao  = $this->getDao(new PrincipalInvestigator());
+                    $piDao->save($pi);
+                }else{
+                    $pi = new PrincipalInvestigator();
+                    $pi->setUser_id($user->getKey_id());
+                }
                 $user->setPrincipalInvestigator($this->savePI($pi));
-            }            
-           
+            }
+
             //user was sent from client with Saftey Inspector in roles array
             if(isset($saveInspector)){
-                
+
                 //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($user->getInspector() != null){
-                	$inspector = $user->getInspector();
-                	$inspector->setIs_active($user->getIs_active());
-                	$inspectorDao  = $this->getDao(new Inspector());
+                    $inspector = $user->getInspector();
+                    $inspector->setIs_active($user->getIs_active());
+                    $inspectorDao  = $this->getDao(new Inspector());
                 }else{
-                	$inspector = new Inspector;
-                	$inspector->setUser_id($user->getKey_id());
+                    $inspector = new Inspector;
+                    $inspector->setUser_id($user->getKey_id());
                 }
-                
+
                 $user->setInspector($this->saveInspector($inspector));
             }
 
@@ -447,7 +446,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspector");
                 $entityMaps[] = new EntityMap("lazy","getSupervisor");
                 $entityMaps[] = new EntityMap("eager","getRoles");
-              	
+
                 $user->setEntityMaps($entityMaps);
                 return $user;
             }
@@ -721,7 +720,8 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
-
+        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+        
         foreach ($hazards as &$hazard){
             $hazard->setEntityMaps($entityMaps);
         }
@@ -936,6 +936,8 @@ class ActionManager {
             $newEntityMaps[] = new EntityMap("lazy","getInspectionRooms");
             $newEntityMaps[] = new EntityMap("eager","getHasChildren");
             $newEntityMaps[] = new EntityMap("lazy","getParentIds");
+            $newEntityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            
             $savedHazard->setEntityMaps($newEntityMaps);
 
             $chklstMaps = array();
@@ -1353,7 +1355,7 @@ class ActionManager {
 
     public function getAllPIs($rooms = null){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-        
+
         $rooms = $this->getValueFromRequest("rooms", $rooms);
 
         $dao = $this->getDao(new PrincipalInvestigator());
@@ -1361,7 +1363,7 @@ class ActionManager {
         /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
-        
+
         if($rooms != null){
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getLabPersonnel");
@@ -1395,21 +1397,21 @@ class ActionManager {
             if($user->getPrincipalInvestigator() != null){
                 $pi = $user->getPrincipalInvestigator();
                 $piMaps = array();
-				$piMaps[] = new EntityMap("eager","getLabPersonnel");
-				$piMaps[] = new EntityMap("eager","getRooms");
-				$piMaps[] = new EntityMap("eager","getDepartments");
-				$piMaps[] = new EntityMap("eager","getUser");
-				$piMaps[] = new EntityMap("lazy","getInspections");
-				$piMaps[] = new EntityMap("lazy","getAuthorizations");
-				$piMaps[] = new EntityMap("lazy", "getActiveParcels");
-				$piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-				$piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-				$piMaps[] = new EntityMap("lazy", "getSolidsContainers");
-				$piMaps[] = new EntityMap("lazy", "getPickups");
-				$piMaps[] = new EntityMap("lazy", "getScintVialCollections");
-				$piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-				$piMaps[] = new EntityMap("lazy","getOpenInspections");
-				$piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+                $piMaps[] = new EntityMap("eager","getLabPersonnel");
+                $piMaps[] = new EntityMap("eager","getRooms");
+                $piMaps[] = new EntityMap("eager","getDepartments");
+                $piMaps[] = new EntityMap("eager","getUser");
+                $piMaps[] = new EntityMap("lazy","getInspections");
+                $piMaps[] = new EntityMap("lazy","getAuthorizations");
+                $piMaps[] = new EntityMap("lazy", "getActiveParcels");
+                $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+                $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+                $piMaps[] = new EntityMap("lazy", "getSolidsContainers");
+                $piMaps[] = new EntityMap("lazy", "getPickups");
+                $piMaps[] = new EntityMap("lazy", "getScintVialCollections");
+                $piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+                $piMaps[] = new EntityMap("lazy","getOpenInspections");
+                $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 
                 $pi->setEntityMaps($piMaps);
             }
@@ -2301,18 +2303,18 @@ class ActionManager {
             }else{
               $allHazards = $this->getAllHazardsAsTree();
             }
-            
-            $LOG->fatal($allHazards);
+
 
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy","getSubHazards");
-			$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
-			$entityMaps[] = new EntityMap("lazy","getChecklist");
-			$entityMaps[] = new EntityMap("lazy","getRooms");
-			$entityMaps[] = new EntityMap("eager","getInspectionRooms");
-			$entityMaps[] = new EntityMap("eager","getHasChildren");
-			$entityMaps[] = new EntityMap("lazy","getParentIds");
-
+            $entityMaps[] = new EntityMap("eager","getActiveSubHazards");
+            $entityMaps[] = new EntityMap("lazy","getChecklist");
+            $entityMaps[] = new EntityMap("lazy","getRooms");
+            $entityMaps[] = new EntityMap("eager","getInspectionRooms");
+            $entityMaps[] = new EntityMap("eager","getHasChildren");
+            $entityMaps[] = new EntityMap("lazy","getParentIds");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            
             $allHazards->setEntityMaps($entityMaps);
 
             $rooms = array();
@@ -2335,6 +2337,8 @@ class ActionManager {
                     $entityMaps[] = new EntityMap("eager","getInspectionRooms");
                     $entityMaps[] = new EntityMap("eager","getHasChildren");
                     $entityMaps[] = new EntityMap("lazy","getParentIds");
+                    $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                    
                     $subhazard->setEntityMaps($entityMaps);
                     //Skip General Hazards
                     $this->filterHazards($subhazard,$rooms);
@@ -2368,6 +2372,8 @@ class ActionManager {
         $entityMaps[] = new EntityMap("eager","getInspectionRooms");
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
+        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+        
 
         $hazard->setInspectionRooms($rooms);
         $hazard->filterRooms();
@@ -2423,6 +2429,8 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspectionRooms");
                 $entityMaps[] = new EntityMap("eager","getHasChildren");
                 $entityMaps[] = new EntityMap("lazy","getParentIds");
+                $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                
                 $subhazard->setEntityMaps($entityMaps);
             }
 
@@ -2513,7 +2521,8 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
                 $entityMaps[] = new EntityMap("eager","getParentIds");
                 $entityMaps[] = new EntityMap("lazy","getHasChildren");
-
+                $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                
                 foreach ($hazards as &$hazard){
                     $hazard->setEntityMaps($entityMaps);
                     $parentIds = array();
@@ -2580,6 +2589,8 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getInspectionRooms");
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            
             $hazard->setEntityMaps($entityMaps);
 
             $LOG->debug($hazard);
@@ -2632,7 +2643,8 @@ class ActionManager {
                         $subEntityMaps[] = new EntityMap("lazy","getRooms");
                         $subEntityMaps[] = new EntityMap("eager","getInspectionRooms");
                         $subEntityMaps[] = new EntityMap("eager","getHasChildren");
-
+                        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                        
                         $subhazard->setEntityMaps($subEntityMaps);
                     }
 
@@ -2757,6 +2769,8 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getInspectionRooms");
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            
             $hazard->setEntityMaps($entityMaps);
             $hazard->filterRooms();
 
@@ -2860,50 +2874,48 @@ class ActionManager {
 
         }
     }
-    
-    
+
+
     public function saveOtherDeficiencySelection(DeficiencySelection $deficiencySelection = NULL  ){
-    	$LOG = Logger::getLogger('Action:' . __function__);
-    	$decodedObject = $this->convertInputJson();
-    	$LOG->fatal($decodedObject);
-    	if( $decodedObject === NULL ){
-    		return new ActionError('Error converting input stream to DeficiencySelection');
-    	}
-    	else if( $decodedObject instanceof ActionError){
-    		return $decodedObject;
-    	}
-    	else{
-    		// check to see if the roomIds array is populated
-    		$roomIds = $decodedObject->getRoomIds();
-    
-    		// start by saving or updating the object.
-    		$dao = $this->getDao(new DeficiencySelection());
-    		$ds = $dao->save($decodedObject);
-    
-    		// remove the old rooms. if any
-    		foreach ($ds->getRooms() as $room){
-    			$dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
-    		}
-    
-    		// if roomIds were provided then save them
-    		if (!empty($roomIds)){
-    			foreach ($roomIds as $id){
-    				$dao->addRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
-    			}
-    			// else if no roomIds were provided, then just deactivate this DeficiencySelection
-    		} else {
-    			$ds->setIs_active(false);
-    			$dao->save($ds);
-    		}
-    		$LOG->fatal($ds);
-    		$selection = $dao->getById($ds->getKey_id());
-    		$LOG->fatal($selection);
-    
-    		return $selection;
-    
-    	}
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to DeficiencySelection');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
+            // check to see if the roomIds array is populated
+            $roomIds = $decodedObject->getRoomIds();
+
+            // start by saving or updating the object.
+            $dao = $this->getDao(new DeficiencySelection());
+            $ds = $dao->save($decodedObject);
+
+            // remove the old rooms. if any
+            foreach ($ds->getRooms() as $room){
+                $dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+            }
+
+            // if roomIds were provided then save them
+            if (!empty($roomIds)){
+                foreach ($roomIds as $id){
+                    $dao->addRelatedItems($id,$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
+                }
+                // else if no roomIds were provided, then just deactivate this DeficiencySelection
+            } else {
+                $ds->setIs_active(false);
+                $dao->save($ds);
+            }
+            $selection = $dao->getById($ds->getKey_id());
+            $LOG->fatal($selection);
+
+            return $selection;
+
+        }
     }
-    
+
     public function saveCorrectiveAction(){
         $LOG = Logger::getLogger('Action:' . __function__);
         $decodedObject = $this->convertInputJson();
@@ -3017,27 +3029,27 @@ class ActionManager {
             return new ActionError("No request parameter 'inspectionId' was provided");
         }
     }
-    
+
     public function getArchivedInspectionsByPIId( $id = NULL ){
-    	//Get responses for Inspection
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
-    
-    	$piId = $this->getValueFromRequest('piId', $piId);
-    
-    	if( $piId !== NULL ){
-    
-    		$pi = $this->getPIById($piId);
-    
-    		$inspectionsDao = $this->getDao(new Inspection);
-    		$whereClauseGroup = new WhereClauseGroup( array( new WhereClause("cap_submitted_date","IS NOT", "NULL") ) );
-    		$inspections = $inspectionsDao->getAllWhere($whereClauseGroup);
-    		
-    		return $inspections;
-    	}
-    	else{
-    		//error
-    		return new ActionError("No request parameter 'inspectionId' was provided");
-    	}
+        //Get responses for Inspection
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        $piId = $this->getValueFromRequest('piId', $piId);
+
+        if( $piId !== NULL ){
+
+            $pi = $this->getPIById($piId);
+
+            $inspectionsDao = $this->getDao(new Inspection);
+            $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("cap_submitted_date","IS NOT", "NULL") ) );
+            $inspections = $inspectionsDao->getAllWhere($whereClauseGroup);
+
+            return $inspections;
+        }
+        else{
+            //error
+            return new ActionError("No request parameter 'inspectionId' was provided");
+        }
     }
 
     public function resetChecklists( $id = NULL ){
@@ -3264,12 +3276,12 @@ class ActionManager {
             return new ActionError("No request parameter 'inspectionId' was provided");
         }
     }
-    
+
     public function loginTest(){
-    	
+
     }
 
-   
+
 
     public function lookupUser($username = NULL) {
         //Get responses for Inspection
@@ -3582,8 +3594,8 @@ class ActionManager {
 
     public function getLocationCSV(){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-		$roomDao = $this->getDao(new Room());
-		$rooms = $roomDao->getAll(NULL,NULL,true);
+        $roomDao = $this->getDao(new Room());
+        $rooms = $roomDao->getAll(NULL,NULL,true);
 
         usort($rooms, function($a, $b)
         {
