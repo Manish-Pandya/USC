@@ -79,7 +79,7 @@ class Hazard extends GenericCrud {
 	private $order_index;
 	
 	/** The PIs who have relationships with rooms that have relationships with this hazard**/
-	private $principal_investigators;
+	private $principalInvestigators;
 	
 	/** Boolean to indicate whether this Hazard has relationships with any Rooms that have more than 1 PrincipalInvestigator */
 	private $hasMultiplePIs;
@@ -97,7 +97,7 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 		$entityMaps[] = new EntityMap("lazy","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
-		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		
 		
 		$this->setEntityMaps($entityMaps);
@@ -265,12 +265,12 @@ class Hazard extends GenericCrud {
 	    $this->order_index = $order_index;
 	}
 
-	public function getPrincipal_investigators(){
-		if($this->principal_investigators == NULL){
+	public function getPrincipalInvestigators(){
+		if($this->principalInvestigators == NULL){
 			$thisDao = new GenericDAO($this);
-			$this->principal_investigators = $thisDao->getPIsByHazard();
+			$this->principalInvestigators = $thisDao->getPIsByHazard();
 		}
-		return $this->principal_investigators;
+		return $this->principalInvestigators;
 	}
 	
 	public function getHasMultiplePIs(){

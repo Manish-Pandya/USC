@@ -720,7 +720,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
-        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+        $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
         
         foreach ($hazards as &$hazard){
             $hazard->setEntityMaps($entityMaps);
@@ -936,7 +936,7 @@ class ActionManager {
             $newEntityMaps[] = new EntityMap("lazy","getInspectionRooms");
             $newEntityMaps[] = new EntityMap("eager","getHasChildren");
             $newEntityMaps[] = new EntityMap("lazy","getParentIds");
-            $newEntityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            $newEntityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
             
             $savedHazard->setEntityMaps($newEntityMaps);
 
@@ -2313,7 +2313,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getInspectionRooms");
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
-            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
             
             $allHazards->setEntityMaps($entityMaps);
 
@@ -2337,7 +2337,7 @@ class ActionManager {
                     $entityMaps[] = new EntityMap("eager","getInspectionRooms");
                     $entityMaps[] = new EntityMap("eager","getHasChildren");
                     $entityMaps[] = new EntityMap("lazy","getParentIds");
-                    $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                    $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
                     
                     $subhazard->setEntityMaps($entityMaps);
                     //Skip General Hazards
@@ -2372,7 +2372,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("eager","getInspectionRooms");
         $entityMaps[] = new EntityMap("eager","getHasChildren");
         $entityMaps[] = new EntityMap("lazy","getParentIds");
-        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+        $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
         
 
         $hazard->setInspectionRooms($rooms);
@@ -2429,7 +2429,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspectionRooms");
                 $entityMaps[] = new EntityMap("eager","getHasChildren");
                 $entityMaps[] = new EntityMap("lazy","getParentIds");
-                $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
                 
                 $subhazard->setEntityMaps($entityMaps);
             }
@@ -2521,7 +2521,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
                 $entityMaps[] = new EntityMap("eager","getParentIds");
                 $entityMaps[] = new EntityMap("lazy","getHasChildren");
-                $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
                 
                 foreach ($hazards as &$hazard){
                     $hazard->setEntityMaps($entityMaps);
@@ -2589,7 +2589,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getInspectionRooms");
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
-            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
             
             $hazard->setEntityMaps($entityMaps);
 
@@ -2643,7 +2643,7 @@ class ActionManager {
                         $subEntityMaps[] = new EntityMap("lazy","getRooms");
                         $subEntityMaps[] = new EntityMap("eager","getInspectionRooms");
                         $subEntityMaps[] = new EntityMap("eager","getHasChildren");
-                        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+                        $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
                         
                         $subhazard->setEntityMaps($subEntityMaps);
                     }
@@ -2769,7 +2769,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getInspectionRooms");
             $entityMaps[] = new EntityMap("eager","getHasChildren");
             $entityMaps[] = new EntityMap("lazy","getParentIds");
-            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
             
             $hazard->setEntityMaps($entityMaps);
             $hazard->filterRooms();
