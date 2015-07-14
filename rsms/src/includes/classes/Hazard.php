@@ -78,7 +78,8 @@ class Hazard extends GenericCrud {
 	/** Hazards will be ordered by order_index in hazard hub **/
 	private $order_index;
 	
-	/** Is this Hazard in a room owned by multiple PIs? **/
+	/** The PIs who have relationships with rooms that have relationships with this hazard**/
+	private $principal_investigators;
 
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -93,6 +94,7 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 		$entityMaps[] = new EntityMap("lazy","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
+		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigators");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -258,6 +260,15 @@ class Hazard extends GenericCrud {
 	    $this->order_index = $order_index;
 	}
 
+	public function getPrincipal_investigators(){
+		if($this->principal_investigators == NULL){
+			$this->principal_investigators = array();
+			foreach($this->getRooms() as $room){
+				$this->principal_investigators = array_merge($this->principal_investigators, $room->getPrincipalInvestigators());
+			}
+		}
+		return $this->principal_investigators;
+	}
 }
 
 ?>
