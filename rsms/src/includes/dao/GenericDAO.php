@@ -720,7 +720,7 @@ class GenericDAO {
 		return $result;
 	}
 	
-	function getPIsByHazard(){
+	function getPIsByHazard($rooms = NULL){
 		// Get the db connection
 		global $db;
 		
@@ -728,10 +728,25 @@ class GenericDAO {
 		$hazard = $this->modelObject;
 		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
 		
+		//if we pass a collection of rooms, we are only getting back PIs that have relationships with those rooms, rather than all the rooms this hazard is in
+		//get the key_ids of the rooms
+		if($rooms !=NULL){
+			$roomIds = array();
+			foreach($rooms as $room){
+				$roomIds[] = $room->getKey_id();
+			}
+			$roomsCSV = implode(",", $roomIds);
+		}
+		
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
-		$sql = "SELECT * FROM principal_investigator WHERE key_id 
-				IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id 
-				IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
+		$sql = "SELECT * FROM principal_investigator WHERE key_id";
+		
+		if(!isset($roomsCSV)){
+			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";			
+		}else{
+			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
+		}
+		
 		$stmt = $db->prepare($sql);
 		
 		// Query the db and return an array of $this type of object
