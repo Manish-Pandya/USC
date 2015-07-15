@@ -1577,25 +1577,19 @@ class ActionManager {
         }
     }
 
-    public function getPIsByClassInstanceId( $className = NULL, $id = NULL ){
-        $className = $this->getValueFromRequest('className', $className);
-        $id = $this->getValueFromRequest('id', $id);
+    public function getPIsByClassInstance( $decodedObject = NULL ){
+     $LOG = Logger::getLogger( 'Action:' . __function__ );
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
-        $LOG->trace('getting hazard');
+        $decodedObject = $this->convertInputJson();
 
-        if( $id !== NULL ){
-            $dao = $this->getDao(new $className);
-            $instance =  $dao->getById($id);
-            if ( method_exists($instance, "getPrincipalInvestigators") ) {
-                return $instance->getPrincipalInvestigators();
-            } else {
-                return new ActionError("No method in instance to fetch PIs");
-            }
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to RelationshipDto');
         }
-        else{
-            return new ActionError("No request parameter 'id' was provided");
+        else if( $decodedObject instanceof ActionError ){
+            return $decodedObject;
         }
+
+        return $decodedObject->getPrincipalInvestigators();
     }
 
     public function savePI( $pi = NULL){

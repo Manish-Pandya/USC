@@ -198,7 +198,7 @@ class ActionMappingFactory {
                 "getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "", $this::$ROLE_GROUPS["EHS"]),
 
                 // GENERIC
-                "getPIsByClassInstanceId"=>new ActionMapping("getPIsByClassInstanceId", "", "")
+                "getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", "")
         );
     }
 }
