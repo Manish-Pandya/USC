@@ -16,92 +16,38 @@ require_once '../top_view.php';
 </div>
 <div data-ng-app="hazardAssesment" data-ng-controller="hazardAssessmentController">
 <div class="container-fluid whitebg" style="padding-bottom:130px;" >
-    <div class="" >
-    <!-- recursive subhazard template -->
-    <script type="text/ng-template" id="sub-hazard.html">
-            <label class="checkbox inline">
-                <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-                <span class="metro-checkbox targetHaz" once-text="child.Name"></span>
-            </label>
-            <span ng-if="child.ActiveSubHazards.length || child.HasChildren">
-                <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
-            </span>
-            <span ng-show="child.IsPresent">
-                <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
-            </span>
-
-            <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
-                <h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
-                <ul>
-                    <li ng-repeat="(key, child) in child.ActiveSubHazards">
-                        <label class="checkbox inline">
-                            <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child)"/>
-                            <span class="metro-checkbox">{{child.Name}}<img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
-                        </label>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-                <h3 class="orangeBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
-                <ul>
-                    <li ng-repeat="(key, room) in child.InspectionRooms">
-                        <label class="checkbox inline" ng-show="$parent.$parent.$parent.child.InspectionRooms[$index].ContainsHazard">
-                            <input ng-show="room.IsAllowed" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-                            <span class="metro-checkbox">{{room.Name}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-                        </label>
-
-                        <label class="checkbox inline disallowed" ng-hide="$parent.$parent.$parent.child.InspectionRooms[$index].ContainsHazard">
-                            <input  type="checkbox"  ng-model="room.ContainsHazard"  disabled>
-                            <span class="metro-checkbox">{{room.Name}}<img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-                        </label>
-                    </li>
-                </ul>
-            </div>
-
-            <ul ng-if="getShowRooms(child)" class="subRooms">
-                <li>Rooms:</li>
-                <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
-                    <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>
-                </li>
-            </ul>
-
-            <ul>
-                <li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" id="id-{{child.Key_Id}}" class="hazardLi"><span data-ng-include="'sub-hazard.html'"></span></li>
-            </ul>
-    </script>
-
+    <div class="">
         <div>
         <div id="editPiForm" class="row-fluid">
         <form class="form">
              <div class="control-group span4">
                <label class="control-label" for="name"><h3>Principal Investigator</h3></label>
                <div class="controls">
-               <span ng-show="!PIs">
+               <span ng-if="!PIs">
                  <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                     <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
                </span>
-               <span ng-hide="!PIs">
-                    <ui-select ng-show="!PI || selectPI" class="span8" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+               <span ng-if="PIs">
+                    <ui-select ng-if="!PI || selectPI" class="span8" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
                       <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                     </ui-select>
-                   <i class="icon-cancel danger" ng-show="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
-                   <h3 ng-show="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
+                   <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
+                   <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
               </div>
-                  <h3 style="display:block; width:100%" ng-show="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
+                  <h3 style="display:block; width:100%" ng-if="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
              </div>
             <div class="span8" ng-if="PI || pi">
                <div class="controls">
                <h3 class="span6">Building(s):</h3>
                <h3 class="span6">
                Laboratory Rooms:
-                   <div class="control-group roomSelectContainer" ng-hide="!buildings.length">
+                   <div class="control-group roomSelectContainer" ng-if="buildings.length">
                        <a style="white-space:normal;" class="btn btn-info btn-mini" ng-click="selectRooms = !selectRooms" data-toggle="dropdown" href="#">Select Rooms to Inspect</a>
                     <span class="roomSelect" style="position:relative">
-                      <ul ng-show="selectRooms && buildings" class="selectRooms">
+                      <ul ng-if="selectRooms && buildings" class="selectRooms">
                            <li style="float:right"><i class="icon-cancel-2" ng-click="selectRooms = !selectRooms"></i></li>
                             <li ng-repeat="(key, building) in buildings">
                                 <label class="checkbox inline">
@@ -124,7 +70,7 @@ require_once '../top_view.php';
                    </span>
                 </div>
                </h3>
-                   <span ng-show="!buildings.length">
+                   <span ng-if="!buildings.length">
                            <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
                                Select a Principal Investigator.
                            </p>
@@ -133,7 +79,7 @@ require_once '../top_view.php';
                         </p>
                 </span>
 
-                   <span ng-hide="!buildings || !PI">
+                   <span ng-if="buildings && PI">
                            <ul class="selectedBuildings">
                                <li ng-repeat="(key, building) in buildings">
                                <div class="span6">
@@ -152,7 +98,7 @@ require_once '../top_view.php';
             </form>
         </div>
 
-        <div class="loading" ng-show='!PI' >
+        <div class="loading" ng-if='!PI' >
 
             <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
 
@@ -164,28 +110,28 @@ require_once '../top_view.php';
         </div>
         <h3 ng-if="inactive">Principal Investigator is inactive.</h3>
         <form>
-        <span ng-show="hazardsLoading" class="loading">
+        <span ng-if="hazardsLoading" class="loading">
          <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
           Building Hazard List...
         </span>
                <ul class="allHazardList">
                 <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">
-                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-show="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
-                    <span ng-hide="hazard.hidden">
+                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
+                    <span ng-if="!hazard.hidden">
                     <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" once-text="hazard.Name"></h1>
                     <hr>
                     <ul class="topChildren">
                         <li>
                             <a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
-                                <span ng-show="!hazard.hideUnselected">
+                                <span ng-if="!hazard.hideUnselected">
                                     <i style="margin-right:8px !important;" class="icon-collapse"></i>View Only Hazards Present
                                 </span>
-                                <span ng-show="hazard.hideUnselected">
+                                <span ng-if="hazard.hideUnselected">
                                     <i style="margin-right:8px !important;" class="icon-full-screen"></i>View All Hazard Categories
                                 </span>
                             </a>
                         </li>
-                        <li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-hide="!child.IsPresent && hazard.hideUnselected">
+                        <li ng-repeat="(key, child) in hazard.ActiveSubHazards" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                             <!--<h4 class="">-->
                             <label class="checkbox inline">
                                 <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
@@ -195,7 +141,7 @@ require_once '../top_view.php';
 
                                     <!--<span once-text="child.Name" class="nudge-up"></span>-->
 
-                                    <img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
+                                    <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
                                 <!--<pre>{{child | json}}</pre>-->
                                 </span>
                             </label>
@@ -203,11 +149,11 @@ require_once '../top_view.php';
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
                             </span>
-                            <span ng-show="child.IsPresent">
+                            <span ng-if="child.IsPresent">
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
-                            <span ng-show="child.HasMultiplePIs">
+                            <span ng-if="child.HasMultiplePIs && child.IsPresent">
                                 <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
                             </span>
 
@@ -230,7 +176,7 @@ require_once '../top_view.php';
                                     <li ng-repeat="(key, room) in child.InspectionRooms">
                                         <label class="checkbox inline">
                                             <input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
-                                            <span class="metro-checkbox" once-text="room.Name"><img ng-show="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
+                                            <span class="metro-checkbox" once-text="room.Name"><img ng-if="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
                                         </label>
                                         <div class="clearfix"></div>
                                     </li>
@@ -244,7 +190,7 @@ require_once '../top_view.php';
                                 </li>
                             </ul>
                             <ul>
-                                <li ng-repeat="child in child.ActiveSubHazards" ng-show="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
+                                <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
                                     <span data-ng-include="'sub-hazard.html'"></span>
                                 </li>
                             </ul>
@@ -265,7 +211,7 @@ require_once '../top_view.php';
 </div>
 <span ng-controller="footerController">
 
-    <div ng-show="selectedFooter == 'reports'" class="selectedFooter" style="width:auto;">
+    <div ng-if="selectedFooter == 'reports'" class="selectedFooter" style="width:auto;">
         <i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
         <h2 style="text-decoration:underline">ARCHIVED REPORTS</h2>
         <span ng-if="!PI">
@@ -274,7 +220,7 @@ require_once '../top_view.php';
         <span ng-if="PI">
         <h2>Principle Investigator: <span once-text="PI.User.Name"></span></h2>
 
-        <div class="loading" ng-show='!previousInspections' >
+        <div class="loading" ng-if='!previousInspections' >
         Loading Archived Reports...
           <img class="" src="../../img/loading.gif"/>
         </div>
@@ -319,7 +265,7 @@ require_once '../top_view.php';
     </div>
 
 
-    <div style="margin-left:25%;" ng-show="selectedFooter == 'contacts'" class="selectedFooter">
+    <div style="margin-left:25%;" ng-if="selectedFooter == 'contacts'" class="selectedFooter">
     <i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
         <h2 style="text-decoration:underline">Lab Contacts</h2>
         <span ng-if="!PI">
@@ -328,7 +274,7 @@ require_once '../top_view.php';
         <span ng-if="PI">
         <h2>Principle Investigator: {{PI.User.Name}}</h2>
 
-        <div class="loading" ng-show='!PI' >
+        <div class="loading" ng-if='!PI' >
         Loading Archived Reports...
           <img class="" src="../../img/loading.gif"/>
         </div>
@@ -353,14 +299,14 @@ require_once '../top_view.php';
         </span>
     </div>
 
-    <div ng-show="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:48%; width:19%;">
+    <div ng-if="selectedFooter == 'comments'" class="selectedFooter" style="margin-left:48%; width:19%;">
         <i ng-click="close()" class="icon-cancel-2" style="float:right;"></i>
         <h3 style="text-decoration:underline; margin-bottom:5px;">INSPECTION COMMENTS</h3>
         <span ng-if="!inspection.Note || noteEdited">
             <textarea ng-model="newNote" rows="4" style="width:100%"></textarea>
             <a ng-click="saveNoteForInspection(newNote)" class="btn btn-success"><i class="icon-checkmark"></i>Save</a>
             <a ng-click="cancelSaveNote(); editNote = false;" class="btn btn-danger"><i class="icon-cancel"></i>Cancel</a>
-            <img ng-show="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
+            <img ng-if="newNoteIsDirty" class="smallLoading" src="../../img/loading.gif"/>
         </span>
         <span ng-if="inspection.Note && !noteEdited">
             <h4>{{inspection.Note}}<a style="margin-left:5px;" class="btn btn-mini btn-primary" ng-click="editNote()" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a></h4>
