@@ -266,9 +266,15 @@ class Hazard extends GenericCrud {
 	}
 
 	public function getPrincipalInvestigators(){
+		$LOG = Logger::getLogger(__Class__);
+		$LOG->fatal($this->inspectionRooms);
 		if($this->principalInvestigators == NULL){
-			$thisDao = new GenericDAO($this);
-			$this->principalInvestigators = $thisDao->getPIsByHazard();
+			if($this->inspectionRooms == NULL){
+				$this->principalInvestigators = NULL;
+			}else{
+				$thisDao = new GenericDAO($this);
+				$this->principalInvestigators = $thisDao->getPIsByHazard($this->getInspectionRooms());
+			}
 		}
 		return $this->principalInvestigators;
 	}
