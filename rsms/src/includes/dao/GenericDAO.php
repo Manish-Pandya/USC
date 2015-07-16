@@ -255,11 +255,7 @@ class GenericDAO {
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		foreach($whereClauses as $key=>$clause){
-			if($clause->getOperator() == "IN"){
-				//
-			}else{
 				$stmt->bindValue($key+1, $clause->getVal());
-			}
 		}
 			
 		// Query the db and return an array of $this type of object
@@ -733,7 +729,7 @@ class GenericDAO {
 		if($rooms !=NULL){
 			$roomIds = array();
 			foreach($rooms as $room){
-				$roomIds[] = $room->getKey_id();
+				if($room->getContainsHazard() == TRUE)$roomIds[] = $room->getKey_id();
 			}
 			$roomsCSV = implode(",", $roomIds);
 		}
