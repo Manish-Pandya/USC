@@ -170,6 +170,12 @@ class JsonManager {
 				// ...and reset value to entity
 				$decodedJsonArray[$key] = $entity;
 			}
+			//We may have an array containing arrays that should be instantiated as well
+			else if( is_array($value) && is_array($value[0]) && array_key_exists('Class', $value[0] ) ){
+				//TODO:  instantiate child objects
+				$LOG = Logger::getLogger('yo');
+				$LOG->fatal('found child object');
+			}
 		}
 		
 		//Transform the decoded array into the object
