@@ -149,6 +149,7 @@ class ActionMappingFactory {
                 "saveHazardRoomRelations"=>new ActionMapping("saveHazardRoomRelations", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveHazardRelation"=>new ActionMapping("saveHazardRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "resetInspectionRooms"=>new ActionMapping("resetInspectionRooms", "", "", $this::$ROLE_GROUPS["EHS"]),
+        		"getPiForHazardInventory"=>new ActionMapping("getPiForHazardInventory", "", "", $this::$ROLE_GROUPS["EHS"]),
 
                 // Inspection, step 3 (Checklist)
                 "resetChecklists"=>new ActionMapping("resetChecklists","","", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
