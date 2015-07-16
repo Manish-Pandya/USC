@@ -137,7 +137,7 @@ class Hazard extends GenericCrud {
 				$key_id = $rm->getKey_id();
 			}
 			$room = $roomDao->getById($key_id);
-			if($containsHazard != NULL)$room->setContainsHazard($containsHazard);
+			if( isset($containsHazard) )$room->setContainsHazard($containsHazard);
 				
 			$this->inspectionRooms[] = $room;
 		}
