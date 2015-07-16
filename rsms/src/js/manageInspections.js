@@ -26,7 +26,7 @@ var getDate = function(time){
             // create a new javascript Date object based on the timestamp
             var date = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
-            
+
             // hours part from the timestamp
             var hours = date.getHours();
             // minutes part from the timestamp
@@ -38,9 +38,11 @@ var getDate = function(time){
             var day = date.getDate();
             var year = date.getFullYear();
 
+            // preserve initial zero
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
 
-
-            // will display date in mm/dd/yy format
+            // will display date in mm/dd/yyyy format
             var formattedTime = {};
             formattedTime.formattedString = month + '/' + day + '/' + year;
             formattedTime.year = year;
@@ -88,11 +90,11 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
                         }else{
                             item.matched = false;
                         }
-                    
+
                     }else{
                         item.matched = false;
                     }
-                    
+
                 }
 
                 if( search.campus ) {
@@ -114,13 +116,13 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
                         item.matched = false;
                     }else{
                         if(item.Inspections && item.Inspections.Date_started)var tempDate = getDate(item.Inspections.Date_started);
-                        if(tempDate && tempDate.monthString.toLowerCase().indexOf(search.date) < 0  ){
+                        if(tempDate && tempDate.formattedString.indexOf(search.date) < 0){
                             var goingToMatch = false;
                         }else{
                             var goingToMatch = true;
                         }
                         if(item.Inspections && item.Inspections.Schedule_month){
-                            console.log(item.Inspections.Schedule_month);
+                            //console.log(item.Inspections.Schedule_month);
                             var j = monthNames2.length
                             while(j--){
                                 if(monthNames2[j].val == item.Inspections.Schedule_month){
@@ -489,7 +491,7 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
 
 
 manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMethods){
-    
+
     $scope.mif = manageInspectionsFactory;
     $scope.convenienceMethods = convenienceMethods;
     $scope.years = [];
@@ -547,7 +549,7 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
 
 
     init();
-    
+
 
     $scope.selectYear = function()
     {
