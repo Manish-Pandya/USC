@@ -1385,8 +1385,6 @@ class ActionManager {
     			}
     		}
     		
-			$LOG->fatal($buildings);
-    		
     		foreach($buildings as $building){
     			$rooms = array();
 	    		foreach($pi->getRooms() as $room){
