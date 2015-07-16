@@ -132,10 +132,14 @@ class Hazard extends GenericCrud {
 			//If so, we set the key id by index instead of calling the getter
 			if(!is_object($rm)){
 				$key_id = $rm['Key_id'];
+				if(isset($rm['ContainsHazard']))$containsHazard = $rm['ContainsHazard'];
 			}else{
 				$key_id = $rm->getKey_id();
 			}
-			$this->inspectionRooms[] = $roomDao->getById($key_id);
+			$room = $roomDao->getById($key_id);
+			if($containsHazard != NULL)$room->setContainsHazard($containsHazard);
+				
+			$this->inspectionRooms[] = $room;
 		}
 	}
 
