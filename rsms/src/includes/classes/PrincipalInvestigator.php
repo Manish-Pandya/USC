@@ -171,6 +171,8 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	/** QuarterlyInventories for this PI **/
 	private $quarterly_inventories;
+	
+	private $buildings;
 
 	public function __construct(){
 
@@ -393,6 +395,9 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->quarterly_inventories;
 	}
+	
+	public function getBuildings(){return  $this->buildings;}
+	public function setBuildings($buildings){$this->buildings = $buildings;}
 
 	
 
