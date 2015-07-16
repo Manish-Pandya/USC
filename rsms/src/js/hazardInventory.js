@@ -921,7 +921,8 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
   $scope.getArchivedReports = function(){
       var modalInstance = $modal.open({
         templateUrl: 'hazard-inventory-modals/archived-reports.html',
-        controller: controllers.modalCtrl
+        controller: controllers.modalCtrl,
+        resolve: {instanceWithPIs:function() {return null;} }
       });
 
 
@@ -1042,7 +1043,6 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 }
 
 controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance, convenienceMethods, instanceWithPIs){
-
     if (instanceWithPIs && instanceWithPIs.HasMultiplePIs) {
         // We have room with multiple PIs, so get PIs for room
         $scope.instanceWithPIs = instanceWithPIs;
