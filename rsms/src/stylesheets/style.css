@@ -1864,13 +1864,26 @@ ul.key li.deficiencies span {
 }
 /* line 1388, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
+  color: rgba(91, 183, 91, 0.61);
+}
+.hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2:hover {
   color: #5bb75b;
 }
-/* line 1391, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
-  color: #49afcd;
+  color: rgba(73, 175, 205, 0.62)
 }
 
+/* line 1391, ../sass/style.scss */
+.hazardList i.icon-enter, .hazardList ul i.icon-enter:hover {
+  color: #49afcd;
+}
+.hazardList i.icon-enter, .hazardList ul i.icon-info {
+    color:rgba(204, 0, 0, 0.57)
+}
+
+.hazardList i.icon-enter, .hazardList ul i.icon-info:hover {
+  color: #CC0000;
+}
 
 .hazardList span > ul.topChildren {
   margin-left: 0 !important;
