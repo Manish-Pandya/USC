@@ -72,7 +72,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
       deferred.resolve( this.PI );
     }else{
       //eager load
-      var url = '../../ajaxaction.php?action=getPIById&id='+id+'&getRooms=true&callback=JSON_CALLBACK';
+      var url = '../../ajaxaction.php?action=getPiForHazardInventory&id='+id+'&getRooms=true&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(promise){
           factory.PI = promise;
@@ -421,7 +421,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
                         $scope.inactive = false;
                       }
                       $scope.selectPI = false;
-                      $scope.buildings = hazardInventoryFactory.parseBuildings( pi.Rooms );
+                      $scope.buildings = pi.Buildings;
                       $location.search("pi", pi.Key_id);
                       piDefer.resolve( pi );
                   },
@@ -463,7 +463,7 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
                   $location.search("pi", inspection.PrincipalInvestigator.Key_id);
 
                   //set up our list of buildings
-                  $scope.buildings = hazardInventoryFactory.parseBuildings( inspection.Rooms );
+                 // $scope.buildings = ;
 
                   //set our inspection scope object
                   $scope.inspection = inspection;
@@ -1046,17 +1046,19 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
     if (instanceWithPIs && instanceWithPIs.HasMultiplePIs) {
         // We have room with multiple PIs, so get PIs for room
         $scope.instanceWithPIs = instanceWithPIs;
-        var url = '../../ajaxaction.php?action=getPIsByClassInstance';
-        var instanceCopy = jQuery.extend({}, instanceWithPIs);
-        convenienceMethods.saveDataAndDefer(url, instanceCopy).then(
-            function(pis) {
-                $scope.error = null;
-                instanceWithPIs.PrincipalInvestigators = pis;
-            }, function() {
-                $scope.error = "PIs failed to load";
-            }
-        );
+        if(!instanceWithPIs.PrincipalInvestigators || !instanceWithPIs.PrincipalInvestigators.length){
+            var url = '../../ajaxaction.php?action=getPIsByClassInstance';
+            convenienceMethods.saveDataAndDefer(url, $scope.instanceWithPIs).then(
+                function(pis) {
+                    $scope.error = null;
+                    instanceWithPIs.PrincipalInvestigators = pis;
+                }, function() {
+                    $scope.error = "PIs failed to load";
+                }
+            );
+        }
     }
+
     $scope.gettingInspections = true;
     var pi = hazardInventoryFactory.PI;
     $scope.pi = pi;
