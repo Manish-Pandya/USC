@@ -65,20 +65,21 @@ class ActionManager {
         }
     }
 
-    public function getCurrentUserRoles($user = NULL){
+    public function getCurrentUserRoles( $user = NULL ){
         $LOG = Logger::getLogger('Action:' . __function__);
 
-        if(array_key_exists("USER", $_SESSION) && $_SESSION['USER'] != NULL) {
+        if(array_key_exists("USER", $_SESSION) && $_SESSION['USER'] != NULL && $user == NULL) {
             $user = $_SESSION['USER'];
-        } else {
+        } elseif($user != NULL) {
             $_SESSION['USER'] = $user;
+        }else{
+        	return false;
         }
-        $LOG->debug($user);
+        
         $roles = array();
         $roles["allRoles"] = array();
         //put an array of all possible roles into the session so we can use it for comparison on the client
         foreach($this->getAllRoles() as $role){
-            $LOG->debug($role);
             $roles["allRoles"][] = array($role->getName() => $role->getBit_value());
         }
 
@@ -148,7 +149,9 @@ class ActionManager {
                 $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
                 $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
                 if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                    if($destination == NULL){
+                    	$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                    }
                 }
                 else{
                     if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
@@ -176,44 +179,41 @@ class ActionManager {
                 $roles[] = $role->getName();
             }
             //the name of a real role was input in the form
-            if ( in_array($username, $roles) ) {
-                if($password != "correcthorsebatterystaple"){
-                    $_SESSION['DESTINATION'] = 'login.php';
-                    return false;
+            if ( in_array($username, $roles) || $username == "EmergencyUser") {
+            				
+                if($username != "EmergencyUser"){
+                	if($password != "correcthorsebatterystaple"){
+                		$_SESSION['ERROR'] = "The username or password you entered was incorrect.";
+                		return false;
+                	}
+	                $user = $this->getUserById(1);
+	                $roleDao = $this->getDao(new Role());
+	                $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+	                $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+	                
+	                
+	
+	                if($username != "Principal Investigator"){
+	                    $user->setSupervisor_id(1);
+	                }else{
+	                	$principalInvestigator = $this->getPIById(1);
+	                	$LOG->fatal($principalInvestigator);
+	                    $user->setPrincipalInvestigator($principalInvestigator);
+	                }
+	                $user->setRoles(NULL);
+	                $user->setRoles($fakeRoles);
+                }else{
+                	$user = $this->getUserById(911);
                 }
-
-                $user = $this->getUserById(1);
-                $roleDao = $this->getDao(new Role());
-                $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-                $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-
+                
                 $user->setFirst_name("Test user with role:");
                 $user->setLast_name($username);
-
-                if($username != "Principal Investigator"){
-                    $user->setSupervisor_id(1);
-                }else{
-                    $user->setPrincipal_investigator_id(1);
-                }
-
-                $user->setRoles($fakeRoles);
-                $LOG->debug($user);
+                
                 $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 // put the USER into session
                 $_SESSION['USER'] = $user;
 
-                $LOG->debug($_SESSION['ROLE']['userRoles']);
-
-                //get the proper destination based on the user's role
-                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-                }
-                else{
-                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
-                }
-                $LOG->debug($_SESSION);
+                $_SESSION['DESTINATION'] = $this->getDestination();
                 // return true to indicate success
                 return true;
 
@@ -240,32 +240,38 @@ class ActionManager {
 
                     // put the USER into session
                     $_SESSION['USER'] = $user;
-
-                    $LOG->debug($_SESSION['ROLE']['userRoles']);
-
-                    //get the proper destination based on the user's role
-                    $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-                    $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-                    if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                        $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-                    }
-                    else{
-                        $_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
-                    }
+                    
+                    $_SESSION['DESTINATION'] = $this->getDestination();
 
                     // return true to indicate success
                     return true;
                 } else {
                     // successful LDAP login, but not an authorized Erasmus user, return false
-                     $_SESSION['DESTINATION'] = 'login.php';
+                     $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
                      return false;
                 }
             }
         }
 
         // otherwise, return false to indicate failure
-        $_SESSION['DESTINATION'] = 'login.php';
+        $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
         return false;
+    }
+    
+    private function getDestination(){
+    	$LOG = Logger::getLogger("" . __function__);
+     //get the proper destination based on the user's role
+     $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
+     if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+         $destination = 'views/RSMSCenter.php';  
+     }else{
+         if(in_array("Emergency Account", $_SESSION['ROLE']['userRoles'])){
+            $destination = "views/hubs/emergencyInformationHub.php";
+         }else{
+            $destination = 'views/lab/MyLab.php';
+         }
+      }
+      return $destination;
     }
 
     public function logoutAction(){
@@ -275,6 +281,13 @@ class ActionManager {
 
     public function getCurrentUser(){
         //todo:  when a user is logged in and in session, return the currently logged in user.
+        $LOG = Logger::getLogger("action: " . $_SESSION['USER']);
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
+        $entityMaps[] = new EntityMap("eager","getInspector");
+        $entityMaps[] = new EntityMap("eager","getSupervisor");
+        $entityMaps[] = new EntityMap("lazy","getRoles");
+        $_SESSION['USER']->setEntityMaps($entityMaps);
         return $_SESSION['USER'];
     }
 
@@ -1394,9 +1407,7 @@ class ActionManager {
 	    			}
 	    		}
 	    		
-	    		$building->setEntityMaps($buildingMaps);
-	    		$LOG->fatal($rooms);
-	    		 
+	    		$building->setEntityMaps($buildingMaps);	    		 
 	    		$building->setRooms($rooms);
     		}
     		
@@ -1658,7 +1669,6 @@ class ActionManager {
             return $decodedObject;
         }
 
-        $LOG->fatal($decodedObject);
         
         $pis = $decodedObject->getPrincipalInvestigators();       
    
@@ -3022,7 +3032,6 @@ class ActionManager {
                 $dao->save($ds);
             }
             $selection = $dao->getById($ds->getKey_id());
-            $LOG->fatal($selection);
 
             return $selection;
 
