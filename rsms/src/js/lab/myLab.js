@@ -91,8 +91,8 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
                 console.log(user);
                 $scope.user = user;
                 //if this user is a PI, we get their own PI record.  If not, we get their supervisor's record
-                if(user.Principal_investigator_id){
-                    return user.Principal_investigator_id;
+                if(user.PrincipalInvestigator){
+                    return user.PrincipalInvestigator.Key_id;
                 }else{
                     return user.Supervisor_id;
                 }
