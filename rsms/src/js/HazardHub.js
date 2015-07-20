@@ -203,36 +203,12 @@ hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
     };
 }]);
 
-hazardHub.directive('buttongroup', function ($window) {
-     return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-         // Observe the element's dimensions.
-         scope.$watch(
-            function () {
-                return {
-                    w:element.width(),
-                };
-            },
-            function (newValue, oldValue) {
-                if (newValue.w < 1200 && newValue.w !== 0) {
-                    console.log(newValue.w);
-                    element.addClass('small');
-                }else{
-                    element.removeClass('small');
-                }
-            },
-            true
-        );
-    }
- }
-
-});
 */
 hazardHub.directive('buttongroup', ['$window', function($window) {
     return {
         restrict: 'A',
         link: function(scope, elem, attrs) {
+            console.log(elem.find('.hazarNodeButtons').length);
             scope.onResize = function() {
                 w = elem.width();
                 if(w<1200 && $($window).width()>1365){
@@ -287,7 +263,7 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
     return factory;
 });
 
-hazardHub.controller('TreeController', function ($scope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory) {
+hazardHub.controller('TreeController', function ($scope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory, roleBasedFactory, $rootScope) {
 
     init();
 
@@ -295,6 +271,7 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     //we do it this way so that we know we get data before we set the $scope object
     //
     function init(){
+        $rootScope.rbf = roleBasedFactory;
         $scope.doneLoading = false;
         //we pass 10000 as the id to this request because 10000 will always be the key_id of the root hazard
         convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+10000+'&callback=JSON_CALLBACK', onGetHazards, onFailGet);
