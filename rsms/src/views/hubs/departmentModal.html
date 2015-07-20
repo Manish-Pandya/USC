@@ -1,0 +1,17 @@
+<div class="modal">
+    <div class="purpleBg modal-header">
+        <h3 ng-if="department.Key_id">Edit {{department.Name}}</h3>
+        <h3 ng-if="!department.Key_id">Create a new department</h3>
+    </div>
+    <div class="modal-body no-border">
+        <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+        <form name="modalForm">
+            <input ng-model="department.Name">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <i class="icon icon-spinnery-dealie spinner small" ng-if="isDirty"></i>
+        <button class="btn-success btn left btn-large" ng-disabled="!department.Name" ng-click="saveDepartment()"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+</div>
