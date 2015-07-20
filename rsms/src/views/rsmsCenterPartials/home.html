@@ -13,7 +13,7 @@
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'], R['Emergency Account'] ])">
       <a href="hubs/emergencyInformationHub.php" class="span12" style="background: #e67e1d;">
         <img class="" src="../img/hazard-icon.png" />
         <p>Emergency Information</p>
