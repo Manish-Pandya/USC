@@ -144,24 +144,21 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
       if(!category.Questions){
         //there weren't any hazards in this category
         //hide the whole category
-        console.log(category.name+' had no hazards in these labs');
+        //console.log(category.name+' had no hazards in these labs');
         category.message = false;
         category.show = false
       }else if( category.Questions.some(this.isAnsweredNo) ){
-        console.log(category.name+' some questions were no');
         //some questions are answered no
         //display as normal
         category.show = true;
         category.message = false;
       }else if( category.Questions.every(this.notAnswered) ){
-        console.log(category.name+' no questions were answered');
+        //console.log(category.name+' no questions were answered');
         //there were checklists but no questions were answered
         category.show = true;
         category.message = category.name+' hazards were not evaluated during this laboratory safety inspection.';
-        console.log(category);
-
       }else{
-        console.log(category.name+' there were no deficiencies');
+        //console.log(category.name+' there were no deficiencies');
         //there were no deficiencies
         category.show = true;
         category.message = 'No '+category.name+' deficiencies were identified during this laboratory safety inspection.';
@@ -189,7 +186,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   }
 
   factory.setDateForCalWidget = function(obj, dateProperty){
-    console.log(obj);
+    //console.log(obj);
     if(obj[dateProperty]){
       obj['view'+dateProperty] = new Date(obj[dateProperty].substring(0,10));
     }
@@ -209,25 +206,21 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
   //calculate the inspection's scores
   factory.calculateScore = function(inspection){
-    console.log(inspection);
+    //console.log(inspection);
     if(!inspection.score)inspection.score = {};
     inspection.score.itemsInspected = 0;
     inspection.score.deficiencyItems = 0;
     inspection.score.compliantItems = 0;
     angular.forEach(inspection.Checklists, function(checklist, key){
       if(checklist.Is_active != false){
-        console.log('checklist active')
         angular.forEach(checklist.Questions, function(question, key){
           if(question.Responses && question.Responses.Answer){
-            console.log('question had responses');
             inspection.score.itemsInspected++;
             if(question.Responses && question.Responses.Answer && question.Responses.Answer == 'no'){
               inspection.score.deficiencyItems++;
               var i = question.Responses.DeficiencySelections.length;
               while(i--){
-                console.log(i);
                 if(question.Responses.DeficiencySelections[i].CorrectiveActions.length){
-                  console.log(question.Responses);
                   factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Completion_date');
                   factory.setDateForCalWidget(question.Responses.DeficiencySelections[i].CorrectiveActions[0],'Promised_date');
                 }
@@ -336,7 +329,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   factory.submitCap = function(inspection){
     var inspectionDto = angular.copy(inspection);
     inspectionDto.Cap_submitted_date = convenienceMethods.setMysqlTime(Date());
-    console.log(inspectionDto);
+    //console.log(inspectionDto);
     var url = "../../ajaxaction.php?action=saveInspection";
     var deferred = $q.defer();
 
@@ -352,8 +345,9 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   }
 
   factory.getHotWipes = function( inspection ){
-      var i = inspection.Inspection_wipe_tests[0].Inspection_wipes.length;
       inspection.hotWipes = 0;
+      if(!inspection.Inspection_wipe_tests[0])return
+      var i = inspection.Inspection_wipe_tests[0].Inspection_wipes.length;
       while(i--){
         //if a wipe is 3 times background level, it is hot
         if(inspection.Inspection_wipe_tests[0].Inspection_wipes[i].Curie_level >= (inspection.Inspection_wipe_tests[0].Background_level * 3)){
@@ -368,26 +362,14 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   return factory;
 });
 
-mainController = function($scope, $location, postInspectionFactory,convenienceMethods){
+mainController = function($scope, $location, postInspectionFactory,convenienceMethods, $rootScope, roleBasedFactory){
   $scope.route = $location.path();
   $scope.loc = $location.search();
   $scope.setRoute = function(route){
     $location.path(route);
     $scope.route = route;
   }
-  /*
-  if(!postInspectionFactory.getInspection()){
-    convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=132&callback=JSON_CALLBACK')
-      .then(function(promise){
-        inspection = promise.data;
-        console.log(inspection);
-        postInspectionFactory.setInspection(promise.data);
-        $scope.inspection = postInspectionFactory.getInspection();
-      });
-  }else{
-    $scope.inspection = postInspectionFactory.getInspection();
-  }
-  */
+  $rootScope.rbf = roleBasedFactory;
 }
 inspectionDetailsController = function($scope, $location, $anchorScroll, convenienceMethods,postInspectionFactory, $rootScope){
     function init(){
@@ -397,7 +379,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
           $scope.doneLoading = false;
           convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
             .then(function(promise){
-              console.log(promise.data);
+              //console.log(promise.data);
 
               //set the inspection date as a javascript date object
               if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
@@ -419,7 +401,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
               //each group of checklists will have a Questions property containing all questions for each checklist in a given category
               $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
 
-              console.log($scope.questionsByChecklist);
+              //console.log($scope.questionsByChecklist);
             });
         }
          else{
@@ -465,7 +447,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
         .then(function(promise){
           $rootScope.inspection = promise.data;
           if(promise.data.Date_started)promise.data = postInspectionFactory.setDateForView(promise.data,"Date_started");
-          console.log(promise.data);
+          //console.log(promise.data);
           //set view init values for email
           $scope.others = [{email:''}];
           $scope.defaultNote = {};
@@ -540,7 +522,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     $scope.sending = false;
     $scope.emailSent = 'success';
 
-    console.log($rootScope.inspection);
+    //console.log($rootScope.inspection);
     evaluateCloseInspection();
 
   }
@@ -571,18 +553,18 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   function setInspectionClosed(){
     var inspectionDto = angular.copy($rootScope.inspection);
     inspectionDto.date_closed = new Date();
-    console.log(inspectionDto);
+    //console.log(inspectionDto);
     var url = "../../ajaxaction.php?action=saveInspection";
     convenienceMethods.updateObject( inspectionDto, null, onSetInspectionClosed, onFailSetInspecitonClosed, url);
   }
 
   function onSetInspectionClosed(data){
-    console.log('saved');
+    //console.log('saved');
     data.Checklists = angular.copy($rootScope.Checklists);
     $rootScope.inspection = data;
     $rootScope.inspection.closed = true;
     $scope.inspection = $rootScope.inspection;
-    console.log($rootScope.inspection);
+    //console.log($rootScope.inspection);
   }
 
   function onFailSetInspecitonClosed(){
@@ -686,7 +668,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     //parse the dates for MYSQL
     if(def.CorrectiveActionCopy.viewCompletion_date)def.CorrectiveActionCopy = postInspectionFactory.setDatesForServer(def.CorrectiveActionCopy,"viewCompletion_date");
     if(def.CorrectiveActionCopy.viewPromised_date)def.CorrectiveActionCopy = postInspectionFactory.setDatesForServer(def.CorrectiveActionCopy,"viewPromised_date");
-    console.log(def.CorrectiveActionCopy);
+    //console.log(def.CorrectiveActionCopy);
 
     var test = postInspectionFactory.saveCorrectiveAction(def.CorrectiveActionCopy).then(
       function(promise){
@@ -717,7 +699,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
   $scope.setViewDate = function( date ){
    // if(!date)return convenienceMethods.getDate(convenienceMethods.setMysqlTime(Date()));
-    console.log(new Date(date));
+    //console.log(new Date(date));
     return new Date(date);
   }
 
@@ -727,7 +709,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
   }
 
   $scope.openModal = function(question, def){
-    console.log('test')
+    //console.log('test')
     var modalData = {
       question: question,
       deficiency: def
@@ -766,8 +748,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       var totals = 0;
       var pendings = 0;
       var completes = 0;
-      console.log('adfasdfasdfasdfasdf')
-      console.log($scope.questionsByChecklist.biologicalHazards)
+      //console.log('adfasdfasdfasdfasdf')
+      //console.log($scope.questionsByChecklist.biologicalHazards)
       var i = $scope.questionsByChecklist.biologicalHazards.Questions.length;
       while(i--){
         var question = $scope.questionsByChecklist.biologicalHazards.Questions[i];
@@ -797,7 +779,6 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       var i = $scope.questionsByChecklist.generalHazards.Questions.length;
       while(i--){
         var question = $scope.questionsByChecklist.generalHazards.Questions[i];
-        console.log(question);
         if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
             var j = question.Responses.DeficiencySelections.length;
             while(j--){
@@ -811,7 +792,6 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
           var i = $scope.questionsByChecklist.radiationHazards.Questions.length;
           while(i--){
             var question = $scope.questionsByChecklist.radiationHazards.Questions[i];
-            console.log(question);
             if(question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
                 var j = question.Responses.DeficiencySelections.length;
                 while(j--){
