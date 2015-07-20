@@ -772,6 +772,59 @@ class GenericDAO {
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
 	}
+	
+	function getAllDepartmentsAndCounts(){
+		$LOG = Logger::getLogger(__CLASS__);
+	
+		$this->has_hazards = false;
+		// Get the db connection
+		global $db;
+	
+		$queryString = "select
+						d.key_id as department_id,
+						d.is_active as is_active,
+						d.name department_name,
+						(SELECT COUNT(*) FROM principal_investigator_department pd WHERE  pd.department_id = d.key_id) as pi_count,
+						(SELECT COUNT(*) FROM principal_investigator_room pr WHERE principal_investigator_id
+							IN(
+								select principal_investigator_id
+								from principal_investigator_department
+								where department_id=d.key_id
+							)
+						) as room_count
+						from department d
+						GROUP BY d.key_id;";
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+	}
+	
+	function getDepartmentDtoById( $id ){
+		$LOG = Logger::getLogger(__CLASS__);
+	
+		$this->has_hazards = false;
+		// Get the db connection
+		global $db;
+
+		$queryString = "select
+						d.key_id as department_id,
+						d.is_active as is_active,
+						d.name department_name,
+						(SELECT COUNT(*) FROM principal_investigator_department pd WHERE  pd.department_id = d.key_id) as pi_count,
+						(SELECT COUNT(*) FROM principal_investigator_room pr WHERE principal_investigator_id
+							IN(
+								select principal_investigator_id
+								from principal_investigator_department
+								where department_id=d.key_id
+							)
+						) as room_count
+						from department d
+						WHERE key_id = :id;";
+		$stmt = $db->prepare($queryString);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+	}
 
 
 }
