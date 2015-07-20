@@ -1913,6 +1913,12 @@ class ActionManager {
 
         return $dao->getAll();
     }
+    
+    public function getAllDepartmentsWithCounts(){
+    	$dao = $this->getDao(new Department());
+    	return $dao->getAllDepartmentsAndCounts();
+    }
+    
 
     public function getAllActiveDepartments(){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1951,8 +1957,8 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Department());
-            $dao->save($decodedObject);
-            return $decodedObject;
+            $department = $dao->save($decodedObject);
+            return $dao->getDepartmentDtoById($department->getKey_id());
         }
     }
 

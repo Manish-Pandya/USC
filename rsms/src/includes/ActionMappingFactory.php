@@ -118,6 +118,7 @@ class ActionMappingFactory {
 
                 // Department Hub
                 "saveDepartment"=>new ActionMapping("saveDepartment", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+        		"getAllDepartmentsWithCounts"=>new ActionMapping("getAllDepartmentsWithCounts", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
                 // Inspection, step 1 (PI / Room assessment)
                 "getAllRooms"=>new ActionMapping("getAllRooms", "", "", $this::$ROLE_GROUPS["EHS"]),
