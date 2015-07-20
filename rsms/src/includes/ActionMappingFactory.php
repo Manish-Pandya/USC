@@ -42,7 +42,7 @@ class ActionMappingFactory {
                 //TODO: Assign roles
                 //TODO: Assign response codes
                 "loginAction"=>new ActionMapping("loginAction", WEB_ROOT."views/RSMSCenter.php", WEB_ROOT."login.php", array(), false),
-                "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."../login.php", WEB_ROOT."../login.php", array(), false),
+                "logoutAction"=>new ActionMapping("logoutAction", WEB_ROOT."login.php", WEB_ROOT."login.php", array(), false),
 
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
