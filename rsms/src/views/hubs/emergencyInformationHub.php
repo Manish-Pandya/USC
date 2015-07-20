@@ -33,22 +33,12 @@ require_once '../top_view.php';
 				<form class="row form-inline" style="margin-left:0" ng-if="!showingHazards">
 					<span ng-if="searchType == 'location'">
 						<label>Building Name or Physical Address:</label>
-                        <ui-select ng-if="buildings" ng-show="!PI || selectPI" style="width:350px" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectBuilding($item)">
-                            <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
-                            <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
-                              <div ng-bind-html="building.Name | highlight: $select.search"></div>
-                            </ui-select-choices>
-                        </ui-select>
+						<input ng-if="buildings" style="width:350px" type="text" typeahead-on-select='eif.onSelectBuilding($item)' ng-model="selectedBuilding" placeholder="Select a Building" typeahead="building as building.Name for building in buildings | filter:$viewValue">
 						<input ng-if="!buildings" style="width:350px" type="text" disabled="disabled" placeholder="Getting buildings...">
 				       	<i ng-if="!buildings" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
 
 						<label>Room:</label>
-                        <ui-select ng-if="rooms" ng-show="!PI || selectPI" style="width:350px" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectBuilding($item)">
-                            <ui-select-match placeholder="Select or search for a PI">{{$select.Name}}</ui-select-match>
-                            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search}">
-                              <div ng-bind-html="building.roomText | highlight: $select.search"></div>
-                            </ui-select-choices>
-                        </ui-select>
+						<input ng-if="rooms" style="" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:{roomText: $viewValue}">
 						<input ng-if="!rooms && !gettingRooms" placeholder="Select a Building" disabled="disabled">
 						<input ng-if="!rooms && gettingRooms" placeholder="Getting rooms..." disabled="disabled">
 				       	<i ng-if="!rooms && gettingRooms" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
