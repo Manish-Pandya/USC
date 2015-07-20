@@ -28,14 +28,15 @@ require_once '../top_view.php';
                     <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
                </span>
                <span ng-if="PIs">
-                    <ui-select ng-if="!PI || selectPI" class="span8" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
-                      <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
-                    </ui-select-choices>
+                    <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                        <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                        <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
+                          <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                        </ui-select-choices>
                     </ui-select>
                    <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
-                   <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
+                   <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3>
+                </span>
               </div>
                   <h3 style="display:block; width:100%" ng-if="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
              </div>
