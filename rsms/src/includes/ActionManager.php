@@ -1352,6 +1352,75 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided");
         }
     }
+    
+    // Inspection, step 1 (PI / Room assessment)
+    public function getPiForHazardInventory( $id = NULL ){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$id = $this->getValueFromRequest('id', $id);
+    
+    	if( $id !== NULL ){
+    		$dao = $this->getDao(new PrincipalInvestigator());
+    		$pi = $dao->getById($id);
+    		
+    		$buildings = array();
+    		
+    		$roomMaps = array();
+    		$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+    		$roomMaps[] = new EntityMap("lazy","getHazards");
+    		$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+    		$roomMaps[] = new EntityMap("lazy","getHas_hazards");
+    		$roomMaps[] = new EntityMap("lazy","getBuilding");
+    		$roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+ 
+    		$buildingMaps = array();
+    		$buildingMaps[] = new EntityMap("eager","getRooms");
+    		$buildingMaps[] = new EntityMap("lazy","getCampus");
+    		$buildingMaps[] = new EntityMap("lazy","getCampus_id");
+    		$buildingMaps[] = new EntityMap("lazy","getPhysical_address");
+    		
+    		$rooms = $pi->getRooms();
+    		foreach($rooms as $room){
+    			if(!in_array($room->getBuilding(), $buildings)){
+	    			$buildings[] = $room->getBuilding();
+    			}
+    		}
+    		
+    		foreach($buildings as $building){
+    			$rooms = array();
+	    		foreach($pi->getRooms() as $room){
+	    			if($room->getBuilding_id() == $building->getKey_id()){
+	    				$room->setEntityMaps($roomMaps);
+	    				$rooms[] = $room;
+	    			}
+	    		}
+	    		
+	    		$building->setEntityMaps($buildingMaps);
+	    		$LOG->fatal($rooms);
+	    		 
+	    		$building->setRooms($rooms);
+    		}
+    		
+    		$pi->setBuildings($buildings);
+    			
+    		$entityMaps = array();
+    		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+    		$entityMaps[] = new EntityMap("eager","getRooms");
+    		$entityMaps[] = new EntityMap("lazy","getDepartments");
+    		$entityMaps[] = new EntityMap("eager","getUser");
+    		$entityMaps[] = new EntityMap("eager", "getBuilding");
+    		$entityMaps[] = new EntityMap("lazy","getInspections");
+    		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+    		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+    		$entityMaps[] = new EntityMap("lazy","getScintVialCollections");
+    		
+    		$pi->setEntityMaps($entityMaps);
+    		return $pi;
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'id' was provided");
+    	}
+    }
 
     public function getAllPIs($rooms = null){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1577,25 +1646,43 @@ class ActionManager {
         }
     }
 
-    public function getPIsByClassInstanceId( $className = NULL, $id = NULL ){
-        $className = $this->getValueFromRequest('className', $className);
-        $id = $this->getValueFromRequest('id', $id);
+    public function getPIsByClassInstance( $decodedObject = NULL ){
+     $LOG = Logger::getLogger( 'Action:' . __function__ );
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
-        $LOG->trace('getting hazard');
+        $decodedObject = $this->convertInputJson();
 
-        if( $id !== NULL ){
-            $dao = $this->getDao(new $className);
-            $instance =  $dao->getById($id);
-            if ( method_exists($instance, "getPrincipalInvestigators") ) {
-                return $instance->getPrincipalInvestigators();
-            } else {
-                return new ActionError("No method in instance to fetch PIs");
-            }
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to RelationshipDto');
         }
-        else{
-            return new ActionError("No request parameter 'id' was provided");
+        else if( $decodedObject instanceof ActionError ){
+            return $decodedObject;
         }
+
+        $LOG->fatal($decodedObject);
+        
+        $pis = $decodedObject->getPrincipalInvestigators();       
+   
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getAuthorizations");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        
+        foreach($pis as $pi){
+        	$pi->setEntityMaps($entityMaps);
+        }
+        return $pis;
     }
 
     public function savePI( $pi = NULL){

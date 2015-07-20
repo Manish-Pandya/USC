@@ -55,7 +55,9 @@
 						<li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.User.Name'></li>
 					</ul>
 				</td>
-				<td>hazards</td>
+				<td>
+                    <span ng-if="!inspection.Is_rad"><img src="../../../src/img/biohazard-largeicon.png" style="width: 21px;"/><img src="../../../src/img/chemical-safety-large-icon.png" style="width: 21px;"/></span><img src="../../../src/img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 21px;"/>
+                </td>
 
 				<td>
 					<span ng-if="inspection.Status != 'SCHEDULED'">{{inspection.Status}}</span>

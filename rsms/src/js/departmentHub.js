@@ -4,7 +4,7 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
     var factory = {};
     var inspection = {};
     factory.getAllDepartments = function(url){
-        var url = "../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK";
+        var url = "../../ajaxaction.php?action=getAllDepartmentsWithCounts&callback=JSON_CALLBACK";
         var deferred = $q.defer();
 
         convenienceMethods.getDataAsDeferredPromise(url).then(
@@ -48,7 +48,7 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
     return factory;
 });
 
-departmentHubController = function($scope,departmentFactory,convenienceMethods){
+departmentHubController = function($scope,departmentFactory,convenienceMethods, $modal){
 
     function init(){
         getDepartments();
@@ -105,69 +105,71 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods){
         department.setActive = true;
     }
 
+    $scope.openModal = function(dto){
+        var instance = $modal.open({
+            templateUrl: 'departmentModal.html',
+            controller: 'modalCtrl',
+            resolve: {
+                departmentDto: function(){
+                   if(dto) return dto;
+                   return {};
+                }
+            }
+        });
+        
+        instance.result.then(function (returnedDto) {
+            if(!convenienceMethods.arrayContainsObject($scope.departments,returnedDto, ["Department_name", "Department_name"])){
+                $scope.departments.push(returnedDto)
+            }
+        });
+    }
+}
+modalCtrl = function($scope, departmentDto, $modalInstance, departmentFactory, convenienceMethods){
+        
+    $scope.department = {
+        Class: "Department",
+        Name:'',
+        Is_active:true
+    }
+    
+    if(departmentDto.Department_id){
+        $scope.department.Name =   departmentDto.Department_name;
+        $scope.department.Key_id = departmentDto.Department_id;
+        $scope.deptName = departmentDto.Department_name;
+    }
+        
     // overwrites department with modified $scope.departmentCopy
     // note that the department parameter is the department to be overwritten.
-    $scope.saveDepartment = function(department, isEdited){
-        console.log(department);
-
+    $scope.saveDepartment = function(){
+/*
         // prevent user from changing name to an already existing department
-        if(!isEdited && convenienceMethods.arrayContainsObject($scope.departments, $scope.departmentCopy, ['Name', 'Name'])) {
+        if(!isEdited && convenienceMethods.arrayContainsObject($scope.departments, departmentDto, ['Name', 'Department_name'])) {
             $scope.error = "Department with name " + $scope.departmentCopy.Name + " already exists!";
             // TODO: sort out department vs $scope.departmentCopy (ie department passed in, but still has to use departmentCopy, a scope variable)
             // Mixed up here, later in this method, and in departmentHub.php itself.
             return false;
         }
-
-        if(!department.Class)department.Class="Department";
-          department.isDirty = true;
-        departmentFactory.saveDepartment($scope.departmentCopy).then(
+*/
+        $scope.isDirty = true;
+        $scope.error = '';
+        departmentFactory.saveDepartment($scope.department).then(
           function(promise){
-              department.isDirty = false;
-              department.edit = false;
-              department.Name = promise.Name;
-              department.Is_active = promise.Is_active;
-              if(!convenienceMethods.arrayContainsObject($scope.departments,department))$scope.departments.push(department);
-              departmentFactory.setDepartments($scope.departments);
-              $scope.creatingDepartment = false;
-            $scope.newDepartment = false;
-            department.setActive = false;
+              console.log(promise);
+              departmentDto.Department_name = promise[0].Department_name;
+              departmentDto.Is_active = promise[0].Is_active;
+              departmentDto.Department_id    = promise[0].Department_id
+              $modalInstance.close(departmentDto);
           },
           function(promise){
-            department.error = 'There was a promblem saving the department.';
-            department.isDirty = false;
-            department.edit = false;
-            $scope.creatingDepartment = false;
-            $scope.newDepartment = false;
-            $scope.department.setActive = false;
-
+            $scope.error = 'There was a promblem saving the department.';
+            $scope.isDirty = false;
           }
         );
     }
-
-    // adds a newly created department
-    $scope.saveNewDepartment = function(department) {
-
-        // Prevent user from saving a duplicate department
-        if(convenienceMethods.arrayContainsObject($scope.departments, department, ['Name', 'Name'])) {
-            $scope.error = "Department with name " + department.Name + " already exists!";
-            return false;
-        }
-
-
-        department.isDirty = true;
-        departmentFactory.saveDepartment(department).then(
-            function(returnedData) {
-                $scope.departments.push(department);
-            },
-            function(errorData) {
-                department.error = 'There was a problem when saving the new department. See console log for details.';
-                console.log('Server returned error: ');
-                console.dir(errorData);
-            })['finally'](function() { // note: odd ['finally'] syntax is so that it can be called in ie8.
-                department.isDirty = false;
-                $scope.creatingDepartment = false;
-                $scope.newDepartment = false;
-                department.setActive = false;
-            })
+    
+    $scope.cancel = function(){
+        $scope.error = '';
+        $modalInstance.dismiss();
     }
+
 }

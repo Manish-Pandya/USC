@@ -93,7 +93,7 @@ require_once '../top_view.php';
 				<th>Edit</th>
 				<th>Deficiency</th>
 			</tr>		
-			<tr ng-repeat="def in question.Deficiencies">
+			<tr ng-repeat="def in question.Deficiencies" ng-class="{inactive: !def.Is_active}">
 				<td style="width:8%;">
 					<a class="btn btn-success btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="!def.Is_active"><i class="icon-checkmark"></i></a>
 					<a class="btn btn-danger btn-mini" ng-click="handleObjActive(def,question)" ng-disabled="def.edit" ng-if="def.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>

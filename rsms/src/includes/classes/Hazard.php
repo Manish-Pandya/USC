@@ -132,10 +132,14 @@ class Hazard extends GenericCrud {
 			//If so, we set the key id by index instead of calling the getter
 			if(!is_object($rm)){
 				$key_id = $rm['Key_id'];
+				if(isset($rm['ContainsHazard']))$containsHazard = $rm['ContainsHazard'];
 			}else{
 				$key_id = $rm->getKey_id();
 			}
-			$this->inspectionRooms[] = $roomDao->getById($key_id);
+			$room = $roomDao->getById($key_id);
+			if( isset($containsHazard) )$room->setContainsHazard($containsHazard);
+				
+			$this->inspectionRooms[] = $room;
 		}
 	}
 
@@ -266,9 +270,15 @@ class Hazard extends GenericCrud {
 	}
 
 	public function getPrincipalInvestigators(){
+		$LOG = Logger::getLogger(__Class__);
+		$LOG->fatal($this->inspectionRooms);
 		if($this->principalInvestigators == NULL){
-			$thisDao = new GenericDAO($this);
-			$this->principalInvestigators = $thisDao->getPIsByHazard();
+			if($this->inspectionRooms == NULL){
+				$this->principalInvestigators = NULL;
+			}else{
+				$thisDao = new GenericDAO($this);
+				$this->principalInvestigators = $thisDao->getPIsByHazard($this->getInspectionRooms());
+			}
 		}
 		return $this->principalInvestigators;
 	}

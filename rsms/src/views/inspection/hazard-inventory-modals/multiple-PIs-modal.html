@@ -1,14 +1,12 @@
-<h3 class="orangeBg"><span class="nudge-up">PIs for room {{instanceWithPIs.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="close()"></i></h3>
+<h3 class="orangeBg"><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Room'">PIs for room {{instanceWithPIs.Name}}</span><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Hazard'">PIs sharing {{instanceWithPIs.Name}} with {{PI.User.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="close()"></i></h3>
 
-<div class="modal-body">
+<div class="modal-body" style="border-bottom:none">
     <div class="loading" ng-show='!instanceWithPIs.PrincipalInvestigators.length'>
         <i class="icon-spinnery-dealie spinner large"></i>
         <span>Getting PIs...</span>
     </div>
 
-    <div class="span6">
-        <ul>
-            <li ng-repeat="pi in instanceWithPIs.PrincipalInvestigators"><h3>{{pi.User.Name}}</h3></li>
-        </ul>
-    </div>
+    <ul>
+        <li ng-repeat="pi in instanceWithPIs.PrincipalInvestigators"><h3>{{pi.User.Name}}</h3></li>
+    </ul>
 </div>

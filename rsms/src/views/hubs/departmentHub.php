@@ -19,8 +19,8 @@ require_once '../top_view.php';
 	   <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
 	  Loading Departments
 	</span>
-	<div class="span5 center-element center-text bottomMargin">
-		<a ng-click="createDepartment()" class="btn btn-success btn-large left" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Department</a>
+	<div class="" style="margin-bottom:14px;">
+		<a ng-click="openModal()" class="btn btn-success btn-large left" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Department</a>
 		<span ng-if="creatingDepartment" style="width:100%; display: block;">
 			<input style="width:50%" ng-model="newDepartment.Name">
 			<span style="width:50%">
@@ -31,17 +31,20 @@ require_once '../top_view.php';
 		</span>
 	</div>
 
-	<table class="table table-striped center-element table-bordered span9 editTable" ng-if="departments">
+	<table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
+
 		<THEAD>
 			<tr>
 				<th>Edit</th>
 				<th>Departments</th>
+                <th># Principal Investigators</th>
+                <th># Laboratory Rooms</th>
 			</tr>
 		</THEAD>
 		<tbody>
-			<tr ng-repeat="(key, department) in departments | orderBy: 'Name'" class="center-block" ng-class="{inactive:!department.Is_active}">
+			<tr ng-repeat="(key, department) in departments | orderBy: 'Department_name'" class="center-block" ng-class="{inactive:!department.Is_active}">
 				<td>
-					<a class="btn btn-primary left" ng-click="editDepartment(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a>
+					<a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a>
 					<a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
 						<span ng-if="department.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
 						<span ng-if="!department.Is_active"><i class="icon-checkmark-2"></i></span>
@@ -49,21 +52,14 @@ require_once '../top_view.php';
 					<img ng-show="department.isDirty && department.setActive" class="smallLoading" src="../../img/loading.gif"/>
 				</td>
 				<td>
-					<span ng-if="!department.edit" >
-						<span once-text="department.Name"></span>
-					</span>
-					<span ng-if="department.edit">
-						<input style="width:100%" ng-model="departmentCopy.Name">
-						<span class="absoluteBtns" ng-of="department.edit">
-							<a class="btn-success btn left" ng-click="saveDepartment(department)"><i class="icon-checkmark"></i>Save</a>
-							<a class="btn-danger btn left" ng-click="cancelEdit(department)"><i class="icon-cancel"></i>Cancel</a>
-							<img ng-show="department.isDirty" class="smallLoading" src="../../img/loading.gif"/>
-						</span>
-					</span>
+                    {{department.Department_name}}
 				</td>
+                <td>{{department.Pi_count}}</td>
+                <td>{{department.Room_count}}</td>
 			</tr>
 		</tbody>
 	</table>
+    <div>&nbsp;</div>
 </div>
 <div class="bottomMargin" style="clear:both;">&nbsp;</div>
 <?php
