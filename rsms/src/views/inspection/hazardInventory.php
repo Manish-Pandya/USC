@@ -24,21 +24,24 @@ require_once '../top_view.php';
                <label class="control-label" for="name"><h3>Principal Investigator</h3></label>
                <div class="controls">
                <span ng-if="!PIs">
-                 <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+                     <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                     <img class="" style="height:23px; margin:-13px 0 0 -30px" src="<?php echo WEB_ROOT?>img/loading.gif"/>
                </span>
                <span ng-if="PIs">
-                    <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                    <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span8" >
                         <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
                           <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
-                   <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
-                   <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3>
+                   <h3 style="display:inline" ng-if="PI && !selectPI">{{PI.User.Name}}</h3>
+                    <span ng-click="selectPI = !selectPI">
+                        <i  ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
+                        <i class="icon-cancel danger" ng-if="PI && selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 5px;"></i>
+                    </span>
                 </span>
               </div>
-                  <h3 style="display:block; width:100%" ng-if="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
+             <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
              </div>
             <div class="span8" ng-if="PI || pi">
                <div class="controls">

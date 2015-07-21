@@ -472,17 +472,38 @@ div.rsmsCenterIconContainer a p {
 #emergency-info .dropdown-menu li {
   text-align: left;
 }
+
 #emergency-info input{
   padding:20px 5px;
-  margin: 5px;
+  //margin: 5px;
 }
 
 #emergency-info label{
   font-size:17px;
+  margin:5px;
   text-decoration: underline;
   font-weight: bold;
 }
-
+#emergency-info .selectize-dropdown-content{
+    margin-top:0 !important;
+}
+#emergency-info .ui-select-container{
+    display:inline-block;
+}
+#emergency-info .ui-select-match {
+  font-size: 18px;
+  margin-left: 8px;
+  background-color: white;
+  position: absolute;
+  margin-top: 12px;
+}
+#emergency-info i.dropdown-arrow {
+  position: absolute;
+  margin-left: -34px;
+  margin-top: 15px;
+  font-size: 24px;
+  color: #CCC;
+}
 .pisTable{
   max-width:900px;
   margin:25px auto;
