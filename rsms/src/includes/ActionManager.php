@@ -952,14 +952,16 @@ class ActionManager {
             $newEntityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 
             $savedHazard->setEntityMaps($newEntityMaps);
-
-            $chklstMaps = array();
-            $chklstMaps[] = new EntityMap("lazy","getHazard");
-            $chklstMaps[] = new EntityMap("lazy","getQuestions");
-
+			
             $checklist = $savedHazard->getChecklist();
-            $checklist->setEntityMaps($chklstMaps);
-            $savedHazard->setChecklist($checklist);
+            
+            if($checklist != NULL){
+	            $chklstMaps = array();
+	            $chklstMaps[] = new EntityMap("lazy","getHazard");
+	            $chklstMaps[] = new EntityMap("lazy","getQuestions");
+	            $checklist->setEntityMaps($chklstMaps);
+	            $savedHazard->setChecklist($checklist);
+            }
 
             return $savedHazard;
 
@@ -3580,6 +3582,7 @@ class ActionManager {
             $dao->save($hazard);
 
             //we get the parent hazard and return it's subhazards because it is easier to keep the order of its subhazards synched between server and view
+            return $hazard;
             return $this->getHazardTreeNode($hazard->getParent_hazard_id());
         }
         else{
