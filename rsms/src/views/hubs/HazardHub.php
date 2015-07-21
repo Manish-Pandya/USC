@@ -1,6 +1,7 @@
 <?php
     require_once '../top_view.php';
 ?>
+<!--ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])" -->
 <script src="../../js/HazardHub.js"></script>
 <span ng-app="hazardHub" ng-controller="TreeController">
 <div class="navbar">
@@ -33,13 +34,12 @@
             <option value="both">Display Active & Inactive Hazards</option>
           </select>
           <ol id="hazardTree" style="padding-top:0">
-            <li ng-repeat="child in SubHazards" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
+            <li ng-repeat="child in SubHazards | orderBy:['Order_index','Name']" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
               <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>
             </li>
           </ol>
         </div>
 </span>
-
 <?php
 require_once '../bottom_view.php';
 ?>

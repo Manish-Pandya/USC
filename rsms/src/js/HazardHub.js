@@ -553,8 +553,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     }
 
     $scope.moveHazard = function(idx, parent, direction, filteredSubHazards){
-        console.log(filteredSubHazards);
-
         //Make a copy of the hazard we want to move, so that it can be temporarily moved in the view
         var clickedHazard   = angular.copy(parent.SubHazards[idx]);
         filteredSubHazards[idx].IsDirty = true;
@@ -592,11 +590,8 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         //make the call
         convenienceMethods.saveDataAndDefer(url, clickedHazard).then(
             function(promise){
-                filteredSubHazards.IsDirty = false;
-                parent.SubHazards = promise;
-                $location.hash('hazard'+hazardId);
-                // call $anchorScroll()
-                $anchorScroll();
+                filteredSubHazards[idx].IsDirty = false;
+                filteredSubHazards[idx].Order_index = promise.Order_index;
             },
             function(){
                 filteredSubHazards.error = true;
@@ -604,7 +599,6 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
             }
         );
     }
-
 
     $scope.order = function(hazard){
         return parseFloat(hazard.Order_index);
