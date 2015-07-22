@@ -99,6 +99,20 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return contacts;
   }
 }])
+.filter('isPersonnel',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+    var i = users.length
+    while(i--){
+      if( userHubFactory.hasRole(users[i], 'personnel') || userHubFactory.hasRole(users[i], 'contact') ){
+        userHubFactory.getSupervisor(users[i]);
+        personnel.unshift(users[i]);
+      }
+    }
+    return personnel;
+  }
+}])
 .filter('isUncat',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
@@ -797,7 +811,7 @@ var labPersonnelController = function($scope, $modal, $rootScope, userHubFactory
     userHubFactory.getAllUsers()
       .then(
         function(users){
-          $scope.LabContacts = userHubFactory.users;;
+          $scope.LabPersonnel = userHubFactory.users;
           $rootScope.neededUsers = true;
           $rootScope.renderDone = true;
         }
