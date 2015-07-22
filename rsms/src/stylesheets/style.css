@@ -33,11 +33,18 @@ a{cursor: pointer !important}
 }
 
 /* line 27, ../sass/style.scss */
-.orangeBg {
+.redBg {
   background-color: #cc0000 !important;
   border-color: #cc0000 !important;
   color: white;
 }
+/* line 27, ../sass/style.scss */
+.orangeBg {
+  background-color: #F4630B !important;
+  border-color: #F4630B !important;
+  color: white;
+}
+
 
 /* line 32, ../sass/style.scss */
 .purpleBg {
@@ -47,7 +54,7 @@ a{cursor: pointer !important}
 }
 
 /* line 38, ../sass/style.scss */
-h1.orangeBg, h2.orangeBg, h3.orangeBg, h4.orangeBg, h5.orangeBg {
+h1.redBg, h2.redBg, h3.redBg, h4.redBg, h5.redBg, h5.orangeBg {
   padding: 10px;
 }
 

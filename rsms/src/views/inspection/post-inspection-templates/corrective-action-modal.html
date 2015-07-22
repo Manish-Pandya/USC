@@ -1,5 +1,5 @@
 <div class="modal-header" style="padding:0;" class="">
-    <h2 style="padding:5px" ng-if="!modalData.Key_id" class="orangeBg">Add a corrective action</h2>
+    <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">Add a corrective action</h2>
 </div>
 <div class="modal-body">
 <!--<pre>{{def|json}}</pre>-->
@@ -12,7 +12,7 @@
     <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
 
     <form class="form">
-      
+
         <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == 'Accepted'" style="color:#090"></i>Corrective Action Status:</label>
         <select class="status"
           ng-model="def.CorrectiveActions[0].Status"

@@ -78,7 +78,7 @@
 
 <script type="text/ng-template" id="roomHazardsModal.html">
     <div class="modal-header wide-modal" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="orangeBg">Hazards in room {{room.Name}}</h2>
+        <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Hazards in room {{room.Name}}</h2>
     <div class="modal-body">
 
        <span ng-if="!hazards && !error" class="loading">
@@ -106,7 +106,7 @@
 
 <script type="text/ng-template" id="roomHazardsModal.html">
     <div class="modal-header wide-modal" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="orangeBg">Hazards in room {{room.Name}}</h2>
+        <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Hazards in room {{room.Name}}</h2>
     <div class="modal-body">
 
        <span ng-if="!hazards && !error" class="loading">
@@ -133,7 +133,7 @@
 
 <script type="text/ng-template" id="roomConfirmation.html">
     <div class="modal-header" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="orangeBg">Please Confirm</h2>
+        <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Please Confirm</h2>
     <div class="modal-body">
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
     <h3>Remove room {{room.Name}} from {{PI.User.Name}}?</h3>

@@ -4,7 +4,7 @@ require_once '../top_view.php';
 <script src="../../js/hazardInventory.js"></script>
 
 <div class="navbar">
-    <ul class="nav pageMenu row-fluid orangeBg">
+    <ul class="nav pageMenu row-fluid redBg">
         <li class="span12">
             <h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
                 <img src="../../img/hazard-icon.png"  style="height:50px" />
@@ -162,7 +162,7 @@ require_once '../top_view.php';
                             </span>
 
                             <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px">
-                                <h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+                                <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
                                 <ul>
                                     <li ng-repeat="(key, child) in child.ActiveSubHazards">
                                         <label class="checkbox inline">
@@ -175,7 +175,7 @@ require_once '../top_view.php';
                             </div>
 
                             <div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-                                <h3 class="orangeBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+                                <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
                                 <ul>
                                     <li ng-repeat="(key, room) in child.InspectionRooms">
                                         <label class="checkbox inline">

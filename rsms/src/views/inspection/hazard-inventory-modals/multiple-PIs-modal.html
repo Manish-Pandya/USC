@@ -1,4 +1,4 @@
-<h3 class="orangeBg"><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Room'">PIs for room {{instanceWithPIs.Name}}</span><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Hazard'">PIs sharing {{instanceWithPIs.Name}} with {{PI.User.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="close()"></i></h3>
+<h3 class="redBg"><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Room'">PIs for room {{instanceWithPIs.Name}}</span><span class="nudge-up" ng-if="instanceWithPIs.Class == 'Hazard'">PIs sharing {{instanceWithPIs.Name}} with {{PI.User.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="close()"></i></h3>
 
 <div class="modal-body" style="border-bottom:none">
     <div class="loading" ng-show='!instanceWithPIs.PrincipalInvestigators.length'>

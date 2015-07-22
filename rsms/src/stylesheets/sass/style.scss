@@ -24,7 +24,7 @@ $grey:                        #ccc;
   background-color:$grey;
   border-color:$grey;
 }
-.orangeBg{
+.redBg{
   background-color:$orange;
   border-color:$orange;
   color: white;
@@ -35,7 +35,7 @@ $grey:                        #ccc;
   color: white;
 }
  h1, h2, h3, h4, h5{
-  &.orangeBg{padding:10px;}
+  &.redBg{padding:10px;}
  }
 
 /* line 22, ../sass/style.scss */
@@ -81,7 +81,7 @@ h1, h2, h3, h4, h5, p, a {
 
 /* line 62, ../sass/style.scss */
 a {
-  	    /**
+          /**
       * Apply transitions to all hover states, etc
       **/
   -webkit-transition: all .1s ease-in-out;
@@ -195,7 +195,7 @@ div.rsmsCenterIconContainer a p {
 }
 @media (min-width: 1201px) {
   div.rsmsCenterIconContainer a{
-   
+
   }
   div.rsmsCenterIconContainer a img{
     width:100% !important;
@@ -212,7 +212,7 @@ div.rsmsCenterIconContainer a p {
       text-align: left;
     }
   }
-  > div{    
+  > div{
     margin:inherit auto !important;
 
      text-align:center;
@@ -346,8 +346,8 @@ tr.notedit, tr.notedit td {
       margin-left:130px;
     }
   }
-  
-} 
+
+}
 /*******************************************************
 *	HAZARD HUB STYLES
 *******************************************************/
@@ -450,9 +450,9 @@ li.small a.hazardBtn span{
 li.minimized {
   ol{
     margin-top: 0 !important;
-    border:none !important; 
+    border:none !important;
   }
-  
+
 }
 /* line 285, ../sass/style.scss */
 #hazardTree [ng-cloak] {
@@ -715,8 +715,8 @@ html[xmlns] .clearfix {
           visibility: visible;
         }
         &:last-child{
-          &:after { 
-          content: ""; 
+          &:after {
+          content: "";
           }
         }
       }
@@ -739,8 +739,8 @@ html[xmlns] .clearfix {
       visibility: visible;
     }
     &:last-child{
-      &:after { 
-      content: ""; 
+      &:after {
+      content: "";
       }
     }
   }
@@ -942,7 +942,7 @@ div.question, li.question {
       display:inline-block;
       margin-bottom:10px;
       font-weight: bold;
-    } 
+    }
     p{
       color:$darkBlue;
       margin-left:2px;
@@ -1011,7 +1011,7 @@ td.reviewHeader{
     &.rsc-logo{
       float:none !important;
       width:225px;
-    }   
+    }
   }
 }
 #biologicalMaterialsHeader,#chemicalSafetyHeader,#radiationSafetyHeader,#generalSafetyHeader{
@@ -1118,7 +1118,7 @@ td.reviewHeader{
       }
       p.rootCause{
         margin-left:5px;
-        font-size:15px; 
+        font-size:15px;
       }
     }
   }
@@ -1142,7 +1142,7 @@ td.reviewHeader{
 ul.key{
   margin-top: -70px;
   float: right;
-  list-style: none; 
+  list-style: none;
   &:after{
      visibility: hidden;
      display: block;
@@ -1522,7 +1522,7 @@ li.active a {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* line 653, ../sass/style.scss 
+/* line 653, ../sass/style.scss
 .checklist:before {
   display: block;
   content: " ";

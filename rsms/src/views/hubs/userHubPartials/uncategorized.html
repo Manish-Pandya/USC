@@ -1,8 +1,8 @@
 <table class="userList table table-striped table-hover piTable table-bordered" scroll-table watch="filtered.length" ng-show="neededUsers">
     <thead>
-        <tr class="orangeBg">
-            <th colspan="3" class="orangeBg">
-                <h1 class="orangeBg">UNCATEGORIZED USERS</h1>
+        <tr class="redBg">
+            <th colspan="3" class="redBg">
+                <h1 class="redBg">UNCATEGORIZED USERS</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                          <input type="hidden" ng-model="showInactive" ng-init="showInactive = false;">
@@ -10,7 +10,7 @@
                          <span ng-hide="showInactive">Show Inactive Users</span>
                      </a>
                </div>
-                <h2 class="orangeBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Users Displayed</h2>
+                <h2 class="redBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Users Displayed</h2>
             </th>
         </tr>
         <tr>
