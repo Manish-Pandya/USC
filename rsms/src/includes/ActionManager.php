@@ -73,9 +73,9 @@ class ActionManager {
         } elseif($user != NULL) {
             $_SESSION['USER'] = $user;
         }else{
-        	return false;
+            return false;
         }
-        
+
         $roles = array();
         $roles["allRoles"] = array();
         //put an array of all possible roles into the session so we can use it for comparison on the client
@@ -150,7 +150,7 @@ class ActionManager {
                 $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
                 if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
                     if($destination == NULL){
-                    	$_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                        $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
                     }
                 }
                 else{
@@ -180,35 +180,35 @@ class ActionManager {
             }
             //the name of a real role was input in the form
             if ( in_array($username, $roles) || $username == "EmergencyUser") {
-            				
+
                 if($username != "EmergencyUser"){
-                	if($password != "correcthorsebatterystaple"){
-                		$_SESSION['ERROR'] = "The username or password you entered was incorrect.";
-                		return false;
-                	}
-	                $user = $this->getUserById(1);
-	                $roleDao = $this->getDao(new Role());
-	                $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-	                $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-	                
-	                
-	
-	                if($username != "Principal Investigator"){
-	                    $user->setSupervisor_id(1);
-	                }else{
-	                	$principalInvestigator = $this->getPIById(1);
-	                	$LOG->fatal($principalInvestigator);
-	                    $user->setPrincipalInvestigator($principalInvestigator);
-	                }
-	                $user->setRoles(NULL);
-	                $user->setRoles($fakeRoles);
+                    if($password != "correcthorsebatterystaple"){
+                        $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
+                        return false;
+                    }
+                    $user = $this->getUserById(1);
+                    $roleDao = $this->getDao(new Role());
+                    $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+                    $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+
+
+
+                    if($username != "Principal Investigator"){
+                        $user->setSupervisor_id(1);
+                    }else{
+                        $principalInvestigator = $this->getPIById(1);
+                        $LOG->fatal($principalInvestigator);
+                        $user->setPrincipalInvestigator($principalInvestigator);
+                    }
+                    $user->setRoles(NULL);
+                    $user->setRoles($fakeRoles);
                 }else{
-                	$user = $this->getUserById(911);
+                    $user = $this->getUserById(911);
                 }
-                
+
                 $user->setFirst_name("Test user with role:");
                 $user->setLast_name($username);
-                
+
                 $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
                 // put the USER into session
                 $_SESSION['USER'] = $user;
@@ -240,7 +240,7 @@ class ActionManager {
 
                     // put the USER into session
                     $_SESSION['USER'] = $user;
-                    
+
                     $_SESSION['DESTINATION'] = $this->getDestination();
 
                     // return true to indicate success
@@ -257,13 +257,13 @@ class ActionManager {
         $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
         return false;
     }
-    
+
     private function getDestination(){
-    	$LOG = Logger::getLogger("" . __function__);
+        $LOG = Logger::getLogger("" . __function__);
      //get the proper destination based on the user's role
      $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
      if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-         $destination = 'views/RSMSCenter.php';  
+         $destination = 'views/RSMSCenter.php';
      }else{
          if(in_array("Emergency Account", $_SESSION['ROLE']['userRoles'])){
             $destination = "views/hubs/emergencyInformationHub.php";
@@ -952,15 +952,15 @@ class ActionManager {
             $newEntityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 
             $savedHazard->setEntityMaps($newEntityMaps);
-			
+
             $checklist = $savedHazard->getChecklist();
-            
+
             if($checklist != NULL){
-	            $chklstMaps = array();
-	            $chklstMaps[] = new EntityMap("lazy","getHazard");
-	            $chklstMaps[] = new EntityMap("lazy","getQuestions");
-	            $checklist->setEntityMaps($chklstMaps);
-	            $savedHazard->setChecklist($checklist);
+                $chklstMaps = array();
+                $chklstMaps[] = new EntityMap("lazy","getHazard");
+                $chklstMaps[] = new EntityMap("lazy","getQuestions");
+                $checklist->setEntityMaps($chklstMaps);
+                $savedHazard->setChecklist($checklist);
             }
 
             return $savedHazard;
@@ -1367,72 +1367,72 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided");
         }
     }
-    
+
     // Inspection, step 1 (PI / Room assessment)
     public function getPiForHazardInventory( $id = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
-    	$id = $this->getValueFromRequest('id', $id);
-    
-    	if( $id !== NULL ){
-    		$dao = $this->getDao(new PrincipalInvestigator());
-    		$pi = $dao->getById($id);
-    		
-    		$buildings = array();
-    		
-    		$roomMaps = array();
-    		$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-    		$roomMaps[] = new EntityMap("lazy","getHazards");
-    		$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
-    		$roomMaps[] = new EntityMap("lazy","getHas_hazards");
-    		$roomMaps[] = new EntityMap("lazy","getBuilding");
-    		$roomMaps[] = new EntityMap("lazy","getSolidsContainers");
- 
-    		$buildingMaps = array();
-    		$buildingMaps[] = new EntityMap("eager","getRooms");
-    		$buildingMaps[] = new EntityMap("lazy","getCampus");
-    		$buildingMaps[] = new EntityMap("lazy","getCampus_id");
-    		$buildingMaps[] = new EntityMap("lazy","getPhysical_address");
-    		
-    		$rooms = $pi->getRooms();
-    		foreach($rooms as $room){
-    			if(!in_array($room->getBuilding(), $buildings)){
-	    			$buildings[] = $room->getBuilding();
-    			}
-    		}
-    		
-    		foreach($buildings as $building){
-    			$rooms = array();
-	    		foreach($pi->getRooms() as $room){
-	    			if($room->getBuilding_id() == $building->getKey_id()){
-	    				$room->setEntityMaps($roomMaps);
-	    				$rooms[] = $room;
-	    			}
-	    		}
-	    		
-	    		$building->setEntityMaps($buildingMaps);	    		 
-	    		$building->setRooms($rooms);
-    		}
-    		
-    		$pi->setBuildings($buildings);
-    			
-    		$entityMaps = array();
-    		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-    		$entityMaps[] = new EntityMap("eager","getRooms");
-    		$entityMaps[] = new EntityMap("lazy","getDepartments");
-    		$entityMaps[] = new EntityMap("eager","getUser");
-    		$entityMaps[] = new EntityMap("eager", "getBuilding");
-    		$entityMaps[] = new EntityMap("lazy","getInspections");
-    		$entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
-    		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-    		$entityMaps[] = new EntityMap("lazy","getScintVialCollections");
-    		
-    		$pi->setEntityMaps($entityMaps);
-    		return $pi;
-    	}
-    	else{
-    		//error
-    		return new ActionError("No request parameter 'id' was provided");
-    	}
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new PrincipalInvestigator());
+            $pi = $dao->getById($id);
+
+            $buildings = array();
+
+            $roomMaps = array();
+            $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+            $roomMaps[] = new EntityMap("lazy","getHazards");
+            $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+            $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+            $roomMaps[] = new EntityMap("lazy","getBuilding");
+            $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+
+            $buildingMaps = array();
+            $buildingMaps[] = new EntityMap("eager","getRooms");
+            $buildingMaps[] = new EntityMap("lazy","getCampus");
+            $buildingMaps[] = new EntityMap("lazy","getCampus_id");
+            $buildingMaps[] = new EntityMap("lazy","getPhysical_address");
+
+            $rooms = $pi->getRooms();
+            foreach($rooms as $room){
+                if(!in_array($room->getBuilding(), $buildings)){
+                    $buildings[] = $room->getBuilding();
+                }
+            }
+
+            foreach($buildings as $building){
+                $rooms = array();
+                foreach($pi->getRooms() as $room){
+                    if($room->getBuilding_id() == $building->getKey_id()){
+                        $room->setEntityMaps($roomMaps);
+                        $rooms[] = $room;
+                    }
+                }
+
+                $building->setEntityMaps($buildingMaps);
+                $building->setRooms($rooms);
+            }
+
+            $pi->setBuildings($buildings);
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+            $entityMaps[] = new EntityMap("eager","getRooms");
+            $entityMaps[] = new EntityMap("lazy","getDepartments");
+            $entityMaps[] = new EntityMap("eager","getUser");
+            $entityMaps[] = new EntityMap("eager", "getBuilding");
+            $entityMaps[] = new EntityMap("lazy","getInspections");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
+            $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+            $entityMaps[] = new EntityMap("lazy","getScintVialCollections");
+
+            $pi->setEntityMaps($entityMaps);
+            return $pi;
+        }
+        else{
+            //error
+            return new ActionError("No request parameter 'id' was provided");
+        }
     }
 
     public function getAllPIs($rooms = null){
@@ -1671,9 +1671,9 @@ class ActionManager {
             return $decodedObject;
         }
 
-        
-        $pis = $decodedObject->getPrincipalInvestigators();       
-   
+
+        $pis = $decodedObject->getPrincipalInvestigators();
+
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
@@ -1690,9 +1690,9 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-        
+
         foreach($pis as $pi){
-        	$pi->setEntityMaps($entityMaps);
+            $pi->setEntityMaps($entityMaps);
         }
         return $pis;
     }
@@ -2012,12 +2012,12 @@ class ActionManager {
 
         return $dao->getAll();
     }
-    
+
     public function getAllDepartmentsWithCounts(){
-    	$dao = $this->getDao(new Department());
-    	return $dao->getAllDepartmentsAndCounts();
+        $dao = $this->getDao(new Department());
+        return $dao->getAllDepartmentsAndCounts();
     }
-    
+
 
     public function getAllActiveDepartments(){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -3188,7 +3188,7 @@ class ActionManager {
             $inspection = $dao->getById($id);
 
             // check if this is an inspection we're just starting
-            if( !isset($inspection->getDate_started) ) {
+            if( $inspection->getDate_started() == NULL ) {
                 $inspection->setDate_started(date("Y-m-d H:i:s"));
                 $dao->save($inspection);
             }
