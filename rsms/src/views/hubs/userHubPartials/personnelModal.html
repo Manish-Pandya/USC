@@ -70,9 +70,13 @@
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Roles(s)</label>
                     <div class="controls">
-                        <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                        <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || modalData.Username">
-
+                        <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" on-select="onSelectRole($item, $model, $label)">
+                            <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
+                              <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        
                         <ul style="margin-top:3px;">
                             <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<i ng-show="role.IsDirty" class="small spinner icon-spinnery-dealie" src="../../img/loading.gif"></i>
                             </li>
