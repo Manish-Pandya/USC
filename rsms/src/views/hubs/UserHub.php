@@ -24,6 +24,7 @@ require_once '../top_view.php';
 			  <option value="/pis">Principal Investigators</option>
 			  <option value="/contacts">Laboratory Contacts</option>
 			  <option value="/EHSPersonnel">EHS Personnel</option>
+              <option value="/labPersonnel">Lab Personnel</option>
   			  <option value="/uncategorized">Uncategorized Users</option>
 		   </select>
          </div>

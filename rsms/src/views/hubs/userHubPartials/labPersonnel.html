@@ -2,17 +2,17 @@
     <thead style="position:fixed;">
         <tr class="greenBg">
             <th colspan="9" class="greenBg">
-                <h1 class="greenBg">Lab Contacts</h1>
+                <h1 class="greenBg">Lab Personnel</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                           <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
-                         <span ng-show="showInactive">Show Active Contacts</span>
-                         <span ng-hide="showInactive">Show Inactive Contacts</span>
+                         <span ng-show="showInactive">Show Active Personnel</span>
+                         <span ng-hide="showInactive">Show Inactive Personnel</span>
                      </a>
-                     <a  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Contact</a>
+                     <a  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Personnel</a>
                      <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
                </div>
-                   <h2 style="margin-top:8px;float:right" class="greenBg"><span class="bold underline">{{filtered.length}}</span> Lab Contacts Displayed</h2>
+                   <h2 style="margin-top:8px;float:right" class="greenBg"><span class="bold underline">{{filtered.length}}</span> Lab Personnel Displayed</h2>
             </th>
         </tr>
         <tr>
@@ -36,7 +36,6 @@
             <!--<th>Lab Phone</th>-->
             <th>Email</th>
             <th>Lab Phone</th>
-            <th>Emergency Phone</th>
         </tr>
     </thead>
 
@@ -74,10 +73,6 @@
 
             <td style="width:10%;">
                 {{contact.Lab_phone}}
-            </td>
-
-            <td style="width:10%;">
-                {{contact.Emergency_phone}}
             </td>
 
         </tr>

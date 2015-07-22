@@ -26,6 +26,12 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         controller: personnelController
       }
     )
+    .when('/labPersonnel',
+      {
+        templateUrl: 'userHubPartials/labPersonnel.html',
+        controller: labPersonnelController
+      }
+    )
     .when('/uncategorized',
       {
         templateUrl: 'userHubPartials/uncategorized.html',
@@ -780,6 +786,47 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
 
     }
 }
+
+var labPersonnelController = function($scope, $modal, $rootScope, userHubFactory) {
+    $rootScope.neededUsers = false;
+    $rootScope.error="";
+    $scope.order = 'Last_name';
+    $rootScope.renderDone = false;
+
+
+    userHubFactory.getAllUsers()
+      .then(
+        function(users){
+          $scope.LabContacts = userHubFactory.users;;
+          $rootScope.neededUsers = true;
+          $rootScope.renderDone = true;
+        }
+      )
+
+    $scope.openModal = function(user,$index){
+        if(!user){
+          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+          var i = userHubFactory.roles.length;
+          while(i--){
+            if(userHubFactory.roles[i].Name.indexOf('Lab Personnel')>-1)user.Roles.push(userHubFactory.roles[i]);
+          }
+        }
+        userHubFactory.setModalData(user);
+        var modalInstance = $modal.open({
+          templateUrl: 'userHubPartials/labPersonnelModal.html',
+          controller: modalCtrl
+        });
+        modalInstance.result.then(function (returnedUser) {
+          if(user.Key_id){
+            angular.extend(user, returnedUser)
+          }else{
+            userHubFactory.users.push(returnedUser);
+          }
+        });
+
+    }
+}
+
 var uncatController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods) {
     $rootScope.order="Last_name";
     $rootScope.neededUsers = false;
