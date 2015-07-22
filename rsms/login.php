@@ -1,5 +1,5 @@
 <?php
-if( stristr( $_SERVER[HTTP_HOST], "graysail" ) ){
+if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
     include('src/Application.php');
 }else{
     include('Application.php');
