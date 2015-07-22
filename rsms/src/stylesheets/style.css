@@ -3432,3 +3432,14 @@ button.btn-large{
     margin-left:0
 }
 .no-border{border:none !important}
+
+/*clear floats after span classed elements in modals*/
+.modal .controls[class*="span"]{
+    margin-left:0
+}
+.modal .control-group:after{
+   content:'';
+   clear:both;
+    display:block;
+   float:none;
+}

@@ -87,25 +87,23 @@
                     </div>
                     </div>
                 </div>
-                <div style="clear:both">
-                    <div class="control-group">
-                        <label class="control-label" for="inputEmail">Department</label>
-                        <div class="controls span4">
-                            <input style=""  placeholder="Select A Department" typeahead-on-select='onAddDepartmentToPi($item, $model, $label)' type="text" ng-model="selectedDepartment" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                             <ui-select direction="up" ng-if="!isProductionServer || modalData.Username" ng-model="pi.selected" theme="selectize" direction="up" ng-disabled="disabled" on-select="onAddDepartmentToPi($item, $model, $label)">
-                                <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>
-                                <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
-                                  <div ng-bind-html="department.Name | highlight: $select.search"></div>
-                                </ui-select-choices>
-                            </ui-select>
-                           <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
-                           <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
-                            <ul>
-                                <li ng-repeat="department in modalData.PrincipalInvestigator.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
-                                </li>
-                            </ul>
-                            <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
-                        </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Department</label>
+                    <div class="controls span4">
+                        <input style=""  placeholder="Select A Department" typeahead-on-select='onAddDepartmentToPi($item, $model, $label)' type="text" ng-model="selectedDepartment" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+                         <ui-select direction="up" ng-if="!isProductionServer || modalData.Username" ng-model="pi.selected" theme="selectize" direction="up" ng-disabled="disabled" on-select="onAddDepartmentToPi($item, $model, $label)">
+                            <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
+                              <div ng-bind-html="department.Name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                       <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
+                       <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
+                        <ul>
+                            <li ng-repeat="department in modalData.PrincipalInvestigator.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
+                            </li>
+                        </ul>
+                        <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
                     </div>
                 </div>
         </form>

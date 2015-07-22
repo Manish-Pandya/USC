@@ -59,58 +59,54 @@
              </div>
             </div>
 
-             <div class=""style="padding:3px 0">
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Principal Investigator</label>
-                 <div class="controls span4">
+            <div class="control-group">
+                <label class="control-label" for="inputEmail">Principal Investigator</label>
+                <div class="controls span4">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
-                     
-                     <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectPI($item, $model, $label)">
+
+                    <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectPI($item, $model, $label)">
                         <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
-                          <div ng-bind-html="pi.Name | highlight: $select.search"></div>
+                            <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
+           <div class="control-group">
+                <label class="control-label" for="inputEmail">Roles(s)</label>
+                <div class="controls span4">
+                    <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
-            <div class="" style="padding:3px 0;">
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Roles(s)</label>
-                 <div class="controls span4">
-                    <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                     
-                     <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectRole($item, $model, $label)">
+                    <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectRole($item, $model, $label)">
                         <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
-                          <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                            <div ng-bind-html="role.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
-                     
-                <ul style="margin-top:3px;">
-                    <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-                    </li>
-                </ul>
-               </div>
-            </div>
 
-              <div class=""style="padding:3px 0">
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Department</label>
-                 <div class="controls span4">
-                    <input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                     
-                     <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectDepartment($item, $model, $label)">
-                        <ui-select-match placeholder="Select A Department">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
-                          <div ng-bind-html="department.Name | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                     
+                    <ul style="margin-top:3px;">
+                        <li ng-repeat="role in modalData.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputEmail">Department</label>
+                <div class="controls span4">
+                    <input style="" class="span4" placeholder="Select A Department" typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+
+                    <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectDepartment($item, $model, $label)">
+                        <ui-select-match placeholder="Select A Department">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
+                            <div ng-bind-html="department.Name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+
+                </div>
+            </div>
+
         </form>
-    </div>
     <div class="modal-footer">
         <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
         <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark"/>Save</button>
