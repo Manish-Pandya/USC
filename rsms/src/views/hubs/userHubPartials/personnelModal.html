@@ -69,7 +69,7 @@
             <div class="" style="padding:3px 0;">
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Roles(s)</label>
-                    <div class="controls">
+                    <div class="controls span4">
                         <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" on-select="onSelectRole($item, $model, $label)">
                             <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
                             <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
