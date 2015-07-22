@@ -1098,7 +1098,7 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   $scope.hif=hazardInventoryFactory;
   var pi = hazardInventoryFactory.PI;
   $scope.pi = pi;
-  $scope.buildings = hazardInventoryFactory.buildings;
+  $scope.buildings = pi.Buildings;
   $scope.gettingInspections = true;
 
     hazardInventoryFactory.getOpenInspections(pi)
