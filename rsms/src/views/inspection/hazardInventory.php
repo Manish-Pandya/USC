@@ -48,31 +48,6 @@ require_once '../top_view.php';
                <h3 class="span6">Building(s):</h3>
                <h3 class="span6">
                Laboratory Rooms:
-                   <div class="control-group roomSelectContainer" ng-if="buildings.length">
-                       <a style="white-space:normal;" class="btn btn-info btn-mini" ng-click="selectRooms = !selectRooms" data-toggle="dropdown" href="#">Select Rooms to Inspect</a>
-                    <span class="roomSelect" style="position:relative">
-                      <ul ng-if="selectRooms && buildings" class="selectRooms">
-                           <li style="float:right"><i class="icon-cancel-2" ng-click="selectRooms = !selectRooms"></i></li>
-                            <li ng-repeat="(key, building) in buildings">
-                                <label class="checkbox inline">
-                                <input ng-model='building.IsChecked' ng-init='true' type="checkbox" ng-change="checkBuilding(building)"/>
-                                <span class="metro-checkbox" class="bold underline" once-text="building.Name"></span>
-                            </label>
-
-                                <ul>
-                                    <li ng-repeat="(key, room) in building.Rooms" style="width:100%">
-                                        <label class="checkbox inline smaller">
-                                        <input ng-model='room.IsSelected' type="checkbox" ng-change="selectRoom(room,building)"/>
-                                        <span class="metro-checkbox smaller" once-text="room.Name"></span>
-                                    </label>
-                                </li>
-                            </ul>
-                            </li>
-                            <li><a a class="btn btn-warning" ng-click="resetInspection()">Get Hazards</a></li>
-                            <li ng-if="noRoomsSelected" class="alert alert-danger">Please select one or more rooms.</li>
-                           </ul>
-                   </span>
-                </div>
                </h3>
                    <span ng-if="!buildings.length">
                            <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
