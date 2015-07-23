@@ -791,20 +791,15 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 	
-		$queryString = "select
-						d.key_id as department_id,
-						d.is_active as is_active,
-						d.name department_name,
-						(SELECT COUNT(*) FROM principal_investigator_department pd WHERE  pd.department_id = d.key_id) as pi_count,
-						(SELECT COUNT(*) FROM principal_investigator_room pr WHERE principal_investigator_id
-							IN(
-								select principal_investigator_id
-								from principal_investigator_department
-								where department_id=d.key_id
-							)
-						) as room_count
-						from department d
-						GROUP BY d.key_id;";
+		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, count(distinct b.key_id) as pi_count, 
+						count(distinct c.key_id) as room_count
+						FROM department a 
+						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
+						LEFT JOIN principal_investigator b ON (d.principal_investigator_id = b.key_id) AND b.is_active = 1
+						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
+						LEFT JOIN room c ON (e.room_id = c.key_id)
+						GROUP BY a.key_id
+						ORDER BY a.name;";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
@@ -817,20 +812,14 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 
-		$queryString = "select
-						d.key_id as department_id,
-						d.is_active as is_active,
-						d.name department_name,
-						(SELECT COUNT(*) FROM principal_investigator_department pd WHERE  pd.department_id = d.key_id) as pi_count,
-						(SELECT COUNT(*) FROM principal_investigator_room pr WHERE principal_investigator_id
-							IN(
-								select principal_investigator_id
-								from principal_investigator_department
-								where department_id=d.key_id
-							)
-						) as room_count
-						from department d
-						WHERE key_id = :id;";
+		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, count(distinct b.key_id) as pi_count, 
+						count(distinct c.key_id) as room_count
+						FROM department a 
+						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
+						LEFT JOIN principal_investigator b ON (d.principal_investigator_id = b.key_id) AND b.is_active = 1
+						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
+						LEFT JOIN room c ON (e.room_id = c.key_id)
+						WHERE a.key_id = :id;";
 		$stmt = $db->prepare($queryString);
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();

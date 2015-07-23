@@ -427,13 +427,12 @@ class ActionManager {
                  //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($user->getPrincipalInvestigator() != null){
                     $pi = $user->getPrincipalInvestigator();
-                    $pi->setIs_active($user->getIs_active());
-                    $piDao  = $this->getDao(new PrincipalInvestigator());
-                    $piDao->save($pi);
                 }else{
                     $pi = new PrincipalInvestigator();
                     $pi->setUser_id($user->getKey_id());
                 }
+                $pi->setIs_active($user->getIs_active());
+                $piDao  = $this->getDao(new PrincipalInvestigator());
                 $user->setPrincipalInvestigator($this->savePI($pi));
             }
 
@@ -443,13 +442,12 @@ class ActionManager {
                 //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($user->getInspector() != null){
                     $inspector = $user->getInspector();
-                    $inspector->setIs_active($user->getIs_active());
-                    $inspectorDao  = $this->getDao(new Inspector());
                 }else{
                     $inspector = new Inspector;
                     $inspector->setUser_id($user->getKey_id());
                 }
-
+                $inspector->setIs_active($user->getIs_active());
+                $inspectorDao  = $this->getDao(new Inspector());
                 $user->setInspector($this->saveInspector($inspector));
             }
 

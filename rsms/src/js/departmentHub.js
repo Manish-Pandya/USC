@@ -75,12 +75,6 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
         $scope.departmentCopy = angular.copy(department);
     }
 
-    $scope.saveDepartment = function(department){
-        department.isDirty = true;
-        console.log(department);
-
-    }
-
     $scope.cancelEdit = function(department){
         department.edit = false;
         $scope.departmentCopy = {};
@@ -99,10 +93,27 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
     }
 
     $scope.handleActive = function(department){
-        $scope.departmentCopy = angular.copy(department);
-        $scope.departmentCopy.Is_active=!$scope.departmentCopy.Is_active;
-        $scope.saveDepartment(department, true);
-        department.setActive = true;
+        department.isDirty = true;
+        $scope.error = '';
+        deptDto = {
+            Class: "Department",
+            Name: department.Department_name,
+            Is_active: !department.Is_active,
+            Key_id: department.Department_id
+        }
+        departmentFactory.saveDepartment(deptDto).then(
+          function(promise){
+              console.log(promise);
+              department.Is_active = promise[0].Is_active;
+              department.isDirty = false;
+
+          },
+          function(promise){
+            $scope.error = 'There was a promblem saving the department.';
+            department.isDirty = false;
+          }
+        );
+
     }
 
     $scope.openModal = function(dto){
@@ -116,7 +127,6 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
                 }
             }
         });
-        
         instance.result.then(function (returnedDto) {
             if(!convenienceMethods.arrayContainsObject($scope.departments,returnedDto, ["Department_name", "Department_name"])){
                 $scope.departments.push(returnedDto)
@@ -125,19 +135,16 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
     }
 }
 modalCtrl = function($scope, departmentDto, $modalInstance, departmentFactory, convenienceMethods){
-        
     $scope.department = {
         Class: "Department",
         Name:'',
         Is_active:true
     }
-    
     if(departmentDto.Department_id){
         $scope.department.Name =   departmentDto.Department_name;
         $scope.department.Key_id = departmentDto.Department_id;
         $scope.deptName = departmentDto.Department_name;
     }
-        
     // overwrites department with modified $scope.departmentCopy
     // note that the department parameter is the department to be overwritten.
     $scope.saveDepartment = function(){
@@ -166,7 +173,7 @@ modalCtrl = function($scope, departmentDto, $modalInstance, departmentFactory, c
           }
         );
     }
-    
+
     $scope.cancel = function(){
         $scope.error = '';
         $modalInstance.dismiss();
