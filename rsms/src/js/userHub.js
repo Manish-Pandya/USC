@@ -219,6 +219,13 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         if(factory.users[i].PrincipalInvestigator && factory.users[i].PrincipalInvestigator.Key_id == id)return factory.users[i];
       }
   }
+  
+  factory.getUserId = function(id){
+      var i = factory.users.length;
+      while(i--){
+        if(factory.users[i].Key_id == id)return factory.users[i];
+      }
+  }
 
   factory.getBuildingsByPi = function(pi)
   {
@@ -704,7 +711,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
 
 }
 
-var labContactController = function($scope, $modal, $rootScope, userHubFactory) {
+var labContactController = function($scope, $modal, $rootScope, userHubFactory, $location) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
     $scope.order = 'Last_name';
@@ -716,17 +723,25 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
         function(users){
           $scope.LabContacts = userHubFactory.users;;
           $rootScope.neededUsers = true;
+            if($location.search().contactId && $location.search().piId && !userHubFactory.openedModal){
+              userHubFactory.openedModal = true;
+              $scope.openModal(userHubFactory.getUserId($location.search().contactId), $location.search().piId);
+            }
           $rootScope.renderDone = true;
         }
       )
 
-    $scope.openModal = function(user,$index){
+    $scope.openModal = function(user,piId){
         if(!user){
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
           var i = userHubFactory.roles.length;
           while(i--){
             if(userHubFactory.roles[i].Name.indexOf('Lab Contact')>-1)user.Roles.push(userHubFactory.roles[i]);
           }
+        }
+        if(!user.Supervisor_id){
+          user.Supervisor_id = piId;
+          user.Supervisor = userHubFactory.getUserByPIId($location.search().piId);
         }
         userHubFactory.setModalData(user);
         var modalInstance = $modal.open({
@@ -744,10 +759,14 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory) 
     }
 }
 
-var personnelController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout) {
+var personnelController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $location) {
     $rootScope.neededUsers = false;
     $rootScope.order="Last_name";
     $rootScope.error="";
+    if($location.search().personnelId && $location.search().piId && !userHubFactory.openedModal){
+      userHubFactory.openedModal = true;
+      $scope.openModal(userHubFactory.getUserId($location.search().personnelId), $location.search().piId);
+    }
     $rootScope.renderDone = false;
 
     userHubFactory.getAllUsers()
@@ -765,9 +784,17 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
       )
 
 
-    $scope.openModal = function(user,$index){
+    $scope.openModal = function(user,piId){
         if(!user){
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+            var i = userHubFactory.roles.length;
+          while(i--){
+            if(userHubFactory.roles[i].Name.indexOf('Lab Personnel')>-1)user.Roles.push(userHubFactory.roles[i]);
+          }
+        }
+        if(!user.Supervisor_id){
+          user.Supervisor_id = piId;
+          user.Supervisor = userHubFactory.getUserByPIId($location.search().piId);
         }
         userHubFactory.setModalData(user);
 
