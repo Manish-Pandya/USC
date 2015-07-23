@@ -22,12 +22,13 @@
 <table class="roomList table table-striped table-hover list" id="rooms" style="margin-top: 12px" ng-if="PI">
     <thead>
         <tr>
-            <td colspan="6" style="padding:3px 0;" class="greenBg">
-                <tr>
-                    <td colspan="6" style="padding:3px 0;" class="greenBg">
-                        <h2 class="alert greenBg  pull-left" style="padding-top:15px;">Lab Contacts</h2>
-                    </td>
-                </tr>
+            <td colspan="5" class="greenBg">
+                <h2 class="alert greenBg pull-left">Lab Contacts</h2>
+                <h2>
+                    <a class="btn btn-large" href="UserHub.php#/contacts?piId={{PI.Key_id}}">
+                    <i class="icon-plus-2" style="margin: 3px 21px 0px 8px !important"></i>Add Lab Contacts</a>
+                    <div class="clearfix"></div>
+                </h2>
             </td>
         </tr>
         <tr>
@@ -36,11 +37,11 @@
     </thead>
     <tbody>
         <tr ng-repeat="user in PI.LabPersonnel | filter: active">
-            <td>
+            <td width="14%">
                 <a class="btn btn-warning btn-large left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
-            <td>
+            <td width="18%">
                 <a class="btn btn-danger btn-large left" ng-click="confirmRemoveUser(user)">
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
@@ -53,12 +54,13 @@
 <table class="roomList table table-striped table-hover list" id="rooms" style="margin-top: 12px" ng-if="PI">
     <thead>
         <tr>
-            <td colspan="6" style="padding:3px 0;" class="greenBg">
-                <tr>
-                    <td colspan="6" style="padding:3px 0;" class="greenBg">
-                        <h2 class="alert greenBg  pull-left" style="padding-top:15px;">Lab Personnel</h2>
-                    </td>
-                </tr>
+            <td colspan="5" class="greenBg">
+                <h2 class="alert greenBg pull-left">Lab Personnel</h2>
+                <h2>
+                    <a class="btn btn-large" href="UserHub.php#/labPersonnel?piId={{PI.Key_id}}">
+                    <i class="icon-plus-2" style="margin: 3px 21px 0px 8px !important"></i>Add Lab Personnel</a>
+                    <div class="clearfix"></div>
+                </h2>
             </td>
         </tr>
         <tr>
@@ -66,12 +68,12 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="user in PI.LabPersonnel | filter: active">
-            <td>
+        <tr ng-repeat="user in PI.LabPersonnel | isContact">
+            <td width="14%">
                 <a class="btn btn-warning btn-large left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
-            <td>
+            <td width="18%">
                 <a class="btn btn-danger btn-large left" ng-click="confirmRemoveUser(user)">
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />

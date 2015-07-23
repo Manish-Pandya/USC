@@ -326,14 +326,11 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
             }
         )
 
-
-
     }
 
     function onSaveRoomRelation(data,room,building){
         console.log(data);
         console.log(room);
-
 
         /*
         angular.forEach(building.Rooms, function(room, key){
