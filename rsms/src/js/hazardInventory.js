@@ -938,17 +938,6 @@ controllers.footerController = function($scope, $location, $filter, convenienceM
 
   }
 
-  $scope.getContacts = function(){
-      var modalInstance = $modal.open({
-        templateUrl: 'hazard-inventory-modals/lab-personnel.html',
-        controller: contactsController
-      });
-
-
-      modalInstance.result.then(function () {});
-
-  }
-
   function onGetInspections(data){
     $scope.previousInspections = data;
     $scope.waitingForInspections = false;
