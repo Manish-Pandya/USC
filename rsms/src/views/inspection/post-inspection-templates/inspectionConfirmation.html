@@ -9,16 +9,16 @@
   <div class="control-group">
       <div class="controls">
         <label class="checkbox">
-           <input type="checkbox" ng-model="inspection.PrincipalInvestigator.User.include" ng-init="inspection.PrincipalInvestigator.User.include = true" ng-change="handleContactList(inspection.PrincipalInvestigator.User)"><span class="metro-checkbox">{{inspection.PrincipalInvestigator.User.Name}}</span>
+           <input type="checkbox" ng-model="inspection.PrincipalInvestigator.User.include" ng-init="inspection.PrincipalInvestigator.User.include = true" ng-change="handleContactList(inspection.PrincipalInvestigator.User)"><span class="metro-checkbox">{{inspection.PrincipalInvestigator.User.Name}} (Principal Investigator<span ng-if="!contacts">/Lab Contact</span>)</span>
         </label>
         </label>
       </div>
   </div>
 
-  <div class="control-group" ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel">
+  <div class="control-group" ng-repeat="contact in contacts = (inspection.PrincipalInvestigator.LabPersonnel | isContact)">
       <div class="controls">
         <label class="checkbox">
-           <input type="checkbox" ng-model="contact.include" ng-change="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
+           <input type="checkbox" ng-model="contact.include" ng-init="contact.include = true" ng-change="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}} (Lab Contact)</span>
         </label>
         </label>
       </div>
