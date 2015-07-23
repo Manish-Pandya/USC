@@ -467,4 +467,22 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
     }
     return out;
   }
-});
+})
+//is a user a lab contact?  run this fancy filter to find out.
+.filter('isContact',[function(){
+  return function(users){
+    if(!users)return;
+    var contacts = [];
+    var i = users.length
+    while(i--){
+        var j = users[i].Roles.length;
+        while(j--){
+            if(users[i].Roles[j].Name == "Lab Contact"){
+                contacts.unshift(users[i]);
+                break;
+            }
+        }
+    }
+    return contacts;
+  }
+}]);

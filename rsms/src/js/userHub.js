@@ -85,20 +85,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return personnel;
   }
 }])
-.filter('isContact',['userHubFactory', function(userHubFactory){
-  return function(users){
-    if(!users)return;
-    var contacts = [];
-    var i = users.length
-    while(i--){
-      if( userHubFactory.hasRole(users[i], 'contact') ){
-        userHubFactory.getSupervisor(users[i]);
-        contacts.unshift(users[i]);
-      }
-    }
-    return contacts;
-  }
-}])
 .filter('isPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
