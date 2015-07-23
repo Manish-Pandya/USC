@@ -30,7 +30,6 @@ require_once '../top_view.php';
                       <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                     </ui-select>
-                <!--<input options="PIs" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" laserbox="pi.User.Name+(pi.Is_active ? '': ' (Inactive)') as pi.User.Name+(pi.Is_active ? '': ' (Inactive)') for pi in PIs | filter:$viewValue"/>-->
 
                </span>
               </div>

@@ -32,35 +32,35 @@ class PrincipalInvestigator extends GenericCrud {
 		"className"	=>	"Inspection",
 		"tableName"	=>	"inspection",
 		"keyName"	=>	"key_id",
-		"foreignKeyName"	=>	"principal_investigator_id"
+		"foreignKeyName" =>	"principal_investigator_id"
 	);
 
 	public static $ROOMS_RELATIONSHIP = array(
 		"className"	=>	"Room",
 		"tableName"	=>	"principal_investigator_room",
 		"keyName"	=>	"room_id",
-		"foreignKeyName"	=>	"principal_investigator_id"
+		"foreignKeyName" =>	"principal_investigator_id"
 	);
 
 	public static $LABPERSONNEL_RELATIONSHIP = array(
 		"className"	=>	"User",
 		"tableName"	=>	"erasmus_user",
 		"keyName"	=>	"key_id",
-		"foreignKeyName"	=>	"supervisor_id"
+		"foreignKeyName" =>	"supervisor_id"
 	);
 
 	public static $DEPARTMENTS_RELATIONSHIP = array(
 		"className"	=>	"Department",
 		"tableName"	=>	"principal_investigator_department",
 		"keyName"	=>	"department_id",
-		"foreignKeyName"	=>	"principal_investigator_id"
+		"foreignKeyName" =>	"principal_investigator_id"
 	);
 
 	public static $PRINCIPAL_INVESTIGATOR_ROOMS_RELATIONSHIP = array(
 		"className"	=>	"PrincipalInvestigatorRoomRelation",
 		"tableName"	=>	"principal_investigator_room",
 		"keyName"	=>	"key_id",
-		"foreignKeyName"	=>	"principal_investigator_id"
+		"foreignKeyName" =>	"principal_investigator_id"
 	);
 	
 
@@ -68,7 +68,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"className" =>  "Authorization",
 			"tableName" =>  "authorization",
 			"keyName"   =>  "key_id",
-			"foreignKeyName"	=> "principal_investigator_id"
+			"foreignKeyName" => "principal_investigator_id"
 	);
 	
 	public static $ACTIVEPARCELS_RELATIONSHIP = array(
