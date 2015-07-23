@@ -476,27 +476,6 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
   $scope.contactList = [];
 
-  $scope.handleContactList = function(obj, $index){
-
-    if(!convenienceMethods.arrayContainsObject($scope.contactList,obj)){
-      $scope.contactList.push(obj);
-    }else{
-      angular.forEach($scope.contactList, function(value, key){
-        if(value.KeyId === obj.KeyId){
-          $scope.contactList.splice(key,1);
-        }
-      });
-    }
-  }
-
-  $scope.handleContactList = function(contact){
-    if(contact.include){
-      $scope.contactList.push(contact.Key_id);
-    }else{
-      $scope.contactList.splice( $scope.contactList.indexOf(contact.Key_id),1);
-    }
-  }
-
   $scope.sendEmail = function(){
 
     othersToSendTo = [];
@@ -505,14 +484,23 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       othersToSendTo.push(other.email);
     });
 
+    var contactList = [];
+
+    if($scope.inspection.PrincipalInvestigator.User.include) contactList.push($scope.inspection.PrincipalInvestigator.User.Key_id)
+
+    var i = $scope.inspection.PrincipalInvestigator.LabPersonnel.length;
+    while(i--){
+        if($scope.inspection.PrincipalInvestigator.LabPersonnel[i].include)contactList.push($scope.inspection.PrincipalInvestigator.LabPersonnel[i].Key_id);
+    }
+
     var emailDto ={
       Class: "EmailDto",
       Entity_id: $scope.inspection.Key_id,
-      Recipient_ids: $scope.contactList,
+      Recipient_ids: contactList,
       Other_emails: othersToSendTo,
       Text: $scope.defaultNote.Text
     }
-
+    console.log(emailDto);
     var url = '../../ajaxaction.php?action=sendInspectionEmail';
     convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
     $scope.sending = true;
@@ -522,7 +510,6 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
     $scope.sending = false;
     $scope.emailSent = 'success';
 
-    //console.log($rootScope.inspection);
     evaluateCloseInspection();
 
   }

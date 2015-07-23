@@ -15,8 +15,7 @@
       </div>
   </div>
 
-  <div class="control-group" ng-repeat="contact in Inspection.PrincipalInvestigator.LabPersonnel">
-     <label class="control-label" for="inputEmail">Email</label>
+  <div class="control-group" ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel">
       <div class="controls">
         <label class="checkbox">
            <input type="checkbox" ng-model="contact.include" ng-change="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}}</span>
@@ -24,6 +23,7 @@
         </label>
       </div>
   </div>
+
 
   <div class="control-group" style="margin-top:15px;">
       <div class="controls" ng-repeat="other in others">
@@ -36,7 +36,7 @@
 
   <textarea ng-model="defaultNote.Text" style="width:800px;" rows="10" html-text></textarea><br>
 
-  <a ng-click="sendEmail()" class="btn btn-large btn-success" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>
+  <a ng-click="sendEmail()" class="btn btn-large btn-success left" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>
   <img style="margin-top: 18px;" ng-show="sending" class="smallLoading" src="../../img/loading.gif"/>
   <div ng-if="emailSent" class="alert span-5" style="float: left; font-size: 30px; margin-left: 15px; padding: 14px;" ng-class="{'alert-success': emailSent == 'success', 'alert-error': emailSent == 'error'}">
     <span ng-if="emailSent == 'success'">The email was sent successfully.</span>
