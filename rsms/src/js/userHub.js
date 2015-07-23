@@ -85,6 +85,20 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return personnel;
   }
 }])
+.filter('isLabContact',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+    var i = users.length
+    while(i--){
+      if( userHubFactory.hasRole(users[i], 'contact') || userHubFactory.hasRole(users[i], 'contact') ){
+        userHubFactory.getSupervisor(users[i]);
+        personnel.unshift(users[i]);
+      }
+    }
+    return personnel;
+  }
+}])
 .filter('isPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
