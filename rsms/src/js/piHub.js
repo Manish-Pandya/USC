@@ -92,8 +92,6 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
             $scope.noPiSet = true;
         }
 
-
-
         if($location.search().hasOwnProperty('inspection')){
             $scope.inspectionId = $location.search().inspection;
         }
