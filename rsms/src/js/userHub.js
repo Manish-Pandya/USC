@@ -913,7 +913,19 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.phoneNumberErrorMsg = "E.G. 123-555-5555 or (123) 555-5555";
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
     $scope.emailErrorMsg = "Invalid email address";
-
+    $scope.pis = userHubFactory.getPIs();
+    //if the user has a supervisor, set the selected PI for ui-select elements to the matching index of $scope.pis
+    if($scope.modalData.Supervisor_id){
+        var i = $scope.pis.length;
+        while(i--){
+            if($scope.pis[i].PrincipalInvestigator.Key_id === $scope.modalData.Supervisor_id){
+                $scope.selectedPI = $scope.pis[i];
+                break;
+            }
+        }
+    }
+    
+    
     userHubFactory.getAllRoles()
       .then(
         function(roles){
@@ -926,13 +938,13 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
           $scope.departments = departments;
         }
       )
-    $scope.pis = userHubFactory.getPIs();
 
     $scope.cancel = function () {
         $modalInstance.dismiss();
     };
 
     $scope.savePi = function(){
+        alert('yo');
       $scope.modalData.IsDirty=true;
       $scope.modalError=""
       console.log($scope.modalData)

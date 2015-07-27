@@ -57,7 +57,7 @@
                 <div class="controls span4">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
 
-                    <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectPI($item, $model, $label)">
+                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectPI($item, $model, $label)">
                         <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="pi.Name | highlight: $select.search"></div>

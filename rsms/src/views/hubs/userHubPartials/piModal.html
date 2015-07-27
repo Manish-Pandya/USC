@@ -1,11 +1,10 @@
-<form name="form" ng-submit="savePi()">
+<form name="form" ng-submit="savePi()" class="form-horizontal form">
     <div class="modal-header" style="padding:0;" class="">
         <h2 style="padding:5px" ng-show="modalData.Key_id" class="blueBg">Editing {{modalData.Name}}</h2>
         <h2 style="padding:5px" ng-hide="modalData.Key_id" class="blueBg">Create a New Principal Investigator</h2>
     </div>
     <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
-        <form class="form-horizontal form">
             <div class="error alert alert-danger" ng-if="frmError && !modalData.Username" style="color:black">{{frmError}}</div>
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Username</label>
@@ -106,11 +105,10 @@
                         <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
                     </div>
                 </div>
-        </form>
         </div>
         <div class="modal-footer">
             <i class="icon-spinnery-dealie spinner small" style=";margin: 3px;" ng-if="modalData.IsDirty"></i>
-            <button type="submit" class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark" />Save</button>
+            <button type="submit" class="btn btn-success left btn-large"><i class="icon-checkmark" />Save</button>
             <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
 </form>
