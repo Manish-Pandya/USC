@@ -63,21 +63,17 @@
             <td style="width:14%;">
                 {{contact.Primary_department.Name}}
             </td>
-            <!--
-            <td style="width:12%;" once-text="contact.Lab_phone">
-
-            </td>
-            -->
+            
             <td style="width:10%;">
                 {{contact.Email}}
             </td>
 
             <td style="width:10%;">
-                {{contact.Lab_phone}}
+                {{contact.Lab_phone | tel}}
             </td>
 
             <td style="width:10%;">
-                {{contact.Emergency_phone}}
+                {{contact.Emergency_phone | tel}}
             </td>
 
         </tr>

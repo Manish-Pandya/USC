@@ -99,7 +99,7 @@ require_once '../top_view.php';
                     </tr>
                     <tr ng-repeat="pi in pisByRoom">
                         <td style="width:37%">{{pi.User.Name}}</td>
-                        <td style="width:18%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
+                        <td style="width:18%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone | tel}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
                         <td style="width:45%">
                             <ul style="list-style: none;">
                                 <li ng-repeat="dept in pi.Departments">{{dept.Name}}</li>
@@ -114,7 +114,7 @@ require_once '../top_view.php';
                     </tr>
                     <tr ng-repeat="contact in personnel">
                         <td>{{contact.Name}}</td>
-                        <td>{{contact.Emergency_phone}}<span ng-if="!contact.Emergency_phone">Unknown</span></td>
+                        <td>{{contact.Emergency_phone | tel}}<span ng-if="!contact.Emergency_phone">Unknown</span></td>
                     </tr>
                 </table>
 

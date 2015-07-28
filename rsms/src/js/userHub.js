@@ -138,14 +138,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return uncat;
   }
 }])
-.filter('tel', function () {
-    return function (phoneNumber) {
-        if (!phoneNumber)
-            return phoneNumber;
-
-        return formatLocal('US', phoneNumber);
-    }
-})
 .factory('userHubFactory', function(convenienceMethods,$q, $rootScope, roleBasedFactory){
 
   var factory = {};
@@ -944,7 +936,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     };
 
     $scope.savePi = function(){
-        alert('yo');
       $scope.modalData.IsDirty=true;
       $scope.modalError=""
       console.log($scope.modalData)

@@ -16,7 +16,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{PI.User.Name}}</td><td>{{PI.User.Email}}</td><td>{{PI.User.Office_phone}}</td><td>{{PI.User.Emergency_phone}}</td>
+            <td>{{PI.User.Name}}</td><td>{{PI.User.Email}}</td><td>{{PI.User.Office_phone | tel}}</td><td>{{PI.User.Emergency_phone | tel}}</td>
         </tr>
     </tbody>
 </table>
@@ -39,7 +39,7 @@
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone}}</td><td>{{user.Emergency_phone}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/contacts?piId={{PI.Key_id}}&contact_id={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/contacts?piId={{PI.Key_id}}&contactId={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>
@@ -62,7 +62,7 @@
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/personnel?piId={{PI.Key_id}}&contact_id={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/personnel?piId={{PI.Key_id}}&contactId={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>

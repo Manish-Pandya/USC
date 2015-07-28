@@ -401,6 +401,23 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return activeObjects;
     };
 })
+.filter('tel', function () {
+    return function (tel) {
+        if (!tel) { return ''; }
+
+        var value = tel.toString().trim().replace(/^\+/, '');
+
+        if (value.match(/[^0-9]/)) {
+            return tel;
+        }
+
+        var city = value.slice(0, 3);
+        var number = value.slice(3);
+
+        number = number.slice(0, 3) + '-' + number.slice(3);
+        return ("(" + city + ") " + number).trim();
+    }
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',

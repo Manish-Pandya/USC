@@ -47,8 +47,8 @@
             <div class="control-group">
              <label class="control-label" for="inputEmail">Lab Phone</label>
              <div class="controls">
-                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Lab_phone|tel">
-                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Lab_phone|tel">
+                 <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Lab_phone | tel">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Lab_phone | tel">
              </div>
             </div>
 
