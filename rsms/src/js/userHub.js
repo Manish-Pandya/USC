@@ -62,14 +62,14 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return pis;
   }
 }])
-.filter('isPersonel',['userHubFactory', function(userHubFactory){
+.filter('isPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
     var personnel = [];
     var i = users.length
     while(i--){
       var shouldPush = false;
-      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
+      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation') || userHubFactory.hasRole(users[i], 'read only')){
         shouldPush = true;
       }
 
@@ -99,7 +99,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return personnel;
   }
 }])
-.filter('isPersonnel',['userHubFactory', function(userHubFactory){
+.filter('isLabPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
     var personnel = [];
