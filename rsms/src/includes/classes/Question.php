@@ -188,9 +188,7 @@ class Question extends GenericCrud {
 
 	public function getResponses(){
 		$LOG = Logger::getLogger(__Class__);
-		if(!empty($this->inspectionId)) {
-			$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
-		
+		if(!empty($this->inspectionId)) {		
 			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
 			$responsesDao = new GenericDAO(new Response);
 			$this->responses = array_shift($responsesDao->getAllWhere($whereClauseGroup));
