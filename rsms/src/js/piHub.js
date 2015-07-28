@@ -1,4 +1,4 @@
-var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule'])
+var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','userList'])
 
 .config(function($routeProvider){
     $routeProvider

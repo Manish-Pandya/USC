@@ -2,6 +2,8 @@
 require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/piHub.js"></script>
+<script src="../../js/userHub.js"></script>
+
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
