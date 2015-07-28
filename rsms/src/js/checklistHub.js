@@ -1,7 +1,9 @@
 var checklistHub = angular.module('checklistHub', ['convenienceMethodWithRoleBasedModule','ui.bootstrap','once']);
 
-function ChecklistHubController($scope, $rootElement, $location, convenienceMethods) {
-    
+function ChecklistHubController($scope, $rootElement, $location, convenienceMethods, roleBasedFactory) {
+
+    $scope.rbf = roleBasedFactory;
+
     function init(){
         if($location.search().id){
             getChecklistById($location.search().id);
