@@ -376,9 +376,10 @@ routeCtrl = function($scope, $location,$rootScope){
     $rootScope.iterator=0;
 }
 
-roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, locationHubFactory){
+roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, locationHubFactory, roleBasedFactory){
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
+    $rootScope.rbf = roleBasedFactory;
 
     locationHubFactory.getBuildings()
         .then(
@@ -421,7 +422,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
 
 }
 
-var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory) {
+var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, roleBasedFactory) {
+    $rootScope.rbf = roleBasedFactory;
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
 
@@ -475,7 +477,8 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory) {
 }
 
 
-campusesCtrl = function($scope, $rootScope, locationHubFactory){
+campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory){
+    $rootScope.rbf = roleBasedFactory;
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
 
