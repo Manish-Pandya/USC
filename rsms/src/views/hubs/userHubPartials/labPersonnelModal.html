@@ -57,7 +57,7 @@
                 <div class="controls span4">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
 
-                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectPI($item, $model, $label)">
+                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)">
                         <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="pi.Name | highlight: $select.search"></div>
@@ -70,7 +70,7 @@
                 <div class="controls span4">
                     <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
-                    <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectRole($item, $model, $label)">
+                    <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
                         <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="role.Name | highlight: $select.search"></div>
@@ -89,7 +89,7 @@
                 <div class="controls span4">
                     <input style="" class="span4" placeholder="Select A Department" typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
-                    <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectDepartment($item, $model, $label)">
+                    <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectDepartment($item, $model, $label)">
                         <ui-select-match placeholder="Select A Department">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="department.Name | highlight: $select.search"></div>
