@@ -225,6 +225,28 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
         return room.Building;
     }
 
+    factory.getAllPis = function(){
+        //lazy load
+
+        //if we don't have a the list of pis, get it from the server
+        var deferred = $q.defer();
+        if(factory.pis){
+            deferred.resolve(factory.pis);
+        }else{
+            var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+                  convenienceMethods.getDataAsDeferredPromise(url).then(
+                  function(promise){
+                    deferred.resolve(promise);
+                    factory.pis = promise;
+                  },
+                  function(promise){
+                    deferred.reject();
+                  }
+            );
+        }
+        return deferred.promise;
+    }
+
     factory.saveRoom = function(roomDto){
         $rootScope.validationError='';
         if(!roomDto.Key_id){
@@ -531,6 +553,14 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
         }
     );
 
+    if($scope.modalData.Class  == "Room"){
+        locationHubFactory.getAllPis()
+            .then(
+                function(pis){
+                    $scope.pis = pis;
+                }
+            )
+    }
 
     $scope.cancel = function () {
       $rootScope.validationError='';
@@ -578,6 +608,49 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
                 )
             }
 
+        );
+
+    }
+
+    $scope.handlePI = function(pi, adding){
+        pi.saving = true;
+        $scope.modalError="";
+        var room = $scope.modalData;
+        var roomDto = {
+          Class: "RelationshipDto",
+          relation_id: room.Key_id,
+          master_id: pi.Key_id,
+          add: adding
+        }
+        var url = '../../ajaxaction.php?action=savePIRoomRelation';
+        convenienceMethods.saveDataAndDefer(url, roomDto).then(
+            function(){
+
+                var rooms = locationHubFactory.rooms;
+                var i = rooms.length;
+                while(i--){
+                    if(room.Key_id === rooms[i].Key_id){
+                        var originalRoom = rooms[i];
+                        break;
+                    }
+                }
+
+                if(!adding){
+                    var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
+                    room.PrincipalInvestigators.splice(idx,1);
+                    //find the room in the factory collection of rooms, remove the pi from it as well
+                    originalRoom.PrincipalInvestigators.splice(idx,1);
+                }else{
+                    room.PrincipalInvestigators.push(pi);
+                    originalRoom.PrincipalInvestigators.push(pi);
+                }
+                pi.saving = false;
+            },
+            function(){
+                pi.saving = false;
+                var added = adding ? "added" : "removed";
+                $scope.error = "The PI could not be " + added + ".  Please check your internet connection and try again.";
+            }
         );
 
     }
