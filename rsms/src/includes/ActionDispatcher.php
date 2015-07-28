@@ -132,7 +132,7 @@ class ActionDispatcher {
 		$actionMapping = $actionConfig[$actionName];
 		$action_function = $actionMapping->actionFunctionName;
 		
-		$this->LOG->debug("Checking user roles for action $actionName");
+		//$this->LOG->debug("Checking user roles for action $actionName");
 		
 		if($actionMapping->checkRoles == true){
 			$allowActionExecution = $this->checkRoles($actionMapping);
@@ -232,13 +232,13 @@ class ActionDispatcher {
 		$LOG = Logger::getLogger(__CLASS__);
 		//Get roles allowed from mapping
 		$allowed_roles = $actionMapping->roles;
-		$LOG->debug($allowed_roles);
+		//$LOG->debug($allowed_roles);
 		//Get user's role from our data source
 		$user_roles = array();
 		if( array_key_exists("ROLE", $this->sessionSource) ){
 			$user_roles = $this->sessionSource["ROLE"]["userRoles"];
 		}
-		$LOG->debug($this->sessionSource["ROLE"]["userRoles"]);
+		//$LOG->debug($this->sessionSource["ROLE"]["userRoles"]);
 		
 		//Check that we need any roles at all
 		$grantAccess = empty($allowed_roles);
@@ -263,7 +263,7 @@ class ActionDispatcher {
 		
 		if( method_exists( $actions, $action_function ) ){
 			//call the specified action function
-			$this->LOG->debug("Executing action function '$action_function'");
+			//$this->LOG->debug("Executing action function '$action_function'");
 			$functionResult = $actions->$action_function();
 			
 			return $functionResult;
