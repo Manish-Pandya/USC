@@ -8,29 +8,30 @@ require_once '../top_view.php';
 <div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
 <div class="alert savingBox" ng-if="saving">
   <h1>
-  	<i style="color:white" class="icon-spinnery-dealie spinner large"></i>
-  	<span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
+      <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
+      <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
   </h1>
 </div>
-<div class="navbar fixed">    		
-	<ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-		<li class="">
-			<img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
-			<h2  style="padding: 11px 0 5px 0px;">Manage Inspections
-				<a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>	
-			</h2>	
-		</li>
-	</ul>
+<div class="navbar fixed">
+    <ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
+        <li class="">
+            <img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
+            <h2  style="padding: 11px 0 5px 0px;">Manage Inspections
+                {{filtered.length}} Inspections Displayed
+                <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+            </h2>
+        </li>
+    </ul>
 </div>
-	<div class="loading" ng-if="loading" style="position:fixed; margin-top:70px">
-	  <i class="icon-spinnery-dealie spinner large"></i>
-	  <span>Loading...</span>
-	</div>
-	<select ng-model="selectedYear" ng-if="dtos" ng-change="selectYear()" ng-options="year.Name for year in years" style="z-index: 1060;margin-top: -30px;position:fixed;">
-	      <option value="">-- select year --</option>
-  	</select>
+    <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px">
+      <i class="icon-spinnery-dealie spinner large"></i>
+      <span>Loading...</span>
+    </div>
+    <select ng-model="selectedYear" ng-if="dtos" ng-change="selectYear()" ng-options="year.Name for year in years" style="z-index: 1060;margin-top: -30px;position:fixed;">
+          <option value="">-- select year --</option>
+      </select>
 
-	<table ng-if="dtos" class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
+    <table ng-if="dtos" class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
             <tr>
@@ -43,14 +44,14 @@ require_once '../top_view.php';
                     <input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
                 </th>
                 <th>
-                    Building<br>				
+                    Building<br>
                     <input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
                 </th>
                 <th>
                     Lab Room(s)<br>
                 </th>
                 <th>
-                    Start Date<br>
+                    Month Scheduled<br>
                     <input class="span2" ng-model="search.date" placeholder="Filter by Date"/>
                 </th>
                 <th>
@@ -59,7 +60,13 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <input class="span2" ng-model="search.status" placeholder="Filter by Status"/>
+                    <select ng-model="search.status" style="margin-bottom:0">
+                        <option>Select a status</option>
+                        <option value="not scheduled">Not Scheduled</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="pending">Pending</option>
+                        <option value="complete">Complete</option>
+                    </select>
                 </th>
             </tr>
         </thead>
@@ -78,21 +85,24 @@ require_once '../top_view.php';
                     </ul>
                 </td>
                 <td>
+                    <span ng-if="!dto.Inspection_id && rbf.getHasPermission([ R['Safety Inspector'],  R['Radiation Inspector']])">
+                        NOT SCHEDULED
+                    </span>
                     <span ng-if="dto.Inspection_id">
-                        <span ng-if="dto.Inspections.Date_started">{{dto.Inspections.Date_started | dateToISO | date:"MM/dd/yy"}}</span>
-                        <select ng-if="!dto.Inspections.Date_started" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, selectedYear )" >
+                        <span ng-if="dto.Inspections.Date_started">{{dto.Inspections.Schedule_month}}</span>
+                        <select ng-if="!dto.Inspections.Date_started && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, selectedYear )" >
                             <option value="">-- select month --</option>
                             <option ng-selected="month.val==dto.Inspections.Schedule_month" ng-repeat="month in months" value="{{month.val}}">{{month.string}}</option>
                         </select>
                     </span>
 
-                    <select ng-if="!dto.Inspection_id" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, selectedYear )" ng-options="month.val as month.string for month in months">
+                    <select ng-if="!dto.Inspection_id && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, selectedYear )" ng-options="month.val as month.string for month in months">
                         <option value="">-- select month --</option>
                     </select>
 
                 </td>
                 <td>
-                    <select ng-model="dto.selectedInspector" ng-if="!dto.Inspections || !dto.Inspections.Inspectors.length || dto.replaceInspector" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
+                    <select ng-model="dto.selectedInspector" ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']]) && (!dto.Inspections || !dto.Inspections.Inspectors.length || dto.replaceInspector)" ng-change="mif.scheduleInspection( dto, selectedYear, dto.selectedInspector )">
                         <option value="">-- Select inspector --</option>
                         <option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}</option>
                     </select>
@@ -100,20 +110,20 @@ require_once '../top_view.php';
                     <ul ng-if="dto.Inspections.Inspectors">
                         <li ng-repeat="inspector in dto.Inspections.Inspectors">
                             <span ng-if="!inspector.edit" once-text="inspector.User.Name"></span>
-                            <span ng-if="inspector.edit && dtoCopy">
+                            <span ng-if="inspector.edit && dtoCopy && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
                                 <select ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, selectedYear, $index, dtoCopy.replacementInspector, inspector)">
                                     <option value="" disabled selected>Select an Inspector</option>
                                     <option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
                                 </select>
                                 <i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
                             </span>
-                            <span ng-if="!inspector.edit">
+                            <span ng-if="!inspector.edit && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
                                 <i class="icon-pencil primary" title="Edit" title="Edit" ng-click="mif.editInspector(inspector, dto)"></i>
                                 <i class="icon-remove danger" title="Remove" title="Remove" ng-click="mif.removeInspector(dto, selectedYear, inspector)"></i>
                                 <i ng-if="$last" title="Add" alt="Add" class="icon-plus-2 success" ng-click="dto.addInspector = true"></i></a>
                             </span>
                         </li>
-                        <li ng-if="dto.addInspector">
+                        <li ng-if="dto.addInspector && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
                             <select ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, selectedYear, dto.addedInspector )">
                                 <option value="" disabled selected>Add an Inspector</option>
                                 <option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
@@ -121,7 +131,9 @@ require_once '../top_view.php';
                             <i class="icon-cancel-2 danger" ng-click="dto.addInspector = false"></i>
                         </li>
                     </ul>
-
+                    <span ng-if="!dto.Inspections.Inspectors && rbf.getHasPermission([ R['Safety Inspector'],  R['Radiation Inspector']])">
+                        NOT ASSIGNED
+                    </span>
 
                 </td>
                 <td>
@@ -165,6 +177,6 @@ require_once '../top_view.php';
                 </td>
             </tr>
 </tbody>
-	</table>
+    </table>
 </div>
 

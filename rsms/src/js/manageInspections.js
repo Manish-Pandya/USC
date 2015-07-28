@@ -490,12 +490,12 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
 });
 
 
-manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMethods){
+manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMethods, roleBasedFactory){
 
+    $scope.rbf = roleBasedFactory;
     $scope.mif = manageInspectionsFactory;
     $scope.convenienceMethods = convenienceMethods;
     $scope.years = [];
-
 
     var getDtos = function( year )
     {
