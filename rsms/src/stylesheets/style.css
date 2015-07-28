@@ -1,5 +1,6 @@
 @CHARSET "ISO-8859-1";
 a{cursor: pointer !important}
+*[disabled]{cursor:not-allowed !important}
 /*****************variables***********/
 h2 a{
     margin-left:5px;
