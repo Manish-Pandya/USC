@@ -5,8 +5,8 @@
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Lab Personnel...</span>
 </div>
-
-<h2 class="alert greenBg" ng-if="PI">Lab Personnel</h2>
+<span ng-if="PI">
+<h2 style="margin-top:20px;" class="alert greenBg" ng-if="PI">Lab Personnel</h2>
 
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" ng-if="PI">
     <thead>
@@ -21,15 +21,16 @@
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI">Lab Contacts<a class="btn btn-success left" href="UserHub.php#/contacts?piId={{PI.Key_id}}&contactId=null"><i class="icon-plus-2"></i>Add Lab Contact</a><div class="clearfix"></div></h2>
-<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" ng-if="PI">
+<h2 ng-if="PI">Lab Contacts<a class="btn btn-success left"  ng-click="openModal(null, 'Lab Contact')"><i class="icon-plus-2"></i>Add Lab Contact</a><div class="clearfix"></div></h2>
+<p ng-if="!contacts && PI">{{PI.User.Name}} has no lab contacts.</p>
+<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" >
     <thead>
-        <tr>
+        <tr ng-if="contacts.length">
             <th>Remove User</th><th>Deactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Emergency Phone</th><th>Edit</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="user in PI.LabPersonnel | filter: active">
+        <tr ng-repeat="user in (contacts = (PI.LabPersonnel | isLabContact | activeOnly))">
             <td width="14%">
                 <a class="btn btn-warning btn-large left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
@@ -39,20 +40,21 @@
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/contacts?piId={{PI.Key_id}}&contactId={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary btn-large left" ng-click="openModal(user)"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI">Lab Personnel<a class="btn btn-success left" href="UserHub.php#/labPersonnel?piId={{PI.Key_id}}&personnelId=null"><i class="icon-plus-2"></i>Add Lab Personnel</a></h2>
-<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" ng-if="PI">
+<h2 ng-if="PI">Lab Personnel<a class="btn btn-success left" ng-click="openModal(null, 'Lab Personnel')"><i class="icon-plus-2"></i>Add Lab Personnel</a></h2>
+<h3 ng-if="!personnel.length" >{{PI.User.Name}} has no lab personnel.</h3>
+<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>
-        <tr>
+        <tr ng-if="personnel.length">
             <th>Remove User</th><th>Deactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="user in PI.LabPersonnel | isContact">
+        <tr ng-repeat="user in (personnel = (PI.LabPersonnel | isNotContact))">
             <td width="14%">
                 <a class="btn btn-warning btn-large left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
@@ -62,11 +64,11 @@
                     <i class="icon-remove"></i>Deactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary btn-large left" href="UserHub.php#/personnel?piId={{PI.Key_id}}&contactId={{user.Key_id}}"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary btn-large left" ng-click="openModal(user)"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>
-
+</span>
 
 <!-- confirmation modal-->
 <script type="text/ng-template" id="confirmationModal.html">
@@ -78,117 +80,8 @@
         <h3>{{message}}</h3>
     </div>
     <div class="modal-footer">
-        <img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-        <a ng-if="userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
-        <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+        <i ng-if="userCopy.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+        <a ng-if="userCopy.Key_id" class="btn btn-success left btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
+        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
 </script>
-
-<!-- user edit modal -->
-<script type="text/ng-template" id="personnelModal.html">
-    <div class="modal-header" style="padding:0;" class="">
-        <h2 style="padding:5px" ng-show="userCopy.Key_id" class="greenBg">Editing {{userCopy.Name}}</h2>
-        <h2 style="padding:5px" ng-hide="userCopy.Key_id" class="greenBg">Create a New Lab Contact</h2>
-    </div>
-    <div class="modal-body">
-        <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-        <form class="form-horizontal form">
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">Username</label>
-             <div class="controls">
-                 <div class="input-append">
-                 <input type="text" ng-if="isProductionServer && !userCopy.Username" id="inputEmail" ng-model="userCopy.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser()"><i class="icon-search"></i></a>
-                  <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
-              </div>
-                <input type="text" ng-if="!isProductionServer || userCopy.Username" id="inputEmail" disabled="disabled" ng-model="userCopy.Username" placeholder="Username">
-                 <input type="hidden" ng-model="userCopy.Username"/>
-             </div>
-            </div>
-
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">First Name</label>
-             <div class="controls">
-                 <input type="text" id="inputEmail" ng-model="userCopy.First_name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="First Name">
-                <input type="text" id="inputEmail" ng-model="userCopy.First_name" ng-if="!isProductionServer || userCopy.Username" placeholder="First Name">
-             </div>
-            </div>
-
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">Last Name</label>
-             <div class="controls">
-                 <input type="text" id="inputEmail" ng-model="userCopy.Last_name" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="Last Name">
-                <input type="text" id="inputEmail" ng-model="userCopy.Last_name" ng-if="!isProductionServer || userCopy.Username" placeholder="Last Name">
-             </div>
-            </div>
-
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">Email</label>
-             <div class="controls">
-                <input type="text" id="inputEmail" ng-model="userCopy.Email" ng-if="isProductionServer && !userCopy.Username" disabled="disabled" placeholder="Email">
-                <input type="text" id="inputEmail" ng-model="userCopy.Email" ng-if="!isProductionServer || userCopy.Username" placeholder="Email">
-             </div>
-            </div>
-            <!--
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">Lab Phone</label>
-             <div class="controls">
-                <input type="text" id="inputEmail" ng-model="userCopy.Lab_phone" placeholder="Lab Phone" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-                <input type="text" id="inputEmail" ng-model="userCopy.Lab_phone" placeholder="Lab Phone" ng-if="!isProductionServer || userCopy.Username">
-
-             </div>
-            </div>
-            -->
-            <div class="control-group">
-             <label class="control-label" for="inputEmail">Emergency Phone</label>
-             <div class="controls">
-                 <input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Emergency Phone" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-                <input type="text" id="inputEmail" ng-model="userCopy.Emergency_phone" placeholder="Emergency Phone" ng-if="!isProductionServer || userCopy.Username">
-             </div>
-            </div>
-
-             <div class=""style="padding:3px 0">
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Principal Investigator</label>
-                 <div class="controls">
-                    <input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="userCopy.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-                       <input style="" class="span4" placeholder="Select A PI"  typeahead-on-select='onSelectPI($item, $model, $label)' type="text" ng-model="userCopy.Supervisor" typeahead="pi as pi.User.Name for pi in pis | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-
-                </div>
-            </div>
-
-            <div class="" style="padding:3px 0;">
-            <!--
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Roles(s)</label>
-                 <div class="controls">
-                    <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-                    <input style="" class="span4" placeholder="Select A Role"  typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-                    <img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-
-                    <ul style="margin-top:3px;">
-                        <li ng-repeat="role in userCopy.Roles"><a class="btn btn-danger btn-mini" ng-click="removeRole(role)"><i class="icon-cancel"></i></a>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-                        </li>
-                    </ul>
-               </div>
-            -->
-            </div>
-
-              <div class=""style="padding:3px 0">
-                <div  class="control-group">
-                 <label class="control-label" for="inputEmail">Department</label>
-                 <div class="controls">
-                    <input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="userCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !userCopy.Username" disabled="disabled">
-                    <input style="" class="span4" placeholder="Select A Department"  typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="userCopy.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
-
-                    <img ng-show="selectedDepartment.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <img ng-show="userCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-        <a ng-if="userCopy.Key_id" class="btn btn-success hazardBtn btn-large" ng-click="saveUser()"><i class="icon-checkmark"></i>Save</a>
-           <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
-    </div>
-    </script>
-

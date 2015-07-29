@@ -73,7 +73,8 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBa
     return factory;
 });
 
-piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory){
+piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
+    //console.log(modalCtrl($scope, userHubFactory, $modalInstance, convenienceMethods, $q));
     $scope.doneLoading = false;
 
     $scope.setRoute = function(route){
@@ -250,6 +251,20 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         });
     }
 
+    $scope.openModal = function(pi){
+        var user = pi.User
+        userHubFactory.setModalData(user);
+
+        var modalInstance = $modal.open({
+          templateUrl: 'userHubPartials/piModal.html',
+          controller: modalCtrl
+        });
+
+        modalInstance.result.then(function (returnedUser) {
+            angular.extend(user, returnedUser)
+        });
+    }
+
   };
 
 var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods, piHubFactory, $q) {
@@ -401,17 +416,16 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 
 }
 
-piHubPersonnelController = function($scope, $location, convenienceMethods, $modal, piHubFactory){
+piHubPersonnelController = function($scope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
+
     init();
     function init(){
         var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
         convenienceMethods.getData( url, onGetUsers, onFailGetUsers );
-
     }
 
     function onGetUsers(data){
         $scope.users = data;
-
     }
 
     function onFailGetUsers(){
@@ -516,6 +530,52 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 
     function onFailRemoveUser(){
         alert('There was a problem trying to save the user.');
+    }
+
+    $scope.openModal = function(user, role){
+        if(!user){
+          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+          userHubFactory.getAllRoles()
+            .then(
+                function(roles){
+                    var i = userHubFactory.roles.length;
+                    while(i--){
+                        if(userHubFactory.roles[i].Name.indexOf(role)>-1)user.Roles.push(userHubFactory.roles[i]);
+                        break;
+                    }
+                    return user;
+                }
+            ).then(fireModal);
+
+        }else{
+            fireModal(user);
+        }
+
+        function fireModal(user){
+            userHubFactory.setModalData(user);
+
+            //determine which modal we should open based on the user's role(s)
+            if(userHubFactory.hasRole(user, "Principal Investigator")){
+                templateString = "piModal";
+            }else if(userHubFactory.hasRole(user, "Lab Contact")){
+                templateString = "labContactModal";
+            }else{
+                templateString = "labPersonnelModal";
+            }
+
+            var modalInstance = $modal.open({
+              templateUrl: 'userHubPartials/'+templateString+'.html',
+              controller: modalCtrl
+            });
+
+            modalInstance.result.then(function (returnedUser) {
+              if(user.Key_id){
+                angular.extend(user, returnedUser)
+              }else{
+                pi.LabPersonnel.push(returnedUser);
+              }
+            });
+        }
     }
 
 }
