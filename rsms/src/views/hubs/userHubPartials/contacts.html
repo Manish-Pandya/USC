@@ -5,7 +5,7 @@
                 <h1 class="greenBg">Lab Contacts</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
-                          <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
+                         <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                          <span ng-show="showInactive">Show Active Contacts</span>
                          <span ng-hide="showInactive">Show Inactive Contacts</span>
                      </a>
@@ -42,7 +42,7 @@
 
     <tbody>
         <tr ng-repeat="contact in (filtered = (LabContacts | isLabContact | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
-            <td style="width:12%;">
+            <td style="width:9%;">
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0"><i class="icon-remove"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0"><i class="icon-checkmark"></i></button>
@@ -60,10 +60,10 @@
                 <a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.PrincipalInvestigator.Key_id" once-text="contact.Supervisor.Name"></a>
             </td>
 
-            <td style="width:14%;">
+            <td style="width:17%;">
                 {{contact.Primary_department.Name}}
             </td>
-            
+
             <td style="width:10%;">
                 {{contact.Email}}
             </td>
