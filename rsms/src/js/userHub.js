@@ -62,14 +62,14 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return pis;
   }
 }])
-.filter('isPersonnel',['userHubFactory', function(userHubFactory){
+.filter('isEHSPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
     var personnel = [];
     var i = users.length
     while(i--){
       var shouldPush = false;
-      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation') || userHubFactory.hasRole(users[i], 'read only')){
+      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
         shouldPush = true;
       }
 
@@ -81,6 +81,20 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         }
       }
       if(shouldPush)personnel.unshift(users[i]);
+    }
+    return personnel;
+  }
+}])
+.filter('isNotContact',['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+    var i = users.length
+    while(i--){
+      if( !userHubFactory.hasRole(users[i], 'contact') && userHubFactory.hasRole(users[i], 'personnel') ){
+        userHubFactory.getSupervisor(users[i]);
+        personnel.unshift(users[i]);
+      }
     }
     return personnel;
   }
@@ -108,6 +122,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
       if( userHubFactory.hasRole(users[i], 'personnel') || userHubFactory.hasRole(users[i], 'contact') ){
         userHubFactory.getSupervisor(users[i]);
         personnel.unshift(users[i]);
+        if( userHubFactory.hasRole(users[i], 'contact') )users[i].isContact = true;
       }
     }
     return personnel;
@@ -138,6 +153,14 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return uncat;
   }
 }])
+.filter('tel', function () {
+    return function (phoneNumber) {
+        if (!phoneNumber)
+            return phoneNumber;
+
+        return formatLocal('US', phoneNumber);
+    }
+})
 .factory('userHubFactory', function(convenienceMethods,$q, $rootScope, roleBasedFactory){
 
   var factory = {};
@@ -225,7 +248,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         if(factory.users[i].PrincipalInvestigator && factory.users[i].PrincipalInvestigator.Key_id == id)return factory.users[i];
       }
   }
-  
+
   factory.getUserId = function(id){
       var i = factory.users.length;
       while(i--){
@@ -897,7 +920,7 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q){
 
-    $scope.modalError=""
+    $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
     $scope.order="Last_name";
@@ -916,8 +939,8 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             }
         }
     }
-    
-    
+
+
     userHubFactory.getAllRoles()
       .then(
         function(roles){
@@ -960,6 +983,13 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
           .then(
               function(){
                 user.Roles.push(role);
+                //all lab contacts are also lab personnel.  Server side application logic automatically adds the role, but saveUserRoleRelation on the server only returns a boolean, so we add here as well
+                if(role.Name == "Lab Contact"){
+                    var i = userHubFactory.roles.length;
+                    while(i--){
+                        if(userHubFactory.roles[i].Name.indexOf('Lab Personnel')>-1)user.Roles.push(userHubFactory.roles[i]);
+                    }
+                }
                 if(user.Is_incategorized){
                   userHubFactory.placeUser(user);
                 }
@@ -1124,15 +1154,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     function saveUser( userDto )
     {
-      /*
-        var i = userHubFactory.users.length;
-        while(i--){
-          if( !userDto.Key_id && userHubFactory.users[i].Username && userDto.Username.toLowerCase() == userHubFactory.users[i].Username.toLowerCase()){
-            $scope.modalError='This username is already taken by another user in the system.';
-            return;
-          }
-        }
-        */
         return userHubFactory.saveUser( userDto )
           .then(
             function( returnedUser ){
@@ -1247,7 +1268,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         return userHubFactory.savePIDepartmentRelations(pi.PrincipalInvestigator.Key_id, newDepartmentIds)
           .then(
             function(){
-              console.log('saved dept')
               return pi;
             },
             function(){
