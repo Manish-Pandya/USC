@@ -66,7 +66,6 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
             }
 
             while(i--){
-
                 //we filter for every set search filter, looping through the collection only once
                 var item=items[i];
                 item.matched = true;

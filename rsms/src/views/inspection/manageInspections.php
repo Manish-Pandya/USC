@@ -17,8 +17,8 @@ require_once '../top_view.php';
         <li class="">
             <img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 0px;">Manage Inspections
-                {{filtered.length}} Inspections Displayed
                 <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                <span style="float:right;" ng-if="filtered">{{filtered.length}} Inspections Displayed</span>
             </h2>
         </li>
     </ul>
@@ -31,7 +31,7 @@ require_once '../top_view.php';
           <option value="">-- select year --</option>
       </select>
 
-    <table ng-if="dtos" class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
+    <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
             <tr>
@@ -65,6 +65,7 @@ require_once '../top_view.php';
                         <option value="not scheduled">Not Scheduled</option>
                         <option value="scheduled">Scheduled</option>
                         <option value="pending">Pending</option>
+                        <option value="overdue for inspection">Overdue for Inspection</option>
                         <option value="complete">Complete</option>
                     </select>
                 </th>
@@ -89,7 +90,9 @@ require_once '../top_view.php';
                         NOT SCHEDULED
                     </span>
                     <span ng-if="dto.Inspection_id">
-                        <span ng-if="dto.Inspections.Date_started">{{dto.Inspections.Schedule_month}}</span>
+                        <span ng-if="dto.Inspections.Date_started">
+                            <span ng-repeat="month in months" ng-if="month.val==dto.Inspections.Schedule_month">{{month.string}}</span>
+                        </span>
                         <select ng-if="!dto.Inspections.Date_started && rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, selectedYear )" >
                             <option value="">-- select month --</option>
                             <option ng-selected="month.val==dto.Inspections.Schedule_month" ng-repeat="month in months" value="{{month.val}}">{{month.string}}</option>
@@ -176,7 +179,7 @@ require_once '../top_view.php';
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
                 </td>
             </tr>
-</tbody>
+        </tbody>
     </table>
 </div>
 
