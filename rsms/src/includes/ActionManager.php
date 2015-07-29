@@ -1918,8 +1918,7 @@ class ActionManager {
                 // if add is true, add this role to this USER
                 if ($add){
                     if(!in_array($roleToAdd, $roles)){
-                        // only add the role if the user doesn't already have it
-                        $dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+                        
                         //add PI record if role is PI
                         if($roleToAdd->getName() == 'Principal Investigator'){
                             //if the user already has a PI, get that PI
@@ -1946,8 +1945,34 @@ class ActionManager {
                             }
                             if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
                         }
+                        
+                        //All Lab Contacts are also Lab Personnel, so make sure Lab Contacts have that role as well
+                        if($roleToAdd->getName() == 'Lab Contact'){
+                        	$addContact = true;
+                        	foreach($roles as $role){
+                        		if($role->getName() == 'Lab Personnel') $addContact = false;
+                        	}
+                        	if($addContact == true){
+                        		$allRoles = $this->getAllRoles();
+                        		foreach($allRoles as $role){
+                        			if($role->getName() == "Lab Personnel"){
+                        				$labPersonnelKeyid = $role->getKey_id();
+                        				break;
+                        			}
+                        		}
+	                        	$personnelRelation = new RelationshipDto();
+	                        	$personnelRelation->setAdd(true);
+	                        	$personnelRelation->setMaster_id($userID);
+	                        	$personnelRelation->setRelation_id($roleId);
+	                        	$LOG->fatal($personnelRelation);
+	                        	$dao->addRelatedItems($labPersonnelKeyid,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+                        	}
+                        }
+                        
+                        // only add the role if the user doesn't already have it
+                        $dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
                     }
-                    // if add is false, remove this role from this PI
+                // if add is false, remove this role from this PI
                 } else {
                     $dao->removeRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
                     if($roleToAdd->getName() == 'Principal Investigator'){
