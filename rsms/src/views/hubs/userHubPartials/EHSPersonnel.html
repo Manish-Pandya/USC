@@ -32,7 +32,7 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="contact in (filtered = (Admins | isPersonnel | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
+        <tr ng-repeat="contact in (filtered = (Admins | isEHSPersonnel | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))">
             <td style="width:12%;">
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0"><i class="icon-remove"></i></button>
