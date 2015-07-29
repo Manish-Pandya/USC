@@ -3457,3 +3457,7 @@ button.btn-large{
     display:block;
    float:none;
 }
+button.btn-mini i {
+    margin: 3px 0px 0px -2px !important;
+}
+.modal ul .btn{margin-top: 2px;}
