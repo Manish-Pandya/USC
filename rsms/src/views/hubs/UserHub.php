@@ -23,7 +23,7 @@ require_once '../top_view.php';
             <select ng-model="selectedRoute" ng-change="setRoute()" id="route">
               <option value="/pis">Principal Investigators</option>
               <option value="/contacts">Laboratory Contacts</option>
-              <option value="/labPersonnel">Lab Personnel</option>
+              <option value="/labPersonnel">Laboratory Personnel</option>
               <option value="/EHSPersonnel">EHS Personnel</option>
               <option value="/uncategorized">Uncategorized Users</option>
            </select>
