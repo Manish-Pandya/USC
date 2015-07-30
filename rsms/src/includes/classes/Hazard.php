@@ -19,6 +19,8 @@ class Hazard extends GenericCrud {
 		//checklist is a relationship
 		//rooms are relationships
 		"order_index" => "text",
+		
+		"is_equipment" => "boolean",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -83,6 +85,9 @@ class Hazard extends GenericCrud {
 	
 	/** Boolean to indicate whether this Hazard has relationships with any Rooms that have more than 1 PrincipalInvestigator */
 	private $hasMultiplePIs;
+	
+	/** Boolean to indicate whether this Hazard is a piece of equipment **/
+	private $is_equipment;
 
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -289,6 +294,16 @@ class Hazard extends GenericCrud {
 			if(count($this->getPrincipalInvestigators()) > 1) $this->hasMultiplePIs = true;
 		}
 		return $this->hasMultiplePIs;
+	}
+	
+	public function getIs_equipment()
+	{
+		return $this->is_equipment;
+	}
+	
+	public function setIs_equipment($is_equipment)
+	{
+		$this->is_equipment = $is_equipment;
 	}
 }
 
