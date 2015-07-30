@@ -992,6 +992,16 @@ class ActionManager {
         else{
             $dao = $this->getDao(new Room());
             $decodedObject = $dao->save($decodedObject);
+            
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+            $entityMaps[] = new EntityMap("lazy","getHazards");
+            $entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
+            $entityMaps[] = new EntityMap("lazy","getHas_hazards");
+            $entityMaps[] = new EntityMap("eager","getBuilding");
+            $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+            $decodedObject->setEntityMaps($entityMaps);
+            
             return $decodedObject;
         }
     }
