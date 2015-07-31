@@ -419,7 +419,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
     $scope.openRoomModal = function(room){
 
         if(!room)room = {Is_active: true, Class:'Room', Name:'', Building:{Name:''}};
-
+        locationHubFactory.setModalData(null);
         locationHubFactory.setModalData(room);
 
         var modalInstance = $modal.open({
@@ -558,6 +558,7 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
             .then(
                 function(pis){
                     $scope.pis = pis;
+                    $scope.pis.selected = false;
                 }
             )
     }
