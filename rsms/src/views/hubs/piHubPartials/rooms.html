@@ -1,3 +1,5 @@
+<h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !PI.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!PI.Is_active">(Inactive)</span></h3>
+
 <div class="container loading" ng-hide="noPiSet" ng-if="!PI || !PI.Rooms">
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Rooms...</span>

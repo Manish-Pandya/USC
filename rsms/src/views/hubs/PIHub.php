@@ -46,7 +46,7 @@ require_once '../top_view.php';
             <a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inspection</a>
         </div>
     </span>
-    <h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !PI.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!PI.Is_active">(Inactive)</span></h3>
+    
     <ng-view></ng-view>
 
 
