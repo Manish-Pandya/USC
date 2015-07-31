@@ -792,7 +792,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
       $rootScope.pendings = pendings;
       $rootScope.completes = completes;
-      if(pendings + completes == totals){
+      if(totals > 0 && (endings + completes == totals)){
         if($rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00')$scope.readyToSubmit = true;
         var modalInstance = $modal.open({
           templateUrl: 'post-inspection-templates/submit-cap.html',
