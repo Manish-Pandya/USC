@@ -21,12 +21,12 @@
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI">Lab Contacts<a class="btn btn-success left"  ng-click="openModal(null, 'Lab Contact')"><i class="icon-plus-2"></i>Add Lab Contact</a><div class="clearfix"></div></h2>
+<h2 ng-if="PI">Lab Contact(s)<a class="btn btn-success left"  ng-click="openModal(null, 'Lab Contact')"><i class="icon-plus-2"></i>Add Lab Contact</a><div class="clearfix"></div></h2>
 <p ng-if="!contacts && PI">{{PI.User.Name}} has no lab contacts.</p>
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" >
     <thead>
         <tr ng-if="contacts.length">
-            <th>Remove User</th><th>Deactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Emergency Phone</th><th>Edit</th>
+            <th>Remove User</th><th>Inactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Emergency Phone</th><th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -37,7 +37,7 @@
             </td>
             <td width="18%">
                 <a class="btn btn-danger btn-large left" ng-click="confirmRemoveUser(user)">
-                    <i class="icon-remove"></i>Deactivate</a>
+                    <i class="icon-remove"></i>Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
             <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary btn-large left" ng-click="openModal(user)"><i class="icon-pencil"></i>Edit</a></td>
@@ -45,12 +45,12 @@
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI">Lab Personnel<a class="btn btn-success left" ng-click="openModal(null, 'Lab Personnel')"><i class="icon-plus-2"></i>Add Lab Personnel</a></h2>
-<h3 ng-if="!personnel.length" >{{PI.User.Name}} has no lab personnel.</h3>
+<h2 ng-if="PI">Lab Member(s)<a class="btn btn-success left" ng-click="openModal(null, 'Lab Personnel')"><i class="icon-plus-2"></i>Add Lab Member</a></h2>
+<h3 ng-if="!personnel.length" >{{PI.User.Name}} has no lab members.</h3>
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>
         <tr ng-if="personnel.length">
-            <th>Remove User</th><th>Deactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th>
+            <th>Remove User</th><th>Inactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -61,7 +61,7 @@
             </td>
             <td width="18%">
                 <a class="btn btn-danger btn-large left" ng-click="confirmRemoveUser(user)">
-                    <i class="icon-remove"></i>Deactivate</a>
+                    <i class="icon-remove"></i>Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />
             </td>
             <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary btn-large left" ng-click="openModal(user)"><i class="icon-pencil"></i>Edit</a></td>
