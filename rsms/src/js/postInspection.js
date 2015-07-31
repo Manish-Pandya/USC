@@ -592,7 +592,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
 
             //see if the inspection report is ready for the lab to submit to EHS (do all deficiencies have at least pending corrective action)
-            getIsReadyToSubmit();
+            if($rootScope.rbf.getHasPermission([$rootScope.R["Principal Investigator"], $rootScope.R["Lab Contact"]]))getIsReadyToSubmit();
           });
       }else{
         $scope.inspection = postInspectionFactory.getInspection();
@@ -600,7 +600,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
         $scope.doneLoading = true;
         postInspectionFactory.getHotWipes($scope.inspection);
-        getIsReadyToSubmit();
+         if($rootScope.rbf.getHasPermission([$rootScope.R["Principal Investigator"], $rootScope.R["Lab Contact"]]))getIsReadyToSubmit();
       }
       $scope.options = ['Incomplete','Pending','Complete'];
     }else{
@@ -714,7 +714,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       }else{
           def.CorrectiveActions.push(returnedCA);
       }
-      getIsReadyToSubmit();
+       if($rootScope.rbf.getHasPermission([$rootScope.R["Principal Investigator"], $rootScope.R["Lab Contact"]]))getIsReadyToSubmit();
     });
   }
 
@@ -792,7 +792,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
       $rootScope.pendings = pendings;
       $rootScope.completes = completes;
-      if(totals > 0 && (endings + completes == totals)){
+      $rootScope.totals    = totals;
+      if(pendings + completes == totals || totals == 0){
         if($rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00')$scope.readyToSubmit = true;
         var modalInstance = $modal.open({
           templateUrl: 'post-inspection-templates/submit-cap.html',
