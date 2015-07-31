@@ -124,7 +124,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 $scope.selectionChange();
             }
             $scope.$watch("selectedTitle", function(){
-                console.log('changed to ' + $scope.selectedTitle);
                 $scope.param.Other_text = $scope.selectedTitle;
             })
 
@@ -217,9 +216,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
                 }
             }
-            console.log(question);
             if (defSelection) {
-                console.log("I am saved", question.freeText);
                 //find the right DeficiencySelection and update it's other text or Is_active property
                 var i = question.Responses.DeficiencySelections.length;
                 if(question.selected){
@@ -229,7 +226,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 }
 
             } else {
-                console.log("I am NOT saved", question.freeText);
                 //no deficiency selection yet, build one
                 var defSelection = {
                     Class: "DeficiencySelection",
@@ -377,7 +373,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                 if(!responseDto.Answer)responseDto.Answer = '';
 
-                console.log(responseDto)
 
                 var deferred = $q.defer();
                 return convenienceMethods.saveDataAndDefer(url, responseDto).then(
@@ -418,9 +413,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.evaluateDeficienyShowRooms = function( id ){
                 var i = this.inspection.Deficiency_selections[2].length;
-                console.log(i);
                 while(i--){
-                    console.log(this.inspection.Deficiency_selections[2][i] + ' | ' + id)
                     if( id == this.inspection.Deficiency_selections[2][i] )return true;
                 }
                 return false;
@@ -429,11 +422,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.saveDeficiencySelection = function( deficiency, question, checklist, room )
         {
-                console.log(deficiency);
                 deficiency.IsDirty = true;
                 question.error =  '';
                 if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
-                console.log(checklist.InspectionRooms);
                 if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
                 //grab a collection of room ids
                 var i = deficiency.InspectionRooms.length;
@@ -450,8 +441,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
                     }
                 }
-                console.log(roomIds);
-
                 var defDto = {
                     Class: "DeficiencySelection",
                     RoomIds: roomIds,
@@ -490,7 +479,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                 function(returnedDeficiency){
                                     deficiency.IsDirty = false;
                                     deficiency.selected = true;
-                                    //console.log(returnedDeficiency);
                                     factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
                                     if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
                                     question.Responses.DeficiencySelections.push( returnedDeficiency );
@@ -585,7 +573,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.evaluateDeficiencyRoomChecked = function( room, question, deficiency )
         {
-            //console.log(deficiency);
             var i = question.Responses.DeficiencySelections.length;
             while(i--){
                 if( question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id ){
@@ -602,7 +589,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.copyForEdit = function( question, objectToCopy )
         {
-            console.log(objectToCopy);
             $rootScope[objectToCopy.Class+'Copy'] = convenienceMethods.copyObject( objectToCopy );
             $rootScope[objectToCopy.Class+'Copy'].edit = true;
             objectToCopy.edit = true;
@@ -619,7 +605,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.objectNullifactor = function( objectToNullify, question )
         {
-            console.log(question)
             objectToNullify.edit = false;
             question.edit = false;
             $rootScope[objectToNullify.Class] = {};
@@ -854,7 +839,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                       }
                                   }
                                   recommendation.IsDirty = false;
-                                  console.log(question.Responses);
                               },
                               function(error){
                                   recommendation.IsDirty = false;
@@ -975,7 +959,6 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
       checklistFactory.getInspection( $scope.inspId )
           .then(
               function( inspection ){
-                  console.log(inspection);
                   checklistFactory.evaluateCategories();
               },
               function( error ){
@@ -1000,7 +983,6 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
 
     //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
     function calculateClickPosition(event, deficiency, element){
-        console.log(deficiency);
         var x = event.clientX;
         var y = event.clientY+$window.scrollY;
 
@@ -1027,10 +1009,8 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
 
 function commentsController ($scope, checklistFactory, $modalInstance, convenienceMethods, $q){
   $scope.cf=checklistFactory;
-  console.log(checklistFactory);
   var pi = checklistFactory.inspection.PrincipalInvestigator;
   $scope.pi = pi;
-  console.log($scope.pi);
   $scope.piCopy = {
     Key_id: $scope.pi.Key_id,
     Is_active: $scope.pi.Is_active,
@@ -1046,7 +1026,6 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
 
   $scope.edit = function(state){
     $scope.pi.editNote = state;
-    console.log($scope.editNote);
   }
 
   $scope.saveNote = function(){
@@ -1056,7 +1035,6 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
     checklistFactory.savePi($scope.piCopy)
       .then(
         function(returnedPi){
-          console.log(returnedPi);
           angular.extend(checklistFactory.inspection.PrincipalInvestigator, returnedPi);
           $scope.savingNote = false;
           $scope.close();
