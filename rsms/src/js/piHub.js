@@ -252,9 +252,11 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
     }
 
     $scope.openModal = function(pi){
-        var user = pi.User
+        var user = pi.User;
+        // pump in PIs Departments
+        user.PrincipalInvestigator = {Departments:pi.Departments};
+        
         userHubFactory.setModalData(user);
-
         var modalInstance = $modal.open({
           templateUrl: 'userHubPartials/piModal.html',
           controller: modalCtrl
@@ -582,31 +584,6 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
             });
         }
     }
-    /*$scope.openModal = function(user,piId){
-        if(!user){
-          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
-          var i = userHubFactory.roles.length;
-          while(i--){
-            if(userHubFactory.roles[i].Name.indexOf('Lab Contact')>-1)user.Roles.push(userHubFactory.roles[i]);
-          }
-        }
-        if(!user.Supervisor_id){
-          user.Supervisor_id = piId;
-          user.Supervisor = userHubFactory.getUserByPIId($location.search().piId);
-        }
-        userHubFactory.setModalData(user);
-        var modalInstance = $modal.open({
-          templateUrl: 'userHubPartials/labContactModal.html',
-          controller: modalCtrl
-        });
-        modalInstance.result.then(function (returnedUser) {
-          if(user.Key_id){
-            angular.extend(user, returnedUser)
-          }else{
-            userHubFactory.users.push(returnedUser);
-          }
-        });
-    }*/
 
 }
 roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInstance, convenienceMethods, $q){
