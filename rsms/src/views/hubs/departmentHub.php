@@ -32,18 +32,17 @@ require_once '../top_view.php';
     </div>
 
     <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
-
         <THEAD>
             <tr>
                 <th>Edit</th>
-                <th>Departments</th>
-                <th># Principal Investigators</th>
+                <th style="text-align:center;">Departments</th>
+                <th style="text-align:center;"># Principal Investigators</th>
                 <th># Laboratory Rooms</th>
             </tr>
         </THEAD>
         <tbody>
             <tr ng-repeat="(key, department) in departments | orderBy: 'Department_name'" class="center-block" ng-class="{inactive:!department.Is_active}">
-                <td>
+                <td style="width:14%;">
                     <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a>
                     <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                         <span ng-if="department.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
@@ -51,11 +50,11 @@ require_once '../top_view.php';
                     </a>
                     <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty"/>
                 </td>
-                <td>
+                <td style="width:41%; text-align:center;">
                     {{department.Department_name}}
                 </td>
-                <td>{{department.Pi_count}}</td>
-                <td>{{department.Room_count}}</td>
+                <td style="width:27%; text-align:center;">{{department.Pi_count}}</td>
+                <td style="width:18%;">{{department.Room_count}}</td>
             </tr>
         </tbody>
     </table>
