@@ -22,7 +22,7 @@
                 <input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
             </th>
             <th>
-                Lab Room
+                Room Number
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room"/>
             </th>
             <th>
@@ -68,7 +68,7 @@
             <td  style="width:32%">
                 <ul ng-if="room.PrincipalInvestigators.length">
                     <li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
-                        <span><a once-href="'PIHub.php#/personnel?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>
+                        <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>
                         <ul>
                             <li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
                             <li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
@@ -122,7 +122,7 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputEmail">Principal Investigators</label>
+                    <label class="control-label" for="inputEmail">Lab PI</label>
                     <span ng-show="!pis" style="margin-left:5px;">
                         <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                         <i class="icon-spinnery-dealie spinner small" style="margin-left:-30px;"></i>
