@@ -548,7 +548,12 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
             ).then(fireModal);
 
         }else{
-            fireModal(user);
+            userHubFactory.getAllUsers()
+              .then(
+                function(users){
+                  return user;
+                }
+              ).then(fireModal);
         }
 
         function fireModal(user){
@@ -577,6 +582,31 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
             });
         }
     }
+    /*$scope.openModal = function(user,piId){
+        if(!user){
+          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+          var i = userHubFactory.roles.length;
+          while(i--){
+            if(userHubFactory.roles[i].Name.indexOf('Lab Contact')>-1)user.Roles.push(userHubFactory.roles[i]);
+          }
+        }
+        if(!user.Supervisor_id){
+          user.Supervisor_id = piId;
+          user.Supervisor = userHubFactory.getUserByPIId($location.search().piId);
+        }
+        userHubFactory.setModalData(user);
+        var modalInstance = $modal.open({
+          templateUrl: 'userHubPartials/labContactModal.html',
+          controller: modalCtrl
+        });
+        modalInstance.result.then(function (returnedUser) {
+          if(user.Key_id){
+            angular.extend(user, returnedUser)
+          }else{
+            userHubFactory.users.push(returnedUser);
+          }
+        });
+    }*/
 
 }
 roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInstance, convenienceMethods, $q){

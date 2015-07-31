@@ -193,8 +193,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   }
 
 
-  factory.getAllUsers = function()
-  {
+  factory.getAllUsers = function(){
     var deferred = $q.defer();
 
       //lazy load
@@ -694,7 +693,6 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
         angular.forEach(user.PrincipalInvestigator.Departments, function(department, key){
           if(typeof $scope.search.selectedDepartment == 'undefined'|| department.Name.toLowerCase().indexOf($scope.search.selectedDepartment.toLowerCase())>-1)show = true;
         });
-        console.log()
         return show;
     }
   }
@@ -919,7 +917,6 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
     }
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q){
-
     $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
@@ -929,6 +926,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
     $scope.emailErrorMsg = "Invalid email address";
     $scope.pis = userHubFactory.getPIs();
+    
     //if the user has a supervisor, set the selected PI for ui-select elements to the matching index of $scope.pis
     if($scope.modalData.Supervisor_id){
         var i = $scope.pis.length;
@@ -939,7 +937,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             }
         }
     }
-
 
     userHubFactory.getAllRoles()
       .then(
@@ -1100,7 +1097,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             if (user.Roles[i].Name == "Lab Contact" || user.Roles[i].Name == "Lab Personnel") {
                 return true;
             }
-            console.log("DIG: " + user.Roles[i].Name);
         }
         return false;
     }
