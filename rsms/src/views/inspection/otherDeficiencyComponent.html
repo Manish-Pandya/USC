@@ -2,7 +2,7 @@
     <!-- this should be here until a thing is saved-->
     <label class="checkbox inline" ng-show="!param.saved" ng-disabled="param.otherSelected">
         <input type="checkbox" ng-disabled="param.edit" ng-model="param.edit" ng-checked="checkedOnInit()"/>
-        <span class="metro-checkbox"><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="param.otherSelected" style="margin-top:0">{{unselectedTitle}}</span>
+        <span class="metro-checkbox"><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="param.otherSelected || param.edit" style="margin-top:0">{{unselectedTitle}}</span>
         </span>
     </label>
 
@@ -13,7 +13,7 @@
         </span>
     </label>
     <i class="icon-pencil primary edit" ng-click="edit()" ng-if="param.saved && !param.edit"></i>
-
+    
     <div ng-hide="!param.edit">
         <textarea required placeholder="{{textareaPlaceholder}}" rows="2" cols="50" form="form" name="textArea" ng-model="param.freeText"></textarea>
          <a class="btn btn-danger left" ng-click="cancel(false)"><i class="icon-cancel-2"></i>Cancel</a>

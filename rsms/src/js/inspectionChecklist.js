@@ -246,7 +246,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             var url = '../../ajaxaction.php?action=saveOtherDeficiencySelection';
              return convenienceMethods.saveDataAndDefer(url, defSelection).then(
                     function(returnedSelection){
-                        console.log(returnedSelection);
                         if(!question.saved){
                             question.Responses.DeficiencySelections.push(returnedSelection);
                             factory.inspection.Deficiency_selections[0].push(returnedSelection.Deficiency_id);
