@@ -128,7 +128,8 @@ class ActionManager {
                     if($username != "Principal Investigator"){
                         $user->setSupervisor_id(1);
                     }else{
-                        $user->setPrincipal_investigator_id(1);
+						$principalInvestigator = $this->getPIById(1);
+                        $user->setPrincipalInvestigator($principalInvestigator);                    
                     }
 
                     $user->setRoles($fakeRoles);
@@ -197,7 +198,6 @@ class ActionManager {
                         $user->setSupervisor_id(1);
                     }else{
                         $principalInvestigator = $this->getPIById(1);
-                        $LOG->fatal($principalInvestigator);
                         $user->setPrincipalInvestigator($principalInvestigator);
                     }
                     $user->setRoles(NULL);
