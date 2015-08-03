@@ -3,15 +3,15 @@
     <div class="leftThings">
         <button class="toggle" ng-click="toggleMinimized(child, false)">
             <span ng-if="child.HasChildren">
-        <span ng-if="!child.minimized">&#x25BC;</span><span ng-if="child.minimized">&#x25B6;</span>
+                <span ng-if="!child.minimized">&#x25BC;</span><span ng-if="child.minimized">&#x25B6;</span>
             </span>
         </button>
-        <span ng-hide="child.isBeingEdited" class="hazardName">
+        <span ng-if="!child.isBeingEdited" class="hazardName">
             <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
         </span>
 
-        <span ng-show="child.isBeingEdited">
-            <img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/><input ng-class="{invalid: child.Invalid == true}" ng-model="hazardCopy.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i><span>Save</span></a><a class="btn btn-danger" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel"></i><span>Cancel</span></a>
+        <span ng-if="child.isBeingEdited">
+            <img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/><input ng-class="{invalid: child.Invalid == true}" ng-model="hazardCopy.Name" placeholder="New Hazard" ng-click="$event.stopPropagation;" /><a class="btn btn-success left" ng-click="saveEditedHazard(child); $event.stopPropagation();"><i class="icon-checkmark"></i><span>Save</span></a><a class="btn btn-danger left" ng-click="cancelHazardEdit(child, $index); $event.stopPropagation();"><i class="icon-cancel-2"></i><span>Cancel</span></a>
         </span>
     </div>
 
@@ -60,9 +60,8 @@
     </div>
 
     <ol ng-if="!child.minimized && child.SubHazards">
-        <!--infinite-scroll infinite-scroll-distance=".5" infinite-scroll-down="setSubs(child, 'addToBottom')" infinite-scroll-bottom-on-screen="setSubs(child,'addToBottom')" infinite-scroll-top-on-screen="setSubs(child,'addToTop')" infinite-scroll-top-off-screen="setSubs(child,'removeFromTop')"-->
         <li ng-repeat="child in (filteredSubHazards = (child.SubHazards | filter: hazardFilter | orderBy: [order]))" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true" buttonGroup>
-            <span ng-include src="'hazard-hub-partial.html'" autoscroll></span>
+            <span ng-include src="'hazard-hub-partial.html'" ></span>
         </li>
     </ol>
     </li>

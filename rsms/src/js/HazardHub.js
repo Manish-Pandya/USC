@@ -6,204 +6,6 @@ hazardHub.filter('makeUppercase', function () {
   };
 });
 
-hazardHub.directive('yaTree', function () {
-
-    return {
-        restrict: 'A',
-        transclude: 'element',
-        priority: 1000,
-        terminal: true,
-        compile: function (tElement, tAttrs, transclude) {
-
-            var repeatExpr, childExpr, rootExpr, childrenExpr;
-
-            repeatExpr = tAttrs.yaTree.match(/^(.*) in ((?:.*\.)?(.*)) at (.*)$/);
-            childExpr = repeatExpr[1];
-            rootExpr = repeatExpr[2];
-            childrenExpr = repeatExpr[3];
-            branchExpr = repeatExpr[4];
-
-            return function link(scope, element, attrs) {
-                console.log(scope);
-                var rootElement = element[0].parentNode,
-                    cache = [];
-
-                // Reverse lookup object to avoid re-rendering elements
-                function lookup(child) {
-                    var i = cache.length;
-                    while (i--) {
-                        if (cache[i].scope[childExpr] === child) {
-                            return cache.splice(i, 1)[0];
-                        }
-                    }
-                }
-
-                scope.$watch("SubHazards", function (root) {
-                    var currentCache = [];
-                    // Recurse the data structure
-                    (function walk(SubHazards, parentNode, parentScope, depth) {
-                        //console.log(children);
-                        var i = 0,
-                            n = SubHazards.length - 1,
-                            last = n - 1,
-                            cursor,
-                            child,
-                            cached,
-                            childScope,
-                            grandchildren;
-
-                        // Iterate the children at the current level
-                        for (i=0; i < n; ++i) {
-
-                            // We will compare the cached element to the element in
-                            // at the destination index. If it does not match, then
-                            // the cached element is being moved into this position.
-                            cursor = parentNode.childNodes[i];
-
-                            child = SubHazards[i];
-                            //console.log(child);
-                            scope.getShowHazard(child);
-                            // See if this child has been previously rendered
-                            // using a reverse lookup by object reference
-                            cached = lookup(child);
-
-                            // If the parentScope no longer matches, we've moved.
-                            // We'll have to transclude again so that scopes
-                            // and controllers are properly inherited
-                            if (cached && cached.parentScope !== parentScope) {
-                                cache.push(cached);
-                                cached = null;
-                            }
-
-                            // If it has not, render a new element and prepare its scope
-                            // We also cache a reference to its branch node which will
-                            // be used as the parentNode in the next level of recursion
-                            if (!cached) {
-                                transclude(parentScope.$new(), function (clone, childScope) {
-
-                                    childScope[childExpr] = child;
-
-                                    cached = {
-                                        scope: childScope,
-                                        parentScope: parentScope,
-                                        element: clone[0],
-                                        branch: clone.find(branchExpr)[0]
-                                    };
-
-                                    // This had to happen during transclusion so inherited
-                                    // controllers, among other things, work properly
-                                    if (!cursor) parentNode.appendChild(cached.element);
-                                    else parentNode.insertBefore(cached.element, cursor);
-
-
-                                });
-                            } else if (cached.element !== cursor) {
-                                if (!cursor) parentNode.appendChild(cached.element);
-                                else parentNode.insertBefore(cached.element, cursor);
-
-                            }
-
-                            // Lets's set some scope values
-                            childScope = cached.scope;
-
-                            // Store the current depth on the scope in case you want
-                            // to use it (for good or evil, no judgment).
-                            childScope.$depth = depth;
-
-                            // Emulate some ng-repeat values
-                            childScope.$index = i;
-                            childScope.$first = (i === 0);
-                            childScope.$last = (i === last);
-                            childScope.$middle = !(childScope.$first || childScope.$last);
-
-                            // Push the object onto the new cache which will replace
-                            // the old cache at the end of the walk.
-                            currentCache.push(cached);
-
-                            // If the child has children of its own, recurse 'em.
-                            if(child) grandchildren = child[childrenExpr];
-
-                           // console.log(childrenExpr);
-                            if (grandchildren && grandchildren.length) {
-                                walk(grandchildren, cached.branch, childScope, depth + 1);
-                            }
-                        }
-                    })(root, rootElement, scope, 0);
-
-                    // Cleanup objects which have been removed.
-                    // Remove DOM elements and destroy scopes to prevent memory leaks.
-                    i = cache.length;
-
-                    while (i--) {
-                        cached = cache[i];
-                        if (cached.scope) {
-                            cached.scope.$destroy();
-                        }
-                        if (cached.element) {
-                            cached.element.parentNode.removeChild(cached.element);
-                        }
-                    }
-
-                    // Replace previous cache.
-                    cache = currentCache;
-
-                }, true);
-            };
-        }
-    };
-});
-/*
-
-hazardHub.directive('uiNestedSortable', ['$parse', function ($parse) {
-
-    'use strict';
-
-    var eventTypes = 'Create Begin Sort Change BeforeStop Stop Update Receive Remove Over Out Activate Deactivate'.split(' ');
-
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-
-            var options = attrs.uiNestedSortable ? $parse(attrs.uiNestedSortable)() : {};
-
-            angular.forEach(eventTypes, function (eventType) {
-
-                var attr = attrs['uiNestedSortable' + eventType],
-                    callback;
-
-                if (attr) {
-
-                    callback = $parse(attr);
-                    options[eventType.charAt(0).toLowerCase() + eventType.substr(1)] = function (event, ui) {
-                        scope.$apply(function () {
-                            callback(scope, {
-                                $event: event,
-                                $ui: ui
-                            });
-                        });
-                    };
-                }
-
-            });
-
-            //note the item="{{child}}" attribute on line 17
-            options.isAllowed = function(item, parent) {
-                if (!parent) return false;
-                var attrs = parent.context.attributes;
-                parent = attrs.getNamedItem('item');
-                attrs = item.context.attributes;
-                item = attrs.getNamedItem('item');
-               // console.log(item, parent);
-                //if ( ... ) return false;
-               return true;
-                };
-            element.nestedSortable(options);
-
-        }
-    };
-}]);
-
-*/
 hazardHub.directive('buttongroup', ['$window', function($window) {
     return {
         restrict: 'A',
@@ -291,12 +93,19 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     }
 
     $scope.toggleMinimized = function (child, adding) {
+        $scope.error = null;
         $scope.openedHazard = child;
         child.minimized = !child.minimized;
         if(!child.SubHazards){
             child.loadingChildren = true;
-            if(adding)convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK', onGetSubhazards, onFailGetSubhazards, child, adding);
-            if(!adding)convenienceMethods.getData('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK', onGetSubhazards, onFailGetSubhazards, child);
+            convenienceMethods.getDataAsDeferredPromise('../../ajaxaction.php?action=getHazardTreeNode&id='+child.Key_id+'&callback=JSON_CALLBACK')
+                .then(function(subs){
+                    child.SubHazards = subs;
+                    child.loadingChildren = false;
+                }, function(){
+                    child.loadingChildren = false;
+                    $scope.error = "There was a problem loading the list of Subhazard for " +child.Name+ ".  Please check your internet connection."
+                });
         }
     };
 
@@ -304,19 +113,17 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     //call back for asynch loading of a hazard's suhazards
     function onGetSubhazards (data, hazard, adding){
         hazard.loadingChildren = false;
-        console.log(data);
 
         hazard.SubHazardsHolder = data;
         hazard.numberOfPossibleSubs = hazard.SubHazardsHolder.length;
         hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].lastSub = true;
 
-        console.log( hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].Name);
+      //  //console.log( hazard.SubHazardsHolder[hazard.SubHazardsHolder.length-1].Name);
         $scope.openedHazard = hazard;
 
-        var counter = Math.min(hazard.SubHazardsHolder.length-1, 2000 );
-        if(adding)buildSubsArray(hazard, 0, counter, adding);
-        if(!adding)buildSubsArray(hazard, 0, counter);
-       // sorticus(hazard,adding);
+       // var counter = Math.min(hazard.SubHazardsHolder.length-1, 2000 );
+       // if(adding)buildSubsArray(hazard, 0, counter, adding);
+        //if(!adding)buildSubsArray(hazard, 0, counter);
 
     }
 
