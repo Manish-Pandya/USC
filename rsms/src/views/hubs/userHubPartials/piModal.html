@@ -69,7 +69,7 @@
             <div>
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Roles(s)</label>
-                    <div class="controls span4">
+                    <div class="controls span4" style="padding-left: 5px;">
                         <input placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
                         <ui-select direction="up" ng-if="!isProductionServer || modalData.Username" ng-model="pi.selected" theme="selectize" direction="up" ng-disabled="disabled" on-select="onSelectRole($item, $model, $label)">
                             <ui-select-match placeholder="Select or search for a Role">{{$select.selected.Name}}</ui-select-match>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Department</label>
-                    <div class="controls span4">
+                    <div class="controls span4" style="padding-left: 5px;">
                         <input style=""  placeholder="Select A Department" typeahead-on-select='onAddDepartmentToPi($item, $model, $label)' type="text" ng-model="selectedDepartment" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
                          <ui-select direction="up" ng-if="!isProductionServer || modalData.Username" ng-model="pi.selected" theme="selectize" direction="up" ng-disabled="disabled" on-select="onAddDepartmentToPi($item, $model, $label)">
                             <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>

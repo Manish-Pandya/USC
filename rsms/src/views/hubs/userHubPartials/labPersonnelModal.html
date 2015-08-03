@@ -54,7 +54,7 @@
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Principal Investigator</label>
-                <div class="controls span4">
+                <div class="controls span4" style="padding-left: 5px;">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
 
                     <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)">
@@ -67,7 +67,7 @@
             </div>
            <div class="control-group">
                 <label class="control-label" for="inputEmail">Roles(s)</label>
-                <div class="controls span4">
+                <div class="controls span4" style="padding-left: 5px;">
                     <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
                     <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
@@ -86,7 +86,7 @@
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Department</label>
-                <div class="controls span4">
+                <div class="controls span4" style="padding-left: 5px;">
                     <input style="" class="span4" placeholder="Select A Department" typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
                     <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectDepartment($item, $model, $label)">
