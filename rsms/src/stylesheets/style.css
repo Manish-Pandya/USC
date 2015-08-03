@@ -3461,3 +3461,21 @@ button.btn-mini i {
     margin: 3px 0px 0px -2px !important;
 }
 .modal ul .btn{margin-top: 2px;}
+
+/**** disabled button style overrides **/
+.btn-danger.disabled, .btn-danger[disabled] {
+    background-color: rgb(193, 103, 98);
+    border-color: #CA655F;
+}
+.btn-primary.disabled, .btn-primary[disabled] {
+    background-color: #88419C;
+    border-color: #88419C;
+}
+.btn-warning.disabled, .btn-warning[disabled] {
+    background-color: #F5B55A;
+    border-color: #F5B55A;
+}
+.btn-info.disabled, .btn-info[disabled] {
+    background-color: #56A1B7;
+    border-color: #56A1B7;
+}
