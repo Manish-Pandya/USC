@@ -255,7 +255,6 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         var user = pi.User;
         // pump in PIs Departments
         user.PrincipalInvestigator = {Departments:pi.Departments};
-        
         userHubFactory.setModalData(user);
         var modalInstance = $modal.open({
           templateUrl: 'userHubPartials/piModal.html',
@@ -424,6 +423,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
     function init(){
         var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
         convenienceMethods.getData( url, onGetUsers, onFailGetUsers );
+        userHubFactory.getAllUsers();
     }
 
     function onGetUsers(data){
@@ -537,30 +537,38 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
     $scope.openModal = function(user, role){
         if(!user){
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
-          userHubFactory.getAllRoles()
-            .then(
-                function(roles){
-                    var i = userHubFactory.roles.length;
-                    while(i--){
-                        if(userHubFactory.roles[i].Name.indexOf(role)>-1)user.Roles.push(userHubFactory.roles[i]);
-                        break;
+          getUsers()
+          .then(
+              userHubFactory.getAllRoles()
+                .then(
+                    function(roles){
+                        console.log(roles);
+                        var i = userHubFactory.roles.length;
+                        while(i--){
+                            if(userHubFactory.roles[i].Name.indexOf(role)>-1)user.Roles.push(userHubFactory.roles[i]);
+                            break;
+                        }
+                        return user;
                     }
-                    return user;
-                }
-            ).then(fireModal);
-
+                )
+            )
+          .then(fireModal);
         }else{
-            userHubFactory.getAllUsers()
+            getUsers()
+            .then(fireModal);
+        }
+
+        function getUsers(){
+            return userHubFactory.getAllUsers()
               .then(
                 function(users){
                   return user;
                 }
-              ).then(fireModal);
+              )
         }
 
         function fireModal(user){
             userHubFactory.setModalData(user);
-
             //determine which modal we should open based on the user's role(s)
             if(userHubFactory.hasRole(user, "Principal Investigator")){
                 templateString = "piModal";
