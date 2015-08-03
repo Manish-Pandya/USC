@@ -19,7 +19,6 @@ class Hazard extends GenericCrud {
 		//checklist is a relationship
 		//rooms are relationships
 		"order_index" => "text",
-		
 		"is_equipment" => "boolean",
 
 		//GenericCrud
@@ -103,7 +102,6 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getHasChildren");
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-		
 		
 		$this->setEntityMaps($entityMaps);
 
@@ -275,8 +273,6 @@ class Hazard extends GenericCrud {
 	}
 
 	public function getPrincipalInvestigators(){
-		$LOG = Logger::getLogger(__Class__);
-		$LOG->fatal($this->inspectionRooms);
 		if($this->principalInvestigators == NULL){
 			if($this->inspectionRooms == NULL){
 				$this->principalInvestigators = NULL;
@@ -298,10 +294,9 @@ class Hazard extends GenericCrud {
 	
 	public function getIs_equipment()
 	{
-		return $this->is_equipment;
-	}
-	
-	public function setIs_equipment($is_equipment)
+		return (bool) $this->is_equipment;
+	}	
+	public function setIs_equipment(Boolean  $is_equipment)
 	{
 		$this->is_equipment = $is_equipment;
 	}
