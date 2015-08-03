@@ -33,9 +33,9 @@ require_once '../top_view.php';
                 <form class="row form-inline" style="margin-left:0" ng-if="!showingHazards">
                     <span ng-if="searchType == 'location'">
                         <label>Building Name or Physical Address:</label>
-                            <ui-select ng-if="buildings" ng-show="!PI || selectPI" style="width:350px;" ng-model="building.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectBuilding($item)">
+                            <ui-select ng-if="buildings" ng-show="!PI || selectPI" style="width:350px !important;" ng-model="building.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectBuilding($item)">
                                 <ui-select-match placeholder="Select Buidling">{{$select.selected.Name}}</ui-select-match>
-                                <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
+                                <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search} | filter: {Is_active: true}">
                                   <div ng-bind-html="building.Name | highlight: $select.search"></div>
                                 </ui-select-choices>
                             </ui-select>
@@ -62,14 +62,14 @@ require_once '../top_view.php';
                         <ui-select ng-if="pis" style="width:350px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectPI($item)">
                             <ui-select-match placeholder="Select Principal Investigator">{{$select.selected.User.Name}}</ui-select-match>
                             <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
-                              <div ng-bind-html="pi.User.Name | highlight: $select.search" class="test">hey, you</div>
+                              <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
                         <input ng-if="!pis" style="width:280px" type="text" disabled="disabled" placeholder="Getting Principal Investigators...">
                            <i ng-if="!pis" class="icon-spinnery-dealie spinner small" style="height: 23px; margin: 15px 0 0 -44px; position: absolute;"></i>
 
                         <label>Location:</label>
-                        <ui-select ng-if="rooms && !gettingRoomsForPI" style="width:450px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectRoom($item)">
+                        <ui-select ng-if="rooms && !gettingRoomsForPI" style="width:500px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectRoom($item)">
                             <ui-select-match placeholder="Select Room">{{$select.selected.roomText}}</ui-select-match>
                             <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search}">
                               <div ng-bind-html="room.roomText | highlight: $select.search"></div>

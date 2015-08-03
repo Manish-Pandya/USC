@@ -65,6 +65,12 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
     overflow-y: visible;
     position:relative;
 }
+.selectize-input>div{
+    width:90% !important;
+}
+.selectize-input>div>span{
+    font-size:14px !important;
+}
 .ui-select-container{
     text-align:left;
     position:relative;
