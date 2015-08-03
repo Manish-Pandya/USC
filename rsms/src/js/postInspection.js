@@ -893,7 +893,7 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
     //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
     var inspectionDate = Date.parse(postInspectionFactory.getInspection().view_Date_started)-864000;
     var now = new Date();
-    if(calDate>=inspectionDate){
+    if(calDate>=inspectionDate && calDate<=now.getTime()){
       return true;
     }
     return false;
