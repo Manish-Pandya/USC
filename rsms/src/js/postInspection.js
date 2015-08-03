@@ -96,10 +96,10 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
     //object with array properties to contain the checklists
     checklistHolder = {};
-    checklistHolder.biologicalHazards = {name: "Biological Saftey", checklists:[]};
-    checklistHolder.chemicalHazards = {name: "Chemical Saftey", checklists:[]};
+    checklistHolder.biologicalHazards = {name: "Biological Safety", checklists:[]};
+    checklistHolder.chemicalHazards = {name: "Chemical Safety", checklists:[]};
     checklistHolder.radiationHazards = {name: "Radiation Safety", checklists:[]};
-    checklistHolder.generalHazards = {name: "General Safety", checklists:[] };
+    checklistHolder.generalHazards = {name: "General Lab Safety", checklists:[] };
 
     //group the checklists by parent hazard
     //get the questions for each checklist and store them in a property that the view can access easily
@@ -156,12 +156,12 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         //console.log(category.name+' no questions were answered');
         //there were checklists but no questions were answered
         category.show = true;
-        category.message = category.name+' hazards were not evaluated during this laboratory safety inspection.';
+        category.message = category.name+' hazards were not evaluated during this laboratory inspection.';
       }else{
         //console.log(category.name+' there were no deficiencies');
         //there were no deficiencies
         category.show = true;
-        category.message = 'No '+category.name+' deficiencies were identified during this laboratory safety inspection.';
+        category.message = 'No '+category.name+' deficiencies were identified during this laboratory inspection.';
       }
 
   }
