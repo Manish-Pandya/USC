@@ -991,8 +991,13 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Room());
-            $decodedObject = $dao->save($decodedObject);
-            
+            $room = $dao->save($decodedObject);
+            if($decodedObject->getPrincipalInvestigators() != NULL){
+            	foreach($decodedObject->getPrincipalInvestigators() as $pi){
+            		$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
+            		$this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
+            	}
+            }
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
             $entityMaps[] = new EntityMap("lazy","getHazards");
@@ -1000,9 +1005,9 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getHas_hazards");
             $entityMaps[] = new EntityMap("eager","getBuilding");
             $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
-            $decodedObject->setEntityMaps($entityMaps);
+            $room->setEntityMaps($entityMaps);
             
-            return $decodedObject;
+            return $room;
         }
     }
 
@@ -1758,9 +1763,13 @@ class ActionManager {
         }
         else{
 
-            $PIId = $decodedObject->getMaster_id();
-            $roomId = $decodedObject->getRelation_id();
-            $add = $decodedObject->getAdd();
+            if($PIId == NULL && $roomId == NULL && $add == NULL){
+	        	$PIId = $decodedObject->getMaster_id();
+	            $roomId = $decodedObject->getRelation_id();
+	            $add = $decodedObject->getAdd();
+            }
+            
+            $LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
 
             if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
 
@@ -1768,6 +1777,7 @@ class ActionManager {
                 $dao = $this->getDao(new PrincipalInvestigator());
                 // if add is true, add this room to this PI
                 if ($add){
+                	$LOG->fatal('trying to add');
                     $dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
                 // if add is false, remove this room from this PI
                 } else {

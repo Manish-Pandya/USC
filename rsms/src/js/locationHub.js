@@ -418,7 +418,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
 
     $scope.openRoomModal = function(room){
 
-        if(!room)room = {Is_active: true, Class:'Room', Name:'', Building:{Name:''}};
+        if(!room)room = {Is_active: true, Class:'Room', Name:'', Building:{Name:''}, PrincipalInvestigators:[]};
         locationHubFactory.setModalData(null);
         locationHubFactory.setModalData(room);
 
@@ -617,6 +617,10 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
         pi.saving = true;
         $scope.modalError="";
         var room = $scope.modalData;
+        if(!room.Key_id){
+            room.PrincipalInvestigators.push(pi);
+            return;
+        }
         var roomDto = {
           Class: "RelationshipDto",
           relation_id: room.Key_id,
