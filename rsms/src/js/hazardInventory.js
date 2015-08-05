@@ -24,15 +24,22 @@ hazardInventory.directive('hazardLi', ['$window', function($window) {
     }
 }]);
 
-hazardInventory.filter('openInspections', function () {
-  return function (inspections) {
+hazardInventory.filter('inspectionClosed', function () {
+  return function (inspections, closedOrNot) {
       if(!inspections)return;
-      var openInspections = [];
+      var filteredInspections = [];
       var i = inspections.length;
       while(i--){
-          if(!inspections[i].Status || inspections[i].Status.toLowerCase().indexOf('close') < 0)openInspections.push(inspections[i]);
+          //looking for closed inspections
+          if(closedOrNot == true){
+              if(inspections[i].Cap_submitted_date)filteredInspections.push(inspections[i]);
+          }
+          //looking for open inspections
+          else{
+            if(!inspections[i].Cap_submitted_date)filteredInspections.push(inspections[i]);
+          }
       }
-      return openInspections;
+      return filteredInspections;
   };
 })
 
@@ -277,7 +284,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
     return false;
   }
 
-  factory.getPreviousInspections = function(pi)
+  factory.getInspections = function(pi)
   {
       var deferred = $q.defer();
 
@@ -1051,7 +1058,7 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
     $scope.gettingInspections = true;
     var pi = hazardInventoryFactory.PI;
     $scope.pi = pi;
-    hazardInventoryFactory.getPreviousInspections(pi)
+    hazardInventoryFactory.getInspections(pi)
     .then(
         function(inspections){
             $scope.previousInspections = inspections;
@@ -1062,20 +1069,6 @@ controllers.modalCtrl = function($scope, hazardInventoryFactory, $modalInstance,
             $scope.error = 'The system could not retrieve the list of inspections.  Please check your internet connection and try again.  '
         }
     )
-
-  $scope.$watch('previousInspections', function(previousInspections, oldValue) {
-    angular.forEach($scope.previousInspections, function(inspection, key){
-      if(inspection.Date_created){
-        var date =  convenienceMethods.getDate(inspection.Date_created);
-        inspection.startDate = date.formattedString;
-        inspection.year = date.year;
-      }
-
-      if(inspection.Date_closed){
-        inspection.endDate = convenienceMethods.getDate(inspection.Date_closed).formattedString;
-      }
-    });
-  });
 
   $scope.close = function () {
     $modalInstance.dismiss();
@@ -1090,7 +1083,7 @@ controllers.findInspectionCtrl = function($scope, hazardInventoryFactory, $modal
   $scope.buildings = pi.Buildings;
   $scope.gettingInspections = true;
 
-    hazardInventoryFactory.getOpenInspections(pi)
+    hazardInventoryFactory.getInspections(pi)
     .then(
       function(inspections){
         $scope.openInspections = inspections;

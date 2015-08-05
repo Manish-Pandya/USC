@@ -21,7 +21,7 @@
                 <th>Inspection Report</th>
             </thead>
             <tbody>
-                <tr ng-repeat="(key, inspection) in previousInspections" ng-if="inspection.Status == 'CLOSED OUT' || inspection.Status == 'PENDING CLOSEOUT'">
+                <tr ng-repeat="(key, inspection) in previousInspections | inspectionClosed:true">
                     <td>{{inspection.Schedule_year}}</td>
                     <td>{{inspection.Date_started | dateToISO}}</td>
                     <td>{{inspection.Inspectors[0].User.Name}}</td>

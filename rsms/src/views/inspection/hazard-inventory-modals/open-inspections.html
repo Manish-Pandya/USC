@@ -20,7 +20,7 @@
     <table class="table table-bordered table-striped">
     <table ng-show="openInspections" class="table table-striped table-bordered">
     <thead>
-            <th>Begin Inspection</th>
+            <th>Inspect Lab</th>
             <th>Rooms</th>
             <th>Year</th>
             <th>Month</th>
@@ -29,9 +29,9 @@
             <th>Report</th>
         </thead>
         <tbody>
-            <tr ng-repeat="(key, inspection) in openInspections|orderBy:'Date_started':reverse | openInspections" ng-class="{new:inspection.Is_new}">
+            <tr ng-repeat="(key, inspection) in openInspections | orderBy:'Date_started':reverse | inspectionClosed:false" ng-class="{new:inspection.Is_new}">
                 <td style="width:14%; vertical-align:middle;text-align:center;">
-                    <a class="btn btn-danger btn-large left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i></a>
+                    <button ng-disalbed="inspection.Notification_date" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i>Inspect Labs</a>
                 </td>
                 <td>
                     <ul>

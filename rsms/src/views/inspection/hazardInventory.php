@@ -66,7 +66,7 @@ require_once '../top_view.php';
                                </div>
                                <div class="roomsForBuidling span6">
                                    <ul>
-                                       <li ng-repeat="(key, room) in building.Rooms"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                       <li ng-repeat="(key, room) in building.Rooms | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                    </ul>
                                </div>
                                </li>
@@ -365,8 +365,8 @@ require_once '../top_view.php';
 
 <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
     <ul class="container-fluid whitebg" style="padding:0 70px !Important">
-        <li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Inspection Reports</span></a></li>
-        <li><a href="../hubs/PIHub.php#/personnel?pi={{PI.Key_id}}&inspection=true"><img src="../../img/phone.png"/><span>Laboratory Personnel</span></a></li>
+        <li><a ng-click="getArchivedReports(pi)"><img src="../../img/clipboard.png"/><span>Archived Reports</span></a></li>
+        <li><a href="../hubs/PIHub.php#/personnel?pi={{PI.Key_id}}&inspection=true" target="_blank"><img src="../../img/phone.png"/><span>Laboratory Personnel</span></a></li>
         <li><a ng-click="openNotes()"><img src="../../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
         <li><a ng-click="startInspection()"><img src="../../img/checkmarkFooter.png"/><span>Inspect Labs</a></span></li>
     </ul>
