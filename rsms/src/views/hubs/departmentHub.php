@@ -35,26 +35,26 @@ require_once '../top_view.php';
         <THEAD>
             <tr>
                 <th>Edit</th>
-                <th style="text-align:center;">Departments</th>
+                <th>Departments</th>
                 <th style="text-align:center;"># Principal Investigators</th>
-                <th># Laboratory Rooms</th>
+                <th style="text-align:center;"># Laboratory Rooms</th>
             </tr>
         </THEAD>
         <tbody>
             <tr ng-repeat="(key, department) in departments | orderBy: 'Department_name'" class="center-block" ng-class="{inactive:!department.Is_active}">
-                <td style="width:14%;">
-                    <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a>
+                <td style="width:11%;">
+                    <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                     <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                         <span ng-if="department.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
                         <span ng-if="!department.Is_active"><i class="icon-checkmark-2"></i></span>
                     </a>
                     <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty"/>
                 </td>
-                <td style="width:41%; text-align:center;">
+                <td style="width:35%;">
                     {{department.Department_name}}
                 </td>
                 <td style="width:27%; text-align:center;">{{department.Pi_count}}</td>
-                <td style="width:18%;">{{department.Room_count}}</td>
+                <td style="width:22%; text-align:center;">{{department.Room_count}}</td>
             </tr>
         </tbody>
     </table>
