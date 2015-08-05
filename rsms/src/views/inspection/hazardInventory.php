@@ -62,11 +62,11 @@ require_once '../top_view.php';
                            <ul class="selectedBuildings">
                                <li ng-repeat="(key, building) in buildings">
                                <div class="span6">
-                                   <h4 ng-class="{greyedOut: !building.IsChecked}"><!--<a class="btn btn-danger btn-mini" style="margin-right:5px;"><i class="icon-cancel-2" ng-click="removeBuilding(building)"></i></a>-->{{building.Name}}</h4>
+                                   <h4 ><!--<a class="btn btn-danger btn-mini" style="margin-right:5px;"><i class="icon-cancel-2" ng-click="removeBuilding(building)"></i></a>-->{{building.Name}}</h4>
                                </div>
                                <div class="roomsForBuidling span6">
                                    <ul>
-                                       <li ng-class="{greyedOut: !room.IsSelected}" ng-repeat="(key, room) in building.Rooms"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                       <li ng-repeat="(key, room) in building.Rooms"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                    </ul>
                                </div>
                                </li>
@@ -174,12 +174,11 @@ require_once '../top_view.php';
                             </ul>
                         </li>
                     </ul>
-                    
+
                     <!-- EQUIPMENT LIST HERE -->
                     <br/><br/><br/>
-                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">Equipment</h1>
+                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
                     <hr style="margin-bottom:4px;">
-            
                     <ul class="topChildren">
                         <li ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true}" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                             <!--<h4 class="">-->
@@ -245,7 +244,7 @@ require_once '../top_view.php';
                             </ul>
                         </li>
                     </ul>
-            
+
                     <br/><br/>
                     </span>
                 </li>
