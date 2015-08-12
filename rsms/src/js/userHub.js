@@ -926,17 +926,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
     $scope.emailErrorMsg = "Invalid email address";
     $scope.pis = userHubFactory.getPIs();
-    
-    //if the user has a supervisor, set the selected PI for ui-select elements to the matching index of $scope.pis
-    if($scope.modalData.Supervisor_id){
-        var i = $scope.pis.length;
-        while(i--){
-            if($scope.pis[i].PrincipalInvestigator.Key_id === $scope.modalData.Supervisor_id){
-                $scope.selectedPI = $scope.pis[i];
-                break;
-            }
-        }
-    }
 
     userHubFactory.getAllRoles()
       .then(
@@ -948,8 +937,33 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       .then(
         function(departments){
           $scope.departments = departments;
+            //if the user has a department, set the selected Department for ui-select elements to the matching index of $scope.departments
+            if($scope.modalData.Primary_department){
+                var i = $scope.departments.length;
+                while(i--){
+                    if($scope.departments[i].Key_id === $scope.modalData.Primary_department.Key_id){
+                        $scope.departmentIdx = i;
+                        break;
+                    }
+                }
+            }
         }
       )
+
+    //if the user has a supervisor, set the selected PI for ui-select elements to the matching index of $scope.pis
+    if($scope.modalData.Supervisor_id){
+        var i = $scope.pis.length;
+        while(i--){
+            if($scope.pis[i].PrincipalInvestigator.Key_id === $scope.modalData.Supervisor_id){
+                $scope.piIndex = i;
+                break;
+            }
+        }
+    }
+
+
+
+
 
     $scope.cancel = function () {
         $modalInstance.dismiss();

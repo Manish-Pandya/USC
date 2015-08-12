@@ -79,7 +79,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
     $scope.setRoute = function(route){
         $location.path(route);
-      }
+    }
 
     init();
 
@@ -568,6 +568,12 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
         }
 
         function fireModal(user){
+            if (user.Class == "PrincipalInvestigator"){
+                // pump in PIs Departments
+                var pi = user;
+                user = pi.User;
+                user.PrincipalInvestigator = {Departments:pi.Departments};
+            }
             userHubFactory.setModalData(user);
             //determine which modal we should open based on the user's role(s)
             if(userHubFactory.hasRole(user, "Principal Investigator")){

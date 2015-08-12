@@ -96,7 +96,7 @@
                 <div class="controls span4" style="padding-left: 5px;">
                     <input style="" class="span4" placeholder="Select A Department" typeahead-on-select='onSelectDepartment($item, $model, $label)' type="text" ng-model="modalData.Primary_department" typeahead="department as department.Name for department in departments | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
-                    <ui-select ng-model="selectedDepartment" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectDepartment($item, $model, $label)">
+                    <ui-select  ng-model="departments[departmentIdx]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectDepartment($item, $model, $label)">
                         <ui-select-match placeholder="Select A Department">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="department.Name | highlight: $select.search"></div>
