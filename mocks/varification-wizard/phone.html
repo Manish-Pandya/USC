@@ -1,0 +1,33 @@
+<div class="top-junk">
+    <h1>Emergency Phone Numbers</h1>
+    <h3>Please verify the emergency phone numbers for all contacts in your lab.</h3>
+</div>
+<form name="personnelForm" style="width:999px;">
+    <table class="table table-striped table-hover table-bordered userList" style="width:500px;">
+        <tr>
+            <th>Name</th>
+            <th>Emergency Phone Number</th>
+        </tr>
+        <tr class="table-row" ng-repeat="contact in contacts" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
+            <td style="position:relative; width:50%">{{contact.Name}}</td>
+            <td style="position:relative; width:50%">
+                <span ng-if="contact.Emergency_phone && !contact.edit" style="height: 25px;display: block;">{{contact.Emergency_phone}}</span>
+                <input ng-if="!contact.Emergency_phone || contact.edit" ng-model="contact.fake_phone"/>
+                <div class="absoluteBtns" style="margin-left:5px;">
+                    <a ng-if="contact.Emergency_phone && !contact.edit" ng-click="contact.edit = true; contact.fake_phone = contact.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                    <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false; contact.Emergency_phone = contact.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                    <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+<label class="checkbox inline full">
+    <input type="checkbox" ng-disabled="personnelForm.$invalid" ng-model="step2" ng-change="vf.setStepDone('2', step2)" value="{{true}}" />
+    <span class="metro-checkbox">The above emergency phone numbers are accurate and can be used to contact me in the event of a lab emergency or incident.  I have verified this is the best phone number to reach me any time, including nights, weekends or holidays (e.g. cell phone).</span>
+</label>
+<div class="step-nav">
+    <button class="btn btn-success pull-left left"><i class=" icon-arrow-left" ng-click="vf.setRoute('personnel')" ng-disabled="!step2"></i>Previous</button>
+    <button class="btn btn-success pull-right" ng-click="vf.setRoute('location')" ng-disabled="!step2">Next<i class=" icon-arrow-right"></i></button>
+</div>
+</form>

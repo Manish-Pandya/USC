@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- stylesheets -->
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/bootstrap.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/bootstrap-responsive.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/bootmetro.css"/>
+<link rel="stylesheet" type="text/css" href="../../rsms/src/css/bootmetro-tiles.css"/>
+<link rel="stylesheet" type="text/css" href="../../rsms/src/css/bootmetro-charms.css"/>
+<link rel="stylesheet" type="text/css" href="../../rsms/src/css/metro-ui-light.css"/>
+<link rel="stylesheet" type="text/css" href="../../rsms/src/css/icomoon.css"/>
+<link rel="stylesheet" type="text/css" href="../../rsms/src/css/datepicker.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/stylesheets/style.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/stylesheets/rad-styles.css"/>
+
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/jqtree.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/font-awesome.min.css"/>
+
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/ng-mobile-menu.css"/>
+<link type="text/css" rel="stylesheet" href="../../rsms/src/css/select.min.css"/>
+
+
+<script type='text/javascript' src='../../rsms/src/js/lib/jquery-1.9.1.js'></script>
+
+<script type="text/javascript" src="../../rsms/src/js/lib/jquery-ui.js"></script>
+
+<script src="../../rsms/src/js/lib/jquery.mjs.nestedSortable.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/scrollDisabler.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/angular.js"></script>
+<script src="../../rsms/src/js/lib/angular-route.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/jquery-1.10.0.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/ng-mobile-menu.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/select.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/convenienceMethodsModule.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/ng-quick-date.js"></script>
+<!--<script type="text/javascript" src="../../rsms/src/js/lib/ng-infinite-scroll.min.js"></script>-->
+<script type="text/javascript" src="../../rsms/src/js/lib/ng-infinite-scroll.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/angular-once.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/modalPosition.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/ui-mask.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/roleBased.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/angular-busy.min.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/scrolltable.js"></script>
+<script type="text/javascript" src="../../rsms/src/js/lib/angular-ui-router.min.js"></script>
+
+<script type="text/javascript" src="../../rsms/src/js/lib/phone-format.js"></script>
+
+<script src="verification.js"></script>
+<style>
+    .verification-nav{margin:20px -4px 40px !Important}
+    .verification-nav button{
+        box-shadow:none !Important;
+        background: #fff !important;
+        margin-right: 60px;
+        color: rgb(91, 155, 209);
+        height: auto;
+        text-align: left;
+        padding: 18px 7px 13px!Important;
+    }
+    .verification-nav button:hover, .verification-nav button:focus{
+        color: rgb(91, 155, 209);
+        box-shadow: none !important;
+
+    }
+    .verification-nav button[disabled]{
+        color:#aaa !important;
+        opacity: 1;
+        background-color: #e6e6e6 !important;
+    }
+    .verification-nav button[disabled] .number-circle{
+        box-shadow: none;
+    }
+    .number-circle {
+        box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+        font-weight: bold;
+        border-radius: 50%;
+        padding: 4px 16px;
+        border: 2px solid #eee;
+        text-align: center;
+        background: #eee;
+        font-size: 28px;
+    }
+
+    button.btn.wizard-step.done .number-circle {
+        background-color: rgb(255, 255, 255);
+        color: #62C462;
+        border-color: #62C462;
+        padding: 9px 10px;
+        font-family: 'IcoMoon';
+    }
+
+    button.btn.wizard-step.done {
+        border-color: #62c462;
+        color:#62c462;
+        background-color:  white !important;
+    }
+
+    button.btn.wizard-step.selected.done .wizard-step-child{
+        color:#fff;
+    }
+    .wizard-step-child {
+        vertical-align: top;
+        font-size: 20px;
+        display: inline-block;
+        padding-top: 1px;
+        margin-left: 5px;
+    }
+    button.btn.wizard-step.selected,.verification-nav button:focus {
+        //box-shadow: 0px 3px 12px 0 rgba(0, 0, 0, 0.5) !important;
+        background:#fff !important;;
+    }
+    button.btn.wizard-step.selected {
+        border-color: #62c462 !important;
+        color:white !important;
+        background-color:  #62c462 !important;
+    }
+    button.btn.wizard-step.done.selected .number-circle {
+        background-color: #62C462;
+        color:white;
+        border-color:#62C462;
+    }
+    .selected span.number-circle {
+        box-shadow: 2px 2px 10px rgba(0,0,0,.7);
+        background-color:  #62c462 !important;
+        border-color: #62c462 !important;
+
+    }
+    .middle-squeeze{
+        margin:0 auto;
+        width:1000px;
+    }
+    .progress-success.progress-striped .bar, .progress-striped .bar-success {
+                            background-color: #62c462;
+                            background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+                            background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+                            background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+                            background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+                            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    }
+    .step-nav{
+        width:1000px;
+        margin-top:25px;
+    }
+    table{
+        max-width: 1000px !important;
+    }
+    .inventory-verification-list, .inventory-verification-list ul{
+        margin: 20px 0;
+        list-style-type: none;
+        max-width: 1000px !important;
+    }
+    .inventory-verification-list h1{
+        padding-bottom: 3px;
+        border-bottom: 1px solid #ddd;
+    }
+    tr.orangeBg  td{
+        background-color: #F4630B !important;
+        border-color: #F4630B !important;
+    }
+    .top-junk h1,.top-junk h3{
+        margin:10px 0
+    }
+</style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="navbar">
+            <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
+                <li class="span3" style="margin-left:0">
+                        <h2 style="padding: 11px 0 5px 15px;"><i style="font-size: 40px;margin-top: 10px;width: 50px;" class="icon-checkbox"></i>Annual Verification
+                        <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                    </h2>
+                </li>
+                <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
+            </ul>
+        </div>
+        <div class="whitebg" ng-app="verification" style="padding:70px 70px;">
+                <div class="progress progress-striped" style="width:999px; margin-bottom: -100px;margin-top: 33px;">
+                  <div class="bar bar-success" style="width: 35%;" ng-if="step1"></div>
+                  <div class="bar bar-success" style="width: 27%;" ng-if="step2"></div>
+                  <div class="bar bar-success" style="width: 23%;" ng-if="step3"></div>
+                  <div class="bar bar-success" style="width: 10%;" ng-if="step4"></div>
+                </div>
+                <div class="btn-group verification-nav" ng-controller="navCtrl">
+                    <button class="btn wizard-step" ng-class="{'selected':view=='personnel', 'done':step1}" ng-click="vf.setRoute('personnel')"><span class="number-circle"><span ng-if="!step1">1</span><span ng-if="step1">&#xe132;</span></span><span class="wizard-step-child">Personnel</span></button>
+                    <button class="btn wizard-step" ng-class="{'selected':view=='phone', 'done':step2}" ng-disabled="!step1" ng-click="vf.setRoute('phone')"><span class="number-circle"><span ng-if="!step2">2</span><span ng-if="step2">&#xe132;</span></span><span class="wizard-step-child">Emergency Phone Numbers</span></button>
+                    <button class="btn wizard-step" ng-class="{'selected':view=='location', 'done':step3}" ng-disabled="!step2" ng-click="vf.setRoute('location')"><span class="number-circle"><span ng-if="!step3">3</span><span ng-if="step3">&#xe132;</span></span><span class="wizard-step-child">Locations</span></button>
+                    <button class="btn wizard-step"  ng-class="{'selected':view==  'inventory', 'done':step4}" ng-disabled="!step3" ng-click="vf.setRoute('inventory')"><span class="number-circle"><span ng-if="!step4">4</span><span ng-if="step4">&#xe132;</span></span><span class="wizard-step-child">Inventory</span></button>
+                </div>
+
+                <div ui-view></div>
+        </div>
+    </div>
+</body>

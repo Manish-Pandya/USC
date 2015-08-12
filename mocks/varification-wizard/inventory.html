@@ -1,0 +1,56 @@
+<div class="top-junk">
+    <h1>Lab Hazards Inventory</h1>
+    <h3>Please verify the following hazards and equipment used or stored in each of your laboratory rooms:</h3>
+</div>
+<div class="room-nav">
+    <a class="btn btn-info btn-large selected">Coker Life Sciences, Room 101</a>
+    <a class="btn btn-info btn-large" ng-disabled="!step4">Coker Life Sciences, Room 102</a>
+    <a class="btn btn-info btn-large disabled" disabled>Coker Life Sciences, Room 103</a>
+</div>
+<div class="span4" style="margin:10px 0; float:none" ng-if="adding">
+    <ui-select ng-if="allHazards" ng-model="selected" theme="selectize" ng-disabled="disabled" on-select="addHazard($item)" class="span8"  style="margin:10px 0;" tagging>
+        <ui-select-match placeholder="Select or search for a Hazard">{{$select.selected.Name}}</ui-select-match>
+        <ui-select-choices repeat="hazard in allHazards | selectHazard: {Name: $select.search} | orderBy:'Name'">
+          <div ng-bind-html="hazard.Name + ' | ' +  hazard.Class | highlight: $select.search"></div>
+        </ui-select-choices>
+    </ui-select>
+</div>
+<a style="margin:10px 0;" class="btn btn-success left btn-large" ng-click="test()" ng-if="!adding"><i class="icon-plus-2"></i>Add a hazard</a>
+<ul class="inventory-verification-list" ng-if="addedHazards">
+    <li><h3 class="bold underline">Added Hazards:</h3></li>
+    <li ng-repeat="hazard in addedHazards"><h3>{{hazard.Name}}</h3></li>
+</ul>
+
+<ul class="inventory-verification-list">
+    <li ng-repeat="hazard in hazards">
+        <ul>
+            <li ng-repeat="sub in hazard.ActiveSubHazards">
+                <table class="table table-striped table-bordered">
+                    <tr><th colspan="3"><h1 class="hazardListHeader" id="hazardListHeader{{hazard.Key_id}}">{{hazard.Name}}</h1></th></tr>
+                    <tr>
+                        <th>
+                            <h2>{{sub.Name}}</h2>
+                        </th>
+                        <th>Matesic (My Lab)</th>
+                        <th>Frizell</th>
+                    </tr>
+                    <tr ng-repeat="subsub in sub.ActiveSubHazards" ng-class="{'new': subsub.newStatus == 'Used by my lab', 'inactive':subsub.newStatus =='Stored Only', 'orangeBg':subsub.newStatus =='Used by another lab' }">
+                        <td>{{subsub.Name}}</td>
+                        <td>
+                            <select ng-options="status for status in statuses" ng-change="doStatus(subsub)" ng-model="subsub.status"></select>
+                        </td>
+                        <td><select ng-options="status for status in statuses" ng-change="doStatus(subsub)" ng-model="subsub.otherStatus" disabled></select></td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
+    </li>
+</ul>
+<label class="checkbox inline full">
+    <input type="checkbox" ng-disabled="personnelForm.$invalid" ng-model="step4" ng-change="vf.setStepDone('4', step4)" value="{{true}}" />
+    <span class="metro-checkbox">The above list of laboratory hazards accurately includes all biological, chemical and radioactive hazards in my lab room <span class="bold underline">Coker Life Sciences, Room 101.</span>
+</span>
+</label>
+<div class="step-nav" style="width:999px;">
+    <button class="btn btn-success pull-left left"><i class=" icon-arrow-left" ng-click="vf.setRoute('location')"></i>Previous</button>
+</div>
