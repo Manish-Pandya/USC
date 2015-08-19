@@ -121,7 +121,7 @@ class Response extends GenericCrud {
 
 	public function getQuestion(){
 		if($this->question == null) {
-			$questionDAO = new GenericDAO("Question");
+			$questionDAO = new GenericDAO(new Question());
 			$this->question = $questionDAO->getById($this->question_id);
 		}
 		return $this->question;
@@ -135,7 +135,7 @@ class Response extends GenericCrud {
 
 	public function getInspection(){
 		if($this->inspection == null) {
-			$inspectionDAO = new GenericDAO("Inspection");
+			$inspectionDAO = new GenericDAO(new Inspection());
 			$this->inspection = $inspectionDAO->getById($this->inspection_id);
 		}
 		return $this->inspection;
