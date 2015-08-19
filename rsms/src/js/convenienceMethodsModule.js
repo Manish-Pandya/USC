@@ -437,7 +437,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     $(this).width( firstRow.children("td").eq(index-1).width() );
                 });
                 $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
-                 console.log('fired');
 
              }
              $(window).load(function() {setWidths();});

@@ -811,7 +811,7 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
         }
         userHubFactory.setModalData(user);
-
+        console.log("wtf");
         var modalInstance = $modal.open({
           templateUrl: 'userHubPartials/personnelModal.html',
           controller: modalCtrl
@@ -906,7 +906,7 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
         userHubFactory.setModalData(user);
         user.Is_incategorized = true;
         var modalInstance = $modal.open({
-          templateUrl: 'personnelModal.html',
+          templateUrl: 'userHubPartials/personnelModal.html',
           controller: modalCtrl
         });
 
