@@ -69,7 +69,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var i = users.length
     while(i--){
       var shouldPush = false;
-      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation')){
+      if(userHubFactory.hasRole(users[i], 'admin') || userHubFactory.hasRole(users[i], 'radiation') || userHubFactory.hasRole(users[i], 'read only')){
         shouldPush = true;
       }
 
@@ -811,7 +811,6 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
         }
         userHubFactory.setModalData(user);
-        console.log("wtf");
         var modalInstance = $modal.open({
           templateUrl: 'userHubPartials/personnelModal.html',
           controller: modalCtrl
