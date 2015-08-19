@@ -97,7 +97,7 @@ class DeficiencySelection extends GenericCrud {
 			$responseDAO = new GenericDAO(new Response());
 			$this->response = $responseDAO->getById($this->response_id);
 		}
-		return $this->inspection;
+		return $this->response;
 	}
 	public function setResponse($response){
 		$this->response = $response;
