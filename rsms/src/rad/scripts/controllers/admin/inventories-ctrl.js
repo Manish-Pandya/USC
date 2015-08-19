@@ -10,7 +10,7 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('InventoriesCtrl', function ($scope, actionFunctionsFactory, $rootScope, $state) {
 
-  		var af = actionFunctionsFactory;
+          var af = actionFunctionsFactory;
       var getInventory = function(){
         /*
         console.log($state);
@@ -19,20 +19,20 @@ angular.module('00RsmsAngularOrmApp')
         */
         af.getQuartleryInventory(1)
           .then(
-            function(){                      
+            function(){
               $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory",1);
             }
           )
       }
-  		$scope.af = af;
-  		$scope.inventoryPromise = af.getMostRecentInventory()
-  			.then(
-  				function(inventory){
-  					$scope.inventory = inventory;
-            console.log(inventory);
-  				},
-  				function(){}
-  			)
+      $scope.af = af;
+      $scope.inventoryPromise = af.getMostRecentInventory()
+          .then(
+              function(inventory){
+                  $scope.inventory = inventory;
+        console.log(inventory);
+              },
+              function(){}
+          )
 
       if($state.current.name == 'radmin-quarterly-inventory'){
         getInventory();
@@ -43,7 +43,7 @@ angular.module('00RsmsAngularOrmApp')
             .then(
               function(piInventories){
                   console.log(piInventories);
-                  $scope.piInventories = piInventories; 
+                  $scope.piInventories = piInventories;
               }
             )
       }
@@ -55,8 +55,8 @@ angular.module('00RsmsAngularOrmApp')
               $scope.inventory = inventory;
               console.log(inventory);
             },
-            function(){}          
+            function(){}
           );
       }
 
-  });IY6
+  });
