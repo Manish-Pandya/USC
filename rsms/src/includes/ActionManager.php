@@ -39,6 +39,8 @@ class ActionManager {
             return NULL;
         }
     }
+    
+   
 
     public function convertInputJson(){
         try{
@@ -256,6 +258,78 @@ class ActionManager {
         // otherwise, return false to indicate failure
         $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
         return false;
+    }
+    
+    /**
+     * Determines if the currently logged in user's lab has permissions to run a method, based on the object type being retrieved, altered or created by that method
+     *
+     * @param unknown $object
+     * @return boolean
+     */
+    private function getByLab($object){    	
+    	//if the current user is an Admin or Inspector, we don't need to filter by lab
+    	$roles = $this->getCurrentUserRoles();
+    	$ehsRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
+    	if(count(array_intersect($roles['userRoles'], $ehsRoles)) > 0){
+    		return true;
+    	}
+    
+    	//Does the PrincipalInvestigator associated with the currently logged in user match the PrincipalInvestigator who owns the object we want to get?
+    	if($this->getPIIDFromObject($object) == $this->getPIIDFromUser()){
+    		return true;
+    	}
+    	
+    	return false;
+    	 
+    }
+    
+    /**
+     * Gets the key_id of the PrincipalInvestigator associated with a method call.  Used to determine if a User can make a call for a particular object instance.
+     *
+     * @param unkonwn object
+     * @return integer $value| boolean
+     */
+    private function getPIIDFromObject($object){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	//method chains
+    	$map = array(
+    			"CorrectiveAction"=>array("getDeficiencySelection", "getResponse", "getInspection", "getPrincipal_investigator_id")
+    	);
+    	 
+    	$value = $object;
+    	 
+    	foreach($map[get_class($object)] as $method){
+    		if($value == NULL)return false;
+    		$value = $value->$method();
+    	}
+    
+    	return $value;
+    }
+    
+    /**
+     * Gets the key_id of the PrincipalInvestigator associated with the user who is currently logged in
+     *
+     * @param User $user
+     * @return integer $value| boolean
+     */
+    private function getPIIDFromUser(){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	$user = $this->getCurrentUser();
+    	$roles = getCurrentUserRoles();
+    	 
+    	if(in_array("Principal Investigator", $roles['userRoles'])){
+    		if($user->getPrincipalInvestigator() != NULL){
+    			return $user->getPrincipalInvestigator()->getKey_id();
+    		}
+    		return false;
+    	}elseif(in_array("Lab Contact", $roles['userRoles'])){
+    		if($user->getSupervisor_id() != NULL){
+    			return $user->getSupervisor_id();
+    		}
+    		return false;
+    	}
+    	
+    	return false;
     }
 
     private function getDestination(){
@@ -3093,10 +3167,16 @@ class ActionManager {
             return $decodedObject;
         }
         else{
+        	        	
             $dao = $this->getDao(new CorrectiveAction());
             $dao->save($decodedObject);
+            $LOG->fatal($this->getPIIDFromObject($decodedObject));
+            
             return $decodedObject;
         }
+    }
+    
+    private function canDo($thing){
     }
 
     public function getChecklistsForInspection( $id = NULL ){
@@ -3811,6 +3891,236 @@ class ActionManager {
         fclose($output);
     }
 
+    /***
+     * 
+     *    ANNUAL VERIFICATION
+     * 
+     */
+    
+    //Labs can't create verification
+    public function saveVerification($verification = NULL){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($verification !== NULL) {
+    		$decodedObject = $verification;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		$dao = $this->getDao(new Verification());
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    
+    //since labs can't create verifications, they call this function when they are finished with one
+    public function closeVerification($id = NULL, $timestamp = NULL){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	 
+    	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+    	if($timestamp == NULL)$timestamp = $this->getValueFromRequest('date', $id);
+    	 
+    	if( $id !== NULL &&  $timestamp !== NULL ){
+    		$dao = $this->getDao(new Verification());
+    		$verification = $dao->getById($id);
+    		$verification->setCompleted_date($timestamp);
+    		return $dao->save($verification);
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'id' was provided");
+    	}
+    }
+    
+    public function getVerificationById($id = NULL){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	
+    	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+    	
+    	if( $id !== NULL ){
+    		$dao = $this->getDao(new Verification());
+    		return $dao->getById($id);
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'id' was provided");
+    	}
+    }
+    
+    public function savePendingUserChange(PendingUserChange $pendingUserChange = NULL){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($pendingUserChange !== NULL) {
+    		$decodedObject = $pendingUserChange;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		$dao = $this->getDao(new PendingUserChange());
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    public function savePendingRoomChange(PendingRoomChange $pendingRoomChange = NULL){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($pendingRoomChange !== NULL) {
+    		$decodedObject = $pendingRoomChange;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		$dao = $this->getDao(new PendingRoomChange());
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    
+    public function savePendingHazardChange(PendingHazardChange $pendingHazardChange = NULL){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($pendingHazardChange !== NULL) {
+    		$decodedObject = $pendingHazardChange;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		$dao = $this->getDao(new PendingHazardChange());
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    
+    public function confirmPendingUserChange(PendingUserChange $pendingUserChange = Null){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($pendingUserChange !== NULL) {
+    		$decodedObject = $pendingUserChange;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		if($decodedObject->getParent_id() == NULL){
+    			return new ActionError('This user doesn\'t exist.  Please create a user account in the User Hub');
+    		}
+    		$userDao = $this->getDao(new User());
+    		$user = $userDao->getById($decodedObject->getParent_id());
+    		$status = strtolower( $decodedObject->getNew_status() );
+    		
+    		if($status == "no longer a lab contact"){
+    			
+    			//get the lab contact role by name
+    			$whereClauseGroup = new WhereClauseGroup(
+    				array(new WhereClause("name","=","Lab Contact"))
+    			);
+    			$roleDao = $this->getDao(new Role());
+    			$roles = $roleDao->getAllWhere($whereClauseGroup);
+    			
+    			//remove lab contact role
+    			$relation = new RelationshipDto();
+    			$relation->setMaster_id($user->getKey_id());
+    			$relation->setRelation_id($roles[0]->getKey_id());
+    			$relation->setAdd(false);
+    			$this->saveUserRoleRelation($relation);
+    			
+    			
+    		}elseif($status == "now a lab contact"){
+    			
+    			//get the lab contact role by name
+    			$whereClauseGroup = new WhereClauseGroup(
+    					array(new WhereClause("name","=","Lab Contact"))
+    			);
+    			$roleDao = $this->getDao(new Role());
+    			$roles = $roleDao->getAllWhere($whereClauseGroup);
+    			
+    			//add lab contact role
+    			$relation = new RelationshipDto();
+    			$relation->setMaster_id($user->getKey_id());
+    			$relation->setRelation_id($roles[0]->getKey_id());
+    			$relation->setAdd(true);
+    			$this->saveUserRoleRelation($relation);
+    		}elseif($status == "no longer works in this lab"){
+    			//remove supervisor id
+    			$user->setSupervisor_id(null);
+    			$userDao->save($user);
+    			
+    		}elseif($status == "no longer at the univserity"){
+    			//deactivate user
+    			$user->setIs_active(false);
+    			$userDao->save($user);
+    		}else{
+    			return $decodedObject;
+    		}
+    		
+    		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    
+    public function confirmPendingRoomChange(PendingRoomChange $pendingRoomChange = NULL){
+    	$LOG = Logger::getLogger('Action:' . __function__);
+    	if($pendingRoomChange !== NULL) {
+    		$decodedObject = $pendingRoomChange;
+    	}
+    	else {
+    		$decodedObject = $this->convertInputJson();
+    	}
+    	if( $decodedObject === NULL ){
+    		return new ActionError('Error converting input stream to Question');
+    	}
+    	else if( $decodedObject instanceof ActionError){
+    		return $decodedObject;
+    	}
+    	else{
+    		if($decodedObject->getParent_id() == NULL){
+    			return new ActionError('This user doesn\'t exist.  Please create a user account in the User Hub');
+    		}
+    		$userDao = $this->getDao(new Room());
+    		$room = $userDao->getById($decodedObject->getParent_id());    		
+    		$this->savePIRoomRelation($this->getPIIDFromObject($room), $room->getKey_id(), $decodedObject->getAdding());
+    		
+    		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
+    		$dao->save($decodedObject);
+    		return $decodedObject;
+    	}
+    }
+    
+    public function confirmPendingHazardChange(PendingHazardChange $pendingHazardChange = NULL){
+    	 
+    }
+    
+    
     //generate a random float
     public function random_float ($min,$max) {
         return ($min+lcg_value()*(abs($max-$min)));

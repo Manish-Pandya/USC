@@ -163,7 +163,7 @@ class ActionMappingFactory {
 				"removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
-				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", "", $this::$ROLE_GROUPS["EHS"]),
+				"saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -199,6 +199,17 @@ class ActionMappingFactory {
 
 				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "", $this::$ROLE_GROUPS["EHS"]),
+
+				//ANNUAL VERIFICATION
+				"saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
+				"closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getVerificationById"=>new ActionMapping("getVerificationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"savePendingUserChange"=>new ActionMapping("savePendingUserChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"savePendingRoomChange"=>new ActionMapping("savePendingRoomChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"savePendingHazardChange"=>new ActionMapping("savePendingHazardChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"confirmPendingUserChange"=>new ActionMapping("confirmPendingUserChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"confirmPendingRoomChange"=>new ActionMapping("confirmPendingRoomChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"confirmPendingHazardChange"=>new ActionMapping("confirmPendingHazardChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
 				// GENERIC
 				"getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", "")

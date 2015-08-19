@@ -2907,7 +2907,6 @@ table.roomList td {
 table.roomList h2 {
   margin-top: 0;
 }
-
 /* line 2105, ../sass/style.scss */
 .piHeader {
   width: 60%;
@@ -2919,7 +2918,6 @@ table.roomList h2 {
 /* line 2112, ../sass/style.scss */
 #piButtons {
   width: 100%;
-  margin-top: 52px;
 }
 
 /* line 2116, ../sass/style.scss */
@@ -3478,4 +3476,7 @@ button.btn-mini i {
 .btn-info.disabled, .btn-info[disabled] {
     background-color: #56A1B7;
     border-color: #56A1B7;
+}
+.no-list{
+    list-style-type:none;
 }
