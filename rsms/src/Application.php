@@ -108,11 +108,17 @@ function isProduction(){
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Boolean to determine if Radiation Module is enabled
+// DETECT WHICH MODULE WE ARE IN
 //
 ////////////////////////////////////////////////////////////////////////////////
 function isRadiationEnabled() {
-	return true;
+	if(	strstr('/rad/', $_SERVER[REQUEST_URI]))return true;
+	return false;
+}
+
+function isVerificationEnabled(){
+	if(	strstr('/verification/', $_SERVER[REQUEST_URI]))return true;
+	return false;
 }
 
 //////////////////////////////////////////////////
