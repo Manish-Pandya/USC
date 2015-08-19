@@ -72,9 +72,6 @@ angular.module('verification', ['ui.bootstrap','convenienceMethodWithRoleBasedMo
 .factory('verificationFactory',function(convenienceMethods, $location, $rootScope, applicationFactory){
 
         var vf = $.extend({},applicationFactory);
-        vf.alert = function(){
-            alert('child');
-        }
         vf.setRoute = function(route){
             $rootScope.view = route;
             $location.path(route);
@@ -84,9 +81,7 @@ angular.module('verification', ['ui.bootstrap','convenienceMethodWithRoleBasedMo
             console.log(val)
             $rootScope['step'+step] = val;
         }
-        vf.showParent = function(){
-            applicationFactory.alert();
-        }
+
         return vf;
 })
 .factory('verificationFactory2',function(convenienceMethods, $location, $rootScope,verificationFactory){
@@ -98,8 +93,6 @@ var navCtrl = function($rootScope, verificationFactory2,$location){
     console.log(verificationFactory);
     $rootScope.vf = verificationFactory;
     verificationFactory.setRoute($location.path())
-    verificationFactory.alert();
-    verificationFactory.showParent();
 };
 var personnelCtrl = function($scope, $location,$rootScope, $modal){
 
@@ -1044,7 +1037,7 @@ var inventoryCtrl = function($scope){
                                     Is_active: true
                                     },
                                     {
-                                        status:$scope.statuses[0],
+                                        status:null,
                                         otherStatus:$scope.statuses[0],
                                     Class: "Hazard",
                                     Name: "Adenovirus",

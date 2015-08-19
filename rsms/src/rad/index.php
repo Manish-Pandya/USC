@@ -1,10 +1,10 @@
 <?php
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
-	require_once('../Application.php');
+    require_once('../Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
-	require_once('Application.php');
+    require_once('Application.php');
 }else{
-	require_once('../Application.php');
+    require_once('../Application.php');
 }
 
 echo '<script type="text/javascript">
@@ -35,13 +35,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rad-styles.css">
 
-<!-- included fonts 
+<!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 -->
-<!-- included javascript libraries 
+<!-- included javascript libraries
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
-  
+
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 <!--
 <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
@@ -64,6 +64,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/cycle.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 
 
@@ -122,15 +124,15 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/inventoryStatus.js"></script>
 
 <!-- framework -->
-<script src="./scripts/genericModel/inheritance.js"></script>
-<script src="./scripts/genericModel/genericModel.js"></script>
-<script src="./scripts/genericModel/genericAPI.js"></script>
-<script src="./scripts/genericModel/modelInflator.js"></script>
-<script src="./scripts/genericModel/urlMapper.js"></script>
-<script src="./scripts/dataStore/dataStore.js"></script>
-<script src="./scripts/dataStore/dataStoreManager.js"></script>
-<script src="./scripts/dataStore/dataSwitch.js"></script>
-<script src="./scripts/dataStore/dataLoader.js"></script>
+<script src="../client-side-framework/genericModel/inheritance.js"></script>
+<script src="../client-side-framework/genericModel/genericModel.js"></script>
+<script src="../client-side-framework/genericModel/genericAPI.js"></script>
+<script src="../client-side-framework/genericModel/modelInflator.js"></script>
+<script src="../client-side-framework/genericModel/urlMapper.js"></script>
+<script src="../client-side-framework/dataStore/dataStore.js"></script>
+<script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
+<script src="../client-side-framework/dataStore/dataSwitch.js"></script>
+<script src="../client-side-framework/dataStore/dataLoader.js"></script>
 
 
 <!-- models -->
@@ -173,5 +175,5 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
     <h1>{{viewLabel}}</h1>
   </div>
 <!-- VIEW NESTING -->
-	<div ui-view class="noBg"></div>
+    <div ui-view class="noBg"></div>
 </div>

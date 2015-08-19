@@ -8,7 +8,7 @@
     <a class="btn btn-info btn-large disabled" disabled>Coker Life Sciences, Room 103</a>
 </div>
 <div class="span4" style="margin:10px 0; float:none" ng-if="adding">
-    <ui-select tagging="defaultAddOtherTag" ng-if="allHazards" ng-model="selected" theme="selectize" ng-disabled="disabled" on-select="addHazard($item)" class="span8"  style="margin:10px 0;" tagging>
+    <ui-select ng-if="allHazards" tagging="defaultAddOtherTag" ng-model="selected" theme="selectize" ng-disabled="disabled" on-select="addHazard($item)" class="span8"  style="margin:10px 0;">
         <ui-select-match placeholder="Select or search for a Hazard">{{$select.selected.Name}}</ui-select-match>
         <ui-select-choices repeat="hazard in allHazards | selectHazard: {Name: $select.search} | orderBy:'Name'">
           <div ng-bind-html="hazard.Name + ' | ' +  hazard.Class | highlight: $select.search"></div>
@@ -37,7 +37,9 @@
                     <tr ng-repeat="subsub in sub.ActiveSubHazards" ng-class="{'new': subsub.newStatus == 'Used by my lab', 'inactive':subsub.newStatus =='Stored Only', 'orangeBg':subsub.newStatus =='Used by another lab' }">
                         <td>{{subsub.Name}}</td>
                         <td>
-                            <select ng-options="status for status in statuses" ng-change="doStatus(subsub)" ng-model="subsub.status"></select>
+                            <select ng-options="status for status in statuses" ng-change="doStatus(subsub)" ng-class="{'unselected':!subsub.status}" ng-model="subsub.status" placeholder="select an option">
+                                <option value="" ng-if="!subsub.status" class="first-select-option">Default null value</option>
+                            </select>
                         </td>
                         <td><select ng-options="status for status in statuses" ng-change="doStatus(subsub)" ng-model="subsub.otherStatus" disabled></select></td>
                     </tr>
