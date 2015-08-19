@@ -8,7 +8,7 @@
     <a class="btn btn-info btn-large disabled" disabled>Coker Life Sciences, Room 103</a>
 </div>
 <div class="span4" style="margin:10px 0; float:none" ng-if="adding">
-    <ui-select ng-if="allHazards" ng-model="selected" theme="selectize" ng-disabled="disabled" on-select="addHazard($item)" class="span8"  style="margin:10px 0;" tagging>
+    <ui-select tagging="defaultAddOtherTag" ng-if="allHazards" ng-model="selected" theme="selectize" ng-disabled="disabled" on-select="addHazard($item)" class="span8"  style="margin:10px 0;" tagging>
         <ui-select-match placeholder="Select or search for a Hazard">{{$select.selected.Name}}</ui-select-match>
         <ui-select-choices repeat="hazard in allHazards | selectHazard: {Name: $select.search} | orderBy:'Name'">
           <div ng-bind-html="hazard.Name + ' | ' +  hazard.Class | highlight: $select.search"></div>
