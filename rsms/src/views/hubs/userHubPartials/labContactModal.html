@@ -79,13 +79,13 @@
 
                     <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
                         <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
+                        <ui-select-choices repeat="role in roles | orderBy:'Name' | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="role.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
 
                     <ul style="margin-top:3px;">
-                        <li ng-repeat="role in modalData.Roles"><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == 'Lab Personnel'" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                        <li ng-repeat="role in modalData.Roles | orderBy:'Name' "><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == 'Lab Personnel'" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                         </li>
                     </ul>
                 </div>

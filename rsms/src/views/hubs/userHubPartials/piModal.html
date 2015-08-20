@@ -73,14 +73,14 @@
                         <input placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
                         <ui-select direction="up" ng-if="!isProductionServer || modalData.Username" ng-model="pi.selected" theme="selectize" direction="up" ng-disabled="disabled" on-select="onSelectRole($item, $model, $label)">
                             <ui-select-match placeholder="Select or search for a Role">{{$select.selected.Name}}</ui-select-match>
-                            <ui-select-choices repeat="role in roles | propsFilter: {Name: $select.search}">
+                            <ui-select-choices repeat="role in roles | orderBy:'Name'  | propsFilter: {Name: $select.search}">
                               <div ng-bind-html="role.Name | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
                        <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
                        <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
                         <ul>
-                            <li ng-repeat="role in modalData.Roles"><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == 'Lab Personnel'" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                            <li ng-repeat="role in modalData.Roles | orderBy:'Name'"><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == 'Lab Personnel'" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                             </li>
                         </ul>
                     </div>
