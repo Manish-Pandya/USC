@@ -97,7 +97,9 @@ require_once '../top_view.php';
                 <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards">
                     <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
                     <span ng-if="!hazard.hidden">
-                    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" once-text="hazard.Name"></h1>
+                    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
+                        <span ng-if="hazard.Name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Name == 'Chemical/Physical Safety' || hazard.Name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Name == 'Radiation Safety'">Radiation Hazards</span>
+                    </h1>
                     <hr>
                     <ul class="topChildren">
                         <li>
@@ -177,7 +179,7 @@ require_once '../top_view.php';
 
                     <!-- EQUIPMENT LIST HERE -->
                     <br/><br/><br/>
-                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
+                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical and Physical Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
                     <hr style="margin-bottom:4px;">
                     <ul class="topChildren">
                         <li ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true}" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
