@@ -564,11 +564,6 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
     $scope.setRoute = function(){
       $location.path($scope.selectedRoute);
     }
-    if($location.$$host.indexOf('graysail')<0){
-      $rootScope.isProductionServer = true;
-    }else{
-      $rootScope.isProductionServer = false;
-    }
 
     if(!$location.path()) {
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
@@ -915,7 +910,14 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
         });
     }
 }
-modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q){
+modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q, $location){
+
+    if($location.$$host.indexOf('graysail')<0){
+      $scope.isProductionServer = true;
+    }else{
+      $scope.isProductionServer = false;
+    }
+
     $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
