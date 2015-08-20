@@ -538,20 +538,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
         if(!user){
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
           getUsers()
-          .then(
-              userHubFactory.getAllRoles()
-                .then(
-                    function(roles){
-                        console.log(roles);
-                        var i = userHubFactory.roles.length;
-                        while(i--){
-                            if(userHubFactory.roles[i].Name.indexOf(role)>-1)user.Roles.push(userHubFactory.roles[i]);
-                            break;
-                        }
-                        return user;
-                    }
-                )
-            )
+          .then(getRoles)
           .then(fireModal);
         }else{
             getUsers()
@@ -568,6 +555,7 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
         }
 
         function fireModal(user){
+            console.log(user);
             if (user.Class == "PrincipalInvestigator"){
                 // pump in PIs Departments
                 var pi = user;
@@ -597,6 +585,38 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
               }
             });
         }
+
+        function getRoles(user){
+            return userHubFactory.getAllRoles()
+                .then(
+                    function(roles){
+                        var i = userHubFactory.roles.length;
+                        while(i--){
+                            if(userHubFactory.roles[i].Name.indexOf(role)>-1){
+                                user.Roles.push(userHubFactory.roles[i]);
+                                return user;
+                            }
+                        }
+                    }
+                )
+        }
+    }
+
+    $scope.openAssignModal = function(type){
+            var modalInstance = $modal.open({
+              templateUrl: 'piHubPartials/assign-user.html',
+              controller: assignUserCtrl,
+              resolve: {
+                modalData: function () {
+                  $scope.PI.type = type;
+                  return $scope.PI;
+                }
+              }
+            });
+
+            modalInstance.result.then(function (returnedUser) {
+                $scope.PI.LabPersonnel.push(returnedUser);
+            });
     }
 
 }
@@ -776,7 +796,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 
   }
 
-  hazardDisplayModalInstanceController = function( $scope, $modalInstance, room, convenienceMethods ){
+  var hazardDisplayModalInstanceController = function( $scope, $modalInstance, room, convenienceMethods ){
 
       $scope.room = room;
     //the server expects an array of roomIds, but we are only going to send one, so wrap it in an array;
@@ -797,4 +817,39 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
        $scope.close = function(){
            $modalInstance.close($scope.hazards);
        }
-}
+  }
+
+  var assignUserCtrl = function($scope, modalData, $modalInstance, userHubFactory){
+      $scope.modalData = modalData;
+
+      $scope.gettingUsers = true;
+      userHubFactory.getAllUsers()
+        .then(function(users){$scope.users = users;$scope.modalError="";$scope.gettingUsers = false},function(){$scope.modalError="There was an error getting the list of users.  Please check your internet connection and try again.";})
+
+      $scope.save = function(user){
+          console.log(user);
+          if(user.Supervisor_id){
+              if(!$scope.needsConfirmation){
+                  $scope.selectedUser = user;
+                  $scope.needsConfirmation = true;
+                  return;
+              }
+          }
+          $scope.saving = true;
+
+          user.Supervisor_id = modalData.Key_id;
+
+          userHubFactory.saveUser(user)
+            .then(
+              function(user){
+                  $scope.saving = false;
+                  user.new = true;
+                  $modalInstance.close(user);
+              }
+            )
+      }
+
+      $scope.cancel = function(){
+          $modalInstance.dismiss();
+      }
+  }

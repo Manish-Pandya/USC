@@ -33,7 +33,7 @@ require_once '../top_view.php';
                         </ui-select-choices>
                     </ui-select>
                    <ul ng-if="PI && PI.Departments" class="no-list" style="margin-left:0">
-                       <li><h2 class="bold underline">Department(s):</h2></li>
+                       <li><h2 class="bold underline">Department:</h2></li>
                        <li ng-repeat="dept in PI.Departments"><h3 style="height:auto" once-text="dept.Name"></h3></li>
                    </ul>
                </span>
