@@ -63,6 +63,15 @@ class Verification extends GenericCrud{
 	
 	public function __construct(){}
 	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+	
 	public function getPrincipal_investigator_id(){return $this->principal_investigator_id;}
 	public function setPrincipal_investigator_id($id){$this->principal_investigator_id = $id;}
 	

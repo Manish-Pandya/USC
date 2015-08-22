@@ -200,6 +200,9 @@ class ActionMappingFactory {
 				"getAllLabLocations"=>new ActionMapping("getAllLabLocations", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"getAllSupplementalObservations"=>new ActionMapping("getAllSupplementalObservations", "", "", $this::$ROLE_GROUPS["EHS"]),
 
+				
+				//MY LABORATORY
+				"getMyLab"=>new ActionMapping("getMyLab", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				//ANNUAL VERIFICATION
 				"saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

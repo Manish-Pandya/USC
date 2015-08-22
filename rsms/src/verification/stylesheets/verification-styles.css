@@ -14,7 +14,7 @@
     color: rgb(91, 155, 209);
     height: auto;
     text-align: left;
-    padding: 18px 7px 13px!Important;
+    padding: 18px 7px !Important;
 }
 .verification-nav button:hover,
 .verification-nav button:focus {

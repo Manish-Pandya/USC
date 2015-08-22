@@ -20,15 +20,19 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap-responsive.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ui-lightness/jquery-ui-1.10.3.custom.min.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootmetro.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/bootmetro-tiles.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/bootmetro-charms.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
+
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 <link type="text/css" rel="stylesheet" href="stylesheets/verification-styles.css">
 
@@ -81,9 +85,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/applicationController.js"></script>
 
 <!-- controllers -->
-<script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
-
-
+<script type="text/javascript" src="scripts/controllers/personnelCtrl.js"></script>
 
 
 <!-- models -->
@@ -94,10 +96,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <div ng-app="VerificationApp" ng-controller="NavCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-<!-- NAVIGATION -->
-  <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-    <h1>{{viewLabel}}</h1>
-  </div>
 <!-- VIEW NESTING -->
     <div ui-view class="noBg"></div>
 </div>

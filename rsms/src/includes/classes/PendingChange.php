@@ -47,6 +47,15 @@ class PendingChange extends GenericCrud {
 	
 	}
 	
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+	
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+	
 	public function getVerification_id(){return $this->verification_id;}
 	public function setVerification_id($verification_id){$this->verification_id = $verification_id;}
 	

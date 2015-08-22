@@ -120,6 +120,13 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 	
+	public static $VERIFICATIONS_RELATIONSHIP = array(
+			"className" => "Verification",
+			"tableName" => "verification",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+	
 	/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
@@ -173,6 +180,8 @@ class PrincipalInvestigator extends GenericCrud {
 	private $quarterly_inventories;
 	
 	private $buildings;
+	
+	private $verifications;
 
 	public function __construct(){
 
@@ -192,6 +201,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		
 		$this->setEntityMaps($entityMaps);
 
@@ -399,7 +409,13 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getBuildings(){return  $this->buildings;}
 	public function setBuildings($buildings){$this->buildings = $buildings;}
 
-	
+	public function getVerifications(){
+		if($this->verifications === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->verifications = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$VERIFICATIONS_RELATIONSHIP));
+		}
+		return $this->verifications;
+	}
 
 }
 

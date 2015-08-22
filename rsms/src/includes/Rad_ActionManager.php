@@ -352,7 +352,7 @@ class Rad_ActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
 		$entityMaps[] = new EntityMap("eager", "getScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-		
+		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("eager", "getActiveParcels");		
 				
 		$pi->setEntityMaps($entityMaps);
