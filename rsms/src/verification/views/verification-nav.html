@@ -1,0 +1,28 @@
+        <div class="navbar">
+            <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
+                <li class="span3" style="margin-left:0">
+                        <h2 style="padding: 11px 0 5px 15px;"><i style="font-size: 40px;margin-top: 10px;width: 50px;" class="icon-checkbox"></i>Annual Verification
+                        <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                    </h2>
+                </li>
+                <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
+            </ul>
+        </div>
+        <div class="whitebg" ng-app="verification" style="padding:70px 70px;">
+                <div class="progress progress-striped" style="width:999px; margin-bottom: -100px;margin-top: 33px;">
+                  <div class="bar bar-success" style="width: 35%;" ng-if="step > 1"></div>
+                  <div class="bar bar-success" style="width: 27%;" ng-if="step > 2"></div>
+                  <div class="bar bar-success" style="width: 23%;" ng-if="step > 3"></div>
+                  <div class="bar bar-success" style="width: 10%;" ng-if="step > 4"></div>
+                </div>
+                <div class="btn-group verification-nav">
+                    <button class="btn wizard-step" ng-class="{'selected':viewName=='verification.step1', 'done':step > 1}" ui-sref="verification.step1"><span class="number-circle"><span ng-if="step<2">1</span><span ng-if="step>1">&#xe132;</span></span><span class="wizard-step-child">Personnel</span></button>
+                    <button class="btn wizard-step" ng-class="{'selected':view=='phone', 'done':step > 2}" ng-disabled="!step1" ng-click="vf.setRoute('phone')"><span class="number-circle"><span ng-if="step<3">2</span><span ng-if="step>2">&#xe132;</span></span><span class="wizard-step-child">Emergency Phone Numbers</span></button>
+                    <button class="btn wizard-step" ng-class="{'selected':view=='location', 'done':step  > 3}" ng-disabled="!step2" ng-click="vf.setRoute('location')"><span class="number-circle"><span ng-if="step<4">3</span><span ng-if="step > 3">&#xe132;</span></span><span class="wizard-step-child">Locations</span></button>
+                    <button class="btn wizard-step"  ng-class="{'selected':view==  'inventory', 'done':step > 4}" ng-disabled="!step3" ng-click="vf.setRoute('inventory')"><span class="number-circle"><span ng-if="step<5">4</span><span ng-if="step > 4">&#xe132;</span></span><span class="wizard-step-child">Inventory</span></button>
+                    <button class="btn wizard-step"  ng-class="{'selected':view=='confirmation', 'done':step > 5}" ng-disabled="!step3" ng-click="vf.setRoute('inventory')"><span class="number-circle"><span ng-if="step <= 5">5</span><span ng-if="step > 5">&#xe132;</span></span><span class="wizard-step-child">Confirm</span></button>
+                </div>
+                <h1>{{viewLabel}}</h1>
+                <div ui-view></div>
+        </div>
+    </div>
