@@ -8,7 +8,21 @@ angular
         //give us access to this factory in all views.  Because that's cool.
         $rootScope.af = this;
 
+
         store.$q = $q;
+
+        ac.setStep = function(int){
+            this.step = this.steps[int];
+        }
+
+        ac.stepDone(int){
+           this.steps[int].done = true;
+        }
+
+        af.getVerification = function(id)
+        {
+            return dataSwitchFactory.getObjectById('Verification', id, true,'rooms');
+        }
 
 
         return ac;
