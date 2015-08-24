@@ -16,13 +16,8 @@
                   <div class="bar bar-success" style="width: 10%;" ng-if="step > 4"></div>
                 </div>
                 <div class="btn-group verification-nav">
-                    <button class="btn wizard-step" ng-class="{'selected':viewName=='verification.step1', 'done':step > 1}" ui-sref="verification.step1"><span class="number-circle"><span ng-if="step<2">1</span><span ng-if="step>1">&#xe132;</span></span><span class="wizard-step-child">Personnel</span></button>
-                    <button class="btn wizard-step" ng-class="{'selected':view=='phone', 'done':step > 2}" ng-disabled="!step1" ng-click="vf.setRoute('phone')"><span class="number-circle"><span ng-if="step<3">2</span><span ng-if="step>2">&#xe132;</span></span><span class="wizard-step-child">Emergency Phone Numbers</span></button>
-                    <button class="btn wizard-step" ng-class="{'selected':view=='location', 'done':step  > 3}" ng-disabled="!step2" ng-click="vf.setRoute('location')"><span class="number-circle"><span ng-if="step<4">3</span><span ng-if="step > 3">&#xe132;</span></span><span class="wizard-step-child">Locations</span></button>
-                    <button class="btn wizard-step"  ng-class="{'selected':view==  'inventory', 'done':step > 4}" ng-disabled="!step3" ng-click="vf.setRoute('inventory')"><span class="number-circle"><span ng-if="step<5">4</span><span ng-if="step > 4">&#xe132;</span></span><span class="wizard-step-child">Inventory</span></button>
-                    <button class="btn wizard-step"  ng-class="{'selected':view=='confirmation', 'done':step > 5}" ng-disabled="!step3" ng-click="vf.setRoute('inventory')"><span class="number-circle"><span ng-if="step <= 5">5</span><span ng-if="step > 5">&#xe132;</span></span><span class="wizard-step-child">Confirm</span></button>
-                </div>
-                <h1>{{viewLabel}}</h1>
+                    <button ng-repeat="state in states" ng-disabled="greatestAllowedStep > state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{$index+1}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
+                <h1>{{selectedView.Label}}</h1>
                 <div ui-view></div>
         </div>
     </div>

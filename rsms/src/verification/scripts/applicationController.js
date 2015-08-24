@@ -15,7 +15,7 @@ angular
             this.step = this.steps[int];
         }
 
-        ac.stepDone(int){
+        ac.stepDone = function(int){
            this.steps[int].done = true;
         }
 

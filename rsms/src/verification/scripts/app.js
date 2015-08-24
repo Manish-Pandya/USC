@@ -25,7 +25,7 @@ angular
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
-    $urlRouterProvider.otherwise("");
+    $urlRouterProvider.otherwise("/personnel");
     $stateProvider
     .state('verification', {
         url: "",
@@ -61,66 +61,58 @@ angular
 
   })
   .controller('NavCtrl', function ($rootScope, $state) {
-    $rootScope.$on('$stateChangeStart ',function(){
-      $rootScope.loading = true;
-    });
-    $rootScope.$on('$stateChangeSuccess',
-        function(event, toState, toParams, fromState, fromParams){
-            $rootScope.loading = false;
-            var viewMap = getViewMap($state.current);
-            $rootScope.viewName = viewMap.Name;
-            $rootScope.viewLabel = viewMap.Label;
-            $rootScope.bannerClass = viewMap.Name;
-            $rootScope.dashboardView = viewMap.Dashboard;
-            $rootScope.noHead = viewMap.NoHead;
-            $rootScope.step = parseInt(viewMap.Step);
-        }
-    );
-
-    function getViewMap(current){
-        var viewMap = [
-            {
-                Name: 'verification',
-                Label: '',
-                Dashboard:false,
-                Step: false
-            },
+   
+    $rootScope.states = [
             {
                 Name: 'verification.step1',
                 Label: 'Verify Personnel',
+                NavLabel: 'Personnel',
                 Dashboard:false,
                 Step:1
             },
             {
                 Name: 'verification.step2',
-                Label: 'Verify e cons',
+                Label: 'Verify Emergency Contacts',
+                NavLabel:'Emergency Phone Numbers',
                 Dashboard:false,
                 Step:2
             },
             {
                 Name: 'verification.step3',
-                Label: 'Verify Personnel',
+                Label: 'Verify Lab Locations',
                 Dashboard:false,
+                NavLabel:'Locations',
                 Step:3
             },
             {
                 Name: 'verification.step4',
-                Label: 'Verify Personnel',
+                Label: 'Verify Hazard Inventory',
                 Dashboard:false,
+                NavLabel:'Inventory',
                 Step:4
+            },
+            {
+                Name: 'verification.step5',
+                Label: 'Confirmation',
+                Dashboard:false,
+                NavLabel:'Confirmation',
+                Step:5
             }
-        ]
-
-        var i = viewMap.length;
-        while(i--){
-            if(current.name == viewMap[i].Name){
-                return viewMap[i];
-            }
-        }
+    ]
+    
+    $rootScope.navigate = function(int){
+        console.log($rootScope.states[int]);
+        $rootScope.selectedView = $rootScope.states[int];
+        $state.go($rootScope.states[int].Name);
     }
-
-    function setSelectedView(view){
-        $rootScope.selectedView = view;
+    
+    //get the right state on page load
+    var i = $rootScope.states.length;
+    while(i--){
+        if($rootScope.states[i].Name == $state.current.name){
+            $rootScope.navigate(i);
+            return;
+        }
     }
 
   });
