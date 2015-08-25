@@ -251,11 +251,11 @@ class GenericDAO {
 			}
 		}
 		
-		$this->LOG->debug("DIG: $sql");
+		$this->LOG->fatal("DIG: $sql");
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		foreach($whereClauses as $key=>$clause){
-				$stmt->bindValue($key+1, $clause->getVal());
+				if($clause->getVal() != NULL)$stmt->bindValue($key+1, $clause->getVal());
 		}
 			
 		// Query the db and return an array of $this type of object
@@ -265,7 +265,7 @@ class GenericDAO {
 		} else {
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
 		}
 		
 		return $result;
