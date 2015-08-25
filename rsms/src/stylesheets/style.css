@@ -3183,8 +3183,10 @@ table.large tr th{
   margin-right: 1%;
 }
 .half{
-  width: 48%;
-  margin-right: 1.5%;
+  width: 49.5%;
+}
+.half:nth-of-type(odd){
+    margin-right:1%;
 }
 *[class~='well']:last-child:after, *[class~='card']:last-child:after{
   clear:both;
@@ -3479,4 +3481,8 @@ button.btn-mini i {
 }
 .no-list{
     list-style-type:none;
+}
+
+.my-lab-alert{
+    margin-top:22px;
 }

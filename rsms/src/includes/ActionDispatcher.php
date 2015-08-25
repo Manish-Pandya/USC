@@ -39,12 +39,14 @@ class ActionDispatcher {
         // module is enabled.
         if( isRadiationEnabled() ) {
             $this->actionManagerType = "Rad_ActionManager";
-        }else if( isVerificationEnabled() ){
+        }else if( isVerificationEnabled() ){ 
             $this->actionManagerType = "Verification_ActionManager";
         }
         else {
             $this->actionManagerType = "ActionManager";
         }
+        $this->LOG->fatal( 'getting action manager type' );
+        $this->LOG->fatal( $this->actionManagerType );
     }
 
     public function setDefaultErrorPage($errorPage){
@@ -62,6 +64,10 @@ class ActionDispatcher {
 
             if( isRadiationEnabled() ) {
                 $actionMappings = array_merge($actionMappings, Rad_ActionMappingFactory::readActionConfig());
+            }
+            
+            if( isVerificationEnabled() ) {
+            	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
             }
 
             return $actionMappings;

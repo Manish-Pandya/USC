@@ -5,48 +5,26 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
         var factory = {};
 
         factory.archivedInspections = [];
-        factory.openInspections = [];
-        factory.previousInspections = [];
-        factory.user = {};
+        factory.user;
+        factory.pi;
 
-        factory.getOpenInspections = function(id)
+        factory.getPI = function(id)
         {
           var deferred = $q.defer();
 
-          if(factory.openInspections.length){
-            deferred.resolve( factory.openInspections );
+          if(factory.pi != null){
+            console.log(factory.pi);
+            deferred.resolve( factory.pi );
             return deferred.promise;
           }
 
-          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getOpenInspectionsByPIId&id="+id;
+          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getMyLab&id="+id;
           convenienceMethods.getDataAsDeferredPromise(url).then(
-            function(promise){
-              factory.openInspections = promise;
-              deferred.resolve(factory.openInspections);
+            function(pi){
+              factory.pi = pi;
+              deferred.resolve(pi);
             },
-            function(promise){
-              deferred.reject();
-            }
-          );
-          return deferred.promise
-        }
-
-        factory.getPreviousInspections = function(id)
-        {
-          var deferred = $q.defer();
-
-          if(factory.previousInspections.length){
-            deferred.resolve( factory.previousInspections );
-            return deferred.promise;
-          }
-
-          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getArchivedInspectionsByPIId&piId="+id;
-          convenienceMethods.getDataAsDeferredPromise(url).then(
-            function(promise){
-              factory.previousInspections = promise;
-              deferred.resolve(promise);
-            },
-            function(promise){
+            function(pi){
               deferred.reject();
             }
           );
@@ -56,7 +34,7 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
         factory.getCurrentUser = function(id){
             var deferred = $q.defer();
 
-            if(factory.user.length){
+            if(factory.user){
                 deferred.resolve( factory.user );
                 return deferred.promise;
             }
@@ -80,15 +58,10 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
     var mlf = myLabFactory
     $scope.mlf = mlf;
 
-    //GLOBAL_SESSION_USER
-
-    console.log(roleBasedFactory);
-
     var getUser = function(){
         return mlf.getCurrentUser()
         .then(
             function(user){
-                console.log(user);
                 $scope.user = user;
                 //if this user is a PI, we get their own PI record.  If not, we get their supervisor's record
                 if(user.PrincipalInvestigator){
@@ -100,29 +73,18 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
         )
     }
 
-    var getOpenInspections = function(id){
-       return  mlf.getOpenInspections(id)
+    var getPI = function(id){
+       return  mlf.getPI(id)
             .then(
-                function(openInspections){
-                    console.log(openInspections);
-                    $scope.openInspections = openInspections;
-                    return id;
+                function(pi){
+                    console.log(pi);
+                    $scope.pi = pi;
                 }
             )
     }
 
-    var getPreviousInspections = function(id){
-        return mlf.getPreviousInspections(id)
-            .then(
-                function(previousInspections){
-                    $scope.previousInspections = previousInspections;
-                }
-            )
-    }
 
     //init call
     $scope.inspectionPromise = getUser()
-                                .then(getOpenInspections)
-                                .then(getPreviousInspections);
-
+                                .then(getPI)
 }

@@ -9,13 +9,12 @@
 
  var urlMapper = {};
 
- urlMapper.getList = function() {
-    return {
+ urlMapper.list = {
 
         /*
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
-                                   
+
         'Authorization'         : {getById: "getAuthorizationById"         , getAll: "getAllAuthorizations"         , save: "saveAuthorization"          }, // note that you're supposed to get authorizations by PI Id usually - "getAuthorizationsByPIId"
         'Carboy'                : {getById: "getCarboyById"                , getAll: "getAllCarboys"                , save: "saveCarboy"                 },
         'CarboyUseCycle'        : {getById: "getCarboyUseCycleById"        , getAll: "getAllCarboyUseCycles"        , save: "saveCarboyUseCycle"         },
@@ -41,9 +40,10 @@
         'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getAllMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
         'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
         'CarboyReadingAmount'   : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
-        'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"    },
+        'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"   },
 
         // Forgot to add Base module entities - add as needed.
-        'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   }
-    };
- }
+        'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },
+        'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"                   }
+
+};
