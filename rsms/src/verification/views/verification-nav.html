@@ -16,8 +16,23 @@
                   <div class="bar bar-success" style="width: 10%;" ng-if="step > 4"></div>
                 </div>
                 <div class="btn-group verification-nav">
-                    <button ng-repeat="state in states" ng-disabled="greatestAllowedStep > state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{$index+1}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
-                <h1>{{selectedView.Label}}</h1>
+                    <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
+
+                <div class="top-junk">
+
+
+                    <h1>{{selectedView.Label}}{{greatestAllowedStep}} ;alksdjf</h1>
+                    <h3>{{selectedView.Message}}</h3>
+                </div>
                 <div ui-view></div>
-        </div>
+                <div class="bottoms" style="width:1060px;">
+                    <label class="checkbox inline full">
+                        <input type="checkbox" ng-model="selectedView.confirmed" ng-change="setStepDone(selectedView)" />
+                        <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
+                    </label>
+                    <div class="step-nav">
+                        <button class="btn btn-success pull-right" ng-click="vf.setRoute('phone')" ng-disabled="!step1">Next<i class=" icon-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
     </div>

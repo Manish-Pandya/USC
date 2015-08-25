@@ -61,11 +61,13 @@ angular
 
   })
   .controller('NavCtrl', function ($rootScope, $state) {
-   
+    $rootScope.greatestAllowedStep = 1;
     $rootScope.states = [
             {
                 Name: 'verification.step1',
                 Label: 'Verify Personnel',
+                Message: 'Please verify the following personnel still work in your lab(s).',
+                ConfirmationMessage: 'Please confirm.',
                 NavLabel: 'Personnel',
                 Dashboard:false,
                 Step:1
@@ -73,6 +75,7 @@ angular
             {
                 Name: 'verification.step2',
                 Label: 'Verify Emergency Contacts',
+                Message: 'Please verify the emergency phone numbers for your lab(s).',
                 NavLabel:'Emergency Phone Numbers',
                 Dashboard:false,
                 Step:2
@@ -80,6 +83,7 @@ angular
             {
                 Name: 'verification.step3',
                 Label: 'Verify Lab Locations',
+                Message: 'Please verify the following personnel still work in your lab(s).',
                 Dashboard:false,
                 NavLabel:'Locations',
                 Step:3
@@ -87,6 +91,7 @@ angular
             {
                 Name: 'verification.step4',
                 Label: 'Verify Hazard Inventory',
+                Message: 'Please verify the following personnel still work in your lab(s).',
                 Dashboard:false,
                 NavLabel:'Inventory',
                 Step:4
@@ -94,24 +99,30 @@ angular
             {
                 Name: 'verification.step5',
                 Label: 'Confirmation',
+                Message: 'Please verify the following personnel still work in your lab(s).',
                 Dashboard:false,
                 NavLabel:'Confirmation',
                 Step:5
             }
     ]
-    
+
     $rootScope.navigate = function(int){
-        console.log($rootScope.states[int]);
         $rootScope.selectedView = $rootScope.states[int];
         $state.go($rootScope.states[int].Name);
     }
-    
+
     //get the right state on page load
     var i = $rootScope.states.length;
     while(i--){
         if($rootScope.states[i].Name == $state.current.name){
             $rootScope.navigate(i);
             return;
+        }
+    }
+
+    $rootScope.setStepDone = function(step){
+        if(!$rootScope.greatestAllowedStep || ( step.confirmed && ( step.Step >= $rootScope.greatestAllowedStep ) ) ){
+            $rootScope.greatestAllowedStep = step.Step + 1;
         }
     }
 
