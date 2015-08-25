@@ -39,6 +39,7 @@ class Verification_ActionMappingFactory extends ActionMappingFactory {
 		return array(
 
 				//ANNUAL VERIFICATION
+				"getPIForVerification"=>new ActionMapping("getPIForVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getVerificationById"=>new ActionMapping("getVerificationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

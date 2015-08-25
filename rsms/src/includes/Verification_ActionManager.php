@@ -73,6 +73,45 @@ class Verification_ActionManager extends ActionManager  {
     	}
     }
     
+    public function getPIForVerification(){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG->fatal('called it');
+    	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+    	 
+    	if( $id !== NULL ){
+    		$dao = $this->getDao(new PrincipalInvestigator());
+   		
+    		$pi = $dao->getById($id);
+    		
+    		$entityMaps = array();
+    		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
+    		$entityMaps[] = new EntityMap("eager","getRooms");
+    		$entityMaps[] = new EntityMap("eager","getUser");
+    		$entityMaps[] = new EntityMap("eager","getCurrentVerifications");
+    		
+    		$entityMaps[] = new EntityMap("lazy","getDepartments");
+    		$entityMaps[] = new EntityMap("lazy","getInspections");
+    		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+    		$entityMaps[] = new EntityMap("lazy","getActiveParcels");
+    		$entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
+    		$entityMaps[] = new EntityMap("lazy","getPurchaseOrders");
+    		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+    		$entityMaps[] = new EntityMap("lazy","getPickups");
+    		$entityMaps[] = new EntityMap("lazy","getScintVialCollections");
+    		$entityMaps[] = new EntityMap("lazy","getCurrentScintVialCollections");
+    		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+    		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+    		$entityMaps[] = new EntityMap("lazy","getVerifications");
+    		
+    		$pi->setEntityMaps($entityMaps);
+    		return $pi;
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'id' was provided");
+    	}
+    }
+    
     public function savePendingUserChange(PendingUserChange $pendingUserChange = NULL){
     	$LOG = Logger::getLogger('Action:' . __function__);
     	if($pendingUserChange !== NULL) {
