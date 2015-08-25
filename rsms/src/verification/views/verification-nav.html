@@ -9,25 +9,24 @@
             </ul>
         </div>
         <div class="whitebg" ng-app="verification" style="padding:70px 70px;">
-                <div class="progress progress-striped" style="width:999px; margin-bottom: -100px;margin-top: 33px;">
-                  <div class="bar bar-success" style="width: 35%;" ng-if="step > 1"></div>
-                  <div class="bar bar-success" style="width: 27%;" ng-if="step > 2"></div>
-                  <div class="bar bar-success" style="width: 23%;" ng-if="step > 3"></div>
-                  <div class="bar bar-success" style="width: 10%;" ng-if="step > 4"></div>
+                <div class="progress progress-striped" style="width:1060px; margin-bottom: -100px;margin-top: 33px;">
+                  <div class="bar bar-success" style="width: 35%;" ng-if="greatestAllowedStep > 1"></div>
+                  <div class="bar bar-success" style="width: 27%;" ng-if="greatestAllowedStep > 2"></div>
+                  <div class="bar bar-success" style="width: 23%;" ng-if="greatestAllowedStep > 3"></div>
+                  <div class="bar bar-success" style="width: 8%;" ng-if="greatestAllowedStep > 4"></div>
+                  <div class="bar bar-success" style="width: 10%;" ng-if="greatestAllowedStep == 5"></div>
                 </div>
                 <div class="btn-group verification-nav">
                     <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
 
                 <div class="top-junk">
-
-
-                    <h1>{{selectedView.Label}}{{greatestAllowedStep}} ;alksdjf</h1>
+                    <h1>{{selectedView.Label}} | {{greatestAllowedStep}}</h1>
                     <h3>{{selectedView.Message}}</h3>
                 </div>
                 <div ui-view></div>
                 <div class="bottoms" style="width:1060px;">
                     <label class="checkbox inline full">
-                        <input type="checkbox" ng-model="selectedView.confirmed" ng-change="setStepDone(selectedView)" />
+                        <input type="checkbox" ng-model="selectedView.Done" ng-change="setStepDone(selectedView)" />
                         <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
                     </label>
                     <div class="step-nav">

@@ -121,7 +121,7 @@ angular
     }
 
     $rootScope.setStepDone = function(step){
-        if(!$rootScope.greatestAllowedStep || ( step.confirmed && ( step.Step >= $rootScope.greatestAllowedStep ) ) ){
+        if(!$rootScope.greatestAllowedStep || ( step.Done && ( step.Step >= $rootScope.greatestAllowedStep ) ) ){
             $rootScope.greatestAllowedStep = step.Step + 1;
         }
     }
