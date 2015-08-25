@@ -72,6 +72,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../client-side-framework/genericModel/genericAPI.js"></script>
 <script src="../client-side-framework/genericModel/modelInflator.js"></script>
 <script src="../client-side-framework/genericModel/urlMapper.js"></script>
+<script src="./scripts/verificationUrlMapper.js"></script>
 <script src="../client-side-framework/dataStore/dataStore.js"></script>
 <script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
 <script src="../client-side-framework/dataStore/dataSwitch.js"></script>
@@ -89,7 +90,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- models -->
-
+<script type="text/javascript" src="scripts/models/Verification.js"></script>
+<script type="text/javascript" src="scripts/models/PrincipalInvestigator.js"></script>
 
 </head>
 <body>
