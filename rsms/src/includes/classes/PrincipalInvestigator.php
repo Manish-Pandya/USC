@@ -182,7 +182,8 @@ class PrincipalInvestigator extends GenericCrud {
 	private $buildings;
 	
 	private $verifications;
-
+	private $currentVerifications;
+	
 	public function __construct(){
 
 		$entityMaps = array();
@@ -201,7 +202,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-		$entityMaps[] = new EntityMap("lazy","getVerifications");
+		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 		
 		$this->setEntityMaps($entityMaps);
 
@@ -415,6 +416,21 @@ class PrincipalInvestigator extends GenericCrud {
 			$this->verifications = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$VERIFICATIONS_RELATIONSHIP));
 		}
 		return $this->verifications;
+	}
+	
+	public function getCurrentVerifications(){
+		if($this->getCurrentVerifications === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO(new Verification());
+			$whereClauseGroup = new WhereClauseGroup(
+				array(
+						new WhereClause("principal_investigator_id", "=" , $this->getKey_id()),
+						new WhereClause("completed_date", "IS", NULL),
+						new WhereClause("notification_date", "IS NOT", NULL)
+				)
+			);
+			$this->getCurrentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
+		}
+		return $this->getCurrentVerifications;
 	}
 
 }
