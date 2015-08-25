@@ -11,19 +11,25 @@ angular
 
         store.$q = $q;
 
-        ac.setStep = function(int){
+        ac.setStep = function(int)
+        {
             this.step = this.steps[int];
         }
 
-        ac.stepDone = function(int){
+        ac.stepDone = function(int)
+        {
            this.steps[int].done = true;
         }
 
-        af.getVerification = function(id)
+        ac.getVerification = function(id)
         {
-            return dataSwitchFactory.getObjectById('Verification', id, true,'rooms');
+            return dataSwitchFactory.getObjectById('Verification', id, true);
         }
 
+        ac.getPI = function(id)
+        {
+            return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true);
+        }
 
         return ac;
     });
