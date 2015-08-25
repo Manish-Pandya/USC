@@ -31,27 +31,6 @@ class Verification extends GenericCrud{
 			"is_rad"			=> "boolean"
 	);
 	
-	public static $PENDING_ROOM_CHANGES_RELATIONSHIP = array(
-			"className"	=>	"PendingRoomChange",
-			"tableName"	=>	"pending_change",
-			"keyName"	=>	"key_id",
-			"foreignKeyName"	=>	"parent_id"
-	);
-	
-	public static $PENDING_USER_CHANGES_RELATIONSHIP = array(
-			"className"	=>	"PendingUserChange",
-			"tableName"	=>	"pending_change",
-			"keyName"	=>	"key_id",
-			"foreignKeyName"	=>	"parent_id"
-	);
-	
-	public static $PENDING_HAZARD_CHANGES_RELATIONSHIP = array(
-			"className"	=>	"PendingHazardChange",
-			"tableName"	=>	"pending_change",
-			"keyName"	=>	"key_id",
-			"foreignKeyName"	=>	"parent_id"
-	);
-	
 	private $principal_investigator_id;
 	private $notification_date;
 	private $due_date;
@@ -61,7 +40,9 @@ class Verification extends GenericCrud{
 	private $pendingUserChanges;
 	private $pendingHazardChanges;
 	
-	public function __construct(){}
+	public function __construct(){
+		
+	}
 	
 	// Required for GenericCrud
 	public function getTableName(){
@@ -86,24 +67,42 @@ class Verification extends GenericCrud{
 	
 	public function getPendingRoomChanges(){
 		if($this->pendingRoomChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->pendingRoomChanges = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PENDING_ROOM_CHANGES_RELATIONSHIP));
+			$thisDAO = new GenericDAO(new PendingUserChange());
+			$whereClauseGroup = new WhereClauseGroup(
+					array(
+							new WhereClause("parent_class", "=", "Room"),
+							new WhereClause("verification_id", "=", $this->getKey_id())
+					)
+			);
+			$this->pendingRoomChanges = $thisDAO->getAllWhere($whereClauseGroup);
 		}
 		return $this->pendingRoomChanges;
 	}
 	
 	public function getPendingUserChanges(){
 		if($this->pendingUserChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->pendingUserChanges = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PENDING_USER_CHANGES_RELATIONSHIP));
+			$thisDAO = new GenericDAO(new PendingUserChange());
+			$whereClauseGroup = new WhereClauseGroup(
+				array(
+					new WhereClause("parent_class", "=", "User"),
+					new WhereClause("verification_id", "=", $this->getKey_id())
+				)
+			);
+			$this->pendingUserChanges = $thisDAO->getAllWhere($whereClauseGroup);
 		}
 		return $this->pendingUserChanges;
 	}
 	
 	public function getPendingHazardChanges(){
 		if($this->pendingHazardChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->pendingHazardChanges = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PENDING_HAZARD_CHANGES_RELATIONSHIP));
+			$thisDAO = new GenericDAO(new PendingUserChange());
+			$whereClauseGroup = new WhereClauseGroup(
+				array(
+					new WhereClause("parent_class", "=", "Hazard"),
+					new WhereClause("verification_id", "=", $this->getKey_id())
+				)
+			);
+			$this->pendingHazardChanges = $thisDAO->getAllWhere($whereClauseGroup);
 		}
 		return $this->pendingHazardChanges;
 	}
