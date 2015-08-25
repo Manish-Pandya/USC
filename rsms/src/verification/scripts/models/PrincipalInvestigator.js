@@ -4,8 +4,7 @@
 //constructor
 var PrincipalInvestigator = function() {};
 PrincipalInvestigator.prototype = {
-
-    eagerAccessors:[],
+    eagerAccessors:[]
 }
 
 // inherit from GenericModel
