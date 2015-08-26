@@ -4,9 +4,9 @@
 //constructor
 var PrincipalInvestigator = function() {};
 PrincipalInvestigator.prototype = {
-    eagerAccessors:[]
+    
 }
 
-// inherit from GenericModel
-extend(PrincipalInvestigator, GenericModel);
+// inherit from GenericPrincipalInvestigator
+extend(PrincipalInvestigator, GenericPrincipalInvestigator);
 

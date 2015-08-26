@@ -6,9 +6,7 @@
 var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
-    className: "PrincipalInvestigator",
-
-	eagerAccessors:[
+    eagerAccessors: [
 		{method:"getPrincipalInvestigatorRoomRelations"},
 		{method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
@@ -16,14 +14,12 @@ PrincipalInvestigator.prototype = {
         {method:"loadWasteBags", boolean:"SolidsContainers"},
 		{method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
 	],
-
+        
 	UserRelationship: {
-
 		className: 	  'User',
 		keyReference:  'User_id',
 		queryString:  'getUserById',
 		queryParam:   ''	
-
 	},
 
 	LabPersonnelRelationship: {
@@ -49,65 +45,53 @@ PrincipalInvestigator.prototype = {
 	},
 
 	AuthorizationsRelationship: {
-
         className:    'Authorization',
         keyReference:  'Principal_investigator_id',
         methodString:  'getAuthorizationsByPIId',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
     ActiveParcelsRelationship: {
-
         className:    'Parcel',
         keyReference:  'Principal_investigator_id',
         methodString:  'getActiveParcelsFromPIById',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
     PurchaseOrdersRelationship: {
-
         className:    'PurchaseOrder',
         keyReference:  'Principal_investigator_id',
         methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
     SolidsContainersRelationship: {
-
         className:    'SolidsContainer',
         keyReference:  'Principal_investigator_id',
         methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
     CurrentScintVialCollectionRelationship: {
-
         className:    'ScintVialCollection',
         keyReference:  'Principal_investigator_id',
         methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id',
         where:[{'Pickup_id':"IS NULL"}]
-
     },
 
 
     CarboyUseCyclesRelationship: {
-
         className:    'CarboyUseCycle',
         keyReference:  'Principal_investigator_id',
         methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
 
     PickupsRelationship: {
@@ -175,12 +159,11 @@ PrincipalInvestigator.prototype = {
 
 }
 
-//inherit from and extend GenericModel
-extend(PrincipalInvestigator, GenericModel);
 
+//inherit from and extend GenericPrincipalInvestigator
+extend(PrincipalInvestigator, GenericPrincipalInvestigator);
 
 //create an angular module for the model, so it can be injected downstream
 angular
 	.module("principalInvestigator",[])
 	.value("PrincipalInvestigator",PrincipalInvestigator);
-

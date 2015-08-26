@@ -126,6 +126,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>
 <script src="../client-side-framework/genericModel/genericModel.js"></script>
+<script src="../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
 <script src="../client-side-framework/genericModel/genericAPI.js"></script>
 <script src="../client-side-framework/genericModel/modelInflator.js"></script>
 <script src="../client-side-framework/genericModel/urlMapper.js"></script>

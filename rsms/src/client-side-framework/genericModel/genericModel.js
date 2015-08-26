@@ -8,7 +8,6 @@ var GenericModel = function( api ){
 };
 
 GenericModel.prototype = {
-
 	//pass a reference to the api
 	api: {},
 	getApi: function()
@@ -19,7 +18,6 @@ GenericModel.prototype = {
 	{
 		this.api = api;
 	},
-
 
 	rootScope:{},
 	getRootScope: function()
@@ -36,6 +34,8 @@ GenericModel.prototype = {
 	{
 		this.inflator = inflator
 	},
+    
+    eagerAccessors:[],
 
 	getKey_id: function(){
 		return this.Key_id;
@@ -93,8 +93,8 @@ GenericModel.prototype = {
 	//called when on success when a getter makes an asynch call
 	getterCallback:  function( falseFlag )
 	{
-			if(falseFlag)return false;
-			return true;
+        if(falseFlag)return false;
+        return true;
 	}
 
 }
