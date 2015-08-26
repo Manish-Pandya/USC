@@ -29,6 +29,7 @@ angular
     $stateProvider
     .state('verification', {
         url: "",
+        abstract: true,
         templateUrl: "views/verification-nav.html",
         controller: "NavCtrl"
     })
