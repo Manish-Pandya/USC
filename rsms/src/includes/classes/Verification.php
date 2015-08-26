@@ -67,7 +67,7 @@ class Verification extends GenericCrud{
 	
 	public function getPendingRoomChanges(){
 		if($this->pendingRoomChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO(new PendingUserChange());
+			$thisDAO = new GenericDAO(new PendingRoomChange());
 			$whereClauseGroup = new WhereClauseGroup(
 					array(
 							new WhereClause("parent_class", "=", "Room"),
@@ -95,7 +95,7 @@ class Verification extends GenericCrud{
 	
 	public function getPendingHazardChanges(){
 		if($this->pendingHazardChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO(new PendingUserChange());
+			$thisDAO = new GenericDAO(new PendingHazardChange());
 			$whereClauseGroup = new WhereClauseGroup(
 				array(
 					new WhereClause("parent_class", "=", "Hazard"),
