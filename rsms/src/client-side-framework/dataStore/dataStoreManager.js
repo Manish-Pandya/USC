@@ -14,7 +14,7 @@ var dataStoreManager = {};
 dataStoreManager.store = function( object, trusted, flavor )
 {
         if(!trusted)trusted = false;
-        
+
         if( !(object instanceof Array) ){
             //we have a single object
             //add name of object or collection our list of collections in the cache
@@ -71,10 +71,10 @@ dataStoreManager.store = function( object, trusted, flavor )
 }
 
 dataStoreManager.addToCollection = function( type, trusted )
-{       
+{
         //if we don't have the name of this type of object or a name for this array of objects, push it into the collection
         if( !dataStore.Collections.hasOwnProperty( type ) || !dataStore.Collections[type].trusted ){
-            dataStore.Collections[type] = {type:type, trusted:trusted};  
+            dataStore.Collections[type] = {type:type, trusted:trusted};
         }
 }
 
@@ -85,7 +85,7 @@ dataStoreManager.removeFromCollection = function( type )
 
 dataStoreManager.checkCollection = function( type )
 {
-        
+
         if( dataStore.Collections.hasOwnProperty( type ) ) return true;
         return false;
 }
@@ -96,12 +96,12 @@ dataStoreManager.purge = function( objectFlavor )
 }
 
 dataStoreManager.get = function( objectFlavor )
-{   
+{
         return dataStore[objectFlavor];
 }
 
 dataStoreManager.getById = function( objectFlavor, key_id )
-{   
+{
     // get index of this room in the cache, no looping anymore!
     if(!dataStore[objectFlavor+'Map'] || typeof dataStore[objectFlavor+'Map'][key_id] === 'undefined')return false;
     var location = dataStore[objectFlavor+'Map'][key_id];
@@ -116,24 +116,24 @@ dataStoreManager.getIfExists = function( objectFlavor, key_id )
         }else{
             if( dataStore.Collections.hasOwnProperty( objectFlavor ) && dataStore.Collections[objectFlavor].Key_id == key_id)return true;
             return false;
-        } 
+        }
         return false;
-}            
+}
 
 dataStoreManager.setIsDirty = function( object )
 {
-		dataStore[object.Class].setIsDirty( !dataStore[object.Class].IsDirty );
+        dataStore[object.Class].setIsDirty( !dataStore[object.Class].IsDirty );
 }
 
 dataStoreManager.createCopy = function( object )
-{   
+{
         dataStore[object.Class+'Copy'] =  $.extend(null,{},object);
         console.log(dataStore[object.Class+'Copy']);
         return dataStore[object.Class+'Copy'];
 }
 
 dataStoreManager.replaceWithCopy = function( object )
-{      
+{
         //replace the object with the cached copy version
         for( var prop in object ){
             object[prop] = dataStore[object.Class+'Copy'][prop];
@@ -231,7 +231,7 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
                         collectionToReturn.push(current);
                     }
                 }
-                
+
             }
 
             return collectionToReturn;
@@ -239,12 +239,28 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
         }
 }
 
+
+/******
+**gets a single child object from the cache
+**@param String type  the type of object we are looking for in the cache
+**@param String prop  the property of the object to compare (i.e. key_id, parent_id, etc.)
+**@param int key
+**/
+dataStoreManager.getChildByParentProperty = function(type, prop, key){
+    if(!dataStore[type])return null;
+    var i = dataStore[type].length;
+    while(i--){
+        if(dataStore[type][i][prop] == key)return dataStore[type][i];
+    }
+    return null;
+}
+
 dataStoreManager.mapCache = function( cacheClass )
-{ 
+{
     dataStore[cacheClass+'Map'] = [];
     var stuff = this.get(cacheClass);
     var length = stuff.length;
-    var cachePosition = 0; 
+    var cachePosition = 0;
 
     while(length--){
         var targetId = stuff[cachePosition].Key_id;
@@ -269,7 +285,7 @@ dataStoreManager.getModalData = function()
 }
 
 dataStoreManager.addOnSave = function( object )
-{   
+{
     if( !this.getById(object.Class, object.Key_id ) )dataStore[object.Class].push( object );
 }
 
