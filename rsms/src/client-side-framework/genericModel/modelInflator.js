@@ -49,7 +49,6 @@ angular
 
                     // call each of this object's eager accessors
                     if(modelledObject.eagerAccessors){
-
                         var eml = modelledObject.eagerAccessors.length;
 
                         while(eml--){

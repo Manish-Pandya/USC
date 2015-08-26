@@ -14,6 +14,14 @@ function extend( Child, Parent ) {
 function inherit( Child, Parent ) {
 
   for (var prop in Parent.prototype) {
+    // Skip overwriting child props that already exist in the child,
+    // as they should trump the parent's version of that prop...
+    // you know... for inheritance goodness.
+    if (Child.prototype[prop] != null) {
+        break;
+    }
+      
+    // Otherwise, push the Parent prop to the child
     Child.prototype[prop] = Parent.prototype[prop];
   }
 
