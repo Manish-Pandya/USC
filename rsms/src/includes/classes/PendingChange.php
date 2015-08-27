@@ -25,17 +25,15 @@ class PendingChange extends GenericCrud {
 			"date_last_modified"	=> "timestamp",
 			"is_active"			=> "boolean",
 			"last_modified_user_id"			=> "integer",
-			"completion_date"   =>     "timestamp",
-			"promised_date"   =>     "timestamp",
 			"created_user_id"	=> "integer"
 	);
 	
 	protected $verification_id;
-	protected  $parent_id;
+	protected $parent_id;
 	protected $parent_class;
 	protected $new_status;
 	protected $approval_date;
-	protected $adding;
+	protected $adding;	
 	
 	
 	public function __construct(){
@@ -70,7 +68,6 @@ class PendingChange extends GenericCrud {
 		return $this->parent_id;
 	}
 	public function setParent_id($parent_id){
-		$LOG->fatal('calling the parent id setter');
 		$this->parent_id = $parent_id;
 	}
 	
@@ -85,6 +82,9 @@ class PendingChange extends GenericCrud {
 	
 	public function getAdding(){return (boolean) $this->adding;}
 	public function setAdding($add){$this->adding = $add;}
+	
+	public function getParent_class(){return $this->parent_class;}
+	public function setParent_class($parent_class){$this->parent_class = $parent_class;}
 
 }
 ?>

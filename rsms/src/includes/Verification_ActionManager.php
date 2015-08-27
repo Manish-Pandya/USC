@@ -128,8 +128,9 @@ class Verification_ActionManager extends ActionManager  {
     	}
     	else{
     		$dao = $this->getDao(new PendingUserChange());
-    		$dao->save($decodedObject);
-    		return $decodedObject;
+    		$change = $dao->save($decodedObject);
+    		$LOG->fatal($change);
+    		return $change;
     	}
     }
     public function savePendingRoomChange(PendingRoomChange $pendingRoomChange = NULL){

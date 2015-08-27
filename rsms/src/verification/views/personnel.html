@@ -1,46 +1,52 @@
-<form name="personnelForm" style="width:999px;">
+<table class="table table-striped table-hover table-bordered userList">
+    <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">Lab Contacts</h3></th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Still a contact for this lab?</th>
+    </tr>
+    <tr class="table-row" ng-repeat="contact in PI.LabPersonnel | contactOrPersonnel:true" ng-class="{'new' : contact.stillHere == true, 'inactive' : contact.stillHere == false }">
+        <td>{{contact.Name}}</td>
+        <td>
+            <span ng-if="contact.PendingUserChange" ng-init="contact.stillHere = !(contact.PendingUserChange.New_status)"/>
+            <span ng-if="contact.PendingUserChange &&  contact.PendingUserChange.answer" ng-init="contact.stillHere = ( contact.PendingUserChange.answer == 'Yes' )"/>
 
-    <table class="table table-striped table-hover table-bordered userList">
-        <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">Lab Contacts</h3></th></tr>
-        <tr>
-            <th>Name</th>
-            <th>Has </th>
-        </tr>
-        <tr class="table-row" ng-repeat="contact in PI.LabPersonnel" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
-            <td>{{contact.Name}}</td>
-            <td>
-                <label class="checkbox inline">
-                    <input type="radio" ng-model="contact.stillHere" value="false" ng-required="!contact.stillHere" />
-                    <span class="metro-radio">Status Has Changed</span>
-                </label>
-                <select ng-if="contact.stillHere == 'false'" style="width:260px">
-                    <option>In another PI's lab</option>
-                    <option>No longer at the university</option>
-                    <option>Still in this lab, but no longer a contact</option>
-                </select>
-            </td>
-        </tr>
-    </table>
 
-    <table class="table table-striped table-bordered table-hover userList" style="width:999px;">
-        <tr class="orangeBg"><th colspan="2" class="orangeBg" ><h3 class="card-header padding orangeBg">Lab Personnel</h3></th></tr>
-        <tr>
-            <th>Name</th>
-            <th>Still Here</th>
-        </tr>
-        <tr class="table-row" ng-repeat="contact in personnel" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
-            <td>{{contact.Name}}</td>
-            <td>
-                <label class="checkbox inline">
-                    <input type="radio" ng-model="contact.stillHere" value="false" ng-required="!contact.stillHere" />
-                    <span class="metro-radio">Status Has Changed</span>
-                </label>
-                <select ng-if="contact.stillHere == 'false'" style="width:290px">
-                    <option>In another PI's lab</option>
-                    <option>No longer at the university</option>
-                    <option>Still in this lab, but no now a lab contact</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-</form>
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.stillHere" ng-value="true" ng-required="contact.stillHere" ng-change="ac.createPendingChange(contact, verification.Key_id, 'Yes')" />
+                <span class="metro-radio">Yes</span>
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.stillHere" ng-value="false" ng-required="!contact.stillHere" ng-change="ac.createPendingChange(contact)" />
+                <span class="metro-radio">No</span>
+            </label>
+            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
+                <option ng-if="!contact.PendingUserChange.New_status" value="">What changed about {{contact.Name}}?</option>
+            </select>
+        </td>
+    </tr>
+</table>
+
+<table class="table table-striped table-bordered table-hover userList" style="width:999px;">
+    <tr class="orangeBg"><th colspan="2" class="orangeBg" ><h3 class="card-header padding orangeBg">Lab Personnel</h3></th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Still Here</th>
+    </tr>
+    <tr class="table-row" ng-repeat="contact in  PI.LabPersonnel | contactOrPersonnel:false"  ng-class="{'new' : contact.stillHere == true, 'inactive' : contact.stillHere == false }">
+        <td>{{contact.Name}}</td>
+        <td>
+            <span ng-if="contact.PendingUserChange" ng-init="contact.stillHere = !(contact.PendingUserChange.New_status)"/>
+            <span ng-if="contact.PendingUserChange &&  contact.PendingUserChange.answer" ng-init="contact.stillHere = ( contact.PendingUserChange.answer == 'Yes' )"/>
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.stillHere" ng-value="true" ng-required="contact.stillHere" ng-change="ac.createPendingChange(contact, verification.Key_id, 'Yes')" />
+                <span class="metro-radio">Yes</span>
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.stillHere" ng-value="false" ng-required="!contact.stillHere" ng-change="ac.createPendingChange(contact)" />
+                <span class="metro-radio">No</span>
+            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in personnelOtions">
+                <option ng-if="!contact.PendingUserChange.New_status" value="">What changed about {{contact.Name}}?</option>
+            </select>
+        </td>
+    </tr>
+</table>

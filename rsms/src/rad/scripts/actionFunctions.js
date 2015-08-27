@@ -2,9 +2,9 @@
 
 angular
     .module('actionFunctionsModule',[])
-    
+
         .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods ){
-        	var af = {};
+            var af = {};
             var store = dataStoreManager;
             //give us access to this factory in all views.  Because that's cool.
             $rootScope.af = this;
@@ -33,7 +33,7 @@ angular
             }
 
             af.cancelEdit = function( obj )
-            {   
+            {
                     obj.edit = false;
                     $rootScope[obj.Class+'Copy'] = {};
                     //store.replaceWithCopy( object );
@@ -63,7 +63,7 @@ angular
             }
 
             af.save = function( object, saveChildren )
-            { 
+            {
                     if(!saveChildren)saveChildren = false;
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
@@ -82,7 +82,7 @@ angular
 
             af.getById = function( objectFlavor, key_id )
             {
-                return store.getById(objectFlavor, key_id );       
+                return store.getById(objectFlavor, key_id );
             }
 
             af.getAll = function(className) {
@@ -93,7 +93,7 @@ angular
             {
                 return dataStore[flavor];
             }
-            
+
             af.getViewMap = function(current)
             {
                 var viewMap = [
@@ -212,16 +212,16 @@ angular
                 dataStore.modalData = [];
             }
 
-        	/********************************************************************
-        	**
-        	**		USER MANAGEMENT
-        	**
-        	********************************************************************/
+            /********************************************************************
+            **
+            **		USER MANAGEMENT
+            **
+            ********************************************************************/
 
-        	af.getUserById = function( key_id )
-        	{
+            af.getUserById = function( key_id )
+            {
 
-        			var urlSegment = 'getUserById&id=' + key_id;
+                    var urlSegment = 'getUserById&id=' + key_id;
 
                     if( store.checkCollection( 'User', key_id ) ){
                         var user = store.getById( 'User', key_id )
@@ -231,23 +231,23 @@ angular
                                 }
                             );
                     }else{
-            			var user = genericAPIFactory.read( urlSegment )
-    	        			.then(
-    	        				function( returnedPromise ){
-    	        					return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-    	        				}
-    	        			);
+                        var user = genericAPIFactory.read( urlSegment )
+                            .then(
+                                function( returnedPromise ){
+                                    return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                                }
+                            );
                     }
-        			return user;
-        	}
+                    return user;
+            }
 
-        	af.getAllUsers = function()
-        	{
+            af.getAllUsers = function()
+            {
                 return dataSwitchFactory.getAllObjects('User');
             }
 
             af.getUsersViewModel = function()
-            {       
+            {
                     var model = [];
                     var userPromise = $q.defer();
                     var piPromise = $q.defer();
@@ -372,9 +372,9 @@ angular
                                                 }
                                             );
                                     }
-                                );  
+                                );
                         }
-                    }                        
+                    }
                     return hazards;
             }
 
@@ -425,7 +425,7 @@ angular
 
                     //if we are moving the hazard down to the last spot, the index for the before hazard will out of range, so we can't get a key_id
                     if(afterHazardIdx < filteredSubHazards.length){
-                        var afterHazardId = filteredSubHazards[afterHazardIdx].Key_id;  
+                        var afterHazardId = filteredSubHazards[afterHazardIdx].Key_id;
                     }else{
                         var afterHazardId = null;
                     }
@@ -442,7 +442,7 @@ angular
                                 //object.Name = error;
                                 $rootScope.error = hazard.Name + ' couldn\'t be moved.';
                             }
-                        );                    
+                        );
 
             }
 
@@ -507,8 +507,8 @@ angular
                                         store.store( returnedRelations );
                                         return store.get( 'PrincipalInvestigatorRoomRelation' );
                                     }
-                                );  
-                    }                    
+                                );
+                    }
                     return relations;
             }
 
@@ -918,7 +918,7 @@ angular
 
             af.getRadPI = function(pi)
             {
-                
+
                 if(!store.checkCollection( 'Authorization')){
                     var segment = "getRadPIById&id="+pi.Key_id;
                     return genericAPIFactory.read(segment)
@@ -948,7 +948,7 @@ angular
             }
 
             af.getRadPIById = function(id)
-            {   
+            {
                 //var segment = "getRadPIById&id="+id+"&rooms=true";
                 return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
             }
@@ -1009,16 +1009,16 @@ angular
                                 return store.get( 'Inspection' )
                             },
                             function(promise){
-                                
+
                             }
-                        );  
+                        );
                     return $rootScope.inspectionPromise;
             }
 
             af.resetInspectionRooms = function( roomIds, inspectionId )
             {
 
-                    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
+                    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards
                     var url = 'resetInspectionRooms&inspectionId='+inspectionId+'&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
 
                     $rootScope.inspectionPromise = genericAPIFactory.read( url )
@@ -1027,10 +1027,10 @@ angular
                                     return inspection
                                 },
                                 function(promise){
-                                } 
-                            );  
+                                }
+                            );
                     return $rootScope.inspectionPromise;
-                
+
             }
 
             af.getHazardRoomRelations = function( pi )
@@ -1043,7 +1043,7 @@ angular
                         roomIds.push(rooms[i].Key_id);
                     }
 
-                    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards  
+                    //we have changed the room collection for this inspection, so we set the new relationships on the server and get back and new collection of hazards
                     var url = 'getHazardRoomRelations&'+$.param({roomIds:roomIds})+'&callback=JSON_CALLBACK';
 
                     $rootScope.inspectionPromise = genericAPIFactory.read( url )
@@ -1053,8 +1053,8 @@ angular
                                     return HazardRoomRelations
                                 },
                                 function(promise){
-                                } 
-                            );  
+                                }
+                            );
                     return $rootScope.inspectionPromise;
             }
 
@@ -1069,10 +1069,10 @@ angular
                 return dataSwitchFactory.getAllObjects('Room');
             }
 
-            af.getRoomById = function(id) 
+            af.getRoomById = function(id)
             {
                 return dataSwitchFactory.getObjectById("Room", id);
-            } 
+            }
 
             af.test = function(user)
             {
@@ -1359,7 +1359,7 @@ angular
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
                 if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
-                
+
                 return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){
@@ -1385,7 +1385,7 @@ angular
                                 while(i--){
                                     if(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id)){
                                         //find the cached CarboyUseCycle with the same key_id as the one from the server, and update its properties
-                                        angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);                                  
+                                        angular.extend(dataStoreManager.getById('CarboyUseCycle', returnedPickup.Carboy_use_cycles[i].Key_id),returnedPickup.Carboy_use_cycles[i]);
                                     }
                                 }
 
@@ -2011,7 +2011,7 @@ angular
 
             af.savePiQuarterlyInventory = function(inventory, copy)
             {
-                af.clearError();                
+                af.clearError();
                 copy.Sign_off_date = convenienceMethods.setMysqlTime(new Date());
                 return this.save(copy)
                     .then(
@@ -2023,7 +2023,7 @@ angular
 
                     )
             }
-   
 
-        	return af;
-		});
+
+            return af;
+        });

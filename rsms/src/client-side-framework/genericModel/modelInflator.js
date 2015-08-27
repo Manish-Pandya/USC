@@ -8,15 +8,15 @@ angular
             /**
             *
             *   Converts JSON into a POJO-like object with accessors
-            *   @ JSON JSON object containing data which will be 
+            *   @ JSON JSON object containing data which will be
             *   @ Object object    object containing POJO methods that will have JSON data inserted
             *
             **/
 
             //treat this as a private method, only to be called locally
-            inflator.instantiateObjectFromJson = function( json, objectFlavor ) 
+            inflator.instantiateObjectFromJson = function( json, objectFlavor )
             {
-                   
+
                     if( !objectFlavor ){
                         try {
                             objectFlavor = json.Class;
@@ -32,7 +32,7 @@ angular
                         return json;
                         console.log("WARNING! Creating Class " + objectFlavor + ' dynamically. THIS SHOULD NOT HAVE TO HAPPEN!');
                         inflator.dynamicallyCreateClass( objectFlavor );
-                    } 
+                    }
 
                     //instantiate an object of Class objectFlavor
                     var modelledObject = new window[objectFlavor]( );
@@ -62,15 +62,13 @@ angular
 
             //treat this as a public method, called from controller layer
             inflator.instateAllObjectsFromJson = function(  json, objectFlavor  )
-            {        
+            {
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
-                        console.log(json);
                         while(i--){
-                            console.log(i);
                             var currentJsonObj = json[i];
-                            //if we have haven't passed a string, get the the class name of the object 
+                            //if we have haven't passed a string, get the the class name of the object
                             if( !objectFlavor ) objectFlavor = currentJsonObj.Class;
                             models.push( inflator.instantiateObjectFromJson( currentJsonObj, objectFlavor ) );
                         }
@@ -78,7 +76,7 @@ angular
                         return models;
 
                     } else {
-                        //if we have haven't passed a string, get the the class name of the object 
+                        //if we have haven't passed a string, get the the class name of the object
                         if( !objectFlavor ) objectFlavor = json.Class;
                         return inflator.instantiateObjectFromJson( json, objectFlavor );
                     }
@@ -88,7 +86,7 @@ angular
             inflator.createEntityAccessors = function( object )
             {
                 for( var prop in object ){
-                    
+
                     var getterName = 'get' + prop;
                     var setterName = 'set' + prop;
 
@@ -120,7 +118,7 @@ angular
 
                                 //check for the cache for a collection of this object type
                                 if( dataStoreManager.getIfExists( this[prop + 'Relationship'].Class) ){
-                                    
+
                                     $rootScope[this.Class+"Busy"] = defer.promise;
                                     var foreignKey = this[prop + 'Relationship'].keyReference;
                                     var term       = this[prop + 'Relationship'].Class;
@@ -129,7 +127,7 @@ angular
                                     return this.Supervisor;
                                     //we return via the object's getterCallback method so that we can wait until the promise is fulfilled
                                     //this way we can display an angular-busy loading directive.
-                                                                 
+
                                 }else{
                                     //we don't have this type of object in the cache.  Get a collection from the server
                                     //make a copy of this object so that we don't lose reference to the "this" keyword in the success function
@@ -150,7 +148,7 @@ angular
 
                                         //if anybody can think of a better way to get the data out of the promise above and return it, please, for the love of god, let me know.
                                         var i = 0;
-                                        var interval = setInterval(function(){          
+                                        var interval = setInterval(function(){
                                              i++;
                                              hackyClosureExtractor();
                                         },100);
@@ -165,7 +163,7 @@ angular
                                             }
                                             if(i>100){
                                                 clearInterval(interval);
-                                                return false; 
+                                                return false;
                                             }
 
                                         }
@@ -184,7 +182,7 @@ angular
                                 }
                                 return this[prop];
                         }
-                        
+
                     };
 
             }

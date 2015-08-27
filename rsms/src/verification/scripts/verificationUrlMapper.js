@@ -17,7 +17,9 @@
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },
-        'PrincipalInvestigator' : {getById: "getPIForVerification"         , getAll: "getAllRadPis"                 , save: "savePI"                     }
+        'PrincipalInvestigator' : {getById: "getPIForVerification"         , getAll: "getAllRadPis"                 , save: "savePI"                     },
+        'PendingUserChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingUserChange"      }
+
 
 };
 

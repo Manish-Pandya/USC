@@ -1,12 +1,15 @@
 angular
     .module('VerificationApp')
-    .controller('PersonnelCtrl', function ($scope, applicationControllerFactory) {
+    .controller('PersonnelCtrl', function ($scope, $rootScope, applicationControllerFactory) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
+
+        $scope.contactOptions  = ["In another PI's lab", "No longer at the university", "Still in this lab, but no longer a contact"];
+        $scope.personnelOtions = ["In another PI's lab", "No longer at the university", "Still in this lab, but now a lab contact"];
         var id = 1;
 
-        getVerification(id)
-            .then(getPI);
+        $rootScope.loading = getVerification(id)
+                                .then(getPI);
 
         function getVerification(id){
             return ac.getVerification(id)

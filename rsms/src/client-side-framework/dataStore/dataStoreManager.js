@@ -286,7 +286,10 @@ dataStoreManager.getModalData = function()
 
 dataStoreManager.addOnSave = function( object )
 {
-    if( !this.getById(object.Class, object.Key_id ) )dataStore[object.Class].push( object );
+    if( !this.getById(object.Class, object.Key_id ) ){
+        if(!dataStore[object.Class])dataStore[object.Class]=[];
+        dataStore[object.Class].push( object );
+    }
 }
 
 dataStoreManager.pushIntoCollection = function(object){

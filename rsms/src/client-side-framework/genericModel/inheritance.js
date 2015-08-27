@@ -18,7 +18,6 @@ function inherit( Child, Parent ) {
     // as they should trump the parent's version of that prop...
     // you know... for inheritance goodness
     // Otherwise, push the Parent prop to the child
-
     if (Child.prototype[prop] == null) {
         Child.prototype[prop] = Parent.prototype[prop];
     }

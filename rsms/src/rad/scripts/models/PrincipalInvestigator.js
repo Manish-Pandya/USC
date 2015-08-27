@@ -7,44 +7,44 @@ var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
     eagerAccessors: [
-		{method:"getPrincipalInvestigatorRoomRelations"},
-		{method:"loadUser", boolean:"User_id"},
+        {method:"getPrincipalInvestigatorRoomRelations"},
+        {method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
         {method:"loadWasteBags", boolean:"SolidsContainers"},
-		{method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
-	],
-        
-	UserRelationship: {
-		className: 	  'User',
-		keyReference:  'User_id',
-		queryString:  'getUserById',
-		queryParam:   ''	
-	},
+        {method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
+    ],
 
-	LabPersonnelRelationship: {
-		className: 	  'User',
-		keyReference:  'Supervisor_id',
-		queryString:  'getUserById',
-		queryParam:  ''
-	},
+    UserRelationship: {
+        className: 	  'User',
+        keyReference:  'User_id',
+        queryString:  'getUserById',
+        queryParam:   ''
+    },
 
-	PrincipalInvestigatorRoomRelationRelationship: {
-		Class: 	  'PrincipalInvestigatorRoomRelation',
-		foreignKey:  'Principal_investigator_id',
-		queryString:  'getPrincipalInvestigatorRoomRelationsByPiId&id=',
-		queryParam:   'Key_id'
-	},	
+    LabPersonnelRelationship: {
+        className: 	  'User',
+        keyReference:  'Supervisor_id',
+        queryString:  'getUserById',
+        queryParam:  ''
+    },
 
-	RoomsRelationship:{
-		name: 	  'PrincipalInvestigatorRoomRelation',
+    PrincipalInvestigatorRoomRelationRelationship: {
+        Class: 	  'PrincipalInvestigatorRoomRelation',
+        foreignKey:  'Principal_investigator_id',
+        queryString:  'getPrincipalInvestigatorRoomRelationsByPiId&id=',
+        queryParam:   'Key_id'
+    },
+
+    RoomsRelationship:{
+        name: 	  'PrincipalInvestigatorRoomRelation',
         className: 'Room',
-		keyReference: 'Principal_investigator_id',
+        keyReference: 'Principal_investigator_id',
         otherKey:     'Room_id',
-		paramValue:  'Key_id'	
-	},
+        paramValue:  'Key_id'
+    },
 
-	AuthorizationsRelationship: {
+    AuthorizationsRelationship: {
         className:    'Authorization',
         keyReference:  'Principal_investigator_id',
         methodString:  'getAuthorizationsByPIId',
@@ -103,14 +103,13 @@ PrincipalInvestigator.prototype = {
     },
 
 
-	Buildings: {},
+    Buildings: {},
 
-	loadAuthorizations: function() {
+    loadAuthorizations: function() {
         dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
-        
     },
 
-	loadActiveParcels: function() {
+    loadActiveParcels: function() {
         dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship);
     },
 
@@ -165,5 +164,5 @@ extend(PrincipalInvestigator, GenericPrincipalInvestigator);
 
 //create an angular module for the model, so it can be injected downstream
 angular
-	.module("principalInvestigator",[])
-	.value("PrincipalInvestigator",PrincipalInvestigator);
+    .module("principalInvestigator",[])
+    .value("PrincipalInvestigator",PrincipalInvestigator);

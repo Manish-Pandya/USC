@@ -80,10 +80,12 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
 <script src="../client-side-framework/filters/splitAtPeriod.js"></script>
 
+
 <!-- app -->
 <script type="text/javascript" src="./scripts/app.js"></script>
 
 <!-- business logic-->
+<script type="text/javascript" src="../client-side-framework/rootApplicationController.js"></script>
 <script type="text/javascript" src="./scripts/applicationController.js"></script>
 
 <!-- controllers -->
@@ -96,6 +98,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/models/PendingChange.js"></script>
 <script type="text/javascript" src="scripts/models/PendingUserChange.js"></script>
 <script type="text/javascript" src="scripts/models/User.js"></script>
+
+<!-- filters -->
+<script src="scripts/filters/contactOrPersonnel.js"></script>
 
 </head>
 <body>
