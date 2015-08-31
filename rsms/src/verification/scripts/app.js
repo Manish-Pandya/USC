@@ -40,7 +40,8 @@ angular
     })
     .state('verification.step2', {
         url: "/contact",
-        templateUrl: "views/emergency-phone.html"
+        templateUrl: "views/emergency-phone.html",
+        controller: "EmergencyPhoneCtrl"
     })
     .state('verification.step3', {
         url: "/laboratories",

@@ -44,7 +44,7 @@
             <label class="checkbox inline">
                 <input type="radio" ng-model="contact.stillHere" ng-value="false" ng-required="!contact.stillHere" ng-change="ac.createPendingChange(contact)" />
                 <span class="metro-radio">No</span>
-            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in personnelOtions">
+            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in personnelOptions">
                 <option ng-if="!contact.PendingUserChange.New_status" value="">What changed about {{contact.Name}}?</option>
             </select>
         </td>

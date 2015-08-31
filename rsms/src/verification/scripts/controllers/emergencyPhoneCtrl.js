@@ -1,11 +1,10 @@
 angular
     .module('VerificationApp')
-    .controller('PersonnelCtrl', function ($scope, $rootScope, applicationControllerFactory) {
+    .controller('EmergencyPhoneCtrl', function ($scope, $rootScope, applicationControllerFactory) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
 
-        $scope.contactOptions  = ["In another PI's lab", "No longer at the university", "Still in this lab, but no longer a contact"];
-        $scope.personnelOptions = ["In another PI's lab", "No longer at the university", "Still in this lab, but now a lab contact"];
+        $scope.contactOptions  = [];
         var id = 1;
 
         $rootScope.loading = getVerification(id)
