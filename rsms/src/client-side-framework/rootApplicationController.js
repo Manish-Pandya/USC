@@ -60,19 +60,21 @@ angular
             rac.save = function( object, saveChildren )
             {
                     if(!saveChildren)saveChildren = false;
+
+                    var defer = $q.defer();
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
+                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
                         .then(
                             function( returnedData ){
-                                return returnedData.data;
+                                defer.resolve(returnedData.data);
                             },
                             function( error )
                             {
-                                //object.Name = error;
-                               // object.setIs_active( !object.Is_active );
+                                defer.reject(error);
                                 $rootScope.error = 'error';
                             }
                         );
+                    return defer.promise;
             }
 
             rac.getById = function( objectFlavor, key_id )
@@ -89,9 +91,10 @@ angular
                 return dataStore[flavor];
             }
 
-            rac.setError = function(errorString)
+            rac.setError = function(errorString, editedThing)
             {
                 $rootScope.error = errorString + ' please check your internet connection and try again';
+                if(editedThing)editedThing.edit = false;
             }
 
             rac.clearError = function()
