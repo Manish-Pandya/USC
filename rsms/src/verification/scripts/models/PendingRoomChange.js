@@ -6,7 +6,8 @@ var PendingRoomChange = function() {};
 PendingRoomChange.prototype = {
     Class:"PendingRoomChange",
     className: "PendingRoomChange",
-    eagerAccessors:[]
+    eagerAccessors:[],
+    Parent_class: "Room"
 };
 
 // inherit from PendingChange
