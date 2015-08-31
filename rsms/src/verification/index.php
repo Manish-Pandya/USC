@@ -97,7 +97,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/models/PrincipalInvestigator.js"></script>
 <script type="text/javascript" src="scripts/models/PendingChange.js"></script>
 <script type="text/javascript" src="scripts/models/PendingUserChange.js"></script>
+<script type="text/javascript" src="scripts/models/PendingRoomChange.js"></script>
+<script type="text/javascript" src="scripts/models/PendingHazardChange.js"></script>
 <script type="text/javascript" src="scripts/models/User.js"></script>
+<script type="text/javascript" src="scripts/models/Room.js"></script>
+<script type="text/javascript" src="scripts/models/Hazard.js"></script>
 
 <!-- filters -->
 <script src="scripts/filters/contactOrPersonnel.js"></script>
