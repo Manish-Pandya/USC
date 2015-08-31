@@ -2,9 +2,9 @@
 
 /**
  * @ngdoc overview
- * @name 00RsmsAngularOrmApp
+ * @name VerificationApp
  * @description
- * # 00RsmsAngularOrmApp
+ * # VerificationApp
  *
  * Main module of the application.
  */
@@ -28,7 +28,6 @@ angular
     $urlRouterProvider.otherwise("/personnel");
     $stateProvider
     .state('verification', {
-        url: "",
         abstract: true,
         templateUrl: "views/verification-nav.html",
         controller: "NavCtrl"
@@ -71,22 +70,20 @@ angular
                 Message: 'Please verify the following personnel still work in your lab(s).',
                 ConfirmationMessage: 'Please confirm.',
                 NavLabel: 'Personnel',
-                Dashboard:false,
                 Step:1
             },
             {
                 Name: 'verification.step2',
                 Label: 'Verify Emergency Contacts',
                 Message: 'Please verify the emergency phone numbers for your lab(s).',
+                ConfirmationMessage: 'The above emergency phone numbers are accurate and can be used to contact me in the event of a lab emergency or incident. I have verified this is the best phone number to reach me any time, including nights, weekends or holidays (e.g. cell phone).',
                 NavLabel:'Emergency Phone Numbers',
-                Dashboard:false,
                 Step:2
             },
             {
                 Name: 'verification.step3',
                 Label: 'Verify Lab Locations',
                 Message: 'Please verify the following personnel still work in your lab(s).',
-                Dashboard:false,
                 NavLabel:'Locations',
                 Step:3
             },
@@ -94,7 +91,6 @@ angular
                 Name: 'verification.step4',
                 Label: 'Verify Hazard Inventory',
                 Message: 'Please verify the following personnel still work in your lab(s).',
-                Dashboard:false,
                 NavLabel:'Inventory',
                 Step:4
             },
@@ -102,7 +98,6 @@ angular
                 Name: 'verification.step5',
                 Label: 'Confirmation',
                 Message: 'Please verify the following personnel still work in your lab(s).',
-                Dashboard:false,
                 NavLabel:'Confirmation',
                 Step:5
             }
