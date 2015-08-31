@@ -18,6 +18,8 @@ class PendingChange extends GenericCrud {
 			"parent_class"		=> "text",
 			"approval_date"		=> "timestamp",
 			"adding"			=> "boolean",
+			"answer"			=> "text",
+			"emergency_phone"	=> "text",
 				
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -34,6 +36,8 @@ class PendingChange extends GenericCrud {
 	protected $new_status;
 	protected $approval_date;
 	protected $adding;	
+	protected $answer;
+	protected $emergency_phone;
 	
 	
 	public function __construct(){
@@ -85,6 +89,16 @@ class PendingChange extends GenericCrud {
 	
 	public function getParent_class(){return $this->parent_class;}
 	public function setParent_class($parent_class){$this->parent_class = $parent_class;}
+	
+	public function getAnswer(){return $this->answer;}
+	public function setAnswer($answer){$this->answer = $answer;}
+	
+	public function getEmergency_phone(){
+		return $this->emergency_phone;
+	}
+	public function setEmergency_phone($phone){
+		$this->emergency_phone = $phone;
+	}
 
 }
 ?>
