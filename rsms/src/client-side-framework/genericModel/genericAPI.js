@@ -80,9 +80,6 @@ angular
                 console.log(url);
                 if(saveChildren)url = url + "&saveChildren=true";
 
-                //return testPromise.promise;
-                //test api post
-                //url = 'http://angularormtest.apiary.io/hazards/1';
                 console.log(object);
                 var promise = $http.post(url, object)
                     .success( function( data ){
@@ -90,6 +87,7 @@ angular
                         return object;
                     })
                     .error( function(){
+                        return false;
                         console.log('error while saving object: ' + object);
                     })
 
