@@ -1,1 +1,42 @@
-e phone
+<h2 class="alert greenBg" ng-if="PI">PRINCIPAL INVESTIGATOR</h2>
+<table class="table table-striped table-hover table-bordered userList" style="width:500px;">
+    <tr>
+        <th>Name</th>
+        <th>Emergency Phone Number</th>
+    </tr>
+    <tr class="table-row">
+        <td style="position:relative; width:50%">{{PI.User.Name}}</td>
+        <td style="position:relative; width:50%">
+            <span ng-if="PI.User.Emergency_phone && !PI.User.edit" style="height: 25px;display: block;">{{PI.User.Emergency_phone}}</span>
+            <input ng-if="!contact.Emergency_phone || contact.edit" ng-model="contact.fake_phone"/>
+            <div class="absoluteBtns" style="margin-left:5px;">
+                <a ng-if="contact.Emergency_phone && !contact.edit" ng-click="contact.edit = true; contact.fake_phone = contact.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false; contact.Emergency_phone = contact.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+            </div>
+        </td>
+
+    </tr>
+</table>
+
+
+<h2 class="alert greenBg" ng-if="PI">LAB CONTACTS</h2>
+<table class="table table-striped table-hover table-bordered userList" style="width:500px;">
+    <tr>
+        <th>Name</th>
+        <th>Emergency Phone Number</th>
+    </tr>
+    <tr class="table-row" ng-repeat="contact in PI.LabPersonnel | contactOrPersonnel:true" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
+        <td style="position:relative; width:50%">{{contact.Name}}</td>
+        <td style="position:relative; width:50%">
+            <span ng-if="contact.Emergency_phone && !contact.edit" style="height: 25px;display: block;">{{contact.Emergency_phone}}</span>
+            <input ng-if="!contact.Emergency_phone || contact.edit" ng-model="contact.fake_phone"/>
+            <div class="absoluteBtns" style="margin-left:5px;">
+                <a ng-if="contact.Emergency_phone && !contact.edit" ng-click="contact.edit = true; contact.fake_phone = contact.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false; contact.Emergency_phone = contact.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+            </div>
+        </td>
+
+    </tr>
+</table>

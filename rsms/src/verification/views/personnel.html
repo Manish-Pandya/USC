@@ -43,6 +43,7 @@
                 <span class="metro-radio">No</span>
             </label>
             <select ng-if="contact.PendingUserChange && !contact.stillHere" ng-click="ac.convertToCopy(contact, verification)" style="width:260px; margin-bottom:0;" ng-model="PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
+            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in personnelOptions">
                 <option ng-if="!contact.PendingUserChange.New_status" value="">What changed about {{contact.Name}}?</option>
             </select>
         </td>
