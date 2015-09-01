@@ -19,7 +19,8 @@ User.prototype = {
             if(this.PendingUserChange){
                 this.PendingUserChangeCopy = dataStoreManager.createCopy(this.PendingUserChange)
             }else{
-                this.PendingUserChangeCopy = new window.PendingUserChange();
+                this.PendingUserChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingUserChange());
+                if(!this.PendingUserChangeCopy.hasOwnProperty("Parent_class"))this.PendingUserChangeCopy.Parent_class = "User";
                 this.PendingUserChangeCopy.Parent_id = this.Key_id;
             }
         }

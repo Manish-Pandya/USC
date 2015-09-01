@@ -6,7 +6,8 @@ var PendingHazardChange = function() {};
 PendingHazardChange.prototype = {
     Class:"PendingHazardChange",
     className: "PendingHazardChange",
-    eagerAccessors:[]
+    eagerAccessors:[],
+    Parent_class:"Hazard"
 };
 
 // inherit from PendingChange

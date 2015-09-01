@@ -8,7 +8,6 @@ angular
         //give us access to this factory in all views.  Because that's cool.
         $rootScope.af = this;
 
-
         store.$q = $q;
 
         ac.setStep = function(int)
@@ -76,32 +75,30 @@ angular
 
         }
 
-        ac.savePendingUserChange = function(pendingUserChange, contact, verificationId)
+        ac.savePendingUserChange = function(contact, verificationId)
         {
             ac.clearError();
-            if(!$rootScope.PendingUserChangeCopy)$rootScope.PendingUserChangeCopy = ac.createCopy(pendingUserChange);
-
-            var copy = $rootScope.PendingUserChangeCopy;
-            if(pendingUserChange.New_status_copy)$rootScope.PendingUserChangeCopy.New_status = pendingUserChange.New_status_copy;
+            var copy = contact.PendingUserChangeCopy;
+            copy.Verification_id = ac.getCachedVerification().Key_id;
             console.log(copy);
             return ac.save( copy )
                 .then(
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
-                        if(!pendingUserChange.Key_id){
-                            if(pendingUserChange.answer)returnedChange.answer = pendingUserChange.answer;
+                        if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
                         }
-                        angular.extend(pendingUserChange, returnedChange);
-                        if(pendingUserChange.New_status_copy)pendingUserChange.New_status_copy = returnedChange.New_status;
+                        angular.extend(copy, returnedChange);
                         contact.edit = false;
                     },
                     function(){
                         ac.setError('The change could not be saved', contact);
-                        if(pendingUserChange.New_status_copy)pendingUserChange.New_status_copy = pendingUserChange.New_status;
+                        copy = null;
+                        copy = dataStoreManager.createCopy(contact.PendingUserChange);
                     }
                 )
-        }
+
+       }
 
         return ac;
     });

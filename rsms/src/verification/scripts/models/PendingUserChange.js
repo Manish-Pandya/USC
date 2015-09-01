@@ -6,6 +6,7 @@ var PendingUserChange = function() {};
 PendingUserChange.prototype = {
     Class:"PendingUserChange",
     className: "PendingUserChange",
+    Parent_class:"User",
     eagerAccessors:[]
 };
 
