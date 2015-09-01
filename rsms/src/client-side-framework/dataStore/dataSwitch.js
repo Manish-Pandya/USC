@@ -141,6 +141,10 @@ angular
                             dataStoreManager.store(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);
                         }
+                        //it's an object with a property called class, there is a client-side class of type object.class, object is not yet an instance of that class
+                        else if( typeof instatedObjects[i][prop] == "object" && instatedObjects[i][prop] != null && instatedObjects[i][prop].Class && window[instatedObjects[i][prop].Class] && !(instatedObjects[i][prop] instanceof window[instatedObjects[i][prop].Class])){
+                            instatedObjects[i][prop] = modelInflatorFactory.instantiateObjectFromJson(instatedObjects[i][prop]);
+                        }
                     }
                 }
             }
