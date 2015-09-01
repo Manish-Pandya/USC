@@ -1,0 +1,25 @@
+<table class="table table-striped table-hover table-bordered userList" ng-repeat="building in PI.Buildings">
+    <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">{{building.Name}}</h3></th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Still a contact for this lab?</th>
+    </tr>
+    <tr class="table-row" ng-repeat="room in building.Rooms" ng-class="{'new' : contact.PendingUserChangeCopy.Answer == 'Yes', 'inactive' : contact.PendingUserChangeCopy.Answer == 'No' }">
+        <td>{{room.Name}}</td>
+        <td>
+            <!-- TODO: REFACTOR THIS, TODD -->
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.PendingUserChangeCopy.Answer" ng-value="'Yes'" ng-required="contact.PendingUserChangeCopy.Answer == 'Yes'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" />
+                <span class="metro-radio">Yes</span>
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" ng-model="contact.PendingUserChangeCopy.Answer" ng-value="'No'" ng-required="contact.PendingUserChangeCopy.Answer == 'No'"/>
+                <span class="metro-radio">No</span>
+            </label>
+            <select ng-if="contact.PendingUserChangeCopy.Answer == 'No'" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChangeCopy.Answer == 'No'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
+                <option ng-if="!contact.PendingUserChangeCopy.New_status" value="">What changed about {{contact.Name}}?</option>
+            </select>
+        </td>
+    </tr>
+</table>
+<pre>{{PI | json}}</pre>

@@ -44,7 +44,8 @@ angular
     })
     .state('verification.step3', {
         url: "/laboratories",
-        templateUrl: "views/rooms.html"
+        templateUrl: "views/rooms.html",
+        controller: "LocationCtrl"
     })
     .state('verification.step4', {
         url: "/inventory",
