@@ -11,9 +11,16 @@ Room.prototype = {
 
     loadPendingRoomChange: function()
     {
-        // not all users have a supervisor, don't try to load something that doesn't exist.
         if(!this.PendingRoomChange) {
             this.PendingRoomChange = dataStoreManager.getChildByParentProperty("PendingRoomChange", "Parent_id", this.Key_id);
+
+            if(this.PendingRoomChange){
+                this.PendingRoomChangeCopy = dataStoreManager.createCopy(this.PendingRoomChange)
+            }else{
+                this.PendingRoomChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingRoomChange());
+                if(!this.PendingRoomChangeCopy.hasOwnProperty("Parent_class"))this.PendingRoomChangeCopy.Parent_class = "User";
+                this.PendingRoomChangeCopy.Parent_id = this.Key_id;
+            }
         }
     }
 }
