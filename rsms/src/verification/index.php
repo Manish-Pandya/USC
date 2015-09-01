@@ -105,8 +105,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/models/Building.js"></script>
 <script type="text/javascript" src="scripts/models/Hazard.js"></script>
 
+<script type="text/javascript" src="../js/lib/phone-format.js"></script>
+
 <!-- filters -->
-<script src="scripts/filters/contactOrPersonnel.js"></script>
+<script src="scripts/filters/verificationFilters.js"></script>
 
 </head>
 <body>
