@@ -1,3 +1,16 @@
+<a ng-if="!PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = true;" class="btn-large btn" style="padding:10px; margin-left:5px; margin-bottom:8px;"><img src='../img/add-user-icon.png'>Add User</a>
+<div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.edit">
+    <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="users.selected" theme="selectize" ng-disabled="disabled" on-select="handleUser($item, true)">
+            <ui-select-match placeholder="Select or search for a User">{{$select.selected.Name}}</ui-select-match>
+            <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                <div once-text="user.Name"></div>
+            </ui-select-choices>
+        </ui-select>
+    </ui-select>
+    <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false;" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+    <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+</div>
+
 <table class="table table-striped table-hover table-bordered userList">
     <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">Lab Contacts</h3></th></tr>
     <tr>

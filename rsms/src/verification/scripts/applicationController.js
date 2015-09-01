@@ -35,6 +35,11 @@ angular
         {
             return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true);
         }
+        
+        ac.getAllUsers = function()
+        {
+            return dataSwitchFactory.getAllObjects('User');
+        }
 
         ac.createPendingChange = function(thingToBeChanged, verification_id, answer, save)
         {

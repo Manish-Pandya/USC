@@ -9,7 +9,8 @@ angular
         var id = 1;
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI);
+                                .then(getPI).then(getAllUsers);
+    
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -28,6 +29,19 @@ angular
                             $scope.PI = dataStoreManager.getById("PrincipalInvestigator",id);
                         }
                     )
+        }
+    
+        function getAllUsers(){
+           return ac.getAllUsers()
+                    .then(
+                        function( users ){
+                            $scope.allUsers = users;
+                        },
+                        function(){
+                            $scope.error = "Couldn't get the users";
+                            return false;
+                        }
+                    );
         }
 
     });

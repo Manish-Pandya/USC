@@ -11,7 +11,6 @@ Room.prototype = {
 
     loadPendingRoomChange: function()
     {
-        alert('yo nigga');
         if(!this.PendingRoomChange) {
             this.PendingRoomChange = dataStoreManager.getChildByParentProperty("PendingRoomChange", "Parent_id", this.Key_id);
 
