@@ -11,6 +11,7 @@ Room.prototype = {
 
     loadPendingRoomChange: function()
     {
+        alert('yo nigga');
         if(!this.PendingRoomChange) {
             this.PendingRoomChange = dataStoreManager.getChildByParentProperty("PendingRoomChange", "Parent_id", this.Key_id);
 
@@ -18,7 +19,7 @@ Room.prototype = {
                 this.PendingRoomChangeCopy = dataStoreManager.createCopy(this.PendingRoomChange)
             }else{
                 this.PendingRoomChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingRoomChange());
-                if(!this.PendingRoomChangeCopy.hasOwnProperty("Parent_class"))this.PendingRoomChangeCopy.Parent_class = "User";
+                if(!this.PendingRoomChangeCopy.hasOwnProperty("Parent_class"))this.PendingRoomChangeCopy.Parent_class = "Room";
                 this.PendingRoomChangeCopy.Parent_id = this.Key_id;
             }
         }

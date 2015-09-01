@@ -100,5 +100,31 @@ angular
 
        }
 
+       ac.savePendingRoomChange = function(room, verificationId)
+       {
+            ac.clearError();
+            var copy = room.PendingRoomChangeCopy;
+            copy.Verification_id = ac.getCachedVerification().Key_id;
+            console.log(room);
+            return ac.save( copy )
+                .then(
+                    function(returnedChange){
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
+                        if(!copy.Key_id){
+                            dataStoreManager.addOnSave(returnedChange);
+                        }
+                        angular.extend(copy, returnedChange);
+                        room.edit = false;
+                    },
+                    function(){
+                        ac.setError('The change could not be saved', contact);
+                        copy = null;
+                        copy = dataStoreManager.createCopy(room.PendingRoomChange);
+                    }
+                )
+
+       }
+
+
         return ac;
     });

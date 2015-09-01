@@ -23,6 +23,7 @@ angular
                     .then(
                         function(){
                             $scope.PI = dataStoreManager.getById("PrincipalInvestigator",id);
+                            console.log(dataStore);
                         }
                     )
         }
