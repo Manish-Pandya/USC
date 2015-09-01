@@ -32,19 +32,16 @@
     <tr class="table-row" ng-repeat="contact in  PI.LabPersonnel | contactOrPersonnel:false"  ng-class="{'new' : contact.stillHere == true, 'inactive' : contact.stillHere == false }">
         <td>{{contact.Name}}</td>
         <td>
-            <span ng-if="contact.PendingUserChange" ng-init="contact.stillHere = !(contact.PendingUserChange.New_status)"/>
-            <span ng-if="contact.PendingUserChange &&  contact.PendingUserChange.answer" ng-init="contact.stillHere = ( contact.PendingUserChange.answer == 'Yes' )"/>
             <label class="checkbox inline">
-                <input type="radio" ng-model="contact.stillHere" ng-value="true" ng-required="contact.stillHere" ng-change="ac.createPendingChange(contact, verification.Key_id, 'Yes')" />
+                <input type="radio" ng-model="contact.PendingUserChangeCopy.Answer" ng-value="'Yes'" ng-required="contact.PendingUserChangeCopy.Answer == 'Yes'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" />
                 <span class="metro-radio">Yes</span>
             </label>
             <label class="checkbox inline">
-                <input type="radio" ng-model="contact.stillHere" ng-value="false" ng-required="!contact.stillHere" ng-change="ac.createPendingChange(contact, null, 'No')"  />
+                <input type="radio" ng-model="contact.PendingUserChangeCopy.Answer" ng-value="'No'" ng-required="contact.PendingUserChangeCopy.Answer == 'No'"/>
                 <span class="metro-radio">No</span>
             </label>
-            <select ng-if="contact.PendingUserChange && !contact.stillHere" ng-click="ac.convertToCopy(contact, verification)" style="width:260px; margin-bottom:0;" ng-model="PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
-            <select ng-if="contact.PendingUserChange && !contact.stillHere" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChange.New_status" ng-required="contact.PendingUserChange" ng-change="ac.savePendingUserChange(contact.PendingUserChange, contact, verification.Key_id)" ng-options="option as option for option in personnelOptions">
-                <option ng-if="!contact.PendingUserChange.New_status" value="">What changed about {{contact.Name}}?</option>
+            <select ng-if="contact.PendingUserChangeCopy.Answer == 'No'" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChangeCopy.Answer == 'No'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
+                <option ng-if="!contact.PendingUserChangeCopy.New_status" value="">What changed about {{contact.Name}}?</option>
             </select>
         </td>
     </tr>
