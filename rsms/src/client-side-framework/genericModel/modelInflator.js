@@ -57,6 +57,8 @@ angular
                         }
 
                     }
+                    modelledObject.setPropertiesFromPrototype()
+
                     return modelledObject;
             }
 
