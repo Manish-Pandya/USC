@@ -1,5 +1,5 @@
-<h2 class="alert greenBg" ng-if="PI">PRINCIPAL INVESTIGATOR</h2>
-<table class="table table-striped table-hover table-bordered userList" style="width:500px;">
+<table class="table table-striped table-hover table-bordered userList" style="width:500px;" ng-class="{'greyed-out': !PI}">
+    <tr class="greenBg"><th class="greenBg" colspan="2"><h2 class="greenBg">PRINCIPAL INVESTIGATOR</h2></th></tr>
     <tr>
         <th>Name</th>
         <th>Emergency Phone Number</th>
@@ -8,7 +8,7 @@
         <td style="position:relative; width:50%">{{PI.User.Name}}</td>
         <td style="position:relative; width:50%">
             <span ng-if="PI.User.Emergency_phone && !PI.User.edit" style="height: 25px;display: block;">{{PI.User.Emergency_phone}}</span>
-            <input ng-if="!PI.User.Emergency_phone || PI.User.edit" ng-model="PI.User.fake_phone"/>
+            <input ng-if="!PI.User.PendingUserChangeCopy.Emergency_phone || PI.User.edit" ng-model="PI.User.PendingUserChangeCopy.Emergency_phone"/>
             <div class="absoluteBtns" style="margin-left:5px;">
                 <a ng-if="PI.User.Emergency_phone && !PI.User.edit" ng-click="PI.User.edit = true; PI.User.fake_phone = PI.User.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
                 <a ng-if="!PI.User.Emergency_phone || PI.User.edit" ng-click="PI.User.edit = false; PI.User.Emergency_phone = PI.User.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>

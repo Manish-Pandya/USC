@@ -126,3 +126,8 @@ span.metro-radio{
     padding-left: 27px;
     padding-top: 5px !Important;
 }
+span.metro-checkbox{
+    display: block;
+    max-width: 1220px;
+    white-space: initial;
+}
