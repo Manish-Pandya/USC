@@ -7,21 +7,21 @@
     <tr class="table-row">
         <td style="position:relative; width:50%">{{PI.User.Name}}</td>
         <td style="position:relative; width:50%">
-            <span ng-if="PI.User.Emergency_phone && !PI.User.edit" style="height: 25px;display: block;">{{PI.User.Emergency_phone}}</span>
-            <input ng-if="!PI.User.PendingUserChangeCopy.Emergency_phone || PI.User.edit" ng-model="PI.User.PendingUserChangeCopy.Emergency_phone"/>
+            <span ng-if="PI && !PI.User.PendingUserChangeCopy.Emergency_phone" ng-init="PI.User.PendingUserChangeCopy.Emergency_phone = PI.User.Emergency_phone"/>
+            <span ng-if="PI.User.PendingUserChangeCopy.Emergency_phone && !PI.User.edit" style="height: 25px;display: block;">{{PI.User.PendingUserChangeCopy.Emergency_phone}}</span>
+            <input ng-if="!PI.User.PendingUserChangeCopy.Emergency_phone || PI.User.edit" ng-model="PI.User.PendingUserChangeCopy.Emergency_phone" ui-mask="(999) 999-9999"/>
             <div class="absoluteBtns" style="margin-left:5px;">
-                <a ng-if="PI.User.Emergency_phone && !PI.User.edit" ng-click="PI.User.edit = true; PI.User.fake_phone = PI.User.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                <a ng-if="!PI.User.Emergency_phone || PI.User.edit" ng-click="PI.User.edit = false; PI.User.Emergency_phone = PI.User.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="PI.User.Emergency_phone && !PI.User.edit" ng-click="PI.User.edit = true; PI.User.PendingUserChangeCopy.Emergency_phone = PI.User.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                <a ng-if="!PI.User.Emergency_phone || PI.User.edit" ng-click="PI.User.edit = false; PI.User.Emergency_phone = PI.User.PendingUserChangeCopy.Emergency_phone; ac.savePendingUserChange(PI.User, verification.Key_id)" class="btn btn-success left" ng-disabled="PI.User.PendingUserChangeCopy.Emergency_phone.length < 10"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="!PI.User.Emergency_phone || PI.User.edit" ng-click="PI.User.edit = false" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
         </td>
-
     </tr>
 </table>
 
 
-<h2 class="alert greenBg" ng-if="PI">LAB CONTACTS</h2>
-<table class="table table-striped table-hover table-bordered userList" style="width:500px;">
+<table class="table table-striped table-hover table-bordered userList" style="width:500px;" ng-class="{'greyed-out': !PI}">
+    <tr class="greenBg"><th class="greenBg" colspan="2"><h2 class="greenBg">LAB CONTACTS</h2></th></tr>
     <tr>
         <th>Name</th>
         <th>Emergency Phone Number</th>
@@ -29,14 +29,14 @@
     <tr class="table-row" ng-repeat="contact in PI.LabPersonnel | contactOrPersonnel:true" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
         <td style="position:relative; width:50%">{{contact.Name}}</td>
         <td style="position:relative; width:50%">
-            <span ng-if="contact.Emergency_phone && !contact.edit" style="height: 25px;display: block;">{{contact.Emergency_phone}}</span>
-            <input ng-if="!contact.Emergency_phone || contact.edit" ng-model="contact.fake_phone"/>
+            <span ng-if="contact && !contact.PendingUserChangeCopy.Emergency_phone" ng-init="contact.PendingUserChangeCopy.Emergency_phone = contact.Emergency_phone"/>
+            <span ng-if="contact.PendingUserChangeCopy.Emergency_phone && !contact.edit" style="height: 25px;display: block;">{{contact.PendingUserChangeCopy.Emergency_phone}}</span>
+            <input ng-if="!contact.PendingUserChangeCopy.Emergency_phone || contact.edit" ng-model="contact.PendingUserChangeCopy.Emergency_phone" ui-mask="(999) 999-9999"/>
             <div class="absoluteBtns" style="margin-left:5px;">
-                <a ng-if="contact.Emergency_phone && !contact.edit" ng-click="contact.edit = true; contact.fake_phone = contact.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false; contact.Emergency_phone = contact.fake_phone" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="contact.Emergency_phone && !contact.edit" ng-click="contact.edit = true; contact.PendingUserChangeCopy.Emergency_phone = contact.Emergency_phone" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false; contact.Emergency_phone = contact.PendingUserChangeCopy.Emergency_phone; ac.savePendingUserChange(contact, verification.Key_id)" class="btn btn-success left" ng-disabled="PI.User.PendingUserChangeCopy.Emergency_phone.length < 10"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="!contact.Emergency_phone || contact.edit" ng-click="contact.edit = false" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
         </td>
-
     </tr>
 </table>
