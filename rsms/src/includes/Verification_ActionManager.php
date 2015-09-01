@@ -80,14 +80,51 @@ class Verification_ActionManager extends ActionManager  {
     	 
     	if( $id !== NULL ){
     		$dao = $this->getDao(new PrincipalInvestigator());
-   		
-    		$pi = $dao->getById($id);
+            $pi = $dao->getById($id);
+
+            $buildings = array();
+
+            $roomMaps = array();
+            $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+            $roomMaps[] = new EntityMap("lazy","getHazards");
+            $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+            $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+            $roomMaps[] = new EntityMap("lazy","getBuilding");
+            $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+
+            $buildingMaps = array();
+            $buildingMaps[] = new EntityMap("eager","getRooms");
+            $buildingMaps[] = new EntityMap("lazy","getCampus");
+            $buildingMaps[] = new EntityMap("lazy","getCampus_id");
+            $buildingMaps[] = new EntityMap("lazy","getPhysical_address");
+
+            $rooms = $pi->getRooms();
+            foreach($rooms as $room){
+                if(!in_array($room->getBuilding(), $buildings)){
+                    $buildings[] = $room->getBuilding();
+                }
+            }
+
+            foreach($buildings as $building){
+                $rooms = array();
+                foreach($pi->getRooms() as $room){
+                    if($room->getBuilding_id() == $building->getKey_id()){
+                        $room->setEntityMaps($roomMaps);
+                        $rooms[] = $room;
+                    }
+                }
+
+                $building->setEntityMaps($buildingMaps);
+                $building->setRooms($rooms);
+            }
+
+            $pi->setBuildings($buildings);
     		
     		$entityMaps = array();
     		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
-    		$entityMaps[] = new EntityMap("eager","getRooms");
     		$entityMaps[] = new EntityMap("eager","getUser");
     		$entityMaps[] = new EntityMap("eager","getCurrentVerifications");
+    		$entityMaps[] = new EntityMap("eager","getBuildings");
     		
     		$entityMaps[] = new EntityMap("lazy","getDepartments");
     		$entityMaps[] = new EntityMap("lazy","getInspections");
@@ -102,6 +139,8 @@ class Verification_ActionManager extends ActionManager  {
     		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
     		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
     		$entityMaps[] = new EntityMap("lazy","getVerifications");
+    		$entityMaps[] = new EntityMap("lazy","getRooms");
+    		
     		
     		$pi->setEntityMaps($entityMaps);
     		return $pi;
