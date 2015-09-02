@@ -1,6 +1,6 @@
 <a ng-if="!PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = true;" class="btn-large btn" style="padding:10px; margin-left:5px; margin-bottom:8px;"><img src='../img/add-user-icon.png'>Add User</a>
 <div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.edit">
-    <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="users.selected" theme="selectize" ng-disabled="disabled" on-select="handleUser($item, true)">
+    <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="handleUser($item, true)">
             <ui-select-match placeholder="Select or search for a User">{{$select.selected.Name}}</ui-select-match>
             <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
                 <div once-text="user.Name"></div>

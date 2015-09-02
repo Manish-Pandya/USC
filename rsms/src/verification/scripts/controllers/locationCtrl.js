@@ -4,6 +4,8 @@ angular
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         var id = 1;
+    
+        $scope.rooms = [];
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllBuildings);
@@ -39,6 +41,10 @@ angular
                             return false;
                         }
                     );
+        }
+    
+        $scope.onBuildingSelect = function(item) {
+            if (item) $scope.rooms = item.Rooms;
         }
 
     });
