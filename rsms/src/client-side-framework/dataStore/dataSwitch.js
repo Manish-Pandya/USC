@@ -57,7 +57,7 @@ angular
                     return deferred.promise;
             }
 
-            dataSwitch.getAllObjects = function( className, recurse ) {
+            dataSwitch.getAllObjects = function( className, recurse, force ) {
 
                 // should always return a promise
                 var deferred = $q.defer();
@@ -69,7 +69,7 @@ angular
                     //this is a new request.  make reference to our promise in dataSwitch so the next time we make it, we return the one we already made
                     dataSwitch.promises[className] = deferred;
                     // check cache first
-                    if( dataStoreManager.checkCollection(className) ) {
+                    if( !force && dataStoreManager.checkCollection(className) ) {
                         deferred.resolve( dataStoreManager.get(className) );
                     }
                     // if not in cache, get from server
@@ -136,6 +136,7 @@ angular
                 var i = instatedObjects.length;
                 while(i--){
                     for(var prop in instatedObjects[i]){
+
                         if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] && !(instatedObjects[i][prop][0] instanceof window[instatedObjects[i][prop][0].Class])){
                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataStoreManager.store(instatedObjects[i][prop]);

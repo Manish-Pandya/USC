@@ -38,7 +38,25 @@ angular
         
         ac.getAllUsers = function()
         {
-            return dataSwitchFactory.getAllObjects('User');
+            return dataSwitchFactory.getAllObjects('User', null, true);
+        }
+        
+        ac.saveVerification = function(verification, step){
+            var copy = verification;
+            copy.Step = step;
+            console.log(copy);
+            return ac.save( copy )
+                .then(
+                    function(returnedVerification){
+                        returnedVerification = modelInflatorFactory.instantiateObjectFromJson( returnedVerification );
+                        angular.extend(copy, returnedVerification);
+                    },
+                    function(){
+                        ac.setError('The step could not be saved', contact);
+                        copy = null;
+                    }
+                )
+
         }
 
         ac.createPendingChange = function(thingToBeChanged, verification_id, answer, save)
