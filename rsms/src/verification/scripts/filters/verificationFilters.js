@@ -25,3 +25,25 @@ angular.module('filtersApp',[])
             return formatLocal('US', phoneNumber);
         }
     })
+    .filter('userChanges',function(){
+        return function(changes){
+            if(!changes)return;
+            var userChanges = [];
+            var i = changes.length;
+            while(i--){
+                if(changes[i].New_status)userChanges.push(changes[i])
+            }
+            return userChanges;
+        }
+    })
+    .filter('phoneChanges',function(){
+        return function(changes){
+            if(!changes)return;
+            var phoneChanges = [];
+            var i = changes.length;
+            while(i--){
+                if(changes[i].Emergency_phone)phoneChanges.push(changes[i])
+            }
+            return phoneChanges;
+        }
+    })
