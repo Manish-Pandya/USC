@@ -7,14 +7,14 @@
             </ui-select-choices>
         </ui-select>
     </ui-select>
-    <ui-select tagging="defaultAddOtherTag" ng-show="allBuildings" ng-model="room.selected" theme="selectize" ng-disabled="!rooms.length" on-select="handleRoom($item)">
+    <ui-select tagging="defaultAddOtherTag" ng-show="allBuildings" ng-model="room.selected" theme="selectize" ng-disabled="!rooms.length" on-select="onRoomSelect($item)">
             <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
             <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search} | orderBy:'Name'">
                 <div once-text="room.Name"></div>
             </ui-select-choices>
         </ui-select>
     </ui-select>
-    <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false;" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+    <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false; ac.savePendingRoomChange(room, verification.Key_id);" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
     <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 </div>
 

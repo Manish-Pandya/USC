@@ -6,6 +6,7 @@ angular
         var id = 1;
     
         $scope.rooms = [];
+        $scope.room;
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllBuildings);
@@ -45,6 +46,13 @@ angular
     
         $scope.onBuildingSelect = function(item) {
             if (item) $scope.rooms = item.Rooms;
+        }
+        
+        $scope.onRoomSelect = function(item) {
+            if (item) {
+                item.PendingRoomChangeCopy.New_status = "Added";
+                $scope.room = item;
+            }
         }
 
     });

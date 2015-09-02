@@ -43,7 +43,7 @@ angular
         
         ac.getAllBuildings = function()
         {
-            return dataSwitchFactory.getAllObjects('Building', null, true);
+            return dataSwitchFactory.getAllObjects('Building', true, true);
         }
         
         ac.saveVerification = function(verification, step){
