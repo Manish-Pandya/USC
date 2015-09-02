@@ -114,7 +114,7 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
-                            ac.getCachedVerification().PendingUserChages.push(returnedChange);
+                            ac.getCachedVerification().PendingUserChanges.push(returnedChange);
                         }
                         angular.extend(copy, returnedChange);
                         contact.edit = false;
@@ -140,7 +140,7 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
-                            ac.getCachedVerification().PendingRoomChages.push(returnedChange);
+                            ac.getCachedVerification().PendingRoomChanges.push(returnedChange);
                         }
                         angular.extend(copy, returnedChange);
                         room.edit = false;
