@@ -108,13 +108,13 @@ angular
             ac.clearError();
             var copy = contact.PendingUserChangeCopy;
             copy.Verification_id = ac.getCachedVerification().Key_id;
-            console.log(copy);
             return ac.save( copy )
                 .then(
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
+                            ac.getCachedVerification().PendingUserChages.push(returnedChange);
                         }
                         angular.extend(copy, returnedChange);
                         contact.edit = false;
@@ -140,6 +140,7 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
+                            ac.getCachedVerification().PendingRoomChages.push(returnedChange);
                         }
                         angular.extend(copy, returnedChange);
                         room.edit = false;
