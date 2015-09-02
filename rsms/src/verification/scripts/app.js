@@ -30,7 +30,7 @@ angular
     .state('verification', {
         abstract: true,
         templateUrl: "views/verification-nav.html",
-        controller: "NavCtrl"
+        controller: "NavCtrl",
     })
     .state('verification.step1', {
         url: "/personnel",
@@ -53,7 +53,8 @@ angular
     })
     .state('verification.step5', {
         url: "/confirmation",
-        templateUrl: "views/confirm.html"
+        templateUrl: "views/confirm.html",
+        controller: "ConfirmationCtrl"
     })
     //admin stuff
     .state('verificiation-admin', {
@@ -62,7 +63,29 @@ angular
     })
 
   })
-  .controller('NavCtrl', function ($rootScope, $state) {
+  .controller('NavCtrl', function ($rootScope, $state, applicationControllerFactory) {
+    var ac = applicationControllerFactory;
+    ac.getVerification(1)
+        .then(
+            function(){
+                $rootScope.greatestAllowedStep = parseInt(ac.getCachedVerification().Step + 1);
+                $rootScope.navigate(parseInt(ac.getCachedVerification().Step -1));
+                var i = 0
+                for(i; i < ac.getCachedVerification().Step; i++){
+                    $rootScope.states[i].Done = true;
+                }
+            }
+        )
+    
+    $rootScope.stepDone = function(step){
+        return ac.saveVerification(ac.getCachedVerification(), step)
+                    .then(
+                        function(){
+                            $rootScope.greatestAllowedStep = parseInt(ac.getCachedVerification().Step + 1);
+                        }
+                    )
+    }
+    
     $rootScope.greatestAllowedStep = 1;
     $rootScope.states = [
             {
@@ -85,6 +108,7 @@ angular
                 Name: 'verification.step3',
                 Label: 'Verify Lab Locations',
                 Message: 'Please verify the following personnel still work in your lab(s).',
+                ConfirmationMessage: 'The above list of laboratory rooms accurately includes all locations where my laboratory conducts research experiments (including rooms where my lab personnel use shared equipment or rooms where my lab uses research animals).',
                 NavLabel:'Locations',
                 Step:3
             },
@@ -98,30 +122,20 @@ angular
             {
                 Name: 'verification.step5',
                 Label: 'Confirmation',
-                Message: 'Please verify the following personnel still work in your lab(s).',
+                Message: 'Please confirm any changes...',
+                ConfirmationMessage: 'I verify that all information provided is true on penalty of being launch into the sun...',
                 NavLabel:'Confirmation',
                 Step:5
             }
     ]
 
     $rootScope.navigate = function(int){
+        if(int<0){
+            int=0;
+        }
         $rootScope.selectedView = $rootScope.states[int];
         $state.go($rootScope.states[int].Name);
-    }
-
-    //get the right state on page load
-    var i = $rootScope.states.length;
-    while(i--){
-        if($rootScope.states[i].Name == $state.current.name){
-            $rootScope.navigate(i);
-            return;
-        }
-    }
-
-    $rootScope.setStepDone = function(step){
-        if(!$rootScope.greatestAllowedStep || ( step.Done && ( step.Step >= $rootScope.greatestAllowedStep ) ) ){
-            $rootScope.greatestAllowedStep = step.Step + 1;
-        }
+        console.log($rootScope.selectedView);
     }
 
   });

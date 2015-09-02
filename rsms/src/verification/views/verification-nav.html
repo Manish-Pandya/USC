@@ -1,7 +1,8 @@
   <!--   <div cg-busy="{promise:PendingUserChangeSaving,message:'Saving',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
     <div cg-busy="{promise:PendingHazardChangeSaving,message:'Saving',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
     <div cg-busy="{promise:Loading,message:'Loading...',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>-->
-   <div cg-busy="{promise:PendingRoomChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+   <div cg-busy="{promise:VerificationSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>   
+    <div cg-busy="{promise:PendingRoomChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
    <div cg-busy="{promise:PendingUserChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
     <div class="navbar">
@@ -15,29 +16,31 @@
             </ul>
         </div>
         <div class="whitebg" ng-app="verification" style="padding:70px 70px;">
-                <div class="progress progress-striped" style="width:1060px; margin-bottom: -100px;margin-top: 33px;">
-                  <div class="bar bar-success" style="width: 22%;" ng-if="greatestAllowedStep > 1"></div>
-                  <div class="bar bar-success" style="width: 37%;" ng-if="greatestAllowedStep > 2"></div>
-                  <div class="bar bar-success" style="width: 23%;" ng-if="greatestAllowedStep > 3"></div>
-                  <div class="bar bar-success" style="width: 8%;" ng-if="greatestAllowedStep > 4"></div>
-                  <div class="bar bar-success" style="width: 10%;" ng-if="greatestAllowedStep == 5"></div>
-                </div>
-                <div class="btn-group verification-nav">
-                    <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
-
-                <div class="top-junk">
-                    <h1>{{selectedView.Label}}</h1>
-                    <h3>{{selectedView.Message}}</h3>
-                </div>
-                <form name="fancyForm"><div ui-view></div></form>
-                <div class="bottoms" style="width:1060px;">
-                    <label class="checkbox inline full">
-                        <input type="checkbox" ng-model="selectedView.Done" ng-disabled="fancyForm.$invalid" ng-change="setStepDone(selectedView)" />
-                        <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
-                    </label>
-                    <div class="step-nav">
-                        <button class="btn btn-success pull-right" ng-click="vf.setRoute('phone')" ng-disabled="!step1">Next<i class=" icon-arrow-right"></i></button>
-                    </div>
+            <div class="progress progress-striped" style="width:1060px; margin-bottom: -100px;margin-top: 33px;">
+              <div class="bar bar-success" style="width: 22%;" ng-if="greatestAllowedStep > 1"></div>
+              <div class="bar bar-success" style="width: 37%;" ng-if="greatestAllowedStep > 2"></div>
+              <div class="bar bar-success" style="width: 23%;" ng-if="greatestAllowedStep > 3"></div>
+              <div class="bar bar-success" style="width: 8%;" ng-if="greatestAllowedStep > 4"></div>
+              <div class="bar bar-success" style="width: 10%;" ng-if="greatestAllowedStep == 5"></div>
+            </div>
+            <div class="btn-group verification-nav">
+                <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
+            </div>
+            <div class="top-junk">
+                <h1>{{selectedView.Label}}</h1>
+                <h3>{{selectedView.Message}}</h3>
+            </div>
+            <form name="fancyForm"><div ui-view></div></form>
+            <div class="bottoms" style="width:1060px;">
+<pre>                    {{selectedView | json}}
+</pre>
+                <label class="checkbox inline full">
+                    <input type="checkbox" ng-model="selectedView.Done" ng-disabled="fancyForm.$invalid" ng-change="stepDone(selectedView.Step)" />
+                    <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
+                </label>
+                <div class="step-nav">
+                    <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left" ng-click="vf.setRoute('phone')"><i class=" icon-arrow-left"></i>Previous</button>
+                    <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right" ng-click="vf.setRoute('phone')" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
                 </div>
             </div>
-    </div>
+        </div>
