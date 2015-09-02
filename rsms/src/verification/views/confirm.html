@@ -1,0 +1,36 @@
+<div class="card two-thirds" ng-show="userChanges.length">
+    <h3>Verify Changes to Lab Personnel</h3>
+    <ul>
+       <li ng-repeat="change in userChanges = (verification.PendingUserChanges | userChanges)">
+            {{change}}
+       </li>  
+    </ul>
+</div>
+
+<div class="card two-thirds" ng-show="phoneChanges.length">
+    <h3>Verify Changes to Lab Personnel</h3>
+    <ul>
+       <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
+            {{change}}
+       </li>  
+    </ul>
+</div>
+
+<div class="card two-thirds">
+    <h3>Verify Changes to Lab Locations</h3>
+    <ul>
+       <li ng-repeat="change in verification.PendingRoomChanges">
+            {{change}}
+       </li>  
+    </ul>
+</div>
+
+<div class="card two-thirds">
+    <h3>Verify Changes to Lab Personnel</h3>
+    <ul>
+       <li ng-repeat="change in verification.PendingHazardChanges">
+            {{change}}
+       </li>  
+    </ul>
+</div>
+<pre>{{verification | json}}</pre>
