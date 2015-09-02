@@ -25,15 +25,17 @@ angular.module('filtersApp',[])
             return formatLocal('US', phoneNumber);
         }
     })
-    .filter('userChanges',function(){
-        return function(changes){
+    .filter('hasNewStatus',function(){
+        return function(changes, status){
             if(!changes)return;
-            var userChanges = [];
+            var changedThings = [];
             var i = changes.length;
             while(i--){
-                if(changes[i].New_status)userChanges.push(changes[i])
+                console.log(changes[i]);
+                if(changes[i].New_status && (!status || changes[i].New_status == status))changedThings.push(changes[i])
             }
-            return userChanges;
+            console.log(changedThings);
+            return changedThings;
         }
     })
     .filter('phoneChanges',function(){
