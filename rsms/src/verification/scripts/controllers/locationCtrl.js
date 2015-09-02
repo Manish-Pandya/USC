@@ -55,7 +55,6 @@ angular
                     r.Building = dataStoreManager.getById("Building", r.Building_id);
                     
                     $scope.addedRooms.push(r);
-                    console.log(r);
                 }
             }
             return $scope.addedRooms;
