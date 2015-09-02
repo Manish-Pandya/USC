@@ -19,6 +19,7 @@ class Verification extends GenericCrud{
 			"notification_date"			=> "timestamp",
 			"due_date"					=> "timestamp",
 			"completed_date"			=> "timestamp",
+			"step"						=> "integer",
 			
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -27,14 +28,13 @@ class Verification extends GenericCrud{
 			"is_active"			=> "boolean",
 			"last_modified_user_id"			=> "integer",
 			"created_user_id"	=> "integer",
-			"cap_complete"      => "integer",
-			"is_rad"			=> "boolean"
 	);
 	
 	private $principal_investigator_id;
 	private $notification_date;
 	private $due_date;
 	private $completed_date;
+	private $step;
 	
 	private $pendingRoomChanges;
 	private $pendingUserChanges;
@@ -64,6 +64,9 @@ class Verification extends GenericCrud{
 	
 	public function getCompleted_date(){return $this->completed_date;}
 	public function setCompleted_date($date){$this->completed_date = $date;}
+	
+	public function getStep(){return $this->step;}
+	public function setStep($step){$this->step = $step;}
 	
 	public function getPendingRoomChanges(){
 		if($this->pendingRoomChanges === NULL && $this->hasPrimaryKeyValue()) {
