@@ -41,6 +41,11 @@ angular
             return dataSwitchFactory.getAllObjects('User', null, true);
         }
         
+        ac.getAllBuildings = function()
+        {
+            return dataSwitchFactory.getAllObjects('Building', null, true);
+        }
+        
         ac.saveVerification = function(verification, step){
             var copy = verification;
             copy.Step = step;

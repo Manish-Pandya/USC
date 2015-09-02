@@ -1,8 +1,8 @@
 <a ng-if="!PI.Buildings.edit" class="btn-large btn" ng-click="PI.Buildings.edit = true;" style="padding:10px; margin-left:5px; margin-bottom:8px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Location</a>
 <div class="span4" style="margin:10px 0; float:none" ng-if="PI.Buildings.edit">
-    <ui-select tagging="defaultAddOtherTag" ng-show="PI.Buildings" ng-model="users.selected" theme="selectize" ng-disabled="disabled" on-select="handleUser($item, true)">
+    <ui-select ng-show="allBuildings" ng-model="users.selected" theme="selectize" ng-disabled="disabled" on-select="handleUser($item, true)">
             <ui-select-match placeholder="Select or search for a Location">{{$select.selected.Name}}</ui-select-match>
-            <ui-select-choices repeat="building in PI.Buildings | propsFilter: {Name: $select.search} | orderBy:'Name'">
+            <ui-select-choices repeat="building in allBuildings | propsFilter: {Name: $select.search} | orderBy:'Name'">
                 <div once-text="building.Name"></div>
             </ui-select-choices>
         </ui-select>

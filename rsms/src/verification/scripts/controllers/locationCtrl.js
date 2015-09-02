@@ -6,7 +6,7 @@ angular
         var id = 1;
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI);
+                                .then(getPI).then(getAllBuildings);
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -26,6 +26,19 @@ angular
                             console.log(dataStore);
                         }
                     )
+        }
+    
+        function getAllBuildings(){
+           return ac.getAllBuildings()
+                    .then(
+                        function( buildings ){
+                            $scope.allBuildings = buildings;
+                        },
+                        function(){
+                            $scope.error = "Couldn't get the users";
+                            return false;
+                        }
+                    );
         }
 
     });
