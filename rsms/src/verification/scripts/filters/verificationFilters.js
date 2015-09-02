@@ -47,3 +47,15 @@ angular.module('filtersApp',[])
             return phoneChanges;
         }
     })
+    .filter('activePendingRoomChangeOnly', function() {
+        return function(array) {
+                if(!array)return;
+                var activeObjects = [];
+
+                var i = array.length;
+                while(i--){
+                    if(array[i].PendingRoomChange.Is_active)activeObjects.unshift(array[i]);
+            }
+            return activeObjects;
+        };
+    })
