@@ -131,3 +131,9 @@ span.metro-checkbox{
     max-width: 1220px;
     white-space: initial;
 }
+
+.card {
+    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    padding: 10px;
+    margin: 10px 0;
+}
