@@ -22,6 +22,7 @@ User.prototype = {
                 if(!this.PendingUserChangeCopy.hasOwnProperty("Parent_class"))this.PendingUserChangeCopy.Parent_class = "User";
                 this.PendingUserChangeCopy.Parent_id = this.Key_id;
             }
+            this.PendingUserChangeCopy.Is_active = true;
         }
     }
 }

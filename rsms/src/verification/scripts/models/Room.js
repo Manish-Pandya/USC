@@ -20,6 +20,7 @@ Room.prototype = {
                 this.PendingRoomChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingRoomChange());
                 if(!this.PendingRoomChangeCopy.hasOwnProperty("Parent_class"))this.PendingRoomChangeCopy.Parent_class = "Room";
                 this.PendingRoomChangeCopy.Parent_id = this.Key_id;
+                this.PendingRoomChangeCopy.Is_active = true;
             }
         }
     }
