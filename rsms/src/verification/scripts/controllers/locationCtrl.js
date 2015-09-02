@@ -7,9 +7,10 @@ angular
     
         $scope.rooms = [];
         $scope.room;
+        $scope.addedRooms = [];
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllBuildings);
+                                .then(getPI).then(getAllBuildings).then(getAllAddedRooms);
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -42,6 +43,22 @@ angular
                             return false;
                         }
                     );
+        }
+    
+        function getAllAddedRooms(){
+            var v = ac.getCachedVerification();
+            for(var i = 0; i < v.PendingRoomChanges.length; i++){
+                var pendingChange = v.PendingRoomChanges[i];
+                if (pendingChange.New_status == "Added") {
+                    var r = dataStoreManager.getById("Room", pendingChange.Parent_id);
+                    // set the building
+                    r.Building = dataStoreManager.getById("Building", r.Building_id);
+                    
+                    $scope.addedRooms.push(r);
+                    console.log(r);
+                }
+            }
+            return $scope.addedRooms;
         }
     
         $scope.onBuildingSelect = function(item) {

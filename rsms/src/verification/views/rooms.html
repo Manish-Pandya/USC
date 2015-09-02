@@ -39,3 +39,8 @@
         </td>
     </tr>
 </table>
+
+<h3 class="card-header padding greenBg" style="padding:5px">Added Buildings</h3>
+<ul ng-repeat="room in addedRooms">
+    <li><h3>{{room.Building.Name}}: {{room.Name}}</h3></li>
+</ul>
