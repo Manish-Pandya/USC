@@ -3,16 +3,15 @@ angular
     .controller('LocationCtrl', function ($scope, $rootScope, applicationControllerFactory) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
+        $scope.dataStoreManager = dataStoreManager;
         var id = 1;
     
         $scope.rooms = [];
         $scope.room;
-        $scope.addedRooms = [];
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI)
-                                .then(getAllBuildings)
-                                    .then(getAllAddedRooms);
+                                .then(getAllBuildings);
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -45,21 +44,6 @@ angular
                             return false;
                         }
                     );
-        }
-    
-        function getAllAddedRooms(){
-            var v = ac.getCachedVerification();
-            for(var i = 0; i < v.PendingRoomChanges.length; i++){
-                var pendingChange = v.PendingRoomChanges[i];
-                if (pendingChange.New_status == "Added") {
-                    var r = dataStoreManager.getById("Room", pendingChange.Parent_id);
-                    // set the building
-                    r.Building_name = dataStoreManager.getById("Building", r.Building_id).Name;
-                    
-                    $scope.addedRooms.push(r);
-                }
-            }
-            return $scope.addedRooms;
         }
     
         $scope.onBuildingSelect = function(item) {

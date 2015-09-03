@@ -41,9 +41,12 @@
 </table>
 
 <h3 class="card-header padding greenBg" style="padding:5px">Added Buildings</h3>
-<ul ng-repeat="room in addedRooms | activePendingRoomChangeOnly">
+<ul ng-repeat="pendingRoomChange in verification.PendingRoomChanges | hasNewStatus:'Added' | activeOnly">
     <li>
-        <h3>{{room.Building_name}}: {{room.Name}}<a style="margin-left:5px;" ng-click="room.PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(room, verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
+        <h3>
+            {{dataStoreManager.getById('Room', pendingRoomChange.Parent_id).Building_name}}
+            {{dataStoreManager.getById('Room', pendingRoomChange.Parent_id).Name}}
+            <a style="margin-left:5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
         </h3>
     </li>
 </ul>

@@ -12,7 +12,7 @@ angular
         var id = 1;
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(getAllAddedUsers);
+                                .then(getPI).then(getAllUsers);
     
 
         function getVerification(id){
@@ -45,18 +45,6 @@ angular
                             return false;
                         }
                     );
-        }
-    
-        function getAllAddedUsers(){
-            var v = ac.getCachedVerification();
-            for(var i = 0; i < v.PendingRoomChanges.length; i++){
-                var pendingChange = v.PendingRoomChanges[i];
-                if (pendingChange.New_status == "Added") {
-                    var u = dataStoreManager.getById("User", pendingChange.Parent_id);
-                    $scope.addedUsers.push(u);
-                }
-            }
-            return $scope.addedUsers;
         }
     
         $scope.onUserSelect = function(item) {
