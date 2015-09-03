@@ -45,7 +45,7 @@ angular
                         }
                     );
         }
-    
+        
         $scope.onBuildingSelect = function(item) {
             if (item) $scope.rooms = item.Rooms;
         }
@@ -53,6 +53,7 @@ angular
         $scope.onRoomSelect = function(item) {
             if (item) {
                 item.PendingRoomChangeCopy.New_status = "Added";
+                item.Building_name = dataStoreManager.getById("Building", item.Building_id).Name;
                 $scope.room = item;
             }
         }
