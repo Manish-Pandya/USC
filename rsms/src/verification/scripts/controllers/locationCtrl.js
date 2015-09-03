@@ -10,7 +10,9 @@ angular
         $scope.addedRooms = [];
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllBuildings).then(getAllAddedRooms);
+                                .then(getPI)
+                                .then(getAllBuildings)
+                                    .then(getAllAddedRooms);
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -52,7 +54,7 @@ angular
                 if (pendingChange.New_status == "Added") {
                     var r = dataStoreManager.getById("Room", pendingChange.Parent_id);
                     // set the building
-                    r.Building = dataStoreManager.getById("Building", r.Building_id);
+                    r.Building_name = dataStoreManager.getById("Building", r.Building_id).Name;
                     
                     $scope.addedRooms.push(r);
                 }
