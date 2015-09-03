@@ -134,7 +134,6 @@ angular
             ac.clearError();
             var copy = room.PendingRoomChangeCopy;
             copy.Verification_id = ac.getCachedVerification().Key_id;
-            console.log(room);
             return ac.save( copy )
                 .then(
                     function(returnedChange){
@@ -146,7 +145,7 @@ angular
                         }
                         room.PendingRoomChange.Is_active = returnedChange.Is_active;
                         angular.extend(copy, returnedChange);
-                        angular.extend(contact.PendingRoomChange, returnedChange)
+                        angular.extend(room.PendingRoomChange, returnedChange)
                         room.edit = false;
                     },
                     function(){
