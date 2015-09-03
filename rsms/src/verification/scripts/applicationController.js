@@ -107,15 +107,16 @@ angular
         {
             ac.clearError();
             var copy = contact.PendingUserChangeCopy;
-            copy.Verification_id = ac.getCachedVerification().Key_id;
-            return ac.save( copy )
+            copy.Verification_id = ac.getCachedVerification().Key_id;            return ac.save( copy )
                 .then(
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
-                            ac.getCachedVerification().PendingUserChanges.push(returnedChange);
+                            ac.getCachedVerification().PendingRoomChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
+                            contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
+                        contact.PendingUserChange.Is_active = returnedChange.Is_active;
                         angular.extend(copy, returnedChange);
                         contact.edit = false;
                     },
@@ -140,8 +141,10 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.addOnSave(returnedChange);
-                            ac.getCachedVerification().PendingRoomChanges.push(returnedChange);
+                            ac.getCachedVerification().PendingRoomChanges.push(dataStoreManager.getById("PendingRoomChange", returnedChange.Key_id));
+                            room.PendingRoomChange = dataStoreManager.getById("PendingRoomChange", returnedChange.Key_id);
                         }
+                        room.PendingRoomChange.Is_active = returnedChange.Is_active;
                         angular.extend(copy, returnedChange);
                         room.edit = false;
                     },
@@ -153,7 +156,6 @@ angular
                 )
 
        }
-
 
         return ac;
     });

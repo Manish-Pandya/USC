@@ -43,6 +43,7 @@
 <h3 class="card-header padding greenBg" style="padding:5px">Added Buildings</h3>
 <ul ng-repeat="room in addedRooms | activePendingRoomChangeOnly">
     <li>
-        <h3>{{room.Building_name}}: {{room.Name}}</h3><a ng-click="room.PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(room, verification.Key_id);" class="btn btn-danger left"><i class="icon-remove"></i></a>
+        <h3>{{room.Building_name}}: {{room.Name}}<a style="margin-left:5px;" ng-click="room.PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(room, verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
+        </h3>
     </li>
 </ul>
