@@ -134,6 +134,21 @@ span.metro-checkbox{
 
 .card {
     box-shadow: 0 0 10px rgba(0,0,0,.2);
-    padding: 10px;
     margin: 10px 0;
+}
+.card > *{
+    padding: 10px;
+}
+
+.card-header{
+    margin-bottom:0
+}
+.card ul{
+    list-style-type: none;
+    margin-left:0
+}
+.card ul li{
+    padding: 5px 0;
+    font-size: 19px;
+    margin-left: 0;
 }

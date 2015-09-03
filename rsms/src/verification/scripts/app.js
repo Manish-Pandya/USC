@@ -135,7 +135,6 @@ angular
         }
         $rootScope.selectedView = $rootScope.states[int];
         $state.go($rootScope.states[int].Name);
-        console.log($rootScope.selectedView);
     }
 
   });
