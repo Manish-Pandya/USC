@@ -6,10 +6,12 @@ angular
 
         $scope.contactOptions  = ["In another PI's lab", "No longer at the university", "Still in this lab, but no longer a contact"];
         $scope.personnelOptions = ["In another PI's lab", "No longer at the university", "Still in this lab, but now a lab contact"];
+        $scope.newUser;
+        $scope.addedUsers = [];
         var id = 1;
 
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers);
+                                .then(getPI).then(getAllUsers).then(getAllAddedUsers);
     
 
         function getVerification(id){
@@ -42,6 +44,25 @@ angular
                             return false;
                         }
                     );
+        }
+    
+        function getAllAddedUsers(){
+            var v = ac.getCachedVerification();
+            for(var i = 0; i < v.PendingRoomChanges.length; i++){
+                var pendingChange = v.PendingRoomChanges[i];
+                if (pendingChange.New_status == "Added") {
+                    var u = dataStoreManager.getById("User", pendingChange.Parent_id);
+                    $scope.addedUsers.push(u);
+                }
+            }
+            return $scope.addedUsers;
+        }
+    
+        $scope.onUserSelect = function(item) {
+            if (item) {
+                item.PendingUserChangeCopy.New_status = "Added";
+                $scope.newUser = item;
+            }
         }
 
     });
