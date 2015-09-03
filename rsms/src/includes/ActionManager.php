@@ -289,7 +289,7 @@ class ActionManager {
      * @param unkonwn object
      * @return integer $value| boolean
      */
-    private function getPIIDFromObject($object){
+    protected function getPIIDFromObject($object){
     	$LOG = Logger::getLogger('Action:' . __function__);
     	//method chains
     	$map = array(

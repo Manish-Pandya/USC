@@ -59,7 +59,8 @@ angular
     //admin stuff
     .state('verificiation-admin', {
         url: "/admin",
-        templateUrl: "views/admin.html"
+        templateUrl: "views/admin.html",
+        controller: "AdminCtrl"
     })
 
   })
@@ -68,8 +69,9 @@ angular
     ac.getVerification(1)
         .then(
             function(){
+                console.log($state);
                 $rootScope.greatestAllowedStep = parseInt(ac.getCachedVerification().Step + 1);
-                $rootScope.navigate(parseInt(ac.getCachedVerification().Step -1));
+                if($state.$current.name != "verificiation-admin")$rootScope.navigate(parseInt(ac.getCachedVerification().Step -1));
                 var i = 0
                 for(i; i < ac.getCachedVerification().Step; i++){
                     $rootScope.states[i].Done = true;

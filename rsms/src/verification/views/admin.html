@@ -1,0 +1,72 @@
+<div cg-busy="{promise:VerificationSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PendingRoomChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PendingUserChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<div class="navbar">
+    <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
+        <li class="span3" style="margin-left:0">
+            <h2 style="padding: 11px 0 5px 15px;"><i style="font-size: 40px;margin-top: 10px;width: 50px;" class="icon-checkbox"></i>Annual Verification
+                    <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                </h2>
+        </li>
+        <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
+    </ul>
+</div>
+<div class="whitebg admin" ng-app="verification" style="padding:70px 70px;">
+    <div class="card two-thirds">
+        <h3 class="card-header alert-info alert">Verify Changes to Lab Personnel for {{PI.User.Name}}'s labs</h3>
+        <ul>
+            <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
+                <span ng-if="change.New_status != 'Added'">{{change.Name}} is {{change.New_status | lowercase}}</span>
+                <span ng-if="change.New_status == 'Added'">{{change.Name}} was added to {{PI.User.Name}}'s Lab Personnel</span>
+
+                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
+                <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
+                <a class="btn btn-info left pull-right" href="../../views/hubs/UserHub.php" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New User</a>
+            </li>
+            <li ng-if="!userChanges.length">No changes requested</li>
+        </ul>
+    </div>
+
+    <div class="card two-thirds">
+        <h3 class="card-header alert-info alert">Verify Changes to Emergency Contact Information for {{PI.User.Name}}'s labs</h3>
+        <ul>
+            <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
+                {{change.Name}}'s emergency phone number was changed to {{change.Emergency_phone | tel}}
+                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
+                <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
+            </li>
+            <li ng-if="!phoneChanges.length">No changes requested</li>
+        </ul>
+    </div>
+
+    <div class="card two-thirds">
+        <h3 class="card-header alert-info alert">Verify Changes to Lab Locations for {{PI.User.Name}}'s labs</h3>
+        <ul>
+            <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Removed')">
+                {{change.Buidling_name}} Room: {{change.Name}} is no longer your lab room.
+                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
+                <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
+            </li>
+            <li class="new" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Added')">
+                {{change.Buidling_name}} Room: {{change.Name}} is now your lab room.
+                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
+                <a class="btn btn-info left pull-right" href="../../views/hubs/locationHub.php" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New Room</a>
+            </li>
+            <li ng-if="!roomChanges.length">No changes requested</li>
+        </ul>
+    </div>
+
+    <div class="card two-thirds" ng-if="verification.PendingHazardChanges.length">
+        <h3>Verify Changes to Lab Personnel</h3>
+        <ul>
+            <li ng-repeat="change in verification.PendingHazardChanges">
+                {{change}}
+            </li>
+        </ul>
+        <div>
+            <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Personnel</a>
+        </div>
+    </div>
+
+</div>

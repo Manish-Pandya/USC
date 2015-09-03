@@ -1,9 +1,9 @@
 <div class="card two-thirds" ng-show="userChanges.length">
-    <h3 class="card-header alert-info alert">Verify Changes to Lab Personnel</h3>
+    <h3 class="card-header alert-info alert">Confirm Changes to Lab Personnel</h3>
     <ul>
-       <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)">
+        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
             {{change.Name}} is {{change.New_status | lowercase}}
-       </li>  
+        </li>
     </ul>
     <div>
         <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Personnel</a>
@@ -11,26 +11,26 @@
 </div>
 
 <div class="card two-thirds" ng-show="phoneChanges.length">
-    <h3 class="card-header alert-info alert">Verify Changes to Emergency Contact Information</h3>
+    <h3 class="card-header alert-info alert">Confirm Changes to Emergency Contact Information</h3>
     <ul>
-       <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
+        <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
             {{change.Name}}'s emergency phone number was changed to {{change.Emergency_phone | tel}}
-       </li>  
+        </li>
     </ul>
     <div>
         <a ng-click="navigate(1)" class="btn btn-large">Edit Emergency Contact Info</a>
     </div>
 </div>
 
-<div class="card two-thirds" ng-if="roomChanges">
-    <h3 class="card-header alert-info alert">Verify Changes to Lab Locations</h3>
+<div class="card two-thirds" ng-show="roomChanges">
+    <h3 class="card-header alert-info alert">Confirm Changes to Lab Locations</h3>
     <ul>
-       <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Removed')">
+        <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Removed')">
             {{change.Buidling_name}} Room: {{change.Name}} is no longer your lab room.
-       </li> 
-       <li  class="new" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Added')">
+        </li>
+        <li class="new" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Added')">
             {{change.Buidling_name}} Room: {{change.Name}} is now your lab room.
-       </li> 
+        </li>
     </ul>
     <div>
         <a ng-click="navigate(2)" class="btn btn-large btn-success">Edit Lab Locations</a>
@@ -40,11 +40,8 @@
 <div class="card two-thirds" ng-if="verification.PendingHazardChanges.length">
     <h3>Verify Changes to Lab Personnel</h3>
     <ul>
-       <li ng-repeat="change in verification.PendingHazardChanges">
+        <li ng-repeat="change in verification.PendingHazardChanges">
             {{change}}
-       </li>  
+        </li>
     </ul>
-    <div>
-        <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Personnel</a>
-    </div>
 </div>

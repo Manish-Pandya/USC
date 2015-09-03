@@ -16,11 +16,11 @@
     <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 
 </div>
-<div class="added-list"ng-if="verification">
-    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Buildings</h3>
+<div class="added-list">
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Rooms</h3>
     <ul ng-if="verification">
         <li ng-repeat="pendingRoomChange in newChanges = (verification.PendingRoomChanges | hasNewStatus:'Added' | activeOnly | orderBy: 'Building_name')" >
-                <a style="margin:0 5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingRoomChange.Building_name}} Room {{pendingRoomChange.Name}}
+            <a style="margin:0 5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingRoomChange.Building_name}} Room {{pendingRoomChange.Name}}
         </li>
     </ul>
 </div>
@@ -38,11 +38,11 @@
         <td>
             <!-- TODO: REFACTOR THIS, TODD -->
             <label class="checkbox inline">
-                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'Yes'" ng-required="room.PendingRoomChangeCopy.Answer == 'Yes'" ng-change="ac.savePendingRoomChange(room, verification.Key_id)" />
+                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'Yes'" ng-required="room.PendingRoomChangeCopy.Answer == 'Yes'" ng-change="ac.savePendingRoomChange(room, verification.Key_id, building)" />
                 <span class="metro-radio">Yes</span>
             </label>
             <label class="checkbox inline">
-                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'No'" ng-required="room.PendingRoomChangeCopy.Answer == 'No'" ng-change="ac.savePendingRoomChange(room, verification.Key_id)" />
+                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'No'" ng-required="room.PendingRoomChangeCopy.Answer == 'No'" ng-change="ac.savePendingRoomChange(room, verification.Key_id, building)" />
                 <span class="metro-radio">No</span>
             </label>
         </td>

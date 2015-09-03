@@ -57,13 +57,14 @@ angular
 
             }
 
-            rac.save = function( object, saveChildren )
+            rac.save = function( object, saveChildren, url )
             {
                     if(!saveChildren)saveChildren = false;
+                    if(!url)url = false
 
                     var defer = $q.defer();
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
+                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, url, saveChildren )
                         .then(
                             function( returnedData ){
                                 defer.resolve(returnedData.data);

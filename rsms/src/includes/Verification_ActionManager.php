@@ -232,11 +232,12 @@ class Verification_ActionManager extends ActionManager  {
     		if($decodedObject->getParent_id() == NULL){
     			return new ActionError('This user doesn\'t exist.  Please create a user account in the User Hub');
     		}
-    		$userDao = $this->getDao(new User());
-    		$user = $userDao->getById($decodedObject->getParent_id());
+    		$userDao = $this->getDao(new User());    		
+    		$user = $userDao->getById($decodedObject->getParent_id());		
     		$status = strtolower( $decodedObject->getNew_status() );
     		
-    		if($status == "no longer a lab contact"){
+    		$LOG->fatal("status is " . $status);
+    		if($status == "still in this lab, but no longer a contact"){
     			
     			//get the lab contact role by name
     			$whereClauseGroup = new WhereClauseGroup(
@@ -253,7 +254,7 @@ class Verification_ActionManager extends ActionManager  {
     			$this->saveUserRoleRelation($relation);
     			
     			
-    		}elseif($status == "now a lab contact"){
+    		}elseif($status == "still in this lab, but now a lab contact"){
     			
     			//get the lab contact role by name
     			$whereClauseGroup = new WhereClauseGroup(
@@ -268,11 +269,11 @@ class Verification_ActionManager extends ActionManager  {
     			$relation->setRelation_id($roles[0]->getKey_id());
     			$relation->setAdd(true);
     			$this->saveUserRoleRelation($relation);
-    		}elseif($status == "no longer works in this lab"){
+    		}elseif($status == "in another pi's lab"){    			 
     			//remove supervisor id
     			$user->setSupervisor_id(null);
     			$userDao->save($user);
-    			
+    			 
     		}elseif($status == "no longer at the univserity"){
     			//deactivate user
     			$user->setIs_active(false);
@@ -280,10 +281,11 @@ class Verification_ActionManager extends ActionManager  {
     		}else{
     			return $decodedObject;
     		}
-    		
+    		$dao = $this->getDao(new PendingUserChange());
     		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
-    		$dao->save($decodedObject);
-    		return $decodedObject;
+    		$change = $dao->save($decodedObject);
+    		
+    		return $change;
     	}
     }
     
@@ -307,9 +309,11 @@ class Verification_ActionManager extends ActionManager  {
     		}
     		$userDao = $this->getDao(new Room());
     		$room = $userDao->getById($decodedObject->getParent_id());    		
-    		$this->savePIRoomRelation($this->getPIIDFromObject($room), $room->getKey_id(), $decodedObject->getAdding());
+    		$this->savePIRoomRelation($this->getPIIDFromObject($room), $room->getKey_id(), ($decodedObject->getNew_status() == 'Adding') );
     		
     		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
+    		
+    		$dao = $this->getDao(new PendingRoomChange());
     		$dao->save($decodedObject);
     		return $decodedObject;
     	}
