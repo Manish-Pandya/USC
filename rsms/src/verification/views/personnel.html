@@ -10,7 +10,14 @@
     <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
     <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 </div>
-
+<div class="added-list"ng-if="verification">
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Personnel</h3>
+    <ul ng-if="verification">
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly)" >
+                <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingUserChange.Name}}
+        </li>
+    </ul>
+</div>
 <table class="table table-striped table-hover table-bordered userList">
     <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">Lab Contacts</h3></th></tr>
     <tr>
@@ -59,11 +66,3 @@
         </td>
     </tr>
 </table>
-
-<h3 class="card-header padding greenBg" style="padding:5px">Added Users</h3>
-<ul ng-repeat="pendingUserChange in verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly">
-    <li>
-        <h3>{{dataStoreManager.getById('User', pendingUserChange.Parent_id).Name}}<a style="margin-left:5px;" ng-click="dataStoreManager.getById('User', pendingUserChange.Parent_id).PendingUserChangeCopy.Is_active = false; ac.savePendingUserChange(dataStoreManager.getById('User', pendingUserChange.Parent_id), verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
-        </h3>
-    </li>
-</ul>

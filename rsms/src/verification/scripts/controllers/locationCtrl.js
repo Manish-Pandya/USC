@@ -1,6 +1,6 @@
 angular
     .module('VerificationApp')
-    .controller('LocationCtrl', function ($scope, $rootScope, applicationControllerFactory) {
+    .controller('LocationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
@@ -48,11 +48,17 @@ angular
         
         $scope.onBuildingSelect = function(item) {
             if (item) $scope.rooms = item.Rooms;
+            $scope.selectedBuilding = item;
         }
         
         $scope.onRoomSelect = function(item) {
             if (item) {
+                
+                if(!item.PendingRoomChangeCopy)item.PendingRoomChangeCopy = modelInflatorFactory.instantiateObjectFromJson(new window.PendingRoomChange);
+                
                 item.PendingRoomChangeCopy.New_status = "Added";
+                item.PendingRoomChangeCopy.Is_active = true;
+                item.PendingRoomChangeCopy.Name = item.Name
                 item.Building_name = dataStoreManager.getById("Building", item.Building_id).Name;
                 $scope.room = item;
             }

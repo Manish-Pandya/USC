@@ -97,28 +97,41 @@ angular
                 }
              }
 
-
-
              thingToBeChanged.edit = true;
 
         }
 
-        ac.savePendingUserChange = function(contact, verificationId)
+        ac.savePendingUserChange = function(contact, verificationId, change)
         {
             ac.clearError();
-            var copy = contact.PendingUserChangeCopy;
-            copy.Verification_id = ac.getCachedVerification().Key_id;            return ac.save( copy )
+            if(contact){
+                var copy = contact.PendingUserChangeCopy;
+                if(!copy.Name)copy.Name = contact.Name;
+                console.log(copy.Name);
+                console.log(contact.Name);
+            }else{
+                copy = new window.PendingUserChange();
+                angular.extend(copy, change);
+                copy.Is_active = false;
+            }
+            copy.Verification_id = ac.getCachedVerification().Key_id;            
+            return ac.save( copy )
                 .then(
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
                             dataStoreManager.pushIntoCollection(returnedChange);
-                            ac.getCachedVerification().PendingRoomChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
-                            contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
+                            ac.getCachedVerification().PendingUserChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
+                            if(contact)contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
                         angular.extend(copy, returnedChange);
-                        angular.extend(contact.PendingUserChange, returnedChange)
-                        contact.edit = false;
+                        if(contact){
+                            angular.extend(contact.PendingUserChange, returnedChange)
+                            angular.extend(contact.PendingUserChangeCopy, returnedChange)
+                            contact.edit = false;
+                        }else{
+                            angular.extend(change, returnedChange);
+                        }
                     },
                     function(){
                         ac.setError('The change could not be saved', contact);
@@ -129,11 +142,13 @@ angular
 
        }
 
-       ac.savePendingRoomChange = function(room, verificationId)
+       ac.savePendingRoomChange = function(room, verificationId, building)
        {
             ac.clearError();
             var copy = room.PendingRoomChangeCopy;
             copy.Verification_id = ac.getCachedVerification().Key_id;
+            if(building)copy.Building_name = building.Name; 
+           
             return ac.save( copy )
                 .then(
                     function(returnedChange){

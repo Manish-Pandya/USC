@@ -8,7 +8,7 @@
 class PendingRoomChange extends PendingChange {
 	
 	private $room;
-	
+		
 	public function __construct(){
 	
 		// Define which subentities to load
@@ -20,6 +20,8 @@ class PendingRoomChange extends PendingChange {
 		$this->setEntityMaps($entityMaps);
 	
 	}
+	
+	
 	
 	public function getRoom() {
 		if($this->room === NULL && $this->hasPrimaryKeyValue()) {

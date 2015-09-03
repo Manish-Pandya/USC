@@ -1,25 +1,34 @@
 <a ng-if="!PI.Buildings.edit" class="btn-large btn" ng-click="PI.Buildings.edit = true;" style="padding:10px; margin-left:5px; margin-bottom:8px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Location</a>
 <div class="span4" style="margin:10px 0; float:none" ng-if="PI.Buildings.edit">
     <ui-select ng-show="allBuildings" ng-model="building.selected" theme="selectize" ng-disabled="disabled" on-select="onBuildingSelect($item)">
-            <ui-select-match placeholder="Select for a Building">{{$select.selected.Name}}</ui-select-match>
-            <ui-select-choices repeat="building in allBuildings | propsFilter: {Name: $select.search} | orderBy:'Name'">
-                <div once-text="building.Name"></div>
-            </ui-select-choices>
-        </ui-select>
+        <ui-select-match placeholder="Select for a Building">{{$select.selected.Name}}</ui-select-match>
+        <ui-select-choices repeat="building in allBuildings | propsFilter: {Name: $select.search} | orderBy:'Name'">
+            <div once-text="building.Name"></div>
+        </ui-select-choices>
     </ui-select>
     <ui-select tagging="defaultAddOtherTag" ng-show="allBuildings" ng-model="room.selected" theme="selectize" ng-disabled="!rooms.length" on-select="onRoomSelect($item)">
-            <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
-            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search} | orderBy:'Name'">
-                <div once-text="room.Name"></div>
-            </ui-select-choices>
-        </ui-select>
+        <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
+        <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search} | orderBy:'Name'">
+            <div once-text="room.Name"></div>
+        </ui-select-choices>
     </ui-select>
-    <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false; ac.savePendingRoomChange(room, verification.Key_id);" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+    <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false; ac.savePendingRoomChange(room, verification.Key_id, selectedBuilding);" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
     <a ng-if="PI.Buildings.edit" ng-click="PI.Buildings.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
-</div>
 
+</div>
+<div class="added-list"ng-if="verification">
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Buildings</h3>
+    <ul ng-if="verification">
+        <li ng-repeat="pendingRoomChange in newChanges = (verification.PendingRoomChanges | hasNewStatus:'Added' | activeOnly | orderBy: 'Building_name')" >
+                <a style="margin:0 5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingRoomChange.Building_name}} Room {{pendingRoomChange.Name}}
+        </li>
+    </ul>
+</div>
 <table class="table table-striped table-hover table-bordered userList" ng-repeat="building in PI.Buildings">
-    <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">{{building.Name}}</h3></th></tr>
+    <tr class="greenBg">
+        <th colspan="2" class="greenBg">
+            <h3 class="card-header padding greenBg">{{building.Name}}</h3></th>
+    </tr>
     <tr>
         <th>Name</th>
         <th>Still {{PI.User.Name}}'s Lab Room?</th>
@@ -33,20 +42,9 @@
                 <span class="metro-radio">Yes</span>
             </label>
             <label class="checkbox inline">
-                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'No'" ng-required="room.PendingRoomChangeCopy.Answer == 'No'" ng-change="ac.savePendingRoomChange(room, verification.Key_id)"/>
+                <input type="radio" ng-model="room.PendingRoomChangeCopy.Answer" ng-value="'No'" ng-required="room.PendingRoomChangeCopy.Answer == 'No'" ng-change="ac.savePendingRoomChange(room, verification.Key_id)" />
                 <span class="metro-radio">No</span>
             </label>
         </td>
     </tr>
 </table>
-
-<h3 class="card-header padding greenBg" style="padding:5px">Added Buildings</h3>
-<ul ng-repeat="pendingRoomChange in verification.PendingRoomChanges | hasNewStatus:'Added' | activeOnly">
-    <li>
-        <h3>
-            {{dataStoreManager.getById('Room', pendingRoomChange.Parent_id).Building_name}}
-            {{dataStoreManager.getById('Room', pendingRoomChange.Parent_id).Name}}
-            <a style="margin-left:5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
-        </h3>
-    </li>
-</ul>

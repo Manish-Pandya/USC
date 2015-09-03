@@ -166,9 +166,9 @@ class Verification_ActionManager extends ActionManager  {
     		return $decodedObject;
     	}
     	else{
+    		$LOG->fatal($decodedObject);
     		$dao = $this->getDao(new PendingUserChange());
     		$change = $dao->save($decodedObject);
-    		$LOG->fatal($change);
     		return $change;
     	}
     }

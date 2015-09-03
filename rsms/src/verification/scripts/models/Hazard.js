@@ -21,7 +21,8 @@ Hazard.prototype = {
                 if(!this.PendingHazardChangeCopy.hasOwnProperty("Parent_class"))this.PendingHazardChangeCopy.Parent_class = "Hazard";
                 this.PendingHazardChangeCopy.Parent_id = this.Key_id;
             }
-            this.PendingHazardChangeCopy.Is_active = true;        }
+            this.PendingHazardChangeCopy.Is_active = true;        
+        }
     }
 }
 

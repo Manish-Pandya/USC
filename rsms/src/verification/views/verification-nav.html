@@ -30,7 +30,11 @@
                 <h1>{{selectedView.Label}}</h1>
                 <h3>{{selectedView.Message}}</h3>
             </div>
-            <form name="fancyForm"><div ui-view></div></form>
+            
+            <form style="width:1000px;" name="fancyForm">
+                <div ui-view></div>
+            </form>
+            
             <div class="bottoms" style="width:1060px;">
                 <label class="checkbox inline full">
                     <input type="checkbox" ng-model="selectedView.Done" ng-disabled="fancyForm.$invalid" ng-change="stepDone(selectedView.Step)" />

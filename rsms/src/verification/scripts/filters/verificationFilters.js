@@ -31,10 +31,8 @@ angular.module('filtersApp',[])
             var changedThings = [];
             var i = changes.length;
             while(i--){
-                console.log(changes[i]);
                 if(changes[i].New_status && (!status || changes[i].New_status == status))changedThings.push(changes[i])
             }
-            console.log(changedThings);
             return changedThings;
         }
     })
@@ -65,7 +63,6 @@ angular.module('filtersApp',[])
         return function(array) {
                 if(!array)return;
                 var activeObjects = [];
-
                 var i = array.length;
                 while(i--){
                     if(array[i].PendingUserChange.Is_active)activeObjects.unshift(array[i]);

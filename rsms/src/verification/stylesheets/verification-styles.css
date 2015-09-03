@@ -147,8 +147,15 @@ span.metro-checkbox{
     list-style-type: none;
     margin-left:0
 }
-.card ul li{
+.card ul li, .added-list ul li{
     padding: 5px 0;
     font-size: 19px;
     margin-left: 0;
+}
+.added-list ul{
+    list-style-type: none;
+    margin-left: 0;
+}
+.added-list h3{
+    color:white !important;
 }

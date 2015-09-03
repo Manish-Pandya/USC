@@ -20,6 +20,8 @@ class PendingChange extends GenericCrud {
 			"adding"			=> "boolean",
 			"answer"			=> "text",
 			"emergency_phone"	=> "text",
+			"building_name"		=> "text",
+			"name"				=> "name",
 				
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -99,6 +101,7 @@ class PendingChange extends GenericCrud {
 	}
 	
 	public function getName(){
+		if($this->name != null)return $this->name;
 		if($this->getParent_id() != null && $this->getParent_class() != null){
 			$class = $this->parent_class;
 			$dao = new GenericDAO(new $class());
@@ -106,6 +109,16 @@ class PendingChange extends GenericCrud {
 		}
 		return NULL;
 	}
+	public function setName($name){$this->name = $name;}
+	
+	/** for PendingRoomChange only.  In parent class so that property and getter exist to match db column 
+	 * 	hooray for PHP "polymorphism"
+	 * **/
+	
+	protected $building_name;	
+	public function getBuilding_name(){return $this->building_name;}
+	public function setBuilding_name($building_name){$this->building_name = $building_name;}
+	
 
 }
 ?>
