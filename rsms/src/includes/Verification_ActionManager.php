@@ -316,8 +316,10 @@ class Verification_ActionManager extends ActionManager  {
     			return new ActionError('This user doesn\'t exist.  Please create a user account in the User Hub');
     		}
     		$userDao = $this->getDao(new Room());
-    		$room = $userDao->getById($decodedObject->getParent_id());    		
-    		$this->savePIRoomRelation($this->getPIIDFromObject($room), $room->getKey_id(), ($decodedObject->getNew_status() == 'Adding') );
+    		$room = $userDao->getById($decodedObject->getParent_id());
+    		$verDao = $this->getDao(new Verification());
+    		$verification = $verDao->getById($decodedObject->getVerification_id());
+    		$this->savePIRoomRelation($verification->getPrincipal_investigator_id(), $room->getKey_id(), ($decodedObject->getNew_status() == 'Adding') );
     		
     		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
     		
