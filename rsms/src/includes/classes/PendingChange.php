@@ -38,6 +38,7 @@ class PendingChange extends GenericCrud {
 	protected $adding;	
 	protected $answer;
 	protected $emergency_phone;
+	protected $name;
 	
 	
 	public function __construct(){
@@ -75,9 +76,6 @@ class PendingChange extends GenericCrud {
 		$this->parent_id = $parent_id;
 	}
 	
-	public function getName(){return $this->name;}
-	public function setName($name){$this->name = $name;}
-	
 	public function getNew_status(){return $this->new_status;}	
 	public function setNew_status($new_status){$this->new_status = $new_status;}
 	
@@ -98,6 +96,15 @@ class PendingChange extends GenericCrud {
 	}
 	public function setEmergency_phone($phone){
 		$this->emergency_phone = $phone;
+	}
+	
+	public function getName(){
+		if($this->getParent_id() != null && $this->getParent_class() != null){
+			$class = $this->parent_class;
+			$dao = new GenericDAO(new $class());
+			return $dao->getById($this->getParent_id())->getName();
+		}
+		return NULL;
 	}
 
 }
