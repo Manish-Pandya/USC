@@ -7,7 +7,7 @@
     <tr class="table-row">
         <td style="position:relative; width:50%">{{PI.User.Name}}</td>
         <td style="position:relative; width:50%">
-            <span ng-if="PI && !PI.User.PendingUserChangeCopy.Emergency_phone" ng-init="PI.User.PendingUserChangeCopy.Emergency_phone = PI.User.Emergency_phone"/>
+            <span ng-if="PI && !PI.User.PendingUserChangeCopy.Emergency_phone && !PI.User.edit" ng-init="PI.User.PendingUserChangeCopy.Emergency_phone = PI.User.Emergency_phone"/>
             <span ng-if="PI.User.PendingUserChangeCopy.Emergency_phone && !PI.User.edit" style="height: 25px;display: block;">{{PI.User.PendingUserChangeCopy.Emergency_phone | tel}}</span>
             <input ng-if="PI.User.edit" ng-model="PI.User.PendingUserChangeCopy.Emergency_phone" ui-mask="(999) 999-9999"/>
             <div class="absoluteBtns" style="margin-left:5px;">
@@ -29,7 +29,7 @@
     <tr class="table-row" ng-repeat="contact in PI.LabPersonnel | contactOrPersonnel:true" ng-class="{'new' : contact.stillHere == 'true', 'inactive' : contact.stillHere == 'false'}">
         <td style="position:relative; width:50%">{{contact.Name}}</td>
         <td style="position:relative; width:50%">
-            <span ng-if="contact && !contact.PendingUserChangeCopy.Emergency_phone" ng-init="contact.PendingUserChangeCopy.Emergency_phone = contact.Emergency_phone"/>
+            <span ng-if="contact && !contact.PendingUserChangeCopy.Emergency_phone && !contact.edit" ng-init="contact.PendingUserChangeCopy.Emergency_phone = contact.Emergency_phone"/>
             <span ng-if="contact.PendingUserChangeCopy.Emergency_phone && !contact.edit" style="height: 25px;display: block;">{{contact.PendingUserChangeCopy.Emergency_phone | tel}}</span>
             <input ng-if="contact.edit" ng-model="contact.PendingUserChangeCopy.Emergency_phone" ui-mask="(999) 999-9999"/>
             <div class="absoluteBtns" style="margin-left:5px;">
