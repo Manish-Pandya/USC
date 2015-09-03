@@ -31,10 +31,10 @@
     <div class="card two-thirds">
         <h3 class="card-header alert-info alert">Verify Changes to Emergency Contact Information for {{PI.User.Name}}'s labs</h3>
         <ul>
-            <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
+            <li class="new" ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
                 {{change.Name}}'s emergency phone number was changed to {{change.Emergency_phone | tel}}
-                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
-                <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
+                <i class="icon-checkbox approved pull-right" ng-if="change.Phone_approved"></i>
+                <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Phone_approved" ng-click="ac.confirmChange(change, true)"><i class="icon-checkmark"></i>Confirm</button>
             </li>
             <li ng-if="!phoneChanges.length">No changes requested</li>
         </ul>

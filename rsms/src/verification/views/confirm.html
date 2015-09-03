@@ -1,4 +1,4 @@
-<div class="card two-thirds" ng-show="userChanges.length">
+<div class="card full" ng-show="userChanges.length">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Personnel</h3>
     <ul>
         <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
@@ -10,19 +10,19 @@
     </div>
 </div>
 
-<div class="card two-thirds" ng-show="phoneChanges.length">
+<div class="card full" ng-show="phoneChanges.length">
     <h3 class="card-header alert-info alert">Confirm Changes to Emergency Contact Information</h3>
     <ul>
-        <li ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
+        <li class="new" ng-repeat="change in phoneChanges = (verification.PendingUserChanges | phoneChanges)">
             {{change.Name}}'s emergency phone number was changed to {{change.Emergency_phone | tel}}
         </li>
     </ul>
     <div>
-        <a ng-click="navigate(1)" class="btn btn-large">Edit Emergency Contact Info</a>
+        <a ng-click="navigate(1)" class="btn btn-large btn-success">Edit Emergency Contact Info</a>
     </div>
 </div>
 
-<div class="card two-thirds" ng-show="roomChanges">
+<div class="card full" ng-show="roomChanges">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Locations</h3>
     <ul>
         <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Removed')">
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<div class="card two-thirds" ng-if="verification.PendingHazardChanges.length">
+<div class="card full" ng-if="verification.PendingHazardChanges.length">
     <h3>Verify Changes to Lab Personnel</h3>
     <ul>
         <li ng-repeat="change in verification.PendingHazardChanges">

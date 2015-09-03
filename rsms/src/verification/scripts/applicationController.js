@@ -164,11 +164,12 @@ angular
 
         }
 
-        ac.confirmChange = function (change) {
+        ac.confirmChange = function (change, phone) {
             var copy = dataStoreManager.createCopy(change);
             console.log(change);
             
             var urlFragment = "confirmPending"+change.Parent_class+"Change";
+            if(phone)urlFragment += '&phone=true';
             return ac.save(change, false, urlFragment)
                 .then(
                     function(returnedChange){

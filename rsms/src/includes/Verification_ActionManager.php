@@ -233,56 +233,64 @@ class Verification_ActionManager extends ActionManager  {
     			return new ActionError('This user doesn\'t exist.  Please create a user account in the User Hub');
     		}
     		$userDao = $this->getDao(new User());    		
-    		$user = $userDao->getById($decodedObject->getParent_id());		
-    		$status = strtolower( $decodedObject->getNew_status() );
-    		
-    		$LOG->fatal("status is " . $status);
-    		if($status == "still in this lab, but no longer a contact"){
-    			
-    			//get the lab contact role by name
-    			$whereClauseGroup = new WhereClauseGroup(
-    				array(new WhereClause("name","=","Lab Contact"))
-    			);
-    			$roleDao = $this->getDao(new Role());
-    			$roles = $roleDao->getAllWhere($whereClauseGroup);
-    			
-    			//remove lab contact role
-    			$relation = new RelationshipDto();
-    			$relation->setMaster_id($user->getKey_id());
-    			$relation->setRelation_id($roles[0]->getKey_id());
-    			$relation->setAdd(false);
-    			$this->saveUserRoleRelation($relation);
-    			
-    			
-    		}elseif($status == "still in this lab, but now a lab contact"){
-    			
-    			//get the lab contact role by name
-    			$whereClauseGroup = new WhereClauseGroup(
-    					array(new WhereClause("name","=","Lab Contact"))
-    			);
-    			$roleDao = $this->getDao(new Role());
-    			$roles = $roleDao->getAllWhere($whereClauseGroup);
-    			
-    			//add lab contact role
-    			$relation = new RelationshipDto();
-    			$relation->setMaster_id($user->getKey_id());
-    			$relation->setRelation_id($roles[0]->getKey_id());
-    			$relation->setAdd(true);
-    			$this->saveUserRoleRelation($relation);
-    		}elseif($status == "in another pi's lab"){    			 
-    			//remove supervisor id
-    			$user->setSupervisor_id(null);
-    			$userDao->save($user);
-    			 
-    		}elseif($status == "no longer at the univserity"){
-    			//deactivate user
-    			$user->setIs_active(false);
-    			$userDao->save($user);
+    		$user = $userDao->getById($decodedObject->getParent_id());
+    		$phone = $this->getValueFromRequest('phone', $phone);
+	    	if($phone == NULL){
+	    		$status = strtolower( $decodedObject->getNew_status() );
+	    		
+	    		
+	    		if($status == "still in this lab, but no longer a contact"){
+	    			
+	    			//get the lab contact role by name
+	    			$whereClauseGroup = new WhereClauseGroup(
+	    				array(new WhereClause("name","=","Lab Contact"))
+	    			);
+	    			$roleDao = $this->getDao(new Role());
+	    			$roles = $roleDao->getAllWhere($whereClauseGroup);
+	    			
+	    			//remove lab contact role
+	    			$relation = new RelationshipDto();
+	    			$relation->setMaster_id($user->getKey_id());
+	    			$relation->setRelation_id($roles[0]->getKey_id());
+	    			$relation->setAdd(false);
+	    			$this->saveUserRoleRelation($relation);
+	    			
+	    			
+	    		}elseif($status == "still in this lab, but now a lab contact"){
+	    			
+	    			//get the lab contact role by name
+	    			$whereClauseGroup = new WhereClauseGroup(
+	    					array(new WhereClause("name","=","Lab Contact"))
+	    			);
+	    			$roleDao = $this->getDao(new Role());
+	    			$roles = $roleDao->getAllWhere($whereClauseGroup);
+	    			
+	    			//add lab contact role
+	    			$relation = new RelationshipDto();
+	    			$relation->setMaster_id($user->getKey_id());
+	    			$relation->setRelation_id($roles[0]->getKey_id());
+	    			$relation->setAdd(true);
+	    			$this->saveUserRoleRelation($relation);
+	    		}elseif($status == "in another pi's lab"){    			 
+	    			//remove supervisor id
+	    			$user->setSupervisor_id(null);
+	    			$userDao->save($user);
+	    			 
+	    		}elseif($status == "no longer at the univserity"){
+	    			//deactivate user
+	    			$user->setIs_active(false);
+	    			$userDao->save($user);
+	    		}else{
+	    			return $decodedObject;
+	    		}
+	    		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
     		}else{
-    			return $decodedObject;
+    			$user->setEmergency_phone($decodedObject->getEmergency_phone());
+    			$userDao->save($user);
+    			$decodedObject->setPhone_approved(true);
     		}
+    		
     		$dao = $this->getDao(new PendingUserChange());
-    		$decodedObject->setApproval_date(date("Y-m-d H:i:s"));
     		$change = $dao->save($decodedObject);
     		
     		return $change;
