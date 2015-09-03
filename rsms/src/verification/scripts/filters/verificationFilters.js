@@ -61,3 +61,15 @@ angular.module('filtersApp',[])
             return activeObjects;
         };
     })
+    .filter('activePendingUserChangeOnly', function() {
+        return function(array) {
+                if(!array)return;
+                var activeObjects = [];
+
+                var i = array.length;
+                while(i--){
+                    if(array[i].PendingUserChange.Is_active)activeObjects.unshift(array[i]);
+            }
+            return activeObjects;
+        };
+    })

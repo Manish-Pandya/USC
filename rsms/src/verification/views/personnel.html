@@ -61,9 +61,9 @@
 </table>
 
 <h3 class="card-header padding greenBg" style="padding:5px">Added Users</h3>
-<ul ng-repeat="user in addedUsers">
+<ul ng-repeat="pendingUserChange in verification.PendingUserChanges">
     <li>
-        <h3>{{user.Name}}<a style="margin-left:5px;" ng-click="user.PendingUserChangeCopy.Is_active = false; ac.savePendingUserChange(user, verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
+        <h3>{{dataStoreManager.getById("User", pendingUserChange.Parent_id).Name}}<a style="margin-left:5px;" ng-click="user.PendingUserChangeCopy.Is_active = false; ac.savePendingUserChange(user, verification.Key_id);" class="btn btn-danger left bnt-mini"><i class="icon-remove"></i></a>
         </h3>
     </li>
 </ul>
