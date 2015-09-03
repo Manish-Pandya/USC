@@ -112,12 +112,12 @@ angular
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
-                            dataStoreManager.addOnSave(returnedChange);
+                            dataStoreManager.pushIntoCollection(returnedChange);
                             ac.getCachedVerification().PendingRoomChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
                             contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
-                        contact.PendingUserChange.Is_active = returnedChange.Is_active;
                         angular.extend(copy, returnedChange);
+                        angular.extend(contact.PendingUserChange, returnedChange)
                         contact.edit = false;
                     },
                     function(){
@@ -140,12 +140,13 @@ angular
                     function(returnedChange){
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson( returnedChange );
                         if(!copy.Key_id){
-                            dataStoreManager.addOnSave(returnedChange);
+                            dataStoreManager.pushIntoCollection(returnedChange);
                             ac.getCachedVerification().PendingRoomChanges.push(dataStoreManager.getById("PendingRoomChange", returnedChange.Key_id));
                             room.PendingRoomChange = dataStoreManager.getById("PendingRoomChange", returnedChange.Key_id);
                         }
                         room.PendingRoomChange.Is_active = returnedChange.Is_active;
                         angular.extend(copy, returnedChange);
+                        angular.extend(contact.PendingRoomChange, returnedChange)
                         room.edit = false;
                     },
                     function(){
