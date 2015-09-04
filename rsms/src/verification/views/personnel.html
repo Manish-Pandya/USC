@@ -60,7 +60,7 @@
                 <input type="radio" ng-model="contact.PendingUserChangeCopy.Answer" ng-value="'No'" ng-required="contact.PendingUserChangeCopy.Answer == 'No'"/>
                 <span class="metro-radio">No</span>
             </label>
-            <select ng-if="contact.PendingUserChangeCopy.Answer == 'No'" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChangeCopy.Answer == 'No'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" ng-options="option as option for option in contactOptions">
+            <select ng-if="contact.PendingUserChangeCopy.Answer == 'No'" style="width:260px; margin-bottom:0;" ng-model="contact.PendingUserChangeCopy.New_status" ng-required="contact.PendingUserChangeCopy.Answer == 'No'" ng-change="ac.savePendingUserChange(contact, verification.Key_id)" ng-options="option as option for option in personnelOptions">
                 <option ng-if="!contact.PendingUserChangeCopy.New_status" value="">What changed about {{contact.Name}}?</option>
             </select>
         </td>
