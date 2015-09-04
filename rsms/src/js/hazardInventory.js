@@ -42,6 +42,26 @@ hazardInventory.filter('inspectionClosed', function () {
       return filteredInspections;
   };
 })
+.filter('singleRoom',function(){
+    return function(buildings, singleRoom){
+        if(!singleRoom)return buildings;
+        var out = [];
+        var i = buildings.length;
+        while(i--){
+            var theRoomIsInThisBuilding = false;
+            var j = buildings[i].Rooms.length;
+            while(j--){
+                if(buildings[i].Rooms[j].Key_id == singleRoom){
+                    theRoomIsInThisBuilding = true;
+                }else{
+                    buildings[i].Rooms.splice(j,1);
+                }
+            }
+            if(theRoomIsInThisBuilding)out.push(buildings[i]);
+        }
+        return out;
+    }
+})
 
 hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q){
   var factory = {};
@@ -394,7 +414,7 @@ hazardInventory.factory('hazardInventoryFactory', function(convenienceMethods,$q
 controllers = {};
 
 //called on page load, gets initial user data to list users
-controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element, $modal) {
+controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazardInventoryFactory, $location, $filter, convenienceMethods, $window, $element, $modal, $location) {
 
   var comboBreaker = $q.defer();
   var getAllPis = function()
@@ -520,21 +540,26 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   },
   getHazards = function( pi )
   {
+            console.log($location.search());
             $scope.hazards = null;
             if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection
-            var rooms = pi.Rooms;
-            var roomIds = [];
-            var roomsLength = rooms.length;
-            for(var i = 0; i < roomsLength; i++){
-              if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
-            }
+            if(!$location.search().room){
+                var rooms = pi.Rooms;
+                var roomIds = [];
+                var roomsLength = rooms.length;
+                for(var i = 0; i < roomsLength; i++){
+                  if(roomIds.indexOf(rooms[i].Key_id) == -1)roomIds.push(rooms[i].Key_id);
+                }
 
-            if(!rooms || !rooms.length){
-              $scope.noRoomsAssigned = true;
-              return
+                if(!rooms || !rooms.length){
+                  $scope.noRoomsAssigned = true;
+                  return
+                }
+            }else{
+                var roomIds = [$location.search().room];
+                $scope.singleRoom = $location.search().room;
             }
-
             $scope.hazardsLoading = true;
 
             var hazardDefer = $q.defer();

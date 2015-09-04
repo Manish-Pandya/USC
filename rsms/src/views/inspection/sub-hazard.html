@@ -1,11 +1,11 @@
- <label class="checkbox inline">
+<label class="checkbox inline">
     <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
     <span class="metro-checkbox targetHaz" once-text="child.Name"></span>
 </label>
 <span ng-if="child.ActiveSubHazards.length || child.HasChildren">
     <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
 </span>
-<span ng-if="child.IsPresent">
+<span ng-if="!singleRoom && child.IsPresent">
     <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
 </span>
 <span ng-if="child.HasMultiplePIs && child.IsPresent">
@@ -42,7 +42,7 @@
     </ul>
 </div>
 
-<ul ng-if="getShowRooms(child)" class="subRooms">
+<ul ng-if="!singleRoom && getShowRooms(child)" class="subRooms">
     <li>Rooms:</li>
     <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="">
         <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>

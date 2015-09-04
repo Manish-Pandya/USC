@@ -24,7 +24,7 @@
         <td width="25%">{{room.Building.Name}}</td>
         <td width="20%">{{room.Name}}</td>
         <td width="25%">{{room.Purpose}}</td>
-        <td><a class="edit btn btn-large btn-warning left" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a></td>
+        <td><!--<a class="edit btn btn-large btn-warning left" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a>--><a class="edit btn btn-large btn-warning left" href="../inspection/hazardInventory.php#?pi={{PI.Key_id}}&room={{room.Key_id}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a></td>
     </tr>
 </tbody>
 </table>

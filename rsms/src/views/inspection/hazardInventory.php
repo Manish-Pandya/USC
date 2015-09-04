@@ -60,7 +60,7 @@ require_once '../top_view.php';
 
                    <span ng-if="buildings && PI">
                            <ul class="selectedBuildings">
-                               <li ng-repeat="(key, building) in buildings">
+                               <li ng-repeat="(key, building) in buildings | singleRoom:singleRoom">
                                <div class="span6">
                                    <h4 ><!--<a class="btn btn-danger btn-mini" style="margin-right:5px;"><i class="icon-cancel-2" ng-click="removeBuilding(building)"></i></a>-->{{building.Name}}</h4>
                                </div>
@@ -129,7 +129,7 @@ require_once '../top_view.php';
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
                             </span>
-                            <span ng-if="child.IsPresent">
+                            <span ng-if="!singleRoom && child.IsPresent">
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
@@ -176,7 +176,6 @@ require_once '../top_view.php';
                             </ul>
                         </li>
                     </ul>
-
                     <!-- EQUIPMENT LIST HERE -->
                     <br/><br/><br/>
                     <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical and Physical Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
@@ -199,7 +198,7 @@ require_once '../top_view.php';
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
                             </span>
-                            <span ng-if="child.IsPresent">
+                            <span ng-if="!singleRoom && child.IsPresent">
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
