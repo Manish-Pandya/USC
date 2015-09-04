@@ -129,7 +129,7 @@ require_once '../top_view.php';
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
                             </span>
-                            <span ng-if="!singleRoom && child.IsPresent">
+                            <span ng-if="child.InspectionRooms.length > 1 && child.IsPresent">
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
@@ -198,7 +198,7 @@ require_once '../top_view.php';
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
                             </span>
-                            <span ng-if="!singleRoom && child.IsPresent">
+                            <span ng-if="child.InspectionRooms.length > 1 && child.IsPresent">
                                 <i class="icon-enter" ng-click="showRooms($event, child, $element)"></i>
                             </span>
 
