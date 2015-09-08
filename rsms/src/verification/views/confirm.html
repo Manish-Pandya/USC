@@ -2,7 +2,10 @@
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Members</h3>
     <ul>
         <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
-            {{change.Name}} has been {{change.New_status | lowercase}} to your lab as a Lab Contact/Member
+            <span ng-if="change.New_status != 'Added' && change.New_status != 'Removed'">{{change.Name}} is {{change.New_status | lowercase}}</span>
+            <span ng-if="change.New_status == 'Removed'">{{change.Name}} is no longer assigned to your lab</span>
+            <span ng-if="change.New_status == 'Added' && change.Parent_id">{{change.Name}} is now assigned to your lab</span>
+            <span ng-if="change.New_status == 'Added' && !change.Parent_id">{{change.Name}} has been added to your lab as a Lab Contact/Member</span>
         </li>
     </ul>
     <div>
