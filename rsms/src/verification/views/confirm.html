@@ -1,7 +1,7 @@
 <div class="card full" ng-show="userChanges.length">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Members</h3>
     <ul>
-        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
+        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
             {{change.Name}} has been {{change.New_status | lowercase}} to your lab as a Lab Contact/Member
         </li>
     </ul>
