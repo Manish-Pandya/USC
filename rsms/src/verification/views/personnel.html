@@ -11,7 +11,7 @@
     <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
 </div>
 <div class="added-list"ng-if="verification">
-    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Personnel</h3>
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Members</h3>
     <ul ng-if="verification">
         <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly)" >
                 <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingUserChange.Name}}
@@ -44,7 +44,7 @@
 </table>
 
 <table class="table table-striped table-bordered table-hover userList" style="width:999px;">
-    <tr class="orangeBg"><th colspan="2" class="orangeBg" ><h3 class="card-header padding orangeBg">Lab Personnel</h3></th></tr>
+    <tr class="orangeBg"><th colspan="2" class="orangeBg" ><h3 class="card-header padding orangeBg">Lab Members</h3></th></tr>
     <tr>
         <th>Name</th>
         <th>Still a lab member in this lab.</th>

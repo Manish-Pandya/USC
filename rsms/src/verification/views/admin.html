@@ -14,11 +14,11 @@
 </div>
 <div class="whitebg admin" ng-app="verification" style="padding:70px 70px;">
     <div class="card two-thirds">
-        <h3 class="card-header alert-info alert">Verify Changes to Lab Personnel for {{PI.User.Name}}'s labs</h3>
+        <h3 class="card-header alert-info alert">Verify Changes to Lab Members for {{PI.User.Name}}'s labs</h3>
         <ul>
             <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
                 <span ng-if="change.New_status != 'Added'">{{change.Name}} is {{change.New_status | lowercase}}</span>
-                <span ng-if="change.New_status == 'Added'">{{change.Name}} was added to {{PI.User.Name}}'s Lab Personnel</span>
+                <span ng-if="change.New_status == 'Added'">{{change.Name}} was added to {{PI.User.Name}}'s Lab Members</span>
 
                 <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
                 <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
@@ -58,14 +58,14 @@
     </div>
 
     <div class="card two-thirds" ng-if="verification.PendingHazardChanges.length">
-        <h3>Verify Changes to Lab Personnel</h3>
+        <h3>Verify Changes to Lab Members</h3>
         <ul>
             <li ng-repeat="change in verification.PendingHazardChanges">
                 {{change}}
             </li>
         </ul>
         <div>
-            <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Personnel</a>
+            <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Members</a>
         </div>
     </div>
 
