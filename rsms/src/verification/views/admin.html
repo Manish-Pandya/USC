@@ -16,9 +16,11 @@
     <div class="card two-thirds">
         <h3 class="card-header alert-info alert">Verify Changes to Lab Members for {{PI.User.Name}}'s labs</h3>
         <ul>
-            <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
-                <span ng-if="change.New_status != 'Added'">{{change.Name}} is {{change.New_status | lowercase}}</span>
-                <span ng-if="change.New_status == 'Added'">{{change.Name}} was added to {{PI.User.Name}}'s Lab Members</span>
+            <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
+                <span ng-if="change.New_status != 'Added' && change.New_status != 'Removed'">{{change.Name}} is {{change.New_status | lowercase}}</span>
+                <span ng-if="change.New_status == 'Removed'">{{change.Name}} is no longer assigned to {{PI.User.Name}}'s lab</span>
+                <span ng-if="change.New_status == 'Added' && change.Parent_id">{{change.Name}} is now assigned to {{PI.User.Name}}'s lab</span>
+                <span ng-if="change.New_status == 'Added' && !change.Parent_id">{{change.Name}} was added to {{PI.User.Name}}'s lab as a Lab Contact/Member</span>
 
                 <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
                 <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
