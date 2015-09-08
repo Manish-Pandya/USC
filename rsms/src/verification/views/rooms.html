@@ -30,7 +30,7 @@
             <h3 class="card-header padding greenBg">{{building.Name}}</h3></th>
     </tr>
     <tr>
-        <th>Name</th>
+        <th>Room Number</th>
         <th>Still {{PI.User.Name}}'s Lab Room?</th>
     </tr>
     <tr class="table-row" ng-repeat="room in building.Rooms | orderBy: 'Name' track by $index" ng-class="{'new' : room.PendingRoomChangeCopy.Answer == 'Yes', 'inactive' : room.PendingRoomChangeCopy.Answer == 'No' }">
