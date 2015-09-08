@@ -49,6 +49,12 @@ angular
                     function (returnedVerification) {
                         returnedVerification = modelInflatorFactory.instantiateObjectFromJson(returnedVerification);
                         angular.extend(copy, returnedVerification);
+                        
+                        if ($rootScope.selectedView.Label == "Confirmation" && $rootScope.selectedView.Done) {
+                            // Show all-done message
+                            // TODO: Replace alert with styled modal window.
+                            alert("Your Annual Verification is now complete. Thank You.");
+                        }
                     },
                     function () {
                         ac.setError('The step could not be saved', contact);
