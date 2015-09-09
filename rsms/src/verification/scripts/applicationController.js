@@ -105,8 +105,7 @@ angular
             if (contact) {
                 var copy = contact.PendingUserChangeCopy;
                 if (!copy.Name) copy.Name = contact.Name;
-                console.log(copy.Name);
-                console.log(contact.Name);
+                console.log(copy.Name, contact.Name);
             } else {
                 copy = new window.PendingUserChange();
                 angular.extend(copy, change);
