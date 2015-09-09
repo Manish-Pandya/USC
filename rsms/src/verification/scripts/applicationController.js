@@ -52,8 +52,7 @@ angular
                         
                         if ($rootScope.selectedView.Label == "Confirmation" && $rootScope.selectedView.Done) {
                             // Show all-done message
-                            // TODO: Replace alert with styled modal window.
-                            alert("Your Annual Verification is now complete. Thank You.");
+                            ac.fireModal('views/messageModal', {title:'Thank You', text:'Your Annual Verification is now complete.'});
                         }
                     },
                     function () {
