@@ -1,5 +1,19 @@
 angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngRoute','once'])
 
+.filter('specialtyLab_trueFalse', function(){
+  return function(departments, bool){
+    if(!departments)return;
+    if(bool == null)bool = true;
+    var changedThings = [];
+    var i = departments.length;
+    while(i--){
+      if( departments[i].Specialty_lab == bool || (departments[i].Specialty_lab == null && !bool) ){
+        changedThings.push(departments[i]);
+      }
+    }
+    return changedThings;
+  }
+})
 .factory('departmentFactory', function(convenienceMethods,$q){
     var factory = {};
     var inspection = {};
@@ -116,7 +130,7 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
 
     }
 
-    $scope.openModal = function(dto){
+    $scope.openModal = function(dto, isSpecialtyLab){
         var instance = $modal.open({
             templateUrl: 'departmentModal.html',
             controller: 'modalCtrl',
@@ -124,6 +138,9 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
                 departmentDto: function(){
                    if(dto) return dto;
                    return {};
+                },
+                specialtyLab:function(){
+                    return isSpecialtyLab;
                 }
             }
         });
@@ -134,12 +151,14 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
         });
     }
 }
-modalCtrl = function($scope, departmentDto, $modalInstance, departmentFactory, convenienceMethods){
+modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, departmentFactory, convenienceMethods){
     $scope.department = {
         Class: "Department",
         Name:'',
-        Is_active:true
+        Is_active:true,
+        Specialty_lab:specialtyLab
     }
+    console.log("dig:", specialtyLab);
     if(departmentDto.Department_id){
         $scope.department.Name =   departmentDto.Department_name;
         $scope.department.Key_id = departmentDto.Department_id;
@@ -175,6 +194,7 @@ modalCtrl = function($scope, departmentDto, $modalInstance, departmentFactory, c
     }
 
     $scope.cancel = function(){
+        console.log($scope.department);
         $scope.error = '';
         $modalInstance.dismiss();
     }
