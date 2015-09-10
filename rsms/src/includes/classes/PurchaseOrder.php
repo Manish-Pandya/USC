@@ -17,6 +17,7 @@ class PurchaseOrder extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"principal_investigator_id"		=> "integer",
 		"purchase_order_number"			=> "text", // The "number" may also contain letters.
+		"vendor"						=> "text",	
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -40,6 +41,7 @@ class PurchaseOrder extends GenericCrud {
 	/** alphanumeric string to represent identifiable purchase "number" */
 	private $purchase_order_number;
 
+	private $vendor;
 
 	/** start date for this authorization as a timestamp*/
 	private $start_date;
@@ -95,7 +97,10 @@ class PurchaseOrder extends GenericCrud {
 	}
 
 	public function getEnd_date(){return $this->end_date;}
-
 	public function setEnd_date($end_date){$this->end_date = $end_date;}
+	
+	public function getVendor(){return $this->vendor;}
+	public function setVendor($vendor){$this->vendor = $vendor;}
+	
 }
 ?>
