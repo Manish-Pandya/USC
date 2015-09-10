@@ -118,7 +118,7 @@
                  <label class="control-label" for="inputRoomPurpose">Room Use</label>
                  <div class="controls">
                      <input type="text" ng-if="departmentsHaveSpecialtyLab" class="span4" id="inputRoomPurpose" ng-model="modalData.Purpose" placeholder="Room Purpose">
-                     <ui-select tagging="defaultAddOtherTag" ng-if="!departmentsHaveSpecialtyLab" ng-model="use.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.Purpose = $select.selected.Name">
+                     <ui-select tagging="defaultAddOtherTag" ng-if="!departmentsHaveSpecialtyLab" ng-model="selectedUse" theme="selectize" ng-disabled="disabled" on-select="modalData.Purpose = $select.selected.Name">
                         <ui-select-match placeholder="Select or input a Room Use">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="use in roomUses | propsFilter: {Name: $select.search}">
                             <div once-text="use.Name"></div>
