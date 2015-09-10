@@ -3224,10 +3224,10 @@ div.fake-table .table-row{
 div.fake-table .table-row.new > div{
   background:rgba(91, 183, 91, 0.35) !important
 }
-div.fake-table.striped .table-row:nth-of-type(odd){
+div.fake-table.striped .table-row:nth-of-type(even){
   background:rgba(221, 221, 221, 0.4);
 }
-div.fake-table.striped .table-row:nth-of-type(even){
+div.fake-table.striped .table-row:nth-of-type(odd){
   background:rgba(255, 255, 255, 0.4);
 }
 div.fake-table .table-row > div{
@@ -3492,4 +3492,7 @@ button.btn-mini i {
 }
 .float-left{
     float:left;
+}
+.modal-body{
+    min-height: 112px;
 }
