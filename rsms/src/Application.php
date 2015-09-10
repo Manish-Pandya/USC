@@ -112,12 +112,12 @@ function isProduction(){
 //
 ////////////////////////////////////////////////////////////////////////////////
 function isRadiationEnabled() {
-	if(	strstr($_SERVER["HTTP_REFERER"], '/rad/' ) )return true;
+	if(	strstr($_SERVER["HTTP_REFERER"], '/rad/' ) || isset($_GET['rad']) )return true;
 	return false;
 }
 
 function isVerificationEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/verification/' ))return true;
+	if(	strstr($_SERVER["HTTP_REFERER"], '/verification/' ) || isset($_GET['verification']))return true;
 	return false;
 }
 
