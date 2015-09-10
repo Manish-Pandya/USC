@@ -140,10 +140,12 @@ angular
                     {
                         Name:'solids',
                         Label: 'My Radiation Laboratory',
+                        Dashboard:true
                     },
                     {
                         Name:'use-log',
-                        Label: 'Use Log'
+                        Label: 'Use Log',
+                        Dashboard:true
                     },
                     {
                         Name:'parcel-use-log',
@@ -930,7 +932,7 @@ angular
                             pi.loadActiveParcels();
                             pi.loadAuthorizations();
                             pi.loadPurchaseOrders();
-                            pi.loadCarboys();
+                            pi.loadCarboyUseCycles();
                             pi.loadSolidsContainers();
                             return pi;
                         });
