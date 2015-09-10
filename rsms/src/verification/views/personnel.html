@@ -1,25 +1,32 @@
-<a ng-if="!PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = true;" class="btn-large btn" style="padding:10px; margin-left:5px; margin-bottom:8px;"><img src='../img/add-user-icon.png'>Add User</a>
-<div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.edit">
-    <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="onUserSelect($item)">
-            <ui-select-match placeholder="Select or search for a User">{{$select.selected.Name}}</ui-select-match>
-            <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
-                <div once-text="user.Name"></div>
-            </ui-select-choices>
-        </ui-select>
-    </ui-select>
-    <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn btn-success left"><i class="icon-checkmark"></i>Save</a>
-    <a ng-if="PI.LabPersonnel.edit" ng-click="PI.LabPersonnel.edit = false;" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
-</div>
-<div class="added-list"ng-if="verification">
-    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Personnel</h3>
+<div class="added-list" ng-if="verification">
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Contacts</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly)" >
-                <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingUserChange.Name}}
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:'Lab Contact')">
+            <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
+            {{pendingUserChange.Name}}
         </li>
     </ul>
 </div>
 <table class="table table-striped table-hover table-bordered userList">
-    <tr class="greenBg"><th colspan="2" class="greenBg" ><h3 class="card-header padding greenBg">Lab Contacts</h3></th></tr>
+    <tr class="greenBg">
+        <th class="greenBg">
+            <h3 class="card-header padding greenBg">Lab Contacts</h3>
+        </th>
+        <th class="greenBg">
+            <a ng-if="!PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = true;" class="btn-small btn"><img src='../img/add-user-icon.png'>Add Contact</a>
+            <div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.editContact">
+                <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="onUserSelect($item)">
+                        <ui-select-match placeholder="Select or search for a Contact">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                            <div once-text="user.Name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </ui-select>
+                <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false; newUser.PendingUserChangeCopy.role = 'Lab Contact'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+            </div>
+        </th>
+    </tr>
     <tr>
         <th>Name</th>
         <th>Still a contact for this lab?</th>
@@ -43,8 +50,35 @@
     </tr>
 </table>
 
+<div class="added-list" ng-if="verification">
+    <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Members</h3>
+    <ul ng-if="verification">
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:'Lab Personnel')">
+            <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
+            {{pendingUserChange.Name}}
+        </li>
+    </ul>
+</div>
 <table class="table table-striped table-bordered table-hover userList" style="width:999px;">
-    <tr class="orangeBg"><th colspan="2" class="orangeBg" ><h3 class="card-header padding orangeBg">Lab Personnel</h3></th></tr>
+    <tr class="orangeBg">
+        <th class="orangeBg" >
+            <h3 class="card-header padding orangeBg">Lab Members</h3>
+        </th>
+        <th class="orangeBg">
+            <a ng-if="!PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = true;" class="btn-small btn"><img src='../img/add-user-icon.png'>Add Member</a>
+            <div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.editMember">
+                <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="onUserSelect($item)">
+                        <ui-select-match placeholder="Select or search for a Member">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                            <div once-text="user.Name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </ui-select>
+                <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false; newUser.PendingUserChangeCopy.role = 'Lab Personnel'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+            </div>
+        </th>
+    </tr>
     <tr>
         <th>Name</th>
         <th>Still a lab member in this lab.</th>

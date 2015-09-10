@@ -89,6 +89,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/applicationController.js"></script>
 
 <!-- controllers -->
+<script type="text/javascript" src="../client-side-framework/genericModalController.js"></script>
 <script type="text/javascript" src="scripts/controllers/personnelCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/emergencyPhoneCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/locationCtrl.js"></script>

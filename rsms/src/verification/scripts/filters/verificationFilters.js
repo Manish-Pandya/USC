@@ -17,6 +17,19 @@ angular.module('filtersApp',[])
             return matches;
       };
     })
+    .filter('pendingContactOrPersonnel',function(){
+        return function(changes, role){
+            if(!changes)return;
+            var changedThings = [];
+            var i = changes.length;
+            while(i--){
+                if(changes[i].Role && (!role || changes[i].Role == role)) {
+                    changedThings.push(changes[i]);
+                }
+            }
+            return changedThings;
+        }
+    })
     .filter('tel', function () {
         return function (phoneNumber) {
             if (!phoneNumber)

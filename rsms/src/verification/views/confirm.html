@@ -1,12 +1,15 @@
 <div class="card full" ng-show="userChanges.length">
-    <h3 class="card-header alert-info alert">Confirm Changes to Lab Personnel</h3>
+    <h3 class="card-header alert-info alert">Confirm Changes to Lab Members</h3>
     <ul>
-        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
-            {{change.Name}} is {{change.New_status | lowercase}}
+        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
+            <span ng-if="change.New_status != 'Added' && change.New_status != 'Removed'">{{change.Name}} is {{change.New_status | lowercase}}</span>
+            <span ng-if="change.New_status == 'Removed'">{{change.Name}} is no longer assigned to your lab</span>
+            <span ng-if="change.New_status == 'Added' && change.Parent_id">{{change.Name}} is now assigned to your lab</span>
+            <span ng-if="change.New_status == 'Added' && !change.Parent_id">{{change.Name}} has been added to your lab as a Lab Contact/Member</span>
         </li>
     </ul>
     <div>
-        <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Personnel</a>
+        <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Members</a>
     </div>
 </div>
 
@@ -38,7 +41,7 @@
 </div>
 
 <div class="card full" ng-if="verification.PendingHazardChanges.length">
-    <h3>Verify Changes to Lab Personnel</h3>
+    <h3>Verify Changes to Lab Members</h3>
     <ul>
         <li ng-repeat="change in verification.PendingHazardChanges">
             {{change}}

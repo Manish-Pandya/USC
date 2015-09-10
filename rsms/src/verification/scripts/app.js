@@ -110,7 +110,7 @@ angular
                 Name: 'verification.step3',
                 Label: 'Verify Lab Locations',
                 Message: 'Please verify the following personnel still work in your lab(s).',
-                ConfirmationMessage: 'The above list of laboratory rooms accurately includes all locations where my laboratory conducts research experiments (including rooms where my lab personnel use shared equipment or rooms where my lab uses research animals).',
+                ConfirmationMessage: 'The above list of laboratory rooms accurately includes all locations where my laboratory conducts research experiments (including rooms where my lab members use shared equipment or rooms where my lab uses research animals).',
                 NavLabel:'Locations',
                 Step:3
             },
@@ -125,7 +125,7 @@ angular
                 Name: 'verification.step5',
                 Label: 'Confirmation',
                 Message: 'Please confirm any changes...',
-                ConfirmationMessage: 'I verify that all information provided is true on penalty of being launch into the sun...',
+                ConfirmationMessage: 'I verify that all information provided is accurate and complete to the best of my knowledge',
                 NavLabel:'Confirmation',
                 Step:5
             }

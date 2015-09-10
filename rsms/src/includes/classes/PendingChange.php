@@ -23,6 +23,7 @@ class PendingChange extends GenericCrud {
 			"building_name"		=> "text",
 			"name"				=> "name",
 			"phone_approved"	=> "boolean",
+            "role"		    	=> "text",
 				
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -94,6 +95,9 @@ class PendingChange extends GenericCrud {
 	
 	public function getAnswer(){return $this->answer;}
 	public function setAnswer($answer){$this->answer = $answer;}
+    
+    public function getRole(){return $this->role;}
+	public function setRole($role){$this->role = $role;}
 	
 	public function getEmergency_phone(){
 		return $this->emergency_phone;

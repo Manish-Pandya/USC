@@ -49,6 +49,11 @@ angular
                     function (returnedVerification) {
                         returnedVerification = modelInflatorFactory.instantiateObjectFromJson(returnedVerification);
                         angular.extend(copy, returnedVerification);
+                        
+                        if ($rootScope.selectedView.Label == "Confirmation" && $rootScope.selectedView.Done) {
+                            // Show all-done message
+                            ac.fireModal('views/messageModal', {title:'Thank You', text:'Your Annual Verification is now complete.'});
+                        }
                     },
                     function () {
                         ac.setError('The step could not be saved', contact);
@@ -99,8 +104,7 @@ angular
             if (contact) {
                 var copy = contact.PendingUserChangeCopy;
                 if (!copy.Name) copy.Name = contact.Name;
-                console.log(copy.Name);
-                console.log(contact.Name);
+                console.log(copy.Name, contact.Name);
             } else {
                 copy = new window.PendingUserChange();
                 angular.extend(copy, change);

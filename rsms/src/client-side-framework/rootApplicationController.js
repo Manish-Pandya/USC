@@ -17,7 +17,6 @@ angular
                     store.createCopy( object );
                     //set the other objects in this one's collection to the non-edit state
                     store.setEditStates( object );
-
             }
 
             rac.createCopy = function(obj)
@@ -36,7 +35,6 @@ angular
 
             rac.setObjectActiveState = function( object )
             {
-
                     object.setIs_active( !object.Is_active );
 
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
@@ -102,6 +100,38 @@ angular
             {
                 $rootScope.error = null;
             }
+            
+            /********************************************************************
+            **
+            **      MODALS
+            **
+            ********************************************************************/
+            rac.fireModal = function(templateName, object)
+            {
+                console.log("Firing modal...", object);
+                if(object) rac.setModalData(object);
+                var modalInstance = $modal.open({
+                  templateUrl: templateName+'.html',
+                  controller: 'GenericModalCtrl'
+                });
+            }
+
+            rac.setModalData = function(thing)
+            {
+                dataStoreManager.setModalData(thing);
+            }
+
+            rac.getModalData = function()
+            {
+                return dataStoreManager.getModalData();
+            }
+
+            rac.deleteModalData = function()
+            {
+                dataStore.modalData = [];
+            }
+            
+            /********************************************************************/
 
             return rac;
 });
