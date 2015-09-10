@@ -16,11 +16,10 @@
             <a ng-if="!PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = true;" class="btn-small btn"><img src='../img/add-user-icon.png'>Add Contact</a>
             <div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.editContact">
                 <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="onUserSelect($item)">
-                        <ui-select-match placeholder="Select or search for a Contact">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
-                            <div once-text="user.Name"></div>
-                        </ui-select-choices>
-                    </ui-select>
+                    <ui-select-match placeholder="Select or search for a Contact">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                        <div once-text="user.Name"></div>
+                    </ui-select-choices>
                 </ui-select>
                 <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false; newUser.PendingUserChangeCopy.role = 'Lab Contact'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
@@ -68,11 +67,10 @@
             <a ng-if="!PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = true;" class="btn-small btn"><img src='../img/add-user-icon.png'>Add Member</a>
             <div class="span4" style="margin:10px 0; float:none" ng-if="PI.LabPersonnel.editMember">
                 <ui-select tagging="defaultAddOtherTag" ng-show="allUsers" ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="onUserSelect($item)">
-                        <ui-select-match placeholder="Select or search for a Member">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
-                            <div once-text="user.Name"></div>
-                        </ui-select-choices>
-                    </ui-select>
+                    <ui-select-match placeholder="Select or search for a Member">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="user in allUsers | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                        <div once-text="user.Name"></div>
+                    </ui-select-choices>
                 </ui-select>
                 <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false; newUser.PendingUserChangeCopy.role = 'Lab Personnel'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>

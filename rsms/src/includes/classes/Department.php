@@ -37,6 +37,8 @@ class Department extends GenericCrud {
 	
 	/** Array of PrincipalInvestigator entities that are part of this Department */
 	private $principalInvestigators;
+    
+    private $specialty_lab;
 	
 	public function __construct(){
 			
@@ -67,5 +69,10 @@ class Department extends GenericCrud {
 		return $this->principalInvestigators;
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+    
+    public function getSpecialty_lab(){ return $this->specialty_lab; }
+	public function setSpecialty_lab( $specialty ){ $this->specialty_lab = $specialty; }
+    
 	}
+
 ?>

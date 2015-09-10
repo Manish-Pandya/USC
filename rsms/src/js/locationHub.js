@@ -544,7 +544,19 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
-
+    
+    $scope.roomUses = [
+        {Name:"Chemical Storage"},
+        {Name:"Cold Room"},
+        {Name:"Dark Room"},
+        {Name:"Equipment Room"},
+        {Name:"Greenhouse"},
+        {Name:"Growth Chamber"},
+        {Name:"Rodent Housing"},
+        {Name:"Rodent Surgery"},
+        {Name:"Tissue Culture"}
+    ];
+    
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
     locationHubFactory.getBuildings().then(
@@ -553,12 +565,27 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
         }
     );
 
-    if($scope.modalData.Class  == "Room"){
+    if($scope.modalData.Class == "Room"){
         locationHubFactory.getAllPis()
             .then(
                 function(pis){
                     $scope.pis = pis;
                     $scope.pis.selected = false;
+                }
+            ).then(
+                function(){
+                    $scope.departmentsHaveSpecialtyLab = false;
+                    var i = $scope.modalData.PrincipalInvestigators.length;
+                    while(i--){
+                        var n = $scope.modalData.PrincipalInvestigators[i].Departments.length;
+                        while(n--) {
+                            var dept = $scope.modalData.PrincipalInvestigators[i].Departments[n];
+                            if (dept.Specialty_lab != null && dept.Specialty_lab) {
+                                console.log(dept.Name);
+                                $scope.departmentsHaveSpecialtyLab = true;
+                            }
+                        }
+                    }
                 }
             )
     }
