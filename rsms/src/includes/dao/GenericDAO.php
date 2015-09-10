@@ -791,7 +791,7 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 	
-		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, count(distinct b.key_id) as pi_count, 
+		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab, count(distinct b.key_id) as pi_count,
 						count(distinct c.key_id) as room_count
 						FROM department a 
 						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
@@ -812,7 +812,7 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 
-		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, count(distinct b.key_id) as pi_count, 
+		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab, count(distinct b.key_id) as pi_count,
 						count(distinct c.key_id) as room_count
 						FROM department a 
 						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
