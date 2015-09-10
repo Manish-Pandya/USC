@@ -21,7 +21,8 @@ class Department extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"created_user_id"	=> "integer"
+		"created_user_id"	=> "integer",
+        "specialty_lab"     => "boolean"
 	);
 	
 	protected static $PIS_RELATIONSHIP = array(
