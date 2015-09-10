@@ -1,205 +1,205 @@
 <div ng-if="pi" class="right-column">
-	<h1>{{pi.User.Name}}</h1>
-	<div class="card full auths" ng-click="af.setSelectedView('authorizations')">
-		<h3 class="card-header padding" ng-if="pi.Authorizations.length">
-			<i class="icon-unlocked-2"></i>{{pi.User.Name}} has 
-			<span class="bold">
-				{{pi.Authorizations.length}} authorized rad material<span ng-if="pi.Authorizations.length != 1">s</span>
-			</span>
-			<a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Authorization</a>
-		</h3>
-		<h3 class="card-header padding auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <a class="btn btn-success left"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
-		<div class="card-content" ng-if="selectedView == 'authorizations'">
-			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>Isotope</h3>
-					<h3>Half Life</h3>
-					<h3>Emitter Type</h3>
-					<h3>Maximum Quantity</h3>
-					<h3>Approval Date</h3>
-					<h3>Revocation Date</h3>
-					<h3>Form</h3>
-				</div>
-					<div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
-						<div>
-							<a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
-							<a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
-							<a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
-						</div>
+    <h1>{{pi.User.Name}}</h1>
+    <div class="card full auths" ng-click="af.setSelectedView('authorizations')">
+        <h3 class="card-header padding" ng-if="pi.Authorizations.length">
+            <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
+            <span class="bold">
+                {{pi.Authorizations.length}} authorized rad material<span ng-if="pi.Authorizations.length != 1">s</span>
+            </span>
+            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Authorization</a>
+        </h3>
+        <h3 class="card-header padding auths" ng-if="!pi.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Authorization</a></h3>
+        <div class="card-content" ng-if="selectedView == 'authorizations'">
+            <div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>Isotope</h3>
+                    <h3>Half Life</h3>
+                    <h3>Emitter Type</h3>
+                    <h3>Maximum Quantity</h3>
+                    <h3>Approval Date</h3>
+                    <h3>Revocation Date</h3>
+                    <h3>Form</h3>
+                </div>
+                    <div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
+                        <div>
+                            <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
+                            <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                            <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                        </div>
 
-						<div>
-							{{auth.Isotope.Name}}
-						</div>
+                        <div>
+                            {{auth.Isotope.Name}}
+                        </div>
 
-						<div>
-							{{auth.Isotope.Half_life}}
-						</div>
+                        <div>
+                            {{auth.Isotope.Half_life}}
+                        </div>
 
-						<div>
-							{{auth.Isotope.Emitter_type}}
-						</div>
+                        <div>
+                            {{auth.Isotope.Emitter_type}}
+                        </div>
 
-						<div>
-							{{auth.Max_quantity}} mCi
-						</div>
+                        <div>
+                            {{auth.Max_quantity}} mCi
+                        </div>
 
-						<div>
-							{{auth.Approval_date | dateToISO}}
-						</div>
+                        <div>
+                            {{auth.Approval_date | dateToISO}}
+                        </div>
 
-						<div>
-							{{auth.Revocation_date | dateToISO}}
-						</div>
+                        <div>
+                            {{auth.Revocation_date | dateToISO}}
+                        </div>
 
-						<div>
-							{{auth.Form}}
-						</div>
-					</div>
-				</div>
-			</div>
-		</ul>
-	</div>
-	<div class="card full pos" ng-click="af.setSelectedView('orders')">
-		<h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
-		<h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
-		<div class="card-content" ng-if="selectedView == 'orders'">
-			<div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>P.O. Number</h3>
-					<h3>Start Date</h3>
-					<h3>End Date</h3>
-				</div>
-				<div class="table-row" ng-repeat="order in pi.PurchaseOrders" ng-class="{'inactive':!order.Is_active, 'inactive':af.getIsExpired(order.view_End_date)}">
-					<div>
-						<a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/po-modal', order)"><i class="icon-pencil"></i></a>
-						<a ng-if="order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-danger"><i class="icon-remove"></i></a>
-						<a ng-if="!order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-success"><i class="icon-checkmark"></i></a>
-					</div>
+                        <div>
+                            {{auth.Form}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+    <div class="card full pos" ng-click="af.setSelectedView('orders')">
+        <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
+        <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
+        <div class="card-content" ng-if="selectedView == 'orders'">
+            <div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>P.O. Number</h3>
+                    <h3>Start Date</h3>
+                    <h3>End Date</h3>
+                </div>
+                <div class="table-row" ng-repeat="order in pi.PurchaseOrders" ng-class="{'inactive':!order.Is_active, 'inactive':af.getIsExpired(order.view_End_date)}">
+                    <div>
+                        <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/po-modal', order)"><i class="icon-pencil"></i></a>
+                        <a ng-if="order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                    </div>
 
-					<div>
-						{{order.Purchase_order_number}}
-					</div>
+                    <div>
+                        {{order.Purchase_order_number}}
+                    </div>
 
-					<div>
-						{{order.Start_date | dateToISO:order:'Start_date'}}
-					</div>
+                    <div>
+                        {{order.Start_date | dateToISO:order:'Start_date'}}
+                    </div>
 
-					<div>
-						{{order.End_date | dateToISO:order:'End_date'}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="card full parcels" ng-click="af.setSelectedView('parcels')">
-		<h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
-		<h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
-		<div class="card-content" ng-if="selectedView == 'parcels'">
-			<div class="fake-table striped bordered" ng-if="pi.ActiveParcels.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>P.O. Number</h3>
-					<h3>R.S. Number</h3>
-					<h3>Status</h3>
-					<h3>Isotope</h3>
-					<h3>Arrival Date</h3>
-					<h3>Orginal Quantity</h3>
-					<h3>Remaining Quantity</h3>
-				</div>
-				<div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
-					<div>
-						<a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/parcel-modal', parcel)"><i class="icon-pencil"></i></a>
-						<a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove"></i></a>
-						<a ng-if="!parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-success"><i class="icon-checkmark"></i></a>
-					</div>
+                    <div>
+                        {{order.End_date | dateToISO:order:'End_date'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card full parcels" ng-click="af.setSelectedView('parcels')">
+        <h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+        <h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+        <div class="card-content" ng-if="selectedView == 'parcels'">
+            <div class="fake-table striped bordered" ng-if="pi.ActiveParcels.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>P.O. Number</h3>
+                    <h3>R.S. Number</h3>
+                    <h3>Status</h3>
+                    <h3>Isotope</h3>
+                    <h3>Arrival Date</h3>
+                    <h3>Orginal Quantity</h3>
+                    <h3>Remaining Quantity</h3>
+                </div>
+                <div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
+                    <div>
+                        <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/parcel-modal', parcel)"><i class="icon-pencil"></i></a>
+                        <a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                    </div>
 
-					<div>
-						{{parcel.PurchaseOrder.Purchase_order_number}}
-					</div>
+                    <div>
+                        {{parcel.PurchaseOrder.Purchase_order_number}}
+                    </div>
 
-					<div>
-						{{parcel.Rs_number}}
-					</div>
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
 
 
-					<div>
-						{{parcel.Status}}
-					</div>
+                    <div>
+                        {{parcel.Status}}
+                    </div>
 
-					<div>
-						{{parcel.Isotope.Name}}
-					</div>
+                    <div>
+                        {{parcel.Isotope.Name}}
+                    </div>
 
-					<div>
-						{{parcel.Arrival_date | dateToISO}}
-					</div>
+                    <div>
+                        {{parcel.Arrival_date | dateToISO}}
+                    </div>
 
-					<div>
-						{{parcel.Quantity}} mCi
-					</div>
+                    <div>
+                        {{parcel.Quantity}} mCi
+                    </div>
 
-					<div>
-						{{parcel.Remainder}} mCi
-					</div>
+                    <div>
+                        {{parcel.Remainder}} mCi
+                    </div>
 
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="card full carboys" ng-click="af.setSelectedView('carboys')">
-		<h3 class="card-header padding " ng-if="pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has <span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
-			<a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
-		</h3>
-		<h3 class="card-header padding carboys" ng-if="!pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has no Carboys
-			<a ng-click="openModal('views/admin/admin-modals/carboy-assignment')"  class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
-		</h3>
-		<div class="card-content" ng-if="selectedView == 'carboys'">
-			<div class="fake-table striped bordered" ng-if="pi.CarboyUseCycles.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>Carboy Number</h3>
-					<h3>Room</h3>
-					<h3>Lab Date</h3>
-					<h3>mCi</h3>
-				</div>
-				<div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
-					<div>
-						<a ng-if="cycle.Is_active && cycle.Status=='In Use'" ng-click="af.removeCarboyFromLab(cycle)" class="btn btn-danger"><i class="icon-remove"></i></a>
-					</div>
-					<div>{{cycle.Carboy.Carboy_number}}</div>
-					<div>{{cycle.Room.Name}}</div>
-					<div>{{cycle.Lab_date | dateToISO}}</div>
-					<div>{{cycle.Curie_level}}</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="card half solids-containers" ng-click="af.setSelectedView('containers')">
-		<h3 class="card-header padding " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>{{pi.User.Name}} has <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
-			<a ng-click="openModal('views/admin/admin-modals/containers-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Assign Container</a>
-		</h3>
-		<h3 class="card-header padding solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>{{pi.User.Name}} has no Waste Recepticals
-			<a class="btn btn-success left"><i class="icon-box"></i>Assign Container</a>
-		</h3>
-		<div class="card-content" ng-if="selectedView == 'containers'">
-			<div class="fake-table striped bordered" ng-if="pi.SolidsContainers.length">
-				<div class="table-header">
-					<h3>Edit</h3>
-					<h3>Label</h3>
-				</div>
-				<div class="table-row" ng-repeat="container in pi.SolidsContainers" ng-class="{'inactive':!container.Is_active}">
-					<div>
-						<a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/containers-modal', container)"><i class="icon-pencil"></i></a>
-						<a ng-if="container.Is_active" ng-click="af.setObjectActiveState(container)" class="btn btn-danger"><i class="icon-remove"></i></a>
-						<a ng-if="!container.Is_active" ng-click="af.setObjectActiveState(container)" class="btn btn-success"><i class="icon-checkmark"></i></a>
-					</div>
-					<div>
-						{{container.Name}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>	
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card full carboys" ng-click="af.setSelectedView('carboys')">
+        <h3 class="card-header padding " ng-if="pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has <span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
+            <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
+        </h3>
+        <h3 class="card-header padding carboys" ng-if="!pi.CarboyUseCycles.length"><i class="icon-carboy"></i>{{pi.User.Name}} has no Carboys
+            <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')"  class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
+        </h3>
+        <div class="card-content" ng-if="selectedView == 'carboys'">
+            <div class="fake-table striped bordered" ng-if="pi.CarboyUseCycles.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>Carboy Number</h3>
+                    <h3>Room</h3>
+                    <h3>Lab Date</h3>
+                    <h3>mCi</h3>
+                </div>
+                <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
+                    <div>
+                        <a ng-if="cycle.Is_active && cycle.Status=='In Use'" ng-click="af.removeCarboyFromLab(cycle)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                    </div>
+                    <div>{{cycle.Carboy.Carboy_number}}</div>
+                    <div>{{cycle.Room.Name}}</div>
+                    <div>{{cycle.Lab_date | dateToISO}}</div>
+                    <div>{{cycle.Curie_level}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card half solids-containers" ng-click="af.setSelectedView('containers')">
+        <h3 class="card-header padding " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>{{pi.User.Name}} has <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
+            <a ng-click="openModal('views/admin/admin-modals/containers-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Assign Container</a>
+        </h3>
+        <h3 class="card-header padding solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>{{pi.User.Name}} has no Waste Recepticals
+            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/containers-modal')"><i class="icon-box"></i>Assign Container</a>
+        </h3>
+        <div class="card-content" ng-if="selectedView == 'containers'">
+            <div class="fake-table striped bordered" ng-if="pi.SolidsContainers.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>Label</h3>
+                </div>
+                <div class="table-row" ng-repeat="container in pi.SolidsContainers" ng-class="{'inactive':!container.Is_active}">
+                    <div>
+                        <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/containers-modal', container)"><i class="icon-pencil"></i></a>
+                        <a ng-if="container.Is_active" ng-click="af.setObjectActiveState(container)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!container.Is_active" ng-click="af.setObjectActiveState(container)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                    </div>
+                    <div>
+                        {{container.Name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

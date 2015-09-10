@@ -5,124 +5,125 @@
 <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <!--<pre>{{pi | json}}</pre>-->
 
-<div style="margin-top: 27px;" ng-if="pi">
+<div style="margin-top: 70px;" ng-if="pi">
+    <div class="alert alert-info" ng-if="scheduledPickups">
+        <h3></h3>
+    </div>
+    <div class="half float-left">
+        <div class="card full pickups pickup-collection">
+            <div>
+                <h1 class="card-header" ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>The following items can be picked up</h1>
 
-	<div class="alert alert-info" ng-if="scheduledPickups">
-		<h3></h3> 
-	</div>
+                <h3 class="card-header" ng-if="!solidsContainersHavePickups(pi.SolidsContainers) && !hasPickupItems(pi.CurrentScintVialCollection) && !hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>You don't have any waste ready for pickup.</h3>
 
-	<div class="card half pickups pickup-collection">
-		<div>
-			<h1 class="card-header" ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>The following items can be picked up</a></h1>
+                <div ng-if="solidsContainersHavePickups(pi.SolidsContainers) && pi.SolidsContainers">
+                    <h3><i class="icon-remove-2 solids-containers"></i>Solid Waste Containers</h3>
+                    <ul>
+                        <li ng-repeat="container in pi.SolidsContainers" ng-if="container.WasteBagsForPickup.length">
+                            <label class="checkbox">
+                                <input type="checkbox" ng-true-value="yes" ng-model="container.include" />
+                                <span class="metro-checkbox bold">Bags removed from {{container.Name}} since last pickup:</span>
+                                <p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">
+                                    <span class="metro-checkbox">Waste Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+                                </p>
+                            </label>
 
-			<h3 class="card-header" ng-if="!solidsContainersHavePickups(pi.SolidsContainers) && !hasPickupItems(pi.CurrentScintVialCollection) && !hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>You don't have any waste ready for pickup.</a></h3>		
+                            <label class="checkbox">
+                                <input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag" />
+                                <span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">Empty Bag</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+                            </label>
 
-			<div ng-if="solidsContainersHavePickups(pi.SolidsContainers) && pi.SolidsContainers">
-				<h3><i class="icon-remove-2 solids-containers"></i>Solid Waste Containers</h3>
-				<ul>
-					<ul>
-						<li ng-repeat="container in pi.SolidsContainers" ng-if="container.WasteBagsForPickup.length">
-							<label class="checkbox">
-								<input type="checkbox" ng-true-value="yes" ng-model="container.include"/>
-								<span class="metro-checkbox"><h3>{{container.WasteBagsForPickup.length}} Waste Bags from {{container.Name}}</h3></span>
-							</label>
+                        </li>
+                    </ul>
+                </div>
+                <div ng-if="hasPickupItems(pi.CurrentScintVialCollections)">
+                    <h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
+                    <label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
+                        <input type="checkbox" ng-true-value="yes" ng-model="collection.include" />
+                        <span class="metro-checkbox"><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span>
+                        </span>
+                        <div class="input-append ">
+                            <input ng-model="collection.svTrays" type="text" style="width: 10px !important;  min-width: 33px;">
+                            <span class="add-on">Number of trays</span>
+                        </div>
+                    </label>
+                </div>
 
-							<label class="checkbox">
-								<input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag"/>
-								<span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">Empty Bag</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span></span>
-							</label>
-							<h3>Bags removed from {{container.Name}} since last pickup:</h3>
-							<p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">{{bag.Key_id}}
-								<span class="metro-checkbox">Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
-							</p>
-						</li>
-					</ul>
-				</ul>
-			</div>
-			<div ng-if="hasPickupItems(pi.CurrentScintVialCollections)">
-				<h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
-				<label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
-					<input type="checkbox" ng-true-value="yes" ng-model="collection.include"/>
-					<span class="metro-checkbox"><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span></span>
-					<div class="input-append ">
-					 <input ng-model="collection.svTrays" type="text" style="width: 10px !important;  min-width: 33px;">
-					 <span class="add-on">Number of trays</span>
-					</div>
-				</label>
-			</div>
+                <div ng-if="pi.CarboyUseCycles && hasPickupItems(pi.CarboyUseCycles)">
+                    <!-- && hasPickupItems(pi.CarboyUseCycles)-->
+                    <h3><i class="icon-carboy carboys"></i>Carboys</h3>
+                    <ul>
+                        <label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length && !cycle.Pickup_id">
+                            <input type="checkbox" ng-true-value="yes" ng-model="cycle.include" />
+                            <span class="metro-checkbox">
+                            Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)
+                            </span>
+                        </label>
+                    </ul>
+                </div>
 
-			<div ng-if="pi.CarboyUseCycles && hasPickupItems(pi.CarboyUseCycles)"><!-- && hasPickupItems(pi.CarboyUseCycles)-->
-				<h3><i class="icon-carboy carboys"></i>Carboys</h3>
-				<ul>
-					<label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length && !cycle.Pickup_id">
-						<input type="checkbox" ng-true-value="yes" ng-model="cycle.include"/>
-						<span class="metro-checkbox">
-							Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)
-						</span>
-					</label>
-				</ul>
-			</div>
+                <div ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)">
+                    <h3><a class="btn btn-success btn-large left" ng-click="createPickup(pi)"><i class="icon-box-remove"></i>Request Pickup</a></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="half float-left">
 
-			<div ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)">
-				<h3><a class="btn btn-success btn-large left" ng-click="createPickup(pi)"><i class="icon-box-remove"></i>Request Pickup</a></h3>
-			</div>
-		</div>
-	</div>
+        <div class="card full pickups pickup-collection" ng-repeat="pickup in pi.Pickups" ng-if="pi.Pickups.length">
+            <h3 class="card-header padding"><i class="icon-box-remove"></i>You requested a pickup on {{pickup.Requested_date | dateToISO}}
+        </h3>
+            <div ng-if="!pickup.Pickup_date">
+                <span ng-if="pickup.Notes">
+                <h4>Notes:<p>{{pickup.Notes}}</p></h4>
+            </span>
+                <h4>Pickup Contents:</h4>
+                <div ng-if="pickup.Waste_bags.length">
+                    <h3>Waste Bags</h3>
+                    <div class="fake-table condensed">
+                        <div ng-repeat="bag in pickup.Waste_bags" class="table-row">
+                            <div class="button-cell">
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(bag, pickup.Waste_bags, pi)"><i class="icon-remove"></i>Remove</a>
+                            </div>
+                            <div>
+                                <p>Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}} Contents: (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="pickup.Carboy_use_cycles.length">
+                    <h3>Carboys</h3>
+                    <div class="fake-table condensed">
+                        <div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles">
+                            <div class="button-cell">
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(cycle, pickup.Carboy_use_cycles, pi)"><i class="icon-remove"></i>Remove</a>
+                            </div>
+                            <div>
+                                <p>Carboy Number {{cycle.Carboy.Carboy_number}} Contents: (<span ng-if="!cycle.Contents.length">Empty Bag</span><span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-	<div class="card half pickups pickup-collection" ng-repeat="pickup in pi.Pickups" ng-if="pi.Pickups.length">
-		<h3 class="card-header padding"><i class="icon-box-remove"></i>You requested a pickup on {{pickup.Requested_date | dateToISO}}
-		</h3>
-		<div ng-if="!pickup.Pickup_date">
-			<span ng-if="pickup.Notes">
-				<h4>Notes:<p>{{pickup.Notes}}</p></h4>
-			</span>
-			<h4>Pickup Contents:</h4>
-			<div ng-if="pickup.Waste_bags.length">
-				<h3>Waste Bags</h3>
-				<div class="fake-table condensed">
-					<div ng-repeat="bag in pickup.Waste_bags" class="table-row">
-						<div class="button-cell">
-							<a class="btn btn-danger left" ng-click="af.removeFromPickup(bag, pickup.Waste_bags, pi)"><i class="icon-remove"></i>Remove</a>
-						</div>
-						<div>
-							<p>Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}
-							Contents: (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
-						</div>	
-					</div>
-				</div>
-			</div>
-			<div ng-if="pickup.Carboy_use_cycles.length">
-				<h3>Carboys</h3>
-				<div class="fake-table condensed">
-					<div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles">
-						<div class="button-cell">
-							<a class="btn btn-danger left" ng-click="af.removeFromPickup(cycle, pickup.Carboy_use_cycles, pi)"><i class="icon-remove"></i>Remove</a>
-						</div>
-						<div>
-							<p>Carboy Number {{cycle.Carboy.Carboy_number}}
-							Contents: (<span ng-if="!cycle.Contents.length">Empty Bag</span><span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>	
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div ng-if="pickup.Scint_vial_collections.length">
-				<h3>Scintillation Vials</h3>
-				<div class="fake-table condensed">
-					<div class="table-row" ng-repeat="collection in pickup.Scint_vial_collections">
-						<div class="button-cell">
-							<a class="btn btn-danger left" ng-click="af.removeFromPickup(collection, pickup.Scint_vial_collections, pi)"><i class="icon-remove"></i>Remove</a>
-						</div>
-						<div><p>{{pickup.Scint_vial_trays.length}} Trays</p></div>
-					</div>
-					<!--
-					<div class="span10">
-						<p>Contents: (<span ng-if="!collection.Contents.length">Empty Bag</span><span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>	
-					</div>
-					-->
-				</div>
-			</div>
-		</div>
-
-	</div>
+                <div ng-if="pickup.Scint_vial_collections.length">
+                    <h3>Scintillation Vials</h3>
+                    <div class="fake-table condensed">
+                        <div class="table-row" ng-repeat="collection in pickup.Scint_vial_collections">
+                            <div class="button-cell">
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(collection, pickup.Scint_vial_collections, pi)"><i class="icon-remove"></i>Remove</a>
+                            </div>
+                            <div>
+                                <p>{{pickup.Scint_vial_trays.length}} Trays</p>
+                            </div>
+                        </div>
+                        <!--
+                    <div class="span10">
+                        <p>Contents: (<span ng-if="!collection.Contents.length">Empty Bag</span><span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
+                    </div>
+                    -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

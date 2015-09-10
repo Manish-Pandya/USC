@@ -24,7 +24,7 @@ angular.module('00RsmsAngularOrmApp')
                     },
                     function(){
                     }
-                );  
+                );
     }
     //get the all the pis
     $rootScope.pisPromise
@@ -34,7 +34,7 @@ angular.module('00RsmsAngularOrmApp')
                     .then(getRadPi);
                 }
             )
-    
+
 
     $scope.onSelectPi = function (pi)
     {
@@ -170,4 +170,4 @@ angular.module('00RsmsAngularOrmApp')
         }
 
   }])
-  
+

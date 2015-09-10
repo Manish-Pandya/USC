@@ -3,37 +3,37 @@
 <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="neg-marg" ng-if="pi && pi.Rooms.length">
-	<div class="card full">
-		<h3 class="card-header " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>You have <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
-			<a ng-click="openModal('views/pi/pi-modals/solids-container-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Create Receptical</a>
-		</h3>
+    <div class="card half block">
+        <h3 class="card-header padding" ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>You have <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
+            <a ng-click="openModal('views/pi/pi-modals/solids-container-modal')" ng-click="openModal('views/pi/pi-modals/solids-container-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Create Receptical</a>
+        </h3>
 
-		<h3 class="card-header solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>You have no Waste Recepticals
-			<a class="btn btn-success left"><i class="icon-remove-2"></i>Create Receptical</a>
-		</h3>
-	</div>
+        <h3 class="card-header solids-containers" ng-if="!pi.SolidsContainers.length"><i class="icon-remove-2"></i>You have no Waste Recepticals
+            <a class="btn btn-success left" ng-click="openModal('views/pi/pi-modals/solids-container-modal')"><i class="icon-remove-2"></i>Create Receptical</a>
+        </h3>
+    </div>
 
-	<div class="card full" ng-repeat="container in pi.SolidsContainers">
-		<h3 class="card-header " ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>
-			{{container.Name}} in Room {{container.Room.Name}} has {{container.CurrentWasteBags.length}} waste bags. <a ng-click="openModal('views/pi/pi-modals/solids-container-modal', container)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Receptical</a>
-			<a class="btn btn-success left" ng-click="af.addWasteBagToSolidsContainer(container)"><i class="icon-plus-2"></i>Add Waste Bag</a>
+    <div class="card half block" ng-repeat="container in pi.SolidsContainers">
+        <h3 class="card-header padding" ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>
+            {{container.Name}} in Room {{container.Room.Name}} has {{container.CurrentWasteBags.length}} waste bags. <a ng-click="openModal('views/pi/pi-modals/solids-container-modal', container)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Receptical</a>
+            <a class="btn btn-success left" ng-click="af.addWasteBagToSolidsContainer(container)"><i class="icon-plus-2"></i>Add Waste Bag</a>
 
-		</h3>
-		<div class="fake-table striped bordered" ng-if="container.CurrentWasteBags.length">
-				<div class="table-header">
-					<h3>Remove</h3>
-					<h3>Date Added</h3>
-				</div>
-				<div class="table-row" ng-repeat="bag in container.CurrentWasteBags" ng-if="!bag.Date_removed || bag.Date_removed == '0000-00-00 00:00:00'" ng-class="{'inactive':!container.Is_active}">
-					<div>
-						<a ng-click="af.removeWasteBagFromContainer(container, bag)" class="btn btn-danger"><i class="icon-remove"></i></a>
-					</div>
-					<div>
-						{{bag.Date_added | dateToISO}}
-						{{bag.Date_removed}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        </h3>
+        <div class="fake-table striped bordered" ng-if="container.CurrentWasteBags.length">
+                <div class="table-header">
+                    <h3>Remove</h3>
+                    <h3>Date Added</h3>
+                </div>
+                <div class="table-row" ng-repeat="bag in container.CurrentWasteBags" ng-if="!bag.Date_removed || bag.Date_removed == '0000-00-00 00:00:00'" ng-class="{'inactive':!container.Is_active}">
+                    <div>
+                        <a ng-click="af.removeWasteBagFromContainer(container, bag)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                    </div>
+                    <div>
+                        {{bag.Date_added | dateToISO}}
+                        {{bag.Date_removed}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
