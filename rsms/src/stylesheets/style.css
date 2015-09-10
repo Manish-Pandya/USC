@@ -3185,8 +3185,8 @@ table.large tr th{
 .half{
   width: 49.5%;
 }
-.half:nth-of-type(odd){
-    margin-right:1%;
+.half:nth-of-type(even):not(.block){
+    margin-left:1%;
 }
 *[class~='well']:last-child:after, *[class~='card']:last-child:after{
   clear:both;
@@ -3485,4 +3485,11 @@ button.btn-mini i {
 
 .my-lab-alert{
     margin-top:22px;
+}
+.block{
+    clear:both !important;
+    display:block !important;
+}
+.float-left{
+    float:left;
 }
