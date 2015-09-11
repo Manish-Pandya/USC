@@ -21,14 +21,6 @@ require_once '../top_view.php';
     </span>
     <div class="" style="margin-bottom:14px;">
         <a ng-click="openModal()" class="btn btn-success btn-large left" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Department</a>
-        <span ng-if="creatingDepartment" style="width:100%; display: block;">
-            <input style="width:50%" ng-model="newDepartment.Name">
-            <span style="width:50%">
-                <a class="btn-success btn left" ng-click="saveNewDepartment(newDepartment)"><i class="icon-checkmark"></i>Save</a>
-                <a class="btn-danger btn left" ng-click="cancelEdit(newDepartment)"><i class="icon-cancel"></i>Cancel</a>
-                <img ng-show="newDepartment.isDirty" class="smallLoading" src="../../img/loading.gif"/>
-            </span>
-        </span>
     </div>
 
     <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
@@ -77,7 +69,7 @@ require_once '../top_view.php';
         <tbody>
             <tr ng-repeat="(key, department) in departments | specialtyLab_trueFalse:true | orderBy: 'Department_name'" class="center-block" ng-class="{inactive:!department.Is_active}">
                 <td style="width:11%;">
-                    <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
+                    <a class="btn btn-primary left" ng-click="openModal(department, true)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                     <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                         <span ng-if="department.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
                         <span ng-if="!department.Is_active"><i class="icon-checkmark-2"></i></span>
