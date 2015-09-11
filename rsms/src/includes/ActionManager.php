@@ -90,7 +90,7 @@ class ActionManager {
         $roles['userPermissions'] = 0;
         $roles['userRoles'] = array();
         foreach($user->getRoles() as $role){
-            $LOG->debug($role);
+            //$LOG->debug($role);
             $roles['userPermissions'] += $role->getBit_value();
             $roles['userRoles'][] = $role->getName();
         }
@@ -3836,7 +3836,7 @@ class ActionManager {
             $rooms = $pi->getRooms();
             $pi_bldg_rooms = array();
             foreach ($rooms as $room){
-                $LOG->debug($room);
+                //$LOG->debug($room);
                 $bldg = $room->getBuilding();
                 if ($bldg->getKey_id() == $is->getBuilding_key_id()){
                     $pi_bldg_rooms[] = $room;

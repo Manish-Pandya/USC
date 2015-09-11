@@ -158,7 +158,6 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
         Is_active:true,
         Specialty_lab:specialtyLab
     }
-    console.log("dig:", specialtyLab);
     if(departmentDto.Department_id){
         $scope.department.Name =   departmentDto.Department_name;
         $scope.department.Key_id = departmentDto.Department_id;
@@ -194,7 +193,6 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
     }
 
     $scope.cancel = function(){
-        console.log($scope.department);
         $scope.error = '';
         $modalInstance.dismiss();
     }

@@ -540,7 +540,6 @@ controllers.hazardAssessmentController = function ($scope, $rootScope, $q, hazar
   },
   getHazards = function( pi )
   {
-            console.log($location.search());
             $scope.hazards = null;
             if(pi.Is_active != true)return;
             //rooms is a collection of the inspection's rooms, so we need to get their key_ids for the server to send us back a hazards collection

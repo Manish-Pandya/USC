@@ -432,7 +432,6 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
            locationHubFactory.getRooms()
                 .then(
                     function(rooms){
-                        console.log('got rooms');
                         $scope.rooms = rooms;
                         $scope.loading = false;
                     }

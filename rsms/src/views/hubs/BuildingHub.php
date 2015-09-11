@@ -31,7 +31,7 @@ require_once '../top_view.php';
 					<input ng-model="newBuilding.Name" type="text">
 					<a class="btn btn-mini btn-success" style="margin:-8px -5px 0 0;" ng-click="createBuilding()"><i class="icon-checkmark"></i>Create Building</a>
 					<img ng-show="newBuilding.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-				</div> <!---->
+				</div>
 					
 					
 					<span ng-if="!building.edit">
