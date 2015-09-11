@@ -55,8 +55,9 @@ require_once '../top_view.php';
         <THEAD>
             <tr>
                 <th class="greenBg" colspan="4">
-                    <h3 class="card-header padding greenBg">Specialty Labs</h3>
-                    <a ng-click="openModal(null, true)" class="btn btn-success btn-small left" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
+                    <h3 class="card-header padding greenBg">Specialty Labs
+                        <a ng-click="openModal(null, true)" class="btn btn-success btn-small left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
+                    </h3>
                 </th>
             </tr>
             <tr>
