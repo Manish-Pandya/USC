@@ -645,7 +645,7 @@ class Rad_ActionManager extends ActionManager {
                 $carboyCycle->setCarboy_id( $carboy->getKey_id() );
                 $carboyCycle->setStatus( "Available" );
                 
-                $carboy->setRetirement_date( date('Y-m-d H:i:s') );
+                $carboy->setCommission_date( date('Y-m-d H:i:s') );
                 $carboy = $dao->save($carboy);
                 
                 $carboyUseCycle_dao = $this->getDao($carboyCycle);

@@ -44,6 +44,11 @@ angular.module('00RsmsAngularOrmApp')
 		$scope.af = af;
 
 		$scope.modalData = af.getModalData();
+    
+        $scope.save = function(carboy) {
+            af.saveCarboy(carboy.id, af.createCopy(carboy), carboy)
+                .then($scope.close);
+        }
 
 		$scope.close = function(){
            $modalInstance.dismiss();
