@@ -34,7 +34,7 @@ class Carboy extends RadCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
 		$this->setEntityMaps($entityMaps);
-
+        
 	}
 	
 	/** Relationships */

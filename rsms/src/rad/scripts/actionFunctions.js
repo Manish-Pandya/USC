@@ -1192,10 +1192,6 @@ angular
             af.saveCarboy = function( pi, copy, carboy )
             {
                 af.clearError();
-                if (!copy) {
-                    var copy = new window.Carboy(); 
-                    copy.Class = "Carboy";
-                }
                 console.log(copy);
                 return this.save( copy )
                     .then(
