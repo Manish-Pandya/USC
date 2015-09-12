@@ -23,7 +23,6 @@ angular
                     store.createCopy( object );
                     //set the other objects in this one's collection to the non-edit state
                     store.setEditStates( object );
-
             }
 
             af.createCopy = function(obj)
@@ -130,6 +129,11 @@ angular
                     {
                         Name:'radmin-quarterly-inventory',
                         Label: 'Radiation Administration -- Quarterly Inventories',
+                        Dashboard: true
+                    },
+                    {
+                        Name:'radmin.carboys',
+                        Label: 'Radiation Administration -- Carboys',
                         Dashboard: true
                     },
                     {

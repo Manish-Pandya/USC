@@ -62,6 +62,11 @@ angular
         templateUrl: "views/pi/quarterly-inventory.html",
         controller: "InventoriesCtrl"
       })
+      .state('radmin.carboys', {
+        url: "/carboys",
+        templateUrl: "views/admin/carboys.html",
+        controller: "CarboysCtrl"
+      })
       .state('admin-pickups', {
         url: "/admin/pickups",
         templateUrl: "views/admin/pickups.html",
@@ -107,7 +112,6 @@ angular
         templateUrl: "views/inspection/inspection-wipes.html",
         controller: "InspectionWipeCtrl"
       })
-
       .state('testpage', {
         url: '/testpage',
         templateUrl: 'views/testpage.php',

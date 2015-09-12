@@ -639,8 +639,19 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new Carboy());
-			$decodedObject = $dao->save($decodedObject);
-			return $decodedObject;
+			$carboy = $dao->save($decodedObject);
+            if ( $decodedObject->getKey_id() == NULL ) {
+                $carboyCycle = new CarboyUseCycle();
+                $carboyCycle->setCarboy_id( $carboy->getKey_id() );
+                $carboyCycle->setStatus( "Available" );
+                
+                $carboy->setRetirement_date( date('Y-m-d H:i:s') );
+                $carboy = $dao->save($carboy);
+                
+                $carboyUseCycle_dao = $this->getDao($carboyCycle);
+                $savedCarboyCycle = $carboyUseCycle_dao->save($carboyCycle);
+            }
+			return $carboy;
 		}
 	}
 

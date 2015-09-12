@@ -92,6 +92,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/admin/wipe-test-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
 
 
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>

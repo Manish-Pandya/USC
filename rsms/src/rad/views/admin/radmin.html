@@ -15,6 +15,7 @@
                 <li><a class="wipe-tests" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
                 <li><a class="pickups" ui-sref="admin-pickups"><i class="icon-box-remove"></i>Pickups</a></li>
                 <li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>
+                <li><a class="carboys" ui-sref="radmin.carboys"><i class="icon-carboy"></i>Carboys</a></li>
             </ul>
             <h4 class="section-header"><img src="../img/pi-icon.png"/>Search by PI
                 <input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">

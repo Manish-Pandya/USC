@@ -1,0 +1,30 @@
+<!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+
+<div class="right-column">
+    <div class="well two-thirds">
+        <h1 class="carboys"><i class="icon-carboy"></i>Carboys<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h1>
+        <h3 ng-show="!carboys.length">No carboys</h3>
+        <div class="card full carboys" ng-repeat="carboy in carboys">
+			<div class="fake-table bordered">
+				<div class="table-header">
+					<h3>Carboy Number</h3>
+					<h3>Status</h3>
+					<h3>PI</h3>
+				</div>
+				<div class="table-row">
+					<div>
+						{{carboy.Carboy_number}}
+					</div>
+					<div>
+						{{carboy.Current_carboy_use_cycle.Status}}
+					</div>
+                    <div>
+						{{carboy.Current_carboy_use_cycle.Principal_investigator.Name}}
+					</div>
+				</div>
+			</div>
+
+		</div>
+    </div>
+
+</div>
