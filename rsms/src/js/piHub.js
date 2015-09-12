@@ -74,7 +74,6 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBa
 });
 
 piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
-    //console.log(modalCtrl($scope, userHubFactory, $modalInstance, convenienceMethods, $q));
     $scope.doneLoading = false;
 
     $scope.setRoute = function(route){

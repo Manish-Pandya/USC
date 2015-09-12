@@ -71,7 +71,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 });
 //called on page load, gets initial user data to list users
 var MainUserListController = function(userHubFactory,$scope,$rootScope, $modal, $routeParams, $browser,  $rootElement, $location, convenienceMethods, $filter, $route,$window,userHubFactory) {
- ////console.log($modal);
   $scope.showInactive = false;
   $scope.users = [];
   $scope.order='Last_name';
@@ -413,7 +412,6 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       $scope.onSelectRole(role);
     });
 
-    console.log()
     if($scope.userCopy.isPI && !convenienceMethods.arrayContainsObject($scope.pis,userCopy)){
       var piDTO = {
         Class: "PrincipalInvestigator",

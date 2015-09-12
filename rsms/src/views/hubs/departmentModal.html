@@ -6,7 +6,7 @@
     <div class="modal-body no-border">
         <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
         <form name="modalForm">
-            <input ng-model="department.Name">
+            <input type="text" class="span4" size="50" ng-model="department.Name">
             <input type="checkbox" ng-model="department.Specialty_lab" />
             <span class="metro-checkbox">Specialty Lab</span>
         </form>

@@ -363,7 +363,6 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
   factory.saveUserRoleRelations = function(userId, rolesToAdd){
     var url = "../../ajaxaction.php?action=saveUserRoleRelations&callback=JSON_CALLBACK&userId="+userId+'&'+$.param({roleIds:rolesToAdd});
-    console.log(url);
     var deferred = $q.defer();
       convenienceMethods.getDataAsDeferredPromise(url)
         .then(
@@ -1254,7 +1253,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     }
 
     function savePiDepartmentRelations(pi){
-      console.log(pi);
       console.log('saving dept relations')
       //save deparments added to pi
       var oldDepartments = [];
