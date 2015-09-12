@@ -9,66 +9,66 @@
  */
 angular.module('00RsmsAngularOrmApp')
   .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = actionFunctionsFactory;
+          var af = actionFunctionsFactory;
 
-  		var getAllPickups = function(){
-  			af.getAllPickups()
-  			.then(
-  				function(pickups){  	
-  					console.log(pickups);				
-  					$scope.pickups = pickups;
-  					console.log(dataStore);
-  				},
-  				function(){}
-  			)
-  		}
+          var getAllPickups = function(){
+              af.getAllPickups()
+              .then(
+                  function(pickups){
+                      console.log(pickups);
+                      $scope.pickups = pickups;
+                      console.log(dataStore);
+                  },
+                  function(){}
+              )
+          }
 
-  		$scope.af = af;
-  		$rootScope.pickupsPromise = af.getAllPIs()
-  										.then(getAllPickups);
- 
-		$scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
-			console.log(status);
-			console.log(isChecked);
-			isChecked = !isChecked;
-			console.log(isChecked);
+          $scope.af = af;
+          $rootScope.pickupsPromise = af.getAllPIs()
+                                          .then(getAllPickups);
 
-			var pickupCopy = dataStoreManager.createCopy(pickup);
+        $scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
+            console.log(status);
+            console.log(isChecked);
+            isChecked = !isChecked;
+            console.log(isChecked);
 
-			if(isChecked == true){
-				pickupCopy.Status = oldStatus;
-			}else{
-				if(oldStatus == "PICKED UP"){
-					pickupCopy.Status = null;
-				}else{
-					pickupCopy.Status = "PICKED UP";
-				}
-			}
+            var pickupCopy = dataStoreManager.createCopy(pickup);
 
-			af.savePickup(pickup,pickupCopy);
+            if(isChecked == true){
+                pickupCopy.Status = oldStatus;
+            }else{
+                if(oldStatus == "PICKED UP"){
+                    pickupCopy.Status = null;
+                }else{
+                    pickupCopy.Status = "PICKED UP";
+                }
+            }
 
-		}
+            af.savePickup(pickup,pickupCopy);
+
+        }
 
 
 
   })
   .controller('AdminPickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = actionFunctionsFactory;
-		$scope.af = af;
+        var af = actionFunctionsFactory;
+        $scope.af = af;
 
-		$scope.modalData = af.getModalData();
+        $scope.modalData = af.getModalData();
 
-		if(!$scope.modalData.SolidsContainerCopy){
-		    $scope.modalData.SolidsContainerCopy = {
-		        Class: 'SolidsContainer',
-		        Room_id:null,
-		        Is_active: true
-		    }
-		}
+        if(!$scope.modalData.SolidsContainerCopy){
+            $scope.modalData.SolidsContainerCopy = {
+                Class: 'SolidsContainer',
+                Room_id:null,
+                Is_active: true
+            }
+        }
 
-		$scope.close = function(){
+        $scope.close = function(){
            $modalInstance.dismiss();
            af.deleteModalData();
-		}
+        }
 
-	});
+    });

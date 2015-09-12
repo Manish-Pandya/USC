@@ -1,0 +1,149 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px; background:purple; color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an parcel for {{modalData.pi.User.Name}}</h2>
+</div>
+
+<div class="modal-body super wide-modal">
+
+    <pre>{{modalDataparcel.Wipe_test[0]}}</pre>
+
+    <h4 class="padding">Wipe Test <a ng-if="!parcel.Wipe_test.length && !parcel.Creating_wipe" class="btn-success btn left" ng-click="editWipeParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
+    <div class="fake-table" ng-if="parcel.Wipe_test.length || parcel.Creating_wipe">
+        <div class="table-header">
+            <h3>Edit</h3>
+            <h3>Instrument</h3>
+            <h3>T.I.</h3>
+            <h3>1m</h3>
+            <h3>Surface</h3>
+            <h3><span ng-if="parcel.Creating_wipe">Save</span></h3>
+        </div>
+        <div class="table-row">
+            <div ng-class="{'small-extra-top': parcel.Creating_wipe}">
+                <a class="btn btn-primary left" ng-disabled="parcel.Creating_wipe" ng-click="editWipeParcelWipeTest(parcel, parcel.Wipe_test[0])"><i class="icon-pencil"></i>Edit</a>
+            </div>
+
+            <div ng-if="!parcel.Creating_wipe" ng-if="smear.edit">
+                {{parcel.Wipe_test[0].Reading_type}}
+            </div>
+            <div ng-if="parcel.Creating_wipe" class="small-extra-top">
+                <select ng-init="ParcelWipeTestCopy.Reading_type = 'LSC'" ng-model="ParcelWipeTestCopy.Reading_type" style="width:100px">
+                    <option value="LSC">LSC</option>
+                    <option value="Alpha/Beta">Alpha/Beta</option>
+                    <option value="MCA">MCA</option>
+                </select>
+            </div>
+
+
+            <div ng-if="!parcel.Creating_wipe">{{parcel.Wipe_test[0].Transportation_index}} DPM</div>
+            <div ng-if="parcel.Creating_wipe">
+                <label class="control-label" for="quantity">T.I.:</label>
+                <div class="control-group">
+                    <div class="controls input-append">
+                        <input class="span3" ng-model="ParcelWipeTestCopy.Transportation_index">
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="!parcel.Creating_wipe">{{parcel.Wipe_test[0].One_meter_background}} mR/hr</div>
+            <div ng-if="parcel.Creating_wipe">
+                <label class="control-label" for="quantity">1m:</label>
+                <div class="control-group">
+                    <div class="controls input-append">
+                        <input class="span3" ng-model="ParcelWipeTestCopy.One_meter_background">
+                        <span class="add-on">mR/hr</span>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="!parcel.Creating_wipe">{{parcel.Wipe_test[0].Box_background}} mR/hr</div>
+            <div ng-if="parcel.Creating_wipe">
+                <label class="control-label" for="quantity">Surface:</label>
+                <div class="control-group">
+                    <div class="controls input-append">
+                        <input class="span3" ng-model="ParcelWipeTestCopy.Box_background">
+                        <span class="add-on">mR/hr</span>
+                    </div>
+                </div>
+            </div>
+            <div ng-class="{'small-extra-top':parcel.Creating_wipe}">
+                <span ng-if="parcel.Creating_wipe">
+                                <a class="btn btn-success left" ng-click="af.saveParcelWipeTest(parcel,parcel.Wipe_test)"><i class="icon-checkmark"></i>Save</a>
+                                <a class="btn btn-danger left" ng-click="cancelParcelWipeTestEdit(parcel)"><i class="icon-cancel-2"></i>Cancel</a>
+                            </span>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="spacer small"></div>
+    <h4 ng-if="parcel.Wipe_test.length" class="padding">Smears <a class="btn btn-success left" ng-click="editWipeParcelWipe(parcel.Wipe_test[0])"><i class="icon-plus-2"></i>Add Smear</a></h4>
+    <div class="fake-table" ng-if="parcel.Wipe_test[0].Parcel_wipes.length && parcel.Wipe_test.length">
+        <div class="table-header">
+            <h3>Edit</h3>
+            <h3>Test Location</h3>
+            <h3>Instrument</h3>
+            <h3>Radioactivity</h3>
+            <h3>Comments</h3>
+            <h3></h3>
+        </div>
+
+        <div class="table-row" ng-repeat="smear in parcel.Wipe_test[0].Parcel_wipes | orderBy:'Key_id'">
+            <div>
+                <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editWipeParcelWipe(parcel.Wipe_test[0], smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+            </div>
+
+            <div ng-if="!smear.edit">
+                {{smear.Location}}
+            </div>
+            <div ng-if="smear.edit">
+                <combobox ng-if="ParcelWipeCopy" model="ParcelWipeCopy" modelprop="'Location'" options="parcelWipeLocations" />
+                <combobox ng-if="!ParcelWipeCopy" model="smear" modelprop="'Location'" options="parcelWipeLocations" />
+            </div>
+
+            <div>
+                {{parcel.Wipe_test[0].Reading_type}}
+            </div>
+
+            <div ng-if="!smear.edit">
+                {{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
+            </div>
+            <div ng-if="smear.edit">
+                <div class="control-group">
+                    <div class="controls input-append">
+                        <input class="span3" ng-if="!ParcelWipeCopy" ng-model="smear.Curie_level">
+                        <input class="span3" ng-if="ParcelWipeCopy" ng-model="ParcelWipeCopy.Curie_level">
+                        <span class="add-on">DPM</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div>
+                {{smear.Notes}}
+                <span ng-if="!smear.Notes">N/A</span>
+            </div>
+            <div ng-if="smear.edit">
+                <textarea ng-if="ParcelWipeCopy" placeholder="Notes" ng-model="ParcelWipeCopy.Notes"></textarea>
+                <textarea ng-if="!ParcelWipeCopy" placeholder="Notes" ng-model="smear.Notes"></textarea>
+            </div>
+
+            <div style="min-width:0;">
+                <span ng-if="smear.edit && ParcelWipeCopy">
+                                <a class="btn btn-success left" ng-click="af.saveParcelWipe(parcel.Wipe_test[0], ParcelWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+                                <a class="btn btn-danger left" ng-click="cancelParcelWipeEdit(smear,parcel.Wipe_test[0])"><i class="icon-cancel-2"></i>Cancel</a>
+                            </span>
+            </div>
+        </div>
+        <div class="table-row hover-white" ng-if="parcel.Wipe_test[0].adding">
+            <div class="hover-white">
+                <a class="btn btn-large left btn-success" ng-click="af.saveParcelWipes(parcel.Wipe_test[0])"><i class="icon-checkmark"></i>Save Smears</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.pi, modalData.ParcelCopy, modalData.Parcel)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

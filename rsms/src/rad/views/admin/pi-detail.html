@@ -21,43 +21,43 @@
                     <h3>Revocation Date</h3>
                     <h3>Form</h3>
                 </div>
-                    <div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
-                        <div>
-                            <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
-                            <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
-                            <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
-                        </div>
+                <div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
+                    <div>
+                        <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
+                        <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                    </div>
 
-                        <div>
-                            {{auth.Isotope.Name}}
-                        </div>
+                    <div>
+                        {{auth.Isotope.Name}}
+                    </div>
 
-                        <div>
-                            {{auth.Isotope.Half_life}}
-                        </div>
+                    <div>
+                        {{auth.Isotope.Half_life}}
+                    </div>
 
-                        <div>
-                            {{auth.Isotope.Emitter_type}}
-                        </div>
+                    <div>
+                        {{auth.Isotope.Emitter_type}}
+                    </div>
 
-                        <div>
-                            {{auth.Max_quantity}} mCi
-                        </div>
+                    <div>
+                        {{auth.Max_quantity}} mCi
+                    </div>
 
-                        <div>
-                            {{auth.Approval_date | dateToISO}}
-                        </div>
+                    <div>
+                        {{auth.Approval_date | dateToISO}}
+                    </div>
 
-                        <div>
-                            {{auth.Revocation_date | dateToISO}}
-                        </div>
+                    <div>
+                        {{auth.Revocation_date | dateToISO}}
+                    </div>
 
-                        <div>
-                            {{auth.Form}}
-                        </div>
+                    <div>
+                        {{auth.Form}}
                     </div>
                 </div>
             </div>
+        </div>
         </ul>
     </div>
     <div class="card full pos" ng-click="af.setSelectedView('orders')">
@@ -68,6 +68,7 @@
                 <div class="table-header">
                     <h3>Edit</h3>
                     <h3>P.O. Number</h3>
+                    <h3>Vendor</h3>
                     <h3>Start Date</h3>
                     <h3>End Date</h3>
                 </div>
@@ -80,6 +81,10 @@
 
                     <div>
                         {{order.Purchase_order_number}}
+                    </div>
+
+                    <div>
+                        {{order.Vendor}}
                     </div>
 
                     <div>
@@ -113,6 +118,8 @@
                         <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/parcel-modal', parcel)"><i class="icon-pencil"></i></a>
                         <a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove"></i></a>
                         <a ng-if="!parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                        <a ng-click="openWipeTestModal(parcel)" class="btn btn-primary left"><i class="icon-paper"></i>Wipe Tests</a>
+
                     </div>
 
                     <div>

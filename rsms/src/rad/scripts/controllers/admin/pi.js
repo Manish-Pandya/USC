@@ -52,6 +52,17 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.openWipeTestModal = function(parcel){
+        var modalData = {};
+        modalData.pi = $scope.pi;
+        modalData.Parcel = parcel;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+          templateUrl: 'views/admin/admin-modals/package-wipe-test.html',
+          controller: 'WipeTestModalCtrl'
+        });
+    }
+
   })
   .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;

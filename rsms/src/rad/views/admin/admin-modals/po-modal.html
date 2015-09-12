@@ -2,30 +2,36 @@
     <h2 ng-show="!addRoom" style="padding:5px;" class="greenBg"><span ng-if="!modalData.PurchaseOrder">Add</span><span ng-if="modalData.PurchaseOrder">Edit</span> a Purchase Order for {{modalData.pi.User.Name}}</h2>
 </div>
 <div class="modal-body">
-  <div class="control-group">
-     <label class="control-label" for="inputEmail">P.O. Number</label>
-     <div class="controls input-append">
-        <input data-ng-model="modalData.PurchaseOrderCopy.Purchase_order_number" placeholder="P.O. Number" />
-     </div>
-  </div>
-  <div class="control-group">
-     <label class="control-label" for="inputEmail">Start Date</label>
-     <div class="controls input-append">
-        <input ng-model="modalData.PurchaseOrderCopy.view_Start_date" placeholder="Start Date" date-input/>
-        <span class="help-inline" style="">mm/dd/yy</span>
-     </div>
-  </div>
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">P.O. Number</label>
+        <div class="controls input-append">
+            <input data-ng-model="modalData.PurchaseOrderCopy.Purchase_order_number" placeholder="P.O. Number" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="vendor">Vendor</label>
+        <div class="controls input-append">
+            <input id="vendor" data-ng-model="modalData.PurchaseOrderCopy.Vendor" placeholder="Vendor" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Start Date</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.PurchaseOrderCopy.view_Start_date" placeholder="Start Date" date-input/>
+            <span class="help-inline" style="">mm/dd/yy</span>
+        </div>
+    </div>
 
-  <div class="control-group">
-     <label class="control-label" for="inputEmail">End Date</label>
-     <div class="controls input-append">
-        <input data-ng-model="modalData.PurchaseOrderCopy.view_End_date" placeholder="End Date" />
-        <span class="help-inline">mm/dd/yy</span>
-     </div>
-  </div>
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">End Date</label>
+        <div class="controls input-append">
+            <input data-ng-model="modalData.PurchaseOrderCopy.view_End_date" placeholder="End Date" />
+            <span class="help-inline">mm/dd/yy</span>
+        </div>
+    </div>
 
 </div>
 <div class="modal-footer">
-  <a class="btn btn-large btn-success left" ng-click="savePO(modalData.pi, modalData.PurchaseOrderCopy, modalData.PurchaseOrder)"><i class="icon-checkmark"></i>Save</a>
-  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    <a class="btn btn-large btn-success left" ng-click="savePO(modalData.pi, modalData.PurchaseOrderCopy, modalData.PurchaseOrder)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>
