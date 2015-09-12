@@ -27,9 +27,13 @@ angular.module('00RsmsAngularOrmApp')
   										.then(getAllCarboys);
     
         $scope.openModal = function(object) {
-            console.log(object);
             var modalData = {};
-            if (object) modalData[object.Class] = object;
+            if (!object) {
+                object = new window.Carboy();
+                object.Class = "Carboy";
+            }
+            console.log(object);
+            modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/admin/admin-modals/carboy-modal.html',
@@ -46,7 +50,7 @@ angular.module('00RsmsAngularOrmApp')
 		$scope.modalData = af.getModalData();
     
         $scope.save = function(carboy) {
-            af.saveCarboy(carboy.id, af.createCopy(carboy), carboy)
+            af.saveCarboy(carboy.PrincipalInvestigator, af.createCopy(carboy), carboy)
                 .then($scope.close);
         }
 
