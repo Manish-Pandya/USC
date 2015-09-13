@@ -15,8 +15,7 @@ angular.module('00RsmsAngularOrmApp')
   			af.getAllCarboys()
   			.then(
   				function(carboys){  	
-  					console.log(carboys);				
-  					$scope.carboys = carboys;
+  					$scope.carboys = dataStore.Carboy;
   				},
   				function(){}
   			)

@@ -634,13 +634,14 @@ class Rad_ActionManager extends ActionManager {
 		if( $decodedObject === NULL ) {
 			return new ActionError('Error converting input stream to Carboy', 202);
 		}
-		else if ( $decodedObject instanceof ActionError) {
+		else if ( $decodedObject instanceof ActionError ) {
 			return $decodedObject;
 		}
 		else {
+            $key_id = $decodedObject->getKey_id();
 			$dao = $this->getDao(new Carboy());
 			$carboy = $dao->save($decodedObject);
-            if ( $decodedObject->getKey_id() == NULL ) {
+            if ( $key_id == NULL ) {
                 $carboyCycle = new CarboyUseCycle();
                 $carboyCycle->setCarboy_id( $carboy->getKey_id() );
                 $carboyCycle->setStatus( "Available" );

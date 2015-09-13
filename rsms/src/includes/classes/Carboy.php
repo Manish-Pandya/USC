@@ -103,10 +103,9 @@ class Carboy extends RadCrud {
 	public function getCurrent_carboy_use_cycle(){
 		$cycles = $this->getCarboy_use_cycles();
 		foreach($cycles as $cycle){
-			$cycle = new CarboyUseCycle();
 			//the cycle is the current one if it hasn't been poured 
 			if($cycle->getPour_date() == NULL 
-					&& (strtolower($cycle->getStatus()) == "in use" || strtolower($cycle->getStatus()) == "in use")){
+					&& (strtolower($cycle->getStatus()) == "in use" || strtolower($cycle->getStatus()) == "available")){
 				$this->current_carboy_use_cycle = $cycle;
 				return $cycle;
 			}
