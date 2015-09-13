@@ -985,26 +985,27 @@ class Rad_ActionManager extends ActionManager {
 	}
 	
 	function saveParcelWipes() {
-		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-		$decodedObject = $this->convertInputJson();
+		$LOG = Logger::getLogger ( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson ();
 		
-		if( $decodedObject === NULL ) {
-			return new ActionError('Error converting input stream to WasteType', 202);
-		}
-		else if( $decodedObject instanceof ActionError) {
+		if ($decodedObject === NULL) {
+			return new ActionError ( 'Error converting input stream to WasteType', 202 );
+		} else if ($decodedObject instanceof ActionError) {
 			return $decodedObject;
-		}
-		else if( $decodedObject->getParcel_wipes() == null) {
-			return new ActionError('No Parcel wipes were passed', 202);
-		}
-		else {
-			$wipes = array();
-			foreach($decodedObject->getParcel_wipes() as $wipe){
-				$wipe = JsonManager::assembleObjectFromDecodedArray($wipe);
-				//there will be a collection of at least 6 ParcelWipes.  User intends only to save those with Location provided
-				if($wipe->getLocation() != null){
-					$dao = $this->getDao(new ParcelWipe());
-					$wipes[] = $dao->save($wipe);
+		} else if ($decodedObject->getParcel_wipes () == null) {
+			return new ActionError ( 'No Parcel wipes were passed', 202 );
+		} else {
+			if ($decodedObject->getKey_id () == null) {
+				$wipeTestDao = $this->getDao ( new ParcelWipeTest () );
+				$decodedObject = $wipeTestDao->save ( $decodedObject );
+			}
+			$wipes = array ();
+			foreach ( $decodedObject->getParcel_wipes () as $wipe ) {
+				$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+				// there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided
+				if ($wipe->getLocation () != null) {
+					$dao = $this->getDao ( new ParcelWipe () );
+					$wipes [] = $dao->save ( $wipe );
 				}
 			}
 			return $wipes;
