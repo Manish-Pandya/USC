@@ -1202,6 +1202,7 @@ angular
                             }else{
                                 dataStoreManager.addOnSave(returnedCarboy);
                                 pi.SolidsContainers.push(returnedCarboy);
+                                dataStoreManager.store(returnedCarboy);
                             }
                         },
                         af.setError('The Solids Container could not be saved')
