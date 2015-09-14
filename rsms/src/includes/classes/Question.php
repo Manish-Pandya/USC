@@ -206,9 +206,9 @@ class Question extends GenericCrud {
 
 	private function filterResponsesByInspection($responses){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-		$LOG->fatal("about to filter ".  count($responses) . " responses");
+		//$LOG->fatal("about to filter ".  count($responses) . " responses");
 		if(!empty($this->inspectionId)) {
-			$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
+			//$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
 				
 			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
 			$responsesDao = new GenericDAO(new Response);

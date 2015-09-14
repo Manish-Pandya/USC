@@ -36,6 +36,7 @@ class Authorization extends GenericCrud {
 	/** Reference to the Isotope entity that this authorization contains */
 	private $isotope_id;
 	private $isotope;
+	private $isotopeName;
 
 	/** id of principal_investigator this authorization is about */
 	private $principal_investigator_id;
@@ -89,7 +90,15 @@ class Authorization extends GenericCrud {
 	public function setIsotope($newIsotope) {
 		$this->isotope = $newIsotope;
 	}
-
+	public function getIsotopeName(){
+		$this->isotopeName = null;
+		if($this->getIsotope() != null){
+			$this->isotopeName = $this->getIsotope()->getName();
+		}
+		return $this->isotopeName;
+	}
+	
+	
 	public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
 	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
 
@@ -104,7 +113,6 @@ class Authorization extends GenericCrud {
 
 
 	public function getForm(){return $this->form;}
-
 	public function setForm($form){$this->form = $form;}
 }
 ?>

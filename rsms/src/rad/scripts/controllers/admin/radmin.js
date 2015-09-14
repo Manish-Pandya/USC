@@ -140,14 +140,17 @@ angular.module('00RsmsAngularOrmApp')
 
     $rootScope.pisPromise = getAllUsers()
             .then(getAllPIs)
+    /*
             .then(getAllIsotopes)
             .then(getAllAuthorizations)
             .then(getAllPOs)
             .then(getAllParcels)
+            .then(getAllParcels)
+            .then(getAllParcels)
             .then(getAllCarboys)
             .then(getAllSolidsContainers)
             .then(getAllCarboyUseCycles)
-    
+    */
     $scope.onSelectPi = function (pi)
     {
         $state.go('radmin.pi-detail',{pi:pi.Key_id});

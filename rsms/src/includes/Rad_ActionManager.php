@@ -340,21 +340,24 @@ class Rad_ActionManager extends ActionManager {
 		}else{
 			$entityMaps[] = new EntityMap("eager","getRooms");
 		}
-		$entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
-		$entityMaps[] = new EntityMap("eager","getUser");
+		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("eager","getAuthorizations");
-		$entityMaps[] = new EntityMap("eager","getAuthorizations");
+		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
 		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
-		$entityMaps[] = new EntityMap("eager", "getPickups");
 		$entityMaps[] = new EntityMap("eager", "getSolidsContainers");
-		$entityMaps[] = new EntityMap("eager", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("eager", "getPickups");
+		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");	
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
-		$entityMaps[] = new EntityMap("eager", "getActiveParcels");		
-				
+		
 		$pi->setEntityMaps($entityMaps);
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug($pi);
@@ -698,12 +701,69 @@ class Rad_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 		else {
-			$dao = $this->getDao(new Parcel());
-			$decodedObject = $dao->save($decodedObject);
+			$dao = $this->getDao(new Parcel());			
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+			$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
+			$entityMaps[] = new EntityMap("lazy", "getIsotope");
+			$entityMaps[] = new EntityMap("lazy", "getParcelUses");
+			$entityMaps[] = new EntityMap("eager", "getRemainder");
+			$entityMaps[] = new EntityMap("eager", "getWipe_test");
+			$decodedObject->setEntityMaps($entityMaps);
 			return $decodedObject;
 		}
 	}
 
+	function saveParcelWipesAndChildren() {
+		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+		$decodedObject = $this->convertInputJson();
+		if( $decodedObject === NULL ) {
+			return new ActionError('Error converting input stream to Parcel', 202);
+		}
+		else if( $decodedObject instanceof ActionError) {
+			return $decodedObject;
+		}
+		else {
+			$dao = $this->getDao(new Parcel());
+			$tests = $decodedObject->getWipe_test ();
+			if($decodedObject->getStatus() == "Ordered" && $tests != null){
+				$decodedObject->setStatus("Wipe Tested");
+				$decodedObject= new Parcel();
+				$decodedObject->setArrival_date(date('Y-m-d G:i:s'));				
+			}
+			
+			$decodedObject = $dao->save($decodedObject);
+	
+			if ( $tests != null ) {
+				$test = JsonManager::assembleObjectFromDecodedArray ( $tests[0][0] );
+				$wipes = $test->getParcel_wipes();
+				$wipeTestDao = $this->getDao ( new ParcelWipeTest () );
+				$savedTest = $wipeTestDao->save($test);
+				
+				//$LOG->fatal( $test );
+				foreach ( $wipes as $wipe ) {
+					$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+					// there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided
+					if ($wipe->getLocation () != null) {
+						$dao = $this->getDao ( new ParcelWipe () );
+						$wipe->setParcel_wipe_test_id($savedTest->getKey_id());
+						$wipes[] = $dao->save ( $wipe );
+					}
+				}
+			}
+				
+			$entityMaps = array();
+			$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+			$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
+			$entityMaps[] = new EntityMap("lazy", "getIsotope");
+			$entityMaps[] = new EntityMap("lazy", "getParcelUses");
+			$entityMaps[] = new EntityMap("eager", "getRemainder");
+			$entityMaps[] = new EntityMap("eager", "getWipe_test");
+			$decodedObject->setEntityMaps($entityMaps);
+			return $decodedObject;
+		}
+	}
+	
 	function saveParcelUse($parcel = NULL) {
 		$LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -987,12 +1047,11 @@ class Rad_ActionManager extends ActionManager {
 	function saveParcelWipes() {
 		$LOG = Logger::getLogger ( 'Action' . __FUNCTION__ );
 		$decodedObject = $this->convertInputJson ();
-		
 		if ($decodedObject === NULL) {
 			return new ActionError ( 'Error converting input stream to WasteType', 202 );
 		} else if ($decodedObject instanceof ActionError) {
 			return $decodedObject;
-		} else if ($decodedObject->getParcel_wipes () == null) {
+		} else if ($decodedObject->getWipe_test() == null) {
 			return new ActionError ( 'No Parcel wipes were passed', 202 );
 		} else {
 			if ($decodedObject->getKey_id () == null) {
@@ -1000,8 +1059,13 @@ class Rad_ActionManager extends ActionManager {
 				$decodedObject = $wipeTestDao->save ( $decodedObject );
 			}
 			$wipes = array ();
-			foreach ( $decodedObject->getParcel_wipes () as $wipe ) {
-				$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+			foreach ( $decodedObject->getWipe_test () as $wipe ) {
+				//$LOG->fatal($wipe);
+				
+				//$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+				////$LOG->fatal($wipe);
+				
+				
 				// there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided
 				if ($wipe->getLocation () != null) {
 					$dao = $this->getDao ( new ParcelWipe () );
@@ -1023,7 +1087,7 @@ class Rad_ActionManager extends ActionManager {
 		}
 		else {
 			$dao = $this->getDao(new ParcelWipe());
-			$decodedObject = $dao->save($decodedObject);
+			$decodedObject = $dao->save($decodedObject);		
 			return $decodedObject;
 		}
 	}

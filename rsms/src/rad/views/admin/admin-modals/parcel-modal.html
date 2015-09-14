@@ -6,9 +6,9 @@
   <div class="control-group">
      <label class="control-label">Status</label>
      <div class="controls">
-        <select data-ng-model="modalData.ParcelCopy.Status">
+        <select data-ng-model="modalData.ParcelCopy.Status" >
             <option value="Ordered">Ordered</option>
-            <option value="Wiped">Wipe Tested</option>
+            <option value="Wipe Tested">Wipe Tested</option>
             <option value="Delivered">Delivered</option>
             <option value="Disposed">Disposed</option>
         </select>
@@ -50,7 +50,6 @@
 
 </div>
 <div class="modal-footer">
-  <a class="btn btn-info btn-large left" ng-if="!modalData.ParcelCopy.Status || modalData.ParcelCopy.Status == 'Pre-order' || modalData.ParcelCopy.Status == 'Ordered'" ng-click="markAsArrived(modalData.pi, modalData.ParcelCopy, modalData.Parcel)"><i class=" icon-download-2"></i>Mark as Arrived</a>
-  <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.pi, modalData.ParcelCopy, modalData.Parcel)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
   <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

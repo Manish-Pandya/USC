@@ -73,8 +73,8 @@ class PendingChange extends GenericCrud {
 	
 	public function getParent_id(){
 		$LOG = Logger::getLogger(_Class_);
-		$LOG->fatal('calling it');
-		$LOG->fatal($this->parent_id);
+		//$LOG->fatal('calling it');
+		//$LOG->fatal($this->parent_id);
 		return $this->parent_id;
 	}
 	public function setParent_id($parent_id){

@@ -5,6 +5,7 @@
 var ParcelWipe = function() {};
 ParcelWipe.prototype = {
 	className: "ParcelWipe",
+    Class: "ParcelWipe"
 }
 
 // inherit from GenericModel

@@ -24,6 +24,12 @@ Parcel.prototype = {
 		queryString:  'getPurchaseOrderById',
 		queryParam:   ''	
 	},
+    
+    AuthorizationRelationship:{
+		className: 	  'Authorization',
+		keyReference:  'Parcel_id',
+		queryParam:   ''	
+	},
 
     ParcelUsesRelationship: {
 
@@ -58,6 +64,11 @@ Parcel.prototype = {
     loadUses: function() {
         if(!this.Uses) {
             dataLoader.loadOneToManyRelationship( this, 'ParcelUses', this.ParcelUsesRelationship);
+        }
+    },
+    loadAuthorization: function() {
+        if(!this.Authorization) {
+           this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
         }
     },
 }

@@ -203,6 +203,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		
 		$this->setEntityMaps($entityMaps);
 

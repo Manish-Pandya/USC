@@ -75,7 +75,7 @@ class Verification_ActionManager extends ActionManager  {
     
     public function getPIForVerification(){
     	$LOG = Logger::getLogger( 'Action:' . __function__ );
-    	$LOG->fatal('called it');
+    	//$LOG->fatal('called it');
     	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
     	 
     	if( $id !== NULL ){
@@ -166,7 +166,7 @@ class Verification_ActionManager extends ActionManager  {
     		return $decodedObject;
     	}
     	else{
-    		$LOG->fatal($decodedObject);
+    		//$LOG->fatal($decodedObject);
     		$dao = $this->getDao(new PendingUserChange());
     		$change = $dao->save($decodedObject);
     		return $change;

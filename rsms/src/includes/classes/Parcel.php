@@ -221,9 +221,11 @@ class Parcel extends RadCrud {
 		return $this->wipe_tests;
 	}
 	
+	public function setWipe_test($test){
+		$this->wipe_tests = array($test);
+	}
+	
 	public function getAuthorization_id() {return $this->authorization_id;}
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
-	
-	
 }
 ?>

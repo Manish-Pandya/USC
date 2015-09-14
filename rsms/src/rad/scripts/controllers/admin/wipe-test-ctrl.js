@@ -195,7 +195,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
   }])
-    .controller('WipeTestModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
+    .controller('WipeTestModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'modelInflatorFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, modelInflatorFactory) {
 
         //TODO:  if af.getModalData() doesn't have wipeTest, create and save one for it
         //       creating wipe test message while loading
@@ -205,26 +205,31 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        editWipeParcelWipeTest($scope.modalData.Parcel);
+        editWipeParcelWipeTest($scope.modalData.ParcelCopy, $scope.modalData.Parcel);
 
-        function editWipeParcelWipeTest(parcel, test) {
-            alert('yo')
-            $rootScope.ParcelWipeTestCopy = {}
-
-            if (!test) {
-                $rootScope.ParcelWipeTestCopy = new window.ParcelWipeTest();
-                $rootScope.ParcelWipeTestCopy.Parcel_id = parcel.Key_id
-                $rootScope.ParcelWipeTestCopy.Class = "ParcelWipeTest";
-                $rootScope.ParcelWipeTestCopy.Is_active = true;
+        function editWipeParcelWipeTest(parcel, originalParcel) {
+            if (!parcel.Wipe_test || !parcel.Wipe_test.length) {
+                parcel.Wipe_test = [modelInflatorFactory.instantiateObjectFromJson(new window.ParcelWipeTest())];
+                parcel.Wipe_test[0].parcel_id = parcel.Key_id
+                parcel.Wipe_test[0].Class = "ParcelWipeTest";
+                parcel.Wipe_test[0].edit = true;
+                parcel.Wipe_test[0].Parcel_wipes = [];
+                for (var i = 0; i < 7; i++) {
+                    var wipe = new window.ParcelWipe();
+                    wipe.Parcel_wipe_test_id = parcel.Key_id ? parcel.Key : null;
+                    wipe.Rading_type = "LSC";
+                    wipe.edit = true;
+                    wipe.Class = 'ParcelWipe';
+                    if (i == 0) wipe.Location = "Background";
+                    parcel.Wipe_test[0].Parcel_wipes.push(wipe);
+                }
+                console.log(parcel.Wipe_test[0]);
             } else {
-                af.createCopy(test);
+                console.log(parcel);
+                af.createCopy(parcel.Wipe_test[0]);
             }
 
-            var i = $scope.wipeTestParcels.length
-            while (i--) {
-                $scope.wipeTestParcels[i].Creating_wipe = false;
-            }
-            parcel.Creating_wipe = true;
+            originalParcel.Creating_wipe = true;
 
         }
 
@@ -242,12 +247,11 @@ angular.module('00RsmsAngularOrmApp')
             }
 
             if (!wipe) {
-                $rootScope.ParcelWipeCopy = new window.ParcelWipe();
-                $rootScope.ParcelWipeCopy.Parcel_wipe_test_id = wipeTest.Key_id
-                $rootScope.ParcelWipeCopy.Class = "ParcelWipe";
-                $rootScope.ParcelWipeCopy.edit = true;
-                $rootScope.ParcelWipeCopy.Is_active = true;
-                wipeTest.Parcel_wipes.unshift($rootScope.ParcelWipeCopy);
+                af.getModalData().Wipe_test = new window.ParcelWipe();
+                af.getModalData().Wipe_test.Parcel_wipe_test_id = wipeTest.Key_id
+                af.getModalData().Wipe_test.Class = "ParcelWipe";
+                af.getModalData().Wipe_test.edit = true;
+                af.getModalData().Wipe_test.Is_active = true;
             } else {
                 wipe.edit = true;
                 af.createCopy(wipe);
@@ -280,56 +284,54 @@ angular.module('00RsmsAngularOrmApp')
             }
         }
 
-        $scope.clouseOutMWT = function (test) {
-            af.createCopy(test);
-            $rootScope.MiscellaneousWipeTestCopy.Closeout_date = convenienceMethods.setMysqlTime(new Date());
-            af.saveMiscellaneousWipeTest($rootScope.MiscellaneousWipeTestCopy);
-        }
-
-        $scope.cancelMiscWipeTestEdit = function (test) {
-            $scope.Creating_wipe = false;
-            $rootScope.ParcelWipeTestCopy = {}
-        }
-
-        $scope.editMiscWipe = function (test, wipe) {
-            $rootScope.MiscellaneousWipeCopy = {}
-            if (!test.Miscellaneous_wipes) test.Miscellaneous_wipes = [];
-            var i = test.Miscellaneous_wipes.length;
-            while (i--) {
-                test.Miscellaneous_wipes[i].edit = false;
-            }
-
-            if (!wipe) {
-                $rootScope.MiscellaneousWipeCopy = new window.MiscellaneousWipe();
-                $rootScope.MiscellaneousWipeCopy.Class = "MiscellaneousWipe";
-                $rootScope.MiscellaneousWipeCopy.Is_active = true;
-                $rootScope.MiscellaneousWipeCopy.miscellaneous_wipe_test_id = test.Key_id
-                $rootScope.MiscellaneousWipeCopy.edit = true;
-                test.Miscellaneous_wipes.unshift($rootScope.MiscellaneousWipeCopy);
-            } else {
-                wipe.edit = true;
-                af.createCopy(wipe);
-            }
-
-        }
-
-        $scope.cancelMiscWipeEdit = function (test, wipe) {
-            wipe.edit = false;
-            $rootScope.MiscellaneousWipeCopy = {};
-            var i = test.Miscellaneous_wipes.length;
-            while (i--) {
-                if (!test.Miscellaneous_wipes[i].Key_id) {
-                    console.log()
-                    test.Miscellaneous_wipes.splice(i, 1);
-                }
-            }
+        $scope.onClick = function () {
+            alert('wrong ctrl')
         }
 
         //Suggested/common locations for performing parcel wipes
-        $scope.parcelWipeLocations = ['Background', 'Outside', 'Inside', 'Bag', 'Styrofoam', 'Cylinder', 'Vial', 'Lead Pig'];
+        $scope.parcelWipeLocations = [
+            {
+                Name: "Background"
+            },
+            {
+                Name: "Outside"
+            },
+            {
+                Name: "Inside"
+            },
+            {
+                Name: "Bag"
+            },
+            {
+                Name: "Styrofoam"
+            },
+            {
+                Name: "Cylinder"
+            },
+            {
+                Name: "Vial"
+            },
+            {
+                Name: "Lead Pig"
+            }
+        ]
+        $scope.setLocation = function (wipe) {
+            if (wipe.Location) {
+                var i = $scope.parcelWipeLocations.length;
+                while (i--) {
+                    if (wipe.Location == $scope.parcelWipeLocations.Name) {
+                        wipe.DropLocation = $scope.parcelWipeLocations[i];
+                        $scope.$apply();
+                        break;
+                    }
+                }
+            }
+            console.log(wipe);
+
+        }
 
         $scope.save = function (test) {
-            af.saveMiscellaneousWipeTest(test)
+            af.saveParcelWipeTest(test)
                 .then($scope.close);
         }
 

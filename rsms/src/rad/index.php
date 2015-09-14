@@ -34,6 +34,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rad-styles.css">
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>

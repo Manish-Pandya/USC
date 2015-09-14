@@ -1084,7 +1084,7 @@ class ActionManager {
             $room = $dao->save($decodedObject);
             if($decodedObject->getPrincipalInvestigators() != NULL){
             	foreach($decodedObject->getPrincipalInvestigators() as $pi){
-            		$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
+            		//$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
             		$this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
             	}
             }
@@ -1923,7 +1923,7 @@ class ActionManager {
 	            $add = $decodedObject->getAdd();
             }
             
-            $LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
+            //$LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
 
             if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
 
@@ -1931,7 +1931,7 @@ class ActionManager {
                 $dao = $this->getDao(new PrincipalInvestigator());
                 // if add is true, add this room to this PI
                 if ($add){
-                	$LOG->fatal('trying to add');
+                	//$LOG->fatal('trying to add');
                     $dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
                 // if add is false, remove this room from this PI
                 } else {
@@ -2138,7 +2138,7 @@ class ActionManager {
 	                        	$personnelRelation->setAdd(true);
 	                        	$personnelRelation->setMaster_id($userID);
 	                        	$personnelRelation->setRelation_id($roleId);
-	                        	$LOG->fatal($personnelRelation);
+	                        	//$LOG->fatal($personnelRelation);
 	                        	$dao->addRelatedItems($labPersonnelKeyid,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
                         	}
                         }
@@ -3250,7 +3250,7 @@ class ActionManager {
         	        	
             $dao = $this->getDao(new CorrectiveAction());
             $dao->save($decodedObject);
-            $LOG->fatal($this->getPIIDFromObject($decodedObject));
+            //$LOG->fatal($this->getPIIDFromObject($decodedObject));
             
             return $decodedObject;
         }

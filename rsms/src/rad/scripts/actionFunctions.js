@@ -1153,18 +1153,43 @@ angular
                 return seconds < new Date().getTime();
             }
 
-            af.saveParcel = function( pi, copy, parcel )
+            af.saveParcel = function( copy, parcel, pi )
             {
                 af.clearError();
+                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedParcel){
                             returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
-                            if(parcel){
+                            if(copy.Key_id){
                                 angular.extend(parcel, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
+                            }
+                        },
+                        af.setError('The authorization could not be saved')
+                    )
+            }
+            
+            af.saveParcelWipesAndChildren = function( copy, parcel )
+            {
+                af.clearError();
+                console.log(copy);
+                 return $rootScope.SavingParcelWipe = genericAPIFactory.save( copy, 'saveParcelWipesAndChildren' )
+                    .then(
+                        function(returnedParcel){
+                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
+                            if(parcel){
+                                angular.extend(parcel, copy, true);
+                                parcel.edit = false;
+                                parcel.Wipe_test[0].edit = false;
+                                var i = parcel.Wipe_test[0].Parcel_wipes.length;
+                                while(i--){
+                                    parcel.Wipe_test[0].Parcel_wipes[i].edit = false;
+                                    angular.extend(parcel.Wipe_test[0].Parcel_wipes[i], copy.Wipe_test[0].Parcel_wipes[i]);
+                                    if(!parcel.Wipe_test[0].Parcel_wipes[i].Location)parcel.Wipe_test[0].Parcel_wipes.splice(i,1);
+                                }
                             }
                         },
                         af.setError('The authorization could not be saved')

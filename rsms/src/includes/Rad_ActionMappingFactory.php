@@ -88,6 +88,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveParcelWipesAndChildren"=> new ActionMapping("saveParcelWipesAndChildren", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),

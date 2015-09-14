@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp Radmin PI dashboard
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('PiDetailCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+  .controller('PiDetailCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
@@ -62,6 +62,14 @@ angular.module('00RsmsAngularOrmApp')
           controller: 'WipeTestModalCtrl'
         });
     }
+    
+    $scope.markAsArrived = function(pi, parcel){
+        var copy = new window.Parcel;
+        angular.extend(copy, parcel);
+        copy.Status = "Delivered";
+        copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
+        af.saveParcel( copy, parcel, pi )
+    }
 
   })
   .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
@@ -93,7 +101,7 @@ angular.module('00RsmsAngularOrmApp')
                 Class: 'Parcel',
                 Purchase_order:null,
                 Purchase_order_id:null,
-                Status:'Pre-order',
+                Status:'Ordered',
                 Isotope:null,
                 Isotope_id:null,
                 Arrival_date:null,

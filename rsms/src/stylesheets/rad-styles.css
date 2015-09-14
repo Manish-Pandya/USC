@@ -642,3 +642,9 @@ div.fake-table.inspection-wipe-table {
         margin: 0 0px;
     }
 }
+.wipes-modal .selectize-dropdown-content {
+    margin-top: -10px !important;
+}
+.wipes-modal{
+    min-height: 500px !important;
+}

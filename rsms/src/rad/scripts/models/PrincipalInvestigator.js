@@ -110,7 +110,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadActiveParcels: function() {
-        dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship);
+        dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
     },
 
     loadRooms: function() {

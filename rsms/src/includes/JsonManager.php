@@ -174,7 +174,7 @@ class JsonManager {
 			else if( is_array($value) && is_array($value[0]) && array_key_exists('Class', $value[0] ) ){
 				//TODO:  instantiate child objects
 				$LOG = Logger::getLogger('yo');
-				$LOG->fatal('found child object');
+				//$LOG->fatal('found child object');
 			}
 		}
 		

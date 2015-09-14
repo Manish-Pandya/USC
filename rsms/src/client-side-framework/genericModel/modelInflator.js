@@ -14,7 +14,7 @@ angular
             **/
 
             //treat this as a private method, only to be called locally
-            inflator.instantiateObjectFromJson = function( json, objectFlavor )
+            inflator.instantiateObjectFromJson = function( json, objectFlavor, recurse )
             {
 
                     if( !objectFlavor ){
@@ -57,14 +57,26 @@ angular
                         }
 
                     }
+                
                     modelledObject.setPropertiesFromPrototype()
-
+                    if(recurse){
+                        for(var prop in modelledObject){
+                            if((modelledObject[prop] && modelledObject[prop].Class && window[modelledObject[prop].Class] && !modelledObject[prop] instanceof window[modelledObject[prop].Class])
+                                || 
+                               (modelledObject[prop] instanceof Array && modelledObject[prop][0] && modelledObject[prop][0].Class && window[modelledObject[prop][0].Class])
+                              ){
+                                modelledObject[prop] = inflator.instateAllObjectsFromJson( modelledObject[prop], null, true );
+                                console.log(modelledObject[prop]);
+                            }
+                        }
+                    }
                     return modelledObject;
             }
 
             //treat this as a public method, called from controller layer
-            inflator.instateAllObjectsFromJson = function(  json, objectFlavor  )
+            inflator.instateAllObjectsFromJson = function(  json, objectFlavor, recurse  )
             {
+                    if(!recurse)recurse = false;
                     if ( json instanceof Array ) {
                         var models = [];
                         var i = json.length;
@@ -72,7 +84,7 @@ angular
                             var currentJsonObj = json[i];
                             //if we have haven't passed a string, get the the class name of the object
                             if( !objectFlavor ) objectFlavor = currentJsonObj.Class;
-                            models.push( inflator.instantiateObjectFromJson( currentJsonObj, objectFlavor ) );
+                            models.push( inflator.instantiateObjectFromJson( currentJsonObj, objectFlavor, recurse ) );
                         }
 
                         return models;
@@ -80,8 +92,10 @@ angular
                     } else {
                         //if we have haven't passed a string, get the the class name of the object
                         if( !objectFlavor ) objectFlavor = json.Class;
-                        return inflator.instantiateObjectFromJson( json, objectFlavor );
+                        return inflator.instantiateObjectFromJson( json, objectFlavor, recurse );
                     }
+                
+                    
             }
 
             //dynamically generate accessors for an object

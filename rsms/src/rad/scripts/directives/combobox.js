@@ -22,10 +22,14 @@ angular
                     if (!$(e.target).hasClass('combobox') && !$(e.target).parents('.combobox').size()) {
                        scope.model.showDropDown = false;
                        scope.$apply();
+                       console.log(e.target);
+                    }else{
+                       console.log(e.target);
                     }
                 });
 
                 scope.onClick = function (option) {
+                    alert('yo nigga')
                     scope.model[scope.modelProp] = option;
                     scope.model.showDropDown = false
                 }
