@@ -25,6 +25,12 @@ angular.module('00RsmsAngularOrmApp')
   		$rootScope.carboysPromise = af.getAllPIs()
   										.then(getAllCarboys);
     
+        $scope.deactivate = function(carboy){
+            var copy = dataStoreManager.createCopy(carboy);
+            copy.Retirement_date = new Date();
+            af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
+        }
+    
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
