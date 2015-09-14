@@ -12,7 +12,6 @@ PrincipalInvestigator.prototype = {
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
         {method:"loadWasteBags", boolean:"SolidsContainers"},
-        {method:"getRooms", boolean:"PrincipalInvestigatorRoomRelations"}
     ],
 
     UserRelationship: {
@@ -105,16 +104,12 @@ PrincipalInvestigator.prototype = {
 
     Buildings: {},
 
-    loadAuthorizations: function() {
-        dataLoader.loadOneToManyRelationship( this, 'Authorizations', this.AuthorizationsRelationship);
-    },
-
     loadActiveParcels: function() {
         dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
     },
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship );
+        dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
     },
 
     loadPurchaseOrders: function() {

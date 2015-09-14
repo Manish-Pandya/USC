@@ -20,7 +20,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     if(!recurse)recurse = false;
     // methodString overrides default behavior for making special server calls.
     if (relationship.methodString) {
-        
+
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
 
         parent.api.read(relationship.methodString, paramValue)
@@ -38,7 +38,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     }
 
     // data not cached, get it from the server
-    else {        
+    else {
         var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
 
         parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
@@ -47,14 +47,14 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             dataStoreManager.store(instatedObjects);
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                 relationship.className, relationship.keyReference, parent[relationship.paramValue]);
-            
+
             if(recurse)dataLoader.recursivelyInstantiate(instatedObjects, parent);
 
         });
     }
 }
 
-dataLoader.loadManyToManyRelationship = function (parent, property, relationship) {
+dataLoader.loadManyToManyRelationship = function (parent, property, relationship, apiOverride) {
     // if this type of relationship is cached, use it.
     if (dataLoader[relationship.name]) {
         var matches = dataLoader.getChildrenByParentProperty(
@@ -70,7 +70,7 @@ dataLoader.loadManyToManyRelationship = function (parent, property, relationship
     else {
         var urlFragment = 'getRelationships';
         var paramValue = '&class1=' + parent.Class + '&class2=' + relationship.className;
-
+        if(apiOverride)urlFragment = apiOverride;
         parent.api.read(urlFragment, paramValue)
             .then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
@@ -95,7 +95,7 @@ dataLoader.loadManyToManyRelationship = function (parent, property, relationship
                     // get data
                     parent.api.read(action).then(function (returnedPromise) {
                         var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
-
+                        console.log(instatedObjects);
                         // add returned data to cache
                         dataStoreManager.store(instatedObjects, true, className);
 

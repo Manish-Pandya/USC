@@ -15,12 +15,12 @@ class Authorization extends GenericCrud {
 
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"principal_investigator_id"		=> "integer",
+		"pi_authorization_id"			=> "integer",
 		"isotope_id"					=> "integer",
 		"max_quantity"					=> "float",
 		"approval_date"					=> "timestamp",
 		"revocation_date"				=> "timestamp",
-		"Form"							=> "text",
+		"form"							=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -39,7 +39,7 @@ class Authorization extends GenericCrud {
 	private $isotopeName;
 
 	/** id of principal_investigator this authorization is about */
-	private $principal_investigator_id;
+	private $pi_authorization_id;
 	// Note to self:
 	// ommited a place to store the reference to the principal investigator itself
 	// because (according to current specs at least) a principal investigator is

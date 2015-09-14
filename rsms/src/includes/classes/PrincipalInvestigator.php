@@ -63,14 +63,6 @@ class PrincipalInvestigator extends GenericCrud {
 		"foreignKeyName" =>	"principal_investigator_id"
 	);
 	
-
-	public static $AUTHORIZATIONS_RELATIONSHIP = array(
-			"className" =>  "Authorization",
-			"tableName" =>  "authorization",
-			"keyName"   =>  "key_id",
-			"foreignKeyName" => "principal_investigator_id"
-	);
-	
 	public static $ACTIVEPARCELS_RELATIONSHIP = array(
 			"className" => "Parcel",
 			"tableName" => "parcel",
@@ -144,7 +136,7 @@ class PrincipalInvestigator extends GenericCrud {
 	private $inspections;
 
 	/** Array of Authorizations entities */
-	private $authorizations;
+	private $pi_authorization;
 
 	/** Array of Active (not completed) parcels */
 	private $activeParcels;
@@ -192,7 +184,6 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getDepartments");
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
-		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
 		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
 		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
@@ -204,6 +195,8 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
+		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
+		
 		
 		$this->setEntityMaps($entityMaps);
 
@@ -268,14 +261,7 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function setInspections($inspections){ $this->inspections = $inspections; }
 
-	public function getAuthorizations() {
-		if($this->authorizations === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->authorizations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$AUTHORIZATIONS_RELATIONSHIP));
-		}
-		return $this->authorizations;
-	}
-	public function setAuthorizations($authorizations) { $this->authorizations = $authorizations; }
+
 
 	public function getActiveParcels() {
 		if($this->activeParcels === NULL && $this->hasPrimaryKeyValue()) {
@@ -432,6 +418,19 @@ class PrincipalInvestigator extends GenericCrud {
 			$this->getCurrentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
 		}
 		return $this->getCurrentVerifications;
+	}
+	
+	public function getPi_authorization(){
+		if($this->pi_authorization == NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO(new PIAuthorization());
+			$whereClauseGroup = new WhereClauseGroup(
+					array(
+							new WhereClause("principal_investigator_id", "=" , $this->getKey_id()),
+					)
+			);
+			$this->pi_authorization = reset($thisDAO->getAllWhere($whereClauseGroup));
+		}
+		return $this->pi_authorization;
 	}
 
 }

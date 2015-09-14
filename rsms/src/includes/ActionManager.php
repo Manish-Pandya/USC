@@ -39,8 +39,8 @@ class ActionManager {
             return NULL;
         }
     }
-    
-   
+
+
 
     public function convertInputJson(){
         try{
@@ -130,8 +130,8 @@ class ActionManager {
                     if($username != "Principal Investigator"){
                         $user->setSupervisor_id(1);
                     }else{
-						$principalInvestigator = $this->getPIById(1);
-                        $user->setPrincipalInvestigator($principalInvestigator);                    
+                        $principalInvestigator = $this->getPIById(1);
+                        $user->setPrincipalInvestigator($principalInvestigator);
                     }
 
                     $user->setRoles($fakeRoles);
@@ -259,30 +259,30 @@ class ActionManager {
         $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
         return false;
     }
-    
+
     /**
      * Determines if the currently logged in user's lab has permissions to run a method, based on the object type being retrieved, altered or created by that method
      *
      * @param unknown $object
      * @return boolean
      */
-    private function getByLab($object){    	
-    	//if the current user is an Admin or Inspector, we don't need to filter by lab
-    	$roles = $this->getCurrentUserRoles();
-    	$ehsRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
-    	if(count(array_intersect($roles['userRoles'], $ehsRoles)) > 0){
-    		return true;
-    	}
-    
-    	//Does the PrincipalInvestigator associated with the currently logged in user match the PrincipalInvestigator who owns the object we want to get?
-    	if($this->getPIIDFromObject($object) == $this->getPIIDFromUser()){
-    		return true;
-    	}
-    	
-    	return false;
-    	 
+    private function getByLab($object){
+        //if the current user is an Admin or Inspector, we don't need to filter by lab
+        $roles = $this->getCurrentUserRoles();
+        $ehsRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
+        if(count(array_intersect($roles['userRoles'], $ehsRoles)) > 0){
+            return true;
+        }
+
+        //Does the PrincipalInvestigator associated with the currently logged in user match the PrincipalInvestigator who owns the object we want to get?
+        if($this->getPIIDFromObject($object) == $this->getPIIDFromUser()){
+            return true;
+        }
+
+        return false;
+
     }
-    
+
     /**
      * Gets the key_id of the PrincipalInvestigator associated with a method call.  Used to determine if a User can make a call for a particular object instance.
      *
@@ -290,22 +290,22 @@ class ActionManager {
      * @return integer $value| boolean
      */
     protected function getPIIDFromObject($object){
-    	$LOG = Logger::getLogger('Action:' . __function__);
-    	//method chains
-    	$map = array(
-    			"CorrectiveAction"=>array("getDeficiencySelection", "getResponse", "getInspection", "getPrincipal_investigator_id")
-    	);
-    	 
-    	$value = $object;
-    	 
-    	foreach($map[get_class($object)] as $method){
-    		if($value == NULL)return false;
-    		$value = $value->$method();
-    	}
-    
-    	return $value;
+        $LOG = Logger::getLogger('Action:' . __function__);
+        //method chains
+        $map = array(
+                "CorrectiveAction"=>array("getDeficiencySelection", "getResponse", "getInspection", "getPrincipal_investigator_id")
+        );
+
+        $value = $object;
+
+        foreach($map[get_class($object)] as $method){
+            if($value == NULL)return false;
+            $value = $value->$method();
+        }
+
+        return $value;
     }
-    
+
     /**
      * Gets the key_id of the PrincipalInvestigator associated with the user who is currently logged in
      *
@@ -313,23 +313,23 @@ class ActionManager {
      * @return integer $value| boolean
      */
     private function getPIIDFromUser(){
-    	$LOG = Logger::getLogger('Action:' . __function__);
-    	$user = $this->getCurrentUser();
-    	$roles = getCurrentUserRoles();
-    	 
-    	if(in_array("Principal Investigator", $roles['userRoles'])){
-    		if($user->getPrincipalInvestigator() != NULL){
-    			return $user->getPrincipalInvestigator()->getKey_id();
-    		}
-    		return false;
-    	}elseif(in_array("Lab Contact", $roles['userRoles'])){
-    		if($user->getSupervisor_id() != NULL){
-    			return $user->getSupervisor_id();
-    		}
-    		return false;
-    	}
-    	
-    	return false;
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $user = $this->getCurrentUser();
+        $roles = getCurrentUserRoles();
+
+        if(in_array("Principal Investigator", $roles['userRoles'])){
+            if($user->getPrincipalInvestigator() != NULL){
+                return $user->getPrincipalInvestigator()->getKey_id();
+            }
+            return false;
+        }elseif(in_array("Lab Contact", $roles['userRoles'])){
+            if($user->getSupervisor_id() != NULL){
+                return $user->getSupervisor_id();
+            }
+            return false;
+        }
+
+        return false;
     }
 
     private function getDestination(){
@@ -437,25 +437,25 @@ class ActionManager {
 
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-			$entityMaps[] = new EntityMap("lazy","getRooms");
-			$entityMaps[] = new EntityMap("lazy","getDepartments");
-			$entityMaps[] = new EntityMap("eager","getUser");
-			$entityMaps[] = new EntityMap("lazy","getInspections");
-			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-			$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-			$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-			$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-			$entityMaps[] = new EntityMap("lazy", "getPickups");
-			$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-			$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-			$entityMaps[] = new EntityMap("lazy","getVerifications");
-			$entityMaps[] = new EntityMap("lazy","getBuidling");
-			$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-				
-				
+            $entityMaps[] = new EntityMap("lazy","getRooms");
+            $entityMaps[] = new EntityMap("lazy","getDepartments");
+            $entityMaps[] = new EntityMap("eager","getUser");
+            $entityMaps[] = new EntityMap("lazy","getInspections");
+            $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+            $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+            $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+            $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+            $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+            $entityMaps[] = new EntityMap("lazy", "getPickups");
+            $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+            $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+            $entityMaps[] = new EntityMap("lazy","getVerifications");
+            $entityMaps[] = new EntityMap("lazy","getBuidling");
+            $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
+
 
             $supervisor = $user->getSupervisor();
             if($supervisor != null){
@@ -1083,10 +1083,10 @@ class ActionManager {
             $dao = $this->getDao(new Room());
             $room = $dao->save($decodedObject);
             if($decodedObject->getPrincipalInvestigators() != NULL){
-            	foreach($decodedObject->getPrincipalInvestigators() as $pi){
-            		//$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
-            		$this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
-            	}
+                foreach($decodedObject->getPrincipalInvestigators() as $pi){
+                    //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
+                    $this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
+                }
             }
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
@@ -1096,7 +1096,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getBuilding");
             $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
             $room->setEntityMaps($entityMaps);
-            
+
             return $room;
         }
     }
@@ -1454,24 +1454,24 @@ class ActionManager {
             $pi = $dao->getById($id);
             if($getRooms != null && $getRooms == true){
                 $entityMaps[] = new EntityMap("eager","getLabPersonnel");
-				$entityMaps[] = new EntityMap("eager","getRooms");
-				$entityMaps[] = new EntityMap("eager","getDepartments");
-				$entityMaps[] = new EntityMap("eager","getUser");
-				$entityMaps[] = new EntityMap("lazy","getInspections");
-				$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-				$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-				$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-				$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-				$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-				$entityMaps[] = new EntityMap("lazy", "getPickups");
-				$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-				$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-				$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-				$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-				$entityMaps[] = new EntityMap("lazy","getVerifications");
-				$entityMaps[] = new EntityMap("lazy","getBuidling");
-				$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-				
+                $entityMaps[] = new EntityMap("eager","getRooms");
+                $entityMaps[] = new EntityMap("eager","getDepartments");
+                $entityMaps[] = new EntityMap("eager","getUser");
+                $entityMaps[] = new EntityMap("lazy","getInspections");
+                $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+                $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+                $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+                $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+                $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+                $entityMaps[] = new EntityMap("lazy", "getPickups");
+                $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+                $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+                $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+                $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+                $entityMaps[] = new EntityMap("lazy","getVerifications");
+                $entityMaps[] = new EntityMap("lazy","getBuidling");
+                $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
                 $pi->setEntityMaps($entityMaps);
             }
             return $pi;
@@ -1529,25 +1529,25 @@ class ActionManager {
 
             $pi->setBuildings($buildings);
 
-			$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-			$entityMaps[] = new EntityMap("eager","getRooms");
-			$entityMaps[] = new EntityMap("eager","getDepartments");
-			$entityMaps[] = new EntityMap("eager","getUser");
-			$entityMaps[] = new EntityMap("eager","getBuidling");
-			$entityMaps[] = new EntityMap("lazy","getInspections");
-			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-			$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-			$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-			$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-			$entityMaps[] = new EntityMap("lazy", "getPickups");
-			$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-			$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-			$entityMaps[] = new EntityMap("lazy","getVerifications");	
-			$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-				
+            $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+            $entityMaps[] = new EntityMap("eager","getRooms");
+            $entityMaps[] = new EntityMap("eager","getDepartments");
+            $entityMaps[] = new EntityMap("eager","getUser");
+            $entityMaps[] = new EntityMap("eager","getBuidling");
+            $entityMaps[] = new EntityMap("lazy","getInspections");
+            $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+            $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+            $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+            $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+            $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+            $entityMaps[] = new EntityMap("lazy", "getPickups");
+            $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+            $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+            $entityMaps[] = new EntityMap("lazy","getVerifications");
+            $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
 
             $pi->setEntityMaps($entityMaps);
             return $pi;
@@ -1572,25 +1572,25 @@ class ActionManager {
         if($rooms != null){
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getLabPersonnel");
-			$entityMaps[] = new EntityMap("eager","getRooms");
-			$entityMaps[] = new EntityMap("eager","getDepartments");
-			$entityMaps[] = new EntityMap("eager","getUser");
-			$entityMaps[] = new EntityMap("lazy","getInspections");
-			$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-			$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-			$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-			$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-			$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-			$entityMaps[] = new EntityMap("lazy", "getPickups");
-			$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-			$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-			$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-			$entityMaps[] = new EntityMap("lazy","getVerifications");
-			$entityMaps[] = new EntityMap("lazy","getBuidling");
-			$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-				
-				
+            $entityMaps[] = new EntityMap("eager","getRooms");
+            $entityMaps[] = new EntityMap("eager","getDepartments");
+            $entityMaps[] = new EntityMap("eager","getUser");
+            $entityMaps[] = new EntityMap("lazy","getInspections");
+            $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+            $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+            $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+            $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+            $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+            $entityMaps[] = new EntityMap("lazy", "getPickups");
+            $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+            $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+            $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+            $entityMaps[] = new EntityMap("lazy","getVerifications");
+            $entityMaps[] = new EntityMap("lazy","getBuidling");
+            $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
+
 
             foreach($pis as $pi){
                 $pi->setEntityMaps($entityMaps);
@@ -1620,7 +1620,7 @@ class ActionManager {
                 $piMaps[] = new EntityMap("eager","getDepartments");
                 $piMaps[] = new EntityMap("eager","getUser");
                 $piMaps[] = new EntityMap("lazy","getInspections");
-                $piMaps[] = new EntityMap("lazy","getAuthorizations");
+                $piMaps[] = new EntityMap("lazy","getPi_authorization");
                 $piMaps[] = new EntityMap("lazy", "getActiveParcels");
                 $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
                 $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
@@ -1632,8 +1632,8 @@ class ActionManager {
                 $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
                 $piMaps[] = new EntityMap("lazy","getVerifications");
                 $piMaps[] = new EntityMap("lazy","getBuidling");
-                $piMaps[] = new EntityMap("lazy","getCurrentVerifications");                
-                
+                $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
                 $pi->setEntityMaps($piMaps);
             }
 
@@ -1663,24 +1663,24 @@ class ActionManager {
 
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getLabPersonnel");
-		$entityMaps[] = new EntityMap("eager","getRooms");
-		$entityMaps[] = new EntityMap("eager","getDepartments");
-		$entityMaps[] = new EntityMap("eager","getUser");
-		$entityMaps[] = new EntityMap("lazy","getInspections");
-		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-		$entityMaps[] = new EntityMap("lazy", "getPickups");
-		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-		$entityMaps[] = new EntityMap("lazy","getVerifications");
-		$entityMaps[] = new EntityMap("lazy","getBuidling");
-		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-		      
+        $entityMaps[] = new EntityMap("eager","getRooms");
+        $entityMaps[] = new EntityMap("eager","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getBuidling");
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
 
 
         foreach($pis as $pi){
@@ -1727,7 +1727,7 @@ class ActionManager {
             $piMaps[] = new EntityMap("eager","getDepartments");
             $piMaps[] = new EntityMap("eager","getUser");
             $piMaps[] = new EntityMap("lazy","getInspections");
-            $piMaps[] = new EntityMap("lazy","getAuthorizations");
+            $piMaps[] = new EntityMap("lazy","getPi_authorization");
             $piMaps[] = new EntityMap("lazy", "getActiveParcels");
             $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
             $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
@@ -1740,7 +1740,7 @@ class ActionManager {
             $piMaps[] = new EntityMap("lazy","getVerifications");
             $piMaps[] = new EntityMap("lazy","getBuidling");
             $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
-            
+
 
             foreach($room->getPrincipalInvestigators() as $pi){
                 $pi->setEntityMaps($piMaps);
@@ -1843,7 +1843,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getDepartments");
         $entityMaps[] = new EntityMap("eager","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
-        $entityMaps[] = new EntityMap("lazy","getAuthorizations");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
         $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
         $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
         $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
@@ -1856,8 +1856,8 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getVerifications");
         $entityMaps[] = new EntityMap("lazy","getBuidling");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-        
-        
+
+
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
         }
@@ -1918,11 +1918,11 @@ class ActionManager {
         else{
 
             if($PIId == NULL && $roomId == NULL && $add == NULL){
-	        	$PIId = $decodedObject->getMaster_id();
-	            $roomId = $decodedObject->getRelation_id();
-	            $add = $decodedObject->getAdd();
+                $PIId = $decodedObject->getMaster_id();
+                $roomId = $decodedObject->getRelation_id();
+                $add = $decodedObject->getAdd();
             }
-            
+
             //$LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
 
             if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
@@ -1931,7 +1931,7 @@ class ActionManager {
                 $dao = $this->getDao(new PrincipalInvestigator());
                 // if add is true, add this room to this PI
                 if ($add){
-                	//$LOG->fatal('trying to add');
+                    //$LOG->fatal('trying to add');
                     $dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
                 // if add is false, remove this room from this PI
                 } else {
@@ -2092,7 +2092,7 @@ class ActionManager {
                 // if add is true, add this role to this USER
                 if ($add){
                     if(!in_array($roleToAdd, $roles)){
-                        
+
                         //add PI record if role is PI
                         if($roleToAdd->getName() == 'Principal Investigator'){
                             //if the user already has a PI, get that PI
@@ -2119,30 +2119,30 @@ class ActionManager {
                             }
                             if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
                         }
-                        
+
                         //All Lab Contacts are also Lab Personnel, so make sure Lab Contacts have that role as well
                         if($roleToAdd->getName() == 'Lab Contact'){
-                        	$addContact = true;
-                        	foreach($roles as $role){
-                        		if($role->getName() == 'Lab Personnel') $addContact = false;
-                        	}
-                        	if($addContact == true){
-                        		$allRoles = $this->getAllRoles();
-                        		foreach($allRoles as $role){
-                        			if($role->getName() == "Lab Personnel"){
-                        				$labPersonnelKeyid = $role->getKey_id();
-                        				break;
-                        			}
-                        		}
-	                        	$personnelRelation = new RelationshipDto();
-	                        	$personnelRelation->setAdd(true);
-	                        	$personnelRelation->setMaster_id($userID);
-	                        	$personnelRelation->setRelation_id($roleId);
-	                        	//$LOG->fatal($personnelRelation);
-	                        	$dao->addRelatedItems($labPersonnelKeyid,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
-                        	}
+                            $addContact = true;
+                            foreach($roles as $role){
+                                if($role->getName() == 'Lab Personnel') $addContact = false;
+                            }
+                            if($addContact == true){
+                                $allRoles = $this->getAllRoles();
+                                foreach($allRoles as $role){
+                                    if($role->getName() == "Lab Personnel"){
+                                        $labPersonnelKeyid = $role->getKey_id();
+                                        break;
+                                    }
+                                }
+                                $personnelRelation = new RelationshipDto();
+                                $personnelRelation->setAdd(true);
+                                $personnelRelation->setMaster_id($userID);
+                                $personnelRelation->setRelation_id($roleId);
+                                //$LOG->fatal($personnelRelation);
+                                $dao->addRelatedItems($labPersonnelKeyid,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+                            }
                         }
-                        
+
                         // only add the role if the user doesn't already have it
                         $dao->addRelatedItems($roleId,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
                     }
@@ -3247,15 +3247,15 @@ class ActionManager {
             return $decodedObject;
         }
         else{
-        	        	
+
             $dao = $this->getDao(new CorrectiveAction());
             $dao->save($decodedObject);
             //$LOG->fatal($this->getPIIDFromObject($decodedObject));
-            
+
             return $decodedObject;
         }
     }
-    
+
     private function canDo($thing){
     }
 
@@ -3864,24 +3864,24 @@ class ActionManager {
                     $pis = $room->getPrincipalInvestigators();
                     $entityMaps = array();
                     $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-					$entityMaps[] = new EntityMap("lazy","getRooms");
-					$entityMaps[] = new EntityMap("eager","getDepartments");
-					$entityMaps[] = new EntityMap("eager","getUser");
-					$entityMaps[] = new EntityMap("lazy","getInspections");
-					$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-					$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-					$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-					$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-					$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-					$entityMaps[] = new EntityMap("lazy", "getPickups");
-					$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-					$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-					$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-					$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-					$entityMaps[] = new EntityMap("lazy","getVerifications");
-					$entityMaps[] = new EntityMap("lazy","getBuidling");
-					$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-						
+                    $entityMaps[] = new EntityMap("lazy","getRooms");
+                    $entityMaps[] = new EntityMap("eager","getDepartments");
+                    $entityMaps[] = new EntityMap("eager","getUser");
+                    $entityMaps[] = new EntityMap("lazy","getInspections");
+                    $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+                    $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+                    $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+                    $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+                    $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+                    $entityMaps[] = new EntityMap("lazy", "getPickups");
+                    $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+                    $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+                    $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+                    $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+                    $entityMaps[] = new EntityMap("lazy","getVerifications");
+                    $entityMaps[] = new EntityMap("lazy","getBuidling");
+                    $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
                     foreach($pis as $pi){
                         $pi->setEntityMaps($entityMaps);
                     }
@@ -3984,35 +3984,35 @@ class ActionManager {
     }
 
     public function getMyLab($id = null){
-    	
-    	if($id==null)$id = $this->getValueFromRequest('id', $id);
-    	if($id==null)return new ActionError('No request param "id" provided.');
-    	$principalInvestigator = $this->getPIById($id);
-    	
-    	$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-    	$entityMaps[] = new EntityMap("lazy","getRooms");
-    	$entityMaps[] = new EntityMap("lazy","getDepartments");
-    	$entityMaps[] = new EntityMap("eager","getUser");
-    	$entityMaps[] = new EntityMap("lazy","getInspections");
-    	$entityMaps[] = new EntityMap("lazy","getAuthorizations");
-    	$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-    	$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-    	$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-    	$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
-    	$entityMaps[] = new EntityMap("lazy", "getPickups");
-    	$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-    	$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-    	$entityMaps[] = new EntityMap("eager","getOpenInspections");
-    	$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-    	$entityMaps[] = new EntityMap("eager","getVerifications");
-    	$entityMaps[] = new EntityMap("lazy","getBuidling");
-    	$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-    	
-    	$principalInvestigator->setEntityMaps($entityMaps);
-    	
-    	return $principalInvestigator;
+
+        if($id==null)$id = $this->getValueFromRequest('id', $id);
+        if($id==null)return new ActionError('No request param "id" provided.');
+        $principalInvestigator = $this->getPIById($id);
+
+        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("eager","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("eager","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getBuidling");
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+
+        $principalInvestigator->setEntityMaps($entityMaps);
+
+        return $principalInvestigator;
     }
-       
+
     //generate a random float
     public function random_float ($min,$max) {
         return ($min+lcg_value()*(abs($max-$min)));

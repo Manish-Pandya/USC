@@ -925,25 +925,23 @@ angular
             af.getRadPI = function(pi)
             {
 
-                if(!store.checkCollection( 'Authorization')){
-                    var segment = "getRadPIById&id="+pi.Key_id;
+                if(!store.checkCollection( 'Parcel' )){
+                    var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                            if(tempPI.Authorizations.length){
-                                store.store(tempPI.Authorizations);
-                            }
+                            //pi.loadRooms();
+                            pi.Rooms = tempPI.Rooms;
                             pi.loadActiveParcels();
-                            pi.loadAuthorizations();
                             pi.loadPurchaseOrders();
                             pi.loadCarboyUseCycles();
                             pi.loadSolidsContainers();
                             return pi;
                         });
                 }else{
+                    //pi.loadRooms();
                     pi.loadActiveParcels();
                     pi.loadPurchaseOrders();
-                    pi.loadAuthorizations();
                     pi.loadCarboyUseCycles();
                     pi.loadSolidsContainers();
                     var defer = $q.defer();
@@ -1171,7 +1169,7 @@ angular
                         af.setError('The authorization could not be saved')
                     )
             }
-            
+
             af.saveParcelWipesAndChildren = function( copy, parcel )
             {
                 af.clearError();
@@ -2057,6 +2055,22 @@ angular
                     )
             }
 
+            af.savePIAuthorization = function(auth, copy){
+                af.clearError();
+                return this.save(copy)
+                    .then(
+                        function(returnedAuth){
+                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
+                            if(auth.Key_id){
+                                angular.extend(copy, returnedAuth)
+                            }else{
+                                dataStoreManager.store(returnedAuth);
+                            }
+                            return returnedAuth;
+                        },
+                        af.setError('The Quarterly Inventory could not be saved')
+                    )
+            }
 
             return af;
         });

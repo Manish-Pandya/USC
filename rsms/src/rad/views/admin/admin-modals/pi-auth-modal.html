@@ -1,0 +1,41 @@
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="blueBg">Create or edit Authorization</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Authorization Number</label>
+        <div class="controls">
+            <input ng-model="modalData.PIAuthorizationCopy.Authorization_copy" placeholder="Authorization Number"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Rooms</label>
+        <div class="controls" ng-repeat="room in modalData.pi.Rooms">
+            <label class="checkbox">
+                <input type="checkbox"  ng-checked="pickup.Status == 'PICKED UP' || pickup.Status == 'AT RSO'"/>
+                <span class="metro-checkbox">{{room.Building.Name}} room: {{room.Name}}</span>
+            </label>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Departments</label>
+        <div class="controls">
+            <label class="checkbox" ng-repeat="department in modalData.pi.Departments">
+                <input type="checkbox"  ng-checked="pickup.Status == 'PICKED UP' || pickup.Status == 'AT RSO'"/>
+                <span class="metro-checkbox">{{department.Name}}</span>
+            </label>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Authorization Number</label>
+        <div class="controls">
+            <input ng-model="modalData.PIAuthorizationCopy.Authorization_copy" placeholder="Authorization Number"/>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization )"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

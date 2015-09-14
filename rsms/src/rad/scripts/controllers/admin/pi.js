@@ -15,11 +15,11 @@ angular.module('00RsmsAngularOrmApp')
 
     var getRadPi = function(){
         var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
-        pi.loadRooms();
         return actionFunctionsFactory.getRadPI(pi)
                 .then(
                     function(){
                         $rootScope.pi = pi;
+                        console.log($rootScope.pi);
                         return pi;
                     },
                     function(){
@@ -62,7 +62,7 @@ angular.module('00RsmsAngularOrmApp')
           controller: 'WipeTestModalCtrl'
         });
     }
-    
+
     $scope.markAsArrived = function(pi, parcel){
         var copy = new window.Parcel;
         angular.extend(copy, parcel);
@@ -110,6 +110,16 @@ angular.module('00RsmsAngularOrmApp')
             }
         }
 
+        if(!$scope.modalData.PIAuthorizationCopy){
+            $scope.modalData.PIAuthorizationCopy = {
+                Class: 'PIAuthorization',
+                Rooms:null,
+                Authorization_number: null,
+                Is_active: true,
+                Principal_investigator_id: $scope.modalData.pi.Key_id
+            }
+        }
+
         if(!$scope.modalData.SolidsContainerCopy){
             $scope.modalData.SolidsContainerCopy = {
                 Class: 'SolidsContainer',
@@ -142,6 +152,12 @@ angular.module('00RsmsAngularOrmApp')
         $scope.close = function(){
             af.deleteModalData();
             $modalInstance.dismiss();
+        }
+
+        $scope.savePIAuthorization = function( copy, auth ){
+           $modalInstance.dismiss();
+           af.deleteModalData();
+           af.savePIAuthorization( copy, auth );
         }
 
         $scope.saveAuthorization = function(pi, copy, auth){

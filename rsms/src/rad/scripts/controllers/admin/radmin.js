@@ -98,7 +98,7 @@ angular.module('00RsmsAngularOrmApp')
 
         );
     }
-    
+
     var getAllSolidsContainers = function(){
         return actionFunctionsFactory.getAllSolidsContainers()
         .then(
@@ -138,8 +138,22 @@ angular.module('00RsmsAngularOrmApp')
         );
     }
 
+    var getAllRooms = function(){
+        return actionFunctionsFactory.getAllRooms()
+        .then(
+            function( rooms ){
+                return rooms;
+            },
+            function(){
+                $scope.error = 'There was an error when the system tried to get the list of Rooms.  Please check your internet connection and try again.'
+            }
+
+        );
+    }
+
     $rootScope.pisPromise = getAllUsers()
             .then(getAllPIs)
+            .then(getAllRooms)
     /*
             .then(getAllIsotopes)
             .then(getAllAuthorizations)
