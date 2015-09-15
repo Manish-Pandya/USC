@@ -360,8 +360,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
 
         //copy an object, not by reference
         copyObject: function(obj) {
-            var newObject = JSON.parse(JSON.stringify(obj));
-            return newObject;
+            //var newObject = JSON.parse(JSON.stringify(obj));
+            return $.extend(null,{},obj);
         },
 
         getDate: function(dateString){

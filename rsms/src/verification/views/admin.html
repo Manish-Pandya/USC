@@ -24,7 +24,8 @@
 
                 <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
                 <button class="btn btn-success left pull-right" ng-if="change.Parent_id && !change.Approval_date" ng-click="ac.confirmChange(change)"><i class="icon-checkmark"></i>Confirm</button>
-                <a class="btn btn-info left pull-right" href="../../views/hubs/UserHub.php" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New User</a>
+                <!--a class="btn btn-info left pull-right" href="../../views/hubs/UserHub.php" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New User</a-->
+                <a class="btn btn-info left pull-right" ng-click="openCreateUserModal(change.Role)" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New User</a>
             </li>
             <li ng-if="!userChanges.length">No changes requested</li>
         </ul>
