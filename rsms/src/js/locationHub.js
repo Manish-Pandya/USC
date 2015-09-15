@@ -126,7 +126,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
         if(this.rooms.length){
             deferred.resolve(this.rooms);
         }else{
-            var url = '../../ajaxaction.php?action=getAllRooms&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllRooms&callback=JSON_CALLBACK';
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function(promise){
                     deferred.resolve(promise);
@@ -156,7 +156,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
         if(this.buildings.length){
             deferred.resolve(this.buildings);
         }else{
-            var url = '../../ajaxaction.php?action=getAllBuildings&skipRooms=true&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllBuildings&skipRooms=true&callback=JSON_CALLBACK';
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function(promise){
                     deferred.resolve(promise);
@@ -187,7 +187,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
         if(this.campuss.length){
             deferred.resolve(this.campuss);
         }else{
-            var url = '../../ajaxaction.php?action=getAllCampuses&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllCampuses&callback=JSON_CALLBACK';
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function(promise){
                     deferred.resolve(promise);
@@ -233,7 +233,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
         if(factory.pis){
             deferred.resolve(factory.pis);
         }else{
-            var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
                   convenienceMethods.getDataAsDeferredPromise(url).then(
                   function(promise){
                     deferred.resolve(promise);
@@ -257,7 +257,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 return
             }
         }
-        var url = "../../ajaxaction.php?action=saveRoom";
+        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveRoom";
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
             function(promise){
@@ -280,7 +280,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
     }
 
     factory.saveBuilding = function(buildingDto){
-        var url = "../../ajaxaction.php?action=saveBuilding";
+        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveBuilding";
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, buildingDto).then(
             function(promise){
@@ -295,7 +295,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
 
     factory.saveCampus = function(campusDto){
-        var url = "../../ajaxaction.php?action=saveCampus";
+        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveCampus";
         var deferred = $q.defer();
         convenienceMethods.saveDataAndDefer(url, campusDto).then(
             function(promise){
@@ -376,7 +376,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
     }
 
     factory.getCSV = function(){
-        var url = "../../ajaxaction.php?action=getLocationCSV";
+        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=getLocationCSV";
         $http.get(url, function(status, response){
             // success
         }, function(status, response){
@@ -656,7 +656,7 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
           master_id: pi.Key_id,
           add: adding
         }
-        var url = '../../ajaxaction.php?action=savePIRoomRelation';
+        var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=savePIRoomRelation';
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
             function(){
 

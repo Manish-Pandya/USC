@@ -202,7 +202,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         return deferred.promise;
       }
 
-      var url = '../../ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
+      var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(users){
           factory.users = users;
@@ -274,7 +274,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   factory.saveUser = function(userDto)
   {
     console.log(userDto);
-    var url = "../../ajaxaction.php?action=saveUser";
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveUser";
     var deferred = $q.defer();
       convenienceMethods.saveDataAndDefer(url, userDto)
         .then(
@@ -290,7 +290,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
   factory.savePi = function(pi)
   {
-    var url = "../../ajaxaction.php?action=savePI";
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=savePI";
     var deferred = $q.defer();
       convenienceMethods.saveDataAndDefer(url, pi)
         .then(
@@ -324,8 +324,8 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         deferred.resolve(factory.roles);
         return deferred.promise;
       }
-
-      var url = '../../ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK';
+      
+      var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(roles){
           factory.roles = roles;
@@ -348,7 +348,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         return deferred.promise;
       }
 
-      var url = '../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
+      var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(departments){
           factory.departments = departments;
@@ -362,7 +362,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   }
 
   factory.saveUserRoleRelations = function(userId, rolesToAdd){
-    var url = "../../ajaxaction.php?action=saveUserRoleRelations&callback=JSON_CALLBACK&userId="+userId+'&'+$.param({roleIds:rolesToAdd});
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveUserRoleRelations&callback=JSON_CALLBACK&userId="+userId+'&'+$.param({roleIds:rolesToAdd});
     var deferred = $q.defer();
       convenienceMethods.getDataAsDeferredPromise(url)
         .then(
@@ -377,7 +377,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   }
 
   factory.savePIDepartmentRelations = function(piId, departmentIds){
-    var url = "../../ajaxaction.php?callback=JSON_CALLBACK&action=savePIDepartmentRelations&piId="+piId+'&'+$.param({departmentIds:departmentIds});
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?callback=JSON_CALLBACK&action=savePIDepartmentRelations&piId="+piId+'&'+$.param({departmentIds:departmentIds});
     var deferred = $q.defer();
       convenienceMethods.getDataAsDeferredPromise(url)
         .then(
@@ -400,7 +400,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         add: add
     }
 
-    var url = "../../ajaxaction.php?action=saveUserRoleRelation";
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveUserRoleRelation";
     var deferred = $q.defer();
       convenienceMethods.saveDataAndDefer(url, relDto)
         .then(
@@ -423,7 +423,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         add: add
     }
 
-    var url = "../../ajaxaction.php?action=savePIDepartmentRelation";
+    var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=savePIDepartmentRelation";
     var deferred = $q.defer();
       convenienceMethods.saveDataAndDefer(url, relDto)
         .then(
@@ -439,7 +439,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
   factory.getPIByUserId = function(user_id)
   {
-    var url = '../../ajaxaction.php?action=getPIByUserId&id='+user_id+'&callback=JSON_CALLBACK'
+    var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getPIByUserId&id='+user_id+'&callback=JSON_CALLBACK'
     return convenienceMethods.getDataAsDeferredPromise(url)
       .then(
         function(pi){
@@ -453,7 +453,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
   factory.lookUpUser = function(string)
   {
-        var url = "../../ajaxaction.php?action=lookupUser&username="+string+"&callback=JSON_CALLBACK";
+        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=lookupUser&username="+string+"&callback=JSON_CALLBACK";
         var deferred = $q.defer();
           convenienceMethods.getDataAsDeferredPromise(url)
             .then(

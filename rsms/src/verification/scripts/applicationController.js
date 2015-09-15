@@ -122,7 +122,6 @@ angular
                         }
                         angular.extend(copy, returnedChange);
                         if (contact) {
-                            angular.extend(contact.PendingUserChange, returnedChange)
                             angular.extend(contact.PendingUserChangeCopy, returnedChange)
                             contact.edit = false;
                         } else {

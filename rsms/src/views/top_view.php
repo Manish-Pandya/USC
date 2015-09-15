@@ -18,6 +18,7 @@ session_start();
         Name:    '<?php echo $_SESSION['USER']->getName(); ?>',
         Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
     }
+    var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
 </script>
 <?php } ?>
 <script type="text/javascript">
