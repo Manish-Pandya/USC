@@ -341,7 +341,7 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("eager","getRooms");
         }
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
-        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getDepartments");
         $entityMaps[] = new EntityMap("lazy","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("eager","getPi_authorization");
@@ -359,7 +359,6 @@ class Rad_ActionManager extends ActionManager {
 
         $pi->setEntityMaps($entityMaps);
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->debug($pi);
         return $pi;
 
     }
@@ -1834,6 +1833,70 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    public function getAllPIAuthorizations(){
+    	$dao = $this->getDao(new PIAuthorization());
+    	$auths = $dao->getAll();
+    	return $auths;
+    }
+    
+    public function getPIAuthorizationByPIId(){
+    	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+    	$id = $this->getValueFromRequest("id", $id);
+    	
+    	$inventoriesDao = $this->getDao(new PIAuthorization());
+    	$clauses = array(new WhereClause("principal_investigator_id", "=", $id));
+    	$whereClauseGroup = new WhereClauseGroup($clauses);
+    	$LOG->fatal($whereClauseGroup);
+    	$auth =  reset($inventoriesDao->getAllWhere($whereClauseGroup));
+    	return $auth;
+    }
+    
+    public function savePIAuthorization(){    	 
+    	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+    	$decodedObject = $this->convertInputJson();
+    	if( $decodedObject === NULL ) {
+    		return new ActionError('Error converting input stream to PIAuthorization', 202);
+    	}
+    	else if( $decodedObject instanceof ActionError) {
+    		return $decodedObject;
+    	}
+    	else {
+    		//remove all the departments and rooms from the Authorization, if it is an old one
+    		if($decodedObject->getKey_id() != NULL){
+    			$origDao = $this->getDao(new PIAuthorization());
+    			$origAuth = $origDao->getById($decodedObject->getKey_id());
+    			
+    			foreach($origAuth->getRooms() as $room){
+    				$origDao->removeRelatedItems($room->getKey_id(),$origAuth->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
+    			}
+    			
+    			foreach($origAuth->getDepartments() as $dept){
+    				$origDao->removeRelatedItems($dept->getKey_id(),$origAuth->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
+    			}
+    		}
+    		
+    		$rooms = $decodedObject->getRooms();
+    		$departments = $decodedObject->getDepartments();
+    		
+    		$dao = $this->getDao(new PIAuthorization());
+    		$decodedObject = $dao->save($decodedObject);
+    		
+    		// add the relevant rooms and departments to the db
+    		foreach($rooms as $room){
+    			$LOG->fatal($room);
+    			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
+    		}
+    			
+    		foreach($departments as $dept){
+    			$LOG->fatal($dept);
+    			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
+    		}
+    		
+    		return $decodedObject;
+    	}
+    	 
+    	
+    }
 
 
     /*****************************************************************************\

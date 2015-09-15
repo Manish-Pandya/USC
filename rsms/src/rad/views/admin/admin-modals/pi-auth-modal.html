@@ -6,31 +6,25 @@
     <div class="control-group">
         <label class="control-label">Authorization Number</label>
         <div class="controls">
-            <input ng-model="modalData.PIAuthorizationCopy.Authorization_copy" placeholder="Authorization Number"/>
+            <input ng-model="modalData.PIAuthorizationCopy.Authorization_number" placeholder="Authorization Number"/>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">Rooms</label>
-        <div class="controls" ng-repeat="room in modalData.pi.Rooms">
+        <label class="control-label bold">Rooms</label>
+        <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name'">
             <label class="checkbox">
-                <input type="checkbox"  ng-checked="pickup.Status == 'PICKED UP' || pickup.Status == 'AT RSO'"/>
+                <input type="checkbox" ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)"/>
                 <span class="metro-checkbox">{{room.Building.Name}} room: {{room.Name}}</span>
             </label>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">Departments</label>
+        <label class="control-label bold">Departments</label>
         <div class="controls">
             <label class="checkbox" ng-repeat="department in modalData.pi.Departments">
-                <input type="checkbox"  ng-checked="pickup.Status == 'PICKED UP' || pickup.Status == 'AT RSO'"/>
+                <input type="checkbox"  ng-init="department.isAuthorized = departmentIsAuthorized(department, modalData.PIAuthorizationCopy)"  ng-model="department.isAuthorized" ng-change="checkboxChange(department, modalData.PIAuthorizationCopy)"/>
                 <span class="metro-checkbox">{{department.Name}}</span>
             </label>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">Authorization Number</label>
-        <div class="controls">
-            <input ng-model="modalData.PIAuthorizationCopy.Authorization_copy" placeholder="Authorization Number"/>
         </div>
     </div>
 </div>

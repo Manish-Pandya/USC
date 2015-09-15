@@ -425,7 +425,7 @@ class PrincipalInvestigator extends GenericCrud {
 			$thisDAO = new GenericDAO(new PIAuthorization());
 			$whereClauseGroup = new WhereClauseGroup(
 					array(
-							new WhereClause("principal_investigator_id", "=" , $this->getKey_id()),
+						new WhereClause("principal_investigator_id", "=" , $this->getKey_id()),
 					)
 			);
 			$this->pi_authorization = reset($thisDAO->getAllWhere($whereClauseGroup));

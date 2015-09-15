@@ -128,7 +128,7 @@ class Verification_ActionManager extends ActionManager  {
     		
     		$entityMaps[] = new EntityMap("lazy","getDepartments");
     		$entityMaps[] = new EntityMap("lazy","getInspections");
-    		$entityMaps[] = new EntityMap("lazy","getAuthorizations");
+    		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
     		$entityMaps[] = new EntityMap("lazy","getActiveParcels");
     		$entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
     		$entityMaps[] = new EntityMap("lazy","getPurchaseOrders");

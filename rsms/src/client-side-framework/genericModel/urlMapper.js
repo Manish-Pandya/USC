@@ -41,6 +41,7 @@
         'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
         'CarboyReadingAmount'   : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
         'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"   },
+        'PIAuthorization'       : {getById: "getPIAuthorizationByPIId"     , getAll: "getAllPIAuthorizations"       , save: "savePIAuthorization"        },
 
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },

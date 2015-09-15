@@ -9,7 +9,7 @@
 class PIAuthorization extends RadCrud{
 	
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "pi_authorizaion";
+	protected static $TABLE_NAME = "pi_authorization";
 	
 	
 	/** Key/Value Array listing column names mapped to their types */
@@ -29,14 +29,14 @@ class PIAuthorization extends RadCrud{
 	
 	public static $ROOMS_RELATIONSHIP = array(
 			"className"	=>	"Room",
-			"tableName"	=>	"pi_authorizaion_room",
+			"tableName"	=>	"pi_authorization_room",
 			"keyName"	=>	"room_id",
 			"foreignKeyName" =>	"pi_authorization_id"
 	);
 	
 	public static $DEPARTMENTS_RELATIONSHIP = array(
 			"className"	=>	"Department",
-			"tableName"	=>	"pi_authorizaion_department",
+			"tableName"	=>	"pi_authorization_department",
 			"keyName"	=>	"department_id",
 			"foreignKeyName" =>	"pi_authorization_id"
 	);
@@ -46,7 +46,7 @@ class PIAuthorization extends RadCrud{
 			"className" =>  "Authorization",
 			"tableName" =>  "authorization",
 			"keyName"   =>  "key_id",
-			"foreignKeyName" => "principal_investigator_id"
+			"foreignKeyName" => "pi_authorization_id"
 	);
 	
 	private $principal_investigator_id;

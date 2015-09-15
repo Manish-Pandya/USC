@@ -19,7 +19,7 @@ angular.module('00RsmsAngularOrmApp')
                 .then(
                     function(){
                         $rootScope.pi = pi;
-                        console.log($rootScope.pi);
+                        console.log(pi);
                         return pi;
                     },
                     function(){
@@ -155,15 +155,16 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.savePIAuthorization = function( copy, auth ){
-           $modalInstance.dismiss();
-           af.deleteModalData();
-           af.savePIAuthorization( copy, auth );
+            var pi = $scope.modalData.pi;
+            $modalInstance.dismiss();
+            af.deleteModalData();
+            af.savePIAuthorization(copy, auth, pi);
         }
 
-        $scope.saveAuthorization = function(pi, copy, auth){
-           $modalInstance.dismiss();
-           af.deleteModalData();
-           af.saveAuthorization( pi, copy, auth )
+        $scope.saveAuthorization = function (pi, copy, auth) {
+            $modalInstance.dismiss();
+            af.deleteModalData();
+            af.saveAuthorization(pi, copy, auth)
         }
 
         $scope.saveParcel = function(pi, copy, parcel){
@@ -203,6 +204,69 @@ angular.module('00RsmsAngularOrmApp')
             af.deleteModalData();
             af.addCarboyToLab(cycle, pi, room)
         }
+
+        $scope.roomIsAuthorized = function(room, authorization){
+            room.isAuthorized = false;
+            if(!authorization.Rooms && authorization.Key_id)return;
+            if(authorization.Rooms){
+                var i = authorization.Rooms.length;
+                while(i--){
+                    if(authorization.Rooms[i].Key_id == room.Key_id){
+                        return true;
+                    }
+                }
+                return false;
+            }else{
+                return true;
+            }
+            return false;
+        }
+
+        $scope.departmentIsAuthorized = function(department, authorization){
+            department.isAuthorized = false;
+            if(!authorization.Departments && authorization.Key_id)return;
+            if(authorization.Departments){
+                var i = authorization.Departments.length;
+                while(i--){
+                    if(authorization.Departments[i].Key_id == department.Key_id){
+                        return true;
+                    }
+                }
+                return false;
+            }else{
+                return true;
+            }
+            return false;
+        }
+/*
+        $scope.checkboxChange = function(thing, authorization){
+            if(thing.isAuthorized){
+                if(!authorization[thing.Class+'s']){
+                    authorization[thing.Class+'s'] = [thing];
+                }else{
+                    var thingFound = false;
+                    var i = authorization[thing.Class+'s'].length;
+                    while(i--){
+                        if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
+                            thingFound = true;
+                        }
+                    }
+                    if(!thingFound){
+                        authorization[thing.Class+'s'].push(thing)
+                    }
+                }
+            }else{
+                var thingFound = false;
+                var i = authorization[thing.Class+'s'].length;
+                while(i--){
+                    if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
+                        authorization[thing.Class+'s'].splice(i,1);
+                        thing.isAuthorized = false;
+                    }
+                }
+            }
+        }
+        */
 
   }])
 

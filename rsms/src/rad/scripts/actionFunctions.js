@@ -929,9 +929,11 @@ angular
                     var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
-                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
                             //pi.loadRooms();
                             pi.Rooms = tempPI.Rooms;
+                            pi.Departments = tempPI.Departments;
+                            pi.loadPIAuthorizations();
                             pi.loadActiveParcels();
                             pi.loadPurchaseOrders();
                             pi.loadCarboyUseCycles();
@@ -940,6 +942,7 @@ angular
                         });
                 }else{
                     //pi.loadRooms();
+                    pi.loadPI_Authorizations();
                     pi.loadActiveParcels();
                     pi.loadPurchaseOrders();
                     pi.loadCarboyUseCycles();
@@ -2055,16 +2058,35 @@ angular
                     )
             }
 
-            af.savePIAuthorization = function(auth, copy){
+            af.savePIAuthorization = function(copy, auth, pi){
+                console.log(copy);
+                copy.Rooms = [];
+                if(pi.Rooms){
+                    var i = pi.Rooms.length;
+                    while(i--){
+                        if(pi.Rooms[i].isAuthorized)copy.Rooms.push(pi.Rooms[i]);
+                    }
+                }
+
+                if(pi.Departments){
+                    var i = pi.Departments.length;
+                    while(i--){
+                        if(pi.Departments[i].isAuthorized)copy.Departments.push(pi.Departments[i]);
+                    }
+                }
+
                 af.clearError();
                 return this.save(copy)
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
                             if(auth.Key_id){
-                                angular.extend(copy, returnedAuth)
+                                angular.extend(copy, returnedAuth);
+                                auth.Rooms = [];
+                                auth.Rooms = copy.Rooms
                             }else{
                                 dataStoreManager.store(returnedAuth);
+                                pi.Pi_authorization = returnedAuth;
                             }
                             return returnedAuth;
                         },
