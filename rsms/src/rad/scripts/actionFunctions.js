@@ -555,7 +555,7 @@ angular
             {
                 return dataSwitchFactory.getAllObjects('Isotope');
             }
-            
+
             af.saveIsotope = function(copy, isotope)
             {
                 af.clearError();
@@ -1246,11 +1246,9 @@ angular
                     .then(
                         function(returnedCarboy){
                             returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedCarboy );
-                            if(carboy){
+                            if(carboy.Key_id){
                                 angular.extend(carboy, copy)
                             }else{
-                                dataStoreManager.addOnSave(returnedCarboy);
-                                pi.SolidsContainers.push(returnedCarboy);
                                 dataStoreManager.store(returnedCarboy);
                             }
                         },
