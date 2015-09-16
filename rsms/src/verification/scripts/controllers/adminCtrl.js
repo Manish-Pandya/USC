@@ -1,6 +1,6 @@
 angular
     .module('VerificationApp')
-    .controller('AdminCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory) {
+    .controller('AdminCtrl', function ($scope, $rootScope, $modal, applicationControllerFactory, modelInflatorFactory, locationHubFactory, userHubFactory) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;

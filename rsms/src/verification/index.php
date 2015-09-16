@@ -6,6 +6,7 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 }else{
     require_once('../Application.php');
 }
+session_start();
 
 echo '<script type="text/javascript">
 var isProductionServer;';
@@ -14,6 +15,20 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 }
 ?>
 </script>
+
+<!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
+<?php if($_SESSION != NULL){?>
+<script>
+    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
+    //grab usable properties from the session user object
+    var GLOBAL_SESSION_USER = {
+        Name:    '<?php echo $_SESSION['USER']->getName(); ?>',
+        Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+    }
+    var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+</script>
+<?php } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,6 +102,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- business logic-->
 <script type="text/javascript" src="../client-side-framework/rootApplicationController.js"></script>
 <script type="text/javascript" src="./scripts/applicationController.js"></script>
+<script type="text/javascript" src="../js/locationHub.js"></script>
+<script type="text/javascript" src="../js/userHub.js"></script>
 
 <!-- controllers -->
 <script type="text/javascript" src="../client-side-framework/genericModalController.js"></script>
