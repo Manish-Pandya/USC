@@ -56,7 +56,7 @@ require_once '../top_view.php';
             <tr>
                 <th class="greenBg" colspan="4">
                     <h3 class="card-header padding greenBg">Specialty Labs
-                        <a ng-click="openModal(null, true)" class="btn btn-success btn-small left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
+                        <a ng-click="openModal(null, true)" class="btn left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
                     </h3>
                 </th>
             </tr>
