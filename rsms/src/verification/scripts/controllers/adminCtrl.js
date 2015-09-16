@@ -58,12 +58,13 @@ angular
             }
         }
         
-        $scope.openCreateUserModal = function(roleName){
-            var user = {Is_active:true, Roles:[], Supervisor_id:$scope.PI.Key_id, Supervisor:$scope.PI, Class:'User', Is_new:true};
+        $scope.openCreateUserModal = function(userChange){
+            var names = userChange.Name.split(" ");
+            var user = {Is_active:true, First_name:names[0], Last_name:names[1], Name:names[1]+", "+names[0], Roles:[], Supervisor_id:$scope.PI.Key_id, Supervisor:$scope.PI, Class:'User', Is_new:true, PendingUserChangeCopy:userChange};
             var i = uf.roles.length;
             while(i--){
-                if(uf.roles[i].Name.indexOf(roleName)>-1) user.Roles.push(uf.roles[i]);
-                if(uf.roles[i].Name.indexOf('Lab Personnel') > -1 && roleName == "Lab Contact") user.Roles.push(uf.roles[i]);
+                if(uf.roles[i].Name.indexOf(userChange.Role)>-1) user.Roles.push(uf.roles[i]);
+                if(uf.roles[i].Name.indexOf('Lab Personnel') > -1 && userChange.Role == "Lab Contact") user.Roles.push(uf.roles[i]);
             }
             
             uf.setModalData(user);
@@ -73,11 +74,40 @@ angular
             });
             
             modalInstance.result.then(function (returnedUser) {
-              if(user.Key_id){
-                angular.extend(user, returnedUser)
-              }else{
-                uf.users.push(returnedUser);
-              }
+                if(user.Key_id){
+                    angular.extend(user, returnedUser)
+                }else{
+                    uf.users.push(returnedUser);
+                }
+                // Deactivate pendingChange
+                userChange.Is_active = 0;
+                userChange.Approval_date = new Date();
+                ac.savePendingUserChange(user, $scope.verification.Key_id, userChange);
+            });
+
+        }
+        
+        $scope.openCreateRoomModal = function(roomChange){
+            var room = {Is_active: true, Class:'Room', Name:roomChange.Name, Building:{Name:roomChange.Building_name}, PrincipalInvestigators:[], PendingRoomChangeCopy:roomChange};
+            locationHubFactory.setModalData(room);
+
+            var modalInstance = $modal.open({
+                templateUrl: '../views/hubs/locationHubPartials/roomsModal.html',
+                controller: locationModalCtrl
+            });
+
+            modalInstance.result.then(function () {
+                locationHubFactory.getRooms()
+                    .then(
+                        function(rooms){
+                            $scope.rooms = rooms;
+                            $scope.loading = false;
+                        }
+                    )
+                // Deactivate pendingChange
+                roomChange.Is_active = 0;
+                roomChange.Approval_date = new Date();
+                ac.savePendingRoomChange(room, $scope.verification.Key_id, room.Building);
             });
 
         }

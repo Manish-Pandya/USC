@@ -424,7 +424,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
 
         var modalInstance = $modal.open({
           templateUrl: 'locationHubPartials/roomsModal.html',
-          controller: modalCtrl
+          controller: locationModalCtrl
         });
 
 
@@ -541,7 +541,7 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 }
 
-modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
+locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
     
     $scope.roomUses = [
