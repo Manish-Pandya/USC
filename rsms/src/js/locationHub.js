@@ -423,7 +423,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
         locationHubFactory.setModalData(room);
 
         var modalInstance = $modal.open({
-          templateUrl: 'rooms-modal.html',
+          templateUrl: 'locationHubPartials/roomsModal.html',
           controller: modalCtrl
         });
 
