@@ -925,7 +925,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
     $scope.emailErrorMsg = "Invalid email address";
     $scope.pis = userHubFactory.getPIs();
-
+    
     userHubFactory.getAllRoles()
       .then(
         function(roles){
