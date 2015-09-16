@@ -1,5 +1,6 @@
 <div ng-if="pi" class="right-column">
     <h1>{{pi.User.Name}}</h1>
+    
     <div class="card full auths" ng-click="af.setSelectedView('authorizations')">
         <h3 class="card-header padding" ng-if="pi.Pi_authorization.Authorizations.length">
             <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
@@ -14,7 +15,24 @@
 <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
             <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a></h3>
         <div class="card-content" ng-if="selectedView == 'authorizations'">
-            <div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60% "ng-if="pi.Pi_authorization">
+                <div class="table-header">
+                    <h3>Authorization Number</h3>
+                    <h3>Rooms</h3>
+                    <h3>Departments</h3>
+                </div>
+                <div class="table-row">
+                    <div>{{pi.Pi_authorization.Authorization_number}}</div>
+                    <div>
+                        <ul><li ng-repeat="room in pi.Pi_authorization.Rooms">{{room.Name}}</li></ul>
+                    </div>
+                    <div> 
+                        <ul><li ng-repeat="dept in pi.Pi_authorization.Departments">{{dept.Name}}</li></ul>
+                    </div>
+                </div>
+            </div>
+            <h3>Authorized Isotopes</h3>
+            <div class="fake-table striped bordered" ng-if="pi.Pi_authorization.Authorizations.length">
                 <div class="table-header">
                     <h3>Edit</h3>
                     <h3>Isotope</h3>
@@ -25,7 +43,7 @@
                     <h3>Revocation Date</h3>
                     <h3>Form</h3>
                 </div>
-                <div class="table-row" ng-repeat="auth in pi.Authorizations" ng-class="{'inactive':!auth.Is_active}">
+                <div class="table-row" ng-repeat="auth in pi.Pi_authorization.Authorizations" ng-class="{'inactive':!auth.Is_active}">
                     <div>
                         <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
                         <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>

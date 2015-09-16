@@ -208,6 +208,12 @@
 i.carboys {
     color: rgb(122, 6, 109) !important;
 }
+.left-nav ul li a.isotopes {
+    background: rgba(253, 241, 0, .7);
+}
+.left-nav ul li a.isotopes:hover {
+    background: rgba(253, 241, 0, 1);
+}
 .left-nav ul li a.carboys {
     background: rgba(122, 6, 109, 0.5)
 }
@@ -305,7 +311,7 @@ button.btn:not(.btn-large) {
 }
 .banner.radmin,
 .banner.radiation {
-    background: url('../img/radiation-large-icon.png') rgba(253, 254, 167, 1);
+    background: url('../img/radiation-large-icon.png') rgb(253, 241, 0);;
 }
 .banner {
     background: white;
