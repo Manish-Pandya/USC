@@ -209,7 +209,7 @@ i.carboys {
     color: rgb(122, 6, 109) !important;
 }
 .left-nav ul li a.isotopes {
-    background: rgba(253, 241, 0, .7);
+    background: rgba(253, 241, 0, .9);
 }
 .left-nav ul li a.isotopes:hover {
     background: rgba(253, 241, 0, 1);
