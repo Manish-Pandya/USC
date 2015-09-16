@@ -80,7 +80,6 @@ angular
                     uf.users.push(returnedUser);
                 }
                 // Deactivate pendingChange
-                userChange.Is_active = 0;
                 userChange.Approval_date = new Date();
                 ac.savePendingUserChange(user, $scope.verification.Key_id, userChange);
             });
@@ -105,7 +104,6 @@ angular
                         }
                     )
                 // Deactivate pendingChange
-                roomChange.Is_active = 0;
                 roomChange.Approval_date = new Date();
                 ac.savePendingRoomChange(room, $scope.verification.Key_id, room.Building);
             });
