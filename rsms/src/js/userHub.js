@@ -910,7 +910,6 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
     }
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q, $location){
-
     if($location.$$host.indexOf('graysail')<0){
       $scope.isProductionServer = true;
     }else{
