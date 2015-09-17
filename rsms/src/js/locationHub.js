@@ -543,7 +543,7 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
-    
+
     $scope.roomUses = [
         {Name:"Chemical Storage"},
         {Name:"Cold Room"},
@@ -555,11 +555,11 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         {Name:"Rodent Surgery"},
         {Name:"Tissue Culture"}
     ];
-    
+
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
     $scope.selectedUse = {Name:$scope.modalData.Purpose};
-    
+
     locationHubFactory.getBuildings().then(
         function(buildings){
             $scope.buildings = buildings;
@@ -659,7 +659,6 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=savePIRoomRelation';
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
             function(){
-
                 var rooms = locationHubFactory.rooms;
                 var i = rooms.length;
                 while(i--){
@@ -668,15 +667,13 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                         break;
                     }
                 }
-
+                if(!room.PrincipalInvestigators)room.PrincipalInvestigators = [];
                 if(!adding){
                     var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
-                    room.PrincipalInvestigators.splice(idx,1);
                     //find the room in the factory collection of rooms, remove the pi from it as well
-                    originalRoom.PrincipalInvestigators.splice(idx,1);
+                    room.PrincipalInvestigators.splice(idx,1);
                 }else{
                     room.PrincipalInvestigators.push(pi);
-                    originalRoom.PrincipalInvestigators.push(pi);
                 }
                 pi.saving = false;
             },
