@@ -24,7 +24,7 @@ CarboyUseCycle.prototype = {
     loadCarboy:function(){
         console.log(this);
         if(!this.Carboy){
-            dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
+            //dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
         }
     },
 
@@ -33,7 +33,7 @@ CarboyUseCycle.prototype = {
     },
 
     loadPrincipal_investigator: function(){
-        dataLoader.loadChildObject(this, "Principal_investigator", "PrincipalInvestigator", this.Principal_investigator_id);
+        if(!this.Principal_investigator)dataLoader.loadChildObject(this, "Principal_investigator", "PrincipalInvestigator", this.Principal_investigator_id);
     }
 }
 

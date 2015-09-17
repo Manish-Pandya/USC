@@ -50,7 +50,7 @@
                 </div>
             </div>
             <ul style="margin-left:130px; margin-top:-28px;">
-                <li ng-repeat="pi in modalData.PrincipalInvestigators"><p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p></li>
+                <li ng-repeat="pi in modalData.PrincipalInvestigators track by $index"><p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p></li>
             </ul>
 
         </form>
