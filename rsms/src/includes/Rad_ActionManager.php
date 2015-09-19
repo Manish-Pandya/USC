@@ -53,7 +53,21 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'id' was provided", 201);
         }
     }
+    
+    function getAuthorizationById($id = NULL) {
+        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new Authorization());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+    }
+    
     function getCarboyById($id = NULL) {
         $LOG = Logger::getLogger('Action:' . __FUNCTION__ );
 

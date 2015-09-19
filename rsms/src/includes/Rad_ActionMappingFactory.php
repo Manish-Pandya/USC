@@ -18,6 +18,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 				// get functions
 				"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getAuthorizationById" 			=> new ActionMapping("getAuthorizationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getCarboyById" 				=> new ActionMapping("getCarboyById", "", "",$this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getDrumById" 					=> new ActionMapping("getDrumById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
