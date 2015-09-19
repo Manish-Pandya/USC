@@ -14,14 +14,15 @@
         </select>
      </div>
   </div>
-
   <div class="control-group">
      <label class="control-label">Authorization</label>
      <div class="controls">
-        <select data-ng-model="modalData.ParcelCopy.Authorization_id">
+         <div class="controls">
+         <span ng-if="modalData.ParcelCopy.Authorization" ng-init="modalData.ParcelCopy.Authorization = getAuth(modalData.ParcelCopy.Authorization, modalData.pi.Pi_authorization.Authorizations)"/>
+         <select data-ng-options="auth.Isotope.Name +' ('+ auth.Form +')' for auth in modalData.pi.Pi_authorization.Authorizations" data-ng-model="modalData.ParcelCopy.Authorization">
             <option selected="selected" value="">Select an authorization</option>
-            <option ng-repeat="auth in modalData.pi.Pi_authorization.Authorizations" value="{{auth.Key_id}}">{{auth.Isotope.Name}}: ({{auth.Form}})</option>
         </select>
+     </div>
      </div>
   </div>
 
@@ -35,7 +36,7 @@
   <div class="control-group">
      <label class="control-label" for="inputEmail">Purchase Order</label>
      <div class="controls">
-        <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.Purchase_order">
+        <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.PurchaseOrder">
             <option style="display:none" value="">Select a Purchase Order</option>
         </select>
      </div>

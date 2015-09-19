@@ -238,35 +238,18 @@ angular.module('00RsmsAngularOrmApp')
             }
             return false;
         }
-/*
-        $scope.checkboxChange = function(thing, authorization){
-            if(thing.isAuthorized){
-                if(!authorization[thing.Class+'s']){
-                    authorization[thing.Class+'s'] = [thing];
-                }else{
-                    var thingFound = false;
-                    var i = authorization[thing.Class+'s'].length;
-                    while(i--){
-                        if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                            thingFound = true;
-                        }
-                    }
-                    if(!thingFound){
-                        authorization[thing.Class+'s'].push(thing)
-                    }
-                }
-            }else{
-                var thingFound = false;
-                var i = authorization[thing.Class+'s'].length;
-                while(i--){
-                    if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                        authorization[thing.Class+'s'].splice(i,1);
-                        thing.isAuthorized = false;
-                    }
+        
+        $scope.getAuth = function(auth, auths){
+            if(!auth)return;
+            var i = auths.length;
+            while(i--){
+                auths[i].testing= 'test';
+                if(auth.Key_id == auths[i].Key_id){
+                    console.log(auth);
+                    return auth;
                 }
             }
         }
-        */
 
   }])
 
