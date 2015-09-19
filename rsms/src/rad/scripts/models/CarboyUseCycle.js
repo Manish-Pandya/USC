@@ -4,11 +4,12 @@
 //constructor
 var CarboyUseCycle = function() {};
 CarboyUseCycle.prototype = {
-	className: "CarboyUseCycle",
+    className: "CarboyUseCycle",
 
-	eagerAccessors:[
-		{method:"loadCarboy", boolean: 'Carboy_id'},
-	],
+    eagerAccessors:[
+        {method:"loadCarboy", boolean: 'Carboy_id'},
+        {method:"loadPrincipal_investigator", boolean: 'Principal_investigator_id'},
+    ],
 
     CarboyReadingAmountsRelationship: {
 
@@ -21,13 +22,18 @@ CarboyUseCycle.prototype = {
     },
     // TODO eager accessors, relationships, method names.
     loadCarboy:function(){
-    	if(!this.Carboy){
-            dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
+        console.log(this);
+        if(!this.Carboy){
+            //dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
         }
     },
 
     loadCarboy_reading_amounts:function(){
         dataLoader.loadOneToManyRelationship( this, 'Carboy_reading_amounts', this.CarboyReadingAmountsRelationship);
+    },
+
+    loadPrincipal_investigator: function(){
+        if(!this.Principal_investigator)dataLoader.loadChildObject(this, "Principal_investigator", "PrincipalInvestigator", this.Principal_investigator_id);
     }
 }
 

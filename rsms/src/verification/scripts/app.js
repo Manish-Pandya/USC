@@ -21,7 +21,9 @@ angular
     'ui.router',
     'modalPosition',
     'convenienceMethodWithRoleBasedModule',
-    'filtersApp'
+    'filtersApp',
+    'locationHub',
+    'userList'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {

@@ -555,7 +555,7 @@ angular
             {
                 return dataSwitchFactory.getAllObjects('Isotope');
             }
-            
+
             af.saveIsotope = function(copy, isotope)
             {
                 af.clearError();
@@ -1116,8 +1116,10 @@ angular
             **
             ********************************************************************/
 
-            af.saveAuthorization = function( pi, copy, auth )
-            {
+            af.saveAuthorization = function( pi, copy, auth ){
+
+                console.log(pi);
+                copy.Pi_authorization_id = pi.Pi_authorization.Key_id;
                 af.clearError();
                 return this.save( copy )
                     .then(
@@ -1127,7 +1129,7 @@ angular
                                 angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
-                                pi.Authorizations.push(returnedAuth);
+                                pi.Pi_authorization.Authorizations.push(returnedAuth);
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1246,11 +1248,9 @@ angular
                     .then(
                         function(returnedCarboy){
                             returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedCarboy );
-                            if(carboy){
+                            if(carboy.Key_id){
                                 angular.extend(carboy, copy)
                             }else{
-                                dataStoreManager.addOnSave(returnedCarboy);
-                                pi.SolidsContainers.push(returnedCarboy);
                                 dataStoreManager.store(returnedCarboy);
                             }
                         },

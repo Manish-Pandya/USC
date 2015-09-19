@@ -910,7 +910,6 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
     }
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q, $location){
-
     if($location.$$host.indexOf('graysail')<0){
       $scope.isProductionServer = true;
     }else{
@@ -926,7 +925,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
     $scope.emailErrorMsg = "Invalid email address";
     $scope.pis = userHubFactory.getPIs();
-
+    
     userHubFactory.getAllRoles()
       .then(
         function(roles){
