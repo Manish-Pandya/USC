@@ -86,7 +86,7 @@
         <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
         <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
         <div class="card-content" ng-if="selectedView == 'orders'">
-            <div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+            <div class="fake-table striped bordered" ng-if="pi.PurchaseOrders.length">
                 <div class="table-header">
                     <h3>Edit</h3>
                     <h3>P.O. Number</h3>
