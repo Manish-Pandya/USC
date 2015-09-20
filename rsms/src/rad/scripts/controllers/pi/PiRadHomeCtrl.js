@@ -14,7 +14,7 @@ angular.module('00RsmsAngularOrmApp')
   		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
   			.then(
   				function(pi){
-  					$scope.pi = pi;
+  					$scope.pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
   				},
   				function(){}
   			)

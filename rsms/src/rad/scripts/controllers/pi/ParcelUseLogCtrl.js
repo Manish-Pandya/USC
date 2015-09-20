@@ -16,16 +16,21 @@ angular.module('00RsmsAngularOrmApp')
   		var getPi = function(){
         return af.getRadPIById($stateParams.pi)
     			.then(
-    				function(){
-              $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
-              return $scope.pi;
+    				function(pi){
+                      $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
+                      return $scope.pi;
     				},
     				function(){}
     			)
       }
 
       var getParcel = function(pi){
-        $scope.parcel = af.getById('Parcel',$stateParams.parcel);
+          pi.loadActiveParcels().then(
+            function(){
+                $scope.parcel = af.getById('Parcel',$stateParams.parcel);
+            }
+          )
+        console.log(dataStore);
         console.log($scope.parcel);
       }
 

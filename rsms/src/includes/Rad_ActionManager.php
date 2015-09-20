@@ -365,7 +365,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getSolidsContainers");
         $entityMaps[] = new EntityMap("eager", "getPickups");
         $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
@@ -807,9 +807,28 @@ class Rad_ActionManager extends ActionManager {
                     $newAmount->setCurie_level($amount['Curie_level']);
                     if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                     if($amount['Carboy_id'] != NULL)$newAmount->setCarboy_id($amount['Carboy_id']);
+                    if($amount['Scint_vial_collection_id'] != NULL)$newAmount->setScint_vial_collection_id($amount['Scint_vial_collection_id']);
                     if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
                     if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
                     $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                    
+                    //If this is Scintillation Vial waste, make sure we have a Scint_vial_collection
+                    if($amount['Waste_type_id'] == 3){
+                    	$pi = $this->getPIById($decodedObject->getParcel()->getPrincipal_investigator_id());
+                    	if($pi->getCurrentScintVialCollections() == NULL){
+                    		$collectionDao = $this->getDao(new ScintVialCollection());
+                    		$collection = new ScintVialCollection();
+                    		$collection->setPrincipal_investigator_id($pi->getKey_id());
+                    		$collection = $collectionDao->save($collection);
+                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
+                    	}else{
+                    		$collection = end($pi->getCurrentScintVialCollections());
+                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
+                    	}
+                    	$collection = $collectionDao->save($collection);
+                    	 
+                    }
+                    
                     $amountDao->save($newAmount);
                 }
             }

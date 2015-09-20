@@ -947,7 +947,6 @@ angular
 
             af.getRadPI = function(pi)
             {
-
                 if(!store.checkCollection( 'Parcel' )){
                     var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
@@ -1367,14 +1366,13 @@ angular
                     )
             }
 
-            af.saveParcelUse = function(parcel, copy, use){
+            af.saveParcelUse = function(parcel, copy, use, pi){
                 console.log(copy);
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
                     .then(
                         function(returnedUse){
-                            console.log(returnedUse);
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
@@ -1399,6 +1397,10 @@ angular
                             }
                             parcel.Quantity = parcel.Quantity-total;
                             use.edit = false;
+                            
+                            //if a new ScintVialCollection had to be created, load it.  If it already exists in the cache, this call won't cost much
+                            pi.loadCurrentScintVialCollection();
+                            
                             af.clearError();
                             return parcel;
                         },

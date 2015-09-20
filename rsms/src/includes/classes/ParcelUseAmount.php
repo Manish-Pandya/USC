@@ -21,6 +21,7 @@ include_once 'RadCrud.php';
         "carboy_id"          		=> "integer",
     	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
+    	"scint_vial_collection_id"	=> "integer",
     	"comments"					=> "text",
 
         //GenericCrud
@@ -57,6 +58,8 @@ include_once 'RadCrud.php';
     /** Reference to the WasteBag containing this amount.  Null if not solid wast */
     private $waste_bag;
     private $waste_bag_id;
+    
+    private $scint_vial_collection_id;
 
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
@@ -109,6 +112,9 @@ include_once 'RadCrud.php';
     public function getWaste_type_id() { return $this->waste_type_id; }
     public function setWaste_type_id($newValue) { $this->waste_type_id = $newValue; }
 
+    public function getScint_vial_collection_id(){ return $this->scint_vial_collection_id; }
+    public function setScint_vial_collection_id($newValue){ $this->scint_vial_collection_id = $newValue; }
+    
     public function getCarboy() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
     	if($this->carboy == NULL && $this->getCarboy_id() != null) {
