@@ -2,7 +2,8 @@
 require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/piHub.js"></script>
-<script src="../../js/userHub.js"></script>
+<script src="<?php echo WEB_ROOT?>js/userHub.js"></script>
+<script src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
 
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div class="navbar">

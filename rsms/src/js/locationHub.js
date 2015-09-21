@@ -628,7 +628,7 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                             collection.push(returned);
                             obj.IsDirty=false;
                         }
-                        $modalInstance.close();
+                        $modalInstance.close(obj);
                     },
                     function(){
                         $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';

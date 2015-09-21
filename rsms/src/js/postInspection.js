@@ -194,7 +194,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   }
 
   factory.setDatesForServer = function(obj, dateProperty){
-    //by removing the string 'view' from the date property, we access the orginal MySQL datetime from which the property was set
+    //by removing the string 'view' from the date property, we access the Original MySQL datetime from which the property was set
     //i.e. corrective_action.viewPromised_date is the matching property to corrective_action.Promised_date
     if(!obj[dateProperty]){
       obj[dateProperty] = new Date();
