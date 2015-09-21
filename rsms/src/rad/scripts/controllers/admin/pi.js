@@ -167,10 +167,21 @@ angular.module('00RsmsAngularOrmApp')
             af.saveAuthorization(pi, copy, auth)
         }
 
-        $scope.saveParcel = function(pi, copy, parcel){
-           $modalInstance.dismiss();
-           af.deleteModalData();
-           af.saveParcel( pi, copy, parcel )
+        $scope.saveParcel = function(copy, parcel, pi, force){
+           console.log(copy);
+           if(!force && !getAllowed(copy.Authorization, copy.Quantity)){
+               $scope.needsConfirmation = true;
+           }else{
+               $scope.needsConfirmation = false;
+               af.saveParcel( copy, parcel, pi )
+                .then(
+                    function(){
+                        $modalInstance.dismiss();
+                        af.deleteModalData();
+                    }
+                )
+           }
+           
         }
 
 
@@ -249,6 +260,27 @@ angular.module('00RsmsAngularOrmApp')
                     return auth;
                 }
             }
+        }
+        
+        function getAllowed(auth, amount){
+            var allowed = auth.Max_quantity - amount;
+            console.log(allowed);
+            if(allowed <= 0){
+              return false;
+            }
+            var i = $rootScope.pi.ActiveParcels.length;
+            while(i--){
+                console.log(i);
+                if($rootScope.pi.ActiveParcels[i].Authorization_id == auth.Key_id){
+                    allowed -= parseFloat($rootScope.pi.ActiveParcels[i].OnHand);
+                    console.log(allowed);
+                    if(allowed <= 0){
+                      return false;
+                    }
+                }
+               
+            }
+            return true;
         }
 
   }])

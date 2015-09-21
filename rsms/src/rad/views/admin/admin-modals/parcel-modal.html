@@ -3,54 +3,57 @@
 </div>
 
 <div class="modal-body">
-  <div class="control-group">
-     <label class="control-label">Status</label>
-     <div class="controls">
-        <select data-ng-model="modalData.ParcelCopy.Status" >
-            <option value="Ordered">Ordered</option>
-            <option value="Wipe Tested">Wipe Tested</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Disposed">Disposed</option>
-        </select>
-     </div>
-  </div>
-  <div class="control-group">
-     <label class="control-label">Authorization</label>
-     <div class="controls">
-         <div class="controls">
-         <span ng-if="modalData.ParcelCopy.Authorization" ng-init="modalData.ParcelCopy.Authorization = getAuth(modalData.ParcelCopy.Authorization, modalData.pi.Pi_authorization.Authorizations)"/>
-         <select data-ng-options="auth.Isotope.Name +' ('+ auth.Form +')' for auth in modalData.pi.Pi_authorization.Authorizations" data-ng-model="modalData.ParcelCopy.Authorization">
-            <option selected="selected" value="">Select an authorization</option>
-        </select>
-     </div>
-     </div>
-  </div>
+    <div class="control-group">
+        <label class="control-label">Status</label>
+        <div class="controls">
+            <select data-ng-model="modalData.ParcelCopy.Status">
+                <option value="Ordered">Ordered</option>
+                <option value="Wipe Tested">Wipe Tested</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Disposed">Disposed</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Authorization</label>
+        <div class="controls">
+            <div class="controls">
+                <span ng-if="modalData.ParcelCopy.Authorization" ng-init="modalData.ParcelCopy.Authorization = getAuth(modalData.ParcelCopy.Authorization, modalData.pi.Pi_authorization.Authorizations)" ng-change="modalData.ParcelCopy.Authorization_id = modalData.ParcelCopy.Authorization.Key_id"/>
+                <select data-ng-options="auth.Isotope.Name +' ('+ auth.Form +')' for auth in modalData.pi.Pi_authorization.Authorizations" data-ng-model="modalData.ParcelCopy.Authorization">
+                    <option selected="selected" value="">Select an authorization</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
-  <div class="control-group">
-     <label class="control-label">R.S. Number</label>
-     <div class="controls">
-         <input ng-model="modalData.ParcelCopy.Rs_number" />
-     </div>
-  </div>
+    <div class="control-group">
+        <label class="control-label">R.S. Number</label>
+        <div class="controls">
+            <input ng-model="modalData.ParcelCopy.Rs_number" />
+        </div>
+    </div>
 
-  <div class="control-group">
-     <label class="control-label" for="inputEmail">Purchase Order</label>
-     <div class="controls">
-        <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.PurchaseOrder">
-            <option style="display:none" value="">Select a Purchase Order</option>
-        </select>
-     </div>
-  </div>
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Purchase Order</label>
+        <div class="controls">
+            <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.PurchaseOrder">
+                <option style="display:none" value="">Select a Purchase Order</option>
+            </select>
+        </div>
+    </div>
 
-  <div class="control-group">
-     <label class="control-label" for="inputEmail">Quantity</label>
-     <div class="controls input-append">
-        <input ng-model="modalData.ParcelCopy.Quantity"/><span class="add-on">mCi</span>
-     </div>
-  </div>
-
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Quantity</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">mCi</span>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
-  <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
-  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    <div class="alert alert-danger" ng-if="needsConfirmation" style="text-align:left;">
+        <h3>The quantity you are trying to order exceeds {{modalData.pi.User.Name}}'s authorized amount for {{modalData.ParcelCopy.Authorization.Isotope.Name}} in {{modalData.ParcelCopy.Authorization.Form}} form.</h3>
+    </div>
+    <a ng-if="needsConfirmation" class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi, true)"><i class="icon-checkmark"></i>Confirm Order</a>
+    <a ng-if="!needsConfirmation" class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>
