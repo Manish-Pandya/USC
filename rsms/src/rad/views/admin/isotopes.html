@@ -9,6 +9,7 @@
                     <h3>Edit</h3>
 					<h3>Name</h3>
 					<h3>Half Life</h3>
+                    <h3>Emitter Type</h3>
 				</div>
 				<div class="table-row" ng-repeat="isotope in isotopes ">
                     <div>
@@ -19,7 +20,10 @@
 						{{isotope.Name}}
 					</div>
 					<div>
-						{{isotope.Half_life}} Days
+						{{isotope.Display_half_life}} {{isotope.Unit}}
+					</div>
+                    <div>
+						{{isotope.Emitter_type}}
 					</div>
 				</div>
 			</div>
