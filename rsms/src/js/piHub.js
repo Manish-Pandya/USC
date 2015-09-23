@@ -1,4 +1,4 @@
-var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','userList'])
+var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','userList','locationHub'])
 
 .config(function($routeProvider){
     $routeProvider
@@ -71,8 +71,39 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBa
     }
 
     return factory;
-});
-
+})
+.filter('isOfType',function(){
+    return function(users, type){
+        if(!users || !type)return;
+        var usersOfType = [];
+        var i = users.length;
+        while(i--){
+            if( type == "Lab Contact" ){
+                if(users[i].Supervisor_id)continue;
+                var j = users[i].Roles.length;
+                while(j--){
+                    if(users[i].Roles[j].Name == "Lab Contact")usersOfType.push(users[i])
+                }
+            }else{
+                if(users[i].Supervisor_id)continue;
+                users[i].isPersonnel = false;
+                users[i].isContact = false;
+                var j = users[i].Roles.length;
+                while(j--){
+                    if(users[i].Roles[j].Name == "Lab Personnel" || users[i].Roles[j].Name == "Lab Member" ){
+                       users[i].isPersonnel = true;
+                    }else if(users[i].Roles[j].Name == "Lab Contact"){
+                       users[i].isContact = true;
+                    }
+                }
+                if (users[i].isPersonnel && !users[i].isContact){
+                    usersOfType.push(users[i]);
+                }
+            }
+        }
+        return usersOfType;
+    }
+})
 piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
     $scope.doneLoading = false;
 
@@ -406,12 +437,27 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
 
 }
 
-piHubRoomController = function($scope, $location, convenienceMethods){
+piHubRoomController = function($scope, $location, convenienceMethods, locationHubFactory, $modal, piHubFactory){
 
     init();
     function init(){
         //var url = '../../ajaxaction.php?action=getAllDepartments&callback=JSON_CALLBACK';
         //convenienceMethods.getData( url, onGetDepartemnts, onFailGetDepartments );
+    }
+    $scope.createRoom = function(pi){
+        var room = {Is_active: true, Class:'Room', Name:'', Building:{Name:''}, PrincipalInvestigators:[pi]};
+        locationHubFactory.setModalData(room);
+
+        var modalInstance = $modal.open({
+          templateUrl: 'locationHubPartials/roomsModal.html',
+          controller: locationModalCtrl
+        });
+
+        modalInstance.result.then(
+            function (room) {
+                pi.Rooms.push(room);
+            }
+        );
     }
 
 }

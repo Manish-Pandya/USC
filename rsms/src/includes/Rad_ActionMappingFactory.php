@@ -18,6 +18,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 				// get functions
 				"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getAuthorizationById" 			=> new ActionMapping("getAuthorizationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getCarboyById" 				=> new ActionMapping("getCarboyById", "", "",$this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getCarboyUseCycleById" 		=> new ActionMapping("getCarboyUseCycleById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getDrumById" 					=> new ActionMapping("getDrumById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -29,10 +30,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getRadPIById"					=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getParcelWipeById"				=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getInspectionWipeTestById"		=> new ActionMapping("getInspectionWipeTestById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getInspectionWipeById"			=> new ActionMapping("getInspectionWipeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelWipeTestById"			=> new ActionMapping("getParcelWipeTestById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getParcelWipeById"				=> new ActionMapping("getParcelWipeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getRadInspectionById"			=> new ActionMapping("getRadInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 				// get entity by relationship functions

@@ -167,12 +167,22 @@ angular.module('00RsmsAngularOrmApp')
             af.saveAuthorization(pi, copy, auth)
         }
 
-        $scope.saveParcel = function(pi, copy, parcel){
-           $modalInstance.dismiss();
-           af.deleteModalData();
-           af.saveParcel( pi, copy, parcel )
+        $scope.saveParcel = function(copy, parcel, pi, force){
+           console.log(copy);
+           if(!force && !getAllowed(copy.Authorization, copy.Quantity)){
+               $scope.needsConfirmation = true;
+           }else{
+               $scope.needsConfirmation = false;
+               af.saveParcel( copy, parcel, pi )
+                .then(
+                    function(){
+                        $modalInstance.dismiss();
+                        af.deleteModalData();
+                    }
+                )
+           }
+           
         }
-
 
         $scope.savePO = function(pi, copy, po){
            $modalInstance.dismiss();
@@ -238,35 +248,39 @@ angular.module('00RsmsAngularOrmApp')
             }
             return false;
         }
-/*
-        $scope.checkboxChange = function(thing, authorization){
-            if(thing.isAuthorized){
-                if(!authorization[thing.Class+'s']){
-                    authorization[thing.Class+'s'] = [thing];
-                }else{
-                    var thingFound = false;
-                    var i = authorization[thing.Class+'s'].length;
-                    while(i--){
-                        if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                            thingFound = true;
-                        }
-                    }
-                    if(!thingFound){
-                        authorization[thing.Class+'s'].push(thing)
-                    }
-                }
-            }else{
-                var thingFound = false;
-                var i = authorization[thing.Class+'s'].length;
-                while(i--){
-                    if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                        authorization[thing.Class+'s'].splice(i,1);
-                        thing.isAuthorized = false;
-                    }
+        
+        $scope.getAuth = function(auth, auths){
+            if(!auth)return;
+            var i = auths.length;
+            while(i--){
+                auths[i].testing= 'test';
+                if(auth.Key_id == auths[i].Key_id){
+                    console.log(auth);
+                    return auth;
                 }
             }
         }
-        */
+        
+        function getAllowed(auth, amount){
+            var allowed = auth.Max_quantity - amount;
+            console.log(allowed);
+            if(allowed <= 0){
+              return false;
+            }
+            var i = $rootScope.pi.ActiveParcels.length;
+            while(i--){
+                console.log(i);
+                if($rootScope.pi.ActiveParcels[i].Authorization_id == auth.Key_id){
+                    allowed -= parseFloat($rootScope.pi.ActiveParcels[i].OnHand);
+                    console.log(allowed);
+                    if(allowed <= 0){
+                      return false;
+                    }
+                }
+               
+            }
+            return true;
+        }
 
   }])
 

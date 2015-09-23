@@ -12,6 +12,7 @@ PrincipalInvestigator.prototype = {
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
         {method:"loadWasteBags", boolean:"SolidsContainers"},
+        {method:"loadActiveParcels", boolean:"ActiveParcels"},
     ],
 
     UserRelationship: {
@@ -113,36 +114,36 @@ PrincipalInvestigator.prototype = {
     Buildings: {},
 
     loadActiveParcels: function() {
-        dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
+        return dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
     },
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
+        return dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
     },
 
     loadPurchaseOrders: function() {
-        dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+        return dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
     },
 
     loadSolidsContainers: function() {
-        dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
+        return dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
     },
 
     loadCarboyUseCycles: function() {
-        dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
+        return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
     },
 
     loadPickups: function() {
-        dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
+        return dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
     },
 
     loadPIAuthorizations: function() {
-        dataLoader.loadChildObject(this, 'Pi_authorization', 'PIAuthorization', this.Key_id);
+        return dataLoader.loadChildObject(this, 'Pi_authorization', 'PIAuthorization', this.Key_id);
     },
 
     loadUser:  function() {
         if(!this.User && this.User_id) {
-            dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
+            return dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
         }
     },
 
@@ -160,7 +161,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadCurrentScintVialCollection: function(){
-        dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollection', this.CurrentScintVialCollectionRelationship, this.CurrentScintVialCollectionRelationship.where);
+        return dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship, this.CurrentScintVialCollectionRelationship.where);
     }
 
 }

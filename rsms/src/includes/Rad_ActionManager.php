@@ -53,7 +53,21 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'id' was provided", 201);
         }
     }
+    
+    function getAuthorizationById($id = NULL) {
+        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new Authorization());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+    }
+    
     function getCarboyById($id = NULL) {
         $LOG = Logger::getLogger('Action:' . __FUNCTION__ );
 
@@ -351,7 +365,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getSolidsContainers");
         $entityMaps[] = new EntityMap("eager", "getPickups");
         $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
@@ -608,6 +622,9 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Authorization());
+            if($decodedObject->getApproval_date() == NULL){
+            	$decodedObject->setApproval_date( date( 'Y-m-d H:i:s' ) );
+            }
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -624,6 +641,18 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Isotope());
+            
+            //set the half_life in days, based on the display_half_life and unit
+            //default to days, don't change half-life
+            $factor = 1;
+            if( $decodedObject->getUnit() == "Years" ){
+            	//half life in years, 365.25 (days in a year) is the magic number, yes it is.
+            	$factor = 365.25;
+            }elseif ( $decodedObject->getUnit() == "Hours" ){
+            	//half life in hours, 1/24 (days in an hour) is the magic number, yes it is.
+            	$factor = 1/24;
+            }
+            $decodedObject->setHalf_life( $decodedObject->getDisplay_half_life() * $factor );
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -793,9 +822,28 @@ class Rad_ActionManager extends ActionManager {
                     $newAmount->setCurie_level($amount['Curie_level']);
                     if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                     if($amount['Carboy_id'] != NULL)$newAmount->setCarboy_id($amount['Carboy_id']);
+                    if($amount['Scint_vial_collection_id'] != NULL)$newAmount->setScint_vial_collection_id($amount['Scint_vial_collection_id']);
                     if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
                     if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
                     $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                    
+                    //If this is Scintillation Vial waste, make sure we have a Scint_vial_collection
+                    if($amount['Waste_type_id'] == 3){
+                    	$pi = $this->getPIById($decodedObject->getParcel()->getPrincipal_investigator_id());
+                    	if($pi->getCurrentScintVialCollections() == NULL){
+                    		$collectionDao = $this->getDao(new ScintVialCollection());
+                    		$collection = new ScintVialCollection();
+                    		$collection->setPrincipal_investigator_id($pi->getKey_id());
+                    		$collection = $collectionDao->save($collection);
+                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
+                    	}else{
+                    		$collection = end($pi->getCurrentScintVialCollections());
+                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
+                    	}
+                    	$collection = $collectionDao->save($collection);
+                    	 
+                    }
+                    
                     $amountDao->save($newAmount);
                 }
             }

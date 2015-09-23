@@ -1,6 +1,6 @@
 <div ng-if="pi" class="right-column">
     <h1>{{pi.User.Name}}</h1>
-    
+
     <div class="card full auths" ng-click="af.setSelectedView('authorizations')">
         <h3 class="card-header padding" ng-if="pi.Pi_authorization.Authorizations.length">
             <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
@@ -9,7 +9,7 @@
                 under Authorization #{{pi.Pi_authorization.Authorization_number}}
             </span>
              <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
-            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a
+            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a>
         </h3>
         <h3 class="card-header padding auths" ng-if="!pi.Pi_authorization.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="pi.Pi_authorization">under Authorization #{{pi.Pi_authorization.Authorization_number}}</span>
 <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
@@ -26,7 +26,7 @@
                     <div>
                         <ul><li ng-repeat="room in pi.Pi_authorization.Rooms">{{room.Name}}</li></ul>
                     </div>
-                    <div> 
+                    <div>
                         <ul><li ng-repeat="dept in pi.Pi_authorization.Departments">{{dept.Name}}</li></ul>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div>
-                        {{auth.Isotope.Half_life}}
+                        {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
                     </div>
 
                     <div>
@@ -86,7 +86,7 @@
         <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
         <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
         <div class="card-content" ng-if="selectedView == 'orders'">
-            <div class="fake-table striped bordered" ng-if="pi.Authorizations.length">
+            <div class="fake-table striped bordered" ng-if="pi.PurchaseOrders.length">
                 <div class="table-header">
                     <h3>Edit</h3>
                     <h3>P.O. Number</h3>
@@ -132,7 +132,7 @@
                     <h3>Status</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Orginal Quantity</h3>
+                    <h3>Original Quantity</h3>
                     <h3>Remaining Quantity</h3>
                 </div>
                 <div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
@@ -172,7 +172,6 @@
                     <div>
                         {{parcel.Remainder}} mCi
                     </div>
-
                 </div>
             </div>
         </div>
@@ -232,3 +231,4 @@
         </div>
     </div>
 </div>
+    

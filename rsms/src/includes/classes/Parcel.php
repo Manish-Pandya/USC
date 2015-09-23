@@ -74,6 +74,9 @@ class Parcel extends RadCrud {
 
 	/** Float ammount of isotope that has not been used yet. */
 	private $remainder;
+	
+	/** Float ammount of isotope that has not been picked up yet, regardless of whether it has been used */
+	private $onHand;
 
 	/** Array of parcel uses that pertain to this parcel. */
 	private $parcelUses;
@@ -187,6 +190,22 @@ class Parcel extends RadCrud {
 			$this->remainder = $this->getQuantity() - $usedAmount;
 		}
 		return $this->remainder;
+	}
+	
+	public function getOnHand(){
+		$this->onHand = $this->getQuantity();
+		$uses = $this->getParcelUses();
+		foreach($uses as $use){
+			$amounts = $use->getParcelUseAmounts();
+			foreach ($amounts as $amount){
+				$amount = new ParcelUseAmount();
+				if($amount->getPickedUp() == true){
+					$this->onHand -= $amount->getCurie_level();
+				}
+			}
+		}
+		
+		return $this->onHand;
 	}
 
 	public function getRs_number(){return $this->rs_number;}

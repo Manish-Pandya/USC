@@ -1,6 +1,6 @@
 <div cg-busy="{promise:parcelPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:ParcelUseSaving,message:'Saving Use', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-
+<!--<pre>{{parcel | json}}</pre>-->
 <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
 <div style="margin-top:70px;" ng-if="pi">
     <div class="card full parcels">
@@ -10,7 +10,7 @@
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Orginal Quantity</h3>
+                    <h3>Original Quantity</h3>
                     <h3>Remaining Quantity</h3>
                 </div>
                 <div class="table-row">
@@ -19,7 +19,7 @@
                     </div>
 
                     <div>
-                        {{parcel.Isotope.Name}}
+                        {{parcel.Authorization.IsotopeName}}
                     </div>
 
                     <div>
@@ -48,8 +48,7 @@
                     <h3>Use</h3>
                     <h3>Amount</h3>
                     <h3>Disposals</h3>
-                    <h3></h3>
-                </div>
+                 </div>
                 <div class="table-row top-align" ng-repeat="use in parcel.ParcelUses">
                     <div ng-class="{'extra-top': use.edit}">
                         <a ng-if="!use.edit" class="btn btn-primary" ng-click="editUse(use)"><i class="icon-pencil"></i></a>
@@ -123,7 +122,7 @@
                             </div>
                             <div class="table-row row-fluid edit" ng-if="use.edit">
                                 <div class="use-amount solids">
-                                    <label class="control-label" for="solid-curies">Sol: <a ng-click="addAmount('Solids')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="solid-curies">Sol: <a ng-click="addAmount('Solids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:4})">
                                         <div class="control-group">
                                              <div class="controls input-append">
@@ -137,7 +136,7 @@
                                     </div>
                                 </div>
                                 <div class="use-amount liquids">
-                                    <label class="control-label" for="liquid-curies">Liq: <a ng-click="addAmount('Liquids')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="liquid-curies">Liq: <a ng-click="addAmount('Liquids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:1})">
                                         <div class="control-group">
                                              <div class="controls input-append">
@@ -152,7 +151,7 @@
                                     </div>
                                 </div>
                                 <div class="use-amount vials">
-                                    <label class="control-label" for="vial-curies">S/V: <a ng-click="addAmount('Vials')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="vial-curies">S/V: <a ng-click="addAmount('Vials')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:3})">
                                         <div class="control-group">
                                              <div class="controls input-append">
@@ -163,7 +162,7 @@
                                     </div>
                                 </div>
                                 <div class="use-amount others">
-                                    <label class="control-label" for="vial-curies">Other: <a ng-click="addAmount('Others')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="vial-curies">Other: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:5})">
                                         <div class="control-group">
                                              <div class="controls input-append">
@@ -179,22 +178,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div ng-class="{'extra-top': use.edit}">
+                                    <button ng-disabled="parcel.inValid" ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use, pi)" class="btn btn-success"><i class="icon-checkmark"></i></button>
+                                    <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use)"><i class="icon-cancel-2"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div ng-class="{'extra-top': use.edit}">
-                        <button ng-disabled="parcel.inValid" ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use)" class="btn btn-success"><i class="icon-checkmark"></i></button>
-                        <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use)"><i class="icon-cancel-2"></i></a>
-                    </div>
-                </div>
-            <!--
-            <ul>
-                <li ng-repeat="use in parcel.ParcelUses">
-                    <pre>{{use|json}}</pre>
-                </li>
-            </ul>
-            -->
+                   
+                </div>            
         </div>
     </div>
+                    <pre>{{pi | json}}</pre>
 </div>
 

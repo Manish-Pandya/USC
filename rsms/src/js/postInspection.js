@@ -194,7 +194,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   }
 
   factory.setDatesForServer = function(obj, dateProperty){
-    //by removing the string 'view' from the date property, we access the orginal MySQL datetime from which the property was set
+    //by removing the string 'view' from the date property, we access the Original MySQL datetime from which the property was set
     //i.e. corrective_action.viewPromised_date is the matching property to corrective_action.Promised_date
     if(!obj[dateProperty]){
       obj[dateProperty] = new Date();
@@ -410,7 +410,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
           $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
           $scope.doneLoading = true;
         }
-        $scope.options = ['Incomplete','Pending','Complete'];
+        $scope.options = ['Pending','Complete'];
       }else{
         $scope.error = 'No inspection has been specified';
       }
@@ -602,7 +602,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         postInspectionFactory.getHotWipes($scope.inspection);
          if($rootScope.rbf.getHasPermission([$rootScope.R["Principal Investigator"], $rootScope.R["Lab Contact"]]))getIsReadyToSubmit();
       }
-      $scope.options = ['Incomplete','Pending','Complete'];
+      $scope.options = ['Pending','Complete'];
     }else{
       $scope.error = 'No inspection has been specified';
     }
@@ -832,7 +832,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
 modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance){
   var data = postInspectionFactory.getModalData();
-  $scope.options = ['Incomplete','Pending','Complete'];
+  $scope.options = ['Pending','Complete'];
   $scope.validationError='';
   if(data.deficiency && !data.deficiency.CorrectiveActions.length){
     data.deficiency.CorrectiveActions[0] = {

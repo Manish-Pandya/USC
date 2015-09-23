@@ -116,15 +116,16 @@ require_once '../top_view.php';
                             <!--<h4 class="">-->
                             <label class="checkbox inline">
                                 <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-
-                                <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
+                                <span class="metro-checkbox"></span>
+                                <!--<pre>{{child | json}}</pre>-->
+                            </label>
+                            <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
+                                <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a>                                         <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
 
                                     <!--<span once-text="child.Name" class="nudge-up"></span>-->
 
                                     <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-                                <!--<pre>{{child | json}}</pre>-->
-                                </span>
-                            </label>
+                            </span>
                             <!--</h4>-->
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>
@@ -185,15 +186,16 @@ require_once '../top_view.php';
                             <!--<h4 class="">-->
                             <label class="checkbox inline">
                                 <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-
-                                <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
+                                        <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
 
                                     <!--<span once-text="child.Name" class="nudge-up"></span>-->
 
                                     <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
                                 <!--<pre>{{child | json}}</pre>-->
-                                </span>
+
                             </label>
+
+                            </span>
                             <!--</h4>-->
                             <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="showSubHazards($event, child, $element)"></i>

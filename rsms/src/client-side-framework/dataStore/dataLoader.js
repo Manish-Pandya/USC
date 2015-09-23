@@ -15,7 +15,6 @@ var dataLoader = {};
     Doing so avoids any asynchronous vs synchronous nastiness.
 */
 
-
 dataLoader.loadOneToManyRelationship = function (parent, property, relationship, whereClause, recurse) {
     if(!recurse)recurse = false;
     // methodString overrides default behavior for making special server calls.
@@ -23,9 +22,11 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
 
-        parent.api.read(relationship.methodString, paramValue)
+        return parent.api.read(relationship.methodString, paramValue)
             .then(function (returnedPromise) {
                 parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data, null, recurse);
+                dataStoreManager.store(parent[property]);
+                console.log(parent[property]);
             });
     }
 
@@ -33,7 +34,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     else if (dataStore[relationship.className]) {
         if (!whereClause) whereClause = false;
         parent[property] = [];
-        parent[property] = dataStoreManager.getChildrenByParentProperty(
+       return  parent[property] = dataStoreManager.getChildrenByParentProperty(
             relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
     }
 
@@ -41,7 +42,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     else {
         var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
 
-        parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
+        return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
             //cache result so we don't hit the server next time
             var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
             dataStoreManager.store(instatedObjects);

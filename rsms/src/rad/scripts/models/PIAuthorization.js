@@ -10,6 +10,7 @@ PIAuthorization.prototype = {
 
     instantiateAuthorizations: function(){
         this.Authorizations = this.inflator.instateAllObjectsFromJson(this.Authorizations);
+        dataStoreManager.store(this.Authorizations);
     }
 }
 
