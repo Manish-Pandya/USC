@@ -1117,15 +1117,14 @@ angular
 
             af.saveAuthorization = function( pi, copy, auth ){
 
-                console.log(pi);
                 copy.Pi_authorization_id = pi.Pi_authorization.Key_id;
                 af.clearError();
                 return this.save( copy )
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(auth){
-                                angular.extend(auth, copy)
+                            if(copy.Key_id){
+                                angular.extend(auth, returnedAuth);
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
                                 pi.Pi_authorization.Authorizations.push(returnedAuth);

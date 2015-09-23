@@ -24,6 +24,7 @@
         <input data-ng-model="modalData.AuthorizationCopy.Form" maxlength="35" placeholder="Form"/>
      </div>
   </div>
+    <pre>{{modalData.AuthorizationCopy | json}}</pre>
 </div>
 <div class="modal-footer">
   <a class="btn btn-large btn-success left" ng-click="saveAuthorization(modalData.pi, modalData.AuthorizationCopy, modalData.Authorization)"><i class="icon-checkmark"></i>Save</a>

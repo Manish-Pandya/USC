@@ -184,7 +184,6 @@ angular.module('00RsmsAngularOrmApp')
            
         }
 
-
         $scope.savePO = function(pi, copy, po){
            $modalInstance.dismiss();
            af.deleteModalData();

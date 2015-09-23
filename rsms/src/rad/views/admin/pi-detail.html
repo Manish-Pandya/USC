@@ -9,7 +9,7 @@
                 under Authorization #{{pi.Pi_authorization.Authorization_number}}
             </span>
              <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
-            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a
+            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a>
         </h3>
         <h3 class="card-header padding auths" ng-if="!pi.Pi_authorization.Authorizations.length"><i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="pi.Pi_authorization">under Authorization #{{pi.Pi_authorization.Authorization_number}}</span>
 <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>

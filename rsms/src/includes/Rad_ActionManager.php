@@ -622,6 +622,9 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Authorization());
+            if($decodedObject->getApproval_date() == NULL){
+            	$decodedObject->setApproval_date( date( 'Y-m-d H:i:s' ) );
+            }
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
