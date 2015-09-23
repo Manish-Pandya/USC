@@ -40,7 +40,7 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="personnel in (filtered = (LabPersonnel | isLabPersonnel | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))">
+        <tr ng-repeat="personnel in (filtered = (LabPersonnel | isLabPersonnel | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))" ng-class="{'inactive': !personnel.Is_active, 'new': personnel.isNew}">
             <td style="width:9%;">
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" ng-hide="personnel.edit" class="edit btn btn-primary" ng-click="openModal(personnel,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(personnel)" ng-if="personnel.Is_active && personnel.Is_active > 0"><i class="icon-remove"></i></button>

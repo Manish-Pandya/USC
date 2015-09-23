@@ -1166,6 +1166,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         return userHubFactory.saveUser( userDto )
           .then(
             function( returnedUser ){
+              if(userDto.Is_new) returnedUser.isNew = true;
               console.log(returnedUser);
               returnedUser.Roles = userDto.Roles;
               if(userDto.PrincipalInvestigator && returnedUser.PrincipalInvestigator){
