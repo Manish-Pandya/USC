@@ -625,6 +625,7 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                             obj.IsDirty=false;
                         }else{
                             //we are creating an new object
+                            returned.isNew = true;
                             collection.push(returned);
                             obj.IsDirty=false;
                         }
