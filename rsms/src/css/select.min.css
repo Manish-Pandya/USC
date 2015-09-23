@@ -26,7 +26,6 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
   background: white;
   border: 1px solid #ccc;
   border-top: none;
-  max-height: 145px;
   overflow-y: auto;
   overflow-x:hidden;
   padding: 5px 0;
@@ -74,6 +73,10 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
 .ui-select-container{
     text-align:left;
     position:relative;
+}
+.modal .ui-select-container{
+    text-align:left;
+    position:static;
 }
 .control-group ul{
     display: block;
