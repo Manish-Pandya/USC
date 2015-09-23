@@ -648,7 +648,14 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         $scope.modalError="";
         var room = $scope.modalData;
         if(!room.Key_id){
-            room.PrincipalInvestigators.push(pi);
+            if(!room.PrincipalInvestigators)room.PrincipalInvestigators = [];
+            if(!adding){
+                var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
+                //find the room in the factory collection of rooms, remove the pi from it as well
+                room.PrincipalInvestigators.splice(idx,1);
+            }else{
+                room.PrincipalInvestigators.push(pi);
+            }
             return;
         }
         var roomDto = {
