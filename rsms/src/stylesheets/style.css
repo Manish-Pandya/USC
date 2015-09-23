@@ -654,6 +654,22 @@ div.rsmsCenterIconContainer a p {
   width: 4%;
 }
 
+#manage-inspections-table tr td {
+ width: 15%;
+}
+
+#manage-inspections-table tr td:nth-of-type(3) {
+ width: 20%;
+}
+
+#manage-inspections-table tr td:nth-of-type(4) {
+ width: 6%;
+}
+
+#manage-inspections-table tr td:nth-of-type(7) {
+ width: 14%;
+}
+
 /* line 175, ../sass/style.scss */
 /* line 419, ../sass/style.scss */
 tr.edit {

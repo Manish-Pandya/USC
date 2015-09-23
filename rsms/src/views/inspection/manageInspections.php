@@ -31,7 +31,7 @@ require_once '../top_view.php';
           <option value="">-- select year --</option>
       </select>
 
-    <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
+    <table id="manage-inspections-table" class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
             <tr ng-show="dtos">
