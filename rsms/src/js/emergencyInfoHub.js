@@ -146,7 +146,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
     factory.hazardIsNotPresent = function( hazard )
     {
-        console.log(hazard);
+        //console.log(hazard);
         if(!hazard.IsPresent)return true;
         return false;
     }

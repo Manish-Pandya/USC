@@ -182,7 +182,8 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
               console.log(promise);
               departmentDto.Department_name = promise[0].Department_name;
               departmentDto.Is_active = promise[0].Is_active;
-              departmentDto.Department_id    = promise[0].Department_id
+              departmentDto.Department_id = promise[0].Department_id;
+              departmentDto.Specialty_lab = promise[0].Specialty_lab;
               $modalInstance.close(departmentDto);
           },
           function(promise){
