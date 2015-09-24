@@ -13,11 +13,11 @@ Carboy.prototype = {
         paramName: 'id'
     },
 
-    eagerAccessors: [{method:"instantiateCurrentCarboyUseCycle", boolean:'Carboy_use_cycles'}],
+    //eagerAccessors: [{method:"instantiateCurrentCarboyUseCycle", boolean:'Carboy_use_cycles'}],
 
     // TODO eager accessors, relationships, method names.
     loadCarboyUseCycles:function(){
-        return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
+        //return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
     },
 
     // TODO eager accessors, relationships, method names.

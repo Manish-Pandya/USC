@@ -3,7 +3,6 @@
 <div cg-busy="{promise:WasteBagSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<!--<pre>{{pi | json}}</pre>-->
 
 <div style="margin-top: 70px;" ng-if="pi">
     <div class="alert alert-info" ng-if="scheduledPickups">
@@ -56,7 +55,7 @@
                         <label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length && !cycle.Pickup_id">
                             <input type="checkbox" ng-true-value="yes" ng-model="cycle.include" />
                             <span class="metro-checkbox">
-                            Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)
+                            Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}} <span ng-if="!$last">, </span></span>)
                             </span>
                         </label>
                     </ul>

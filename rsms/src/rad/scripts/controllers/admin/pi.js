@@ -73,6 +73,7 @@ angular.module('00RsmsAngularOrmApp')
 
   })
   .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
+        console.log(dataStore);
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
@@ -138,6 +139,7 @@ angular.module('00RsmsAngularOrmApp')
                     $rootScope.error = "There was a problem retrieving the list of all isotopes.  Please check your internet connection and try again."
                 }
             )
+        
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
 
         $scope.selectIsotope = function(isotope){

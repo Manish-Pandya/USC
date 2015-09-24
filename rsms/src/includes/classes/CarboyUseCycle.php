@@ -211,6 +211,9 @@ class CarboyUseCycle extends RadCrud {
 	
 	
 	public function getContents(){
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->fatal("contents");
+		$LOG->fatal($this->getParcelUseAmounts());
 		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
 		return $this->contents;
 	}

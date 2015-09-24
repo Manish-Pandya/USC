@@ -115,6 +115,7 @@ angular.module('00RsmsAngularOrmApp')
       }
       
       $scope.selectCarboy = function(useAmount){
+          console.log(useAmount.Carboy);
           if( !useAmount.Carboy ){
             useAmount.Carboy_id = null;
           }else{

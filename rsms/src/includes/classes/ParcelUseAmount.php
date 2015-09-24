@@ -121,7 +121,7 @@ include_once 'RadCrud.php';
     public function getCarboy() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
     	if($this->carboy == NULL && $this->getCarboy_id() != null) {
-    		$carboyDao = new GenericDAO(new Carboy());
+    		$carboyDao = new GenericDAO(new CarboyUseCycle());
     		$this->carboy = $carboyDao->getById($this->getCarboy_id());
     	}
     	return $this->carboy;
@@ -160,7 +160,8 @@ include_once 'RadCrud.php';
 		$useDao = new GenericDAO(new ParcelUse());
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
-		$isotope = $parcel->getIsotope();
+		$auth = $parcel->getAuthorization();
+		$isotope = $auth->getIsotope();
 		$this->isotope_name = $isotope->getName();
 		return $this->isotope_name;
 	}
@@ -169,7 +170,8 @@ include_once 'RadCrud.php';
 		$useDao = new GenericDAO(new ParcelUse());
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
-		$isotope = $parcel->getIsotope();
+		$auth = $parcel->getAuthorization();
+		$isotope = $auth->getIsotope();
 		$this->isotope_id = $isotope->getKey_id();
 		return $this->isotope_id;
 	}
@@ -182,8 +184,8 @@ include_once 'RadCrud.php';
 				$bag = $bagDao->getById($this->getWaste_bag_id());
 				$id = $bag->getPickup_id();
 			}elseif($this->getCarboy() != NULL){
-				$carboy = $this->getCarboy();
-				$id = $carboy->getCurrent_carboy_use_cycle()->getPickup_id();
+				$cycle = $this->getCarboy();
+				$id = $cycle->getPickup_id();
 			}elseif($this->getScint_vial_collection_id() != NULL){
 				$collectionDao = new GenericDAO(new ScintVialCollection());
 				$collection = $collectionDao->getById($this->getScint_vial_collection_id());

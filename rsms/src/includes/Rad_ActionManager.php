@@ -830,8 +830,8 @@ class Rad_ActionManager extends ActionManager {
                     //If this is Scintillation Vial waste, make sure we have a Scint_vial_collection
                     if($amount['Waste_type_id'] == 3){
                     	$pi = $this->getPIById($decodedObject->getParcel()->getPrincipal_investigator_id());
+                    	$collectionDao = $this->getDao(new ScintVialCollection());
                     	if($pi->getCurrentScintVialCollections() == NULL){
-                    		$collectionDao = $this->getDao(new ScintVialCollection());
                     		$collection = new ScintVialCollection();
                     		$collection->setPrincipal_investigator_id($pi->getKey_id());
                     		$collection = $collectionDao->save($collection);

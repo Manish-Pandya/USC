@@ -14,8 +14,6 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.piPromise = af.getRadPIById($stateParams.pi)
               .then(
                   function(pi){
-                      console.log(pi);
-                      console.log(dataStore);
                       //pi.loadRooms();
                       if(pi.Pickups){
                           var i = pi.Pickups.length;
@@ -107,7 +105,6 @@ angular.module('00RsmsAngularOrmApp')
 
 
         $scope.hasPickupItems = function(collection){
-            //if(!collection.length)return false;
             var hasPickupItems = false;
             if(!collection)return false;
             var i = collection.length;
@@ -138,7 +135,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.requestPickup = function(pickup){
             $scope.close();
             var pickupCopy = dataStoreManager.createCopy(pickup);
-            af.savePickup(pickup,pickupCopy,true)
+            af.savePickup(pickupCopy, pickup ,true)
                 .then(
                     function(){
 

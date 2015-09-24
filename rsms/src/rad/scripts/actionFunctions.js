@@ -947,32 +947,21 @@ angular
 
             af.getRadPI = function(pi)
             {
-                if(!store.checkCollection( 'Parcel' )){
-                    var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
-                    return genericAPIFactory.read(segment)
-                        .then( function( returnedPromise) {
-                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
-                            //pi.loadRooms();
-                            pi.Rooms = tempPI.Rooms;
-                            pi.Departments = tempPI.Departments;
-                            pi.loadPIAuthorizations();
-                            pi.loadActiveParcels();
-                            pi.loadPurchaseOrders();
-                            pi.loadCarboyUseCycles();
-                            pi.loadSolidsContainers();
-                            return pi;
-                        });
-                }else{
-                    //pi.loadRooms();
-                    pi.loadPI_Authorizations();
-                    pi.loadActiveParcels();
-                    pi.loadPurchaseOrders();
-                    pi.loadCarboyUseCycles();
-                    pi.loadSolidsContainers();
-                    var defer = $q.defer();
-                    defer.resolve(pi);
-                    return defer.promise;
-                }
+               
+                var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
+                return genericAPIFactory.read(segment)
+                    .then( function( returnedPromise) {
+                        var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
+                        //pi.loadRooms();
+                        pi.Rooms = tempPI.Rooms;
+                        pi.Departments = tempPI.Departments;
+                        pi.loadPIAuthorizations();
+                        pi.loadActiveParcels();
+                        pi.loadPurchaseOrders();
+                        pi.loadCarboyUseCycles();
+                        pi.loadSolidsContainers();
+                        return pi;
+                    });
 
             }
 
@@ -1409,7 +1398,7 @@ angular
                     )
             }
 
-            af.savePickup = function(originalPickup, editedPickup, saveChildren){
+            af.savePickup = function(editedPickup, originalPickup, saveChildren){
                 af.clearError();
 
                 //We can tell the server to save the child objects of this pickup, setting their pickup IDs and pickup date properties, if applicable.
@@ -1417,7 +1406,19 @@ angular
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
                 if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
+                console.log(editedPickup);
+                
+                //eliminate circular structures in carboy_use_cycles, if needed
+                if(editedPickup.Carboy_use_cycles){
+                    var i = editedPickup.Carboy_use_cycles.length;
+                    while(i--){
+                        delete( editedPickup.Carboy_use_cycles[i].Carboy );
+                        delete(editedPickup.Carboy_use_cycles[i].Principal_investigator);
+                        delete(editedPickup.Carboy_use_cycles[i].ParcelUseAmounts);
 
+                    }
+                }
+                
                 return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){

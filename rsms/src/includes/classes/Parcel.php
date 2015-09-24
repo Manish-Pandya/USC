@@ -92,6 +92,7 @@ class Parcel extends RadCrud {
 	
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
+	private $authorization;
 
 	public function __construct() {
 		// Define which subentities to load
@@ -149,15 +150,15 @@ class Parcel extends RadCrud {
 	public function getIsotope_id() { return $this->isotope_id; }
 	public function setIsotope_id($newId) { $this->isotope_id = $newId; }
 
-	public function getIsotope() {
-		if($this->isotope == null) {
-			$isotopeDAO = new GenericDAO(new Isotope());
-			$this->isotope = $isotopeDAO->getById($this->getIsotope_id());
+	public function getAuthorization() {
+		if($this->authorization == null) {
+			$authDao = new GenericDAO(new Authorization());
+			$this->authorization = $authDao->getById($this->getAuthorization_id());
 		}
-		return $this->isotope;
+		return $this->authorization;
 	}
-	public function setIsotope($newIsotope) {
-		$this->isotope = $newIsotope;
+	public function setAuthorization($auth) {
+		$this->authorization = $auth;
 	}
 
 	public function getArrival_date() { return $this->arrival_date; }
