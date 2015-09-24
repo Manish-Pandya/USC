@@ -179,7 +179,8 @@
                                     </div>
                                 </div>
                                 <div ng-class="{'extra-top': use.edit}">
-                                    <button ng-disabled="parcel.inValid" ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use, pi)" class="btn btn-success"><i class="icon-checkmark"></i></button>
+                                    <!-- ng-disabled="parcel.inValid"-->
+                                    <button ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use, pi)" class="btn btn-success"><i class="icon-checkmark"></i></button>
                                     <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use)"><i class="icon-cancel-2"></i></a>
                                 </div>
                             </div>

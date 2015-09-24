@@ -811,13 +811,15 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ParcelUse());
-            $use = $dao->save($decodedObject);
-
             $amounts = $decodedObject->getParcelUseAmounts();
-            foreach($amounts as $amount){
-                $amountDao = $this->getDao(new ParcelUseAmount());
-                $newAmount = new ParcelUseAmount();
-                if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
+            $use = $dao->save($decodedObject);            
+            
+            foreach($amounts as $amount){            	
+                $LOG->fatal($amount['Curie_level'] . ' | ' . gettype ( $amount['Curie_level'] )	);
+                if($amount['Curie_level'] != null && floatval ( $amount['Curie_level'] ) > 0){
+                	
+                	$amountDao = $this->getDao(new ParcelUseAmount());
+                	$newAmount = new ParcelUseAmount();	
                     $newAmount->setParcel_use_id($use->getKey_id());
                     $newAmount->setCurie_level($amount['Curie_level']);
                     if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
@@ -901,7 +903,7 @@ class Rad_ActionManager extends ActionManager {
                         $timestamp = date('Y-m-d G:i:s');
                         $cycle->setHotroom_date($timestamp);
                     }
-                    elseif($decodedObject->getStatus() == "AT RSO"){
+                    elseif($decodedObject->getStatus() == "PICKED UP"){
                         $cycle->setStatus("Picked up");
                         $cycle->setHotroom_date(NULL);
                     }
@@ -1209,10 +1211,9 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
-            $dao = $this->getDao(new CarboyReadingAmount());
+            $dao = $this->getDao(new CarboyReadingAmount());            
             $decodedObject = $dao->save($decodedObject);
             $cycle = $decodedObject->getCarboy_use_cycle();
-            $LOG->debug($cycle);
             return $cycle;
         }
     }
@@ -1894,7 +1895,6 @@ class Rad_ActionManager extends ActionManager {
     	$inventoriesDao = $this->getDao(new PIAuthorization());
     	$clauses = array(new WhereClause("principal_investigator_id", "=", $id));
     	$whereClauseGroup = new WhereClauseGroup($clauses);
-    	$LOG->fatal($whereClauseGroup);
     	$auth =  reset($inventoriesDao->getAllWhere($whereClauseGroup));
     	return $auth;
     }
@@ -1931,12 +1931,10 @@ class Rad_ActionManager extends ActionManager {
     		
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
-    			$LOG->fatal($room);
-    			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
+    			$dao->latedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
     		}
     			
     		foreach($departments as $dept){
-    			$LOG->fatal($dept);
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
     		

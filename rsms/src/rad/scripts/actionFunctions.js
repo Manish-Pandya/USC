@@ -947,7 +947,7 @@ angular
 
             af.getRadPI = function(pi)
             {
-               
+
                 var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                 return genericAPIFactory.read(segment)
                     .then( function( returnedPromise) {
@@ -1358,6 +1358,18 @@ angular
                 console.log(copy);
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
+
+                 //eliminate circular structures in carboy_use_cycles, if needed
+                if(copy.ParcelUseAmounts){
+                    var i = copy.ParcelUseAmounts.length;
+                    while(i--){
+                        delete(copy.ParcelUseAmounts[i].Carboy);
+                        delete(copy.ParcelUseAmounts[i].WasteBag);
+                        delete(copy.ParcelUseAmounts[i].Scint_vial_collection);
+
+                    }
+                }
+
                 return this.save( copy )
                     .then(
                         function(returnedUse){
@@ -1385,10 +1397,10 @@ angular
                             }
                             parcel.Quantity = parcel.Quantity-total;
                             use.edit = false;
-                            
+
                             //if a new ScintVialCollection had to be created, load it.  If it already exists in the cache, this call won't cost much
                             pi.loadCurrentScintVialCollection();
-                            
+
                             af.clearError();
                             return parcel;
                         },
@@ -1398,7 +1410,7 @@ angular
                     )
             }
 
-            af.savePickup = function(editedPickup, originalPickup, saveChildren){
+            af.savePickup = function(editedPickup, originalPickup, saveChildren, skip){
                 af.clearError();
 
                 //We can tell the server to save the child objects of this pickup, setting their pickup IDs and pickup date properties, if applicable.
@@ -1407,7 +1419,7 @@ angular
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
                 if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
                 console.log(editedPickup);
-                
+
                 //eliminate circular structures in carboy_use_cycles, if needed
                 if(editedPickup.Carboy_use_cycles){
                     var i = editedPickup.Carboy_use_cycles.length;
@@ -1418,13 +1430,13 @@ angular
 
                     }
                 }
-                
+
                 return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){
                             returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
                             var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
-                            if(saveChildren){
+                            if(saveChildren && !skip){
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
                                 while(i--){
@@ -1919,6 +1931,8 @@ angular
             af.saveCarboyReadingAmount = function(cycle, copy){
                 af.clearError();
                 copy.Date_read = convenienceMethods.setMysqlTime(new Date());
+                //copy.Class = CarboyReadingAmount;
+                console.log(copy);
                 return $rootScope.saving = this.save(copy)
                     .then(
                         function(returnedCycle){

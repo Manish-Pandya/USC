@@ -3202,7 +3202,7 @@ table.large tr th{
   width: 49.5%;
 }
 .half:nth-of-type(even):not(.block){
-    margin-right:1%;
+    margin-left:1%;
 }
 *[class~='well']:last-child:after, *[class~='card']:last-child:after{
   clear:both;
