@@ -454,8 +454,8 @@ piHubRoomController = function($scope, $location, convenienceMethods, locationHu
         });
 
         modalInstance.result.then(
-            function (room) {
-                pi.Rooms.push(room);
+            function (returnedRoom) {
+                pi.Rooms.push(returnedRoom);
             }
         );
     }

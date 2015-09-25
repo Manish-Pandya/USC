@@ -267,7 +267,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 deferred.reject();
             }
         );
-        return deferred.promise
+        return deferred.promise;
     }
 
     factory.roomAlreadyExists = function(room)
@@ -629,7 +629,7 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                             collection.push(returned);
                             obj.IsDirty=false;
                         }
-                        $modalInstance.close(obj);
+                        $modalInstance.close(returned);
                     },
                     function(){
                         $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
