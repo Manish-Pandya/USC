@@ -756,11 +756,10 @@ class Rad_ActionManager extends ActionManager {
             $tests = $decodedObject->getWipe_test ();
             if($decodedObject->getStatus() == "Ordered" && $tests != null){
                 $decodedObject->setStatus("Wipe Tested");
-                $decodedObject= new Parcel();
                 $decodedObject->setArrival_date(date('Y-m-d G:i:s'));
             }
 
-            $decodedObject = $dao->save($decodedObject);
+            $parcel = $dao->save($decodedObject);
 
             if ( $tests != null ) {
                 $test = JsonManager::assembleObjectFromDecodedArray ( $tests[0][0] );
@@ -787,8 +786,8 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("lazy", "getParcelUses");
             $entityMaps[] = new EntityMap("eager", "getRemainder");
             $entityMaps[] = new EntityMap("eager", "getWipe_test");
-            $decodedObject->setEntityMaps($entityMaps);
-            return $decodedObject;
+            $parcel->setEntityMaps($entityMaps);
+            return $parcel;
         }
     }
 
@@ -1110,9 +1109,6 @@ class Rad_ActionManager extends ActionManager {
             $wipes = array ();
             foreach ( $decodedObject->getWipe_test () as $wipe ) {
                 //$LOG->fatal($wipe);
-
-                //$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
-                ////$LOG->fatal($wipe);
 
 
                 // there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided

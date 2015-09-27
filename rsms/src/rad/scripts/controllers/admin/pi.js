@@ -255,10 +255,18 @@ angular.module('00RsmsAngularOrmApp')
             if(!auth)return;
             var i = auths.length;
             while(i--){
-                auths[i].testing= 'test';
                 if(auth.Key_id == auths[i].Key_id){
-                    console.log(auth);
-                    return auth;
+                    return auths[i];
+                }
+            }
+        }
+        
+        $scope.getPO = function(po, pos){
+            if(!po)return;
+            var i = pos.length;
+            while(i--){
+                if(po.Key_id == pos[i].Key_id){
+                    return pos[i];
                 }
             }
         }

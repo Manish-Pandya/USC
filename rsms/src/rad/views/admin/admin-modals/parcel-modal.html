@@ -18,9 +18,9 @@
         <label class="control-label">Authorization</label>
         <div class="controls">
             <div class="controls">
-                <span ng-if="modalData.ParcelCopy.Authorization" ng-init="modalData.ParcelCopy.Authorization = getAuth(modalData.ParcelCopy.Authorization, modalData.pi.Pi_authorization.Authorizations)" ng-change="modalData.ParcelCopy.Authorization_id = modalData.ParcelCopy.Authorization.Key_id"/>
-                <select data-ng-options="auth.Isotope.Name +' ('+ auth.Form +')' for auth in modalData.pi.Pi_authorization.Authorizations" data-ng-model="modalData.ParcelCopy.Authorization">
-                    <option selected="selected" value="">Select an authorization</option>
+                <span ng-if="modalData.ParcelCopy.Authorization" ng-init="modalData.ParcelCopy.Authorization = getAuth(modalData.ParcelCopy.Authorization, modalData.pi.Pi_authorization.Authorizations)"/>
+                <select ng-options="auth.Isotope.Name +' ('+ auth.Form +')' for auth in modalData.pi.Pi_authorization.Authorizations" ng-model="modalData.ParcelCopy.Authorization" ng-change="modalData.ParcelCopy.Authorization_id = modalData.ParcelCopy.Authorization.Key_id">
+                    <option value="">Select an authorization</option>
                 </select>
             </div>
         </div>
@@ -35,8 +35,9 @@
 
     <div class="control-group">
         <label class="control-label" for="inputEmail">Purchase Order</label>
+        <span ng-if="modalData.ParcelCopy.PurchaseOrder" ng-init="modalData.ParcelCopy.PurchaseOrder = getPO(modalData.ParcelCopy.PurchaseOrder, modalData.pi.PurchaseOrders)"/>
         <div class="controls">
-            <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.PurchaseOrder">
+            <select data-ng-change="selectPO()" data-ng-options="po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.Purchase_order">
                 <option style="display:none" value="">Select a Purchase Order</option>
             </select>
         </div>

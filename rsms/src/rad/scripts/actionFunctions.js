@@ -1175,10 +1175,12 @@ angular
                         function(returnedParcel){
                             returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
                             if(copy.Key_id){
-                                angular.extend(parcel, copy)
+                                angular.extend(parcel, returnedParcel);
+                                parcel.loadPurchaseOrder();
                             }else{
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
+                                returnedParcel.loadPurchaseOrder();
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1191,8 +1193,9 @@ angular
                 console.log(copy);
                  return $rootScope.SavingParcelWipe = genericAPIFactory.save( copy, 'saveParcelWipesAndChildren' )
                     .then(
-                        function(returnedParcel){
-                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
+                        function(returned){
+                            var returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
+                            console.log(returnedParcel);
                             if(parcel){
                                 angular.extend(parcel, copy, true);
                                 parcel.edit = false;
@@ -1203,6 +1206,7 @@ angular
                                     angular.extend(parcel.Wipe_test[0].Parcel_wipes[i], copy.Wipe_test[0].Parcel_wipes[i]);
                                     if(!parcel.Wipe_test[0].Parcel_wipes[i].Location)parcel.Wipe_test[0].Parcel_wipes.splice(i,1);
                                 }
+                                parcel.Status = returnedParcel.Status
                             }
                         },
                         af.setError('The authorization could not be saved')
