@@ -150,13 +150,13 @@ angular.module('00RsmsAngularOrmApp')
           var i = uses.length;
           while(i--){
             console.log(uses[i].Quantity);
-            total += parseInt(uses[i].Quantity);
+            total += parseFloat(uses[i].Quantity);
           }
 
-          total += parseInt($rootScope.ParcelUseCopy.Quantity);
+          total += parseFloat($rootScope.ParcelUseCopy.Quantity);
           //if we are editing, subtract the total from the copied use so that it's total isn't included twice
           if($rootScope.ParcelUseCopy.Key_id){
-            total = total - parseInt(dataStoreManager.getById("ParcelUse", $rootScope.ParcelUseCopy.Key_id).Quantity);
+            total = total - parseFloat(dataStoreManager.getById("ParcelUse", $rootScope.ParcelUseCopy.Key_id).Quantity);
           }
 
           if(total > parcel.Quantity){
