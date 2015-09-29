@@ -19,18 +19,6 @@ i.icon-cancel.canceller{position:absolute;margin-left:-28px;margin-top:7px}
   overflow-x:hidden;
   padding: 5px 0;
 }
-.modal .selectize-dropdown-content{
-  z-index:1050;
-  position: absolute;
-  margin-top: 0px;
-  box-shadow: 0 4px 8px rgba(0,0,0,.25);
-  background: white;
-  border: 1px solid #ccc;
-  border-top: none;
-  overflow-y: auto;
-  overflow-x:hidden;
-  padding: 5px 0;
-}
 .drop-up .selectize-dropdown-content {
   z-index: 1050;
   position: absolute;
@@ -64,9 +52,6 @@ i.icon-cancel.canceller{position:absolute;margin-left:-28px;margin-top:7px}
     max-height:50px;
     overflow-y: visible;
     position:relative;
-}
-.selectize-input>div{
-    width:90% !important;
 }
 .selectize-input>div>span{
     font-size:14px !important;
