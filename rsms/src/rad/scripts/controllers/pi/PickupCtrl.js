@@ -109,7 +109,7 @@ angular.module('00RsmsAngularOrmApp')
             if(!collection)return false;
             var i = collection.length;
             while(i--){
-                    if(!collection[i].Pickup_id && collection[i].Contents.length){
+                    if(!collection[i].Pickup_id){
                     hasPickupItems = true;
                 }
 
