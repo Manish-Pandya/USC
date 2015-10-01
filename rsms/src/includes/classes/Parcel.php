@@ -254,7 +254,7 @@ class Parcel extends RadCrud {
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
 	
 	public function getCatalog_number(){return $this->catalog_number;}
-	public function setCatalog_number($number){$this->catalog_numner = $number;}
+	public function setCatalog_number($number){$this->catalog_number = $number;}
 	
 	public function getChemical_compound(){return $this->chemical_compound;}
 	public function setChemical_compound($compound){$this->chemical_compound = $compound;}
