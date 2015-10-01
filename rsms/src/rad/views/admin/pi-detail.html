@@ -134,6 +134,8 @@
                     <h3>Arrival Date</h3>
                     <h3>Original Quantity</h3>
                     <h3>Remaining Quantity</h3>
+                    <h3>Chemical Compound</h3>
+                    <h3>Catalog Number</h3>
                 </div>
                 <div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
                     <div>
@@ -172,6 +174,22 @@
                     <div>
                         {{parcel.Remainder}} mCi
                     </div>
+                    
+                    <div>
+                        {{parcel.Chemical_compound}}
+                    </div>
+                    
+                    <div>
+                        {{parcel.Catalog_number}}
+                    </div>
+        </div>
+    </div>
+    
+    
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Catalog Number</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Catalog_number" />
                 </div>
             </div>
         </div>

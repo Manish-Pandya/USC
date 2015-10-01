@@ -23,6 +23,8 @@ class Parcel extends RadCrud {
 		"quantity"						=> "float",
 		"rs_number"						=> "text",
 		"authorization_id"				=> "integer",
+		"catalog_number"				=> "text",
+		"chemical_compound"				=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -93,6 +95,9 @@ class Parcel extends RadCrud {
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
 	private $authorization;
+	
+	private $chemical_compound;
+	private $catalog_number;
 
 	public function __construct() {
 		// Define which subentities to load
@@ -247,5 +252,11 @@ class Parcel extends RadCrud {
 	
 	public function getAuthorization_id() {return $this->authorization_id;}
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
+	
+	public function getCatalog_number(){return $this->catalog_number;}
+	public function setCatalog_number($number){$this->catalog_number = $number;}
+	
+	public function getChemical_compound(){return $this->chemical_compound;}
+	public function setChemical_compound($compound){$this->chemical_compound = $compound;}
 }
 ?>
