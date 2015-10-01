@@ -2,7 +2,7 @@
     <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.User.Name}}</h2>
 </div>
 <div class="modal-body">
-	<div class="control-group">
+    <div class="control-group">
      <label class="control-label" for="inputEmail">Isotope</label>
      <div class="controls">
         <select data-ng-change="selectIsotope()" data-ng-options="isotope.Name for isotope in isotopes" data-ng-model="modalData.AuthorizationCopy.Isotope">
@@ -24,7 +24,6 @@
         <input data-ng-model="modalData.AuthorizationCopy.Form" maxlength="35" placeholder="Form"/>
      </div>
   </div>
-    <pre>{{modalData.AuthorizationCopy | json}}</pre>
 </div>
 <div class="modal-footer">
   <a class="btn btn-large btn-success left" ng-click="saveAuthorization(modalData.pi, modalData.AuthorizationCopy, modalData.Authorization)"><i class="icon-checkmark"></i>Save</a>

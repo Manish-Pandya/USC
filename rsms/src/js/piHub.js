@@ -197,6 +197,11 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         $location.search("pi", $item.Key_id);
         getPi($item.Key_id);
     }
+    
+    $scope.clearSelectedPI = function() {
+        $scope.PI = null;
+        $scope.noPiSet = true;
+    }
 
     $scope.removeRoom = function(room){
         var modalInstance = $modal.open({

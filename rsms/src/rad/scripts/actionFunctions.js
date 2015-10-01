@@ -1397,9 +1397,9 @@ angular
                             var total = 0;
                             var i = uses.length;
                             while(i--){
-                                total += parseInt(uses[i].Quantity);
+                                total += parseFloat(uses[i].Quantity);
                             }
-                            parcel.Quantity = parcel.Quantity-total;
+                            parcel.Remainder = parcel.Quantity-total;
                             use.edit = false;
 
                             //if a new ScintVialCollection had to be created, load it.  If it already exists in the cache, this call won't cost much
@@ -2127,7 +2127,9 @@ angular
                             if(copy.Key_id){
                                 angular.extend(copy, returnedAuth);
                                 auth.Rooms = [];
-                                auth.Rooms = copy.Rooms
+                                auth.Rooms = copy.Rooms;
+                                auth.Departments = [];
+                                auth.Departments = copy.Departments;
                             }else{
                                 dataStoreManager.store(returnedAuth);
                                 pi.Pi_authorization = returnedAuth;

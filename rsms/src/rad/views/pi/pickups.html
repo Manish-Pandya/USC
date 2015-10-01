@@ -37,7 +37,7 @@
                 </div>
                 <div ng-if="hasPickupItems(pi.CurrentScintVialCollections)">
                     <h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
-                    <label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
+                    <label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
                         <input type="checkbox" ng-true-value="yes" ng-model="collection.include" />
                         <span class="metro-checkbox"><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span>
                         </span>

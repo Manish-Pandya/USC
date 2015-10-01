@@ -653,8 +653,9 @@ class Rad_ActionManager extends ActionManager {
             	$factor = 1/24;
             }
             $decodedObject->setHalf_life( $decodedObject->getDisplay_half_life() * $factor );
-            $decodedObject = $dao->save($decodedObject);
-            return $decodedObject;
+            $isotope = $dao->save($decodedObject);
+            $LOG->fatal($isotope);
+            return $isotope;
         }
     }
 
@@ -1927,7 +1928,7 @@ class Rad_ActionManager extends ActionManager {
     		
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
-    			$dao->latedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
+    			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
     		}
     			
     		foreach($departments as $dept){
