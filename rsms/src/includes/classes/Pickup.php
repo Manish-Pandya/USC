@@ -48,8 +48,15 @@ class Pickup extends RadCrud {
 	);
 	
 	public static $SCINT_VIAL_COLLECTIONS_RELATIONSHIP = array(
-		"className" => "ScintVialCollection",
-		"tableName" => "scint_vial_collection",
+			"className" => "ScintVialCollection",
+			"tableName" => "scint_vial_collection",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "pickup_id"
+	);	
+	
+	public static $OTHER_WASTES_RELATIONSHIP = array(
+		"className" => "OtherWaste",
+		"tableName" => "other_waste",
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
 	);
@@ -74,6 +81,9 @@ class Pickup extends RadCrud {
 	
 	/** Array of Scint Vial Collections picked up **/
 	private $scint_vial_collections;
+	
+	/** Array of OtherWastes picked up **/
+	private $other_wastes;
 
 	/** Key_id of the PI who scheduled this pickup */
 	private $principal_investigator_id;
@@ -182,6 +192,21 @@ class Pickup extends RadCrud {
 	
 	public function getScint_vial_trays(){ return $this->scint_vial_trays; }
 	public function setScint_vial_trays($trays){ $this->scint_vial_trays = $trays; }
+	
+	public function getOther_wastes(){
+		
+		if($this->other_wastes === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			
+			$this->other_wastes = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$OTHER_WASTES_RELATIONSHIP)
+			);
+		}
+		return $this->other_wastes;
+	}
+	
+	public function setOther_wastes($others){$this->other_wastes = $others;}
 	
 }
 ?>

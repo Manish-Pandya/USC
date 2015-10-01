@@ -61,6 +61,18 @@
                     </ul>
                 </div>
 
+                <div>
+                    <h3>Miscellaneous Waste (no activity)</h3>
+                    <div ng-repeat="waste in otherWastes">
+                        {{waste}}
+                        <select  ng-model="waste.Contents" ng-options="other as other for other in others">
+                            <option value="">Choose form</option>
+                        </select>
+                        <i class="icon-plus-2 success" ng-click="addOtherWaste()"></i>
+                        <textarea maxlength="255" rows="3" ng-model="waste.Comments"></textarea>
+                    </div>
+                </div>
+
                 <div ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)">
                     <h3><a class="btn btn-success btn-large left" ng-click="createPickup(pi)"><i class="icon-box-remove"></i>Request Pickup</a></h3>
                 </div>

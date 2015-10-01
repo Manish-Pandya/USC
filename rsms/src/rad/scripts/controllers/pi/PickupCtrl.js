@@ -32,6 +32,16 @@ angular.module('00RsmsAngularOrmApp')
 
        $scope.svTrays = 0;
 
+        $scope.others=[
+            "Lead Pig","Equipment","Shielding","Other"
+        ]
+        $scope.otherWastes = [{Amount:null, Contents:null, Class:"OtherWaste"}];
+        $scope.addOtherWaste = function(){
+            $scope.otherWastes.push({Amount:null, Contents:null, Class:"OtherWaste"})
+        }
+        $scope.removeOtherWaste = function(idx){
+            $scope.otherWastes.splice(idx,1);
+        }
 
         $scope.createPickup = function(pi){
             //collection of things to be picked up
@@ -54,7 +64,7 @@ angular.module('00RsmsAngularOrmApp')
                 pickup.Status = "REQUESTED";
                 pickup.Principal_investigator_id = pi.Key_id;
             }
-
+            pickup.Other_wastes = $scope.otherWastes;
 
             //include proper objects in pickup
             if(pi.SolidsContainers){

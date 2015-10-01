@@ -865,13 +865,14 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Pickup());
-            $LOG->debug($decodedObject);
-            $pickup = $dao->save($decodedObject);
             $wasteBags = $decodedObject->getWaste_bags();
             $svCollections = $decodedObject->getScint_vial_collections();
             $carboys = $decodedObject->getCarboy_use_cycles();
+            $others = $decodedObject->getOther_wastes();
             $LOG->debug("collections logged on line 590");
             $LOG->debug($svCollections);
+            $pickup = $dao->save($decodedObject);
+            
             $saveChildren = $this->getValueFromRequest('saveChildren', $saveChildren);
 
             if($saveChildren != NULL){
@@ -889,6 +890,21 @@ class Rad_ActionManager extends ActionManager {
                     $collection = $svColDao->getById($collectionArray['Key_id']);
                     $collection->setPickup_id($pickup->getKey_id());
                     $svColDao->save($collection);
+                }
+                
+                foreach($others as $other){
+                	if($other["Contents"] != null){
+                		$LOG->fatal($other);
+	                	$otherDao = $this->getDao(new OtherWaste());
+	                	$otherObj = new OtherWaste();
+	           			$otherObj->setContents($other["Contents"]);
+	           			$otherObj->setComments($other["Comments"]);
+	           			//$otherObj->setContents($other["Contents"]);
+	           			 
+	                	$otherObj->setPickup_id($pickup->getKey_id());	                	
+	                	$otherObj = $otherDao->save($otherObj);
+	                	$LOG->fatal($otherObj);
+                	}
                 }
 
                 foreach($carboys as $carboyArray){
@@ -914,6 +930,7 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
             $entityMaps[] = new EntityMap("eager", "getWaste_bags");
             $entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
+            $entityMaps[] = new EntityMap("eager", "getOther_wastes");            
             $entityMaps[] = new EntityMap("eager", "getPrincipalInvestigator");
             $pickup->setEntityMaps($entityMaps);
 
