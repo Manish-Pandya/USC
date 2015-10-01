@@ -49,6 +49,21 @@
             <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">mCi</span>
         </div>
     </div>
+    
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Chemical Compound</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Chemical_compound" />
+        </div>
+    </div>
+    
+    
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Catalog Number</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Catalog_number" />
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <div class="alert alert-danger" ng-if="needsConfirmation" style="text-align:left;">
