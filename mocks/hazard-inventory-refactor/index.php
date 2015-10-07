@@ -45,7 +45,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/custom-font-icons.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>

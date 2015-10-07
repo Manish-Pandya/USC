@@ -971,6 +971,23 @@ angular
                 return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
             }
 
+            af.getPI = function(id)
+            {
+                var segment = "getPiForHazardInventory&id="+id+"&rooms=true";
+                return genericAPIFactory.read(segment)
+                    .then( function( returnedPromise) {
+                        dataStoreManager.store(returnedPromise.data);
+                        var pi = modelInflatorFactory.instateAllObjectsFromJson( dataStoreManager.getById("PrincipalInvestigator",1), null, true );
+                        //pi.loadRooms();
+                        pi.loadPIAuthorizations();
+                        pi.loadActiveParcels();
+                        pi.loadPurchaseOrders();
+                        pi.loadCarboyUseCycles();
+                        pi.loadSolidsContainers();
+                        return pi;
+                    });
+            }
+
             af.getParcelUses = function(parcel)
             {
                 if(!store.checkCollection( 'ParcelUseAmounts' )){

@@ -64,12 +64,13 @@
                 <div>
                     <h3>Miscellaneous Waste (no activity)</h3>
                     <div ng-repeat="waste in otherWastes">
-                        {{waste}}
-                        <select  ng-model="waste.Contents" ng-options="other as other for other in others">
-                            <option value="">Choose form</option>
-                        </select>
-                        <i class="icon-plus-2 success" ng-click="addOtherWaste()"></i>
-                        <textarea maxlength="255" rows="3" ng-model="waste.Comments"></textarea>
+                        <div style="width:100%">
+                            <select  ng-model="waste.Contents" ng-options="other as other for other in others">
+                                <option value="">Choose form</option>
+                            </select>
+                            <!--<i class="icon-plus-2 success" ng-click="addOtherWaste()"></i>-->
+                        </div>
+                        <textarea maxlength="255" rows="3" ng-model="waste.Comments" placeholder="Comments"></textarea>
                     </div>
                 </div>
 
@@ -134,6 +135,15 @@
                     -->
                     </div>
                 </div>
+                     <div ng-if="pickup.Other_wastes.length">
+                        <h3>Misc. Waste</h3>
+                        <ul style="margin-left:0;">
+                            <li ng-repeat="waste in pickup.Other_wastes">
+                                <h4>{{waste.Contents}}</h4>
+                                <p style="margin:3px 0;">{{waste.Comments}}</p>
+                            </li>
+                        </ul>
+                    </div>
             </div>
         </div>
     </div>

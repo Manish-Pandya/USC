@@ -813,7 +813,7 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new ParcelUse());
             $amounts = $decodedObject->getParcelUseAmounts();
             $use = $dao->save($decodedObject);            
-            
+            $LOG->fatal($amounts);
             foreach($amounts as $amount){            	
                 $LOG->fatal($amount['Curie_level'] . ' | ' . gettype ( $amount['Curie_level'] )	);
                 if($amount['Curie_level'] != null && floatval ( $amount['Curie_level'] ) > 0){
@@ -837,12 +837,12 @@ class Rad_ActionManager extends ActionManager {
                     		$collection = new ScintVialCollection();
                     		$collection->setPrincipal_investigator_id($pi->getKey_id());
                     		$collection = $collectionDao->save($collection);
-                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
                     	}else{
                     		$collection = end($pi->getCurrentScintVialCollections());
-                    		$newAmount->setScint_vial_collection_id($collection->getKey_id());
                     	}
-                    	$collection = $collectionDao->save($collection);
+                    	$collection = $collectionDao->save($collection);          	 
+                    	$newAmount->setScint_vial_collection_id($collection->getKey_id());
+                    	 
                     	 
                     }
                     
@@ -934,6 +934,8 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("eager", "getPrincipalInvestigator");
             $pickup->setEntityMaps($entityMaps);
 
+            $LOG->fatal($pickup);
+            
             return $pickup;
         }
     }

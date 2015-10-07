@@ -177,13 +177,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
     <h1>{{viewLabel}}
-        <a class="pull-right" href="../views/RSMSCenter.php"><i style="margin: 13px 125px 0 0px;color: #060606;font-size: 50px;" class="icon-home"></i></a>
+        <a class="pull-right" href="../views/RSMSCenter.php#/admin"><i style="margin: 13px 125px 0 0px;color: #060606;font-size: 50px;" class="icon-home"></i></a>
         <!--
         <a class="pull-right" style="margin-right:15px; color:white; font-size:40px;" ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin'], R['Inspector'], R['Radiation Inspector']])" href="../views/RSMSCenter.php"><i class="icon-home"></i></a>
         <a class="pull-right" style="margin-right:15px; color:white; font-size:40px;" ng-if="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin'], R['Inspector'], R['Radiation Inspector']])" href="../views/RSMSCenter.php"><i class="icon-home"></i></a>
 -->
 </h1>
-    
+
   </div>
 <!-- VIEW NESTING -->
     <div ui-view class="noBg"></div>

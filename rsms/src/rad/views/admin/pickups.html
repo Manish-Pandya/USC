@@ -86,6 +86,16 @@
                 <h3 style="padding-bottom:10px;">Notes:<p>{{pickup.Notes}}</p></h3>
             </div>
         </div>
+
+        <div ng-if="pickup.Other_wastes.length" class="print-always" ng-show="pickup.show" >
+            <h3>Misc. Waste</h3>
+            <ul style="margin-left:0;">
+                <li ng-repeat="waste in pickup.Other_wastes">
+                    <h4>{{waste.Contents}}</h4>
+                    <p style="margin:3px 0  ;">{{waste.Comments}}</p>
+                </li>
+            </ul>
+        </div>
     </div>
      <!--
     <ul>
