@@ -15,7 +15,8 @@
                 <div class="table-row" ng-repeat="carboy in carboys | carboyHasNoRetireDate">
                     <div>
                         <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                        <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                        <!-- TODO: Possible Status values should be enums -->
+                        <a ng-disabled="carboy.edit" ng-if="carboy.Current_carboy_use_cycle.Status != 'In Use' && carboy.Current_carboy_use_cycle.Status != 'Decaying'" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
                     </div>
                     <div>
                         {{carboy.Carboy_number}}
