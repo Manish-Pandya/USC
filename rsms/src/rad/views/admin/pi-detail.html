@@ -1,5 +1,5 @@
 <div ng-if="pi" class="right-column">
-    <h1>{{pi.User.Name}}</h1>
+    <h1>{{pi.User.Name}} <a class="btn btn-info left" href="{{'#/my-lab' + pi.Key_id}}"><i class="icon-info"></i>Lab</a></h1>
 
     <div class="card full auths" ng-click="af.setSelectedView('authorizations')">
         <h3 class="card-header padding" ng-if="pi.Pi_authorization.Authorizations.length">
