@@ -9,7 +9,7 @@
             <h3>Carboy Number</h3>
             <h3>Rooms</h3>
         </div>
-        <div class="table-row" ng-repeat="cycle in carboys">
+        <div class="table-row" ng-repeat="cycle in carboys | filter: {Status: 'Available'}">
             <div>
                 <a ng-if="cycle.Room.Class" ng-click="addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
                 <a ng-if="!cycle.Room.Class" disabled="disabled" class="btn left"><i class="icon-plus-2"></i>Assign</a>
