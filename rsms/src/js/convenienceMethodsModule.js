@@ -1,4 +1,7 @@
 angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased','ui.select','ngSanitize'])
+.run(function($rootScope) {
+    $rootScope.Constants = Constants;
+})
 .factory('convenienceMethods', function($http,$q,$rootScope){
     return{
         //
@@ -9,6 +12,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	@param (Object obj)     The object to be updated in the AngularJS $scope
         *
         **/
+        
         setPropertiesFromDTO: function(dto,obj){
             for (var key in dto) {
               if (dto.hasOwnProperty(key)) {
