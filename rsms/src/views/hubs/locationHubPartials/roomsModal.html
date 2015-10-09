@@ -1,0 +1,66 @@
+<div>
+    <div class="modal-header" style="padding:0;" class="">
+        <h2 style="padding:5px" ng-if="modalData.Key_id" class="greenBg">Editing {{nonEdtiable.Name}}<span ng-if="!modalData.Name">Unnamed Room</span></h2>
+        <h2 style="padding:5px" ng-if="!modalData.Key_id" class="greenBg">Create a New Room</h2>
+    </div>
+    <div class="modal-body">
+        <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
+        <form class="form-horizontal form">
+            <div class="" style="padding:3px 0;">
+                <div  class="control-group">
+                 <label class="control-label" for="inputEmail">Building</label>
+                 <div class="controls">
+                    <input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
+                   </div>
+            </div>
+
+            <div class="control-group">
+             <label class="control-label" for="inputRoomNumber">Room Number</label>
+             <div class="controls">
+                 <input type="text" id="inputRoomNumber" ng-model="modalData.Name" placeholder="Room Number">
+             </div>
+            </div>
+
+            <div class="control-group">
+             <label class="control-label" for="inputRoomPurpose">Room Use</label>
+             <div class="controls">
+                 <input type="text" ng-if="departmentsHaveSpecialtyLab" class="span4" id="inputRoomPurpose" ng-model="modalData.Purpose" placeholder="Room Purpose">
+                 <ui-select tagging="defaultAddOtherTag" ng-if="!departmentsHaveSpecialtyLab" ng-model="selectedUse" theme="selectize" ng-disabled="disabled" on-select="modalData.Purpose = $select.selected.Name">
+                    <ui-select-match placeholder="Select or input a Room Use">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="use in roomUses | propsFilter: {Name: $select.search}">
+                        <div once-text="use.Name"></div>
+                    </ui-select-choices>
+                </ui-select>
+             </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputEmail">Lab PI</label>
+                <span ng-show="!pis" style="margin-left:5px;">
+                    <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+                    <i class="icon-spinnery-dealie spinner small" style="margin-left:-30px;"></i>
+               </span>
+                <div class="controls span4" style="margin-left:5px;">
+                    <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item, true)">
+                        <ui-select-match placeholder="Select A PI">{{$select.selected.User.Name}}</ui-select-match>
+                        <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
+                            <div once-text="pi.User.Name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <ul style="margin-left:130px; margin-top:-28px;">
+                <li ng-repeat="pi in modalData.PrincipalInvestigators track by $index"><p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p></li>
+            </ul>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <i class="icon-spinnery-dealie spinner small" ng-if="modalData.IsDirty"></i>
+        <a ng-if="modalData.Name && modalData.Building.Name && !needsConfirmation" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData)"><i class="icon-checkmark"></i>Save</a>
+        <a ng-if="modalData.Name && modalData.Building.Name && needsConfirmation" class="btn btn-success hazardBtn btn-large" ng-click="save(modalData, true)"><i class="icon-checkmark"></i>Confirm</a>
+
+        <a ng-if="!modalData.Name || !modalData.Building.Name" class="btn btn-success hazardBtn btn-large" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-danger hazardBtn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+</div>

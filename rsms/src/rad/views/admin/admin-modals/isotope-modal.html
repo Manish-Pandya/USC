@@ -1,0 +1,31 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px;" class="greenBg"><span ng-if="!modalData.Isotope">Add</span><span ng-if="modalData.Isotope">Edit</span> an Isotope</h2>
+</div>
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Name</label>
+        <div class="controls">
+            <input data-ng-model="modalData.IsotopeCopy.Name" placeholder="Name" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="vendor">Half Life</label>
+        <div class="controls input-append use-amount">
+            <input id="vendor" data-ng-model="modalData.IsotopeCopy.Display_half_life" placeholder="Half Life" />              
+            <select ng-model="modalData.IsotopeCopy.Unit" style="width:140px;" ng-options="unit as unit for unit in ['Days','Hours','Years']">
+                <option value="">Select a unit</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="emitter">Emitter Type</label>
+        <select ng-model="modalData.IsotopeCopy.Emitter_type" style="width:258px;" ng-options="type for type in ['Alpha','Beta','Gamma']">
+            <option value="">Select an Emitter Type</option>
+        </select>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save( modalData.IsotopeCopy, modalData.Isotope )"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

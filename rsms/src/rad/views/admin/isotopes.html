@@ -1,0 +1,34 @@
+<!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+
+<div class="right-column">
+    <div class="well half">
+        <h1 class="carboys"><i class="icon-carboy"></i>Isotopes<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Isotope</a></h1>
+        <div class="card full isotopes">
+			<div class="fake-table bordered">
+				<div class="table-header">
+                    <h3>Edit</h3>
+					<h3>Name</h3>
+					<h3>Half Life</h3>
+                    <h3>Emitter Type</h3>
+				</div>
+				<div class="table-row" ng-repeat="isotope in isotopes ">
+                    <div>
+                        <a ng-disabled="isotope.edit" ng-class="{'disabled':isotope.edit}" ng-click="openModal(isotope)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                        <a ng-disabled="carboy.edit" ng-class="{'disabled':isotope.edit}" ng-click="deactivate(isotope)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                    </div>
+					<div>
+						{{isotope.Name}}
+					</div>
+					<div>
+						{{isotope.Display_half_life}} {{isotope.Unit}}
+					</div>
+                    <div>
+						{{isotope.Emitter_type}}
+					</div>
+				</div>
+			</div>
+
+		</div>
+    </div>
+
+</div>
