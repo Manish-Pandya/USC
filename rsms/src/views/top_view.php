@@ -51,8 +51,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
-
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
+    
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
 
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
