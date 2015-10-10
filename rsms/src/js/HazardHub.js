@@ -296,6 +296,8 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
 
         //temporarily use our hazard copy client side to bandaid server side bug that causes subhazards to be returned as indexed instead of associative
         convenienceMethods.setPropertiesFromDTO( dto, hazard );
+        console.log(hazard);
+        console.log(dto);
         hazard.isBeingEdited = false;
         hazard.IsDirty = false;
         hazard.Invalid = false;
@@ -323,8 +325,31 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
         $scope.hazardCopy = angular.copy(hazard);
         $scope.hazardCopy.Is_active = !$scope.hazardCopy.Is_active;
         if($scope.hazardCopy.Is_active === null)hazard.Is_active = false;
-        var url = '../../ajaxaction.php?action=saveHazardWithoutReturningSubHazards';
-        convenienceMethods.updateObject( $scope.hazardCopy, hazard, onSaveHazard, onFailSave, url );
+        hazard.IsDirty = true;
+
+        // server lazy loads subhazards, save any subhazards present to re-add manually.
+        var previousSubHazards = hazard.SubHazards;
+
+        hazardHubFactory.saveHazard($scope.hazardCopy).then(
+            function(returnedHazard){
+                hazard.isBeingEdited = false;
+                hazard.IsDirty = false;
+                hazard.Invalid = false;
+                $scope.hazardCopy = {};
+
+                if(previousSubHazards !== null && previousSubHazards.length !== 0) {
+                    // restore subhazards
+                    returnedHazard.SubHazards = previousSubHazards;
+                    onGetSubhazards(previousSubHazards, hazard);
+                }
+
+                angular.extend(hazard, returnedHazard);
+                hazard.Key_id = returnedHazard.Key_id;
+            },
+            function(){
+                hazard.error = hazard.Name + ' could not be saved.  Please check your internet connection and try again.'
+            }
+        )
     }
 
     //by default, this is true.  This means that we will display hazards with a TRUE Is_active property
