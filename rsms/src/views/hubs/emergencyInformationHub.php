@@ -93,30 +93,37 @@ require_once '../top_view.php';
 
                 </ul>
 
+                <h1 class="hazardHeader" ng-if="pisByRoom">EMERGENCY CONTACTS</h1>
                 <table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered">
                     <tr class="blue-tr">
-                        <th>Principal Investigator</th>
+                        <th>Name</th>
                         <th>Phone</th>
                         <th>Department</th>
+                        <th>Role</th>
                     </tr>
                     <tr ng-repeat="pi in pisByRoom">
-                        <td style="width:37%">{{pi.User.Name}}</td>
-                        <td style="width:18%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone | tel}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
-                        <td style="width:45%">
+                        <td style="width:26%">{{pi.User.Name}}</td>
+                        <td style="width:17%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone | tel}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
+                        <td style="width:34%">
                             <ul style="list-style: none;">
                                 <li ng-repeat="dept in pi.Departments">{{dept.Name}}</li>
                             </ul>
                         </td>
-                    </tr>
-                </table>
-                <table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered" style="max-width:500px;">
-                    <tr class="blue-tr">
-                        <th>Lab Personnel Contacts</th>
-                        <th>Phone</th>
+                        <td style="width:23%">
+                            <ul style="list-style: none;">
+                                <li ng-repeat="role in pi.User.Roles">{{role.Name}}</li>
+                            </ul>
+                        </td>
                     </tr>
                     <tr ng-repeat="contact in personnel">
-                        <td>{{contact.Name}}</td>
-                        <td>{{contact.Emergency_phone | tel}}<span ng-if="!contact.Emergency_phone">Unknown</span></td>
+                        <td style="width:26%">{{contact.Name}}</td>
+                        <td style="width:17%"><span ng-if="contact.Emergency_phone">{{contact.Emergency_phone | tel}}</span><span ng-if="!contact.Emergency_phone">Unknown</span></td>
+                        <td style="width:34%">{{contact.Primary_department.Name}}</td>
+                        <td style="width:23%">
+                            <ul style="list-style: none;">
+                                <li ng-repeat="role in contact.Roles">{{role.Name}}</li>
+                            </ul>
+                        </td>
                     </tr>
                 </table>
 
