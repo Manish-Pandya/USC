@@ -268,9 +268,13 @@ button.btn:not(.btn-large){
 /* line 88, ../sass/style.scss */
 /* line 154, ../sass/style.scss */
 .center {
-  float: none;
-  margin-left: auto;
-  margin-right: auto;
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.link-list li{
+  display:inline;
+  float:left;
 }
 
 /* line 89, ../sass/style.scss */

@@ -19,6 +19,11 @@ require_once '../top_view.php';
     <div class="whiteBg" style="margin-top:-40px; padding-bottom:15px !important;">
         <span id="emergency-info">
 
+            <ul style="font-size:20px; font-weight:bold; list-style:none; margin:20px auto; width:500px; height:112px" class="well center link-list">
+                <li style="padding:10px"><a target="_blank" class="btn btn-info btn-large" href="http://wiser.nlm.nih.gov/">WISER</a></li>
+                <li style="padding:10px"><a target="_blank" class="btn btn-info btn-large" href="http://cameochemicals.noaa.gov/">CAMEO Chemicals</a></li>
+                <li style="padding:10px"><a target="_blank" class="btn btn-info btn-large" href="https://asprtracie.hhs.gov/?source=govdelivery&utm_medium=email&utm_source=govdelivery">ASPR TRACIE</a></li>
+            </ul>
             <div class="center" ng-show="!showingHazards">
                 <a class="btn btn-info btn-large" ng-click="searchType = 'location'"><h2>Search by Location</h2></a>
                 <a class="btn btn-info btn-large" ng-click="searchType = 'pi'"><h2>Search by Principal Investigator</h2></a>
@@ -86,12 +91,6 @@ require_once '../top_view.php';
                   <span>Loading...</span>
                 </span>
                 <h2 class="bold" style="margin:-35px 0 10px" ng-if="room && building">Room {{room.Name}}, {{building.Name}}</h2>
-                <ul ng-if="hazards && showingHazards" style="font-size:20px; font-weight:bold; list-style:none;">
-                    <li style="padding:10px"><a target="_blank" href="http://wiser.nlm.nih.gov/">WISER (Wireless Information System for Emergency Responders)</a></li>
-                    <li style="padding:10px"><a target="_blank" href="http://cameochemicals.noaa.gov/">CAMEO Chemicals (Database of Hazardous Materials)</a></li>
-                   <li style="padding:10px"><a target="_blank" href="https://asprtracie.hhs.gov/?source=govdelivery&utm_medium=email&utm_source=govdelivery">ASPR TRACIE (Healthcare Emergency Preparedness Information Gateway)</a></li>
-
-                </ul>
 
                 <h1 class="hazardHeader" ng-if="pisByRoom">EMERGENCY CONTACTS</h1>
                 <table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered">
