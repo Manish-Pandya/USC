@@ -145,8 +145,12 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
             }
         });
         instance.result.then(function (returnedDto) {
+                            console.log(returnedDto);
+
             if(!convenienceMethods.arrayContainsObject($scope.departments,returnedDto, ["Department_name", "Department_name"])){
                 $scope.departments.push(returnedDto)
+            }else{
+                angular.extend(dto, returnedDto);
             }
         });
     }
@@ -158,6 +162,8 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
         Is_active:true,
         Specialty_lab:specialtyLab
     }
+    $scope.specialtyLab = specialtyLab;
+
     if(departmentDto.Department_id){
         $scope.department.Name =   departmentDto.Department_name;
         $scope.department.Key_id = departmentDto.Department_id;
@@ -180,10 +186,7 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
         departmentFactory.saveDepartment($scope.department).then(
           function(promise){
               console.log(promise);
-              departmentDto.Department_name = promise[0].Department_name;
-              departmentDto.Is_active = promise[0].Is_active;
-              departmentDto.Department_id    = promise[0].Department_id
-              $modalInstance.close(departmentDto);
+              $modalInstance.close(promise[0]);
           },
           function(promise){
             $scope.error = 'There was a promblem saving the department.';
