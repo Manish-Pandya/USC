@@ -67,6 +67,7 @@ class ErrorHandler {
 		$error = error_get_last();
 		if ( $error["type"] == E_ERROR ){
 			Logger::getLogger(__CLASS__)->info('Handling Fatal Error');
+			Logger::getLogger(__CLASS__)->info($error);
 			$this->handleError( $error["type"], $error["message"], $error["file"], $error["line"] );
 		}
 	}

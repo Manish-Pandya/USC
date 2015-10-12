@@ -359,6 +359,22 @@ div.rsmsCenterIconContainer a p {
   padding: 5px;
   font-size: 25px;
 }
+.safety-programs a{
+    background: white;
+    border: solid 5px transparent;
+}
+.safety-programs p{
+    color:black !important;
+}
+.safety-programs .bio{
+    border-color: #d00;
+}
+.safety-programs .chem{
+    border-color: #0072BC;
+}
+.safety-programs .rad{
+    border-color:yellow;
+}
 
 @media (max-width: 773px) {
   /* line 131, ../sass/style.scss */
@@ -1290,7 +1306,7 @@ img.smallLoading {
 }
 
 /* line 963, ../sass/style.scss */
-.greyedOut {
+.greydOut {
   color: #bbb !important;
 }
 

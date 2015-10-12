@@ -21,6 +21,12 @@ homeApp
                     controller: adminController
                 }
             )
+            .when('/safety-programs',
+                {
+                    templateUrl: '../views/rsmsCenterPartials/safety-programs.html',
+                    controller: adminController
+                }
+            )
             .otherwise(
                 {
                     redirectTo: '/home'

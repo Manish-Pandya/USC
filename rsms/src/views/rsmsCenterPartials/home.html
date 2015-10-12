@@ -7,17 +7,25 @@
     </div>
 
     <div class="span2 rsmsCenterIconContainer" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])">
+      <a class="span12 bg-color-blue" ng-click="setRoute('/safety-programs')">
+        <img class="" src="../img/safety-programs.png" />
+        <p>Safety Programs</p>
+      </a>
+    </div>
+
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'], R['Emergency Account'] ])">
+      <a href="hubs/emergencyInformationHub.php" class="span12" style="background: white;">
+        <img class="" src="../img/emergency-icon.png" />
+        <p style="color:black">Emergency Information</p>
+      </a>
+    </div>
+  </div>
+</div>
+<div class="centerIcons">
+    <div class="span2 rsmsCenterIconContainer" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])">
       <a class="span12" style="background: #d00;"  ng-click="setRoute('/inspections')">
         <img class="" src="../img/new-inspection-icon.png" />
         <p>Laboratory Inspections</p>
       </a>
     </div>
-
-    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'], R['Emergency Account'] ])">
-      <a href="hubs/emergencyInformationHub.php" class="span12" style="background: #e67e1d;">
-        <img class="" src="../img/hazard-icon.png" />
-        <p>Emergency Information</p>
-      </a>
-    </div>
-  </div>
 </div>
