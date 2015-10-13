@@ -159,7 +159,6 @@ initiateInspection = function(piKey_id)
         return parseFloat(hazard.Order_index);
     }
 
-<<<<<<< HEAD
     $scope.name = function(hazard){
         return parseFloat(hazard.getName());
     }
@@ -180,7 +179,7 @@ initiateInspection = function(piKey_id)
 
 
   });
-=======
+
         //view filter for displaying hazards with the matching Is_active state
         $scope.hazardFilter = function (hazard) {
             if ($scope.hazardFilterSetting.Is_active == 'both') {
@@ -241,4 +240,3 @@ initiateInspection = function(piKey_id)
             af.deleteModalData();
         }
     });
->>>>>>> hazard-inventory-refactor
