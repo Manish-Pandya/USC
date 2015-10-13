@@ -1,0 +1,18 @@
+<div class="modal-header footer-present" style="padding:0;">
+    <h2 style="padding:5px;" class="redBg">{{modalData.Hazard.Name}}</h2>
+</div>
+<div class="modal-body">
+    <ul>
+        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms">
+            <label class="checkbox inline">
+                <input type="checkbox" ng-model="room.ContainsHazard" ng-change="child.loadSubHazards(); child.unchecked=true;" />
+                <span ng-if="$index % 3 ==0" ng-init="room.ContainsHazard = true"/>
+                <span class="metro-checkbox" once-text="room.Name"></span>
+            </label>
+            <div class="clearfix"></div>
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-danger left" ng-click="edit(false);close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
