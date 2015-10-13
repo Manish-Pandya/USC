@@ -159,6 +159,7 @@ initiateInspection = function(piKey_id)
         return parseFloat(hazard.Order_index);
     }
 
+<<<<<<< HEAD
     $scope.name = function(hazard){
         return parseFloat(hazard.getName());
     }
@@ -179,3 +180,65 @@ initiateInspection = function(piKey_id)
 
 
   });
+=======
+        //view filter for displaying hazards with the matching Is_active state
+        $scope.hazardFilter = function (hazard) {
+            if ($scope.hazardFilterSetting.Is_active == 'both') {
+                return true;
+            } else if ($scope.hazardFilterSetting.Is_active == 'active') {
+                if (hazard.Is_active == true) return true;
+            } else if ($scope.hazardFilterSetting.Is_active == 'inactive') {
+                if (hazard.Is_active == false) return true;
+            }
+            return false;
+        }
+
+        $scope.openSubsModal = function (hazard) {
+            hazard.loadSubHazards();
+            var modalData = {};
+            modalData.Hazard = hazard;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'hazard-inventory-modals/sub-hazards-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+            });
+        }
+        
+        $scope.openRoomsModal = function (hazard) {
+            hazard.loadSubHazards();
+            hazard.InspectionRooms = $scope.PI.Rooms;
+            var modalData = {};
+            modalData.Hazard = hazard;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'hazard-inventory-modals/rooms-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+            });
+        }
+        
+        $scope.openMultiplePIsModal = function (hazard) {
+            hazard.loadSubHazards();
+            hazard.InspectionRooms = $scope.PI.Rooms;
+            var modalData = {};
+            modalData.Hazard = hazard;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'hazard-inventory-modals/pis-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+            });
+        }
+
+
+    })
+    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, actionFunctionsFactory, $modalInstance) {
+        var af = actionFunctionsFactory;
+        $scope.modalData = af.getModalData();
+        
+        $scope.pis = [{Name:'Shayne Barlow'},{Name:'Maria "Marj" Pena'},{Name:'Jeffery Twiss'}];
+    
+        $scope.close = function () {
+            $modalInstance.dismiss();
+            af.deleteModalData();
+        }
+    });
+>>>>>>> hazard-inventory-refactor

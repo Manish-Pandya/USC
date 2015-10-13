@@ -1943,7 +1943,26 @@ ul.key li.deficiencies span {
 .hazardList span > ul.topChildren {
   margin-left: 0 !important;
 }
+<<<<<<< HEAD
 
+=======
+.icons{
+  height: 20px;
+  display:inline-block;
+}
+.icons span{
+  text-align: left;
+  margin-right: 0px;
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 20px;
+}
+.icons span i{
+  top: 5px;
+  position:absolute;
+}
+>>>>>>> hazard-inventory-refactor
 
 @media (max-width: 1375px) {
   /* line 501, ../sass/style.scss */
