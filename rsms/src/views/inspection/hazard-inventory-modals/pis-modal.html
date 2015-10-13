@@ -1,0 +1,24 @@
+<div class="modal-header footer-present" style="padding:0;">
+    <h2 style="padding:5px;" class="redBg">{{modalData.Hazard.Name}}</h2>
+</div>
+<div class="modal-body">
+    <ul>
+        <li ng-repeat="(key, pi) in pis" style="display:block">
+            <label class="checkbox inline">
+                <input type="checkbox" disabled ng-model="pi.has" />
+                <span ng-init="pi.has = true"/>
+                <span class="metro-checkbox" once-text="pi.Name"></span>
+            </label>
+            <ul class="subRooms" style="margin-left: 27px;height: 20px;">
+                <li>Rooms:</li>
+                <li ng-repeat="(key2, room) in modalData.Hazard.InspectionRooms" class="" ng-if="(key+key2) % 2 ==0" ng-class="{'last':$last}">
+                    <span>{{room.Name}}</span>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-danger left" ng-click="edit(false);close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

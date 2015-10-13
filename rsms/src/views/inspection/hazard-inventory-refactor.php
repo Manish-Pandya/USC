@@ -154,10 +154,10 @@ require_once '../top_view.php';
                                             <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
                                         </span>
                                         <span ng-if="child.IsPresent">
-                                            <i class="fa-door-open" ng-click="showRooms($event, child, $element)"></i>
+                                            <i class="fa-door-open" ng-click="openRoomsModal(child)"></i>
                                         </span>
 
-                                        <span ng-if="child.HasMultiplePIs && child.IsPresent">
+                                        <span ng-if="child.IsPresent">
                                             <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
                                         </span>
                                     </div>
@@ -217,7 +217,7 @@ require_once '../top_view.php';
                                             <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
                                         </span>
                                         <span ng-if="child.IsPresent">
-                                            <i class="fa-door-open" ng-click="showRooms($event, child, $element)"></i>
+                                            <i class="fa-door-open" ng-click="openRoomsModal(child)"></i>
                                         </span>
 
                                         <span ng-if="child.HasMultiplePIs && child.IsPresent">
