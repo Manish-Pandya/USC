@@ -1960,10 +1960,11 @@ ul.key li.deficiencies span {
   display:inline-block;
 }
 .icons span{
-  margin-right: 5px;
+  text-align: left;
+  margin-right: 0px;
   position: relative;
   display: inline-block;
-  width:20px;
+  width: 18px;
   height: 20px;
 }
 .icons span i{

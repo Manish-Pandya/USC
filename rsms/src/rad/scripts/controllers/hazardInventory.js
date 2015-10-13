@@ -214,13 +214,39 @@ angular.module('HazardInventory', [
                 controller: 'HazardInventoryModalCtrl'
             });
         }
+        
+        $scope.openRoomsModal = function (hazard) {
+            hazard.loadSubHazards();
+            hazard.InspectionRooms = $scope.PI.Rooms;
+            var modalData = {};
+            modalData.Hazard = hazard;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'hazard-inventory-modals/rooms-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+            });
+        }
+        
+        $scope.openMultiplePIsModal = function (hazard) {
+            hazard.loadSubHazards();
+            hazard.InspectionRooms = $scope.PI.Rooms;
+            var modalData = {};
+            modalData.Hazard = hazard;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'hazard-inventory-modals/pis-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+            });
+        }
 
 
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, actionFunctionsFactory, $modalInstance) {
         var af = actionFunctionsFactory;
         $scope.modalData = af.getModalData();
-        console.log(af.getModalData());
+        
+        $scope.pis = [{Name:'Shayne Barlow'},{Name:'Maria "Marj" Pena'},{Name:'Jeffery Twiss'}];
+    
         $scope.close = function () {
             $modalInstance.dismiss();
             af.deleteModalData();
