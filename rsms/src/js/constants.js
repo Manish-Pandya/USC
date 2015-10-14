@@ -6,7 +6,7 @@ var Constants = (function () {
         USER_STATUS:{
             NO_LONGER_CONTACT:"Still in this lab, but no longer a contact",
             NOW_A_CONTACT:"Still in this lab, but now a lab contact",
-            MOVED_LABS:"In another pi's lab",
+            MOVED_LABS:"In another PI's lab",
             LEFT_UNIVERSITY:"No longer at the univserity"
         },
         ROOM_STATUS:{

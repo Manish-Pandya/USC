@@ -6,9 +6,9 @@ angular
         var lf = $scope.lf = locationHubFactory;
         
         $scope.dataStoreManager = dataStoreManager;
-    
-        $scope.contactOptions  = ["In another PI's lab", "No longer at the university", "Still in this lab, but no longer a contact"];
-        $scope.personnelOptions = ["In another PI's lab", "No longer at the university", "Still in this lab, but now a lab contact"];
+        
+        $scope.contactOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NO_LONGER_CONTACT];
+        $scope.personnelOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NOW_A_CONTACT];
         $scope.newUser;
         $scope.addedUsers = [];
         var id = 1;
