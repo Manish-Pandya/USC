@@ -174,7 +174,7 @@ var MainUserListController = function(userHubFactory,$scope,$rootScope, $modal, 
 
      if(!user.userTypes)user.userTypes = convenienceMethods.getUserTypes(user);
      if(!$scope.LabContacts)$scope.LabContacts = [];
-      if(user.userTypes.indexOf('Lab Contact') > -1){
+      if(user.userTypes.indexOf(Constants.ROLES.NAME.LAB_CONTACT) > -1){
 
         if(!convenienceMethods.arrayContainsObject($scope.LabContacts, user)){
           $scope.LabContacts.push(user);
@@ -198,7 +198,7 @@ var MainUserListController = function(userHubFactory,$scope,$rootScope, $modal, 
       }
 
       if(!$scope.Admins)$scope.Admins = [];
-      if(user.userTypes.indexOf('Admin') > -1 || user.userTypes.indexOf('Radiation Inspector') > -1 || user.userTypes.indexOf('Safety Inspector') > -1){
+      if(user.userTypes.indexOf(Constants.ROLES.NAME.ADMIN) > -1 || user.userTypes.indexOf(Constants.ROLES.NAME.RADIATION_INSPECTOR > -1 || user.userTypes.indexOf(Constants.ROLES.NAME.SAFETY_INSPECTOR) > -1){
         if(!convenienceMethods.arrayContainsObject($scope.Admins, user)){
           $scope.Admins.push(user);
         }else{
@@ -421,7 +421,7 @@ var labContactModalInstanceController = function ($scope, $modalInstance, items,
       convenienceMethods.updateObject( piDTO, userCopy.Departments, onSaveNewPI, onFailSaveNewPi, '../../ajaxaction.php?action=savePI');
     }
 /*
-    if(userCopy.userTypes.indexOf("Safety Inspector" > -1)){
+    if(userCopy.userTypes.indexOf(Constants.ROLES.NAME.SAFETY_INSPECTOR > -1)){
       var inspectorDTO = {
         Class: "Inspector",
         User_id: data.Key_id,

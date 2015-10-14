@@ -55,7 +55,6 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
         while( len-- ){
             var room = object.Rooms[len];
-            if(!room.Name)alert('what the fuck');
             room.roomText = 'Room: '+room.Name;
 
             if(room.Building){

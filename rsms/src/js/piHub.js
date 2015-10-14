@@ -563,9 +563,9 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
             }
             userHubFactory.setModalData(user);
             //determine which modal we should open based on the user's role(s)
-            if(userHubFactory.hasRole(user, "Principal Investigator")){
+            if(userHubFactory.hasRole(user, Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)){
                 templateString = "piModal";
-            }else if(userHubFactory.hasRole(user, "Lab Contact")){
+            }else if(userHubFactory.hasRole(user, Constants.ROLES.NAME.LAB_CONTACT)){
                 templateString = "labContactModal";
             }else{
                 templateString = "labPersonnelModal";

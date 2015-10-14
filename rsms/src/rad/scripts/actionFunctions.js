@@ -1241,7 +1241,7 @@ angular
                 af.clearError();
                 if(poured){
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
-                    copy.Status = "Available";
+                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
                 }
                 return this.save( copy )
                     .then(
@@ -1266,7 +1266,7 @@ angular
 
             af.removeCarboyFromLab = function(cycle){
                 af.clearError();
-                cycle.Status = 'Decaying';
+                cycle.Status = Constants.CARBOY_USE_CYCLE.STATUS.DECAYING;
                 return this.save( cycle )
                     .then(
                         function(returnedCycle){
@@ -1281,7 +1281,7 @@ angular
                 cycle.Principal_investigator_id = pi.Key_id;
                 cycle.Room_id = room.Key_id;
                 cycle.Lab_date = convenienceMethods.setMysqlTime(new Date());
-                cycle.Status = 'In Use';
+                cycle.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                 cycle.Is_active = true;
 
                 af.clearError();
@@ -1453,7 +1453,7 @@ angular
 
                 //Set labels for each kind of child the pickup might have, so we can display a human readable error if the save fails.
                 if(copy.Class == "CarboyUseCycle"){
-                    copy.Status = "In Use";
+                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                     var label = "Carboy";
                 }else if(copy.Class == "WasteBag"){
                     var label = "Wate Bag";
@@ -1484,7 +1484,7 @@ angular
                 var copy = dataStoreManager.createCopy(object);
                 //Set labels for each kind of child the pickup might have, so we can display a human readable error if the save fails.
                 if(copy.Class == "CarboyUseCycle"){
-                    copy.Status = "In Use";
+                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                     var label = "Carboy";
                 }else if(copy.Class == "WasteBag"){
                     var label = "Wate Bag";
@@ -1506,7 +1506,7 @@ angular
                 var copy = dataStoreManager.createCopy(object);
                 //Set labels for each kind of child the pickup might have, so we can display a human readable error if the save fails.
                 if(copy.Class == "CarboyUseCycle"){
-                    copy.Status = "In Use";
+                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                     var label = "Carboy";
                 }else if(copy.Class == "WasteBag"){
                     var label = "Wate Bag";
