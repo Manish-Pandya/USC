@@ -56,7 +56,7 @@ angular
                 
                 if(!item.PendingRoomChangeCopy)item.PendingRoomChangeCopy = modelInflatorFactory.instantiateObjectFromJson(new window.PendingRoomChange);
                 
-                item.PendingRoomChangeCopy.New_status = "Added";
+                item.PendingRoomChangeCopy.New_status = Constants.PENDING_CHANGE.ROOM_STATUS.ADDED;
                 item.PendingRoomChangeCopy.Is_active = true;
                 item.PendingRoomChangeCopy.Name = item.Name
                 item.Building_name = dataStoreManager.getById("Building", item.Building_id).Name;

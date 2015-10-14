@@ -10,8 +10,8 @@ var Constants = (function () {
             LEFT_UNIVERSITY:"No longer at the univserity"
         },
         ROOM_STATUS:{
-            ADDING:"Adding",
-            REMOVING:"Removing"
+            ADDED:"Added",
+            REMOVED:"Removed"
         },
         HAZARD_STATUS:{
 

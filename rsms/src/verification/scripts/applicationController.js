@@ -142,7 +142,7 @@ angular
             var copy = room.PendingRoomChangeCopy;
             copy.Verification_id = ac.getCachedVerification().Key_id;
             if (building) copy.Building_name = building.Name;
-            if (room.PendingRoomChangeCopy.Answer == "No") room.PendingRoomChangeCopy.New_status = "Removed";
+            if (room.PendingRoomChangeCopy.Answer == "No") room.PendingRoomChangeCopy.New_status = Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED;
 
             return ac.save(copy)
                 .then(
