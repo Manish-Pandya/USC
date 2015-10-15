@@ -8,7 +8,7 @@ angular.module('filtersApp',[])
                var isContact = false;
                var j = users[i].Roles.length;
                while(j--){
-                   if(users[i].Roles[j].Name == "Lab Contact"){
+                   if(users[i].Roles[j].Name == Constants.ROLE.NAME.LAB_CONTACT){
                      isContact = true;
                    }
                }

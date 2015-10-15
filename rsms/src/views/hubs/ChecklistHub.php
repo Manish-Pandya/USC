@@ -30,7 +30,7 @@ require_once '../top_view.php';
     </form>
     <span ng-hide="!checklist">
         <span class="spacer"></span>
-        <a ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-hide="!showInactive.Is_active" href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left btn-large">
+        <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-hide="!showInactive.Is_active" href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left btn-large">
          <i class="icon-plus-2"></i>Add Question
         </a>
         <Input type="hidden" ng-model="showInactive.Is_active" ng-init="showInactive.Is_active = true">
@@ -49,8 +49,8 @@ require_once '../top_view.php';
 
         <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
           <td style="width:90%">
-            <div class="span1" style="width:40px;" ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
-              <button ng-disabled="$first || !rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
+            <div class="span1" style="width:40px;" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
+              <button ng-disabled="$first || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
               <button ng-disabled="$last" ng-class="{'disabled':$last}" class="btn btn-mini btn-info upvote" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></button>
             </div>
             <h2 style="width:90%;"><span once-text="question.Text"></span>
@@ -76,9 +76,9 @@ require_once '../top_view.php';
           </td>
 
           <td style="width:10%; text-align:center" >
-              <a ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" href="QuestionHub.php#?id={{question.Key_id}}" class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
-              <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></button>
-              <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+              <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" href="QuestionHub.php#?id={{question.Key_id}}" class="btn btn-primary" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
+              <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success" ng-click="handleQuestionActive(question)" ng-if="!question.Is_active || question.Is_active == 0"><i class="icon-checkmark"></i></button>
+              <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger" ng-click="handleQuestionActive(question)" ng-if="question.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
               <i class="icon-spinnery-dealie spinner small" ng-if="question.IsDirty"></i>
               <!--<a ng-click="handleQuestionActive(question)"  ng-class="{'btn-danger': question.Is_active, 'btn-success' :  !question.Is_active}" class="btn btn-large"><i ng-class="{ 'icon-check-alt' :  !question.Is_active, 'icon-remove' :  question.Is_active}" ></i><span ng-show="question.Is_active == true">Disable</span><span ng-show="question.Is_active == false">Activate</span></a></div></li>-->
           </td>

@@ -592,7 +592,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
 
             //see if the inspection report is ready for the lab to submit to EHS (do all deficiencies have at least pending corrective action)
-            if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLES.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
+            if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
           });
       }else{
         $scope.inspection = postInspectionFactory.getInspection();
@@ -600,7 +600,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
         $scope.doneLoading = true;
         postInspectionFactory.getHotWipes($scope.inspection);
-         if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLES.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
+         if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
       }
       $scope.options = ['Incomplete','Pending','Complete'];
     }else{
@@ -714,7 +714,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       }else{
           def.CorrectiveActions.push(returnedCA);
       }
-       if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLES.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
+       if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
     });
   }
 

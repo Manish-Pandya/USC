@@ -1,7 +1,7 @@
 <?php
     require_once '../top_view.php';
 ?>
-<!--ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector'], R['Radiation Admin'], R['Radiation Inspector'] ])" -->
+<!--ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.RADIATION_INSPECTOR] ])" -->
 <script src="../../js/HazardHub.js"></script>
 <span ng-app="hazardHub" ng-controller="TreeController">
 <div class="navbar">

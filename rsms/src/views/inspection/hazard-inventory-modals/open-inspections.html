@@ -60,29 +60,29 @@
                 </td>
 
                 <td>
-                    <span ng-if="inspection.Status != 'SCHEDULED'">{{inspection.Status}}</span>
+                    <span ng-if="inspection.Status != Contacts.INSPECTION.STATUS.SCHEDULED">{{inspection.Status}}</span>
 
-                    <span ng-if="inspection.Status == 'PENDING CLOSEOUT'">
+                    <span ng-if="inspection.Status == Contacts.INSPECTION.STATUS.PENDING_CLOSEOUT">
                         <p>
                             (Due: {{inspection.Cap_due_date | dateToISO}})
                             <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                         </p>
                     </span>
 
-                    <span ng-if="inspection.Status == 'INCOMPLETE REPORT'">
+                    <span ng-if="inspection.Status == Contacts.INSPECTION.STATUS.INCOMPLETE_REPORT">
                         <p>
                             (Started: {{inspection.Date_started | dateToISO}})
                             <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                         </p>
                     </span>
 
-                    <span ng-if="!inspection.Status || inspection.Status == 'SCHEDULED'">
+                    <span ng-if="!inspection.Status || inspection.Status == Contacts.INSPECTION.STATUS.SCHEDULED">
                         <p>
                             N/A
                         </p>
                     </span>
 
-                    <span ng-if="inspection.Status == 'OVERDUE FOR INSPECTION'">
+                    <span ng-if="inspection.Status == Contacts.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                         <p>
                             (Scheduled for {{inspection.Text_schedule_month}})
                             <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>

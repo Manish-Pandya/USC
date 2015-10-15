@@ -18,7 +18,7 @@ var Constants = (function () {
         }
     };
     
-    constants.ROLES = {
+    constants.ROLE = {
         NAME:{
             ADMIN:"Admin",
             SAFETY_INSPECTOR:"Safety Inspector",
@@ -39,6 +39,26 @@ var Constants = (function () {
             IN_USE:"In Use",
             DECAYING:"Decaying",
             PICKED_UP:"Picked Up"
+        }
+    };
+    
+    constants.INSPECTION = {
+        STATUS:{
+            NOT_ASSIGNED:"NOT ASSIGNED",
+            NOT_SCHEDULED:"NOT SCHEDULED",
+            SCHEDULED:"SCHEDULED",
+            PENDING_CLOSEOUT:"PENDING CLOSEOUT",
+            CLOSED_OUT:"CLOSED OUT",
+            INCOMPLETE_REPORT:"INCOMPLETE REPORT",
+            OVERDUE_CAP:"OVERDUE CAP",
+            PENDING_EHS_APPROVAL:"PENDING EHS APPROVAL",
+            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
+        }
+    };
+    
+    constants.HAZARD = {
+        NAME:{
+            
         }
     };
   

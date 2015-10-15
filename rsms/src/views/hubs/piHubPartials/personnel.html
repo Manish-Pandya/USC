@@ -13,12 +13,12 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{PI.User.Name}}</td><td>{{PI.User.Email}}</td><td>{{PI.User.Office_phone | tel}}</td><td>{{PI.User.Emergency_phone | tel}}</td><td><a ng-click="openModal(PI)" class="btn   btn-primary left" style="margin-left: 0;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit PI</a></td>
+            <td>{{PI.User.Name}}</td><td>{{PI.User.Email}}</td><td>{{PI.User.Office_phone | tel}}</td><td>{{PI.User.Emergency_phone | tel}}</td><td><a ng-click="openModal(PI)" class="btn btn-primary left" style="margin-left: 0;" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit PI</a></td>
         </tr>
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI" class="alert greenBg">Laboratory Contact(s) <a class="btn left" ng-click="openAssignModal('Lab Contact')"><i class="icon-plus-2"></i>Assign Lab Contact</a><a class="btn left" ng-click="openModal(null, 'Lab Contact')"><i class="icon-plus-2"></i>Create Lab Contact</a><div class="clearfix"></div></h2>
+<h2 ng-if="PI" class="alert greenBg">Laboratory Contact(s) <a class="btn left" ng-click="openAssignModal('Lab Contact')"><i class="icon-plus-2"></i>Assign Lab Contact</a><a class="btn left" ng-click="openModal(null, Constants.ROLE.NAME.LAB_CONTACT)"><i class="icon-plus-2"></i>Create Lab Contact</a><div class="clearfix"></div></h2>
 <h3 ng-if="!contacts.length && PI">{{PI.User.Name}} has no laboratory contacts.</h3>
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" >
     <thead>
@@ -42,7 +42,7 @@
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI" class="alert greenBg">Laboratory Member(s) <a class="btn left" ng-click="openAssignModal('Lab Member')"><i class="icon-plus-2"></i>Assign Lab Member</a><a class="btn left" ng-click="openModal(null, 'Lab Personnel')"><i class="icon-plus-2"></i>Create Lab Member</a></h2>
+<h2 ng-if="PI" class="alert greenBg">Laboratory Member(s) <a class="btn left" ng-click="openAssignModal('Lab Member')"><i class="icon-plus-2"></i>Assign Lab Member</a><a class="btn left" ng-click="openModal(null, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-plus-2"></i>Create Lab Member</a></h2>
 <h3 ng-if="!personnel.length" >{{PI.User.Name}} has no laboratory members.</h3>
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>

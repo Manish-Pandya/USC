@@ -15,7 +15,7 @@
         </span>
     </div>
 
-    <div class="hazarNodeButtons" ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
+    <div class="hazarNodeButtons" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
         <div class="span1" style="width:40px;" ng-if="child.Parent_hazard_id != 10000">
             <!--
               we are four $scopes down from the parent hazard here:
@@ -45,7 +45,7 @@
             <span style="margin-left:-3px;" ng-if="!child.Checklist">Create Checklist</span><span style="margin-left:-3px;" ng-if="child.Checklist">Edit Checklist</span>
         </a>
     </div>
-    <div class="hazarNodeButtons" ng-if="child.Checklist && rbf.getHasPermission([ R['Safety Inspector'],  R['Radiation Inspector']]) && !rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])">
+    <div class="hazarNodeButtons" ng-if="child.Checklist && rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR]]) && !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
         <a class="btn btn-large hazardBtn" ng-class="{'btn-info':child.Checklist, 'btn-primary':!child.Checklist}" href="ChecklistHub.php#?id={{child.Key_id}}">
             <i class="icon-checkmark" style="width:1em;"></i>
             <span style="margin-left:-3px;">View Checklist</span>

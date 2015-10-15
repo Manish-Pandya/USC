@@ -309,14 +309,14 @@ require_once '../top_view.php';
                         <td style="width:163px;"><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
                         <td style="width:197px;">
                             <span once-text="inspection.Status"></span>
-                            <span ng-if="inspection.Status == 'CLOSED OUT'">
+                            <span ng-if="inspection.Status == Contacts.INSPECTION.STATUS.CLOSED_OUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>
 
-                            <span ng-if="inspection.Status == 'PENDING CLOSEOUT'">
+                            <span ng-if="inspection.Status == Contacts.INSPECTION.STATUS.PENDING_CLOSEOUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>

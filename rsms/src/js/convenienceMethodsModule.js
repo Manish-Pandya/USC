@@ -506,7 +506,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
     while(i--){
         var j = users[i].Roles.length;
         while(j--){
-            if(users[i].Roles[j].Name == Constants.ROLES.NAME.LAB_CONTACT){
+            if(users[i].Roles[j].Name == Constants.ROLE.NAME.LAB_CONTACT){
                 contacts.unshift(users[i]);
                 break;
             }

@@ -1,7 +1,7 @@
 <div class="added-list" ng-if="verification">
     <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Contacts</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:'Lab Contact')">
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:Constants.ROLE.NAME.LAB_CONTACT)">
             <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
             {{pendingUserChange.Name}}
         </li>
@@ -21,7 +21,7 @@
                         <div once-text="user.Name"></div>
                     </ui-select-choices>
                 </ui-select>
-                <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false; newUser.PendingUserChangeCopy.role = 'Lab Contact'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false; newUser.PendingUserChangeCopy.role = Constants.ROLE.NAME.LAB_CONTACT; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="PI.LabPersonnel.editContact" ng-click="PI.LabPersonnel.editContact = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
         </th>
@@ -52,7 +52,7 @@
 <div class="added-list" ng-if="verification">
     <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Members</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:'Lab Personnel')">
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Added' | activeOnly | pendingContactOrPersonnel:Constants.ROLE.NAME.LAB_PERSONNEL)">
             <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
             {{pendingUserChange.Name}}
         </li>
@@ -72,7 +72,7 @@
                         <div once-text="user.Name"></div>
                     </ui-select-choices>
                 </ui-select>
-                <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false; newUser.PendingUserChangeCopy.role = 'Lab Personnel'; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
+                <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false; newUser.PendingUserChangeCopy.role = Constants.ROLE.NAME.LAB_PERSONNEL; ac.savePendingUserChange(newUser, verification.Key_id);" class="btn-small btn btn-success left"><i class="icon-checkmark"></i>Save</a>
                 <a ng-if="PI.LabPersonnel.editMember" ng-click="PI.LabPersonnel.editMember = false;" class="btn-small btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
         </th>

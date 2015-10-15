@@ -50,7 +50,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var pis = [];             /* more code, to make code better  */
     var i = users.length
     while(i--){
-      if(userHubFactory.hasRole(users[i], Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)){
+      if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
         if(users[i].PrincipalInvestigator){
           userHubFactory.getBuildingsByPi(users[i].PrincipalInvestigator);
           pis.unshift(users[i]);
@@ -69,11 +69,11 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var i = users.length
     while(i--){
       var shouldPush = false;
-      if(userHubFactory.hasRole(users[i], Constants.ROLES.NAME.ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.RADIATION_ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.RADIATION_USER) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.READ_ONLY)){
+      if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_USER) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.READ_ONLY)){
         shouldPush = true;
       }
 
-      if( userHubFactory.hasRole(users[i], Constants.ROLES.NAME.SAFETY_INSPECTOR) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.RADIATION_INSPECTOR) ){
+      if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.SAFETY_INSPECTOR) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_INSPECTOR) ){
         if(users[i].Inspector){
           shouldPush = true;
         }else{
@@ -91,7 +91,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var personnel = [];
     var i = users.length
     while(i--){
-      if( !userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_CONTACT) && userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_PERSONNEL) ){
+      if( !userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) && userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_PERSONNEL) ){
         userHubFactory.getSupervisor(users[i]);
         personnel.unshift(users[i]);
       }
@@ -105,7 +105,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var personnel = [];
     var i = users.length
     while(i--){
-      if( userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_CONTACT) ){
+      if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) ){
         userHubFactory.getSupervisor(users[i]);
         personnel.unshift(users[i]);
       }
@@ -119,10 +119,10 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var personnel = [];
     var i = users.length
     while(i--){
-      if( userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_PERSONNEL) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_CONTACT) ){
+      if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_PERSONNEL) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) ){
         userHubFactory.getSupervisor(users[i]);
         personnel.unshift(users[i]);
-        if( userHubFactory.hasRole(users[i], Constants.ROLES.NAME.LAB_CONTACT) ) users[i].isContact = true;
+        if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) ) users[i].isContact = true;
       }
     }
     return personnel;
@@ -138,13 +138,13 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         uncat.unshift(users[i]);
       }
 
-      if(userHubFactory.hasRole(users[i], Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)){
+      if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
         if(!users[i].PrincipalInvestigator){
           uncat.unshift(users[i]);
         }
       }
 
-      if( userHubFactory.hasRole(users[i], Constants.ROLES.NAME.RADIATION_INSPECTOR) || userHubFactory.hasRole(users[i], Constants.ROLES.NAME.SAFETY_INSPECTOR) ){
+      if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_INSPECTOR) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.SAFETY_INSPECTOR) ){
          if(!users[i].Inspector){
           uncat.unshift(users[i]);
         }
@@ -475,7 +475,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         factory.uncategorizedUsers.push(user);
       }
       while(i--){
-        if(factory.hasRole(user, Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)){
+        if(factory.hasRole(user, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
           factory.getPIByUserId(user.Key_id)
             .then(
               function(pi){
@@ -486,10 +486,10 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
               }
             )
         }
-        if(factory.hasRole(user, Constants.ROLES.NAME.ADMIN) || factory.hasRole(user, Constants.ROLES.NAME.RADIATION_INSPECTOR) || factory.hasRole(user, Constants.ROLES.NAME.SAFETY_INSPECTOR) || factory.hasRole(user, Constants.ROLES.NAME.RADIATION_ADMIN) || factory.hasRole(user, Constants.ROLES.NAME.RADIATION_USER) && factory.notInCollection(user, factory.personnel)) {
+        if(factory.hasRole(user, Constants.ROLE.NAME.ADMIN) || factory.hasRole(user, Constants.ROLE.NAME.RADIATION_INSPECTOR) || factory.hasRole(user, Constants.ROLE.NAME.SAFETY_INSPECTOR) || factory.hasRole(user, Constants.ROLE.NAME.RADIATION_ADMIN) || factory.hasRole(user, Constants.ROLE.NAME.RADIATION_USER) && factory.notInCollection(user, factory.personnel)) {
             factory.personnel.push(user);
         }
-        if(factory.hasRole(user, Constants.ROLES.NAME.LAB_CONTACT) && factory.notInCollection(user, factory.labContacts)) {
+        if(factory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT) && factory.notInCollection(user, factory.labContacts)) {
             factory.labContacts.push(user);
         }
       }
@@ -508,7 +508,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
       }
 
       while(i--){
-        if(!factory.hasRole(user, Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)){
+        if(!factory.hasRole(user, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
           factory.getPIByUserId(user.Key_id)
             .then(
               function(pi){
@@ -520,14 +520,14 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
               }
             )
         }
-        if(!factory.hasRole(user, Constants.ROLES.NAME.ADMIN) && !factory.hasRole(user, Constants.ROLES.NAME.RADIATION_INSPECTOR) || !factory.hasRole(user, Constants.ROLES.NAME.SAFETY_INSPECTOR) && !factory.hasRole(user, Constants.ROLES.NAME.RADIATION_ADMIN) && !factory.hasRole(user, Constants.ROLES.NAME.RADIATION_USER) && !factory.notInCollection(user, factory.personnel)){
+        if(!factory.hasRole(user, Constants.ROLE.NAME.ADMIN) && !factory.hasRole(user, Constants.ROLE.NAME.RADIATION_INSPECTOR) || !factory.hasRole(user, Constants.ROLE.NAME.SAFETY_INSPECTOR) && !factory.hasRole(user, Constants.ROLE.NAME.RADIATION_ADMIN) && !factory.hasRole(user, Constants.ROLE.NAME.RADIATION_USER) && !factory.notInCollection(user, factory.personnel)){
             //find user in admin and remove
             var j = factory.personnel.length;
             while(j--){
               if (factory.personnel[j].Key_id == user.Key_id)factory.personnel.splice(j,1);
             }
         }
-        if(!factory.hasRole(user, Constants.ROLES.NAME.LAB_CONTACT) && !factory.notInCollection(user, factory.labContacts)){
+        if(!factory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT) && !factory.notInCollection(user, factory.labContacts)){
             //find user in contacts and remove
             //find user in admin and remove
             var j = factory.labContacts.length;
@@ -654,7 +654,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
           pi = {Is_active: true, Is_new:true, Class:'User', Roles:[], PrincipalInvestigator:{Is_active:true, Departments:[], Class:'PrincipalInvestigator'}};
           var i = userHubFactory.roles.length;
           while(i--){
-            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLES.NAME.PRINCIPAL_INVESTIGATOR)>-1) pi.Roles.push(userHubFactory.roles[i]);
+            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)>-1) pi.Roles.push(userHubFactory.roles[i]);
           }
         }
         userHubFactory.setModalData(pi);
@@ -760,7 +760,7 @@ var labContactController = function($scope, $modal, $rootScope, userHubFactory, 
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
           var i = userHubFactory.roles.length;
           while(i--){
-            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLES.NAME.LAB_CONTACT)>-1) user.Roles.push(userHubFactory.roles[i]);
+            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.LAB_CONTACT)>-1) user.Roles.push(userHubFactory.roles[i]);
           }
         }
         if(!user.Supervisor_id){
@@ -850,7 +850,7 @@ var labPersonnelController = function($scope, $modal, $rootScope, userHubFactory
           user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
           var i = userHubFactory.roles.length;
           while(i--){
-            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLES.NAME.LAB_PERSONNEL)>-1) user.Roles.push(userHubFactory.roles[i]);
+            if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL)>-1) user.Roles.push(userHubFactory.roles[i]);
           }
         }
         if(!user.Supervisor_id){
@@ -999,10 +999,10 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
               function(){
                 user.Roles.push(role);
                 //all lab contacts are also lab personnel.  Server side application logic automatically adds the role, but saveUserRoleRelation on the server only returns a boolean, so we add here as well
-                if(role.Name == Constants.ROLES.NAME.LAB_CONTACT){
+                if(role.Name == Constants.ROLE.NAME.LAB_CONTACT){
                     var i = userHubFactory.roles.length;
                     while(i--){
-                        if(userHubFactory.roles[i].Name.indexOf(Constants.ROLES.NAME.LAB_PERSONNEL)>-1) user.Roles.push(userHubFactory.roles[i]);
+                        if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL)>-1) user.Roles.push(userHubFactory.roles[i]);
                     }
                 }
                 if(user.Is_incategorized){
@@ -1112,7 +1112,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     $scope.isPIRequired = function(user) {
         for (var i = 0; i < user.Roles.length; i++) {
-            if (user.Roles[i].Name == Constants.ROLES.NAME.LAB_CONTACT || user.Roles[i].Name == Constants.ROLES.NAME.LAB_PERSONNEL) {
+            if (user.Roles[i].Name == Constants.ROLE.NAME.LAB_CONTACT || user.Roles[i].Name == Constants.ROLE.NAME.LAB_PERSONNEL) {
                 return true;
             }
         }

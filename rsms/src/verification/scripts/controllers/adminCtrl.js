@@ -64,9 +64,9 @@ angular
             var i = uf.roles.length;
             while(i--){
                 if(uf.roles[i].Name.indexOf(roleName)>-1) user.Roles.push(uf.roles[i]);
-                if(uf.roles[i].Name.indexOf(Constants.ROLES.NAME.LAB_PERSONNEL)>-1) var labPersonnel = uf.roles[i];
+                if(uf.roles[i].Name.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL)>-1) var labPersonnel = uf.roles[i];
             }
-            if(roleName == Constants.ROLES.NAME.LAB_CONTACT) user.Roles.push(labPersonnel);
+            if(roleName == Constants.ROLE.NAME.LAB_CONTACT) user.Roles.push(labPersonnel);
             
             // Prevent circular structure by removing user.Supervisor.LabPersonnel
             //user.Supervisor.LabPersonnel = user.Supervisor.Buildings = user.Supervisor.CurrentVerifications = user.Supervisor.Pi_authorization = user.Supervisor.User = null;

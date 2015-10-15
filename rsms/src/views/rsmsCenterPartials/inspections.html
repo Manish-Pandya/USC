@@ -8,7 +8,7 @@
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R['Admin'], R['Safety Inspector']])">
+    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR]])">
       <a href="inspection/manageInspections.php" class="span12 orangeBg">
         <img class="" src="../img/manage-inspections-icon.png" />
         <p>Manage Inspections</p>

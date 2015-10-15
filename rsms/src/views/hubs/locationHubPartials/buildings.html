@@ -9,7 +9,7 @@
             <th colspan="4" class="greenBg">
                 <h1 class="greenBg">Buildings</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
-                 <a ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn-large btn" ng-click="addBuilding()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Building</a>
+                 <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn-large btn" ng-click="addBuilding()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Building</a>
                </div>
                    <h2 class="greenBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Building Displayed</h2>
             </th>
@@ -33,17 +33,17 @@
     <tbody>
         <tr ng-repeat="building in (filtered = (buildings | genericFilter:search | orderBy:['index', 'Campus.Name', 'Name']))" ng-class="{'inactive': !building.Is_active, 'new': building.isNew}">
             <td style="width:6%;">
-                <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
-                <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="!building.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(building, buildings)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="building.edit" class="edit btn btn btn-primary" disabled="disabled" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <span ng-if="!building.edit">
-                    <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="building.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
-                    <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="!building.Is_active"><i class="icon-checkmark"></i></button>
+                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="building.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(building)" ng-if="!building.Is_active"><i class="icon-checkmark"></i></button>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
                 </span>
 
                 <span ng-if="building.edit">
-                    <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-danger btn DeactivateeRow" disabled="disabled" ng-if="building.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
-                    <button ng-disabled="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin']])" class="btn btn-success btn DeactivateeRow" disabled="disabled" ng-if="!building.Is_active"><i class="icon-checkmark"></i></button>
+                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" disabled="disabled" ng-if="building.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn DeactivateeRow" disabled="disabled" ng-if="!building.Is_active"><i class="icon-checkmark"></i></button>
                 </span>
 
             </td>
