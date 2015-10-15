@@ -7,7 +7,7 @@ angular.module('00RsmsAngularOrmApp')
 
 	  		while(i--){
 	  			var pickup = pickups[i];
-  				if(pickup.Status == "PICKED UP" || pickup.Status == "REQUESTED" && pickup.Waste_bags.length || pickup.Scint_vial_collections.length || pickup.Carboy_use_cycles.length){
+  				if(pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.REQUESTED && pickup.Waste_bags.length || pickup.Scint_vial_collections.length || pickup.Carboy_use_cycles.length){
   					activePickups.push(pickup);
 	  			}
 	  		}

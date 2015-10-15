@@ -178,7 +178,7 @@ require_once '../top_view.php';
                     </ul>
                     <!-- EQUIPMENT LIST HERE -->
                     <br/><br/><br/>
-                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical and Physical Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
+                    <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical and Physical Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Biological Safety'">Equipment/Device</span></h1>
                     <hr style="margin-bottom:4px;">
                     <ul class="topChildren">
                         <li ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true}" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
@@ -294,14 +294,14 @@ require_once '../top_view.php';
                     <td style="width:163px;"><a href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Report</a></td>
                     <td style="width:197px;">
                         <span once-text="inspection.Status"></span>
-                        <span ng-if="inspection.Status == 'CLOSED OUT'">
+                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>
 
-                        <span ng-if="inspection.Status == 'PENDING CLOSEOUT'">
+                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>

@@ -40,7 +40,7 @@ angular.module('00RsmsAngularOrmApp')
             if(pi.Pickups.length){
                 var i = pi.Pickups.length;
                 while(i--){
-                    if(pi.Pickups[i].Status == "REQUESTED")var pickup = pi.Pickups[i];
+                    if(pi.Pickups[i].Status == Constants.PICKUP.STATUS.REQUESTED)var pickup = pi.Pickups[i];
                 }
             }
 
@@ -53,7 +53,7 @@ angular.module('00RsmsAngularOrmApp')
                 pickup.Waste_bags = [];
                 pickup.Principal_investigator_id = null;
                 pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
-                pickup.Status = "REQUESTED";
+                pickup.Status = Constants.PICKUP.STATUS.REQUESTED;
                 pickup.Principal_investigator_id = pi.Key_id;
             }
 

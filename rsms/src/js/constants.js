@@ -56,9 +56,20 @@ var Constants = (function () {
         }
     };
     
-    constants.HAZARD = {
-        NAME:{
-            
+    constants.CORRECTIVE_ACTION = {
+        STATUS:{
+            INCOMPLETE:"Incomplete",
+            PENDING:"Pending",
+            COMPLETE:"Complete",
+            ACCEPTED:"Accepted"
+        }
+    };
+    
+    constants.PICKUP = {
+        STATUS:{
+            PICKED_UP:"PICKED UP",
+            AT_RSO:"AT RSO",
+            REQUESTED:"REQUESTED",
         }
     };
   

@@ -26,7 +26,7 @@
             </span>
             <span ng-if="def.Deficiency.Text">
                 <span ng-if="def.Corrected_in_inspection < 1" class="corrective-action">
-                    <div class="" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == 'Incomplete'">
+                    <div class="" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
                         <div>
                             <a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
                                 <i class="icon-plus-2"></i>Add Corrective Action
@@ -34,7 +34,7 @@
                         </div>
                     </div>
 
-                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Pending'">
+                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
                         <a class="btn btn-primary left" ng-click="openModal(question, def)">
                             <i class="icon-pencil"></i>Edit
                         </a>
@@ -50,7 +50,7 @@
                         <p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
                     </div>
 
-                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == 'Complete'">
+                    <div class="" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
                         <a ng-click="openModal(question, def)" class="btn btn-primary left">
                             <i class="icon-pencil"></i>Edit
                         </a>

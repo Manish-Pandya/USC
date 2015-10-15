@@ -175,7 +175,7 @@
                     <h3>Lab Date</h3>
                     <h3>mCi</h3>
                 </div>
-                <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
+                <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.IN_USE">
                     <div>
                         <a ng-if="cycle.Is_active && cycle.Status=='In Use'" ng-click="af.removeCarboyFromLab(cycle)" class="btn btn-danger"><i class="icon-remove"></i></a>
                     </div>

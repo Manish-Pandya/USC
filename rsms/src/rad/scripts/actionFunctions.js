@@ -1392,7 +1392,7 @@ angular
                 if(!saveChildren)saveChildren = false;
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
-                if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
+                if(editedPickup.Status == Constants.PICKUP.STATUS.PICKED_UP || editedPickup.Status == Constants.PICKUP.STATUS.AT_RSO && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
 
                 return this.save( editedPickup, saveChildren )
                     .then(

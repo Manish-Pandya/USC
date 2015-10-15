@@ -28,14 +28,14 @@
                     <td>hazards</td>
                     <td>
                         <span>{{inspection.Status}}</span>
-                        <span ng-if="inspection.Status == 'CLOSED OUT'">
+                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>
 
-                        <span ng-if="inspection.Status == 'PENDING CLOSEOUT'">
+                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
