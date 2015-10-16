@@ -123,7 +123,7 @@
                         <a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove"></i></a>
                         <a ng-if="!parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-success"><i class="icon-checkmark"></i></a>
                         <a ng-click="openWipeTestModal(parcel)" class="btn btn-primary left"><i class="icon-paper"></i>{{parcel.Wipe_test[0].Parcel_wipes.length ? parcel.Wipe_test[0].Parcel_wipes.length : '0'}} Wipe Test<span ng-if="parcel.Wipe_test[0].Parcel_wipes.length != 1">s</span></a>
-                        <a ng-if="parcel.Status == 'Wipe Tested'" ng-click="markAsArrived(pi, parcel)" class="btn btn-success left"><i class="icon-checkmark"></i>Delivered</a>
+                        <a ng-if="parcel.Status == Constants.PARCEL.STATUS.WIPE_TESTED" ng-click="markAsArrived(pi, parcel)" class="btn btn-success left"><i class="icon-checkmark"></i>Delivered</a>
                     </div>
 
                     <div>

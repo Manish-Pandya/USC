@@ -410,7 +410,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
           $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
           $scope.doneLoading = true;
         }
-        $scope.options = ['Incomplete','Pending','Complete'];
+        $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE,Constants.CORRECTIVE_ACTION.STATUS.PENDING,Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
       }else{
         $scope.error = 'No inspection has been specified';
       }
@@ -602,7 +602,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         postInspectionFactory.getHotWipes($scope.inspection);
          if($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]]))getIsReadyToSubmit();
       }
-      $scope.options = ['Incomplete','Pending','Complete'];
+      $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE,Constants.CORRECTIVE_ACTION.STATUS.PENDING,Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
     }else{
       $scope.error = 'No inspection has been specified';
     }
@@ -744,8 +744,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             var j = question.Responses.DeficiencySelections.length;
             while(j--){
               totals++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE)completes++;
             }
         }
       }
@@ -757,8 +757,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             var j = question.Responses.DeficiencySelections.length;
             while(j--){
               totals++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE)completes++;
             }
         }
       }
@@ -770,8 +770,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
             var j = question.Responses.DeficiencySelections.length;
             while(j--){
               totals++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
-              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)pendings++;
+              if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE)completes++;
             }
         }
       }
@@ -783,8 +783,8 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
                 var j = question.Responses.DeficiencySelections.length;
                 while(j--){
                   totals++;
-                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Pending")pendings++;
-                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == "Complete")completes++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)pendings++;
+                  if(question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE)completes++;
                 }
             }
           }
@@ -812,7 +812,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     var copy = convenienceMethods.copyObject(action);
     action.dirty = true;
     copy.Completion_date = convenienceMethods.setMysqlTime(Date());
-    copy.Status = 'Complete';
+    copy.Status = Constants.CORRECTIVE_ACTION.STATUS.COMPLETE;
     $scope.error=''
     //call to factory to save, return, then close modal, passing data back
     postInspectionFactory.saveCorrectiveAction(copy)
@@ -832,13 +832,13 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
 modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance){
   var data = postInspectionFactory.getModalData();
-  $scope.options = ['Incomplete','Pending','Complete'];
+  $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE,Constants.CORRECTIVE_ACTION.STATUS.PENDING,Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
   $scope.validationError='';
   if(data.deficiency && !data.deficiency.CorrectiveActions.length){
     data.deficiency.CorrectiveActions[0] = {
       Class:"CorrectiveAction",
       Deficiency_selection_id: data.deficiency.Key_id,
-      Status: "Incomplete"
+      Status: Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE
     }
   }
   if(data){
@@ -873,11 +873,11 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
       && $scope.def.CorrectiveActions[0].Text
       ){
 
-        if($scope.def.CorrectiveActions[0].Status == "Pending" && $scope.def.CorrectiveActions[0].view_Promised_date){
+        if($scope.def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && $scope.def.CorrectiveActions[0].view_Promised_date){
             $scope.isValid = true;
         }
 
-        if($scope.def.CorrectiveActions[0].Status == "Complete" && $scope.def.CorrectiveActions[0].view_Completion_date){
+        if($scope.def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && $scope.def.CorrectiveActions[0].view_Completion_date){
             $scope.isValid = true;
         }
     }

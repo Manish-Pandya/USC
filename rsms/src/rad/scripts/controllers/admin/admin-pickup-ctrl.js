@@ -38,10 +38,10 @@ angular.module('00RsmsAngularOrmApp')
             if(isChecked == true){
                 pickupCopy.Status = oldStatus;
             }else{
-                if(oldStatus == "PICKED UP"){
+                if(oldStatus == Constants.PICKUP.STATUS.PICKED_UP){
                     pickupCopy.Status = null;
                 }else{
-                    pickupCopy.Status = "PICKED UP";
+                    pickupCopy.Status = Constants.PICKUP.STATUS.PICKED_UP;
                 }
             }
 

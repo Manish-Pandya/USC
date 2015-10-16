@@ -50,7 +50,7 @@ angular
         $scope.onUserSelect = function(item) {
             if (item) {
                 if(!item.PendingUserChangeCopy)item.PendingUserChangeCopy = modelInflatorFactory.instantiateObjectFromJson(new window.PendingUserChange);
-                item.PendingUserChangeCopy.New_status = "Added";
+                item.PendingUserChangeCopy.New_status = Constants.PENDING_CHANGE.USER_STATUS.ADDED;
                 item.PendingUserChangeCopy.Is_active = true;
                 item.PendingUserChangeCopy.Name = item.Name;
                 $scope.newUser = item;

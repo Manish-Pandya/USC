@@ -106,8 +106,8 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
 
                 if(search.status){
                     if(item.Inspections)var status = item.Inspections.Status;
-                    if(!item.Inspections)var status = "Not Scheduled";
-                    if(status.toLowerCase().indexOf(search.status.toLowerCase()) < 0)item.matched = false;
+                    if(!item.Inspections)var status = Constants.INSPECTION.STATUS.NOT_SCHEDULED;
+                    if(status.toLowerCase().indexOf(search.status.toLowerCase()) < 0) item.matched = false;
                 }
 
                 if(search.date){

@@ -13,12 +13,12 @@ angular.module('00RsmsAngularOrmApp')
 	  			var piInventory = piInventories[i];
 	  			if(dueDate.getTime() < curDate.getTime()){
 	  				if(!piInventory.Sign_off_date){
-	  					piInventory.Status = 'Late';
+	  					piInventory.Status = Constants.INVENTORY.STATUS.LATE;
 	  				}else{
-	  					piInventory.Status = 'Complete';
+	  					piInventory.Status = Constants.INVENTORY.STATUS.COMPLETE;
 	  				}
 	  			}else{
-	  				piInventory.Status = "N/A"
+	  				piInventory.Status = Constants.INVENTORY.STATUS.NA;
 	  			}
 	  			console.log(piInventory);
 	  		}

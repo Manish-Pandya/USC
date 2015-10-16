@@ -7,9 +7,9 @@ angular.module('00RsmsAngularOrmApp')
 	  		while(i--){
 	  			var cycle = cycles[i];
 	  			cycle.pourable = false;
-  				if(cycle.Status.toLowerCase() == "decaying" 
-  					|| cycle.Status.toLowerCase() == "at rso" 
-  					|| cycle.Status.toLowerCase() == "picked up")
+  				if(cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING 
+  					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
+  					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.PICKED_UP)
   				{  	
 
   					if(cycle.Pour_allowed_date){

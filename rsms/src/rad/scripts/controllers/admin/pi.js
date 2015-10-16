@@ -66,7 +66,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.markAsArrived = function(pi, parcel){
         var copy = new window.Parcel;
         angular.extend(copy, parcel);
-        copy.Status = "Delivered";
+        copy.Status = Constants.PARCEL.STATUS.DELIVERED;
         copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
         af.saveParcel( copy, parcel, pi )
     }
@@ -193,7 +193,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.markAsArrived = function(pi, copy, parcel){
-            copy.Status = "Arrived";
+            copy.Status = Constants.PARCEL.STATUS.ARRIVED;
             copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
             $scope.saveParcel(pi, copy, parcel);
         }
