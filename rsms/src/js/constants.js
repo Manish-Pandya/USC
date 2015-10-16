@@ -7,7 +7,9 @@ var Constants = (function () {
             NO_LONGER_CONTACT:"Still in this lab, but no longer a contact",
             NOW_A_CONTACT:"Still in this lab, but now a lab contact",
             MOVED_LABS:"In another PI's lab",
-            LEFT_UNIVERSITY:"No longer at the univserity"
+            LEFT_UNIVERSITY:"No longer at the univserity",
+            ADDED:"Added",
+            REMOVED:"Removed"
         },
         ROOM_STATUS:{
             ADDED:"Added",
@@ -38,7 +40,8 @@ var Constants = (function () {
             AVAILABLE:"Available",
             IN_USE:"In Use",
             DECAYING:"Decaying",
-            PICKED_UP:"Picked Up"
+            PICKED_UP:"Picked Up",
+            AT_RSO:"AT RSO"
         }
     };
     
@@ -72,7 +75,23 @@ var Constants = (function () {
             REQUESTED:"REQUESTED",
         }
     };
-  
+    
+    constants.PARCEL = {
+        STATUS:{
+            ARRIVED:"Arrived",
+            PRE_ORDER:"Pre-order",
+            WIPE_TESTED:"Wipe Tested",
+            DELIVERED:"Delivered"
+        }
+    };
+    
+    constants.INVENTORY = {
+        STATUS:{
+            LATE:"Late",
+            COMPLETE:"Complete",
+            NA:"Wipe Tested"
+        }
+    };
+    
     return constants;
-
 })();
