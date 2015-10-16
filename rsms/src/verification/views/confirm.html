@@ -1,11 +1,11 @@
 <div class="card full" ng-show="userChanges.length">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Members</h3>
     <ul>
-        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == 'Added', inactive: change.New_status != 'Added'}">
-            <span ng-if="change.New_status != 'Added' && change.New_status != 'Removed'">{{change.Name}} is {{change.New_status | lowercase}}</span>
-            <span ng-if="change.New_status == 'Removed'">{{change.Name}} is no longer assigned to your lab</span>
-            <span ng-if="change.New_status == 'Added' && change.Parent_id">{{change.Name}} is now assigned to your lab</span>
-            <span ng-if="change.New_status == 'Added' && !change.Parent_id">{{change.Name}} has been added to your lab as a Lab Contact/Member</span>
+        <li ng-repeat="change in userChanges = (verification.PendingUserChanges | hasNewStatus | activeOnly)" ng-class="{new: change.New_status == Constants.PENDING_CHANGE.USER_STATUS.ADDED, inactive: change.New_status != Constants.PENDING_CHANGE.USER_STATUS.ADDED}">
+            <span ng-if="change.New_status != Constants.PENDING_CHANGE.USER_STATUS.ADDED && change.New_status != Constants.PENDING_CHANGE.USER_STATUS.REMOVED">{{change.Name}} is {{change.New_status | lowercase}}</span>
+            <span ng-if="change.New_status == Constants.PENDING_CHANGE.USER_STATUS.REMOVED">{{change.Name}} is no longer assigned to your lab</span>
+            <span ng-if="change.New_status == Constants.PENDING_CHANGE.USER_STATUS.ADDED && change.Parent_id">{{change.Name}} is now assigned to your lab</span>
+            <span ng-if="change.New_status == Constants.PENDING_CHANGE.USER_STATUS.ADDED && !change.Parent_id">{{change.Name}} has been added to your lab as a Lab Contact/Member</span>
         </li>
     </ul>
     <div>
@@ -28,10 +28,10 @@
 <div class="card full" ng-show="roomChanges">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Locations</h3>
     <ul>
-        <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Removed')">
+        <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED)">
             {{change.Buidling_name}} Room: {{change.Name}} is no longer your lab room.
         </li>
-        <li class="new" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:'Added')">
+        <li class="new" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:Constants.PENDING_CHANGE.ROOM_STATUS.ADDED)">
             {{change.Buidling_name}} Room: {{change.Name}} is now your lab room.
         </li>
     </ul>

@@ -19,7 +19,7 @@
 <div class="added-list">
     <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Rooms</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingRoomChange in newChanges = (verification.PendingRoomChanges | hasNewStatus:'Added' | activeOnly | orderBy: 'Building_name')" >
+        <li ng-repeat="pendingRoomChange in newChanges = (verification.PendingRoomChanges | hasNewStatus:Constants.PENDING_CHANGE.ROOM_STATUS.ADDED | activeOnly | orderBy: 'Building_name')" >
             <a style="margin:0 5px;" ng-click="dataStoreManager.getById('Room', pendingRoomChange.Parent_id).PendingRoomChangeCopy.Is_active = false; ac.savePendingRoomChange(dataStoreManager.getById('Room', pendingRoomChange.Parent_id), verification.Key_id);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>{{pendingRoomChange.Building_name}} Room {{pendingRoomChange.Name}}
         </li>
     </ul>
