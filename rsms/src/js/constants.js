@@ -53,6 +53,7 @@ var Constants = (function () {
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             CLOSED_OUT:"CLOSED OUT",
             INCOMPLETE_REPORT:"INCOMPLETE REPORT",
+            COMPLETE:"COMPLETE",
             OVERDUE_CAP:"OVERDUE CAP",
             PENDING_EHS_APPROVAL:"PENDING EHS APPROVAL",
             OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
@@ -80,8 +81,10 @@ var Constants = (function () {
         STATUS:{
             ARRIVED:"Arrived",
             PRE_ORDER:"Pre-order",
+            ORDERED:"Ordered",
             WIPE_TESTED:"Wipe Tested",
-            DELIVERED:"Delivered"
+            DELIVERED:"Delivered",
+            DISPOSED:"Disposed"
         }
     };
     
@@ -89,7 +92,7 @@ var Constants = (function () {
         STATUS:{
             LATE:"Late",
             COMPLETE:"Complete",
-            NA:"Wipe Tested"
+            NA:"N/A"
         }
     };
     
