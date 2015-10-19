@@ -137,11 +137,6 @@ angular
                         Dashboard: true
                     },
                     {
-                        Name:'radmin.isotopes',
-                        Label: 'Radiation Administration -- Isotopes',
-                        Dashboard: true
-                    },
-                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -556,24 +551,6 @@ angular
                 return dataSwitchFactory.getAllObjects('Isotope');
             }
 
-            af.saveIsotope = function(copy, isotope)
-            {
-                af.clearError();
-                console.log(copy);
-                return this.save( copy )
-                    .then(
-                        function(returnedIsotope){
-                            returnedIsotope = modelInflatorFactory.instateAllObjectsFromJson( returnedIsotope );
-                            if(isotope){
-                                angular.extend(isotope, copy)
-                            }else{
-                                dataStoreManager.addOnSave(returnedIsotope);
-                            }
-                        },
-                        af.setError('The Isotope could not be saved')
-                    )
-            }
-
 
             /********************************************************************
             **
@@ -948,20 +925,32 @@ angular
             af.getRadPI = function(pi)
             {
 
-                var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
-                return genericAPIFactory.read(segment)
-                    .then( function( returnedPromise) {
-                        var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
-                        //pi.loadRooms();
-                        pi.Rooms = tempPI.Rooms;
-                        pi.Departments = tempPI.Departments;
-                        pi.loadPIAuthorizations();
-                        pi.loadActiveParcels();
-                        pi.loadPurchaseOrders();
-                        pi.loadCarboyUseCycles();
-                        pi.loadSolidsContainers();
-                        return pi;
-                    });
+                if(!store.checkCollection( 'Parcel' )){
+                    var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
+                    return genericAPIFactory.read(segment)
+                        .then( function( returnedPromise) {
+                            var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
+                            //pi.loadRooms();
+                            pi.Rooms = tempPI.Rooms;
+                            pi.Departments = tempPI.Departments;
+                            pi.loadPIAuthorizations();
+                            pi.loadActiveParcels();
+                            pi.loadPurchaseOrders();
+                            pi.loadCarboyUseCycles();
+                            pi.loadSolidsContainers();
+                            return pi;
+                        });
+                }else{
+                    //pi.loadRooms();
+                    pi.loadPI_Authorizations();
+                    pi.loadActiveParcels();
+                    pi.loadPurchaseOrders();
+                    pi.loadCarboyUseCycles();
+                    pi.loadSolidsContainers();
+                    var defer = $q.defer();
+                    defer.resolve(pi);
+                    return defer.promise;
+                }
 
             }
 
@@ -969,23 +958,6 @@ angular
             {
                 //var segment = "getRadPIById&id="+id+"&rooms=true";
                 return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
-            }
-
-            af.getPI = function(id)
-            {
-                var segment = "getPiForHazardInventory&id="+id+"&rooms=true";
-                return genericAPIFactory.read(segment)
-                    .then( function( returnedPromise) {
-                        dataStoreManager.store(returnedPromise.data);
-                        var pi = modelInflatorFactory.instateAllObjectsFromJson( dataStoreManager.getById("PrincipalInvestigator",1), null, true );
-                        //pi.loadRooms();
-                        pi.loadPIAuthorizations();
-                        pi.loadActiveParcels();
-                        pi.loadPurchaseOrders();
-                        pi.loadCarboyUseCycles();
-                        pi.loadSolidsContainers();
-                        return pi;
-                    });
             }
 
             af.getParcelUses = function(parcel)
@@ -1121,19 +1093,18 @@ angular
             **
             ********************************************************************/
 
-            af.saveAuthorization = function( pi, copy, auth ){
-
-                copy.Pi_authorization_id = pi.Pi_authorization.Key_id;
+            af.saveAuthorization = function( pi, copy, auth )
+            {
                 af.clearError();
                 return this.save( copy )
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(copy.Key_id){
-                                angular.extend(auth, returnedAuth);
+                            if(auth){
+                                angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
-                                pi.Pi_authorization.Authorizations.push(returnedAuth);
+                                pi.Authorizations.push(returnedAuth);
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1192,12 +1163,10 @@ angular
                         function(returnedParcel){
                             returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
                             if(copy.Key_id){
-                                angular.extend(parcel, returnedParcel);
-                                parcel.loadPurchaseOrder();
+                                angular.extend(parcel, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
-                                returnedParcel.loadPurchaseOrder();
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1210,9 +1179,8 @@ angular
                 console.log(copy);
                  return $rootScope.SavingParcelWipe = genericAPIFactory.save( copy, 'saveParcelWipesAndChildren' )
                     .then(
-                        function(returned){
-                            var returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
-                            console.log(returnedParcel);
+                        function(returnedParcel){
+                            returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
                             if(parcel){
                                 angular.extend(parcel, copy, true);
                                 parcel.edit = false;
@@ -1223,7 +1191,6 @@ angular
                                     angular.extend(parcel.Wipe_test[0].Parcel_wipes[i], copy.Wipe_test[0].Parcel_wipes[i]);
                                     if(!parcel.Wipe_test[0].Parcel_wipes[i].Location)parcel.Wipe_test[0].Parcel_wipes.splice(i,1);
                                 }
-                                parcel.Status = returnedParcel.Status
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1256,9 +1223,11 @@ angular
                     .then(
                         function(returnedCarboy){
                             returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedCarboy );
-                            if(carboy.Key_id){
+                            if(carboy){
                                 angular.extend(carboy, copy)
                             }else{
+                                dataStoreManager.addOnSave(returnedCarboy);
+                                pi.SolidsContainers.push(returnedCarboy);
                                 dataStoreManager.store(returnedCarboy);
                             }
                         },
@@ -1375,25 +1344,14 @@ angular
                     )
             }
 
-            af.saveParcelUse = function(parcel, copy, use, pi){
+            af.saveParcelUse = function(parcel, copy, use){
                 console.log(copy);
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
-
-                 //eliminate circular structures in carboy_use_cycles, if needed
-                if(copy.ParcelUseAmounts){
-                    var i = copy.ParcelUseAmounts.length;
-                    while(i--){
-                        delete(copy.ParcelUseAmounts[i].Carboy);
-                        delete(copy.ParcelUseAmounts[i].WasteBag);
-                        delete(copy.ParcelUseAmounts[i].Scint_vial_collection);
-
-                    }
-                }
-
                 return this.save( copy )
                     .then(
                         function(returnedUse){
+                            console.log(returnedUse);
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
@@ -1414,14 +1372,10 @@ angular
                             var total = 0;
                             var i = uses.length;
                             while(i--){
-                                total += parseFloat(uses[i].Quantity);
+                                total += parseInt(uses[i].Quantity);
                             }
-                            parcel.Remainder = parcel.Quantity-total;
+                            parcel.Quantity = parcel.Quantity-total;
                             use.edit = false;
-
-                            //if a new ScintVialCollection had to be created, load it.  If it already exists in the cache, this call won't cost much
-                            pi.loadCurrentScintVialCollection();
-
                             af.clearError();
                             return parcel;
                         },
@@ -1431,7 +1385,7 @@ angular
                     )
             }
 
-            af.savePickup = function(editedPickup, originalPickup, saveChildren, skip){
+            af.savePickup = function(originalPickup, editedPickup, saveChildren){
                 af.clearError();
 
                 //We can tell the server to save the child objects of this pickup, setting their pickup IDs and pickup date properties, if applicable.
@@ -1439,25 +1393,13 @@ angular
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
                 if(editedPickup.Status == "PICKED UP" || editedPickup.Status == "AT RSO" && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
-                console.log(editedPickup);
-
-                //eliminate circular structures in carboy_use_cycles, if needed
-                if(editedPickup.Carboy_use_cycles){
-                    var i = editedPickup.Carboy_use_cycles.length;
-                    while(i--){
-                        delete( editedPickup.Carboy_use_cycles[i].Carboy );
-                        delete(editedPickup.Carboy_use_cycles[i].Principal_investigator);
-                        delete(editedPickup.Carboy_use_cycles[i].ParcelUseAmounts);
-
-                    }
-                }
 
                 return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){
                             returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
                             var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
-                            if(saveChildren && !skip){
+                            if(saveChildren){
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
                                 while(i--){
@@ -1952,8 +1894,6 @@ angular
             af.saveCarboyReadingAmount = function(cycle, copy){
                 af.clearError();
                 copy.Date_read = convenienceMethods.setMysqlTime(new Date());
-                //copy.Class = CarboyReadingAmount;
-                console.log(copy);
                 return $rootScope.saving = this.save(copy)
                     .then(
                         function(returnedCycle){
@@ -2121,7 +2061,6 @@ angular
             af.savePIAuthorization = function(copy, auth, pi){
                 console.log(copy);
                 copy.Rooms = [];
-                copy.Departments = [];
                 if(pi.Rooms){
                     var i = pi.Rooms.length;
                     while(i--){
@@ -2141,12 +2080,10 @@ angular
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(copy.Key_id){
+                            if(auth.Key_id){
                                 angular.extend(copy, returnedAuth);
                                 auth.Rooms = [];
-                                auth.Rooms = copy.Rooms;
-                                auth.Departments = [];
-                                auth.Departments = copy.Departments;
+                                auth.Rooms = copy.Rooms
                             }else{
                                 dataStoreManager.store(returnedAuth);
                                 pi.Pi_authorization = returnedAuth;

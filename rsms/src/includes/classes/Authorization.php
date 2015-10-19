@@ -99,8 +99,8 @@ class Authorization extends GenericCrud {
 	}
 	
 	
-	public function getPi_authorization_id() { return $this->pi_authorization_id; }
-	public function setPi_authorization_id($newId) { $this->pi_authorization_id = $newId; }
+	public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
+	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
 
 	public function getMax_quantity() { return $this->max_quantity; }
 	public function setMax_quantity($newQuantity) { $this->max_quantity = $newQuantity; }

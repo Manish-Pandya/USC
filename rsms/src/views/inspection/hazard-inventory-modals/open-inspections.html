@@ -31,8 +31,7 @@
         <tbody>
             <tr ng-repeat="(key, inspection) in openInspections | orderBy:'Date_started':reverse | inspectionClosed:false" ng-class="{new:inspection.Is_new}">
                 <td style="width:14%; vertical-align:middle;text-align:center;">
-                    <a ng-if="!inspection.Notification_date" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i>Inspect Labs</a>
-                    <a ng-if="inspection.Notification_date" disabled="disabled" class="btn btn-danger left disabled"><i class="icon-zoom-in"></i>Inspect Labs</a>
+                    <a ng-disalbed="inspection.Notification_date" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i>Inspect Labs</a>
                 </td>
                 <td>
                     <ul>

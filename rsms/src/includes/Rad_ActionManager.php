@@ -53,21 +53,7 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'id' was provided", 201);
         }
     }
-    
-    function getAuthorizationById($id = NULL) {
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
-        $id = $this->getValueFromRequest('id', $id);
-
-        if( $id !== NULL ){
-            $dao = $this->getDao(new Authorization());
-            return $dao->getById($id);
-        }
-        else {
-            return new ActionError("No request parameter 'id' was provided", 201);
-        }
-    }
-    
     function getCarboyById($id = NULL) {
         $LOG = Logger::getLogger('Action:' . __FUNCTION__ );
 
@@ -365,7 +351,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getSolidsContainers");
         $entityMaps[] = new EntityMap("eager", "getPickups");
         $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-        $entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
@@ -622,9 +608,6 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Authorization());
-            if($decodedObject->getApproval_date() == NULL){
-            	$decodedObject->setApproval_date( date( 'Y-m-d H:i:s' ) );
-            }
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -641,21 +624,8 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Isotope());
-            
-            //set the half_life in days, based on the display_half_life and unit
-            //default to days, don't change half-life
-            $factor = 1;
-            if( $decodedObject->getUnit() == "Years" ){
-            	//half life in years, 365.25 (days in a year) is the magic number, yes it is.
-            	$factor = 365.25;
-            }elseif ( $decodedObject->getUnit() == "Hours" ){
-            	//half life in hours, 1/24 (days in an hour) is the magic number, yes it is.
-            	$factor = 1/24;
-            }
-            $decodedObject->setHalf_life( $decodedObject->getDisplay_half_life() * $factor );
-            $isotope = $dao->save($decodedObject);
-            $LOG->fatal($isotope);
-            return $isotope;
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
         }
     }
 
@@ -757,10 +727,11 @@ class Rad_ActionManager extends ActionManager {
             $tests = $decodedObject->getWipe_test ();
             if($decodedObject->getStatus() == "Ordered" && $tests != null){
                 $decodedObject->setStatus("Wipe Tested");
+                $decodedObject= new Parcel();
                 $decodedObject->setArrival_date(date('Y-m-d G:i:s'));
             }
 
-            $parcel = $dao->save($decodedObject);
+            $decodedObject = $dao->save($decodedObject);
 
             if ( $tests != null ) {
                 $test = JsonManager::assembleObjectFromDecodedArray ( $tests[0][0] );
@@ -787,8 +758,8 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("lazy", "getParcelUses");
             $entityMaps[] = new EntityMap("eager", "getRemainder");
             $entityMaps[] = new EntityMap("eager", "getWipe_test");
-            $parcel->setEntityMaps($entityMaps);
-            return $parcel;
+            $decodedObject->setEntityMaps($entityMaps);
+            return $decodedObject;
         }
     }
 
@@ -811,41 +782,20 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ParcelUse());
+            $use = $dao->save($decodedObject);
+
             $amounts = $decodedObject->getParcelUseAmounts();
-            $use = $dao->save($decodedObject);            
-            $LOG->fatal($amounts);
-            foreach($amounts as $amount){            	
-                $LOG->fatal($amount['Curie_level'] . ' | ' . gettype ( $amount['Curie_level'] )	);
-                if($amount['Curie_level'] != null && floatval ( $amount['Curie_level'] ) > 0){
-                	
-                	$amountDao = $this->getDao(new ParcelUseAmount());
-                	$newAmount = new ParcelUseAmount();	
+            foreach($amounts as $amount){
+                $amountDao = $this->getDao(new ParcelUseAmount());
+                $newAmount = new ParcelUseAmount();
+                if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
                     $newAmount->setParcel_use_id($use->getKey_id());
                     $newAmount->setCurie_level($amount['Curie_level']);
                     if($amount['Waste_bag_id'] != NULL)$newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                     if($amount['Carboy_id'] != NULL)$newAmount->setCarboy_id($amount['Carboy_id']);
-                    if($amount['Scint_vial_collection_id'] != NULL)$newAmount->setScint_vial_collection_id($amount['Scint_vial_collection_id']);
                     if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
                     if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
                     $newAmount->setWaste_type_id($amount['Waste_type_id']);
-                    
-                    //If this is Scintillation Vial waste, make sure we have a Scint_vial_collection
-                    if($amount['Waste_type_id'] == 3){
-                    	$pi = $this->getPIById($decodedObject->getParcel()->getPrincipal_investigator_id());
-                    	$collectionDao = $this->getDao(new ScintVialCollection());
-                    	if($pi->getCurrentScintVialCollections() == NULL){
-                    		$collection = new ScintVialCollection();
-                    		$collection->setPrincipal_investigator_id($pi->getKey_id());
-                    		$collection = $collectionDao->save($collection);
-                    	}else{
-                    		$collection = end($pi->getCurrentScintVialCollections());
-                    	}
-                    	$collection = $collectionDao->save($collection);          	 
-                    	$newAmount->setScint_vial_collection_id($collection->getKey_id());
-                    	 
-                    	 
-                    }
-                    
                     $amountDao->save($newAmount);
                 }
             }
@@ -865,14 +815,13 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Pickup());
+            $LOG->debug($decodedObject);
+            $pickup = $dao->save($decodedObject);
             $wasteBags = $decodedObject->getWaste_bags();
             $svCollections = $decodedObject->getScint_vial_collections();
             $carboys = $decodedObject->getCarboy_use_cycles();
-            $others = $decodedObject->getOther_wastes();
             $LOG->debug("collections logged on line 590");
             $LOG->debug($svCollections);
-            $pickup = $dao->save($decodedObject);
-            
             $saveChildren = $this->getValueFromRequest('saveChildren', $saveChildren);
 
             if($saveChildren != NULL){
@@ -891,21 +840,6 @@ class Rad_ActionManager extends ActionManager {
                     $collection->setPickup_id($pickup->getKey_id());
                     $svColDao->save($collection);
                 }
-                
-                foreach($others as $other){
-                	if($other["Contents"] != null){
-                		$LOG->fatal($other);
-	                	$otherDao = $this->getDao(new OtherWaste());
-	                	$otherObj = new OtherWaste();
-	           			$otherObj->setContents($other["Contents"]);
-	           			$otherObj->setComments($other["Comments"]);
-	           			//$otherObj->setContents($other["Contents"]);
-	           			 
-	                	$otherObj->setPickup_id($pickup->getKey_id());	                	
-	                	$otherObj = $otherDao->save($otherObj);
-	                	$LOG->fatal($otherObj);
-                	}
-                }
 
                 foreach($carboys as $carboyArray){
                     $LOG->debug('carboyUseCycle with key id '+$carboyArray['Key_id']);
@@ -919,7 +853,7 @@ class Rad_ActionManager extends ActionManager {
                         $timestamp = date('Y-m-d G:i:s');
                         $cycle->setHotroom_date($timestamp);
                     }
-                    elseif($decodedObject->getStatus() == "PICKED UP"){
+                    elseif($decodedObject->getStatus() == "AT RSO"){
                         $cycle->setStatus("Picked up");
                         $cycle->setHotroom_date(NULL);
                     }
@@ -930,12 +864,9 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
             $entityMaps[] = new EntityMap("eager", "getWaste_bags");
             $entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
-            $entityMaps[] = new EntityMap("eager", "getOther_wastes");            
             $entityMaps[] = new EntityMap("eager", "getPrincipalInvestigator");
             $pickup->setEntityMaps($entityMaps);
 
-            $LOG->fatal($pickup);
-            
             return $pickup;
         }
     }
@@ -1130,6 +1061,9 @@ class Rad_ActionManager extends ActionManager {
             foreach ( $decodedObject->getWipe_test () as $wipe ) {
                 //$LOG->fatal($wipe);
 
+                //$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+                ////$LOG->fatal($wipe);
+
 
                 // there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided
                 if ($wipe->getLocation () != null) {
@@ -1227,9 +1161,10 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
-            $dao = $this->getDao(new CarboyReadingAmount());            
+            $dao = $this->getDao(new CarboyReadingAmount());
             $decodedObject = $dao->save($decodedObject);
             $cycle = $decodedObject->getCarboy_use_cycle();
+            $LOG->debug($cycle);
             return $cycle;
         }
     }
@@ -1911,6 +1846,7 @@ class Rad_ActionManager extends ActionManager {
     	$inventoriesDao = $this->getDao(new PIAuthorization());
     	$clauses = array(new WhereClause("principal_investigator_id", "=", $id));
     	$whereClauseGroup = new WhereClauseGroup($clauses);
+    	$LOG->fatal($whereClauseGroup);
     	$auth =  reset($inventoriesDao->getAllWhere($whereClauseGroup));
     	return $auth;
     }
@@ -1947,10 +1883,12 @@ class Rad_ActionManager extends ActionManager {
     		
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
+    			$LOG->fatal($room);
     			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
     		}
     			
     		foreach($departments as $dept){
+    			$LOG->fatal($dept);
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
     		

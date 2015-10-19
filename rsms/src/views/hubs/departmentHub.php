@@ -20,18 +20,18 @@ require_once '../top_view.php';
       Loading Departments
     </span>
 
-    <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; margin-top:10; float:none;" ng-if="departments">
+    <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
         <THEAD>
             <tr>
                 <th class="greenBg" colspan="4">
                     <h3 class="card-header padding greenBg">Departments
-                        <a ng-click="openModal()" class="btn left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Department</a>
+                        <a ng-click="openModal(null, false)" class="btn btn-small left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Department</a>
                     </h3>
                 </th>
             </tr>
             <tr>
                 <th>Edit</th>
-                <th>Departments</th>
+                <th>Department</th>
                 <th style="text-align:center;"># Principal Investigators</th>
                 <th style="text-align:center;"># Laboratory Rooms</th>
             </tr>
@@ -54,19 +54,19 @@ require_once '../top_view.php';
             </tr>
         </tbody>
     </table>
-    
+
     <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
         <THEAD>
             <tr>
                 <th class="greenBg" colspan="4">
                     <h3 class="card-header padding greenBg">Specialty Labs
-                        <a ng-click="openModal(null, true)" class="btn left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
+                        <a ng-click="openModal(null, true)" class="btn btn-small left" style="margin-left:10px" ng-if="!creatingDepartment && departments"><i class="icon-plus-5"></i>Add New Specialty Lab</a>
                     </h3>
                 </th>
             </tr>
             <tr>
                 <th>Edit</th>
-                <th>Departments</th>
+                <th>Specialty Lab</th>
                 <th style="text-align:center;"># Principal Investigators</th>
                 <th style="text-align:center;"># Laboratory Rooms</th>
             </tr>

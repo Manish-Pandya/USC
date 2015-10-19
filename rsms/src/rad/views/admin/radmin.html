@@ -7,10 +7,6 @@
 <div cg-busy="{promise:CarboySaving,message:'Saving Purchase Order',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Carboy',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:SavingParcelWipe,message:'Saving Smears',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:PIAuthorizationSaving,message:'Saving Authorization',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:IsotopeSaving,message:'Saving Isotope',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-
-
 <div class="dashboard">
     <div class="row-fluid" style="margin-top: -15px;">
         <div class="left-nav">
@@ -20,7 +16,6 @@
                 <li><a class="pickups" ui-sref="admin-pickups"><i class="icon-box-remove"></i>Pickups</a></li>
                 <li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>
                 <li><a class="carboys" ui-sref="radmin.carboys"><i class="icon-carboy"></i>Carboys</a></li>
-                <li><a class="isotopes" style="color:black" ui-sref="radmin.isotopes"><img src="../img/radiation-large-icon.png" style="width: 23px;margin: -3px 7px 0 0px;"/>Isotopes</a></li>
             </ul>
             <h4 class="section-header"><img src="../img/pi-icon.png"/>Search by PI
                 <input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">

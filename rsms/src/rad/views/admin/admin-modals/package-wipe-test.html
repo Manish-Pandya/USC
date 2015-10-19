@@ -9,8 +9,8 @@
             <h3>Edit</h3>
             <h3>Instrument</h3>
             <h3>T.I.</h3>
-            <h3>Surface</h3>
             <h3>1m</h3>
+            <h3>Surface</h3>
         </div>
         <div class="table-row">
             <div ng-class="{'small-extra-top': modalData.Parcel.Creating_wipe}">
@@ -21,7 +21,7 @@
                 {{modalData.Parcel.Wipe_test[0].Reading_type}}
             </div>
             <div ng-if="modalData.Parcel.Creating_wipe" class="small-extra-top">
-                <select ng-init="modalData.ParcelCopy.Wipe_test[0].Reading_type = 'Alpha/Beta'" ng-model="modalData.ParcelCopy.Wipe_test[0].Reading_type" style="width:100px">
+                <select ng-init="modalData.ParcelCopy.Wipe_test[0].Reading_type = 'LSC'" ng-model="modalData.ParcelCopy.Wipe_test[0].Reading_type" style="width:100px">
                     <option value="LSC">LSC</option>
                     <option value="Alpha/Beta">Alpha/Beta</option>
                     <option value="MCA">MCA</option>
@@ -38,17 +38,6 @@
                 </div>
             </div>
 
-            <div ng-if="!modalData.Parcel.Creating_wipe">{{modalData.Parcel.Wipe_test[0].Box_background}} mR/hr</div>
-            <div ng-if="modalData.Parcel.Creating_wipe">
-                <label class="control-label" for="quantity">Surface:</label>
-                <div class="control-group">
-                    <div class="controls input-append">
-                        <input class="span3" ng-model="modalData.ParcelCopy.Wipe_test[0].Box_background">
-                        <span class="add-on">mR/hr</span>
-                    </div>
-                </div>
-            </div>
-
             <div ng-if="!modalData.Parcel.Creating_wipe">{{modalData.Parcel.Wipe_test[0].One_meter_background}} mR/hr</div>
             <div ng-if="modalData.Parcel.Creating_wipe">
                 <label class="control-label" for="quantity">1m:</label>
@@ -60,6 +49,16 @@
                 </div>
             </div>
 
+            <div ng-if="!modalData.Parcel.Creating_wipe">{{modalData.Parcel.Wipe_test[0].Box_background}} mR/hr</div>
+            <div ng-if="modalData.Parcel.Creating_wipe">
+                <label class="control-label" for="quantity">Surface:</label>
+                <div class="control-group">
+                    <div class="controls input-append">
+                        <input class="span3" ng-model="modalData.ParcelCopy.Wipe_test[0].Box_background">
+                        <span class="add-on">mR/hr</span>
+                    </div>
+                </div>
+            </div>
             <div ng-class="{'small-extra-top':modalData.Parcel.Creating_wipe}">
                 <span ng-if="modalData.Parcel.Creating_wipe">
                     <a class="btn btn-success left" ng-click="af.saveParcelWipeTest(parcel,modalData.ParcelCopy.Wipe_test)"><i class="icon-checkmark"></i>Save</a>

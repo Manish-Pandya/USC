@@ -97,7 +97,7 @@ angular
                 }
             }
 
-            dataSwitch.getObjectById = function(className, id, recurse, queryParam, force) {
+            dataSwitch.getObjectById = function(className, id, recurse, queryParam) {
                 // should always return a promise
                 var deferred = $q.defer();
 
@@ -107,7 +107,7 @@ angular
                 else {
                     dataSwitch.promises[className] = deferred;
                     //check cache first
-                    if( !force && dataStoreManager.checkCollection(className) ) {
+                    if( dataStoreManager.checkCollection(className) ) {
                         deferred.resolve( dataStoreManager.getById(className, id) );
                     }
                     else {

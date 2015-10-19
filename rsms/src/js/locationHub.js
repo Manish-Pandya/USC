@@ -267,7 +267,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 deferred.reject();
             }
         );
-        return deferred.promise;
+        return deferred.promise
     }
 
     factory.roomAlreadyExists = function(room)
@@ -423,8 +423,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
         locationHubFactory.setModalData(room);
 
         var modalInstance = $modal.open({
-          templateUrl: 'locationHubPartials/roomsModal.html',
-          controller: locationModalCtrl
+          templateUrl: 'rooms-modal.html',
+          controller: modalCtrl
         });
 
 
@@ -541,9 +541,9 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 }
 
-locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
+modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
-
+    
     $scope.roomUses = [
         {Name:"Chemical Storage"},
         {Name:"Cold Room"},
@@ -555,11 +555,11 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         {Name:"Rodent Surgery"},
         {Name:"Tissue Culture"}
     ];
-
+    
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
     $scope.selectedUse = {Name:$scope.modalData.Purpose};
-
+    
     locationHubFactory.getBuildings().then(
         function(buildings){
             $scope.buildings = buildings;
@@ -625,11 +625,10 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                             obj.IsDirty=false;
                         }else{
                             //we are creating an new object
-                            returned.isNew = true;
                             collection.push(returned);
                             obj.IsDirty=false;
                         }
-                        $modalInstance.close(returned);
+                        $modalInstance.close();
                     },
                     function(){
                         $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
@@ -648,14 +647,7 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         $scope.modalError="";
         var room = $scope.modalData;
         if(!room.Key_id){
-            if(!room.PrincipalInvestigators)room.PrincipalInvestigators = [];
-            if(!adding){
-                var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
-                //find the room in the factory collection of rooms, remove the pi from it as well
-                room.PrincipalInvestigators.splice(idx,1);
-            }else{
-                room.PrincipalInvestigators.push(pi);
-            }
+            room.PrincipalInvestigators.push(pi);
             return;
         }
         var roomDto = {
@@ -667,6 +659,7 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
         var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=savePIRoomRelation';
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
             function(){
+
                 var rooms = locationHubFactory.rooms;
                 var i = rooms.length;
                 while(i--){
@@ -675,13 +668,15 @@ locationModalCtrl = function($scope, $rootScope, locationHubFactory, $modalInsta
                         break;
                     }
                 }
-                if(!room.PrincipalInvestigators)room.PrincipalInvestigators = [];
+
                 if(!adding){
                     var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
-                    //find the room in the factory collection of rooms, remove the pi from it as well
                     room.PrincipalInvestigators.splice(idx,1);
+                    //find the room in the factory collection of rooms, remove the pi from it as well
+                    originalRoom.PrincipalInvestigators.splice(idx,1);
                 }else{
                     room.PrincipalInvestigators.push(pi);
+                    originalRoom.PrincipalInvestigators.push(pi);
                 }
                 pi.saving = false;
             },

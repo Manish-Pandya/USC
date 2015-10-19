@@ -14,7 +14,7 @@
                  <div class="input-append" ng-if="isProductionServer && !modalData.Username">
                      <input type="text" name="userName" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username" required>
                      <a class="add-on greenBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
-                     <img ng-show="lookingForUser" class="smallLoading" src="../../../img/loading.gif"/>
+                      <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif"/>
                   </div>
                 <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" name="userName" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
              </div>

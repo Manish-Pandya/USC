@@ -16,7 +16,7 @@ Hazard.prototype = {
 
     loadSubHazards: function() {
         if(!this.SubHazards) {
-            return dataLoader.loadOneToManyRelationship( this, 'ActiveSubHazards', this.SubHazardsRelationship);
+            dataLoader.loadOneToManyRelationship( this, 'SubHazards', this.SubHazardsRelationship);
         }
     }
 
@@ -28,6 +28,6 @@ extend(Hazard, GenericModel);
 
 //create an angular module for the model, so it can be injected downstream
 angular
-    .module("hazard",[])
-    .value("Hazard",Hazard);
+	.module("hazard",[])
+	.value("Hazard",Hazard);
 

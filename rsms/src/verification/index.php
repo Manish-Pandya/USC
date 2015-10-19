@@ -10,11 +10,11 @@ session_start();
 
 echo '<script type="text/javascript">
 var isProductionServer;';
+echo "</script>";
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
 ?>
-</script>
 
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
 <?php if($_SESSION != NULL){?>
@@ -29,6 +29,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 </script>
 <?php } ?>
 
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +104,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../client-side-framework/rootApplicationController.js"></script>
 <script type="text/javascript" src="./scripts/applicationController.js"></script>
 <script type="text/javascript" src="../js/locationHub.js"></script>
-<script type="text/javascript" src="../js/userHub.js"></script>
+    <script type="text/javascript" src="../js/userHub.js"></script>
 
 <!-- controllers -->
 <script type="text/javascript" src="../client-side-framework/genericModalController.js"></script>
@@ -133,7 +134,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 </head>
 <body>
-
+    
 <div ng-app="VerificationApp" ng-controller="NavCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <!-- VIEW NESTING -->

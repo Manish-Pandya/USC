@@ -14,6 +14,8 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.piPromise = af.getRadPIById($stateParams.pi)
               .then(
                   function(pi){
+                      console.log(pi);
+                      console.log(dataStore);
                       //pi.loadRooms();
                       if(pi.Pickups){
                           var i = pi.Pickups.length;
@@ -32,16 +34,6 @@ angular.module('00RsmsAngularOrmApp')
 
        $scope.svTrays = 0;
 
-        $scope.others=[
-            "Lead Pig","Equipment","Shielding","Other"
-        ]
-        $scope.otherWastes = [{Amount:null, Contents:null, Class:"OtherWaste"}];
-        $scope.addOtherWaste = function(){
-            $scope.otherWastes.push({Amount:null, Contents:null, Class:"OtherWaste"})
-        }
-        $scope.removeOtherWaste = function(idx){
-            $scope.otherWastes.splice(idx,1);
-        }
 
         $scope.createPickup = function(pi){
             //collection of things to be picked up
@@ -64,7 +56,7 @@ angular.module('00RsmsAngularOrmApp')
                 pickup.Status = "REQUESTED";
                 pickup.Principal_investigator_id = pi.Key_id;
             }
-            pickup.Other_wastes = $scope.otherWastes;
+
 
             //include proper objects in pickup
             if(pi.SolidsContainers){
@@ -115,11 +107,12 @@ angular.module('00RsmsAngularOrmApp')
 
 
         $scope.hasPickupItems = function(collection){
+            //if(!collection.length)return false;
             var hasPickupItems = false;
             if(!collection)return false;
             var i = collection.length;
             while(i--){
-                    if(!collection[i].Pickup_id){
+                    if(!collection[i].Pickup_id && collection[i].Contents.length){
                     hasPickupItems = true;
                 }
 
@@ -145,7 +138,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.requestPickup = function(pickup){
             $scope.close();
             var pickupCopy = dataStoreManager.createCopy(pickup);
-            af.savePickup(pickupCopy, pickup ,true)
+            af.savePickup(pickup,pickupCopy,true)
                 .then(
                     function(){
 

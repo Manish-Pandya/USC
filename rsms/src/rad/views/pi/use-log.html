@@ -9,7 +9,7 @@
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Original Quantity</h3>
+                    <h3>Orginal Quantity</h3>
                     <h3>Remaining Quantity</h3>
                 </div>
                 <div class="table-row" ng-repeat="parcel in pi.ActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
@@ -24,7 +24,7 @@
                     </div>
 
                     <div>
-                        {{parcel.Authorization.IsotopeName}}
+                        {{parcel.Isotope.Name}}
                     </div>
 
                     <div>

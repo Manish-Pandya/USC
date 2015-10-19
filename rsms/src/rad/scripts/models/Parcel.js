@@ -7,7 +7,7 @@ Parcel.prototype = {
 	className: "Parcel",
 
 	eagerAccessors:[
-		{method:"loadAuthorization", boolean: 'Authorization_id'},
+		{method:"loadIsotope", boolean: 'Isotope_id'},
 		{method:"loadPurchaseOrder", boolean: 'Purchase_order_id'}
 	],
 
@@ -41,6 +41,12 @@ Parcel.prototype = {
 
     },
 
+	loadIsotope: function() {
+        if(!this.Isotope){
+            dataLoader.loadChildObject(this, 'Isotope', 'Isotope', this.Isotope_id);
+        }
+    },
+
 	loadPurchaseOrder: function() {
         if(!this.PurchaseOrder){
             dataLoader.loadChildObject(this, 'PurchaseOrder', 'PurchaseOrder', this.Purchase_order_id);
@@ -50,6 +56,8 @@ Parcel.prototype = {
     loadPrincipalInvestigator: function() {
         if(!this.PrincipalInvestigator) {
             dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
+            console.log(this);            
+            console.log(dataStore);
         }
     },
 
@@ -60,7 +68,7 @@ Parcel.prototype = {
     },
     loadAuthorization: function() {
         if(!this.Authorization) {
-            dataLoader.loadChildObject(this, 'Authorization','Authorization', this.Authorization_id);
+           this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
         }
     },
 }

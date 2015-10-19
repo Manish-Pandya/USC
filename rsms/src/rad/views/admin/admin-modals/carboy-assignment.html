@@ -2,29 +2,28 @@
     <h2 ng-show="!addRoom" style="padding:5px; background:rgb(122, 6, 109); color:white">Add a Carboy to {{modalData.pi.User.Name}}</h2>
 </div>
 <div class="modal-body wide-modal">
-    <div class="fake-table striped bordered">
-        <div class="table-header">
-            <h3>Add</h3>
-            <h3>Commission Date</h3>
-            <h3>Carboy Number</h3>
-            <h3>Rooms</h3>
-        </div>
-        <div class="table-row" ng-repeat="cycle in carboys">
-            <div>
-                <a ng-if="cycle.Room.Class" ng-click="addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
-                <a ng-if="!cycle.Room.Class" disabled="disabled" class="btn left"><i class="icon-plus-2"></i>Assign</a>
-            </div>
-            <div>{{cycle.Carboy.Commission_date | dateToISO}}</div>
-            <div>{{cycle.Carboy.Carboy_number}}</div>
-            <div>
-                <select ng-model="cycle.Room" ng-options="room.Name for room in modalData.pi.Rooms">
-                    <option value="" ng-if="!cycle.Room.Class">Select a room</option>
-                </select>
-            </div>
-        </div>
-    </div>
+  <div class="fake-table striped bordered">
+		<div class="table-header">
+			<h3>Add</h3>
+			<h3>Commission Date</h3>
+			<h3>Carboy Number</h3>
+			<h3>Rooms</h3>
+		</div>
+		<div class="table-row" ng-repeat="carboy in carboys | carboyIsAvailable">
+			<div>
+				<a ng-if="carboy.Room" ng-click="addCarboyToLab(carboy, modalData.pi,carboy.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
+				<a ng-if="carboy.Room" disabled="disabled" class="btn left"><i class="icon-plus-2"></i>Assign</a>
+			</div>
+			<div>{{carboy.Carboy.Commission_date | dateToISO}}</div>
+			<div>{{carboy.Carboy.Carboy_number}}</div>
+			<select ng-model="carboy.Room">
+				<option style="display:none">Select a room</option>
+				<option ng-repeat="room in modalData.pi.Rooms">{{room.Name}}</option>
+			</select>
+		</div>
+	</div>
 </div>
 
 <div class="modal-footer">
-    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

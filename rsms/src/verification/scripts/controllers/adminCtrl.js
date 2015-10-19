@@ -1,9 +1,10 @@
 angular
     .module('VerificationApp')
-    .controller('AdminCtrl', function ($scope, $rootScope, $modal, applicationControllerFactory, modelInflatorFactory, locationHubFactory, userHubFactory) {
+    .controller('AdminCtrl', function ($scope, $rootScope, $modal, applicationControllerFactory, modelInflatorFactory, userHubFactory, locationHubFactory) {
         var ac = $scope.ac = applicationControllerFactory;
-        var lf = $scope.lf = locationHubFactory;
         var uf = $scope.uf = userHubFactory;
+        var lf = $scope.lf = locationHubFactory;
+        
         $scope.dataStoreManager = dataStoreManager;
     
         $scope.contactOptions  = ["In another PI's lab", "No longer at the university", "Still in this lab, but no longer a contact"];
@@ -11,9 +12,9 @@ angular
         $scope.newUser;
         $scope.addedUsers = [];
         var id = 1;
-
+    
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then(uf.getAllUsers);
+                                .then(getPI).then(getAllUsers).then(uf.getAllRoles);
     
 
         function getVerification(id){
@@ -58,56 +59,31 @@ angular
             }
         }
         
-        $scope.openCreateUserModal = function(userChange){
-            var names = userChange.Name.split(" ");
-            var user = {Is_active:true, First_name:names[0], Last_name:names[1], Name:names[1]+", "+names[0], Roles:[], Supervisor_id:$scope.PI.Key_id, Supervisor:$scope.PI, Class:'User', Is_new:true, PendingUserChangeCopy:userChange};
+        $scope.openCreateUserModal = function(roleName) {
+            var user = {Is_active:true, Roles:[], Class:'User', Supervisor_id:$scope.PI.Key_id, Supervisor:$scope.PI, Is_new:true};
             var i = uf.roles.length;
             while(i--){
-                if(uf.roles[i].Name.indexOf(userChange.Role)>-1) user.Roles.push(uf.roles[i]);
-                if(uf.roles[i].Name.indexOf('Lab Personnel') > -1 && userChange.Role == "Lab Contact") user.Roles.push(uf.roles[i]);
+                if(uf.roles[i].Name.indexOf(roleName)>-1) user.Roles.push(uf.roles[i]);
+                if(uf.roles[i].Name.indexOf("Lab Personnel")>-1) var labPersonnel = uf.roles[i];
             }
+            if(roleName == "Lab Contact") user.Roles.push(labPersonnel);
+            
+            // Prevent circular structure by removing user.Supervisor.LabPersonnel
+            //user.Supervisor.LabPersonnel = user.Supervisor.Buildings = user.Supervisor.CurrentVerifications = user.Supervisor.Pi_authorization = user.Supervisor.User = null;
+            console.log(roleName, user);
             
             uf.setModalData(user);
             var modalInstance = $modal.open({
-                templateUrl: '../views/hubs/userHubPartials/labPersonnelModal.html',
-                controller: modalCtrl
+              templateUrl: '../views/hubs/userHubPartials/labContactModal.html',
+              controller: modalCtrl
             });
-            
             modalInstance.result.then(function (returnedUser) {
-                if(user.Key_id){
-                    angular.extend(user, returnedUser)
-                }else{
-                    uf.users.push(returnedUser);
-                }
-                // Deactivate pendingChange
-                userChange.Approval_date = new Date();
-                ac.savePendingUserChange(user, $scope.verification.Key_id, userChange);
+              if(user.Key_id){
+                angular.extend(user, returnedUser)
+              }else{
+                uf.users.push(returnedUser);
+              }
             });
-
-        }
-        
-        $scope.openCreateRoomModal = function(roomChange){
-            var room = {Is_active: true, Class:'Room', Name:roomChange.Name, Building:{Name:roomChange.Building_name}, PrincipalInvestigators:[], PendingRoomChangeCopy:roomChange};
-            locationHubFactory.setModalData(room);
-
-            var modalInstance = $modal.open({
-                templateUrl: '../views/hubs/locationHubPartials/roomsModal.html',
-                controller: locationModalCtrl
-            });
-
-            modalInstance.result.then(function () {
-                locationHubFactory.getRooms()
-                    .then(
-                        function(rooms){
-                            $scope.rooms = rooms;
-                            $scope.loading = false;
-                        }
-                    )
-                // Deactivate pendingChange
-                roomChange.Approval_date = new Date();
-                ac.savePendingRoomChange(room, $scope.verification.Key_id, room.Building);
-            });
-
         }
 
     });

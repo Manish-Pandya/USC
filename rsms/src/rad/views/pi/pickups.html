@@ -3,6 +3,7 @@
 <div cg-busy="{promise:WasteBagSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<!--<pre>{{pi | json}}</pre>-->
 
 <div style="margin-top: 70px;" ng-if="pi">
     <div class="alert alert-info" ng-if="scheduledPickups">
@@ -37,7 +38,7 @@
                 </div>
                 <div ng-if="hasPickupItems(pi.CurrentScintVialCollections)">
                     <h3><i class="icon-lab scint-vials"></i>Scintillation Vials</h3>
-                    <label class="checkbox" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
+                    <label class="checkbox indent" ng-repeat="collection in pi.CurrentScintVialCollections" ng-if="collection.Contents.length && !collection.Pickup_id">
                         <input type="checkbox" ng-true-value="yes" ng-model="collection.include" />
                         <span class="metro-checkbox"><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span>
                         </span>
@@ -55,23 +56,10 @@
                         <label class="checkbox" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Contents.length && !cycle.Pickup_id">
                             <input type="checkbox" ng-true-value="yes" ng-model="cycle.include" />
                             <span class="metro-checkbox">
-                            Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}} <span ng-if="!$last">, </span></span>)
+                            Carboy #{{cycle.Carboy.Carboy_number}} (<span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)
                             </span>
                         </label>
                     </ul>
-                </div>
-
-                <div>
-                    <h3>Miscellaneous Waste (no activity)</h3>
-                    <div ng-repeat="waste in otherWastes">
-                        <div style="width:100%">
-                            <select  ng-model="waste.Contents" ng-options="other as other for other in others">
-                                <option value="">Choose form</option>
-                            </select>
-                            <!--<i class="icon-plus-2 success" ng-click="addOtherWaste()"></i>-->
-                        </div>
-                        <textarea maxlength="255" rows="3" ng-model="waste.Comments" placeholder="Comments"></textarea>
-                    </div>
                 </div>
 
                 <div ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)">
@@ -135,15 +123,6 @@
                     -->
                     </div>
                 </div>
-                     <div ng-if="pickup.Other_wastes.length">
-                        <h3>Misc. Waste</h3>
-                        <ul style="margin-left:0;">
-                            <li ng-repeat="waste in pickup.Other_wastes">
-                                <h4>{{waste.Contents}}</h4>
-                                <p style="margin:3px 0;">{{waste.Comments}}</p>
-                            </li>
-                        </ul>
-                    </div>
             </div>
         </div>
     </div>

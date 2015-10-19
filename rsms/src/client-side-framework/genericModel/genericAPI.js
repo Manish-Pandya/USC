@@ -10,9 +10,7 @@ angular
         var  api = {};
 
         api.baseUrl = '../ajaxaction.php?action=';
-        if(window.upString){
-            api.baseUrl = '../../ajaxaction.php?rad=true&action=';
-        }
+
         //Generic calls
 
         api.fetchActionString = function( actionName, className, queryParam ) {

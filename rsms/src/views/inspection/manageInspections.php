@@ -18,7 +18,7 @@ require_once '../top_view.php';
             <img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 0px;">Manage Inspections
                 <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
-                <span style="float:right;margin: 4px 15px 0 0px;" ng-if="dtos">{{filtered.length}} Inspections Displayed</span>
+                <span style="float:right;" ng-if="filtered">{{filtered.length}} Inspections Displayed</span>
             </h2>
         </li>
     </ul>
@@ -31,10 +31,10 @@ require_once '../top_view.php';
           <option value="">-- select year --</option>
       </select>
 
-    <table id="manage-inspections-table" class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
+    <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" style="margin-top:100px;">
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
-            <tr ng-show="dtos">
+            <tr>
                 <th>
                     Investigator<br>
                     <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>

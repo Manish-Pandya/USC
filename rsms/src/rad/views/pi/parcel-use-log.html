@@ -1,6 +1,6 @@
 <div cg-busy="{promise:parcelPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:ParcelUseSaving,message:'Saving Use', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<!--<pre>{{parcel | json}}</pre>-->
+
 <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
 <div style="margin-top:70px;" ng-if="pi">
     <div class="card full parcels">
@@ -10,7 +10,7 @@
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Original Quantity</h3>
+                    <h3>Orginal Quantity</h3>
                     <h3>Remaining Quantity</h3>
                 </div>
                 <div class="table-row">
@@ -19,7 +19,7 @@
                     </div>
 
                     <div>
-                        {{parcel.Authorization.IsotopeName}}
+                        {{parcel.Isotope.Name}}
                     </div>
 
                     <div>
@@ -48,6 +48,7 @@
                     <h3>Use</h3>
                     <h3>Amount</h3>
                     <h3>Disposals</h3>
+                    <h3></h3>
                 </div>
                 <div class="table-row top-align" ng-repeat="use in parcel.ParcelUses">
                     <div ng-class="{'extra-top': use.edit}">
@@ -59,8 +60,8 @@
                     </div>
                     <div ng-if="use.edit" class="push-top">
                         <div class="control-group">
-                            <label class="control-label" for="inputEmail">Date Used:</label>
-                            <div class="controls">
+                             <label class="control-label" for="inputEmail">Date Used:</label>
+                             <div class="controls">
                                 <input ng-model="ParcelUseCopy.view_Date_used">
                                 <span class="help-block" style="">mm/dd/yy</span>
                             </div>
@@ -72,9 +73,9 @@
                     </div>
                     <div ng-if="use.edit" class="push-top">
                         <div class="control-group">
-                            <label class="control-label" for="experiment-use">Use:</label>
-                            <div class="controls">
-                                <textarea rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
+                             <label class="control-label" for="experiment-use">Use:</label>
+                             <div class="controls">
+                             <textarea rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
                             </div>
                         </div>
                     </div>
@@ -85,13 +86,13 @@
 
                     <div ng-if="use.edit" class="push-top">
                         <label class="control-label" for="quantity">Amount:</label>
-                        <div class="control-group">
-                            <div class="controls input-append">
-                                <input ng-blur="validateRemainder(parcel)" style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
-                                <span class="help-block" style="">mCi</span>
+                            <div class="control-group">
+                                 <div class="controls input-append">
+                                    <input ng-blur="validateRemainder(parcel)" style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
+                                    <span class="help-block" style="">mCi</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <div>
                         <div class="fake-table no-bg">
                             <div class="table-row row-fluid" ng-if="!use.edit">
@@ -103,7 +104,7 @@
                                 </div>
                                 <div class="use-amount liquids">
                                     <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:1})">
-                                        Liq: {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy.Carboy_number}}
+                                        Liq: {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy_number}}
                                     </div>
                                     <div ng-if="!liquids.length">No Liquid Disposals</div>
                                 </div>
@@ -122,13 +123,13 @@
                             </div>
                             <div class="table-row row-fluid edit" ng-if="use.edit">
                                 <div class="use-amount solids">
-                                    <label class="control-label" for="solid-curies">Sol: <a ng-click="addAmount('Solids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="solid-curies">Sol: <a ng-click="addAmount('Solids')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:4})">
                                         <div class="control-group">
-                                            <div class="controls input-append">
+                                             <div class="controls input-append">
                                                 <input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
                                                 <select ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags">
-                                                    <option value="">Select Receptical</option>
+                                                <option value="">Select Receptical</option>
                                                 </select>
                                                 <span class="help-block " style="">mCi</span>
                                             </div>
@@ -136,13 +137,13 @@
                                     </div>
                                 </div>
                                 <div class="use-amount liquids">
-                                    <label class="control-label" for="liquid-curies">Liq: <a ng-click="addAmount('Liquids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="liquid-curies">Liq: <a ng-click="addAmount('Liquids')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:1})">
                                         <div class="control-group">
-                                            <div class="controls input-append">
+                                             <div class="controls input-append">
                                                 <input ng-blur="validateUseAmounts(ParcelUseCopy)" name="liquid-curies" ng-model="liquid.Curie_level">
 
-                                                <select ng-change="selectCarboy(liquid)" ng-model="liquid.Carboy" ng-options="cycle as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
+                                                <select ng-change="selectCarboy(liquid)" ng-model="liquid.Carboy" ng-options="cycle.Carboy as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
                                                     <option value="">Select Carboy</option>
                                                 </select>
                                                 <span class="help-block " style="">mCi</span>
@@ -151,10 +152,10 @@
                                     </div>
                                 </div>
                                 <div class="use-amount vials">
-                                    <label class="control-label" for="vial-curies">S/V: <a ng-click="addAmount('Vials')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="vial-curies">S/V: <a ng-click="addAmount('Vials')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:3})">
                                         <div class="control-group">
-                                            <div class="controls input-append">
+                                             <div class="controls input-append">
                                                 <input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
                                                 <span class="help-block " style="">mCi</span>
                                             </div>
@@ -162,10 +163,10 @@
                                     </div>
                                 </div>
                                 <div class="use-amount others">
-                                    <label class="control-label" for="vial-curies">Other: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                                    <label class="control-label" for="vial-curies">Other: <a ng-click="addAmount('Others')" class="btn btn-success"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:5})">
                                         <div class="control-group">
-                                            <div class="controls input-append">
+                                             <div class="controls input-append">
                                                 <input ng-blur="validateUseAmounts(ParcelUseCopy)" style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
 
                                                 <span class="help-block " style="">mCi</span>
@@ -178,15 +179,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-class="{'extra-top': use.edit}">
-                                    <!-- ng-disabled="parcel.inValid"-->
-                                    <button ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use, pi)" class="btn btn-success"><i class="icon-checkmark"></i></button>
-                                    <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use)"><i class="icon-cancel-2"></i></a>
-                                </div>
                             </div>
                         </div>
                     </div>
+                    <div ng-class="{'extra-top': use.edit}">
+                        <button ng-disabled="parcel.inValid" ng-if="use.edit" ng-if="use.edit" ng-click="af.saveParcelUse(parcel, ParcelUseCopy,use)" class="btn btn-success"><i class="icon-checkmark"></i></button>
+                        <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use)"><i class="icon-cancel-2"></i></a>
+                    </div>
                 </div>
-            </div>
+            <!--
+            <ul>
+                <li ng-repeat="use in parcel.ParcelUses">
+                    <pre>{{use|json}}</pre>
+                </li>
+            </ul>
+            -->
         </div>
     </div>
+</div>
+

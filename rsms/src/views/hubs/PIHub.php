@@ -2,8 +2,7 @@
 require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/piHub.js"></script>
-<script src="<?php echo WEB_ROOT?>js/userHub.js"></script>
-<script src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
+<script src="../../js/userHub.js"></script>
 
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div class="navbar">
@@ -33,7 +32,6 @@ require_once '../top_view.php';
                           <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
-                    <i class="icon-cancel danger canceller" ng-click="clearSelectedPI()"></i>
                    <ul ng-if="PI && PI.Departments" class="no-list" style="margin-left:0">
                        <li><h2 class="bold underline">Department:</h2></li>
                        <li ng-repeat="dept in PI.Departments"><h3 style="height:auto" once-text="dept.Name"></h3></li>

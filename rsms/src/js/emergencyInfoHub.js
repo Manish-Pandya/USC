@@ -33,6 +33,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
     factory.getHazards = function(room)
     {
+
         //the server expects an array of roomIds, but we are only going to send one, so wrap it in an array;
         var rooms = [room.Key_id];
         var url = '../../ajaxaction.php?action=getHazardRoomMappingsAsTree&'+$.param({roomIds:rooms})+'&callback=JSON_CALLBACK';
@@ -43,6 +44,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
             function(promise){
             }
         );
+
     }
 
     factory.onSelectPIOrBuilding = function( object )
@@ -65,6 +67,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
         if(!object.Rooms)$rootScope.error = "The selected location or PI has no rooms in the system."
         $rootScope.rooms = object.Rooms;
+
     }
 
     factory.onSelectPI = function( pi )
@@ -73,7 +76,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
         this.getRoomsByPI( pi )
           .then(
             function( rooms ){
-                //console.log(rooms);
+                console.log(rooms);
                 pi.Rooms = rooms;
                 var displayRooms = [];
                 var len = pi.Rooms.length;
@@ -146,7 +149,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
 
     factory.hazardIsNotPresent = function( hazard )
     {
-        //console.log(hazard);
+        console.log(hazard);
         if(!hazard.IsPresent)return true;
         return false;
     }

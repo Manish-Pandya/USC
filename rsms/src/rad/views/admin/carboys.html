@@ -2,34 +2,36 @@
 
 <div class="right-column">
     <div class="well two-thirds">
-        <h1 class="carboys"><i class="icon-carboy"></i>Carboys<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-carboy"></i>New Carboy</a></h1>
-        <h3 ng-if="!carboys.length">No carboys</h3>
-        <div class="card full carboys" ng-if="carboys.length">
-            <div class="fake-table bordered">
-                <div class="table-header">
+        <h3 ng-show="!carboys.length">No carboys</h3>
+        <div class="card full carboys">
+			<div class="fake-table bordered">
+				<div class="table-header">
                     <h3>Edit</h3>
-                    <h3>Carboy Number</h3>
-                    <h3>Status</h3>
-                    <h3>PI</h3>
-                </div>
-                <div class="table-row" ng-repeat="carboy in carboys | carboyHasNoRetireDate">
+					<h3>Carboy Number</h3>
+					<h3>Status</h3>
+					<h3>PI</h3>
+                    <h3>Deactivate</h3>
+				</div>
+				<div class="table-row" ng-repeat="carboy in carboys | carboyHasNoRetireDate">
                     <div>
                         <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                        <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
                     </div>
+					<div>
+						{{carboy.Carboy_number}}
+					</div>
+					<div>
+						{{carboy.Current_carboy_use_cycle.Status}}
+					</div>
                     <div>
-                        {{carboy.Carboy_number}}
-                    </div>
+						{{carboy.Current_carboy_use_cycle.Principal_investigator.Name}}
+					</div>
                     <div>
-                        {{carboy.Current_carboy_use_cycle.Status}}
+                        <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-primary left"><i class="icon-minus"></i>Deactivate</a>
                     </div>
-                    <div>
-                        {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
-                    </div>
-                </div>
-            </div>
+				</div>
+			</div>
 
-        </div>
+		</div>
     </div>
 
 </div>

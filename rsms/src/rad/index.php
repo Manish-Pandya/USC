@@ -42,11 +42,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- included javascript libraries
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
-
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 <!--
 <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
 -->
+    
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
+    
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
@@ -94,7 +96,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
+
 
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
@@ -114,9 +116,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- filters -->
+<script type="text/javascript" src="./scripts/filters/dateToIso.js"></script>
 <script type="text/javascript" src="./scripts/filters/splitAtPeriod.js"></script>
 <script type="text/javascript" src="./scripts/filters/carboyIsAvailable.js"></script>
-<script type="text/javascript" src="./scripts/filters/carboyHasNoRetireDate.js"></script>
+    <script type="text/javascript" src="./scripts/filters/carboyHasNoRetireDate.js"></script>
 <script type="text/javascript" src="./scripts/filters/parcelParser.js"></script>
 <script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
 <script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>
@@ -176,14 +179,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-    <h1>{{viewLabel}}
-        <a class="pull-right" href="../views/RSMSCenter.php#/admin"><i style="margin: 13px 125px 0 0px;color: #060606;font-size: 50px;" class="icon-home"></i></a>
-        <!--
-        <a class="pull-right" style="margin-right:15px; color:white; font-size:40px;" ng-if="rbf.getHasPermission([ R['Admin'],  R['Radiation Admin'], R['Inspector'], R['Radiation Inspector']])" href="../views/RSMSCenter.php"><i class="icon-home"></i></a>
-        <a class="pull-right" style="margin-right:15px; color:white; font-size:40px;" ng-if="!rbf.getHasPermission([ R['Admin'],  R['Radiation Admin'], R['Inspector'], R['Radiation Inspector']])" href="../views/RSMSCenter.php"><i class="icon-home"></i></a>
--->
-</h1>
-
+    <h1>{{viewLabel}}</h1>
   </div>
 <!-- VIEW NESTING -->
     <div ui-view class="noBg"></div>

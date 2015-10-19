@@ -21,7 +21,6 @@ include_once 'RadCrud.php';
         "carboy_id"          		=> "integer",
     	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
-    	"scint_vial_collection_id"	=> "integer",
     	"comments"					=> "text",
 
         //GenericCrud
@@ -58,8 +57,6 @@ include_once 'RadCrud.php';
     /** Reference to the WasteBag containing this amount.  Null if not solid wast */
     private $waste_bag;
     private $waste_bag_id;
-    
-    private $scint_vial_collection_id;
 
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
@@ -74,9 +71,6 @@ include_once 'RadCrud.php';
     
     /* The key_id of the isotope up in this ParcelUseAmount */
     private $isotope_id;
-    
-    /* boolean to determine whether this ParcelUserAmount has been picked up or is still on had */
-    private $pickedUp;
 
     public function __construct() {
 
@@ -115,13 +109,10 @@ include_once 'RadCrud.php';
     public function getWaste_type_id() { return $this->waste_type_id; }
     public function setWaste_type_id($newValue) { $this->waste_type_id = $newValue; }
 
-    public function getScint_vial_collection_id(){ return $this->scint_vial_collection_id; }
-    public function setScint_vial_collection_id($newValue){ $this->scint_vial_collection_id = $newValue; }
-    
     public function getCarboy() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
     	if($this->carboy == NULL && $this->getCarboy_id() != null) {
-    		$carboyDao = new GenericDAO(new CarboyUseCycle());
+    		$carboyDao = new GenericDAO(new Carboy());
     		$this->carboy = $carboyDao->getById($this->getCarboy_id());
     	}
     	return $this->carboy;
@@ -140,6 +131,7 @@ include_once 'RadCrud.php';
 
     public function getParcel_use_id() { return $this->parcel_use_id; }
     public function setParcel_use_id($newId) { $this->parcel_use_id = $newId; }
+
 
     public function getWaste_bag_id(){return $this->waste_bag_id;}
     public function setWaste_bag_id($waste_bag_id){$this->waste_bag_id = $waste_bag_id;}
@@ -160,8 +152,7 @@ include_once 'RadCrud.php';
 		$useDao = new GenericDAO(new ParcelUse());
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
-		$auth = $parcel->getAuthorization();
-		$isotope = $auth->getIsotope();
+		$isotope = $parcel->getIsotope();
 		$this->isotope_name = $isotope->getName();
 		return $this->isotope_name;
 	}
@@ -170,36 +161,10 @@ include_once 'RadCrud.php';
 		$useDao = new GenericDAO(new ParcelUse());
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
-		$auth = $parcel->getAuthorization();
-		$isotope = $auth->getIsotope();
+		$isotope = $parcel->getIsotope();
 		$this->isotope_id = $isotope->getKey_id();
 		return $this->isotope_id;
 	}
     
-	public function getPickedUp(){
-		if($this->pickedUp == null){
-			$this->pickedUp = false;
-			if($this->getWaste_bag_id() != NULL){
-				$bagDao = new GenericDAO(new WasteBag());
-				$bag = $bagDao->getById($this->getWaste_bag_id());
-				$id = $bag->getPickup_id();
-			}elseif($this->getCarboy() != NULL){
-				$cycle = $this->getCarboy();
-				$id = $cycle->getPickup_id();
-			}elseif($this->getScint_vial_collection_id() != NULL){
-				$collectionDao = new GenericDAO(new ScintVialCollection());
-				$collection = $collectionDao->getById($this->getScint_vial_collection_id());
-				$id = $collection->getPickup_id();
-			}
-		}
-		
-		if($id != null){
-			$pickupDao = new GenericDAO(new Pickup());
-			$pickup = $pickupDao->getById($id);
-			$this->pickedUp = $pickup->getPickup_date() != null;
-		}
-		
-		return $this->pickedUp;
-	}
 }
 ?>

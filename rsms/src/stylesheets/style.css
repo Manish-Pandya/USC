@@ -268,9 +268,13 @@ button.btn:not(.btn-large){
 /* line 88, ../sass/style.scss */
 /* line 154, ../sass/style.scss */
 .center {
-  float: none;
-  margin-left: auto;
-  margin-right: auto;
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.link-list li{
+  display:inline;
+  float:left;
 }
 
 /* line 89, ../sass/style.scss */
@@ -354,6 +358,22 @@ div.rsmsCenterIconContainer a p {
   text-decoration: none !important;
   padding: 5px;
   font-size: 25px;
+}
+.safety-programs a{
+    background: white;
+    border: solid 5px transparent;
+}
+.safety-programs p{
+    color:black !important;
+}
+.safety-programs .bio{
+    border-color: #d00;
+}
+.safety-programs .chem{
+    border-color: #0072BC;
+}
+.safety-programs .rad{
+    border-color:yellow;
 }
 
 @media (max-width: 773px) {
@@ -652,22 +672,6 @@ div.rsmsCenterIconContainer a p {
 /* line 414, ../sass/style.scss */
 .userList tr td:last-child {
   width: 4%;
-}
-
-#manage-inspections-table tr td {
- width: 15%;
-}
-
-#manage-inspections-table tr td:nth-of-type(3) {
- width: 20%;
-}
-
-#manage-inspections-table tr td:nth-of-type(4) {
- width: 6%;
-}
-
-#manage-inspections-table tr td:nth-of-type(7) {
- width: 14%;
 }
 
 /* line 175, ../sass/style.scss */
@@ -1302,7 +1306,7 @@ img.smallLoading {
 }
 
 /* line 963, ../sass/style.scss */
-.greyedOut {
+.greydOut {
   color: #bbb !important;
 }
 
@@ -1936,25 +1940,10 @@ ul.key li.deficiencies span {
   color: #CC0000;
 }
 
-.hazardList i.fa-door-open, .hazardList ul i.fa-door-open {
-  color: rgba(73, 175, 205, 0.62)
-}
-
-/* line 1391, ../sass/style.scss */
-.hazardList i.fa-door-open, .hazardList ul i.fa-door-open:hover {
-  color: #49afcd;
-}
-.hazardList i.fa-door-open, .hazardList ul i.icon-info {
-    color:rgba(204, 0, 0, 0.57)
-}
-
-.hazardList i.fa-door-open, .hazardList ul i.icon-info:hover {
-  color: #CC0000;
-}
-
 .hazardList span > ul.topChildren {
   margin-left: 0 !important;
 }
+
 .icons{
   height: 20px;
   display:inline-block;

@@ -1081,11 +1081,10 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Room());
-            $id = $decodedObject->getKey_id();
             $room = $dao->save($decodedObject);
-            if($id == NULL && $decodedObject->getPrincipalInvestigators() != NULL){
+            if($decodedObject->getPrincipalInvestigators() != NULL){
                 foreach($decodedObject->getPrincipalInvestigators() as $pi){
-                    $LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
+                    //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
                     $this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
                 }
             }

@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp Radmin PI dashboard
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('disposalCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $modal, modelInflatorFactory) {
+  .controller('disposalCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $modal) {
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
@@ -21,7 +21,7 @@ angular.module('00RsmsAngularOrmApp')
                     $rootScope.drums = dataStore.Drum;
                     return drums;
                 }
-            );
+            );  
     }
 
     var getAllWasteBags = function(){
@@ -126,7 +126,7 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.addReading = function(cycle){
-        $rootScope.CarboyReadingAmountCopy = modelInflatorFactory.instantiateObjectFromJson( new window.CarboyReadingAmount() );
+        $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);

@@ -23,8 +23,6 @@ class Parcel extends RadCrud {
 		"quantity"						=> "float",
 		"rs_number"						=> "text",
 		"authorization_id"				=> "integer",
-		"catalog_number"				=> "text",
-		"chemical_compound"				=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -76,9 +74,6 @@ class Parcel extends RadCrud {
 
 	/** Float ammount of isotope that has not been used yet. */
 	private $remainder;
-	
-	/** Float ammount of isotope that has not been picked up yet, regardless of whether it has been used */
-	private $onHand;
 
 	/** Array of parcel uses that pertain to this parcel. */
 	private $parcelUses;
@@ -94,10 +89,6 @@ class Parcel extends RadCrud {
 	
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
-	private $authorization;
-	
-	private $chemical_compound;
-	private $catalog_number;
 
 	public function __construct() {
 		// Define which subentities to load
@@ -155,15 +146,15 @@ class Parcel extends RadCrud {
 	public function getIsotope_id() { return $this->isotope_id; }
 	public function setIsotope_id($newId) { $this->isotope_id = $newId; }
 
-	public function getAuthorization() {
-		if($this->authorization == null) {
-			$authDao = new GenericDAO(new Authorization());
-			$this->authorization = $authDao->getById($this->getAuthorization_id());
+	public function getIsotope() {
+		if($this->isotope == null) {
+			$isotopeDAO = new GenericDAO(new Isotope());
+			$this->isotope = $isotopeDAO->getById($this->getIsotope_id());
 		}
-		return $this->authorization;
+		return $this->isotope;
 	}
-	public function setAuthorization($auth) {
-		$this->authorization = $auth;
+	public function setIsotope($newIsotope) {
+		$this->isotope = $newIsotope;
 	}
 
 	public function getArrival_date() { return $this->arrival_date; }
@@ -196,22 +187,6 @@ class Parcel extends RadCrud {
 			$this->remainder = $this->getQuantity() - $usedAmount;
 		}
 		return $this->remainder;
-	}
-	
-	public function getOnHand(){
-		$this->onHand = $this->getQuantity();
-		$uses = $this->getParcelUses();
-		foreach($uses as $use){
-			$amounts = $use->getParcelUseAmounts();
-			foreach ($amounts as $amount){
-				$amount = new ParcelUseAmount();
-				if($amount->getPickedUp() == true){
-					$this->onHand -= $amount->getCurie_level();
-				}
-			}
-		}
-		
-		return $this->onHand;
 	}
 
 	public function getRs_number(){return $this->rs_number;}
@@ -252,11 +227,5 @@ class Parcel extends RadCrud {
 	
 	public function getAuthorization_id() {return $this->authorization_id;}
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
-	
-	public function getCatalog_number(){return $this->catalog_number;}
-	public function setCatalog_number($number){$this->catalog_number = $number;}
-	
-	public function getChemical_compound(){return $this->chemical_compound;}
-	public function setChemical_compound($compound){$this->chemical_compound = $compound;}
 }
 ?>

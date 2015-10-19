@@ -1,23 +1,19 @@
-<div class="modal" style="max-height:0">
-    <div class="purpleBg modal-header">
-        <h3 ng-if="department.Key_id">Edit {{department.Name}}</h3>
-        <h3 ng-if="!department.Key_id">Create a new department</h3>
-    </div>
-    <div class="modal-body no-border">
-        <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-        <form name="modalForm">
-            <div class="controls">
-                <input type="text" class="span4" size="50" style="float:left; margin-right:10" ng-model="department.Name">
-                <label class="checkbox" style="float:left">
-                    <input type="checkbox" ng-model="department.Specialty_lab">
-                    <span class="metro-checkbox">Specialty Lab</span>
-                </label>
-            </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <i class="icon icon-spinnery-dealie spinner small" ng-if="isDirty"></i>
-        <button class="btn-success btn left btn-large" ng-disabled="!department.Name" ng-click="saveDepartment()"><i class="icon-checkmark"></i>Save</button>
-        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
-    </div>
+<div class="purpleBg modal-header">
+    <h3 ng-if="department.Key_id">Edit {{department.Name}}</h3>
+    <h3 ng-if="!department.Key_id">Create a new <span ng-if="!specialtyLab">Department</span><span ng-if="specialtyLab">Specialty Lab</span></h3>
+</div>
+<div class="modal-body no-border">
+    <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+    <form name="modalForm">
+        <input type="text" class="span4" size="50" ng-model="department.Name" placeholder="Name">
+        <label class="checkbox" style="padding-top:3px;">
+          <input type="checkbox" ng-model="department.Specialty_lab" />
+            <span class="metro-checkbox">Specialty Lab</span>
+        </label>
+    </form>
+</div>
+<div class="modal-footer">
+    <i class="icon icon-spinnery-dealie spinner small" ng-if="isDirty"></i>
+    <button class="btn-success btn left btn-large" ng-disabled="!department.Name" ng-click="saveDepartment()"><i class="icon-checkmark"></i>Save</button>
+    <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

@@ -24,6 +24,7 @@ class PendingChange extends GenericCrud {
 			"name"				=> "name",
 			"phone_approved"	=> "boolean",
             "role"		    	=> "text",
+			"status_description"=> "text",
 				
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -44,7 +45,7 @@ class PendingChange extends GenericCrud {
 	protected $emergency_phone;
 	protected $name;
 	protected $phone_approved;
-	
+	protected $status_description;
 	
 	public function __construct(){
 	
@@ -113,6 +114,8 @@ class PendingChange extends GenericCrud {
 		$this->phone_approved = $phone;
 	}
 	
+	public function getStatus_description(){return $this->status_description;}
+	public function setStatus_description($desc){$this->status_description = $desc;}
 	
 	public function getName(){
 		if($this->name != null)return $this->name;

@@ -29,6 +29,7 @@ angular
                 });
 
                 scope.onClick = function (option) {
+                    alert('yo nigga')
                     scope.model[scope.modelProp] = option;
                     scope.model.showDropDown = false
                 }

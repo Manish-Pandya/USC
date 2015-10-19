@@ -45,7 +45,7 @@ angular.module('00RsmsAngularOrmApp')
                 }
             }
 
-            af.savePickup(pickupCopy, pickup, true, true);
+            af.savePickup(pickup,pickupCopy);
 
         }
 

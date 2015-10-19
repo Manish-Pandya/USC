@@ -9,29 +9,28 @@
  */
 angular.module('00RsmsAngularOrmApp')
   .controller('CarboysCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-          var af = actionFunctionsFactory;
+  		var af = actionFunctionsFactory;
 
-          var getAllCarboys = function(){
-              af.getAllCarboys()
-              .then(
-                  function(carboys){
-                      $scope.carboys = dataStore.Carboy;
-                      console.log(dataStore.Carboy)
-                  },
-                  function(){}
-              )
-          }
+  		var getAllCarboys = function(){
+  			af.getAllCarboys()
+  			.then(
+  				function(carboys){  	
+  					$scope.carboys = dataStore.Carboy;
+  				},
+  				function(){}
+  			)
+  		}
 
-          $scope.af = af;
-          $rootScope.carboysPromise = af.getAllPIs()
-                                          .then(getAllCarboys);
-
+  		$scope.af = af;
+  		$rootScope.carboysPromise = af.getAllPIs()
+  										.then(getAllCarboys);
+    
         $scope.deactivate = function(carboy){
             var copy = dataStoreManager.createCopy(carboy);
             copy.Retirement_date = new Date();
             af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
         }
-
+    
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
@@ -48,20 +47,19 @@ angular.module('00RsmsAngularOrmApp')
 
   })
   .controller('CarboysModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-        var af = actionFunctionsFactory;
-        $scope.af = af;
+		var af = actionFunctionsFactory;
+		$scope.af = af;
 
-        $scope.modalData = af.getModalData();
+		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
         $scope.save = function(carboy) {
-            console.log(carboy);
             af.saveCarboy(carboy.PrincipalInvestigator, carboy, $scope.modalData.Carboy)
                 .then($scope.close);
         }
 
-        $scope.close = function(){
+		$scope.close = function(){
            $modalInstance.dismiss();
            af.deleteModalData();
-        }
+		}
 
-    });
+	});

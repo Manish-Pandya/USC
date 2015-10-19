@@ -67,11 +67,6 @@ angular
         templateUrl: "views/admin/carboys.html",
         controller: "CarboysCtrl"
       })
-    .state('radmin.isotopes', {
-        url: "/isotopes",
-        templateUrl: "views/admin/isotopes.html",
-        controller: "IsotopeCtrl"
-      })
       .state('admin-pickups', {
         url: "/admin/pickups",
         templateUrl: "views/admin/pickups.html",
