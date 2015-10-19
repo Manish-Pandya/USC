@@ -146,6 +146,8 @@ class ActionMappingFactory {
 
 
                 // Inspection, step 2 (Hazard Assessment)
+        		
+        		"getHazardRoomDtosByPIId"=>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveHazardRoomRelations"=>new ActionMapping("saveHazardRoomRelations", "", "", $this::$ROLE_GROUPS["EHS"]),

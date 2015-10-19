@@ -825,6 +825,36 @@ class GenericDAO {
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
+	
+	function getHazardRoomDtosByPIId( $pIId ){
+		$LOG = Logger::getLogger(__CLASS__);
+		
+		// Get the db connection
+		global $db;
+		
+		//get this pi's rooms
+		$roomsQueryString = "SELECT key_id as room_id, name as room_name from room where key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
+		$stmt = $db->prepare($roomsQueryString);
+		$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
+		$stmt->execute();
+		$rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
+		$roomIds = array();
+		foreach($rooms as $room){
+			$roomIds[] = $room->getRoom_id();
+		}
+				
+		//get a dto for every hazard
+		$queryString = "SELECT key_id as hazard_id, name as hazard_name, parent_hazard_id as parent_hazard_id from hazard;";
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
+		foreach($dtos as $dto){
+			$dto->setPrincipal_investigator_id($pIId);
+			$dto->setRoomIds($roomIds);
+			$dto->setAndFilterInspectionRooms($rooms);
+		}
+		return $dtos;
+	}
 
 
 }
