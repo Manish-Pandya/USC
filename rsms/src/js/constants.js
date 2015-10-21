@@ -69,6 +69,13 @@ var Constants = (function () {
         }
     };
     
+    constants.DRUM = {
+        STATUS:{
+            SHIPPED: "Shipped",
+            
+        }
+    };
+    
     constants.PICKUP = {
         STATUS:{
             PICKED_UP:"PICKED UP",
@@ -95,6 +102,22 @@ var Constants = (function () {
             NA:"N/A"
         }
     };
+    
+    constants.ISOTOPE = {
+        EMITTER_TYPE:{
+            ALPHA: "Alpha",
+            BETA: "BETA",
+            GAMMA: "Gamma"
+        }
+    };
+    
+    constants.WIPE_TEST = {
+        READING_TYPE:{
+            LSC:"LSC",
+            ALPHA_BETA:"Alpha/Beta",
+            MCA:"MCA"
+        }
+    };  
     
     return constants;
 })();
