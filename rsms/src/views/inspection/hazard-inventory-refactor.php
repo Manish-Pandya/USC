@@ -5,6 +5,7 @@ require_once '../top_view.php';
     <!-- framework -->
     <script type="application/javascript">
         var upString = "../";
+        var radUpString = "&rad=true";
     </script>
     <script src="../../client-side-framework/genericModel/inheritance.js"></script>
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
@@ -16,11 +17,14 @@ require_once '../top_view.php';
     <script src="../../client-side-framework/dataStore/dataStoreManager.js"></script>
     <script src="../../client-side-framework/dataStore/dataSwitch.js"></script>
     <script src="../../client-side-framework/dataStore/dataLoader.js"></script>
+    <script src="../../js/lib/angular-ui-router.min.js"></script>
 
     <!-- models -->
     <script src="../../rad/scripts/models/Hazard.js"></script>
     <script src="../../rad/scripts/models/PrincipalInvestigator.js"></script>
 
+
+    <script type="text/javascript" src="../../rad/scripts/app.js"></script>
     <script type="text/javascript" src="../../rad/scripts/actionFunctions.js"></script>
     <script type="text/javascript" src="../../rad/scripts/controllers/hazardInventory.js"></script>
 
@@ -37,7 +41,7 @@ require_once '../top_view.php';
             </li>
         </ul>
     </div>
-    <div data-ng-app="HazardInventory" data-ng-controller="HazardInventoryCtrl">
+    <div data-ng-app="00RsmsAngularOrmApp" data-ng-controller="HazardInventoryCtrl">
         <div class="container-fluid whitebg" style="padding-bottom:130px;">
             <div class="">
                 <div>
@@ -118,7 +122,7 @@ require_once '../top_view.php';
           Building Hazard List...
         </span>
                     <ul class="allHazardList">
-                        <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazards | orderBy: 'Name'" ng-if="hazard.Name != 'General Safety'">
+                        <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Name != 'General Safety'">
                             <span ng-init="hazard.loadSubHazards()" />
                             <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
                             <span ng-if="!hazard.hidden">
@@ -137,15 +141,18 @@ require_once '../top_view.php';
                                 </span>
                                     </a>
                                 </li>
-                                <li ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | everyThirdChecked" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                                <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | everyThirdChecked | orderBy: 'Name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                                     <!--<h4 class="">-->
                                     <label class="checkbox inline">
-                                        <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)" ng-checked="child.IsPresent = child.checked" />
+                                        <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)" ng-init="child.IsPresent = child.checked" />
                                         <span class="metro-checkbox"></span>
                                         <!--<pre>{{child | json}}</pre>-->
                                     </label>
                                     <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
-                                        <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a>                                         <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
+                                        <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
+                                            {{child.Name}}
+                                            <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
+                                        </span>
                                         <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                                     </span>
                                     <!--</h4>-->
@@ -154,7 +161,7 @@ require_once '../top_view.php';
                                             <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
                                         </span>
                                         <span ng-if="child.IsPresent">
-                                            <i class="fa-door-open" ng-click="openRoomsModal(child)"></i>
+                                            <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
                                         </span>
 
                                         <span ng-if="child.IsPresent">

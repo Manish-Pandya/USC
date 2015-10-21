@@ -15,8 +15,8 @@ Hazard.prototype = {
     },
 
     loadSubHazards: function() {
-        if(!this.SubHazards) {
-            dataLoader.loadOneToManyRelationship( this, 'SubHazards', this.SubHazardsRelationship);
+        if(!this.ActiveSubHazards) {
+            dataLoader.loadOneToManyRelationship( this, 'ActiveSubHazards', this.SubHazardsRelationship);
         }
     }
 

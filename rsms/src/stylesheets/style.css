@@ -1960,7 +1960,12 @@ ul.key li.deficiencies span {
   top: 5px;
   position:absolute;
 }
-
+li.yellowed label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after {
+    color: rgb(176, 176, 176);
+}
+.stored{
+    color:crimson;
+}
 @media (max-width: 1375px) {
   /* line 501, ../sass/style.scss */
   /* line 1402, ../sass/style.scss */

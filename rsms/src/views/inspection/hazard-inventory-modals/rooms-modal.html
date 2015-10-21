@@ -2,6 +2,10 @@
     <h2 style="padding:5px;" class="redBg">{{modalData.Hazard.Name}}</h2>
 </div>
 <div class="modal-body">
+    <select ng-modal="modalData.Hazard.Status">
+        <option selected>In Use</option>
+        <option>Stored Only</option>
+    </select>
     <ul>
         <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms">
             <label class="checkbox inline">
