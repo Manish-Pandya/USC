@@ -20,6 +20,7 @@
         'CarboyUseCycle'        : {getById: "getCarboyUseCycleById"        , getAll: "getAllCarboyUseCycles"        , save: "saveCarboyUseCycle"         },
         'Drum'                  : {getById: "getDrumById"                  , getAll: "getAllDrums"                  , save: "saveDrum"                   },
         'Hazard'                : {getById: "getHazardById"                , getAll: "getAllHazards"                , save: "saveHazard"                 },
+        'HazardDto'             : {getById: "getHazardById"                , getAll: "getHazardRoomDtosByPIId&id=1" , save: "saveHazard"                 },
         'Isotope'               : {getById: "getIsotopeById"               , getAll: "getAllIsotopes"               , save: "saveIsotope"                },
         'Parcel'                : {getById: "getParcelById"                , getAll: "getAllParcels"                , save: "saveParcel"                 },
         'ParcelUse'             : {getById: "getParcelUseById"             , getAll: "getAllParcelUses"             , save: "saveParcelUse"              },
