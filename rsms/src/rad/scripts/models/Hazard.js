@@ -6,7 +6,7 @@
 var HazardDto = function(){};
 HazardDto.prototype = {
 
-    ID_prop: "Hazard_id";
+    ID_prop: "Hazard_id",
 
     SubHazardsRelationship: {
         className:    'HazardDto',
