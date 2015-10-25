@@ -48,7 +48,7 @@ angular.module('00RsmsAngularOrmApp')
 
             getHazards = function () {
                 return actionFunctionsFactory
-                    .getAllHazards()
+                    .getAllHazardDtos()
                     .then(
                         function (hazards) {
                             return hazards
@@ -58,6 +58,7 @@ angular.module('00RsmsAngularOrmApp')
                         }
                     ).then(
                         function (hazards) {
+                            console.log(dataStore);
                             var hazard = dataStoreManager.getById('Hazard', 10000);
                             hazard.loadSubHazards();
                             $scope.hazard = hazard;

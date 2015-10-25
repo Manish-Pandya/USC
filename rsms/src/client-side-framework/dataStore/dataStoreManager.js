@@ -261,8 +261,14 @@ dataStoreManager.mapCache = function( cacheClass )
     var length = stuff.length;
     var cachePosition = 0;
 
+    if(stuff[0].ID_prop){
+        var ID_prop = stuff[0].ID_prop;
+    }else{
+        var ID_prop = "Key_id";
+    }
+
     while(length--){
-        var targetId = stuff[cachePosition].Key_id;
+        var targetId = stuff[cachePosition][ID_prop];
         dataStore[cacheClass+'Map'][targetId] = cachePosition;
         cachePosition++;
     }
@@ -292,11 +298,18 @@ dataStoreManager.addOnSave = function( object )
 }
 
 dataStoreManager.pushIntoCollection = function(object){
-    if(dataStoreManager.getById(object.Class, object.Key_id))return;
+
+    if(object.ID_prop){
+        var ID_prop = object.ID_prop;
+    }else{
+        var ID_prop = "Key_id";
+    }
+
+    if(dataStoreManager.getById(object.Class, object[ID_prop]))return;
 
     if(!dataStore[object.Class])dataStoreManager.store([object]);
 
-    if(!dataStoreManager.getById(object.Class, object.Key_id)){
+    if(!dataStoreManager.getById(object.Class, object[ID_prop])){
         dataStore[object.Class].push(object);
         if(!dataStore[object.Class+'Map'])dataStore[object.Class+'Map'] = [];
         dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class].length-1;

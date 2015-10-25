@@ -28,8 +28,6 @@ require_once '../top_view.php';
     <script type="text/javascript" src="../../rad/scripts/actionFunctions.js"></script>
     <script type="text/javascript" src="../../rad/scripts/controllers/hazardInventory.js"></script>
 
-
-
     <div class="navbar">
         <ul class="nav pageMenu row-fluid redBg">
             <li class="span12">
