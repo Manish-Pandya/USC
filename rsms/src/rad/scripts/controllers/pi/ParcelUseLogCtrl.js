@@ -10,22 +10,28 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
 
-  		var af = actionFunctionsFactory;
-  		$scope.af = af;
+          var af = actionFunctionsFactory;
+          $scope.af = af;
 
-  		var getPi = function(){
+          var getPi = function(){
         return af.getRadPIById($stateParams.pi)
-    			.then(
-    				function(){
+                .then(
+                    function(){
               $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
               return $scope.pi;
-    				},
-    				function(){}
-    			)
+                    },
+                    function(){}
+                )
       }
 
-      var getParcel = function(pi){
-        $scope.parcel = af.getById('Parcel',$stateParams.parcel);
+      var getParcel = function(){
+        console.log(dataStore);
+        af.getParcelById($stateParams.parcel)
+            .then(
+                function(){
+                    $scope.parcel = dataStoreManager.getById("Parcel",$stateParams.parcel);
+                }
+            );
         console.log($scope.parcel);
       }
 
@@ -108,7 +114,7 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(amt);
           $rootScope.ParcelUseCopy[type].push(amt);
       }
-      
+
       $scope.selectCarboy = function(useAmount){
           if( !useAmount.Carboy ){
             useAmount.Carboy_id = null;

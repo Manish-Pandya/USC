@@ -345,7 +345,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("eager","getPi_authorization");
-        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("eager", "getActiveParcels");
         $entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
         $entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
         $entityMaps[] = new EntityMap("eager", "getSolidsContainers");

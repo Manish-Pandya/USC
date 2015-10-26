@@ -560,7 +560,7 @@ angular
             {
                 return dataSwitchFactory.getAllObjects('Isotope');
             }
-            
+
             af.saveIsotope = function(copy, isotope)
             {
                 af.clearError();
@@ -699,22 +699,7 @@ angular
 
             af.getParcelById = function( key_id )
             {
-                var urlSegment = 'getParcelById&id=' + key_id;
-
-                if( store.checkCollection( 'Parcel', key_id ) ) {
-                    var parcel = store.getById( 'Parcel', key_id )
-                        .then(function(parcel) {
-                            return parcel;
-                        });
-                }
-                else {
-                    var parcel = genericAPIFactory.read( urlSegment )
-                        .then( function( returnedPromise ) {
-                            // store parcel in cache here?
-                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
-                        });
-                }
-                return parcel;
+                return dataSwitchFactory.getObjectById("Parcel",key_id);
             }
 
             af.getAllParcels = function( key_id )
