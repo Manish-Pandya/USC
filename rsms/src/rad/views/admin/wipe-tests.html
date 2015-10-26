@@ -41,10 +41,10 @@
                             {{parcel.Wipe_test[0].Reading_type}}
                         </div>
                         <div ng-if="parcel.Creating_wipe" class="small-extra-top">
-                            <select ng-init="ParcelWipeTestCopy.Reading_type = 'LSC'" ng-model="ParcelWipeTestCopy.Reading_type" style="width:100px">
-                                <option value="LSC">LSC</option>
-                                <option value="Alpha/Beta">Alpha/Beta</option>
-                                <option value="MCA">MCA</option>
+                            <select ng-init="ParcelWipeTestCopy.Reading_type = Constants.WIPE_TEST.READING_TYPE.LSC" ng-model="ParcelWipeTestCopy.Reading_type" style="width:100px">
+                                <option value="{{Constants.WIPE_TEST.READING_TYPE.LSC}}">{{Constants.WIPE_TEST.READING_TYPE.LSC}}</option>
+                                <option value="{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}">{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}</option>
+                                <option value="{{Constants.WIPE_TEST.READING_TYPE.MCA}}">{{Constants.WIPE_TEST.READING_TYPE.MCA}}</option>
                             </select>
                         </div>
 

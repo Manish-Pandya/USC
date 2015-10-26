@@ -14,9 +14,9 @@
    			<form class="form-inline" style="display:inline-block; margin:0 10px;" ng-if="inspection.Inspection_wipe_tests[0].edit">
 				<label class="bold">Instrument: </label>
 				<select ng-model="InspectionWipeTestCopy.Reading_type" style="width:110px">
-					<option value="LSC">LSC</option>
-					<option value="Alpha/Beta">Alpha/Beta</option>
-					<option value="MCA">MCA</option>
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.LSC}}">{{Constants.WIPE_TEST.READING_TYPE.LSC}}</option>
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}">{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}</option>
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.MCA}}">{{Constants.WIPE_TEST.READING_TYPE.MCA}}</option>
 				</select>
 
 				<a ng-if="!InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, null, inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Create Wipe Test</a>

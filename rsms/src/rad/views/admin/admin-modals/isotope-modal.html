@@ -19,7 +19,7 @@
     </div>
     <div class="control-group">
         <label class="control-label" for="emitter">Emitter Type</label>
-        <select ng-model="modalData.IsotopeCopy.Emitter_type" style="width:258px;" ng-options="type for type in ['Alpha','Beta','Gamma']">
+        <select ng-model="modalData.IsotopeCopy.Emitter_type" style="width:258px;" ng-options="type for type in [Constants.ISOTOPE.EMITTER_TYPE.ALPHA,Constants.ISOTOPE.EMITTER_TYPE.BETA,Constants.ISOTOPE.EMITTER_TYPE.GAMMA]">
             <option value="">Select an Emitter Type</option>
         </select>
     </div>

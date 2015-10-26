@@ -9,10 +9,10 @@
   <div class="control-group">
     <label class="control-label" for="notes">Instrument</label>
      <div class="controls">
-      <select ng-init="modalData.MiscellaneousWipeTest.Reading_type = 'LSC'" ng-model="modalData.MiscellaneousWipeTest.Reading_type" style="width:100px">
-        <option value="LSC">LSC</option>
-        <option value="Alpha/Beta">Alpha/Beta</option>
-        <option value="MCA">MCA</option>
+      <select ng-init="modalData.MiscellaneousWipeTest.Reading_type = Constants.WIPE_TEST.READING_TYPE.LSC" ng-model="modalData.MiscellaneousWipeTest.Reading_type" style="width:100px">
+        <option value="{{Constants.WIPE_TEST.READING_TYPE.LSC}}">{{Constants.WIPE_TEST.READING_TYPE.LSC}}</option>
+        <option value="{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}">{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}</option>
+        <option value="{{Constants.WIPE_TEST.READING_TYPE.MCA}}">{{Constants.WIPE_TEST.READING_TYPE.MCA}}</option>
       </select>
     </div>
   </div>

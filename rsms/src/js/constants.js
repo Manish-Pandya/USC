@@ -106,7 +106,7 @@ var Constants = (function () {
     constants.ISOTOPE = {
         EMITTER_TYPE:{
             ALPHA: "Alpha",
-            BETA: "BETA",
+            BETA: "Beta",
             GAMMA: "Gamma"
         }
     };

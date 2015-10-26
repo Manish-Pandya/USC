@@ -62,11 +62,11 @@ require_once '../top_view.php';
                     Status<br>
                     <select ng-model="search.status" style="margin-bottom:0">
                         <option>Select a status</option>
-                        <option value="not scheduled">Not Scheduled</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="pending">Pending</option>
-                        <option value="overdue for inspection">Overdue for Inspection</option>
-                        <option value="complete">Complete</option>
+                        <option value="{{Constants.INSPECTION.STATUS.NOT_SCHEDULED}}">{{Constants.INSPECTION.STATUS.NOT_SCHEDULED}}</option>
+                        <option value="{{Constants.INSPECTION.STATUS.SCHEDULED}}">{{Constants.INSPECTION.STATUS.SCHEDULED}}</option>
+                        <option value="{{Constants.INSPECTION.STATUS.PENDING}}">{{Constants.INSPECTION.STATUS.PENDING}}</option>
+                        <option value="{{Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION}}">{{Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION}}</option>
+                        <option value="{{Constants.INSPECTION.STATUS.COMPLETE}}">{{Constants.INSPECTION.STATUS.COMPLETE}}</option>
                     </select>
                 </th>
             </tr>

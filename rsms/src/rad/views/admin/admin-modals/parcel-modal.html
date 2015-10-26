@@ -7,10 +7,10 @@
      <label class="control-label">Status</label>
      <div class="controls">
         <select data-ng-model="modalData.ParcelCopy.Status" >
-            <option value="Ordered">Ordered</option>
-            <option value="Wipe Tested">Wipe Tested</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Disposed">Disposed</option>
+            <option value="{{Constants.PARCEL.STATUS.ORDERED}}">{{Constants.PARCEL.STATUS.ORDERED}}</option>
+            <option value="{{Constants.PARCEL.STATUS.WIPE_TESTED}}">{{Constants.PARCEL.STATUS.WIPE_TESTED}}</option>
+            <option value="{{Constants.PARCEL.STATUS.DELIVERED}}">{{Constants.PARCEL.STATUS.DELIVERED}}</option>
+            <option value="{{Constants.PARCEL.STATUS.DISPOSED}}">{{Constants.PARCEL.STATUS.DISPOSED}}</option>
         </select>
      </div>
   </div>

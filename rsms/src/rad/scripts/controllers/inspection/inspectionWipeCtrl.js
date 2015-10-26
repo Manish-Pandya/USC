@@ -29,7 +29,7 @@ angular.module('00RsmsAngularOrmApp')
                         $rootScope.InspectionWipeTestCopy = new window.InspectionWipeTest();
                         $rootScope.InspectionWipeTestCopy.Inspection_id = inspection.Key_id;
                         $rootScope.InspectionWipeTestCopy.Class = "InspectionWipeTest";
-                        $rootScope.InspectionWipeTestCopy.Reading_type = "Alpha/Beta";
+                        $rootScope.InspectionWipeTestCopy.Reading_type = Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA;
                         $rootScope.InspectionWipeTestCopy.edit = true;
                         inspection.Inspection_wipe_tests.push($rootScope.InspectionWipeTestCopy);
                     }
