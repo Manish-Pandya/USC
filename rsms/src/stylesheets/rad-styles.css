@@ -474,7 +474,7 @@ table.table tr td.use-amounts{
 .use-amounts table td{
     padding:10px 7px 0!Important
 }
-.use-amounts table td:last-child{
+.use-amounts table td:last-child:not(.others){
     vertical-align:middle !important;
 }
 .use-amount > div {
