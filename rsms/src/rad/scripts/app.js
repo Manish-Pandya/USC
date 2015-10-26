@@ -82,6 +82,11 @@ angular
         templateUrl: "views/pi/use-log.html",
         controller: "UseLogCtrl"
       })
+      .state('radmin.isotopes', {
+        url: "/isotopes",
+        templateUrl: "views/admin/isotopes.html",
+        controller: "IsotopeCtrl"
+      })
       .state('parcel-use-log', {
         url:'/my-lab:pi/use-log:parcel',
         templateUrl: "views/pi/parcel-use-log.html",
