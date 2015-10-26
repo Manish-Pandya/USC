@@ -225,6 +225,12 @@ i.carboys {
 .card.solids-containers h3 i:first-child {
     color: rgb(151, 49, 58)
 }
+.left-nav ul li a.isotopes {
+    background: rgba(253, 241, 0, .7);
+}
+.left-nav ul li a.isotopes:hover {
+    background: rgba(253, 241, 0, 1);
+}
 i.solids-containers {
     color: rgb(151, 49, 58) !important
 }
@@ -304,8 +310,8 @@ button.btn:not(.btn-large) {
     z-index: 900;
 }
 .banner.radmin,
-.banner.radiation {
-    background: url('../img/radiation-large-icon.png') rgba(253, 254, 167, 1);
+banner.radiation {
+    background: url('../img/radiation-large-icon.png') rgb(253, 241, 0);;
 }
 .banner {
     background: white;

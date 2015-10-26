@@ -174,7 +174,12 @@ angular
                         Name:'quarterly-inventory',
                         Label: 'Quarterly Inventory',
                         Dashboard: true
-                    }
+                    },
+                    {
+                        Name:'radmin.isotopes',
+                        Label: 'Radiation Administration -- Isotopes',
+                        Dashboard: true
+                    },
                 ]
 
                 var i = viewMap.length;
@@ -554,6 +559,24 @@ angular
             af.getAllIsotopes = function( key_id )
             {
                 return dataSwitchFactory.getAllObjects('Isotope');
+            }
+            
+            af.saveIsotope = function(copy, isotope)
+            {
+                af.clearError();
+                console.log(copy);
+                return this.save( copy )
+                    .then(
+                        function(returnedIsotope){
+                            returnedIsotope = modelInflatorFactory.instateAllObjectsFromJson( returnedIsotope );
+                            if(isotope){
+                                angular.extend(isotope, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedIsotope);
+                            }
+                        },
+                        af.setError('The Isotope could not be saved')
+                    )
             }
 
 
@@ -2066,6 +2089,7 @@ angular
             af.savePIAuthorization = function(copy, auth, pi){
                 console.log(copy);
                 copy.Rooms = [];
+                copy.Departments = [];
                 if(pi.Rooms){
                     var i = pi.Rooms.length;
                     while(i--){
@@ -2085,7 +2109,7 @@ angular
                     .then(
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(auth.Key_id){
+                            if(copy.Key_id){
                                 angular.extend(copy, returnedAuth);
                                 auth.Rooms = [];
                                 auth.Rooms = copy.Rooms

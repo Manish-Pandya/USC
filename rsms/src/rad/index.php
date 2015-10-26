@@ -104,12 +104,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
-
+<script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 
 
 <!-- directives -->
-<script type="text/javascript" src="./scripts/directives/hazardHubDirectives.js"></script>
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
 
