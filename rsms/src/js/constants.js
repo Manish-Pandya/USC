@@ -31,7 +31,8 @@ var Constants = (function () {
             RADIATION_USER:"Radiation User",
             RADIATION_ADMIN:"Radiation Admin",
             EMERGENCY_ACCOUNT:"Emergency Account",
-            READ_ONLY:"Read Only"
+            READ_ONLY:"Read Only",
+            OCCUPATIONAL_HEALTH:"Occupational Health"
         }
     };
     
