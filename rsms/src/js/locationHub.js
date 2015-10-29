@@ -423,7 +423,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
         locationHubFactory.setModalData(room);
 
         var modalInstance = $modal.open({
-          templateUrl: 'rooms-modal.html',
+          templateUrl: 'locationHubPartials/roomsModal.html',
           controller: modalCtrl
         });
 
@@ -543,7 +543,7 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
-    
+
     $scope.roomUses = [
         {Name:"Chemical Storage"},
         {Name:"Cold Room"},
@@ -555,11 +555,11 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
         {Name:"Rodent Surgery"},
         {Name:"Tissue Culture"}
     ];
-    
+
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = convenienceMethods.copyObject( locationHubFactory.getModalData() );
     $scope.selectedUse = {Name:$scope.modalData.Purpose};
-    
+
     locationHubFactory.getBuildings().then(
         function(buildings){
             $scope.buildings = buildings;
