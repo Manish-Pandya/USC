@@ -46,9 +46,9 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!--
 <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
 -->
-    
+
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
-    
+
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
@@ -178,7 +178,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-    <h1>{{viewLabel}}</h1>
+    <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>rad/#/admin "><i class="icon-home" style="font-size:40px;"></i></a></h1>
   </div>
 <!-- VIEW NESTING -->
     <div ui-view class="noBg"></div>
