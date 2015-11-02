@@ -198,11 +198,12 @@ angular.module('00RsmsAngularOrmApp')
             $scope.saveParcel(pi, copy, parcel);
         }
 
-        $scope.addCarboyToLab = function(cycle, pi, room){
+        $scope.addCarboyToLab = function(cycle, pi){
+            cycle.loadCarboy();
             cycle.Is_active = false;
             $modalInstance.dismiss();
             af.deleteModalData();
-            af.addCarboyToLab(cycle, pi, room)
+            af.addCarboyToLab(cycle, pi);
         }
 
         $scope.roomIsAuthorized = function(room, authorization){

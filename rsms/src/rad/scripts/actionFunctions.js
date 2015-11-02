@@ -1292,7 +1292,7 @@ angular
 
             af.addCarboyToLab = function(cycle, pi, room){
                 cycle.Principal_investigator_id = pi.Key_id;
-                cycle.Room_id = room.Key_id;
+                cycle.Room_id = cycle.Room.Key_id;
                 cycle.Lab_date = convenienceMethods.setMysqlTime(new Date());
                 cycle.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                 cycle.Is_active = true;
@@ -1301,8 +1301,9 @@ angular
                 return this.save( cycle )
                     .then(
                         function(returnedCycle){
-                            returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
-                            angular.extend(cycle, returnedCycle);
+                            console.log(returnedCycle);
+                            //angular.extend(cycle, returnedCycle);
+                            //returnedCycle.Carboy = cycle.Carboy;
                             pi.CarboyUseCycles.push(cycle);
                         },
                         af.setError('The Carboy could not be added to the lab.')

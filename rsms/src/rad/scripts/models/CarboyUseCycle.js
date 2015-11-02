@@ -4,11 +4,11 @@
 //constructor
 var CarboyUseCycle = function() {};
 CarboyUseCycle.prototype = {
-	className: "CarboyUseCycle",
+    className: "CarboyUseCycle",
 
-	eagerAccessors:[
-		{method:"loadCarboy", boolean: 'Carboy_id'},
-	],
+    eagerAccessors:[
+        {method:"loadCarboy", boolean: 'Carboy_id'},
+    ],
 
     CarboyReadingAmountsRelationship: {
 
@@ -21,9 +21,7 @@ CarboyUseCycle.prototype = {
     },
     // TODO eager accessors, relationships, method names.
     loadCarboy:function(){
-    	if(!this.Carboy){
-            dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
-        }
+        dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
     },
 
     loadCarboy_reading_amounts:function(){
