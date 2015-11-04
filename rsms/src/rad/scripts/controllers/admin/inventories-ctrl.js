@@ -10,7 +10,7 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('InventoriesCtrl', function ($scope, actionFunctionsFactory, $rootScope, $state) {
 
-          var af = actionFunctionsFactory;
+      var af = actionFunctionsFactory;
       var getInventory = function(){
         /*
         console.log($state);
@@ -24,12 +24,27 @@ angular.module('00RsmsAngularOrmApp')
             }
           )
       }
+      
+      $scope.getAllPIs = af.getAllPIs()
+            .then(
+                function( pis ){
+                    $scope.PIs = pis;
+                    return;
+                },
+                function(){
+                    $scope.error = "Couldn't get the PIs";
+                    return false;
+                }
+
+            );
+          
       $scope.af = af;
+    
       $scope.inventoryPromise = af.getMostRecentInventory()
           .then(
               function(inventory){
                   $scope.inventory = inventory;
-        console.log(inventory);
+                  console.log(inventory);
               },
               function(){}
           )

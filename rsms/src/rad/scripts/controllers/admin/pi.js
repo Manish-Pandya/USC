@@ -26,7 +26,7 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 );
     }
-    //get the all the pis
+    //get all the pis
     $rootScope.pisPromise
         .then(
             function(){
