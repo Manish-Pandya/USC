@@ -131,6 +131,19 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyReadingAmountCopy.edit = true;
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }
+    
+    $scope.removeReading = function(cycle, reading){
+        reading.edit = true;
+        af.createCopy(reading);
+        for (var n = 0; n < cycle.Carboy_reading_amounts.length; n++) {
+            if(cycle.Carboy_reading_amounts[n] == reading) {
+                // TODO, make sure this is actually being saved. Don't think it is currently.
+                af.createCopy(cycle);
+                cycle.Carboy_reading_amounts.splice(n, 1);
+                af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle);
+            }
+        }
+    }
 
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {

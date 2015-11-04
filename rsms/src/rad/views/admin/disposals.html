@@ -64,6 +64,7 @@
 				<div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
 					<div>
 						<button ng-click="af.createCopy(reading)" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+                        <button ng-click="removeReading(cycle, reading)" ng-disabled="reading.edit" class="btn btn-danger left"><i class="icon-remove"></i>Remove</button>
 					</div>
 
 					<div ng-if="!reading.edit">
@@ -92,7 +93,7 @@
 					</div>
 
 					<div>
-						<button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
+						<button class="btn btn-success left" ng-click="af.createCopy(reading); af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
 						<button class="btn btn-danger left" ng-click="af.cancelEdit(reading)" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
 					</div>
 
