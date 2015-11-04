@@ -1,6 +1,7 @@
 <label class="checkbox inline">
+    <span ng-if="child.HasChildren" ng-init="child.loadSubhazards()"/>
     <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-    <span class="metro-checkbox targetHaz" once-text="child.Name"></span>
+    <span class="metro-checkbox targetHaz" once-text="child.Hazard_name"></span>
 </label>
 <div class="icons">
     <!--</h4>-->
@@ -17,19 +18,19 @@
 </div>
 
 <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;">
-    <h3 class="redBg"><span>{{child.Name}} yes my child</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+    <h3 class="redBg"><span>{{child.Hazard_name}} yes my child</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
     <ul>
         <li ng-repeat="(key, child) in child.ActiveSubHazards">
             <label class="checkbox inline">
                 <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child)"/>
-                <span class="metro-checkbox">{{child.Name}}<img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
+                <span class="metro-checkbox">{{child.Hazard_name}}<img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
             </label>
         </li>
     </ul>
 </div>
 
 <div class="roomsModal popUp skinny" ng-if="child.showRoomsModal" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-    <h3 class="redBg"><span>{{child.Name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+    <h3 class="redBg"><span>{{child.Hazard_name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
     <ul>
         <li ng-repeat="(key, room) in child.InspectionRooms">
             <label class="checkbox inline">

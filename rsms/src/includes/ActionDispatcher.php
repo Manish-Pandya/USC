@@ -69,6 +69,10 @@ class ActionDispatcher {
             if( isVerificationEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
             }
+            
+            if( isHazardInventoryEnabled() ) {
+            	$actionMappings = array_merge($actionMappings, HazardInventoryActionManager::readActionConfig());
+            }
 
             return $actionMappings;
         }
