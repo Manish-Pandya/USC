@@ -14,6 +14,20 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
     return changedThings;
   }
 })
+.filter("matchCampus", function(){
+    return function(departments, campusName){
+        if(!departments)return;
+        if(!campusName)return departments;
+        var i = departments.length;
+        var matches = [];
+        while(i--){
+            if(departments[i].Campus_name == campusName){
+                matches.unshift(departments[i]);
+            }
+        }
+        return matches;
+    }
+})
 .factory('departmentFactory', function(convenienceMethods,$q){
     var factory = {};
     var inspection = {};
@@ -59,13 +73,33 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
         );
         return deferred.promise
     }
+    factory.getAllCampuses = function(){
+        var url = "../../ajaxaction.php?action=getAllCampuses&callback=JSON_CALLBACK";
+        var deferred = $q.defer();
+
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function(promise){
+                deferred.resolve(promise);
+            },
+            function(promise){
+                deferred.reject(promise);
+            }
+        );
+        return deferred.promise
+    }
     return factory;
 });
 
 departmentHubController = function($scope,departmentFactory,convenienceMethods, $modal){
 
     function init(){
-        getDepartments();
+        departmentFactory.getAllCampuses()
+            .then(
+                function(campuses){
+                    $scope.campuses = campuses;
+                    getDepartments();
+                }
+            )
     }
 
     init();
@@ -145,9 +179,7 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
             }
         });
         instance.result.then(function (returnedDto) {
-                            console.log(returnedDto);
-
-            if(!convenienceMethods.arrayContainsObject($scope.departments,returnedDto, ["Department_name", "Department_name"])){
+            if(!convenienceMethods.arrayContainsObject($scope.departments,returnedDto, ["Department_id", "Department_id"])){
                 $scope.departments.push(returnedDto)
             }else{
                 angular.extend(dto, returnedDto);

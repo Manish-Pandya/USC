@@ -791,15 +791,26 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 	
-		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab, count(distinct b.key_id) as pi_count,
-						count(distinct c.key_id) as room_count
-						FROM department a 
-						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
-						LEFT JOIN principal_investigator b ON (d.principal_investigator_id = b.key_id) AND b.is_active = 1
-						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
-						LEFT JOIN room c ON (e.room_id = c.key_id)
-						GROUP BY a.key_id
-						ORDER BY a.name;";
+		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
+						count(distinct e.key_id) room_count,
+						count(distinct a.principal_investigator_id) pi_count,
+						count(distinct f.key_id) building_count
+						
+						FROM
+						principal_investigator_room a,
+						principal_investigator_department b,
+						campus c,
+						department d,
+						room e,
+						building f
+						WHERE
+						e.key_id = a.room_id
+						AND a.principal_investigator_id = b.principal_investigator_id
+						AND d.key_id = b.department_id
+						AND f.key_id = e.building_id
+						AND c.key_id = f.campus_id
+						GROUP BY c.name, d.name
+						ORDER BY d.name, c.name";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
@@ -812,16 +823,46 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 
-		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab, count(distinct b.key_id) as pi_count,
-						count(distinct c.key_id) as room_count
-						FROM department a 
+		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
+						count(distinct e.key_id) room_count,
+						count(distinct a.principal_investigator_id) pi_count,
+						count(distinct f.key_id) building_count
+						
+						FROM
+						principal_investigator_room a,
+						principal_investigator_department b,
+						campus c,
+						department d,
+						room e,
+						building f
+						WHERE
+						e.key_id = a.room_id
+						AND a.principal_investigator_id = b.principal_investigator_id
+						AND d.key_id = b.department_id
+						AND f.key_id = e.building_id
+						AND c.key_id = f.campus_id
+						AND d.key_id = :id
+						GROUP BY c.name, d.name
+						ORDER BY d.name, c.name;";
+		$stmt = $db->prepare($queryString);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+	}
+	
+	public function getDepartmentsByCampusId(){
+		global $db;
+		
+		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab,
+						g.name as campus_name, g.key_id as campus_id
+						FROM department a
 						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
 						LEFT JOIN principal_investigator b ON (d.principal_investigator_id = b.key_id) AND b.is_active = 1
 						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
-						LEFT JOIN room c ON (e.room_id = c.key_id)
-						WHERE a.key_id = :id;";
+						LEFT JOIN building f ON (e.key_id = e.room_id)	
+						LEFT JOIN campus g ON (g.key_id = f.campus_id);";
 		$stmt = $db->prepare($queryString);
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		//$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
@@ -844,7 +885,7 @@ class GenericDAO {
 		}
 				
 		//get a dto for every hazard
-		$queryString = "SELECT key_id as hazard_id, name as hazard_name, parent_hazard_id as parent_hazard_id from hazard;";
+		$queryString = "SELECT key_id as hazard_id, key_id, name as hazard_name, parent_hazard_id as parent_hazard_id, (SELECT EXISTS(SELECT 1 from hazard where parent_hazard_id = hazard_id) ) as hasChildren from hazard;";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
