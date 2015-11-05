@@ -346,11 +346,6 @@ angular
                 return dataSwitchFactory.getAllObjects('Hazard');
             }
 
-            af.getAllHazardDtos = function()
-            {
-                return dataSwitchFactory.getAllObjects('HazardDto');
-            }
-
             af.getHasChildren = function( hazards )
             {
                     var i = hazards.length;
