@@ -11,7 +11,7 @@
 
 var dataStoreManager = {};
 
-dataStoreManager.store = function( object, trusted, flavor )
+dataStoreManager.store = function ( object, trusted, flavor )
 {
         if(!trusted)trusted = false;
 
@@ -175,10 +175,8 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
                 var current = dataStore[collectionType][i];
                 if(current[property] == value){
                     getIt = true;
-
                     //do we have a whereClause in our "query"?
                     if(whereClause){
-                        console.log(whereClause)
                         var j = whereClause.length;
                         while(j--){
                             for(var prop in whereClause[j]){
@@ -207,7 +205,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
                 if(getIt)collectionToReturn.push( current );
             }
-            console.log(collectionToReturn);
+           // console.log(collectionToReturn);
             return collectionToReturn;
 
         }
