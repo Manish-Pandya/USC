@@ -59,6 +59,7 @@ angular.module('00RsmsAngularOrmApp')
 
 		$scope.close = function(){
            $modalInstance.dismiss();
+            dataStore.Carboy.push($scope.modalData.Carboy);
            af.deleteModalData();
 		}
 
