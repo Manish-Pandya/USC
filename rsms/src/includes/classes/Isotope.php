@@ -17,6 +17,8 @@ class Isotope extends GenericCrud {
 		"name"					=> "text",
 		"half_life"				=> "float",
 		"emitter_type"			=> "text",
+		"display_half_life"		=> "float",
+		"unit"					=> "text",
 		
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -36,6 +38,11 @@ class Isotope extends GenericCrud {
 	/** String containing type of emmitter this isotope produces (Alpha, Beta, or Gamma) */
 	private $emitter_type;
 	
+	/** Sting containing the unit of time the half-life of this isotope is stored in */
+	private $unit;
+	
+	/** Float containing half life of this isotope to be displayed by user selected unit */
+	private $display_half_life;
 	
 	// Required for GenericCrud
 	public function getTableName() {
@@ -52,6 +59,12 @@ class Isotope extends GenericCrud {
 	
 	public function getHalf_life() { return $this->half_life; }
 	public function setHalf_life($newHalfLife) { $this->half_life = $newHalfLife; }
+	
+	public function getUnit(){return $this->unit;}
+	public function setUnit($unit){$this->unit = $unit;}
+	
+	public function getDisplay_half_life(){return $this->display_half_life;}
+	public function setDisplay_half_life($life){$this->display_half_life = $life;}
 	
 	public function getEmitter_type() { return $this->emitter_type; }
 	public function setEmitter_type($newEmitterType) { $this->emitter_type = $newEmitterType; }

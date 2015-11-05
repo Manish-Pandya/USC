@@ -624,6 +624,18 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Isotope());
+            
+            //set the half_life in days, based on the display_half_life and unit
+            //default to days, don't change half-life
+            $factor = 1;
+            if( $decodedObject->getUnit() == "Years" ){
+            	//half life in years, 365.25 (days in a year) is the magic number, yes it is.
+            	$factor = 365.25;
+            }elseif ( $decodedObject->getUnit() == "Hours" ){
+            	//half life in hours, 1/24 (days in an hour) is the magic number, yes it is.
+            	$factor = 1/24;
+            }
+            $decodedObject->setHalf_life( $decodedObject->getDisplay_half_life() * $factor );
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
