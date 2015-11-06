@@ -66,10 +66,11 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
   return function(users){
     if(!users)return;
     var personnel = [];
-    var i = users.length
+    var i = users.length;
+
     while(i--){
       var shouldPush = false;
-      if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_USER) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.READ_ONLY, Constants.ROLE.NAME.OCCUPATIONAL_HEALTH)){
+      if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_ADMIN) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_USER) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.READ_ONLY) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.OCCUPATIONAL_HEALTH)){
         shouldPush = true;
       }
 
