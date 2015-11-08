@@ -1507,7 +1507,6 @@ class Rad_ActionManager extends ActionManager {
                 $inventory->setStart_date(date('Y-m-d H:i:s', $time));
             }else{
                 $LOG->debug('was not null');
-
                 $inventory->setStart_date($previousInventory->getEnd_date());
             }
 
@@ -1525,7 +1524,7 @@ class Rad_ActionManager extends ActionManager {
                 $piInventories[] = $piInventory;
             }
         }
-
+        
         $inventory->setPi_quarterly_inventories($piInventories);
         return $inventory;
     }
@@ -1553,8 +1552,7 @@ class Rad_ActionManager extends ActionManager {
             $pi = $this->getPIById($piId, false);
 
         }
-
-        if($pi->getAuthorizations() == NULL)return NULL;
+        if($pi->getPi_authorization() == NULL)return NULL;
         //make sure we only have one inventory for this pi for this period
         $piInventoryDao = $this->getDao(new PIQuarterlyInventory());
 
@@ -1564,7 +1562,6 @@ class Rad_ActionManager extends ActionManager {
                 new WhereClause('quarterly_inventory_id', '=', $inventory->getKey_id())
         );
         $whereClauseGroup->setClauses($clauses);
-        $LOG->debug($whereClauseGroup);
 
         $pastPiInventories = $piInventoryDao->getAllWhere($whereClauseGroup);
         if($pastPiInventories != NULL){
@@ -1586,7 +1583,8 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getAuthorizations() as $authorization){
+        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
+        	
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
             //do we already have a QuarterlyIsotopeAmount?
@@ -1631,11 +1629,11 @@ class Rad_ActionManager extends ActionManager {
 
             //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
             $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
-
+			
             $amounts[] = $newAmount;
 
         }
-
+		$LOG->fatal($amounts);
         $piInventory->setQuarterly_isotope_amounts($amounts);
         return $piInventory;
     }
@@ -1715,7 +1713,7 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getAuthorizations() as $authorization){
+        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
             //do we already have a QuarterlyIsotopeAmount?
