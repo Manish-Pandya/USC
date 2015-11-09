@@ -19,7 +19,7 @@ require_once '../top_view.php';
        <img style="width:100px"src="<?php echo WEB_ROOT?>img/loading.gif"/>
       Loading Departments
     </span>
-        <select ng-options="campus.Name as campus.Name for campus in campuses" ng-model="selectedCampus" ng-show="departments">
+        <select ng-options="campus.Name as campus.Name for campus in campuses | orderBy:'Name'" ng-model="selectedCampus" ng-show="departments">
             <option value="">All Campuses</option>
         </select>
         <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
