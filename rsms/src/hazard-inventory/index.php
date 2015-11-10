@@ -115,7 +115,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- filters -->
-
+<script type="text/javascript" src="scripts/filters/isEquipmentFilter.js"></script>
 </head>
 <body>
 
@@ -146,7 +146,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
                     <span ng-if="PIs">
                         <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span8" >
                             <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                            <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
+                            <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                               <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
@@ -190,8 +190,67 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
                         </span>
                     </div>
             </div>
-            </form>
+        </form>
     </div>
-<!-- VIEW NESTING -->
-    <div ui-view class="noBg"></div>
+    <ul class="allHazardList">
+        <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Hazard_name != 'General Safety'">
+            <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
+            <span ng-if="!hazard.hidden">
+                <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
+                    <span ng-if="hazard.Hazard_name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Hazard_name == 'Chemical/Physical Safety' || hazard.Hazard_name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Hazard_name == 'Radiation Safety'">Radiation Hazards</span>
+                </h1>
+            </span>
+            <hr>
+            <ul class="topChildren" ng-init="hazard.loadSubhazards()">
+                <li>
+                    <a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
+                        <span ng-if="!hazard.hideUnselected">
+                            <i style="margin-right:8px !important;" class="icon-collapse"></i>View Only Hazards Present
+                        </span>
+                        <span ng-if="hazard.hideUnselected">
+                            <i style="margin-right:8px !important;" class="icon-full-screen"></i>View All Hazard Categories
+                        </span>
+                    </a>
+                </li>
+                <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+                        <span class="metro-checkbox"></span>
+                        <!--<pre>{{child | json}}</pre>-->
+                    </label>
+                    <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
+                        <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
+                            {{child.Hazard_name}}
+                            <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
+                        </span>
+                        <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                    </span>
+                    <!--</h4>-->
+                    <div class="icons">
+                        <span ng-if="child.ActiveSubHazards.length || child.HasChildren && child.IsPresent ">
+                            <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
+                        </span>
+                        <span ng-if="child.IsPresent">
+                            <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
+                        </span>
+
+                        <span ng-if="child.IsPresent">
+                            <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
+                        </span>
+                    </div>
+                    <ul ng-if="getShowRooms(child)" class="subRooms">
+                        <li>Rooms:</li>
+                        <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
+                            <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
+                            <span ng-init="child.loadSubHazards()" data-ng-include="'views/sub-hazard.html'"></span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>

@@ -5,6 +5,7 @@ class HazardDto {
     private $key_id;
     private $hazard_id;
     private $hazard_name;
+    private $is_equipment;
     private $inspectionRooms;
     private $isPresent;
     private $parent_hazard_id;
@@ -28,12 +29,12 @@ class HazardDto {
     public function getHasMultiplePis(){return $this->hasMultiplePis;}
     public function getStored_only(){return $this->stored_only;}
     public function getHasChildren(){return (bool) $this->hasChildren;}
-
+	public function getIs_equipment(){return (bool) $this->is_equipment;}
+    
+    
     public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
     public function setHazard_id($newId) { $this->hazard_id = $newId; }
-    public function setKey_id($newId) {
-        $this->key_id = $newId;
-    }
+    public function setKey_id($newId) { $this->key_id = $newId; }
 
     public function setParent_hazard_id($newId) { $this->parent_hazard_id = $newId; }
     public function setHazard_name($name) { $this->name = $name; }
@@ -43,7 +44,8 @@ class HazardDto {
     public function setHasMultiplePis($hasMultiplePis){ $this->hasMultiplePis = $hasMultiplePis; }
     public function setStored_only($stored){$this->stored_only = $stored;}
     public function setHasChildren($hasChildren){$this->hasChildren = $hasChildren;}
-
+	public function setIs_equipment($is){ $this->is_equipment = $is; }
+    
     public function setAndFilterInspectionRooms($rooms) {
         $this->inspectionRooms = $rooms;
         $this->filterRooms();
