@@ -141,8 +141,8 @@ angular.module('00RsmsAngularOrmApp')
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
 
         $scope.selectIsotope = function(isotope){
-            if($scope.modalData.AuthorizationCopy)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
-            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
+            if($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
+            if($scope.modalData.ParcelCopy && $scope.modalData.ParcelCopy.Isotope)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
         }
 
         $scope.selectPO = function(po){
