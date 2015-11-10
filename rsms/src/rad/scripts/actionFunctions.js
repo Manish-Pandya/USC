@@ -1112,7 +1112,7 @@ angular
                                 angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
-                                pi.Authorizations.push(returnedAuth);
+                                pi.Pi_authorization.Authorizations.push(returnedAuth);
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1213,10 +1213,11 @@ angular
                         function(returnedContainer){
                             returnedContainer = modelInflatorFactory.instateAllObjectsFromJson( returnedContainer );
                             if(container){
-                                angular.extend(container, copy)
+                                angular.extend(container, copy);
                             }else{
                                 returnedContainer.loadRoom();
                                 dataStoreManager.addOnSave(returnedContainer);
+                                pi.SolidsContainers.push(returnedContainer);
                             }
                         },
                         af.setError('The Solids Container could not be saved')
@@ -2091,9 +2092,8 @@ angular
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
                             if(copy.Key_id){
-                                angular.extend(copy, returnedAuth);
-                                auth.Rooms = [];
-                                auth.Rooms = copy.Rooms
+                                angular.extend(auth, copy);
+                                auth.Rooms = copy.Rooms.slice();
                             }else{
                                 dataStoreManager.store(returnedAuth);
                                 pi.Pi_authorization = returnedAuth;
