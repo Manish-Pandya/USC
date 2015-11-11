@@ -115,10 +115,10 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- filters -->
-<script type="text/javascript" src="./scripts/filters/dateToIso.js"></script>
-<script type="text/javascript" src="./scripts/filters/splitAtPeriod.js"></script>
+<script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
+<script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
 <script type="text/javascript" src="./scripts/filters/carboyIsAvailable.js"></script>
-    <script type="text/javascript" src="./scripts/filters/carboyHasNoRetireDate.js"></script>
+<script type="text/javascript" src="./scripts/filters/carboyHasNoRetireDate.js"></script>
 <script type="text/javascript" src="./scripts/filters/parcelParser.js"></script>
 <script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
 <script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>

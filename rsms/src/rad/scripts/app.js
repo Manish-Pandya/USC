@@ -13,6 +13,7 @@ angular
     'ngRoute',
     'modelInflator',
     'genericAPI',
+    'filtersApp',
     'actionFunctionsModule',
     'dataSwitchModule',
     'cgBusy',
