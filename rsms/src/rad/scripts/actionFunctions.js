@@ -932,13 +932,17 @@ angular
 
             af.getRadPI = function(pi)
             {
-
-                if(!store.checkCollection( 'Parcel' )){
                     var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
                             //pi.loadRooms();
+                            for(var prop in tempPI){
+                                store.store(tempPI[prop]);
+                                if(prop == "Pi_authorization"){
+                                    store.store(tempPI[prop].Authorizations);
+                                }
+                            }
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();
@@ -948,18 +952,6 @@ angular
                             pi.loadSolidsContainers();
                             return pi;
                         });
-                }else{
-                    //pi.loadRooms();
-                    pi.loadPI_Authorizations();
-                    pi.loadActiveParcels();
-                    pi.loadPurchaseOrders();
-                    pi.loadCarboyUseCycles();
-                    pi.loadSolidsContainers();
-                    var defer = $q.defer();
-                    defer.resolve(pi);
-                    return defer.promise;
-                }
-
             }
 
             af.getRadPIById = function(id)
