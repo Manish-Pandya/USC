@@ -33,7 +33,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rad-styles.css">
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/equipment-styles.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <!-- included fonts
@@ -77,6 +77,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/actionFunctions.js"></script>
 
 <!-- controllers -->
+<script type="text/javascript" src="./scripts/controllers/MainCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/AutoclavesCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/BioSafetyCabinetsCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/ChemFumeHoodsCtrl.js"></script>
@@ -112,13 +113,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 </head>
 <body>
-
-<div ng-app="EquipmentModule" ng-controller="NavCtrl" class="container-fluid">
-<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-<!-- NAVIGATION -->
-  <div class="banner {{bannerClass | splitAtPeriod}} equipment" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-    <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
-  </div>
-<!-- VIEW NESTING -->
-    <div ui-view class="noBg"></div>
-</div>
+    <div ng-app="EquipmentModule" ng-controller="NavCtrl" class="container-fluid">
+    <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+    <!-- NAVIGATION -->
+      <div class="banner {{bannerClass | splitAtPeriod}} equipment" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
+        <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+      </div>
+    <!-- VIEW NESTING -->
+        <div ui-view class="noBg"></div>
+    </div>
+</body>

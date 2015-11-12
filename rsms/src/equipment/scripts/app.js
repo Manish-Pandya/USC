@@ -29,29 +29,30 @@ angular
     $stateProvider
       .state('equipment-home', {
         url: "/home",
-        templateUrl: "views/equipment-center.html"
+        templateUrl: "views/dashboard.html",
+        controller: "MainCtrl"
       })
-      .state('autoclaves', {
+      .state('equipment-home.autoclaves', {
         url: "/autoclaves",
         templateUrl: "views/autoclaves.html",
         controller: "AutoclavesCtrl"
       })
-      .state('bio-safety-cabinets', {
+      .state('equipment-home.bio-safety-cabinets', {
         url: "/bio-safety-cabinets",
         templateUrl: "views/bio-safety-cabinets.html",
         controller: "BioSafetyCabinetsCtrl"
       })
-      .state('chem-fume-hoods', {
+      .state('equipment-home.chem-fume-hoods', {
         url: "/chem-fume-hoods",
         templateUrl: "views/chem-fume-hoods.html",
         controller: "ChemFumeHoodsCtrl"
       })
-      .state('lasers', {
+      .state('equipment-home.lasers', {
         url: "/lasers",
         templateUrl: "views/lasers.html",
         controller: "LasersCtrl"
       })
-      .state('x-ray', {
+      .state('equipment-home.x-ray', {
         url: "/x-ray",
         templateUrl: "views/x-ray.html",
         controller: "X-RayCtrl"

@@ -1,0 +1,461 @@
+@CHARSET "ISO-8859-1";
+
+/**********************************************************
+*
+*   EQUIPMENT STYLES;
+*
+**********************************************************/
+
+.form-inline .control-group {
+    float: left;
+}
+.rsmsCenterIconContainer a {
+    text-align: center;
+}
+.rsmsCenterIconContainer a i {
+    width: auto;
+    height: 250px;
+    color: white;
+    font-size: 220px;
+    line-height: normal;
+}
+.neg-marg {
+    margin: 0 -30px;
+}
+.neg-marg .container-fluid,
+.dashboard .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+.dashboard {
+    margin: 0 -70px;
+    padding-top: 75px;
+}
+@media screen and (max-width: 1366px) {
+    .dashboard {
+        margin: 0 0px;
+    }
+}
+.hover-white:hover {
+    background: white !important;
+    box-shadow: none !important;
+}
+.hover-white:hover div {
+    background: white !important;
+    box-shadow: none !important;
+}
+.form-icon {
+    margin-top: -4px;
+    margin-left: 11px;
+}
+.card {
+    background: white;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
+    margin-top: 10px;
+    float: left;
+    box-sizing: border-box;
+}
+.card:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.dashboard .well {
+    background: rgba(255, 255, 255, .7);
+    border: 2px solid #CDCDCD;
+    float: left;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+.dashboard .well .alert {
+    box-sizing: border-box;
+    margin: 10px 0 5px;
+}
+.card .card-header i {
+    font-size: 24px;
+    margin-top: 5px;
+    margin-right: 16px;
+}
+.card .card-header {
+    border-bottom: 1px solid #ccc;
+    padding: 0 0 5px;
+    margin: 0;
+}
+.padding {
+    padding: 10px !important;
+}
+.card h1.card-header i {
+    font-size: 40px !important;
+    margin: 20px 35px 0 0 !important;
+}
+.card-header.accordion-header > span:after {
+    clear: both;
+}
+.no-underline {
+    border-bottom: none !important;
+    text-decoration: none !important;
+}
+@media screen and (max-width: 1000px) {
+    /* line 73, ../sass/style.scss */
+}
+.left-nav-typeahead {
+    margin: 10px;
+    width: 180px;
+}
+.left-nav {
+    position: fixed;
+    float: left;
+    width: 200px;
+    background: #343f51;
+    height: 100%;
+    padding-top: 13px;
+}
+.left-nav ul {
+    list-style-type: none;
+    margin: 10px 0 25px;
+}
+.left-nav ul li {
+    //border-top: 1px solid #3D4756;
+    margin: 3px 0;
+}
+.left-nav ul li a {
+    padding: 10px;
+    display: block;
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+}
+.card.auths {
+    border-left: rgba(26, 108, 167, 1) solid 6px;
+}
+.card.auths h1 i:first-child,
+.card.auths h2 i:first-child,
+.card.auths h3 i:first-child {
+    color: rgba(26, 108, 167, 1)
+}
+.modal-header.auths h2 {
+    background: rgba(26, 108, 167, 1)
+}
+.left-nav ul li a.auths {
+    background: rgba(0, 154, 255, .5)
+}
+.left-nav ul li a.auths:hover {
+    background: rgba(0, 154, 255, 1)
+}
+.modal-header.pos h2 {
+    background: rgba(26, 95, 40, 1)
+}
+.card.pos {
+    border-left: rgba(26, 95, 40, 1) solid 6px;
+}
+.card.pos h1 i:first-child,
+.card.pos h2 i:first-child,
+.card.pos h3 i:first-child {
+    color: rgba(26, 95, 40, 1);
+}
+.left-nav .section-header {
+    /* border-bottom: 2px solid white; */
+    padding-top: 15px;
+    margin-bottom: 1px;
+    background: rgba(0, 154, 255, .5);
+}
+.left-nav .section-header img {
+    margin-left: -4px;
+    margin-top: -20px;
+    width: 61px;
+}
+.left-nav ul li a.pos {
+    background: rgba(0, 128, 0, 0.5);
+}
+.left-nav ul li a.pos:hover {
+    background: rgba(0, 128, 0, 1);
+}
+.modal-header.parcels h2 {
+    background: rgba(153, 96, 40, 1)
+}
+.card.parcels {
+    border-left: rgba(153, 96, 40, 1) solid 6px
+}
+.card.parcels h1 i:first-child,
+.card.parcels h2 i:first-child,
+.card.parcels h3 i:first-child {
+    color: rgba(153, 96, 40, 1);
+}
+.left-nav ul li a.parcels {
+    background: rgba(255, 130, 0, 0.5);
+}
+.left-nav ul li a.parcels:hover {
+    background: rgba(255, 130, 0, 1);
+}
+.modal-header.carboys h2 {
+    background: rgb(122, 6, 109)
+}
+.card.carboys {
+    border-left: rgb(122, 6, 109) solid 6px;
+}
+.modal-header.carboys h2 {
+    background: rgb(122, 6, 109);
+}
+.card.carboys h1 i:first-child,
+.card.carboys h2 i:first-child,
+.card.carboys h3 i:first-child {
+    color: rgb(122, 6, 109);
+}
+i.carboys {
+    color: rgb(122, 6, 109) !important;
+}
+.left-nav ul li a.carboys {
+    background: rgba(122, 6, 109, 0.5)
+}
+.left-nav ul li a.carboys:hover {
+    background: rgba(122, 6, 109, 1)
+}
+.modal-header.solids-containers h2 {
+    background: rgb(151, 49, 58);
+}
+.card.solids-containers {
+    border-left: rgb(151, 49, 58) solid 6px
+}
+.card.solids-containers h1 i:first-child,
+.card.solids-containers h2 i:first-child,
+.card.solids-containers h3 i:first-child {
+    color: rgb(151, 49, 58)
+}
+.left-nav ul li a.isotopes {
+    background: rgba(253, 241, 0, .7);
+}
+.left-nav ul li a.isotopes:hover {
+    background: rgba(253, 241, 0, 1);
+}
+i.solids-containers {
+    color: rgb(151, 49, 58) !important
+}
+.left-nav ul li a.solids-containers {
+    background: rgb(151, 49, 58)
+}
+.left-nav ul li a.solids-containers:hover {
+    background: rgba(251, 37, 37, 1)
+}
+.modal-header.pickups h2 {
+    background: rgb(91, 183, 91);
+}
+.card.pickups {
+    border-left: rgb(91, 183, 91) solid 6px
+}
+.card.pickups.pickup-collection:first-child {
+    margin-top: 25px;
+}
+.card.pickups h1 i:first-child,
+.card.pickups h2 i:first-child,
+.card.pickups h3 i:first-child {
+    color: rgb(91, 183, 91);
+    margin: 7px 19px 0 0;
+}
+.left-nav ul li a.pickups {
+    background: rgba(91, 183, 91, .64);
+}
+.left-nav ul li a.pickups:hover {
+    background: rgb(91, 183, 91);
+}
+.card.wipe-tests {
+    border-left: rgb(107, 86, 179) solid 6px
+}
+.card.wipe-tests h1 i:first-child,
+.card.wipe-tests h2 i:first-child,
+.card.wipe-tests h3 i:first-child {
+    color: rgb(107, 86, 179);
+    margin: 7px 19px 0 0;
+}
+.left-nav ul li a.wipe-tests {
+    background: rgba(87, 69, 150, .64);
+}
+.left-nav ul li a.wipe-tests:hover {
+    background: rgb(107, 86, 179);
+}
+.card.inventories {
+    border-left: rgb(255, 145, 0) solid 6px
+}
+.left-nav ul li a.inventories {
+    background: rgba(255, 145, 0, .85);
+}
+.left-nav ul li a.inventories:hover {
+    background: rgba(255, 145, 0, 1);
+}
+.left-nav ul li a i {
+    margin: 4px 13px 0 5px;
+    width: 12px;
+}
+.left-nav ul li a:hover {
+    text-decoration: none;
+}
+.right-column {
+    margin-left: 210px;
+    padding-bottom: 200px;
+    padding-top: 15px;
+}
+.btn i {
+    color: white;
+}
+button.btn:not(.btn-large) {
+    padding-bottom: 22px;
+}
+.banner.dashboard-banner {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: 900;
+}
+.banner.equipment {
+    background: rgb(253, 241, 0);
+}
+.banner {
+    background: white;
+    padding: 10px;
+    background-repeat: no-repeat !important;
+    background-size: 70px !Important;
+    padding-left: 80px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7)
+}
+div.use-log > .table-row > div:nth-of-type(1) {
+    width: 3%;
+}
+div.use-log > .table-row > div:nth-of-type(2) {
+    width: 6%;
+}
+div.use-log > .table-row > div:nth-of-type(2) input {
+    width: 100%;
+}
+div.use-log > .table-row > div:nth-of-type(3) {
+    width: 13%;
+}
+div.use-log > .table-row > div:nth-of-type(3) textarea {
+    width: 100%;
+}
+div.use-log > .table-row > div:nth-of-type(4) {
+    width: 3%;
+}
+div.use-log > .table-row > div:nth-of-type(4) input {
+    width: 68%;
+    min-width: 30px;
+}
+div.use-log > .table-row > div:nth-of-type(5) {
+    padding-right: 0;
+    width: 64%
+}
+div.use-log > .table-row > div:nth-of-type(5) .row-fluid .span4 {
+    width: 33%;
+}
+div.use-log > .table-row > div:nth-of-type(6) {
+    width: 11%;
+}
+.combobox ul {
+    min-width: 0;
+    width: 140px;
+    box-sizing: border-box;
+    border-top: none;
+    margin-top: 5px;
+    padding-left: 0px;
+    font-size: 14px;
+}
+.combobox input {
+    line-height: normal;
+    padding: 5px;
+    width: 140px;
+}
+.combobox i.icon-arrow-down {
+    color: #cacaca;
+    position: absolute;
+    font-size: 27px;
+    margin-left: -31px;
+    margin-top: 7px;
+}
+.input-inline,
+.input-block {
+    font-size: 13px;
+}
+.extra-top {
+    padding-top: 46px !important;
+}
+.small-extra-top {
+    padding-top: 29px !important;
+}
+.table .btn,
+.fake-table .btn {
+    margin-bottom: 3px;
+}
+.fixed-full {
+    position: fixed;
+    top: 10%;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 15px rbga(0, 0, 0, .7)
+}
+.push-top {
+    padding-top: 21px !Important;
+}
+
+.indent {
+    margin: 15px 25px 0;
+}
+.indent-percent {
+    margin: 15px 2.5% 0;
+}
+.print {
+    display: none !important;
+}
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .print {
+        display: block !important;
+    }
+    .print-always {
+        display: block !important;
+    }
+    .label.print {}
+    .card {
+        padding: 5px !important;
+        width: auto !important;
+        border-bottom: 5px solid #999 !important;
+        border-left: none !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    .inactive {
+        text-decoration: line-through;
+    }
+    h1 {
+        font-size: 20px;
+    }
+    .card h1.card-header i {
+        font-size: 30px !important;
+        margin: 7px 25px 0 0 !important;
+    }
+}
+@media screen and (max-width: 1242px) {
+    /* line 73, ../sass/style.scss */
+    body {
+        padding: 0;
+    }
+    body > div.container-fluid {
+        padding: 0;
+    }
+    div.fake-table .table-row > div {
+        display: table-cell;
+        padding: 1px 3px 4px 0;
+        font-size: 12px;
+        vertical-align: middle;
+        font-weight: 600 !important;
+    }
+    .card h1.card-header {
+        font-size: 20px;
+    }
+    .card h1.card-header i {
+        font-size: 29px !important;
+        margin: 7px 22px 0 0 !important;
+    }
+    .dashboard {
+        margin: 0 0px;
+    }
+}
