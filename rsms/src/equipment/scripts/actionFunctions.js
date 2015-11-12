@@ -86,7 +86,7 @@ angular
             af.getViewMap = function(current) {
                 var viewMap = [
                     {
-                        Name: 'equipment-home',
+                        Name: 'equipment',
                         Label: 'Equipment Center',
                         Dashboard:false
                     },

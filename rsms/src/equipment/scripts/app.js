@@ -27,32 +27,32 @@ angular
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
     $urlRouterProvider.otherwise("/home");
     $stateProvider
-      .state('equipment-home', {
+      .state('equipment', {
         url: "/home",
         templateUrl: "views/dashboard.html",
         controller: "MainCtrl"
       })
-      .state('equipment-home.autoclaves', {
+      .state('equipment.autoclaves', {
         url: "/autoclaves",
         templateUrl: "views/autoclaves.html",
         controller: "AutoclavesCtrl"
       })
-      .state('equipment-home.bio-safety-cabinets', {
+      .state('equipment.bio-safety-cabinets', {
         url: "/bio-safety-cabinets",
         templateUrl: "views/bio-safety-cabinets.html",
         controller: "BioSafetyCabinetsCtrl"
       })
-      .state('equipment-home.chem-fume-hoods', {
+      .state('equipment.chem-fume-hoods', {
         url: "/chem-fume-hoods",
         templateUrl: "views/chem-fume-hoods.html",
         controller: "ChemFumeHoodsCtrl"
       })
-      .state('equipment-home.lasers', {
+      .state('equipment.lasers', {
         url: "/lasers",
         templateUrl: "views/lasers.html",
         controller: "LasersCtrl"
       })
-      .state('equipment-home.x-ray', {
+      .state('equipment.x-ray', {
         url: "/x-ray",
         templateUrl: "views/x-ray.html",
         controller: "X-RayCtrl"
