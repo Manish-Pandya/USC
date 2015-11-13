@@ -286,7 +286,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
         $entityMaps[] = new EntityMap("lazy","getDepartments");
-        $entityMaps[] = new EntityMap("lazy","getUser");
+        $entityMaps[] = new EntityMap("eager","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
         $entityMaps[] = new EntityMap("lazy","getPi_authorization");
@@ -298,8 +298,11 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getInspection_notes");
+        $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
-
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
         }
@@ -1507,7 +1510,6 @@ class Rad_ActionManager extends ActionManager {
                 $inventory->setStart_date(date('Y-m-d H:i:s', $time));
             }else{
                 $LOG->debug('was not null');
-
                 $inventory->setStart_date($previousInventory->getEnd_date());
             }
 
@@ -1525,7 +1527,7 @@ class Rad_ActionManager extends ActionManager {
                 $piInventories[] = $piInventory;
             }
         }
-
+        
         $inventory->setPi_quarterly_inventories($piInventories);
         return $inventory;
     }
@@ -1553,8 +1555,7 @@ class Rad_ActionManager extends ActionManager {
             $pi = $this->getPIById($piId, false);
 
         }
-
-        if($pi->getAuthorizations() == NULL)return NULL;
+        if($pi->getPi_authorization() == NULL)return NULL;
         //make sure we only have one inventory for this pi for this period
         $piInventoryDao = $this->getDao(new PIQuarterlyInventory());
 
@@ -1564,7 +1565,6 @@ class Rad_ActionManager extends ActionManager {
                 new WhereClause('quarterly_inventory_id', '=', $inventory->getKey_id())
         );
         $whereClauseGroup->setClauses($clauses);
-        $LOG->debug($whereClauseGroup);
 
         $pastPiInventories = $piInventoryDao->getAllWhere($whereClauseGroup);
         if($pastPiInventories != NULL){
@@ -1586,7 +1586,8 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getAuthorizations() as $authorization){
+        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
+        	
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
             //do we already have a QuarterlyIsotopeAmount?
@@ -1631,11 +1632,11 @@ class Rad_ActionManager extends ActionManager {
 
             //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
             $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
-
+			
             $amounts[] = $newAmount;
 
         }
-
+		$LOG->fatal($amounts);
         $piInventory->setQuarterly_isotope_amounts($amounts);
         return $piInventory;
     }
@@ -1715,7 +1716,7 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getAuthorizations() as $authorization){
+        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
             //do we already have a QuarterlyIsotopeAmount?
@@ -2002,6 +2003,75 @@ class Rad_ActionManager extends ActionManager {
         }
 
         return $wasteDtos;
+    }
+    
+    public function getAllInspectionWipes(){
+    	$dao = $this->getDao(new InspectionWipe());
+    	$wipes = $dao->getAll();
+    	return $wipes;
+    }
+    
+    public function getAllInspectionWipeTests(){
+    	$dao = $this->getDao(new InspectionWipeTest());
+    	$tests = $dao->getAll();
+    	return $tests;
+    }
+    
+    public function getAllScintVialCollections(){
+    	$dao = $this->getDao(new ScintVialCollection());
+    	$collections = $dao->getAll();
+    	return $collections;
+    }
+    
+    public function getAllParcelWipes(){
+    	$dao = $this->getDao(new ParcelWipe());
+    	$wipes = $dao->getAll();
+    	return $wipes;
+    }
+    
+    public function getAllParcelWipeTests(){
+    	$dao = $this->getDao(new ParcelWipeTest());
+    	$tests = $dao->getAll();
+    	return $tests;
+    }
+    
+    public function getAllQuarterlyInventories(){
+    	$dao = $this->getDao(new QuarterlyInventory());
+    	$inventories = $dao->getAll();
+    	return $inventories;
+    }
+    
+
+    
+    public function getRadModels(){
+    	$dto = new RadModelDto();
+    	
+    	$dto->setAuthorization($this->getAllAuthorizations());
+    	$dto->setPIAuthorization($this->getAllPIAuthorizations());
+    	$dto->setCarboy($this->getAllCarboys());
+    	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
+    	$dto->setDrum($this->getAllDrums());
+    	$dto->setInspectionWipe($this->getAllInspectionWipes());
+    	$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
+    	$dto->setIsotope($this->getAllIsotopes());
+    	$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
+    	$dto->setParcelUse($this->getAllParcelUses());
+    	$dto->setParcelWipe($this->getAllParcelWipes());
+    	$dto->setParcelWipeTest($this->getAllParcelWipeTests());
+    	$dto->setParcel($this->getAllParcels());
+    	$dto->setPickup($this->getAllPickups());
+    	$dto->setPurchaseOrder($this->getAllPurchaseOrders());
+    	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
+    	$dto->setQuarterlInventory($this->getMostRecentInventory());
+    	$dto->setScintVialCollection($this->getAllScintVialCollections());
+    	$dto->setWasteBag($this->getAllWasteBags());
+    	$dto->setSolidsContainer($this->getAllSolidsContainers());
+    	$dto->setWasteType($this->getAllWasteTypes());
+    	$dto->setUser($this->getAllRadUsers());
+    	$dto->setPrincipalInvestigator($this->getAllRadPis());
+    	 
+    	return $dto;
+    	
     }
 }
 
