@@ -36,7 +36,7 @@ require_once '../top_view.php';
                     <th>Department</th>
                     <th>Campus</th>
                     <th style="text-align:center;"># Principal Investigators</th>
-                    <th style="text-align:center;"># Laboratory Rooms</th>
+                    <th style="text-align:center;"># Lab Rooms</th>
                 </tr>
             </THEAD>
             <tbody>
@@ -77,7 +77,7 @@ require_once '../top_view.php';
                     <th>Specialty Lab</th>
                     <th>Campus</th>
                     <th style="text-align:center;"># Principal Investigators</th>
-                    <th style="text-align:center;"># Laboratory Rooms</th>
+                    <th style="text-align:center;"># Lab Rooms</th>
                 </tr>
             </THEAD>
             <tbody>

@@ -1,4 +1,4 @@
-angular.module('00RsmsAngularOrmApp')
+angular.module('filtersApp', [])
 	.filter('dateToISO', function() {
 	  return function(input,object,propertyName) {
 	  		if(!input)return "N/A";

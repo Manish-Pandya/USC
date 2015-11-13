@@ -32,7 +32,7 @@ class Carboy extends RadCrud {
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("lazy", "getCarboy_use_cycles");
 		$this->setEntityMaps($entityMaps);
         
 	}

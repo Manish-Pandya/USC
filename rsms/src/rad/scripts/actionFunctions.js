@@ -932,13 +932,17 @@ angular
 
             af.getRadPI = function(pi)
             {
-
-                if(!store.checkCollection( 'Parcel' )){
                     var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
                             //pi.loadRooms();
+                            for(var prop in tempPI){
+                                store.store(tempPI[prop]);
+                                if(prop == "Pi_authorization"){
+                                    store.store(tempPI[prop].Authorizations);
+                                }
+                            }
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();
@@ -948,18 +952,6 @@ angular
                             pi.loadSolidsContainers();
                             return pi;
                         });
-                }else{
-                    //pi.loadRooms();
-                    pi.loadPI_Authorizations();
-                    pi.loadActiveParcels();
-                    pi.loadPurchaseOrders();
-                    pi.loadCarboyUseCycles();
-                    pi.loadSolidsContainers();
-                    var defer = $q.defer();
-                    defer.resolve(pi);
-                    return defer.promise;
-                }
-
             }
 
             af.getRadPIById = function(id)
@@ -1112,7 +1104,7 @@ angular
                                 angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
-                                pi.Authorizations.push(returnedAuth);
+                                pi.Pi_authorization.Authorizations.push(returnedAuth);
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -1213,10 +1205,11 @@ angular
                         function(returnedContainer){
                             returnedContainer = modelInflatorFactory.instateAllObjectsFromJson( returnedContainer );
                             if(container){
-                                angular.extend(container, copy)
+                                angular.extend(container, copy);
                             }else{
                                 returnedContainer.loadRoom();
                                 dataStoreManager.addOnSave(returnedContainer);
+                                pi.SolidsContainers.push(returnedContainer);
                             }
                         },
                         af.setError('The Solids Container could not be saved')
@@ -2091,9 +2084,8 @@ angular
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
                             if(copy.Key_id){
-                                angular.extend(copy, returnedAuth);
-                                auth.Rooms = [];
-                                auth.Rooms = copy.Rooms
+                                angular.extend(auth, copy);
+                                auth.Rooms = copy.Rooms.slice();
                             }else{
                                 dataStoreManager.store(returnedAuth);
                                 pi.Pi_authorization = returnedAuth;
@@ -2102,6 +2094,20 @@ angular
                         },
                         af.setError('The Quarterly Inventory could not be saved')
                     )
+            }
+            
+            af.getRadModels = function(){
+                     return dataSwitchFactory.getAllObjects("RadModelDto")
+                        .then( function( returnedPromise) {
+                            var stuff = returnedPromise.data;
+                            for(var prop in stuff){
+                                if(stuff[prop] != null && window[prop]){
+                                    console.log(prop);
+                                    stuff[prop] = modelInflatorFactory.instateAllObjectsFromJson( stuff[prop] );
+                                    store.store(stuff[prop]);
+                                }
+                            }
+                        });
             }
 
             return af;

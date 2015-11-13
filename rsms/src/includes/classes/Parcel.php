@@ -23,6 +23,8 @@ class Parcel extends RadCrud {
 		"quantity"						=> "float",
 		"rs_number"						=> "text",
 		"authorization_id"				=> "integer",
+        "catalog_number"                => "text",
+        "chemical_compound"             => "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -90,15 +92,18 @@ class Parcel extends RadCrud {
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
 
+    private $catalog_number;
+    private $chemical_compound;
+    
 	public function __construct() {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
 		$entityMaps[] = new EntityMap("lazy", "getIsotope");
-		$entityMaps[] = new EntityMap("eager", "getParcelUses");
+		$entityMaps[] = new EntityMap("lazy", "getParcelUses");
 		$entityMaps[] = new EntityMap("eager", "getRemainder");
-		$entityMaps[] = new EntityMap("eager", "getWipe_test");
+		$entityMaps[] = new EntityMap("lazy", "getWipe_test");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -227,5 +232,12 @@ class Parcel extends RadCrud {
 	
 	public function getAuthorization_id() {return $this->authorization_id;}
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
+    
+    public function getCatalog_number() {return $this->catalog_number;}
+	public function setCatalog_number($num) {$this->catalog_number = $num;}
+    
+    public function getChemical_compound() {return $this->chemical_compound;}
+	public function setChemical_compound($compound) {$this->chemical_compound = $compound;}
+    
 }
 ?>

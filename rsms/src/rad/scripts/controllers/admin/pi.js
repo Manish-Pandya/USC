@@ -14,12 +14,19 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = af;
 
     var getRadPi = function(){
-        var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
-        return actionFunctionsFactory.getRadPI(pi)
+        return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(
-                    function(){
+                    function(pi){
+                        console.log(pi);
+                       // pi = new window.PrincipalInvestigator();
+                        pi.loadPurchaseOrders();
+                        pi.loadActiveParcels();
+                        pi.loadPIAuthorizations();
+                        pi.loadCarboyUseCycles();
+                        pi.loadSolidsContainers();
                         $rootScope.pi = pi;
                         console.log(pi);
+                        console.log(dataStore);
                         return pi;
                     },
                     function(){
@@ -27,13 +34,14 @@ angular.module('00RsmsAngularOrmApp')
                 );
     }
     //get all the pis
-    $rootScope.pisPromise
-        .then(
-            function(){
-                $rootScope.piPromise = actionFunctionsFactory.getAllPIs()
-                    .then(getRadPi);
-                }
-            )
+    if(!$rootScope.piPromise){
+        $rootScope.piPromise = af.getRadModels()
+                            .then(getRadPi);
+    }else{
+        $rootScope.piPromise().then(getRadPi);
+    }
+
+            
 
 
     $scope.onSelectPi = function (pi)
@@ -141,8 +149,8 @@ angular.module('00RsmsAngularOrmApp')
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
 
         $scope.selectIsotope = function(isotope){
-            if($scope.modalData.AuthorizationCopy)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
-            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
+            if($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
+            if($scope.modalData.ParcelCopy && $scope.modalData.ParcelCopy.Isotope)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
         }
 
         $scope.selectPO = function(po){

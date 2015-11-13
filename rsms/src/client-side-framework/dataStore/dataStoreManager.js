@@ -13,6 +13,7 @@ var dataStoreManager = {};
 
 dataStoreManager.store = function( object, trusted, flavor )
 {
+        if(!object || object == null)return;
         if(!trusted)trusted = false;
 
         if( !(object instanceof Array) ){
