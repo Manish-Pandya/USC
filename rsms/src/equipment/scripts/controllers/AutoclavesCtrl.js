@@ -22,7 +22,7 @@ angular.module('EquipmentModule')
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/autoclaves-modal.html',
+                templateUrl: 'views/modals/autoclave-modal.html',
                 controller: 'AutoclavesModalCtrl'
             });
         }

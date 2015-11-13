@@ -1,0 +1,17 @@
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Create or edit Cabinet</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">SERIAL #</label>
+        <div class="controls">
+            <input ng-model="modalData.CabinetCopy.SerialNum" placehold="Label"/>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.CabinetCopy)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
