@@ -7,8 +7,8 @@ Parcel.prototype = {
 	className: "Parcel",
 
 	eagerAccessors:[
-		{method:"loadIsotope", boolean: 'Isotope_id'},
-		{method:"loadPurchaseOrder", boolean: 'Purchase_order_id'}
+		{method:"loadPurchaseOrder", boolean: 'Purchase_order_id'},
+        {method:"loadParcelWipeTest", boolean: 'Purchase_order_id'}
 	],
 
 	IsotopeRelationship:{
@@ -34,6 +34,16 @@ Parcel.prototype = {
     ParcelUsesRelationship: {
 
         className:    'ParcelUse',
+        keyReference:  'Parcel_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+    
+    ParcelWipeTestRelationship: {
+
+        className:    'ParcelWipeTest',
         keyReference:  'Parcel_id',
         methodString:  '',
         paramValue: 'Key_id',
@@ -69,6 +79,11 @@ Parcel.prototype = {
     loadAuthorization: function() {
         if(!this.Authorization) {
            this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
+        }
+    },
+    loadParcelWipeTest: function() {
+        if(!this.Wipe_tests) {
+            dataLoader.loadOneToManyRelationship( this, 'Wipe_tests', this.ParcelWipeTestRelationship);
         }
     },
 }

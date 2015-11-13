@@ -14,10 +14,16 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = af;
 
     var getRadPi = function(){
-        var pi = af.getById("PrincipalInvestigator",$stateParams.pi);
-        return actionFunctionsFactory.getRadPI(pi)
+        return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(
-                    function(){
+                    function(pi){
+                        console.log(pi);
+                       // pi = new window.PrincipalInvestigator();
+                        pi.loadPurchaseOrders();
+                        pi.loadActiveParcels();
+                        pi.loadPIAuthorizations();
+                        pi.loadCarboyUseCycles();
+                        pi.loadSolidsContainers();
                         $rootScope.pi = pi;
                         console.log(pi);
                         console.log(dataStore);
@@ -28,13 +34,14 @@ angular.module('00RsmsAngularOrmApp')
                 );
     }
     //get all the pis
-    $rootScope.pisPromise
-        .then(
-            function(){
-                $rootScope.piPromise = actionFunctionsFactory.getAllPIs()
-                    .then(getRadPi);
-                }
-            )
+    if(!$rootScope.piPromise){
+        $rootScope.piPromise = af.getRadModels()
+                            .then(getRadPi);
+    }else{
+        $rootScope.piPromise().then(getRadPi);
+    }
+
+            
 
 
     $scope.onSelectPi = function (pi)

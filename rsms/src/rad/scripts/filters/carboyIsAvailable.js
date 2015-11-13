@@ -4,7 +4,7 @@ angular.module('00RsmsAngularOrmApp')
             if(!carboys) return;
               var availableCarboys = [];
               var i = carboys.length;
-
+              console.log(i);
               while(i--){
                   var carboy = carboys[i];
                   if(carboy.Is_active == true && carboy.Status == Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE){

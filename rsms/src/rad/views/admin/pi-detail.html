@@ -197,16 +197,18 @@
         <div class="card-content" ng-if="selectedView == 'carboys'">
             <div class="fake-table striped bordered" ng-if="pi.CarboyUseCycles.length">
                 <div class="table-header">
-                    <h3>Edit</h3>
+                    <!--<h3>Edit</h3>-->
                     <h3>Carboy Number</h3>
                     <h3>Room</h3>
                     <h3>Lab Date</h3>
                     <h3>mCi</h3>
                 </div>
                 <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
+                    <!-- do we need to remove carboys from labs here?
                     <div>
                         <a ng-if="cycle.Is_active && cycle.Status=='In Use'" ng-click="af.removeCarboyFromLab(cycle)" class="btn btn-danger"><i class="icon-remove"></i></a>
                     </div>
+-->
                     <div>{{cycle.Carboy.Carboy_number}}</div>
                     <div>{{cycle.Room.Name}}</div>
                     <div>{{cycle.Lab_date | dateToISO}}</div>

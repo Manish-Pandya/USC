@@ -2095,6 +2095,20 @@ angular
                         af.setError('The Quarterly Inventory could not be saved')
                     )
             }
+            
+            af.getRadModels = function(){
+                     return dataSwitchFactory.getAllObjects("RadModelDto")
+                        .then( function( returnedPromise) {
+                            var stuff = returnedPromise.data;
+                            for(var prop in stuff){
+                                if(stuff[prop] != null && window[prop]){
+                                    console.log(prop);
+                                    stuff[prop] = modelInflatorFactory.instateAllObjectsFromJson( stuff[prop] );
+                                    store.store(stuff[prop]);
+                                }
+                            }
+                        });
+            }
 
             return af;
         });
