@@ -1,0 +1,54 @@
+<!--div cg-busy="{promise:Saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+
+<div class="right-column">
+    <div class="well two-thirds">
+        <h1 class="lasers"><i class="icon-laser"></i>Lasers
+            <a ng-click="showInactive()" class="btn btn-success left" style="margin-left:10px">Show Inactive</a>
+            <a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-autoclave"></i>Add Laser</a>
+        </h1>
+        <h3 ng-if="!lasers.length">No Lasers</h3>
+        <div class="card full lasers" ng-if="lasers.length">
+            <div class="fake-table bordered">
+                <div class="table-header">
+                    <h3>EDIT</h3>
+                    <h3>BUILDING</h3>
+                    <h3>ROOM</h3>
+                    <h3>TYPE</h3>
+                    <h3>SERIAL #</h3>
+                    <h3>CONTRACT STATUS</h3>
+                    <h3>VENDOR CONTACT</h3>
+                    <h3>COMMENTS</h3>
+                </div>
+                <div class="table-row" ng-repeat="laser in lasers | active">
+                    <div>
+                        <a ng-disabled="laser.edit" ng-class="{'disabled':laser.edit}" ng-click="openModal(laser)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                        <a ng-disabled="laser.edit" ng-class="{'disabled':laser.edit}" ng-click="deactivate(laser)" class="btn btn-danger left"><i class="icon-remove"></i></a>
+                    </div>
+                    <div>
+                        {{laser.Building.Name}}
+                    </div>
+                    <div>
+                        {{laser.Room.Name}}
+                    </div>
+                    <div>
+                        {{laser.Type}}
+                    </div>
+                    <div>
+                        {{laser.SerialNum}}
+                    </div>
+                    <div>
+                        {{laser.ContractStatus}}
+                    </div>
+                    <div>
+                        {{laser.VendorContact}}
+                    </div>
+                    <div>
+                        {{laser.Comment}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

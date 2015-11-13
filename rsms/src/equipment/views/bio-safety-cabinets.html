@@ -1,0 +1,70 @@
+<!--div cg-busy="{promise:Saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+
+<div class="right-column">
+    <div class="well two-thirds">
+        <h1 class="cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
+            <a ng-click="showInactive()" class="btn btn-success left" style="margin-left:10px">Show Inactive</a>
+            <a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-cabinet"></i>Add Cabinet</a>
+        </h1>
+        <h3 ng-if="!cabinets.length">No Cabinets</h3>
+        <div class="card full cabinets" ng-if="cabinets.length">
+            <div class="fake-table bordered">
+                <div class="table-header">
+                    <h3>EDIT</h3>
+                    <h3>BUILDING</h3>
+                    <h3>ROOM</h3>
+                    <h3>TYPE</h3>
+                    <h3>SERIAL #</h3>
+                    <h3>MAKE</h3>
+                    <h3>MODEL</h3>
+                    <h3>CERT-DATE</h3>
+                    <h3>DUE-DATE</h3>
+                    <h3>FREQUENCY</h3>
+                    <h3>PI</h3>
+                    <h3>REPORT</h3>
+                </div>
+                <div class="table-row" ng-repeat="cabinet in cabinets | active">
+                    <div>
+                        <a ng-disabled="cabinets.edit" ng-class="{'disabled':cabinets.edit}" ng-click="openModal(cabinets)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                        <a ng-disabled="cabinets.edit" ng-class="{'disabled':cabinets.edit}" ng-click="deactivate(cabinets)" class="btn btn-danger left"><i class="icon-remove"></i></a>
+                    </div>
+                    <div>
+                        {{cabinets.Building.Name}}
+                    </div>
+                    <div>
+                        {{cabinets.Room.Name}}
+                    </div>
+                    <div>
+                        {{cabinets.Type}}
+                    </div>
+                    <div>
+                        {{cabinets.SerialNum}}
+                    </div>
+                    <div>
+                        {{cabinets.make}}
+                    </div>
+                    <div>
+                        {{cabinets.model}}
+                    </div>
+                    <div>
+                        {{cabinets.CertDate}}
+                    </div>
+                    <div>
+                        {{cabinets.DueDate}}
+                    </div>
+                    <div>
+                        {{cabinets.Frequency}}
+                    </div>
+                    <div>
+                        {{cabinets.Pi.Name}}
+                    </div>
+                    <div>
+                        {{cabinets.Report}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
