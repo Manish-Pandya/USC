@@ -22,7 +22,7 @@ angular.module('EquipmentModule')
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/bio-safety-cabinet-modal.html',
+                templateUrl: 'views/modals/bio-safety-cabinet-modal.html',
                 controller: 'BioSafetyCabinetsModalCtrl'
             });
         }

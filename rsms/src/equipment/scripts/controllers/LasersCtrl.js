@@ -22,7 +22,7 @@ angular.module('EquipmentModule')
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/laser-modal.html',
+                templateUrl: 'views/modals/laser-modal.html',
                 controller: 'LaserModalCtrl'
             });
         }

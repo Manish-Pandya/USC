@@ -22,7 +22,7 @@ angular.module('EquipmentModule')
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/xray-modal.html',
+                templateUrl: 'views/modals/xray-modal.html',
                 controller: 'XRayModalCtrl'
             });
         }

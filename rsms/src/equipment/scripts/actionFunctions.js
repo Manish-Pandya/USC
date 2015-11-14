@@ -91,32 +91,32 @@ angular
                         Dashboard:false
                     },
                     {
-                        Name:'autoclaves',
+                        Name:'equipment.autoclaves',
                         Label: 'Autoclaves',
                         Dashboard: true
                     },
                     {
-                        Name:'bio-safety-cabinets',
+                        Name:'equipment.bio-safety-cabinets',
                         Label: 'Biological Safety Cabinets',
                         Dashboard: true
                     },
                     {
-                        Name:'chem-fume-hoods',
+                        Name:'equipment.chem-fume-hoods',
                         Label: 'Chemical Fume Hoods',
                         Dashboard: true
                     },
                     {
-                        Name:'lasers',
+                        Name:'equipment.lasers',
                         Label: 'Lasers',
                         Dashboard: true
                     },
                     {
-                        Name:'x-ray',
+                        Name:'equipment.x-ray',
                         Label: 'X-Ray Machines',
                         Dashboard: true
                     }
-                ]
-
+                ];
+                
                 var i = viewMap.length;
                 while(i--){
                     if(current.name == viewMap[i].Name){

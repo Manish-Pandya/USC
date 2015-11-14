@@ -13,6 +13,7 @@ angular
     'ngRoute',
     'modelInflator',
     'genericAPI',
+    'filtersApp',
     'actionFunctionsModule',
     'dataSwitchModule',
     'cgBusy',
@@ -20,7 +21,6 @@ angular
     'once',
     'ui.router',
     'modalPosition',
-    'filtersApp',
     'convenienceMethodWithRoleBasedModule'
     //'ngMockE2E'
   ])

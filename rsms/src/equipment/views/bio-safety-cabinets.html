@@ -25,41 +25,41 @@
                 </div>
                 <div class="table-row" ng-repeat="cabinet in cabinets | active">
                     <div>
-                        <a ng-disabled="cabinets.edit" ng-class="{'disabled':cabinets.edit}" ng-click="openModal(cabinets)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
-                        <a ng-disabled="cabinets.edit" ng-class="{'disabled':cabinets.edit}" ng-click="deactivate(cabinets)" class="btn btn-danger left"><i class="icon-remove"></i></a>
+                        <a ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                        <a ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></a>
                     </div>
                     <div>
-                        {{cabinets.Building.Name}}
+                        {{cabinet.Building.Name}}
                     </div>
                     <div>
-                        {{cabinets.Room.Name}}
+                        {{cabinet.Room.Name}}
                     </div>
                     <div>
-                        {{cabinets.Type}}
+                        {{cabinet.Type}}
                     </div>
                     <div>
-                        {{cabinets.SerialNum}}
+                        {{cabinet.SerialNum}}
                     </div>
                     <div>
-                        {{cabinets.make}}
+                        {{cabinet.make}}
                     </div>
                     <div>
-                        {{cabinets.model}}
+                        {{cabinet.model}}
                     </div>
                     <div>
-                        {{cabinets.CertDate}}
+                        {{cabinet.CertDate}}
                     </div>
                     <div>
-                        {{cabinets.DueDate}}
+                        {{cabinet.DueDate}}
                     </div>
                     <div>
-                        {{cabinets.Frequency}}
+                        {{cabinet.Frequency}}
                     </div>
                     <div>
-                        {{cabinets.Pi.Name}}
+                        {{cabinet.Pi.Name}}
                     </div>
                     <div>
-                        {{cabinets.Report}}
+                        {{cabinet.Report}}
                     </div>
                 </div>
             </div>

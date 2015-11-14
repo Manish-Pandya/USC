@@ -22,7 +22,7 @@ angular.module('EquipmentModule')
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/chem-fume-hood-modal.html',
+                templateUrl: 'views/modals/chem-fume-hood-modal.html',
                 controller: 'ChemFumeHoodModalCtrl'
             });
         }
