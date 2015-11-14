@@ -51,14 +51,8 @@
 .card {
     background: white;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.36);
-    margin-top: 10px;
     float: left;
     box-sizing: border-box;
-}
-.card:after {
-    content: '';
-    display: block;
-    clear: both;
 }
 .dashboard .well {
     background: rgba(255, 255, 255, .7);
@@ -71,25 +65,8 @@
     box-sizing: border-box;
     margin: 10px 0 5px;
 }
-.card .card-header i {
-    font-size: 24px;
-    margin-top: 5px;
-    margin-right: 16px;
-}
-.card .card-header {
-    border-bottom: 1px solid #ccc;
-    padding: 0 0 5px;
-    margin: 0;
-}
 .padding {
     padding: 10px !important;
-}
-.card h1.card-header i {
-    font-size: 40px !important;
-    margin: 20px 35px 0 0 !important;
-}
-.card-header.accordion-header > span:after {
-    clear: both;
 }
 .no-underline {
     border-bottom: none !important;
@@ -106,7 +83,7 @@
     position: fixed;
     float: left;
     width: 200px;
-    background: #343f51;
+    background: #ffffff;
     height: 100%;
     padding-top: 13px;
 }
@@ -122,8 +99,12 @@
     padding: 10px;
     display: block;
     font-size: 17px;
-    color: white;
+    color: #777777;
+    background: #e7eeee;
     cursor: pointer;
+}
+.left-nav ul li a:hover {
+    color: #f2f4f2;
 }
 .left-nav .section-header {
     /* border-bottom: 2px solid white; */
@@ -136,56 +117,50 @@
     margin-top: -20px;
     width: 61px;
 }
-.card.x-ray {
-    border-left: rgb(122, 6, 109) solid 6px;
-}
 .left-nav ul li a.x-ray {
-    background: rgba(122, 6, 109, 0.5)
+    border-left: 6px solid #f56623;
 }
 .left-nav ul li a.x-ray:hover {
-    background: rgba(122, 6, 109, 1)
+    background: #f56623;
 }
-.card.lasers {
-    border-left: rgb(151, 49, 58) solid 6px
-}
-.left-nav ul li a.isotopes {
-    background: rgba(253, 241, 0, .7);
-}
-.left-nav ul li a.isotopes:hover {
-    background: rgba(253, 241, 0, 1);
+.card.x-ray {
+    background: #f56623;
 }
 .left-nav ul li a.lasers {
-    background: rgb(151, 49, 58)
+    border-left: 6px solid #da4842;
 }
 .left-nav ul li a.lasers:hover {
-    background: rgba(251, 37, 37, 1)
+    background: #da4842;
 }
-.card.chem-fume-hoods {
-    border-left: rgb(91, 183, 91) solid 6px
+.card.lasers {
+    background: #da4842;
 }
 .left-nav ul li a.chem-fume-hoods {
-    background: rgba(91, 183, 91, .64);
+    border-left: 6px solid #600c91;
 }
 .left-nav ul li a.chem-fume-hoods:hover {
-    background: rgb(91, 183, 91);
+    background: #600c91;
 }
-.card.bio-safety-cabinets {
-    border-left: rgb(107, 86, 179) solid 6px
+.card.chem-fume-hoods {
+    background: #600c91;
 }
 .left-nav ul li a.bio-safety-cabinets {
-    background: rgba(87, 69, 150, .64);
+    border-left: 6px solid #428642;
 }
 .left-nav ul li a.bio-safety-cabinets:hover {
-    background: rgb(107, 86, 179);
+    background: #428642;
 }
-.card.autoclaves {
-    border-left: rgb(255, 145, 0) solid 6px
+.card.bio-safety-cabinets {
+    background: #428642;
 }
 .left-nav ul li a.autoclaves {
-    background: rgba(255, 145, 0, .85);
+    border-left: 6px solid #42adcc;
 }
 .left-nav ul li a.autoclaves:hover {
-    background: rgba(255, 145, 0, 1);
+    background: #42adcc;
+}
+.card.autoclaves {
+    background: #42adcc;
 }
 .left-nav ul li a i {
     margin: 4px 13px 0 5px;
@@ -212,7 +187,7 @@ button.btn:not(.btn-large) {
     z-index: 900;
 }
 .banner.equipment {
-    background: url('../img/radiation-large-icon.png') rgb(253, 241, 0);
+    background: url('../img/gear-small-icon.png') rgb(253, 241, 0);
 }
 .banner {
     background: white;
@@ -221,38 +196,6 @@ button.btn:not(.btn-large) {
     background-size: 70px !Important;
     padding-left: 80px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.7)
-}
-div.use-log > .table-row > div:nth-of-type(1) {
-    width: 3%;
-}
-div.use-log > .table-row > div:nth-of-type(2) {
-    width: 6%;
-}
-div.use-log > .table-row > div:nth-of-type(2) input {
-    width: 100%;
-}
-div.use-log > .table-row > div:nth-of-type(3) {
-    width: 13%;
-}
-div.use-log > .table-row > div:nth-of-type(3) textarea {
-    width: 100%;
-}
-div.use-log > .table-row > div:nth-of-type(4) {
-    width: 3%;
-}
-div.use-log > .table-row > div:nth-of-type(4) input {
-    width: 68%;
-    min-width: 30px;
-}
-div.use-log > .table-row > div:nth-of-type(5) {
-    padding-right: 0;
-    width: 64%
-}
-div.use-log > .table-row > div:nth-of-type(5) .row-fluid .span4 {
-    width: 33%;
-}
-div.use-log > .table-row > div:nth-of-type(6) {
-    width: 11%;
 }
 .combobox ul {
     min-width: 0;
@@ -320,23 +263,11 @@ div.use-log > .table-row > div:nth-of-type(6) {
         display: block !important;
     }
     .label.print {}
-    .card {
-        padding: 5px !important;
-        width: auto !important;
-        border-bottom: 5px solid #999 !important;
-        border-left: none !important;
-        box-shadow: none !important;
-        page-break-inside: avoid;
-    }
     .inactive {
         text-decoration: line-through;
     }
     h1 {
         font-size: 20px;
-    }
-    .card h1.card-header i {
-        font-size: 30px !important;
-        margin: 7px 25px 0 0 !important;
     }
 }
 @media screen and (max-width: 1242px) {
@@ -353,13 +284,6 @@ div.use-log > .table-row > div:nth-of-type(6) {
         font-size: 12px;
         vertical-align: middle;
         font-weight: 600 !important;
-    }
-    .card h1.card-header {
-        font-size: 20px;
-    }
-    .card h1.card-header i {
-        font-size: 29px !important;
-        margin: 7px 22px 0 0 !important;
     }
     .dashboard {
         margin: 0 0px;

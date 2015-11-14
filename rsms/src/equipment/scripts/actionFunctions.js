@@ -31,7 +31,6 @@ angular
             af.cancelEdit = function( obj ) {
                     obj.edit = false;
                     $rootScope[obj.Class+'Copy'] = {};
-                    //store.replaceWithCopy( object );
             }
 
             af.setObjectActiveState = function( object ) {
@@ -46,7 +45,6 @@ angular
                             },
                             function( error )
                             {
-                                //object.Name = error;
                                 object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
                                 return false;
@@ -64,7 +62,6 @@ angular
                             },
                             function( error )
                             {
-                                //object.Name = error;
                                // object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
                             }

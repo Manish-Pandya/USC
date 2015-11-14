@@ -1,11 +1,10 @@
 <div class="dashboard">
-    <div class="row-fluid" style="margin-top: -55px;">
-        <h2>Equipment</h2>
+    <div class="row-fluid" style="margin-top: -2px;">
+        <h4 class="section-header">Location:
+            <input class="left-nav-typeahead" type="text" ng-model="customSelected" placeholder="Select a location" typeahead="location as (location.Name) for locations in typeAheadPis | filter:$viewValue">
+        </h4>
         <div class="left-nav">
-            <h4 class="section-header">Location:
-                <input class="left-nav-typeahead" type="text" ng-model="customSelected" placeholder="Select a location" typeahead="location as (location.Name) for locations in typeAheadPis | filter:$viewValue">
-            </h4>
-            
+            <h2>Equipment</h2>
             <ul class="sideNav">
                 <li><a class="autoclaves" ui-sref="equipment.autoclaves">Autoclaves</a></li>
                 <li><a class="bio-safety-cabinets" ui-sref="equipment.bio-safety-cabinets">Biological Safety Cabinets</a></li>
