@@ -23,7 +23,23 @@
 
             </ul>
             <h4 class="section-header"><img src="../img/pi-icon.png"/>Search by PI
-                <input class="left-nav-typeahead" typeahead-on-select='onSelectPi($item, $model, $label)' type="text" ng-model="customSelected" placeholder="Select a PI" typeahead="pi as (pi.Name) for pi in typeAheadPis | filter:$viewValue">
+                <span ng-if="!typeAheadPis" style="position:relative">
+                    <input class="span12" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+                    <i class="icon-spinnery-dealie spinner small" style="position:absolute;right:5px;top:0px"></i>
+               </span>
+               <span ng-if="typeAheadPis">
+                    <ui-select  ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span12">
+                        <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                        <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'User.Name' | propsFilter: {User.Name: $select.search} track by $index">
+                          <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                   <h3 style="display:inline" ng-if="PI && !selectPI">{{PI.User.Name}}</h3>
+                    <span ng-click="selectPI = !selectPI">
+                        <i  ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
+                        <i class="icon-cancel danger" ng-if="PI && selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 5px;"></i>
+                    </span>
+                </span>
             </h4>
             <ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
                 <li><a class="auths" ng-click="af.setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>

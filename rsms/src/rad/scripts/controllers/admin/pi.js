@@ -19,8 +19,9 @@ angular.module('00RsmsAngularOrmApp')
                     function(pi){
                         console.log(pi);
                        // pi = new window.PrincipalInvestigator();
-                        pi.loadPurchaseOrders();
+                        pi.loadUser();
                         pi.loadActiveParcels();
+                        pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
@@ -41,7 +42,7 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.piPromise().then(getRadPi);
     }
 
-            
+
 
 
     $scope.onSelectPi = function (pi)

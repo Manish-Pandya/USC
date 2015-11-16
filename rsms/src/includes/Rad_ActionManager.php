@@ -286,7 +286,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
         $entityMaps[] = new EntityMap("lazy","getDepartments");
-        $entityMaps[] = new EntityMap("eager","getUser");
+        $entityMaps[] = new EntityMap("lazy","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator_room_relations");
         $entityMaps[] = new EntityMap("lazy","getPi_authorization");
@@ -320,7 +320,8 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getInspector");
         $entityMaps[] = new EntityMap("lazy","getSupervisor");
         $entityMaps[] = new EntityMap("lazy","getRoles");
-
+        $entityMaps[] = new EntityMap("lazy","getPrimary_department");
+        
         foreach($users as $user){
             $user->setEntityMaps($entityMaps);
         }
@@ -2045,7 +2046,7 @@ class Rad_ActionManager extends ActionManager {
     
     public function getRadModels(){
     	$dto = new RadModelDto();
-    	
+    	$dto->setUser($this->getAllRadUsers());
     	$dto->setAuthorization($this->getAllAuthorizations());
     	$dto->setPIAuthorization($this->getAllPIAuthorizations());
     	$dto->setCarboy($this->getAllCarboys());
@@ -2067,7 +2068,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setWasteBag($this->getAllWasteBags());
     	$dto->setSolidsContainer($this->getAllSolidsContainers());
     	$dto->setWasteType($this->getAllWasteTypes());
-    	$dto->setUser($this->getAllRadUsers());
+    	$dto->setRoom($this->getAllRooms(true));
     	$dto->setPrincipalInvestigator($this->getAllRadPis());
     	 
     	return $dto;

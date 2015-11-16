@@ -65,6 +65,8 @@ class WasteBag extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getContainer");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
+		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+		
 		$this->setEntityMaps($entityMaps);
 	}
 

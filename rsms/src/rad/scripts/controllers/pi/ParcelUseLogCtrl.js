@@ -30,9 +30,10 @@ angular.module('00RsmsAngularOrmApp')
             .then(
                 function(){
                     $scope.parcel = dataStoreManager.getById("Parcel",$stateParams.parcel);
+                    $scope.parcel.loadUses();
+                    console.log($scope.parcel);
                 }
             );
-        console.log($scope.parcel);
       }
 
       $scope.parcelPromise = getPi()

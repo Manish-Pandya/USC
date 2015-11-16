@@ -7,7 +7,6 @@ var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
     eagerAccessors: [
-        {method:"getPrincipalInvestigatorRoomRelations"},
         {method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},

@@ -66,8 +66,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getMiscellaneousWipeTests"		=> new ActionMapping("getMiscellaneousWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getOpenMiscellaneousWipeTests"	=> new ActionMapping("getOpenMiscellaneousWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-
-
+				"getAllParcelWipeTests"			=> new ActionMapping("getAllParcelWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getAllParcelWipes"				=> new ActionMapping("getAllParcelWipes", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				
 
 				// save functions
 				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
