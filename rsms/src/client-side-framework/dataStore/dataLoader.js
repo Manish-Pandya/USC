@@ -53,7 +53,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
         });
     }
 }
-
+/*
 dataLoader.loadManyToManyRelationship = function (parent, property, relationship, apiOverride) {
     // if this type of relationship is cached, use it.
     if (dataLoader[relationship.name]) {
@@ -115,6 +115,54 @@ dataLoader.loadManyToManyRelationship = function (parent, property, relationship
             });
     }
 }
+*/
+
+dataLoader.loadManyToManyRelationship = function(parent, relationship){
+    if(dataStoreManager.checkCollection(relationship.childClass) && dataStore[relationship.table]){
+        parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+    } // data not cached, get from the server
+    else {
+        var urlFragment = 'getRelationships';
+        var paramValue = '&class1=' + parent.Class + '&class2=' + relationship.childClass;
+        parent.api.read(urlFragment+paramValue)
+            .then(function (returnedPromise) {
+                //cache result so we don't hit the server next time
+                dataStoreManager.storeGerunds(returnedPromise.data, relationship.table);
+
+                var className = relationship.childClass;
+
+
+                // *********************************************
+                // BEGIN MESSY AREA TO REFACTOR
+                // This could all be replaced with a DataSwitch.getAll call if we had access to it
+
+                // double check that the child class has been loaded, so instateRelationItems has something to instate.
+                if (!dataStoreManager.checkCollection(className)) {
+                    var action = parent.api.fetchActionString('getAll', className+'s');
+
+                    // get data
+                    parent.api.read(action).then(function (returnedPromise) {
+                        var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+                        console.log(instatedObjects);
+                        // add returned data to cache
+                        dataStoreManager.store(instatedObjects, true, className);
+
+                        // finally instate and set the result on parent.
+                        var instatedMatches = dataLoader.instateRelationItems(matches, className, idProperty);
+                        parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+                    });
+                } else {
+                   parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+
+                }
+
+                // END MESSY AREA TO REFACTOR
+                // ********************************************
+
+
+            });
+    }
+}
 
 dataLoader.instateRelationItems = function (relationList, className, keyProperty) {
     var i = relationList.length;
@@ -143,6 +191,22 @@ dataLoader.loadChildObject = function (parent, property, className, id) {
         });
     }
 }
+
+dataLoader.loadChildObjectByParentProperty = function (parent, property, className, int, childProperty, getString) {
+    console.log(className);
+    // check cache first
+    if (dataStoreManager.checkCollection(className)) {
+        parent[property] = dataStoreManager.getChildByParentProperty(className, childProperty, int);
+    }
+    // not cached, get from server
+    else {
+        var idParam = '&id=' + int;
+        parent.api.read(getString, idParam).then(function (returnedPromise) {
+            parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+        });
+    }
+}
+
 dataLoader.recursivelyInstantiate = function(instatedObjects, parent){
     console.log(instatedObjects);
     var i = instatedObjects.length;

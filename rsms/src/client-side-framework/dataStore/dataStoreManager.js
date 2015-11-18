@@ -1,4 +1,4 @@
-//finds concepts in the concept bucket
+//finds concepts in the concept bucket, put first it pours em in
 
 'use strict';
 
@@ -208,7 +208,6 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
                 if(getIt)collectionToReturn.push( current );
             }
-            console.log(collectionToReturn);
             return collectionToReturn;
 
         }
@@ -239,7 +238,6 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
         }
 }
 
-
 /******
 **gets a single child object from the cache
 **@param String type  the type of object we are looking for in the cache
@@ -250,6 +248,8 @@ dataStoreManager.getChildByParentProperty = function(type, prop, key){
     if(!dataStore[type])return null;
     var i = dataStore[type].length;
     while(i--){
+        console.log(dataStore[type][i]);
+        console.log(prop)
         if(dataStore[type][i][prop] == key)return dataStore[type][i];
     }
     return null;
@@ -316,3 +316,54 @@ dataStoreManager.pushIntoCollection = function(object){
         dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class].length-1;
     }
 }
+
+/**
+*
+*   MNAGEMENT OF MANY TO MANY RELATIONSHIPS THROUGH STORAGE OF ARRAYS OF DOUPLES
+*
+*/
+dataStoreManager.storeGerunds = function(collection, tableName){
+    if(!tableName && collection[0].table)var tableName = collection[0].table;
+    if(!tableName)return;
+    dataStore[tableName] = collection;
+}
+
+dataStoreManager.addGerund = function(gerundObject, tableName){
+    if(!tableName && gerundObject.table)var tableName = gerundObject.table;
+    if(!tableName)return;
+    dataStore[tableName].push(gerundObject);
+}
+//todo
+//given two objects, remove the relationship between them
+
+dataStoreManager.removeGerund = function(obj1, obj2){
+
+}
+/**
+ * @param Various parent       parent object we want to get child objects for
+ * @param Object   relationShip object mapping the relationship between our parent object and the child objects we want to retrieve
+ * @return Array matches
+ */
+dataStoreManager.getManyToMany = function(parent, relationship){
+    if(!dataStore[relationship.childClass] || !dataStore[relationship.table])return false;
+    //if the parent property is not set, or not an array, initialize one
+    if(!parent[relationship.parentProperty] || parent[relationship.parentProperty].constructor !== Array)parent[relationship.parentProperty] = [];
+
+    var matches = [];
+    var i = dataStore[relationship.table].length;
+    while(i--){
+        if(relationship.isMaster){
+            //master_id will be parent's key_id
+            if(dataStore[relationship.table][i].ParentId == parent.Key_id){
+                 matches.push(dataStoreManager.getById(relationship.childClass, dataStore[relationship.table][i].ChildId))
+            }
+        }else{
+            //master_id will be relationship.childClass' key_id
+            if(dataStore[relationship.table][i].ChildId){
+                matches.push(dataStoreManager.getById(relationship.childClass, dataStore[relationship.table][i].ParentId))
+            }
+        }
+    }
+    return matches;
+}
+

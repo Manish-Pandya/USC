@@ -11,6 +11,7 @@ PrincipalInvestigator.prototype = {
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
         {method:"loadWasteBags", boolean:"SolidsContainers"},
+        {method:"loadRooms", boolean:true},
     ],
 
     UserRelationship: {
@@ -35,11 +36,10 @@ PrincipalInvestigator.prototype = {
     },
 
     RoomsRelationship:{
-        name: 	  'PrincipalInvestigatorRoomRelation',
-        className: 'Room',
-        keyReference: 'Principal_investigator_id',
-        otherKey:     'Room_id',
-        paramValue:  'Key_id'
+        table: 	  'principal_investigator_room',
+        childClass: 'Room',
+        parentProperty: 'Rooms',
+        isMaster: true
     },
 
     AuthorizationsRelationship: {
@@ -116,7 +116,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
+        dataLoader.loadManyToManyRelationship( this, this.RoomsRelationship );
     },
 
     loadPurchaseOrders: function() {
@@ -136,7 +136,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadPIAuthorizations: function() {
-        dataLoader.loadChildObject(this, 'Pi_authorization', 'PIAuthorization', this.Key_id);
+        dataLoader.loadChildObjectByParentProperty(this, "Pi_authorization", "PIAuthorization", this.Key_id, "Principal_investigator_id");
     },
 
     loadUser:  function() {

@@ -20,6 +20,7 @@ angular.module('00RsmsAngularOrmApp')
                         console.log(pi);
                        // pi = new window.PrincipalInvestigator();
                         pi.loadUser();
+                        pi.loadRooms();
                         pi.loadActiveParcels();
                         pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
@@ -34,15 +35,9 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 );
     }
-    //get all the pis
-    if(!$rootScope.piPromise){
-        $rootScope.piPromise = af.getRadModels()
-                            .then(getRadPi);
-    }else{
-        $rootScope.piPromise().then(getRadPi);
-    }
 
-
+    $rootScope.radPromise = af.getRadModels()
+                                .then(getRadPi);
 
 
     $scope.onSelectPi = function (pi)

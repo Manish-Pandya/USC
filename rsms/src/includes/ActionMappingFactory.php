@@ -50,7 +50,8 @@ class ActionMappingFactory {
                 "deactivate"=>new ActionMapping("deactivate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
                 "getCurrentUserRoles"=>new ActionMapping("getCurrentUserRoles", "", ""),
-
+        		"getRelationships"=>new ActionMapping("getRelationships", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+        	
                 // Users Hub
                 "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),

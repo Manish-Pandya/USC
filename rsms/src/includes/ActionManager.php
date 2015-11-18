@@ -4106,5 +4106,30 @@ class ActionManager {
         $dao = $this->getDao(new SupplementalObservation());
         return $dao->getAll();
     }
+    
+    public function getRelationships( $class1 = NULL, $class2 = NULL ){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    
+    	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
+    	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+    
+    	// make sure first letter of class name is capitalized.
+    	$class1 = ucfirst($class1);
+    	$class2 = ucfirst($class2);
+    
+    	$relationshipFactory = new RelationshipMappingFactory();
+    	// get the relationship mapping for the relevant classes
+    	$relationship = $relationshipFactory->getRelationship($class1, $class2);
+
+    	if( $relationship instanceof ActionError ) {
+    		return $relationship;
+    	}
+    
+    	$dao = new GenericDAO(new RelationDto());
+    
+    	$relationships = $dao->getRelationships($relationship);
+    	//$LOG->fatal($relationships);
+    	return $relationships;
+    }
 }
 ?>
