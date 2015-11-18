@@ -22,7 +22,7 @@ require_once '../top_view.php';
         <select ng-options="campus.Name as campus.Name for campus in campuses | orderBy:'Name'" ng-model="selectedCampus" ng-show="departments">
             <option value="">All Campuses</option>
         </select>
-        <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments">
+        <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none; width:1270px" ng-if="departments">
             <THEAD>
                 <tr>
                     <th class="greenBg" colspan="5">
@@ -41,7 +41,7 @@ require_once '../top_view.php';
             </THEAD>
             <tbody>
                 <tr ng-repeat="department in filteredDepts = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:false | orderBy: ['Department_name'])" class="center-block" ng-class="{inactive:!department.Is_active}">
-                    <td style="width:11%;">
+                    <td style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                             <span ng-if="department.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
@@ -49,21 +49,21 @@ require_once '../top_view.php';
                         </a>
                         <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty" />
                     </td>
-                    <td style="width:30%;">
+                    <td style="width:27%;">
                         {{department.Department_name}}
                     </td>
-                    <td style="width:25%;">
+                    <td style="width:20%;">
                         {{department.Campus_name}}
                     </td>
-                    <td style="width:12%; text-align:center;">{{department.Pi_count}}</td>
-                    <td style="width:12%; text-align:center;">{{department.Room_count}}</td>
+                    <td style="width:22%; text-align:center;">{{department.Pi_count}}</td>
+                    <td style="width:10%; text-align:center;">{{department.Room_count}}</td>
                 </tr>
                 <tr ng-show="!filteredDepts.length"><td colspan="5"><h3>No Departments in {{selectedCampus}}</h3></td></tr>
 
             </tbody>
         </table>
 
-        <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;" ng-if="departments" >
+        <table class="userList table table-striped table-hover piTable table-bordered span12" style="margin-left:0; float:none;width:1270px" ng-if="departments" >
             <THEAD>
                 <tr>
                     <th class="greenBg" colspan="5">
@@ -82,7 +82,7 @@ require_once '../top_view.php';
             </THEAD>
             <tbody>
                 <tr ng-repeat="department in labs = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:true | orderBy: 'Department_name')" class="center-block" ng-class="{inactive:!department.Is_active}">
-                    <td style="width:11%;">
+                    <td style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department, true)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                             <span ng-if="department.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
@@ -90,14 +90,14 @@ require_once '../top_view.php';
                         </a>
                         <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty" />
                     </td>
-                    <td style="width:30%;">
+                    <td style="width:27%;">
                         {{department.Department_name}}
                     </td>
-                    <td style="width:25%;">
+                    <td style="width:20%;">
                         {{department.Campus_name}}
                     </td>
-                    <td style="width:12%; text-align:center;">{{department.Pi_count}}</td>
-                    <td style="width:12%; text-align:center;">{{department.Room_count}}</td>
+                    <td style="width:22%; text-align:center;">{{department.Pi_count}}</td>
+                    <td style="width:10%; text-align:center;">{{department.Room_count}}</td>
                 </tr>
                 <tr ng-show="!labs.length"><td colspan="5"><h3>No Specialty Labs in {{selectedCampus}}</h3></td></tr>
 
