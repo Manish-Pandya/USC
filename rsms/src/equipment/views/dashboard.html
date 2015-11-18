@@ -1,7 +1,7 @@
 <div class="dashboard">
     <div class="row-fluid" style="margin-top: -2px;">
-        <h4 class="section-header">Location:
-            <input class="left-nav-typeahead" type="text" style="margin-left: -4px;" ng-model="customSelected" placeholder="Select a location" typeahead="location as (location.Name) for locations in typeAheadPis | filter:$viewValue">
+        <h4 class="section-header" style="color: #51a351;">Location:
+            <input class="left-nav-typeahead" type="text" ng-model="customSelected" placeholder="Select a location" typeahead="location as (location.Name) for locations in typeAheadPis | filter:$viewValue">
         </h4>
         <div class="left-nav">
             <h2>Equipment</h2>
@@ -14,7 +14,7 @@
             </ul>
         </div>
 
-        <div ui-view></div>
+        <div ui-view class="noBg" style="margin-top:-26px"></div>
 
     </div>
 </div>

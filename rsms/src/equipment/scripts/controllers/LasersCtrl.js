@@ -5,7 +5,7 @@
  * @name EquipmentModule.controller:AutoclavesCtrl
  * @description
  * # AutoclavesCtrl
- * Controller of the EquipmentModule PI waste Pickups view
+ * Controller of the EquipmentModule Lasers view
  */
 angular.module('EquipmentModule')
   .controller('LasersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
@@ -14,6 +14,10 @@ angular.module('EquipmentModule')
   		$scope.af = af;
     
         $scope.lasers = [];
+    
+        $scope.deactivate = function(cabinet) {
+            
+        }
     
         $scope.openModal = function(object) {
             var modalData = {};
