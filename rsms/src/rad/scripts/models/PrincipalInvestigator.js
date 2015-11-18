@@ -112,6 +112,7 @@ PrincipalInvestigator.prototype = {
     Buildings: {},
 
     loadActiveParcels: function() {
+        console.log(dataStore);
         dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
     },
 

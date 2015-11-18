@@ -31,6 +31,10 @@ Authorization.prototype = {
         dataLoader.loadManyToManyRelationship( this, 'Rooms', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
     },
 
+    loadActiveParcels:function(){
+
+    }
+
 }
 
 // inherit from GenericModel

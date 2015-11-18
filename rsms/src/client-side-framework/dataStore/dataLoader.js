@@ -118,19 +118,17 @@ dataLoader.loadManyToManyRelationship = function (parent, property, relationship
 */
 
 dataLoader.loadManyToManyRelationship = function(parent, relationship){
-    if(dataStoreManager.checkCollection(relationship.childClass) && dataStore[relationship.table]){
+    if(dataStore[relationship.childClass] && dataStore[relationship.table]){
         parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
     } // data not cached, get from the server
     else {
-        var urlFragment = 'getRelationships';
-        var paramValue = '&class1=' + parent.Class + '&class2=' + relationship.childClass;
-        parent.api.read(urlFragment+paramValue)
+        var urlFragment = 'getRelationships&class1=' + parent.Class + '&class2=' + relationship.childClass;
+        parent.api.read(urlFragment)
             .then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 dataStoreManager.storeGerunds(returnedPromise.data, relationship.table);
 
                 var className = relationship.childClass;
-
 
                 // *********************************************
                 // BEGIN MESSY AREA TO REFACTOR

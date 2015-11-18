@@ -325,7 +325,9 @@ dataStoreManager.pushIntoCollection = function(object){
 dataStoreManager.storeGerunds = function(collection, tableName){
     if(!tableName && collection[0].table)var tableName = collection[0].table;
     if(!tableName)return;
+    console.log(tableName);
     dataStore[tableName] = collection;
+    console.log(dataStore[tableName]);
 }
 
 dataStoreManager.addGerund = function(gerundObject, tableName){
