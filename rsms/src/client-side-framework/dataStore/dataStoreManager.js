@@ -208,7 +208,6 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
 
                 if(getIt)collectionToReturn.push( current );
             }
-            console.log(collectionToReturn);
             return collectionToReturn;
 
         }
@@ -238,7 +237,33 @@ dataStoreManager.getRelatedItems = function( type, relationship, key, foreign_ke
 
         }
 }
+/**
+ * @param Various parent       parent object we want to get child objects for
+ * @param Object   relationShip object mapping the relationship between our parent object and the child objects we want to retrieve
+ * @return Array matches
+ */
+dataStoreManager.getManyToMany = function(parent, relationShip){
+    if(!dataStore[relationShip.childClass] || !dataStore[relationShip.table])return false;
+    //if the parent property is not set, or not an array, initialize one
+    if(!parent[relationShip[propertyName]] || parent[relationShip[propertyName]].constructor !== Array)parent[relationShip[propertyName]] = [];
 
+    var matches = [];
+    var i = dataStore[relationShip.table].length;
+    while(i--){
+        if(relationShip.isMaster){
+            //master_id will be parent's key_id
+            if(dataStore[relationShip.table][i].MasterId){
+                 matches.push(dataStoreManager.getById(relationShip.childClass, dataStore[relationShip.table][i].ChildId))
+            }
+        }else{
+            //master_id will be relationShip.childClass' key_id
+            if(dataStore[relationShip.table][i].ChildId){
+                matches.push(dataStoreManager.getById(relationShip.childClass, dataStore[relationShip.table][i].MasterId))
+            }
+        }
+    }
+    return matches;
+}
 
 /******
 **gets a single child object from the cache
@@ -250,6 +275,8 @@ dataStoreManager.getChildByParentProperty = function(type, prop, key){
     if(!dataStore[type])return null;
     var i = dataStore[type].length;
     while(i--){
+        console.log(dataStore[type][i]);
+        console.log(prop)
         if(dataStore[type][i][prop] == key)return dataStore[type][i];
     }
     return null;

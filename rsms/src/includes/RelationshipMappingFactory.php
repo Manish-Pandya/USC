@@ -22,7 +22,9 @@ class RelationshipMappingFactory {
 			new RelationMapping("PrincipalInvestigator", "Room"				  , "principal_investigator_room"			, "PrincipalInvestigatorRoomRelation"),
 			new RelationMapping("Response"			   , "Observation"		  , "response_observation"					, "ResponseObservationRelation"),
 			new RelationMapping("Response"			   , "Recommendation"	  , "response_recommendation"				, "ResponseRecommendationRelation"),
-			new RelationMapping("User"				   , "Role"				  , "user_role"								, "UserRoleRelation")
+			new RelationMapping("User"				   , "Role"				  , "user_role"								, "UserRoleRelation"),
+			new RelationMapping("PIAuthorization"	   , "Room"				  , "pi_authorization_room"		                                ),
+			new RelationMapping("PIAuthorization"	   , "Department"		  , "pi_authorization_department"  	  			        		)
 		);
 	}
 	

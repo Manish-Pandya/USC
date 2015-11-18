@@ -143,6 +143,22 @@ dataLoader.loadChildObject = function (parent, property, className, id) {
         });
     }
 }
+
+dataLoader.loadChildObjectByParentProperty = function (parent, property, className, int, childProperty, getString) {
+    console.log(className);
+    // check cache first
+    if (dataStoreManager.checkCollection(className)) {
+        parent[property] = dataStoreManager.getChildByParentProperty(className, childProperty, int);
+    }
+    // not cached, get from server
+    else {
+        var idParam = '&id=' + int;
+        parent.api.read(getString, idParam).then(function (returnedPromise) {
+            parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+        });
+    }
+}
+
 dataLoader.recursivelyInstantiate = function(instatedObjects, parent){
     console.log(instatedObjects);
     var i = instatedObjects.length;

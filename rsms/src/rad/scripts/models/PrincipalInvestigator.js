@@ -35,11 +35,9 @@ PrincipalInvestigator.prototype = {
     },
 
     RoomsRelationship:{
-        name: 	  'PrincipalInvestigatorRoomRelation',
-        className: 'Room',
-        keyReference: 'Principal_investigator_id',
-        otherKey:     'Room_id',
-        paramValue:  'Key_id'
+        table: 	  'Principal_investigator_room',
+        childClass: 'Room',
+        isMaster: true
     },
 
     AuthorizationsRelationship: {
@@ -136,7 +134,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadPIAuthorizations: function() {
-        dataLoader.loadChildObject(this, 'Pi_authorization', 'PIAuthorization', this.Key_id);
+        dataLoader.loadChildObjectByParentProperty(this, "Pi_authorization", "PIAuthorization", this.Key_id, "Principal_inve    stigator_id");
     },
 
     loadUser:  function() {

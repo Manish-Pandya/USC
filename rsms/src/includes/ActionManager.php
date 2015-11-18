@@ -4106,5 +4106,33 @@ class ActionManager {
         $dao = $this->getDao(new SupplementalObservation());
         return $dao->getAll();
     }
+    
+    public function getRelationships( $class1 = NULL, $class2 = NULL ){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    
+    	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
+    	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+    
+    	// make sure first letter of class name is capitalized.
+    	$class1 = ucfirst($class1);
+    	$class2 = ucfirst($class2);
+    
+    	$relationshipFactory = new RelationshipMappingFactory();
+    	// get name of the table containing those two classes
+    	$tableName = $relationshipFactory->getTableName($class1, $class2);
+    	// get class name of the DTO that will contain the resulting relationships
+    	$className = $relationshipFactory->getClassName($class1, $class2);
+    
+    	if( $tableName instanceof ActionError ) {
+    		return $tableName;
+    	}
+    
+    	// GenericDAO must recieve an entity class, but will not use it in this case.
+    	$dao = new GenericDAO(new Isotope);
+    
+    	$relationships = $dao->getRelationships($tableName, $className);
+    	$LOG->debug($relationships);
+    	return $relationships;
+    }
 }
 ?>

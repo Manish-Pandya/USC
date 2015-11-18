@@ -6,18 +6,24 @@ var PIAuthorization = function() {};
 PIAuthorization.prototype = {
     className: "PIAuthorization",
     Class: "PIAuthorization",
-    eagerAccessors: [{method:"instantiateAuthorizations", boolean: "Authorizations"}],
+
+    AuthorizationsRelationship: {
+        className:    'Authorization',
+        keyReference:  'Pi_authorization_id',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+
+    eagerAccessors: [{method:"loadAuthorizations", boolean: "Key_id"}],
 
     instantiateAuthorizations: function(){
         this.Authorizations = this.inflator.instateAllObjectsFromJson(this.Authorizations);
-    }
+    },
+
+    loadAuthorizations: function() {
+        dataLoader.loadOneToManyRelationship(this, "Authorizations", this.AuthorizationsRelationship);
+    },
 }
 
 // inherit from GenericModel
 extend(PIAuthorization, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("pIAuthorization", [])
-    .value("PIAuthorization", InspectionWipe);
-

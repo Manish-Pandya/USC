@@ -34,15 +34,9 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 );
     }
-    //get all the pis
-    if(!$rootScope.piPromise){
-        $rootScope.piPromise = af.getRadModels()
-                            .then(getRadPi);
-    }else{
-        $rootScope.piPromise().then(getRadPi);
-    }
 
-
+    af.getRadModels()
+        .then(getRadPi);
 
 
     $scope.onSelectPi = function (pi)
