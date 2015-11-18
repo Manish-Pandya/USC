@@ -6,19 +6,6 @@
 *
 **********************************************************/
 
-.form-inline .control-group {
-    float: left;
-}
-.rsmsCenterIconContainer a {
-    text-align: center;
-}
-.rsmsCenterIconContainer a i {
-    width: auto;
-    height: 250px;
-    color: white;
-    font-size: 220px;
-    line-height: normal;
-}
 .neg-marg {
     margin: 0 -30px;
 }
@@ -72,9 +59,6 @@
 .no-underline {
     border-bottom: none !important;
     text-decoration: none !important;
-}
-@media screen and (max-width: 1000px) {
-    /* line 73, ../sass/style.scss */
 }
 .left-nav-typeahead {
     margin: 8px;
@@ -270,24 +254,5 @@ button.btn:not(.btn-large) {
     }
     h1 {
         font-size: 20px;
-    }
-}
-@media screen and (max-width: 1242px) {
-    /* line 73, ../sass/style.scss */
-    body {
-        padding: 0;
-    }
-    body > div.container-fluid {
-        padding: 0;
-    }
-    div.fake-table .table-row > div {
-        display: table-cell;
-        padding: 1px 3px 4px 0;
-        font-size: 12px;
-        vertical-align: middle;
-        font-weight: 600 !important;
-    }
-    .dashboard {
-        margin: 0 0px;
     }
 }
