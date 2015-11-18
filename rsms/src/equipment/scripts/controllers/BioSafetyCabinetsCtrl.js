@@ -13,6 +13,8 @@ angular.module('EquipmentModule')
 
   		$scope.af = af;
     
+        $scope.cabinets = [];
+    
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {

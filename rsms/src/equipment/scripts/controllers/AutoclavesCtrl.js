@@ -13,6 +13,8 @@ angular.module('EquipmentModule')
 
   		$scope.af = af;
     
+        $scope.autoclaves = [];
+    
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
