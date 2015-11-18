@@ -4118,20 +4118,17 @@ class ActionManager {
     	$class2 = ucfirst($class2);
     
     	$relationshipFactory = new RelationshipMappingFactory();
-    	// get name of the table containing those two classes
-    	$tableName = $relationshipFactory->getTableName($class1, $class2);
-    	// get class name of the DTO that will contain the resulting relationships
-    	$className = $relationshipFactory->getClassName($class1, $class2);
-    
-    	if( $tableName instanceof ActionError ) {
-    		return $tableName;
+    	// get the relationship mapping for the relevant classes
+    	$relationship = $relationshipFactory->getRelationship($class1, $class2);
+
+    	if( $relationship instanceof ActionError ) {
+    		return $relationship;
     	}
     
-    	// GenericDAO must recieve an entity class, but will not use it in this case.
-    	$dao = new GenericDAO(new Isotope);
+    	$dao = new GenericDAO(new RelationDto());
     
-    	$relationships = $dao->getRelationships($tableName, $className);
-    	$LOG->debug($relationships);
+    	$relationships = $dao->getRelationships($relationship);
+    	//$LOG->fatal($relationships);
     	return $relationships;
     }
 }

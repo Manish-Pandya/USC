@@ -692,19 +692,24 @@ class GenericDAO {
 
 		return $result;
 	}
+	
+	/*
+	 * @param RelationshipMapping relationship
+	 */
 
-	function getRelationships( $tableName, $resultClass ){
+	function getRelationships( $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
 		global $db;
-
-		$stmt = $db->prepare('SELECT * FROM ' . $tableName);
+		$parentColumn = $relationship->getParentColumn();
+		$childColumn  = $relationship->getChildColumn();
+		$stmt = $db->prepare("SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName());
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $resultClass);
-			foreach($result as $row){
-				$row->passFlag = true;
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "RelationDto");
+			foreach($result as &$dto){
+				$dto->setTable($relationship->getTableName());
 			}
 			//$this->LOG->trace($result);
 			// ... otherwise, die and echo the db error

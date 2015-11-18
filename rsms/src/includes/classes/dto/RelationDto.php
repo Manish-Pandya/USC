@@ -1,23 +1,15 @@
 <?php
 Class RelationDto{
 	private $table;
-	private $masterId;
+	private $parentId;
 	private $childId;
-	
-	public function getTable(){
-		return $this->table;
+
+	public function getParentId(){
+		return $this->parentId;
 	}
 	
-	public function setTable($table){
-		$this->table = $table;
-	}
-	
-	public function getMasterId(){
-		return $this->masterId;
-	}
-	
-	public function setMasterId($masterId){
-		$this->masterId = $masterId;
+	public function setParentId($parentId){
+		$this->parentId = $parentId;
 	}
 	
 	public function getChildId(){
@@ -27,4 +19,7 @@ Class RelationDto{
 	public function setChildId($childId){
 		$this->childId = $childId;
 	}
+	
+	public function getTable(){return $this->table;}
+	public function setTable($table){$this->table = $table;}
 }
