@@ -53,16 +53,18 @@ angular
 
                         while(eml--){
                             var em =  modelledObject.eagerAccessors[eml];
-                            if(modelledObject[em.boolean])modelledObject[em.method]();
+                            //check to see if we should call each eager method.  We call ones whose boolean check evaluates to true AND we call ones who have no boolean property to check
+                            //the boolean property allows us to prevent calling booleans for objects as needed
+                            if(typeof modelledObject[em.method] == "function" && (em.boolean === true || modelledObject[em.boolean]))modelledObject[em.method]();
                         }
 
                     }
-                
+
                     modelledObject.setPropertiesFromPrototype()
                     if(recurse){
                         for(var prop in modelledObject){
                             if((modelledObject[prop] && modelledObject[prop].Class && window[modelledObject[prop].Class] && !modelledObject[prop] instanceof window[modelledObject[prop].Class])
-                                || 
+                                ||
                                (modelledObject[prop] instanceof Array && modelledObject[prop][0] && modelledObject[prop][0].Class && window[modelledObject[prop][0].Class])
                               ){
                                 modelledObject[prop] = inflator.instateAllObjectsFromJson( modelledObject[prop], null, true );
@@ -94,8 +96,8 @@ angular
                         if( !objectFlavor ) objectFlavor = json.Class;
                         return inflator.instantiateObjectFromJson( json, objectFlavor, recurse );
                     }
-                
-                    
+
+
             }
 
             //dynamically generate accessors for an object
