@@ -2,21 +2,21 @@
 
 /**
  * @ngdoc function
- * @name EquipmentModule.controller:AutoclavesCtrl
+ * @name EquipmentModule.controller:BioSafetyCabinetsCtrl
  * @description
- * # AutoclavesCtrl
+ * # BioSafetyCabinetsCtrl
  * Controller of the EquipmentModule Biological Safety Cabinets view
  */
 angular.module('EquipmentModule')
   .controller('BioSafetyCabinetsCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = actionFunctionsFactory;
+  		var af = $scope.af = actionFunctionsFactory;
 
-  		$scope.af = af;
-    
         $scope.cabinets = [];
     
         $scope.deactivate = function(cabinet) {
-            
+            var copy = dataStoreManager.createCopy(cabinet);
+            copy.Retirement_date = new Date();
+            af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
         }
         
         $scope.report = function(cabinet) {
@@ -39,8 +39,7 @@ angular.module('EquipmentModule')
 
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = actionFunctionsFactory;
-		$scope.af = af;
+		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
@@ -50,9 +49,9 @@ angular.module('EquipmentModule')
         }
 
 		$scope.close = function(){
-           $modalInstance.dismiss();
+            $modalInstance.dismiss();
             dataStore.BioSafetyCabinet.push($scope.modalData.BioSafetyCabinetCopy);
-           af.deleteModalData();
+            af.deleteModalData();
 		}
 
 	});

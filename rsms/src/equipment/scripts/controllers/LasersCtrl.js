@@ -2,21 +2,21 @@
 
 /**
  * @ngdoc function
- * @name EquipmentModule.controller:AutoclavesCtrl
+ * @name EquipmentModule.controller:LaserCtrl
  * @description
- * # AutoclavesCtrl
+ * # LaserCtrl
  * Controller of the EquipmentModule Lasers view
  */
 angular.module('EquipmentModule')
   .controller('LasersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = actionFunctionsFactory;
+  		var af = $scope.af = actionFunctionsFactory;
 
-  		$scope.af = af;
-    
         $scope.lasers = [];
     
-        $scope.deactivate = function(cabinet) {
-            
+        $scope.deactivate = function(laser) {
+            var copy = dataStoreManager.createCopy(laser);
+            copy.Retirement_date = new Date();
+            af.saveLaser(laser.pi, copy, laser);
         }
     
         $scope.openModal = function(object) {
@@ -35,8 +35,7 @@ angular.module('EquipmentModule')
 
   })
   .controller('LaserModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = actionFunctionsFactory;
-		$scope.af = af;
+		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
@@ -46,9 +45,9 @@ angular.module('EquipmentModule')
         }
 
 		$scope.close = function(){
-           $modalInstance.dismiss();
+            $modalInstance.dismiss();
             dataStore.Laser.push($scope.modalData.LaserCopy);
-           af.deleteModalData();
+            af.deleteModalData();
 		}
 
 	});

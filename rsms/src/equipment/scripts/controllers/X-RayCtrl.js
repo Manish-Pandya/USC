@@ -2,21 +2,21 @@
 
 /**
  * @ngdoc function
- * @name EquipmentModule.controller:AutoclavesCtrl
+ * @name EquipmentModule.controller:X-RayCtrl
  * @description
- * # AutoclavesCtrl
+ * # X-RayCtrl
  * Controller of the EquipmentModule X-Ray Machines view
  */
 angular.module('EquipmentModule')
   .controller('X-RayCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = actionFunctionsFactory;
+  		var af = $scope.af = actionFunctionsFactory;
 
-  		$scope.af = af;
-    
         $scope.xrays = [];
     
-        $scope.deactivate = function(cabinet) {
-            
+        $scope.deactivate = function(xray) {
+            var copy = dataStoreManager.createCopy(xray);
+            copy.Retirement_date = new Date();
+            af.saveXRay(xray.pi, copy, xray);
         }
     
         $scope.openModal = function(object) {
@@ -35,8 +35,7 @@ angular.module('EquipmentModule')
 
   })
   .controller('AutoclavesModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = actionFunctionsFactory;
-		$scope.af = af;
+		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
@@ -46,9 +45,9 @@ angular.module('EquipmentModule')
         }
 
 		$scope.close = function(){
-           $modalInstance.dismiss();
+            $modalInstance.dismiss();
             dataStore.XRay.push($scope.modalData.XRayCopy);
-           af.deleteModalData();
+            af.deleteModalData();
 		}
 
 	});

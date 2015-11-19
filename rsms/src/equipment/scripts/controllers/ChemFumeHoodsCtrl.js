@@ -2,21 +2,21 @@
 
 /**
  * @ngdoc function
- * @name EquipmentModule.controller:AutoclavesCtrl
+ * @name EquipmentModule.controller:ChemFumeHoodsCtrl
  * @description
- * # AutoclavesCtrl
+ * # ChemFumeHoodsCtrl
  * Controller of the EquipmentModule Chemical Fume Hoods view
  */
 angular.module('EquipmentModule')
   .controller('ChemFumeHoodsCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = actionFunctionsFactory;
+  		var af = $scope.af = actionFunctionsFactory;
 
-  		$scope.af = af;
-    
         $scope.hoods = [];
     
-        $scope.deactivate = function(cabinet) {
-            
+        $scope.deactivate = function(hood) {
+            var copy = dataStoreManager.createCopy(hood);
+            copy.Retirement_date = new Date();
+            af.saveChemFumeHood(hood.pi, copy, hood);
         }
     
         $scope.openModal = function(object) {
@@ -35,8 +35,7 @@ angular.module('EquipmentModule')
 
   })
   .controller('ChemFumeHoodModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = actionFunctionsFactory;
-		$scope.af = af;
+		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
@@ -46,9 +45,9 @@ angular.module('EquipmentModule')
         }
 
 		$scope.close = function(){
-           $modalInstance.dismiss();
+            $modalInstance.dismiss();
             dataStore.ChemFumeHood.push($scope.modalData.ChemFumeHoodCopy);
-           af.deleteModalData();
+            af.deleteModalData();
 		}
 
 	});
