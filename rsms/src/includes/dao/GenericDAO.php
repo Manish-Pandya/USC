@@ -466,7 +466,7 @@ class GenericDAO {
 	 * @param Boolean $activeOnlyRelated
 	 * @return Array:
 	 */
-	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumn = null, $activeOnly = false, $activeOnlyRelated = false){
+	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
 		if (empty($id)) { return array();}
 		
 		// Get the db connection
@@ -486,7 +486,16 @@ class GenericDAO {
 		$sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
 		
-		if ($sortColumn != null){ $sql .= " ORDER BY " . $sortColumn;}
+		if ($sortColumns != null){
+			$sql .= " ORDER BY";
+			$max = count($sortColumns);
+			foreach($sortColumns as $key=>$column){
+				$sql .= " " . $column;
+				if($key != $max - 1){
+					$sql .= ",";
+				}
+			}
+		}
 		$stmt = $db->prepare($sql);
 	
 		// Query the db and return an array of $this type of object

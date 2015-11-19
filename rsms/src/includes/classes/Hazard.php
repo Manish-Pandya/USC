@@ -149,7 +149,7 @@ class Hazard extends GenericCrud {
 	public function getSubHazards(){
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),"order_index",false);
+			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),array("order_index"),false);
 		}
 		return $this->subHazards;
 	}
@@ -157,7 +157,7 @@ class Hazard extends GenericCrud {
 	public function getActiveSubHazards(){
 		if($this->subHazards === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),"order_index",true);
+			$this->subHazards = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP),array("order_index"),true);
 		}
 		return $this->subHazards;
 	}

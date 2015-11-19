@@ -389,7 +389,7 @@ class PrincipalInvestigator extends GenericCrud {
 		if($this->quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			/** quarterly inventories should be sorted by date */
-			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), "date_last_modified", true);
+			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), array("date_last_modified"), true);
 		}
 		return $this->quarterly_inventories;
 	}
