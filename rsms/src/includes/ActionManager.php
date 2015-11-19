@@ -1752,20 +1752,20 @@ class ActionManager {
         	 
         }
         foreach($rooms as $room){
-			if($allLazy != NULL){
-		            foreach($room->getPrincipalInvestigators() as $pi){
-		                $pi->setEntityMaps($piMaps);
-		
-		                $user = $pi->getUser();
-		
-		                $userMaps = array();
-		                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-		                $userMaps[] = new EntityMap("lazy","getInspector");
-		                $userMaps[] = new EntityMap("lazy","getSupervisor");
-		                $userMaps[] = new EntityMap("lazy","getRoles");
-		                $userMaps[] = new EntityMap("lazy","getPrimary_department");
-		                $user->setEntityMaps($userMaps);
-		            }
+			if($allLazy == NULL){
+	            foreach($room->getPrincipalInvestigators() as $pi){
+	                $pi->setEntityMaps($piMaps);
+	
+	                $user = $pi->getUser();
+	
+	                $userMaps = array();
+	                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+	                $userMaps[] = new EntityMap("lazy","getInspector");
+	                $userMaps[] = new EntityMap("lazy","getSupervisor");
+	                $userMaps[] = new EntityMap("lazy","getRoles");
+	                $userMaps[] = new EntityMap("lazy","getPrimary_department");
+	                $user->setEntityMaps($userMaps);
+	            }
 			}
             $room->setEntityMaps($roomMaps);
 

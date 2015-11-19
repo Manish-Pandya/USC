@@ -68,8 +68,6 @@ angular
                 }else{
                     //this is a new request.  make reference to our promise in dataSwitch so the next time we make it, we return the one we already made
                     dataSwitch.promises[className] = deferred;
-                    $rootScope.promises = dataSwitch.promises;
-                    console.log($rootScope.promises);
                     // check cache first
                     if( !force && dataStoreManager.checkCollection(className) ) {
                         deferred.resolve( dataStoreManager.get(className) );

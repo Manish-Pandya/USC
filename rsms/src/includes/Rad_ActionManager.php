@@ -2042,7 +2042,11 @@ class Rad_ActionManager extends ActionManager {
     	return $inventories;
     }
     
-
+    public function getAllPIQuarterlyInventories(){
+    	$dao = $this->getDao(new PIQuarterlyInventory());
+    	$inventories = $dao->getAll();
+    	return $inventories;
+    }
     
     public function getRadModels(){
     	$dto = new RadModelDto();
@@ -2064,6 +2068,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setPurchaseOrder($this->getAllPurchaseOrders());
     	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
     	$dto->setQuarterlInventory($this->getMostRecentInventory());
+    	$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
     	$dto->setScintVialCollection($this->getAllScintVialCollections());
     	$dto->setWasteBag($this->getAllWasteBags());
     	$dto->setSolidsContainer($this->getAllSolidsContainers());
