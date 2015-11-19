@@ -1,7 +1,6 @@
 <?php
 
 include_once '../GenericCrud.php';
-include_once '../Room.php';
 
 /**
  *
@@ -12,19 +11,22 @@ include_once '../Room.php';
 class BioSafetyCabinet extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "bio_safety_cabinet";
+	protected static $TABLE_NAME = "biosafety_cabinet";
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"name"		            => "text",
-        "type"		            => "text",
-        "serialNum"		        => "text",
-        "room_id"		        => "text",
-        "make"          	    => "text",
-        "model"     		    => "text",
-        "frequency"		        => "text",
-        "pi"    		        => "text",
-
+		"name"		            		=> "text",
+        "type"		            		=> "text",
+        "serial_number"		        	=> "text",
+        "room_id"		        		=> "integer",
+        "make"          	   			=> "text",
+        "model"     		    		=> "text",
+        "frequency"		        		=> "text",
+        "principal_investigator_id"    	=> "integer",
+		"certification_date"			=> "date",
+		"due_date"						=> "date",
+		"report_path"					=> "text",
+				
 		//GenericCrud
 		"key_id"			    => "integer",
 		"date_created"		    => "timestamp",
@@ -34,37 +36,19 @@ class BioSafetyCabinet extends GenericCrud {
 		"created_user_id"	    => "integer"
 	);
 
-
-	protected static $ROOM_RELATIONSHIP = array(
-			"className"	        => "Room",
-			"tableName"	        => "room_equipment",
-			"keyName"	        => "key_id",
-			"foreignKeyName"    => "bioSafetyCabinet_id"
-	);
-    
-    protected static $PI_RELATIONSHIP = array(
-			"className"	        => "PrincipalInvestigator",
-			"tableName"	        => "principal_investigator_equipment",
-			"keyName"	        => "key_id",
-			"foreignKeyName"    => "bioSafetyCabinet_id"
-	);
-
-
-	private $name;
-    
-    private $type;
-    
-    private $serialNum;
-    
+	private $name;  
+    private $type;  
+    private $serial_number; 
     private $make;
-    
-    private $model;
-    
+    private $model;  
     private $frequency;
-
+    private $room_id;
 	private $room;
-    
-    private $pi;
+	private $principal_investigator_id;
+	private $principal_investigator;
+	private $certification_date;
+	private $due_date;
+	private $report_date;
 
 	public function __construct(){
 		// Define which subentities to load
@@ -85,44 +69,108 @@ class BioSafetyCabinet extends GenericCrud {
 	}
 
 	// Accessors / Mutators
-	public function getName(){ return $this->$value; }
-	public function setName($value){ $this->name = $value; }
-    
-    public function getType(){ return $this->type; }
-	public function setType($value){ $this->type = $value; }
-    
-    public function getSerialNum(){ return $this->serialNum; }
-	public function setSerialNum($value){ $this->serialNum = $value; }
-    
-    public function getMake(){ return $this->make; }
-	public function setMake($value){ $this->make = $value; }
-    
-    public function getModel(){ return $this->model; }
-	public function setModel($value){ $this->model = $value; }
-    
-    public function getFrequency(){ return $this->frequency; }
-	public function setFrequency($value){ $this->frequency = $value; }
+	public function getName(){
+		return $this->name;
+	}
+
+	public function setName($name){
+		$this->name = $name;
+	}
+
+	public function getType(){
+		return $this->type;
+	}
+
+	public function setType($type){
+		$this->type = $type;
+	}
+
+	public function getSerial_number(){
+		return $this->serial_number;
+	}
+
+	public function setSerial_number($serial_number){
+		$this->serial_number = $serial_number;
+	}
+
+	public function getMake(){
+		return $this->make;
+	}
+
+	public function setMake($make){
+		$this->make = $make;
+	}
+
+	public function getModel(){
+		return $this->model;
+	}
+
+	public function setModel($model){
+		$this->model = $model;
+	}
+
+	public function getFrequency(){
+		return $this->frequency;
+	}
+
+	public function setFrequency($frequency){
+		$this->frequency = $frequency;
+	}
+
+	public function getRoom_id(){
+		return $this->room_id;
+	}
+
+	public function setRoom_id($room_id){
+		$this->room_id = $room_id;
+	}
 
 	public function getRoom(){
-		if($this->buildings == null) {
-			$thisDAO = new GenericDAO($this);
-			$this->room = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$ROOM_RELATIONSHIP));
-		}
 		return $this->room;
 	}
-	public function setRoom($value){
-		$this->room = $value;
+
+	public function setRoom($room){
+		$this->room = $room;
 	}
-    
-    public function getPI(){
-		if($this->buildings == null) {
-			$thisDAO = new GenericDAO($this);
-			$this->pi = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PI_RELATIONSHIP));
-		}
-		return $this->pi;
+
+	public function getPrincipal_investigator_id(){
+		return $this->principal_investigator_id;
 	}
-	public function setPI($value){
-		$this->pi = $value;
+
+	public function setPrincipal_investigator_id($principal_investigator_id){
+		$this->principal_investigator_id = $principal_investigator_id;
+	}
+
+	public function getPrincipal_investigator(){
+		return $this->principal_investigator;
+	}
+
+	public function setPrincipal_investigator($principal_investigator){
+		$this->principal_investigator = $principal_investigator;
+	}
+
+	public function getCertification_date(){
+		return $this->certification_date;
+	}
+
+	public function setCertification_date($certification_date){
+		$this->certification_date = $certification_date;
+	}
+
+	public function getDue_date(){
+		return $this->due_date;
+	}
+
+	public function setDue_date($due_date){
+		$this->due_date = $due_date;
+	}
+
+	public function getReport_date(){
+		return $this->report_date;
+	}
+
+	public function setReport_date($report_date){
+		$this->report_date = $report_date;
 	}
 
 }
