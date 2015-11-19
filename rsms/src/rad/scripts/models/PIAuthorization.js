@@ -9,7 +9,7 @@ PIAuthorization.prototype = {
     eagerAccessors: [
         {method:"loadRooms", boolean:true},
         {method:"loadAuthorizations", boolean:true},
-        {method:"loadAuthorizations", boolean:true}
+        {method:"loadDepartments", boolean:true}
     ],
     AuthorizationsRelationship: {
         className:    'Authorization',

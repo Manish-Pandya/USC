@@ -68,7 +68,6 @@ angular
                                (modelledObject[prop] instanceof Array && modelledObject[prop][0] && modelledObject[prop][0].Class && window[modelledObject[prop][0].Class])
                               ){
                                 modelledObject[prop] = inflator.instateAllObjectsFromJson( modelledObject[prop], null, true );
-                                console.log(modelledObject[prop]);
                             }
                         }
                     }

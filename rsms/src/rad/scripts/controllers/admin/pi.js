@@ -17,7 +17,6 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(
                     function(pi){
-                        console.log(pi);
                        // pi = new window.PrincipalInvestigator();
                         pi.loadUser();
                         pi.loadRooms();
@@ -27,8 +26,6 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
                         $rootScope.pi = pi;
-                        console.log(pi);
-                        console.log(dataStore);
                         return pi;
                     },
                     function(){

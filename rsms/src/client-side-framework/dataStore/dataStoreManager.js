@@ -248,8 +248,6 @@ dataStoreManager.getChildByParentProperty = function(type, prop, key){
     if(!dataStore[type])return null;
     var i = dataStore[type].length;
     while(i--){
-        console.log(dataStore[type][i]);
-        console.log(prop)
         if(dataStore[type][i][prop] == key)return dataStore[type][i];
     }
     return null;
@@ -257,6 +255,7 @@ dataStoreManager.getChildByParentProperty = function(type, prop, key){
 
 dataStoreManager.mapCache = function( cacheClass )
 {
+    if(!cacheClass)return;
     dataStore[cacheClass+'Map'] = [];
     var stuff = this.get(cacheClass);
     var length = stuff.length;
