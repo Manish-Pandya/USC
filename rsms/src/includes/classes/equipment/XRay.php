@@ -1,7 +1,6 @@
 <?php
 
 include_once '../GenericCrud.php';
-include_once '../Room.php';
 
 /**
  *
@@ -16,14 +15,13 @@ class XRay extends GenericCrud {
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"name"		            => "text",
-        "type"		            => "text",
-        "serialNum"		        => "text",
-        "room_id"		        => "text",
-        "make"          	    => "text",
-        "model"     		    => "text",
-        "frequency"		        => "text",
-        "pi"    		        => "text",
+        "type"		                => "text",
+        "serial_number"		        => "text",
+        "room_id"		            => "integer",
+        "make"          	        => "text",
+        "model"     		        => "text",
+        "frequency"		            => "text",
+        "principal_investigator_id" => "integer",
 
 		//GenericCrud
 		"key_id"			    => "integer",
@@ -33,7 +31,6 @@ class XRay extends GenericCrud {
 		"last_modified_user_id"	=> "integer",
 		"created_user_id"	    => "integer"
 	);
-
 
 	protected static $ROOM_RELATIONSHIP = array(
 			"className"	        => "Room",
@@ -50,11 +47,9 @@ class XRay extends GenericCrud {
 	);
 
 
-	private $name;
-    
     private $type;
     
-    private $serialNum;
+    private $serial_number;
     
     private $make;
     
@@ -64,13 +59,18 @@ class XRay extends GenericCrud {
 
 	private $room;
     
-    private $pi;
+    private $room_id;
+    
+    private $principal_investigator;
+    
+    private $principal_investigator_id;
+    
 
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRoom");
-        $entityMaps[] = new EntityMap("lazy","getPI");
+        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -85,14 +85,11 @@ class XRay extends GenericCrud {
 	}
 
 	// Accessors / Mutators
-	public function getName(){ return $this->$value; }
-	public function setName($value){ $this->name = $value; }
-    
     public function getType(){ return $this->type; }
 	public function setType($value){ $this->type = $value; }
     
-    public function getSerialNum(){ return $this->serialNum; }
-	public function setSerialNum($value){ $this->serialNum = $value; }
+    public function getSerial_number(){ return $this->serial_number; }
+	public function setSerial_number($value){ $this->serial_number = $value; }
     
     public function getMake(){ return $this->make; }
 	public function setMake($value){ $this->make = $value; }
@@ -102,6 +99,9 @@ class XRay extends GenericCrud {
     
     public function getFrequency(){ return $this->frequency; }
 	public function setFrequency($value){ $this->frequency = $value; }
+    
+    public function getRoom_id(){ return $this->room_id; }
+	public function setRoom_id($value){ $this->room_id = $value; }
 
 	public function getRoom(){
 		if($this->buildings == null) {
@@ -114,15 +114,22 @@ class XRay extends GenericCrud {
 		$this->room = $value;
 	}
     
-    public function getPI(){
+    public function getPrincipal_investigator_id(){
+		return $this->principal_investigator_id;
+	}
+	public function setPrincipal_investigator_id($value){
+		$this->principal_investigator_id = $value;
+	}
+    
+    public function getPrincipal_investigator(){
 		if($this->buildings == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->pi = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PI_RELATIONSHIP));
+			$this->principal_investigator = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PI_RELATIONSHIP));
 		}
-		return $this->pi;
+		return $this->principal_investigator;
 	}
-	public function setPI($value){
-		$this->pi = $value;
+	public function setPrincipal_investigator($value){
+		$this->principal_investigator = $value;
 	}
 
 }
