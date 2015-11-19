@@ -39,10 +39,11 @@ class ActionDispatcher {
         // module is enabled.
         if( isRadiationEnabled() ) {
             $this->actionManagerType = "Rad_ActionManager";
-        }else if( isVerificationEnabled() ){ 
+        } else if( isVerificationEnabled() ){ 
             $this->actionManagerType = "Verification_ActionManager";
-        }
-        else {
+        } else if ( isEquipmentEnabled() ){
+        	$this->actionManagerType = "Equipment_ActionManager";
+        } else {
             $this->actionManagerType = "ActionManager";
         }
         $this->LOG->fatal( 'getting action manager type' );

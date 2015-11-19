@@ -121,6 +121,11 @@ function isVerificationEnabled(){
 	return false;
 }
 
+function isEquipmentEnabled(){
+	if(	strstr($_SERVER["HTTP_REFERER"], '/equipment/' ) || isset($_GET['equipment']))return true;
+	return false;
+}
+
 //////////////////////////////////////////////////
 
 //TODO Application functions
