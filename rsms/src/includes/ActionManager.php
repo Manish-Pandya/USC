@@ -2912,7 +2912,7 @@ class ActionManager {
 
             //get hazards
             $hazards = $room->getHazards();
-
+            
             // if subhazards is false, change all hazard subentities to lazy loading
             if ($subHazards == "false"){
                 $entityMaps = array();
@@ -2932,13 +2932,71 @@ class ActionManager {
                 }
 
             }
-            return $hazards;
+            
+            //sort the hazards by parent
+            //10000 is the magic number, yes it is.
+            //this is because we arbitrarily decided that the ROOT hazard should have the key_id 10000
+            $sortedHazards = array();
+            $hashMap = array();
+            $nestMap = array();
+            
+            //this loops should be faster than repeatedly calling the db for the subhazards of every hazard
+            foreach ($hazards as $key=>$hazard) {
+            	if($nestMap[$hazard->getParent_hazard_id()] == null){
+            		$nestMap[$hazard->getParent_hazard_id()] = array();
+            	}
+            	array_push($nestMap[$hazard->getParent_hazard_id()], $hazard);
+            }
+           
+            $sortedHazards = $this->rercursivelyOrderHazardMap($hazards, $hashMap, $nestMap, 10000);
+            
+            //return $hazards;            
+            return $sortedHazards;
         }
         else{
             //error
             return new ActionError("No request parameter 'id' was provided");
         }
     }
+    /*
+     * 
+     * given a flat list of hazards and a parent_hazard_id, orders that list so that each hazard is grouped under its parent hazard
+     * @param Array $flatHazards   an arbitrarily ordered list of hazards
+     * @
+     * 
+     */
+    private function rercursivelyOrderHazardMap($flatHazards, $hashMap, $nestMap, $startingId){
+    	$LOG=Logger::getLogger("asdf");
+    	$sorted = array_slice($nestMap[$startingId],0);
+    	$this->lupus($sorted, $nestMap);
+    	
+    	return $sorted;
+    }
+    /*
+     * 
+     * instead of doing this, init a new array every time and push the rest of the stuff into it
+     * for memory reasons we just cant use the slice method
+     * figure out a way to avoid it
+     * 
+     * 
+     */
+    private function lupus($sorted, $nestMap, $startPoint = null){
+    	$LOG=Logger::getLogger("asdf");
+    	 
+    	foreach ($sorted as $key=>$hazard){
+    		
+    		if($startPoint != null && $key <= $startPoint) continue;
+    			 
+    		if(isset($nestMap[$hazard->getKey_id()])){
+    			$LOG->fatal($hazard->getName());
+    			$head = array_slice($sorted, 0, $key);
+    			$tail = array_slice($sorted, $key);
+    			$sorted = array_merge($head, $nestMap[$hazard->getKey_id()], $tail);   			 
+    		}	    
+    		$this->lupus( $sorted, $nestMap, $key );
+    	}
+    }
+    
     public function getHazardRoomRelations( $roomIds = NULL ){
         $roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
 
