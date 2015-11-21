@@ -48,6 +48,7 @@ class Checklist extends GenericCrud {
 	/** The Hazard entity to which this Checklist applies */
 	private $hazard;
 	private $hazard_id;
+	private $parent_hazard_id;
 
 	/** The name of the master hazard category assigned to this checklist's hazard, e.g. Chemical, Biological Radiological */
 	private $master_hazard;
@@ -98,7 +99,10 @@ class Checklist extends GenericCrud {
 	}
 
 	public function getHazard_id(){ return $this->hazard_id; }
-	public function setHazard_id($hazard_id){ $this->hazard_id = $hazard_id; }
+	public function setHazard_id($hazard_id){ $this->hazard_id = $hazard_id; }	
+	
+	public function getParent_hazard_id(){ return $this->parent_hazard_id; }
+	public function setParent_hazard_id($hazard_id){ $this->parent_hazard_id = $hazard_id; }
 
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }

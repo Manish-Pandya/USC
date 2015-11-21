@@ -75,6 +75,8 @@ class Hazard extends GenericCrud {
 
 	/** Array of the parent ids of this hazard */
 	private $parentIds;
+	
+	private $hasChildren;
 
 	/** Hazards will be ordered by order_index in hazard hub **/
 	private $order_index;
@@ -256,12 +258,19 @@ class Hazard extends GenericCrud {
 	}
 
 	public function getHasChildren(){
-		if ($this->getActiveSubHazards() != null) {
-			return true;
+		if($this->hasChildren == null){
+			$this->hasChildren = false;
+			if ( $this->getActiveSubHazards() != null) {
+				$this->hasChildren = true;
+			}
 		}
-		return false;
+		return $this->hasChildren;
 	}
 
+	public function setHasChildren($hasChildren){
+		$this->hasChildren = $hasChildren;
+	}
+	
 	public function getOrder_index()
 	{
 	    return $this->order_index;
@@ -299,6 +308,11 @@ class Hazard extends GenericCrud {
 	public function setIs_equipment(Boolean  $is_equipment)
 	{
 		$this->is_equipment = $is_equipment;
+	}
+	
+	public function addSubhazard($hazard){
+		if($this->subHazards == null)$this->subHazards = array();
+		array_push($this->subHazards, $hazard);
 	}
 }
 

@@ -2947,55 +2947,15 @@ class ActionManager {
             	}
             	array_push($nestMap[$hazard->getParent_hazard_id()], $hazard);
             }
-           
-            $sortedHazards = $this->rercursivelyOrderHazardMap($hazards, $hashMap, $nestMap, 10000);
-            
-            //return $hazards;            
-            return $sortedHazards;
+                    
+            return $hazards;
         }
         else{
             //error
             return new ActionError("No request parameter 'id' was provided");
         }
     }
-    /*
-     * 
-     * given a flat list of hazards and a parent_hazard_id, orders that list so that each hazard is grouped under its parent hazard
-     * @param Array $flatHazards   an arbitrarily ordered list of hazards
-     * @
-     * 
-     */
-    private function rercursivelyOrderHazardMap($flatHazards, $hashMap, $nestMap, $startingId){
-    	$LOG=Logger::getLogger("asdf");
-    	$sorted = array_slice($nestMap[$startingId],0);
-    	$this->lupus($sorted, $nestMap);
-    	
-    	return $sorted;
-    }
-    /*
-     * 
-     * instead of doing this, init a new array every time and push the rest of the stuff into it
-     * for memory reasons we just cant use the slice method
-     * figure out a way to avoid it
-     * 
-     * 
-     */
-    private function lupus($sorted, $nestMap, $startPoint = null){
-    	$LOG=Logger::getLogger("asdf");
-    	 
-    	foreach ($sorted as $key=>$hazard){
-    		
-    		if($startPoint != null && $key <= $startPoint) continue;
-    			 
-    		if(isset($nestMap[$hazard->getKey_id()])){
-    			$LOG->fatal($hazard->getName());
-    			$head = array_slice($sorted, 0, $key);
-    			$tail = array_slice($sorted, $key);
-    			$sorted = array_merge($head, $nestMap[$hazard->getKey_id()], $tail);   			 
-    		}	    
-    		$this->lupus( $sorted, $nestMap, $key );
-    	}
-    }
+    
     
     public function getHazardRoomRelations( $roomIds = NULL ){
         $roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
@@ -3411,16 +3371,21 @@ class ActionManager {
             //iterate the rooms and find the hazards present
             foreach ($rooms as $room){
                 $hazardlist = $this->getHazardsInRoom($room->getKey_id());
+                $LOG->fatal($hazardlist);
+                
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
+                	 
                     // Check to see if we've already examined this hazard (in an earlier room)
                     if (!in_array($hazard->getKey_id(),$masterHazards)){
                         // if this is new hazard, add its keyid to the master array...
                         $masterHazards[] = $hazard->getKey_id();
                         // ... and get its checklist, if there is one
                         $checklist = $hazard->getChecklist();
+                        
                         // if this hazard had a checklist, add it to the checklists array
                         if (!empty($checklist)){
+                        	$checklist->setParent_hazard_id($hazard->getParent_hazard_id());
                             $checklists[] = $checklist;
                         }
                     }
