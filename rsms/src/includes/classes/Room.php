@@ -145,11 +145,12 @@ class Room extends GenericCrud {
 			// Get the db connection
 			global $db;
 
-			$queryString = "SELECT * FROM hazard WHERE key_id = 9999 OR parent_hazard_id = 9999 GROUP BY parent_hazard_id ORDER BY order_index";
+			$queryString = "SELECT * FROM hazard WHERE key_id = 9999 OR parent_hazard_id = 9999 ORDER BY parent_hazard_id, order_index";
 			$LOG->debug("query: " . $queryString);
 			$stmt = $db->prepare($queryString);
 			$stmt->execute();
 			$generalHazards = $stmt->fetchAll(PDO::FETCH_CLASS, "Hazard");
+			$LOG->fatal($generalHazards);
 			$this->hazards = array_merge($this->hazards, $generalHazards);
 
 		}
