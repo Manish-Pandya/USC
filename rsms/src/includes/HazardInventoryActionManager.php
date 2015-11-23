@@ -44,7 +44,7 @@ class HazardInventoryActionManager extends ActionManager {
 		if($decodedObject == null){
 			return new ActionError("No DTO");
 		}
-		
+		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
 		if($decodedObject->getIsPresent() == false){
 			//delete all the PrincipalInvestigatorHazardRoomRelations
 			foreach($decodedObject->getInspectionRooms() as $room){
@@ -53,21 +53,20 @@ class HazardInventoryActionManager extends ActionManager {
 					$piHazardRoomDao->deleteById($relation->getKey_id());
 				}
 			}
-			
-	
 		}else{
 			foreach($decodedObject->getInspectionRooms() as $room){
 				//get the relevant PrincipalInvestigatorHazardRoomRelation
 				$relations = $this->getRelevantRelations($decodedObject, $room);
 				
 				//room doesn't contain the relevant hazard, so delete any relations
-				if($room->getContainsHazard() == false){
+				if($room["ContainsHazard"] == false){
 					foreach($relations as $relation){
 						$piHazardRoomDao->deleteById($relation->getKey_id());
 					}
 				}
 				//this room contains the relevant hazard
 				else{
+					$LOG->fatal($relations);
 					//hazard, room and PI were already related so we get the relevant relations and save them
 					//since they are already matched by pi, hazard and room, the only thing that could have changed is status
 					//there should only be one relation, but our query returns an array, hence the loop
@@ -79,6 +78,7 @@ class HazardInventoryActionManager extends ActionManager {
 					}
 					//no previous relation.  make a new one and save it
 					else{
+						$LOG->fatal('relations null');
 						
 						$room["ContainsHazard"] = true;
 						
@@ -98,8 +98,8 @@ class HazardInventoryActionManager extends ActionManager {
 	
 	private function getRelevantRelations($hazardDto, $roomDto){
 		$whereClauseGroup = new WhereClauseGroup(
-				new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
-				new WhereClause("principal_investigator_id","=",$decodedObject->getPrincipal_investigator_id()),
+				new WhereClause("hazard_id","=",$hazardDto->getHazard_id()),
+				new WhereClause("principal_investigator_id","=",$hazardDto->getPrincipal_investigator_id()),
 				new WhereClause("room_id","=",$roomDto["Key_id"])
 		);
 			
