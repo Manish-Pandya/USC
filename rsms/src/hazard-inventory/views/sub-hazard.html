@@ -1,10 +1,14 @@
-<label class="checkbox inline">
-    <span ng-if="child.HasChildren" ng-init="child.loadSubhazards()"/>
-    <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
-    <span class="metro-checkbox targetHaz"></span>
-
+ <label class="checkbox inline">
+    <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, hazard)"/>
+    <span class="metro-checkbox"></span>
 </label>
-{{child.Hazard_name}}
+<span style="font-size: 14px;font-weight: normal;line-height: 20px;">
+    <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
+        {{child.Hazard_name}}
+        <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
+    </span>
+    <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+</span>
 <div class="icons">
     <!--</h4>-->
     <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
@@ -24,7 +28,7 @@
     <ul>
         <li ng-repeat="(key, child) in child.ActiveSubHazards">
             <label class="checkbox inline">
-                <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child)"/>
+                <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
                 <span class="metro-checkbox">{{child.Hazard_name}}<img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/></span>
             </label>
         </li>

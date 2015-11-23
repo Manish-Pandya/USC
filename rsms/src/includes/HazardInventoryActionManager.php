@@ -26,6 +26,8 @@ class HazardInventoryActionManager extends ActionManager {
 		 
 	}
 	
+	public function PrincipalInvestigatorHazardRoomRelationById(){}
+	
 	/**
 	 * Given a PIHazardRoomDto, creates or deletes relevant relationships between PI, Hazard, and Room
 	 *
@@ -33,48 +35,76 @@ class HazardInventoryActionManager extends ActionManager {
 	 * @return PIHazardRoomDto $dto
 	 */
 	public function savePIHazardRoomMappings($decodedObject = NULL){
-		//$decodedObject = $this->convertInputJson();
-		 
+		$LOG = Logger::getLogger(__CLASS__);
+		
+		if($decodedObject == null){
+			$decodedObject = $this->convertInputJson();
+		}
+		
+		if($decodedObject == null){
+			return new ActionError("No DTO");
+		}
+		
 		if($decodedObject->getIsPresent() == false){
 			//delete all the PrincipalInvestigatorHazardRoomRelations
 			foreach($decodedObject->getInspectionRooms() as $room){
-				//get the relevant PrincipalInvestigatorHazardRoomRelation
-				$whereClauseGroup = new WhereClauseGroup(
-						new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
-						new WhereClause("principal_investigator_id","=",$decodedObject->getHazard_id()),
-						new WhereClause("room_id","=",$room->getKey_id())
-				);
-				 
-				$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-				$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
+				$relations = $this->getRelevantRelations($decodedObject, $room);				
 				foreach($relations as $relation){
 					$piHazardRoomDao->deleteById($relation->getKey_id());
 				}
 			}
+			
 	
 		}else{
-			//delete all the PrincipalInvestigatorHazardRoomRelations
 			foreach($decodedObject->getInspectionRooms() as $room){
 				//get the relevant PrincipalInvestigatorHazardRoomRelation
-				$whereClauseGroup = new WhereClauseGroup(
-						new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
-						new WhereClause("principal_investigator_id","=",$decodedObject->getHazard_id()),
-						new WhereClause("room_id","=",$room->getKey_id())
-				);
-				 
-				$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-				$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
-				foreach($relations as $relation){
-					$relation = new PrincipalInvestigatorHazardRoomRelation();
-					$room = new Room();
-					if($room->getContainsHazard() == false){
+				$relations = $this->getRelevantRelations($decodedObject, $room);
+				
+				//room doesn't contain the relevant hazard, so delete any relations
+				if($room->getContainsHazard() == false){
+					foreach($relations as $relation){
 						$piHazardRoomDao->deleteById($relation->getKey_id());
-					}else{
-						$relation->setRoom_id($room->getKey_id());
-						//$relation->set7
+					}
+				}
+				//this room contains the relevant hazard
+				else{
+					//hazard, room and PI were already related so we get the relevant relations and save them
+					//since they are already matched by pi, hazard and room, the only thing that could have changed is status
+					//there should only be one relation, but our query returns an array, hence the loop
+					if($relations != null){
+						foreach($relations as $relation){
+							$relation->setStatus($room["Status"]);
+							$piHazardRoomDao->save($relation);
+						}
+					}
+					//no previous relation.  make a new one and save it
+					else{
+						
+						$room["ContainsHazard"] = true;
+						
+						$relation = new PrincipalInvestigatorHazardRoomRelation();
+						$relation->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
+						$relation->setHazard_id($decodedObject->getHazard_id());
+						$relation->setRoom_id($room["Key_id"]);
+						$relation->setStatus($decodedObject->getStatus());
+						$relation->setStatus($room["Status"]);
+						$piHazardRoomDao->save($relation);
 					}
 				}
 			}
 		}
+		return $decodedObject;
+	}
+	
+	private function getRelevantRelations($hazardDto, $roomDto){
+		$whereClauseGroup = new WhereClauseGroup(
+				new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
+				new WhereClause("principal_investigator_id","=",$decodedObject->getPrincipal_investigator_id()),
+				new WhereClause("room_id","=",$roomDto["Key_id"])
+		);
+			
+		$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
+		$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
+		return $relations;
 	}
 }

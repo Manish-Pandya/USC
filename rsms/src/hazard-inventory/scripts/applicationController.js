@@ -6,8 +6,6 @@ angular
         var ac = rootApplicationControllerFactory;
         var store = dataStoreManager;
         //give us access to this factory in all views.  Because that's cool.
-        $rootScope.ac = ac;
-
         store.$q = $q;
 
         ac.getAllPIs= function()
@@ -39,6 +37,21 @@ angular
                             return store.get( 'HazardDto' );
                         }
                     );
+        }
+        
+        ac.handleHazardChecked = function(hazardDto){
+            this.clearError();
+            this.save(hazardDto)
+                .then(
+                    function(){},
+                    function(){
+                        hazardDto.isPresent = !hazardDto.isPresent;
+                        this.setError("Something went wrong.");
+                    }
+                )
+        }
+        
+        ac.saveHazardDto = function(){
         }
 
         return ac;

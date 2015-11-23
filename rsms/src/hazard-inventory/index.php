@@ -10,10 +10,11 @@ session_start();
 
 echo '<script type="text/javascript">
 var isProductionServer;';
-echo "</script>";
+
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
+echo "</script>";
 ?>
 
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
@@ -120,6 +121,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <body>
 
 <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid">
+
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
      <div class="navbar">
         <ul class="nav pageMenu row-fluid redBg">
@@ -214,7 +216,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
                 </li>
                 <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                     <label class="checkbox inline">
-                        <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)"/>
+                        <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
                         <span class="metro-checkbox"></span>
                         <!--<pre>{{child | json}}</pre>-->
                     </label>
@@ -227,7 +229,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
                     </span>
                     <!--</h4>-->
                     <div class="icons">
-                        <span ng-if="child.ActiveSubHazards.length || child.HasChildren && child.IsPresent ">
+                        <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
                             <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
                         </span>
                         <span ng-if="child.IsPresent">

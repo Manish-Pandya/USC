@@ -13,10 +13,9 @@ angular.module('HazardInventory')
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         var af = applicationControllerFactory;
-
         var getAllPIs = function () {
                 return af
-                    .getAllPIs(1)
+                    .getAllPIs()
                     .then(function (pis) {
                             //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
                             $scope.PIs = dataStoreManager.get("PrincipalInvestigator");

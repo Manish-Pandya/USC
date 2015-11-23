@@ -92,7 +92,7 @@ angular
 
             rac.setError = function(errorString, editedThing)
             {
-                $rootScope.error = errorString + ' please check your internet connection and try again';
+                $rootScope.error = errorString + ' Please check your internet connection and try again';
                 if(editedThing)editedThing.edit = false;
             }
 

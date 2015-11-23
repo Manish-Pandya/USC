@@ -81,7 +81,7 @@ class HazardDto {
                 if($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() == $this->principal_investigator_id ){
                     $room->setContainsHazard(true);
                     $this->isPresent = true;
-                    if($room->getStatus != "STORED_ONLY"){
+                    if($room->getStatus() != "STORED_ONLY"){
                         $this->setStored_only(false);
                     }
                 }
