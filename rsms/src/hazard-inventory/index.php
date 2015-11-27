@@ -51,7 +51,7 @@ echo "</script>";
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
-<link type="text/css" rel="stylesheet" href="stylesheets/verification-styles.css">
+<link type="text/css" rel="stylesheet" href="stylesheets/hazard-inventory-styles.css">
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -113,7 +113,7 @@ echo "</script>";
 
 <!-- models -->
 <script type="text/javascript" src="scripts/models/HazardDto.js"></script>
-
+<script type="text/javascript" src="scripts/models/PIHazardRoomDto.js"></script>
 
 <!-- filters -->
 <script type="text/javascript" src="scripts/filters/isEquipmentFilter.js"></script>
@@ -218,7 +218,7 @@ echo "</script>";
                     <label class="checkbox inline">
                         <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
                         <span class="metro-checkbox"></span>
-                        <!--<pre>{{child | json}}</pre>-->
+                        <!--<pre>{{child.InspectionRooms | json}}</pre>-->
                     </label>
                     <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
                         <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">

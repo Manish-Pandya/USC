@@ -187,19 +187,18 @@ angular.module('HazardInventory')
             modalData.Hazard = hazard;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'hazard-inventory-modals/sub-hazards-modal.html',
+                templateUrl: 'views/modals/sub-hazards-modal.html',
                 controller: 'HazardInventoryModalCtrl'
             });
         }
 
         $scope.openRoomsModal = function (hazard) {
             hazard.loadSubHazards();
-            hazard.InspectionRooms = $scope.PI.Rooms;
             var modalData = {};
             modalData.Hazard = hazard;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'hazard-inventory-modals/rooms-modal.html',
+                templateUrl: 'views/modals/rooms-modal.html',
                 controller: 'HazardInventoryModalCtrl'
             });
         }
@@ -211,24 +210,17 @@ angular.module('HazardInventory')
             modalData.Hazard = hazard;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'hazard-inventory-modals/pis-modal.html',
+                templateUrl: 'views/modals/pis-modal.html',
                 controller: 'HazardInventoryModalCtrl'
             });
         }
 
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, actionFunctionsFactory, $modalInstance) {
-        var af = actionFunctionsFactory;
+    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance) {
+        var af = applicationControllerFactory;
+        $scope.af = af;
         $scope.modalData = af.getModalData();
-
-        $scope.pis = [{
-            Name: 'Shayne Barlow'
-        }, {
-            Name: 'Maria "Marj" Pena'
-        }, {
-            Name: 'Jeffery Twiss'
-        }];
 
         $scope.close = function () {
             $modalInstance.dismiss();

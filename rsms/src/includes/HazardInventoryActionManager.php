@@ -31,12 +31,12 @@ class HazardInventoryActionManager extends ActionManager {
 	/**
 	 * Given a PIHazardRoomDto, creates or deletes relevant relationships between PI, Hazard, and Room
 	 *
-	 * @param PIHazardRoomDto $decodedObject
-	 * @return PIHazardRoomDto $dto
+	 * @param HazardDto $decodedObject
+	 * @return HazardDto $decodedObject
 	 */
 	public function savePIHazardRoomMappings($decodedObject = NULL){
-		$LOG = Logger::getLogger(__CLASS__);
-		
+		$LOG = Logger::getLogger("asdfasdfasdf");
+				
 		if($decodedObject == null){
 			$decodedObject = $this->convertInputJson();
 		}
@@ -44,65 +44,92 @@ class HazardInventoryActionManager extends ActionManager {
 		if($decodedObject == null){
 			return new ActionError("No DTO");
 		}
+		
+		foreach($decodedObject->getInspectionRooms() as $roomDto){
+			$this->savePrincipalInvestigatorHazardRoomRelation($roomDto);
+		}
+		
+		return $decodedObject;
+	}
+	
+	/*
+	* Creates, updates or deletes a PIHazardRoomDto object, depending on its ContainsHazard property and whether or not it already exists or needs to be created anew
+	* @ param PIHazardRoomDto decodedObject
+	* @ return PIHazardRoomDto dto
+	*/
+	public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
+		$LOG = Logger::getLogger("asdfaf");
+	
+		if($decodedObject == null){
+			$decodedObject = $this->convertInputJson();
+		}
+	
+		//this method is frequently called by $this->savePIHazardRoomMappings()
+		//because the param of that method is assembled by JsonManager, its children will be arrays instead of objects
+		//If we have passed an array, assemble it into a PIHazardRoomDto object
+		if(is_array($decodedObject)){
+			$decodedObject = JsonManager::assembleObjectFromDecodedArray($decodedObject);
+		}
+	
+		if($decodedObject == null){
+			return new ActionError("No DTO");
+		}
+		
 		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-		if($decodedObject->getIsPresent() == false){
-			//delete all the PrincipalInvestigatorHazardRoomRelations
-			foreach($decodedObject->getInspectionRooms() as $room){
-				$relations = $this->getRelevantRelations($decodedObject, $room);				
+	
+		//get the relevant PrincipalInvestigatorHazardRoomRelation
+		$relations = $this->getRelevantRelations($decodedObject);
+		$LOG->fatal($decodedObject);
+		//room doesn't contain the relevant hazard, so delete any relations
+		if($decodedObject->getContainsHazard() == false){
+			foreach($relations as $relation){
+				$LOG->fatal('here?');
+				$piHazardRoomDao->deleteById($relation->getKey_id());
+			}
+		}
+		//this room contains the relevant hazard
+		else{
+			//hazard, room and PI were already related so we get the relevant relations and save them
+			//since they are already matched by pi, hazard and room, the only thing that could have changed is status
+			//there should only be one relation, but our query returns an array, hence the loop
+			if($relations != null){
 				foreach($relations as $relation){
-					$piHazardRoomDao->deleteById($relation->getKey_id());
+					$relation->setStatus($decodedObject->getStatus());
+					$piHazardRoomDao->save($relation);
 				}
 			}
-		}else{
-			foreach($decodedObject->getInspectionRooms() as $room){
-				//get the relevant PrincipalInvestigatorHazardRoomRelation
-				$relations = $this->getRelevantRelations($decodedObject, $room);
-				
-				//room doesn't contain the relevant hazard, so delete any relations
-				if($room["ContainsHazard"] == false){
-					foreach($relations as $relation){
-						$piHazardRoomDao->deleteById($relation->getKey_id());
-					}
-				}
-				//this room contains the relevant hazard
-				else{
-					$LOG->fatal($relations);
-					//hazard, room and PI were already related so we get the relevant relations and save them
-					//since they are already matched by pi, hazard and room, the only thing that could have changed is status
-					//there should only be one relation, but our query returns an array, hence the loop
-					if($relations != null){
-						foreach($relations as $relation){
-							$relation->setStatus($room["Status"]);
-							$piHazardRoomDao->save($relation);
-						}
-					}
-					//no previous relation.  make a new one and save it
-					else{
-						$LOG->fatal('relations null');
-						
-						$room["ContainsHazard"] = true;
-						
-						$relation = new PrincipalInvestigatorHazardRoomRelation();
-						$relation->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-						$relation->setHazard_id($decodedObject->getHazard_id());
-						$relation->setRoom_id($room["Key_id"]);
-						$relation->setStatus($decodedObject->getStatus());
-						$relation->setStatus($room["Status"]);
-						$piHazardRoomDao->save($relation);
-					}
-				}
+			//no previous relations.  make a new one and save it
+			else{
+				$LOG->fatal('relations null');
+				$decodedObject->setContainsHazard(true);
+	
+				$relation = new PrincipalInvestigatorHazardRoomRelation();
+				$relation->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
+				$relation->setHazard_id($decodedObject->getHazard_id());
+				$relation->setRoom_id($decodedObject->getRoom_id());
+				$relation->setStatus($decodedObject->getStatus());
+				$relation = $piHazardRoomDao->save($relation);
 			}
 		}
 		return $decodedObject;
 	}
+	/*
+	 * Given a PIHazardRoomDTO, finds matching PrincipalInvestigatorHazardRoomRelation objects
+	 * @param PIHazardRoomDTO roomDto
+	 * @return Array <PrincipalInvestigatorHazardRoomRelation> relations
+	 */
 	
-	private function getRelevantRelations($hazardDto, $roomDto){
+	private function getRelevantRelations(PIHazardRoomDTO $roomDto){
+		
+		$LOG = Logger::getLogger("asdfaf");
+		
 		$whereClauseGroup = new WhereClauseGroup(
-				new WhereClause("hazard_id","=",$hazardDto->getHazard_id()),
-				new WhereClause("principal_investigator_id","=",$hazardDto->getPrincipal_investigator_id()),
-				new WhereClause("room_id","=",$roomDto["Key_id"])
+				array(
+					new WhereClause("hazard_id","=",$roomDto->getHazard_id()),
+					new WhereClause("principal_investigator_id","=",$roomDto->getPrincipal_investigator_id()),
+					new WhereClause("room_id","=",$roomDto->getRoom_id())
+				)
 		);
-			
 		$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
 		$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
 		return $relations;

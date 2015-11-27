@@ -56,7 +56,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	public function setPrincipal_investigator_id($principal_investigator_id){ $this->principal_investigator_id = $principal_investigator_id; }
 
 	public function getHazard_id(){return $this->hazard_id;}
-	public function setHzard_id($hazard_id){$this->hazard_id = $hazard_id;}
+	public function setHazard_id($hazard_id){$this->hazard_id = $hazard_id;}
 	
 	public function getStatus(){return $this->status;}
 	public function setStatus($status){$this->status = $status;}

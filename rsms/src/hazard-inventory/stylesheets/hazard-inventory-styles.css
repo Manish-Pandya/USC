@@ -1,0 +1,23 @@
+li.hazard-room{}
+li.hazard-room label span.metro-checkbox{
+    display:block;//
+    margin-top:-12px !important;
+    height: 16px;
+    margin-bottom: 7px;
+}
+li.hazard-room label label span.metro-checkbox{
+    padding-top: 5px !important;
+    font-size: 14px;
+    height: 20px;
+    width:auto;
+    margin-left:20px;
+    display:block;
+    margin-top: -8px !important;
+}
+li.hazard-room label label span.metro-checkbox:after{
+    margin-left:28px;
+    font-size:10px !important;
+    height:12px !important;
+    width:12px !important;
+    line-height:15px;
+}

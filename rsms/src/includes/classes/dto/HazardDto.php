@@ -13,6 +13,7 @@ class HazardDto {
     private $hasMultiplePis;
     private $stored_only;
     private $hasChildren;
+    private $order_index;
 
 
     public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
@@ -30,7 +31,8 @@ class HazardDto {
     public function getStored_only(){return $this->stored_only;}
     public function getHasChildren(){return (bool) $this->hasChildren;}
 	public function getIs_equipment(){return (bool) $this->is_equipment;}
-    
+	public function getOrder_index(){return (int) $this->order_index;}
+	
     
     public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
     public function setHazard_id($newId) { $this->hazard_id = $newId; }
@@ -45,23 +47,29 @@ class HazardDto {
     public function setStored_only($stored){$this->stored_only = $stored;}
     public function setHasChildren($hasChildren){$this->hasChildren = $hasChildren;}
 	public function setIs_equipment($is){ $this->is_equipment = $is; }
+	public function setOrder_index($idx){ $this->order_index = $idx;}
     
     public function setAndFilterInspectionRooms($rooms) {
+    	$LOG = Logger::getLogger( __CLASS__ );
+    	 
+        $LOG->fatal($this->getHazard_name());
+        $this->filterRooms($rooms);
         $this->inspectionRooms = $rooms;
-        $this->filterRooms();
+        
     }
 
-    public function filterRooms(){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+    public function filterRooms($rooms){
+        $LOG = Logger::getLogger(__CLASS__ );
         $this->isPresent = false;
         // Get the db connection
         global $db;
-
+        $LOG->fatal("filtering rooms for ".$this->getHazard_name());
+        
         $roomIds = implode (',',$this->roomIds);
 
         //get all the Relationships between this hazard and rooms that this PI has, so we can determine if this PI or ANY PI has the hazard in any of these rooms
         $queryString = "SELECT * FROM principal_investigator_hazard_room WHERE hazard_id = $this->hazard_id AND room_id IN ($roomIds);";
-         $stmt = $db->prepare($queryString);
+        $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
@@ -71,25 +79,25 @@ class HazardDto {
         //build key_id arrays for fast comparison in the next step
         foreach($piHazardRooms as $relation){
             $relationHashMap[$relation->getRoom_id()] = $relation;
-            if($relationHashMap[$relation->getRoom_id()]->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
-                $this->hasMultiplePis = true;
-                $relationHashMap[$relation->getRoom_id()]->setStatus("OTHER_PI");
-            }
         }
-        foreach ($this->inspectionRooms as $room){
+        
+        foreach ($rooms as &$room){
             if( isset($relationHashMap[$room->getRoom_id()])) {
-                if($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() == $this->principal_investigator_id ){
+            	$room->setStatus($relationHashMap[$room->getRoom_id()]->getStatus());
+            	$LOG->fatal($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() . " | " . $this->getPrincipal_investigator_id());
+                if($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() == $this->getPrincipal_investigator_id() ){
                     $room->setContainsHazard(true);
                     $this->isPresent = true;
-                    if($room->getStatus() != "STORED_ONLY"){
-                        $this->setStored_only(false);
-                    }
+                    $this->setStored_only($room->getStatus() == "STORED_ONLY");
+                }else{
+                	$this->hasMultiplePis = true;
+                	$room->setContainsHazard( false );
+                	$room->setStatus("OTHER_PI");
                 }
-                $room->setHazard_id($this->getHazard_id());
-                $room->setStatus($relationHashMap[$room->getRoom_id()]->getStatus());
+            }else{
+            	$room->setContainsHazard( false );
             }
         }
-
     }
 
 }

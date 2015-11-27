@@ -13,9 +13,12 @@
         /*
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
-        'PrincipalInvestigator' : {getById: "getPiForHazardInventory"      , getAll: "getAllPIs"                    , save: "savePI"                     },
-        'User'                  : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUsers"                  },
-        'HazardDto'             : {getById: "getHazardDtoById"             , getAll: "getAllRadPis"                 , save: "savePIHazardRoomMappings"   },
+        'PrincipalInvestigator' : {getById: "getPiForHazardInventory"      , getAll: "getAllPIs"                    , save: "savePI"                                        },
+        'User'                  : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUsers"                                     },
+        'HazardDto'             : {getById: "getHazardDtoById"             , getAll: "getAllRadPis"                 , save: "savePIHazardRoomMappings"                      },
+        'PIHazardRoomDto'       : {getById: ""                             , getAll: ""                             , save: "savePrincipalInvestigatorHazardRoomRelation"   },
+
+     //PIHazardRoomDto
 };
 
 //"extend" the rad URL mapper from the "parent" url mapper, which can be found in /client-side-framework/scripts/genericmodel/urlMapper.js

@@ -8,6 +8,7 @@ HazardDto.prototype = {
 
     ID_prop: "Hazard_id",
     //eagerAccessors:[{method:"loadSubHazards",boolean:"HasChildren"}],
+    Class: "HazardDto",
 
     SubHazardsRelationship: {
         className:    'HazardDto',

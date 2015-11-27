@@ -874,25 +874,39 @@ class GenericDAO {
 		global $db;
 		
 		//get this pi's rooms
-		$roomsQueryString = "SELECT key_id as room_id, name as room_name from room where key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
+		$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a 
+							 LEFT JOIN building b on a.building_id = b.key_id 
+							 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = '1')";
 		$stmt = $db->prepare($roomsQueryString);
 		$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		$stmt->execute();
 		$rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
+		
+		
+		
 		$roomIds = array();
-		foreach($rooms as $room){
+		foreach($rooms as $room){			
 			$roomIds[] = $room->getRoom_id();
 		}
 				
 		//get a dto for every hazard
-		$queryString = "SELECT key_id as hazard_id, key_id, name as hazard_name, is_equipment, parent_hazard_id as parent_hazard_id, (SELECT EXISTS(SELECT 1 from hazard where parent_hazard_id = hazard_id) ) as hasChildren from hazard;";
+		$queryString = "SELECT key_id as hazard_id, order_index, key_id, name as hazard_name, is_equipment, parent_hazard_id as parent_hazard_id, (SELECT EXISTS(SELECT 1 from hazard where parent_hazard_id = hazard_id) ) as hasChildren from hazard;";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
+		$this->LOG->fatal(count($dtos));
+		
 		foreach($dtos as $dto){
-			$dto->setPrincipal_investigator_id($pIId);
 			$dto->setRoomIds($roomIds);
-			$dto->setAndFilterInspectionRooms($rooms);
+			$dto->setPrincipal_investigator_id($pIId);
+			//make a new collection of rooms so we won't pass a reference
+			$roomDtos = array();
+			foreach($rooms as $key=>$room){
+				$roomDtos[] = clone $room;
+				$roomDtos[$key]->setPrincipal_investigator_id($pIId);
+				$roomDtos[$key]->setHazard_id($dto->getHazard_id());
+			}
+			$dto->setAndFilterInspectionRooms($roomDtos);
 		}
 		return $dtos;
 	}
