@@ -5,8 +5,7 @@
 <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
     <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
         {{child.Hazard_name}}
-        <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
-    </span>
+        <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>    </span>
     <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
 </span>
 <div class="icons">
@@ -18,7 +17,7 @@
         <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
     </span>
 
-    <span ng-if="child.IsPresent">
+    <span ng-if="child.IsPresent && child.HasMultiplePis">
         <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
     </span>
 </div>
@@ -38,7 +37,7 @@
 <div class="roomsModal popUp skinny" ng-if="child.showRoomsModal" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
     <h3 class="redBg"><span>{{child.Hazard_name}}</span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
     <ul>
-        <li ng-repeat="(key, room) in child.InspectionRooms">
+        <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, room) in child.InspectionRooms">
             <label class="checkbox inline">
                 <input ng-disabled="!$parent.$parent.$parent.$parent.$parent.child.InspectionRooms[$index].ContainsHazard" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
                 <span class="metro-checkbox">{{room.Name}}<img ng-if="room.waitingForServer" class="" src="../../img/loading.gif"/></span>

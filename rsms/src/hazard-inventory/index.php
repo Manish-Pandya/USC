@@ -165,13 +165,13 @@ echo "</script>";
                         <div class="controls">
                             <h3 class="span6">Building(s):</h3>
                             <h3 class="span6">
-       Laboratory Rooms:
-       </h3>
+                               Laboratory Rooms:
+                               </h3>
                             <span ng-if="!buildings.length">
-                   <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-                       Select a Principal Investigator.
-                   </p>
-                    <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
+                               <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
+                                   Select a Principal Investigator.
+                               </p>
+                                <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
                     <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
                             </p>
                             </span>
@@ -214,16 +214,15 @@ echo "</script>";
                         </span>
                     </a>
                 </li>
-                <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                     <label class="checkbox inline">
                         <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
                         <span class="metro-checkbox"></span>
-                        <!--<pre>{{child.InspectionRooms | json}}</pre>-->
                     </label>
                     <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
                         <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
                             {{child.Hazard_name}}
-                            <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
+                            <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
                         </span>
                         <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                     </span>
@@ -236,7 +235,7 @@ echo "</script>";
                             <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
                         </span>
 
-                        <span ng-if="child.IsPresent">
+                        <span ng-if="child.IsPresent && child.HasMultiplePis">
                             <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
                         </span>
                     </div>

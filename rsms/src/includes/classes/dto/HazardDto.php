@@ -52,7 +52,7 @@ class HazardDto {
     public function setAndFilterInspectionRooms($rooms) {
     	$LOG = Logger::getLogger( __CLASS__ );
     	 
-        $LOG->fatal($this->getHazard_name());
+        //$LOG->fatal($this->getHazard_name());
         $this->filterRooms($rooms);
         $this->inspectionRooms = $rooms;
         
@@ -63,7 +63,7 @@ class HazardDto {
         $this->isPresent = false;
         // Get the db connection
         global $db;
-        $LOG->fatal("filtering rooms for ".$this->getHazard_name());
+        //$LOG->fatal("filtering rooms for ".$this->getHazard_name());
         
         $roomIds = implode (',',$this->roomIds);
 
@@ -73,7 +73,7 @@ class HazardDto {
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
-        $this->stored_only = true;
+        $this->stored_only = false;
 
         $relationHashMap = array();
         //build key_id arrays for fast comparison in the next step
@@ -84,19 +84,22 @@ class HazardDto {
         foreach ($rooms as &$room){
             if( isset($relationHashMap[$room->getRoom_id()])) {
             	$room->setStatus($relationHashMap[$room->getRoom_id()]->getStatus());
-            	$LOG->fatal($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() . " | " . $this->getPrincipal_investigator_id());
                 if($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() == $this->getPrincipal_investigator_id() ){
                     $room->setContainsHazard(true);
                     $this->isPresent = true;
-                    $this->setStored_only($room->getStatus() == "STORED_ONLY");
+                    $this->setStored_only($room->getStatus() == "Stored Only");
                 }else{
                 	$this->hasMultiplePis = true;
                 	$room->setContainsHazard( false );
                 	$room->setStatus("OTHER_PI");
+                	$this->setHasMultiplePis(true);
                 }
             }else{
             	$room->setContainsHazard( false );
             }
+        }
+        if($this->getIsPresent() == false){
+        	$this->setStored_only(false);
         }
     }
 

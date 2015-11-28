@@ -28,7 +28,8 @@ class HazardInventoryActionMappingFactory extends ActionMappingFactory {
                 "getHazardRoomDtosByPIId" =>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "savePIHazardRoomMappings"=>new ActionMapping("savePIHazardRoomMappings", "", "", $this::$ROLE_GROUPS["EHS"]),
         		"savePrincipalInvestigatorHazardRoomRelation"=>new ActionMapping("savePrincipalInvestigatorHazardRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
-        );
+        		"getBuildingsByPIID"=>new ActionMapping("getBuildingsByPIID", "", "", $this::$ROLE_GROUPS["EHS"]),
+		);
     }
 }
 ?>

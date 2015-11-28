@@ -64,6 +64,10 @@ angular
                 .then(
                     function(){
                         hazardDto.IsPresent = copy.IsPresent;
+                        for(var i =0; i < hazardDto.InspectionRooms.length; i++){
+                            hazardDto.InspectionRooms[i].ContainsHazard = copy.IsPresent;
+                        }
+
                     },
                     function(){
                         ac.setError("Something went wrong.");
@@ -82,14 +86,14 @@ angular
 
             //the room has been added or removed, as opposed to having its status changed
             if(changed){
-
+                room.ContainsHazard = !room.ContainsHazard;
             }
 
             this.save(copy)
                 .then(
                     function(){
-                        angular.extend()
-                        ac.evaluateHazardPresent(hazardDto);
+                        angular.extend(room, copy)
+                        ac.evaluateHazardPresent(hazard);
                     },
                     function(){
                         ac.setError("Something went wrong.");
@@ -118,13 +122,35 @@ angular
         ac.evaluateHazardPresent = function(hazardDto){
             var i = hazardDto.InspectionRooms.length;
             hazardDto.IsPresent = false;
-            //hazardDto.Status = "In Use";
+            hazardDto.Status = "In Use";
 
+            var storedOnly = true;
+            
             while(i--){
                 if(hazardDto.InspectionRooms[i].ContainsHazard == true){
                     hazardDto.IsPresent = true;
+                    if(hazardDto.InspectionRooms[i].Status != "Stored Only"){
+                        storedOnly = false;                    
+                    }
                 }
             }
+            if(hazardDto.IsPresent){
+                hazardDto.Stored_only = storedOnly;
+            }else{
+                hazardDto.Stored_only = false;
+            }
+        }
+    
+        ac.getBuildings = function(id){
+            var urlSegment = "getBuildingsByPIID&id="+id;
+            return genericAPIFactory.read( urlSegment )
+                    .then(
+                        function( returnedPromise ){
+                            //buildings will only be displayed and will be reloaded whenever a new parent is selected.  there is no need to isntantiate or cache them
+                            var buildings = returnedPromise.data;
+                            return buildings;
+                        }
+                    );
         }
 
         return ac;
