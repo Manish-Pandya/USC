@@ -25,7 +25,7 @@ angular
         }
 
         ac.getAllHazardDtos = function(id, roomId){
-
+            dataStore.HazardDto = null;
             var urlSegment = "getHazardRoomDtosByPIId&id="+id;
             if(roomId) urlSegment = urlSegment +"room="+roomId;
 

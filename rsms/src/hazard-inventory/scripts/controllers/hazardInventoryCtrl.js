@@ -145,6 +145,7 @@ angular.module('HazardInventory')
         $scope.onSelectPi = function (pi) {
             $scope.PI = pi;
             $scope.hazardPromise = getHazards(pi.Key_id);
+            $scope.selectPI = false;
         }
 
         //local functions for ordering hazards.  in controller because it's only for the view ordering

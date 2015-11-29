@@ -148,8 +148,9 @@ echo "</script>";
                         <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                         <i class="icon-spinnery-dealie spinner small" style="margin:-6px 0 0 -30px"></i>
                    </span>
+                    {{selectPI}}
                     <span ng-if="PIs">
-                        <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span8" >
+                        <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="selectPI = false;onSelectPi($item)" class="span8" >
                             <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                             <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                               <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
@@ -157,8 +158,8 @@ echo "</script>";
                         </ui-select>
                         <h3 style="display:inline" ng-if="PI && !selectPI">{{PI.User.Name}}</h3>
                         <span ng-click="selectPI = !selectPI">
-                            <i  ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
-                            <i class="icon-cancel danger" ng-if="PI && selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 5px;"></i>
+                            <i ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
+                            <i class="icon-cancel danger" ng-if="PI && selectPI"  style="margin: 6px 5px;"></i>
                         </span>
                     </span>
                 </div>
@@ -206,7 +207,7 @@ echo "</script>";
                 </h1>
             </span>
             <hr>
-            <ul class="topChildren" ng-init="hazard.loadSubhazards()">
+            <ul ng-if="!hazard.hidden" class="topChildren" ng-init="hazard.loadSubhazards()">
                 <li>
                     <a style="margin-bottom:15px;" class="btn btn-mini btn-info" ng-click="hazard.hideUnselected = !hazard.hideUnselected">
                         <span ng-if="!hazard.hideUnselected">
@@ -218,6 +219,46 @@ echo "</script>";
                     </a>
                 </li>
                 <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
+                        <span class="metro-checkbox"></span>
+                    </label>
+                    <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
+                        <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
+                            {{child.Hazard_name}}
+                            <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
+                        </span>
+                        <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                    </span>
+                    <!--</h4>-->
+                    <div class="icons">
+                        <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
+                            <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
+                        </span>
+                        <span ng-if="child.IsPresent">
+                            <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
+                        </span>
+
+                        <span ng-if="child.IsPresent && child.HasMultiplePis">
+                            <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
+                        </span>
+                    </div>
+                    <ul class="subRooms" ng-if="getShowRooms(child)" ng-repeat="(key, building) in child.InspectionRooms | groupBy: 'Building_name'">
+                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}">{{ room.Room_name }}<span ng-if="!$last">, </span></span></li>
+                    </ul>
+                    <ul>
+                        <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
+                            <span ng-init="child.loadSubHazards()" data-ng-include="'views/sub-hazard.html'"></span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- EQUIPMENT LIST HERE -->
+            <br/><br/><br/>
+            <h1 ng-class="{narrow: hazard.hidden}" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Hazard_name == 'Biological Safety' || hazard.Hazard_name == 'Chemical and Physical Safety' || hazard.Hazard_name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Hazard_name.indexOf('adiation') > -1">Equipment/Device</span></h1>
+            <hr style="margin-bottom:4px;">
+            <ul ng-if="!hazard.hidden" class="topChildren" ng-init="hazard.loadSubhazards()">
+                <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                     <label class="checkbox inline">
                         <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
                         <span class="metro-checkbox"></span>
