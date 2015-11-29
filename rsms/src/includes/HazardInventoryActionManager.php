@@ -176,4 +176,46 @@ class HazardInventoryActionManager extends ActionManager {
             $pi->setBuildings($buildings);
 		return $pi->getBuildings();
 	}
+	
+	public function getPisByHazardAndRoomIDs( $roomId = null, $hazardId = null){
+
+		if($roomId == NULL){
+			$roomId = $this->getValueFromRequest('roomId', $roomId);
+		}
+		
+		if($hazardId == NULL){
+			$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
+		}
+		
+		if($roomId == NULL && $hazardId == NULL){
+			return new ActionError("roomId and hazardId params both required");
+		}
+		
+		$piDao = $this->getDao(new PrincipalInvestigator());
+		$pis = $piDao->getPisByHazardAndRoomIDs($roomId, $hazardId);
+		
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+		$entityMaps[] = new EntityMap("lazy","getRooms");
+		$entityMaps[] = new EntityMap("lazy","getDepartments");
+		$entityMaps[] = new EntityMap("eager","getUser");
+		$entityMaps[] = new EntityMap("lazy","getInspections");
+		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+		$entityMaps[] = new EntityMap("lazy", "getPickups");
+		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
+		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+		$entityMaps[] = new EntityMap("lazy","getVerifications");
+		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
+		
+		foreach(){
+			
+		}
+			
+	}
 }

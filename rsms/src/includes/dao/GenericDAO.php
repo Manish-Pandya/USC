@@ -876,7 +876,7 @@ class GenericDAO {
 		//get this pi's rooms
 		$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a 
 							 LEFT JOIN building b on a.building_id = b.key_id 
-							 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = '1')";
+							 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 		$stmt = $db->prepare($roomsQueryString);
 		$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		$stmt->execute();
@@ -909,6 +909,26 @@ class GenericDAO {
 			$dto->setAndFilterInspectionRooms($roomDtos);
 		}
 		return $dtos;
+	}
+	
+	function getPisByHazardAndRoomIDs( $roomId, $hazardId ){
+		$LOG = Logger::getLogger(__CLASS__);
+	
+		// Get the db connection
+		global $db;
+	
+		//get this pi's rooms
+		$queryString = "SELECT * from principal_investigator where key_id 
+						IN(select principal_investigator_id from principal_investigator_hazard_room where room_id = :roomId AND hazard_id = :hazardId)";
+	
+		//get a dto for every hazard
+		$stmt = $db->prepare($queryString);
+		$stmt->bindParam('roomId', $roomId, PDO::PARAM_INT);
+		$stmt->bindParam('hazardId', $hazardId, PDO::PARAM_INT);
+		$stmt->execute();
+		$pis = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
+
+		return $pis;
 	}
 
 

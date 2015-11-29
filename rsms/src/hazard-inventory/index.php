@@ -183,7 +183,7 @@ echo "</script>";
                    <ul class="selectedBuildings">
                        <li ng-repeat="(key, building) in buildings">
                        <div class="span6">
-                           <h4 ><!--<a class="btn btn-danger btn-mini" style="margin-right:5px;"><i class="icon-cancel-2" ng-click="removeBuilding(building)"></i></a>-->{{building.Name}}</h4>
+                           <h4 >{{building.Name}}</h4>
                        </div>
                        <div class="roomsForBuidling span6">
                            <ul>
