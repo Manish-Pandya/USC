@@ -180,6 +180,23 @@ angular.module('HazardInventory')
             return false;
         }
 
+        $scope.getShowRooms = function(hazard){
+            var atLeastOne = false;
+            var notAll = false;
+            var i = hazard.InspectionRooms.length;
+            while(i--){
+                var room = hazard.InspectionRooms[i];
+                if(room.ContainsHazard){
+                    atLeastOne = true;
+                }else{
+                    notAll = true;
+                }
+            }
+            if(atLeastOne && notAll)return true;
+            return false;
+
+        }
+
         $scope.openSubsModal = function (hazard) {
             hazard.loadSubHazards();
             var modalData = {};

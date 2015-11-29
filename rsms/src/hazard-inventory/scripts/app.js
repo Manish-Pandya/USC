@@ -18,6 +18,7 @@ angular
         'ui.bootstrap',
         'once',
         'modalPosition',
-        'convenienceMethodWithRoleBasedModule'
+        'convenienceMethodWithRoleBasedModule',
+        'angular.filter'
     ])
     .controller('NavCtrl', function ($rootScope, applicationControllerFactory) {});

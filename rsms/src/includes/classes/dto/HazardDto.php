@@ -78,6 +78,10 @@ class HazardDto {
         $relationHashMap = array();
         //build key_id arrays for fast comparison in the next step
         foreach($piHazardRooms as $relation){
+        	//while we're at it, determine if any of these relations belong to other PIs
+        	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
+        		$this->hasMultiplePis = true;
+        	}
             $relationHashMap[$relation->getRoom_id()] = $relation;
         }
         
@@ -89,7 +93,6 @@ class HazardDto {
                     $this->isPresent = true;
                     $this->setStored_only($room->getStatus() == "Stored Only");
                 }else{
-                	$this->hasMultiplePis = true;
                 	$room->setContainsHazard( false );
                 	$room->setStatus("OTHER_PI");
                 	$this->setHasMultiplePis(true);

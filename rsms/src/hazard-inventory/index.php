@@ -83,6 +83,8 @@ echo "</script>";
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
+
 <!-- Required for the ORM framework -->
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>
@@ -117,6 +119,7 @@ echo "</script>";
 
 <!-- filters -->
 <script type="text/javascript" src="scripts/filters/isEquipmentFilter.js"></script>
+<script type="text/javascript" src="scripts/filters/subRoomsFilter.js"></script>
 </head>
 <body>
 
@@ -239,11 +242,8 @@ echo "</script>";
                             <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
                         </span>
                     </div>
-                    <ul ng-if="getShowRooms(child)" class="subRooms">
-                        <li>Rooms:</li>
-                        <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
-                            <a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span>
-                        </li>
+                    <ul class="subRooms" ng-if="getShowRooms(child)" ng-repeat="(key, building) in child.InspectionRooms | groupBy: 'Building_name'">
+                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}">{{ room.Room_name }}<span ng-if="!$last">, </span></span></li>
                     </ul>
                     <ul>
                         <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">

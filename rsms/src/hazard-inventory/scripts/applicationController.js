@@ -125,12 +125,12 @@ angular
             hazardDto.Status = "In Use";
 
             var storedOnly = true;
-            
+
             while(i--){
                 if(hazardDto.InspectionRooms[i].ContainsHazard == true){
                     hazardDto.IsPresent = true;
                     if(hazardDto.InspectionRooms[i].Status != "Stored Only"){
-                        storedOnly = false;                    
+                        storedOnly = false;
                     }
                 }
             }
@@ -140,7 +140,7 @@ angular
                 hazardDto.Stored_only = false;
             }
         }
-    
+
         ac.getBuildings = function(id){
             var urlSegment = "getBuildingsByPIID&id="+id;
             return genericAPIFactory.read( urlSegment )
