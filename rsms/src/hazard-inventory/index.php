@@ -148,22 +148,21 @@ echo "</script>";
                         <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                         <i class="icon-spinnery-dealie spinner small" style="margin:-6px 0 0 -30px"></i>
                    </span>
-                    {{selectPI}}
                     <span ng-if="PIs">
-                        <ui-select ng-if="!PI || selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="selectPI = false;onSelectPi($item)" class="span8" >
+                        <ui-select ng-if="!PI || af.selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="af.selectPI = false;onSelectPi($item)" class="span8" >
                             <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                             <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                               <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
-                        <h3 style="display:inline" ng-if="PI && !selectPI">{{PI.User.Name}}</h3>
-                        <span ng-click="selectPI = !selectPI">
-                            <i ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
-                            <i class="icon-cancel danger" ng-if="PI && selectPI"  style="margin: 6px 5px;"></i>
+                        <h3 style="display:inline" ng-if="PI && !af.selectPI">{{PI.User.Name}}</h3>
+                        <span ng-click="af.selectPI = !af.selectPI">
+                            <i ng-if="PI && !af.selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
+                            <i class="icon-cancel danger" ng-if="PI && af.selectPI"  style="margin: 6px 5px;"></i>
                         </span>
                     </span>
                 </div>
-                <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
+                <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!af.selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
             </div>
                     <div class="span8" ng-if="PI || pi">
                         <div class="controls">
