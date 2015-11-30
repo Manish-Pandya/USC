@@ -911,20 +911,33 @@ class GenericDAO {
 		return $dtos;
 	}
 	
-	function getPisByHazardAndRoomIDs( $roomId, $hazardId ){
+	function getPisByHazardAndRoomIDs( $roomIds, $hazardId = null){
 		$LOG = Logger::getLogger(__CLASS__);
 	
 		// Get the db connection
 		global $db;
+		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
 	
 		//get this pi's rooms
-		$queryString = "SELECT * from principal_investigator where key_id 
-						IN(select principal_investigator_id from principal_investigator_hazard_room where room_id = :roomId AND hazard_id = :hazardId)";
+		$queryString = 'SELECT *
+					    FROM principal_investigator
+					    WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . '))';
 	
-		//get a dto for every hazard
+		if($hazardId != null){
+			$queryString .= " & hazard_id = :hazardId";
+		}
+		
+		$LOG->fatal($queryString);
+		
 		$stmt = $db->prepare($queryString);
-		$stmt->bindParam('roomId', $roomId, PDO::PARAM_INT);
-		$stmt->bindParam('hazardId', $hazardId, PDO::PARAM_INT);
+		
+		if($hazardId != null){
+			$stmt->bindValue(":hazardId", $hazardId, PDO::PARAM_INT);
+		}	
+		// bindvalue is 1-indexed, so $k+1
+		foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
 		$stmt->execute();
 		$pis = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
 

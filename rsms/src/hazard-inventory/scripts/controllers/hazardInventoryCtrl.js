@@ -220,16 +220,20 @@ angular.module('HazardInventory')
             });
         }
 
-        $scope.openMultiplePIsModal = function (hazard) {
-            hazard.loadSubHazards();
-            hazard.InspectionRooms = $scope.PI.Rooms;
+        $scope.openMultiplePIsModal = function (thing) {
             var modalData = {};
-            modalData.Hazard = hazard;
-            af.setModalData(modalData);
-            var modalInstance = $modal.open({
-                templateUrl: 'views/modals/pis-modal.html',
-                controller: 'HazardInventoryModalCtrl'
-            });
+            af.getPIs(thing)
+                .then(function(pis){
+                    console.log(pis);
+                    modalData[thing.Class] = thing;
+                    modalData.PIs = pis;
+                    af.setModalData(modalData);
+                    var modalInstance = $modal.open({
+                        templateUrl: 'views/modals/multiple-PIs-modal.html',
+                        controller: 'HazardInventoryModalCtrl'
+                    });
+                })
+
         }
 
 
@@ -238,6 +242,7 @@ angular.module('HazardInventory')
         var af = applicationControllerFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        console.log()
 
         $scope.close = function () {
             $modalInstance.dismiss();

@@ -177,22 +177,32 @@ class HazardInventoryActionManager extends ActionManager {
 		return $pi->getBuildings();
 	}
 	
-	public function getPisByHazardAndRoomIDs( $roomId = null, $hazardId = null){
+	public function getPisByHazardAndRoomIDs( $roomIds = null, $hazardId = null){
 
-		if($roomId == NULL){
-			$roomId = $this->getValueFromRequest('roomId', $roomId);
+		$LOG = Logger::getLogger(__Class__);
+		
+		if($roomIds == NULL){
+			$roomIds = $this->getValueFromRequest('roomIds', $roomIds);
 		}
 		
 		if($hazardId == NULL){
 			$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
 		}
 		
-		if($roomId == NULL && $hazardId == NULL){
+		$LOG->fatal($roomIds);
+		$LOG->fatal($hazardId);
+		
+		if($roomIds == NULL && $hazardId == NULL){
 			return new ActionError("roomId and hazardId params both required");
 		}
 		
 		$piDao = $this->getDao(new PrincipalInvestigator());
-		$pis = $piDao->getPisByHazardAndRoomIDs($roomId, $hazardId);
+		
+		if($hazardId != null){
+			$pis = $piDao->getPisByHazardAndRoomIDs($roomIds, $hazardId);
+		}else{
+			$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
+		}
 		
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -213,9 +223,11 @@ class HazardInventoryActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		
-		foreach(){
-			
+		foreach($pis as $pi){
+			$pi->setEntityMaps($entityMaps);
 		}
+		
+		return $pis;
 			
 	}
 }

@@ -153,5 +153,29 @@ angular
                     );
         }
 
+        ac.getPIs = function(roomOrHazarDto){
+
+            var urlSegment = "getPisByHazardAndRoomIDs";
+            var ids = [];
+            if(roomOrHazarDto.Class == "Room"){
+                urlSegment += "&"+$.param({roomIds:[roomOrHazarDto.Key_id]});
+            }else{
+                var i = roomOrHazarDto.InspectionRooms.length;
+                while(i--){
+                    ids.push(roomOrHazarDto.InspectionRooms[i].Room_id);
+                }
+                console.log(ids);
+                urlSegment += "&"+$.param({roomIds:ids});
+            }
+
+            return genericAPIFactory.read( urlSegment )
+                    .then(
+                        function( returnedPromise ){
+                            console.log(returnedPromise.data)
+                           return  returnedPromise.data;
+                        }
+                    );
+        }
+
         return ac;
     });
