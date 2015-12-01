@@ -8,7 +8,7 @@
  * Controller of the HazardInventory Hazard Hub
  */
 angular.module('HazardInventory')
-    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal) {
+    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location) {
 
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
@@ -25,9 +25,10 @@ angular.module('HazardInventory')
                             $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
                         });
             },
-            getHazards = function (id) {
+            getHazards = function (id, roomId) {
+                if(!roomId)roomId = false;
                 return af
-                    .getAllHazardDtos(id)
+                    .getAllHazardDtos(id, roomId)
                     .then(
                         function (hazards) {
                             return hazards
@@ -50,135 +51,38 @@ angular.module('HazardInventory')
                             $scope.error = 'Couldn\'t find the right hazards.'
                         }
 
-                    ).then(af.getBuildings(id).then(function(buildings){console.log(buildings);$scope.buildings=buildings;}));
+                    ).then(
+                        af.getBuildings(id,roomId).then(function(buildings){;$scope.buildings=buildings;})
+                    );
 
-            },
-            setInspection = function (pi) {
-                //fill the PI select field with the selected PI's name
-                $scope.customSelected = pi.User.Name;
-
-                //now that we have a PI, we can initialize the inspection
-                var PIKeyID = pi.Key_id;
-
-                //todo:  when we do user siloing, give the user a way to add another inspection
-                //dummy value for inspector ids
-                inspectorIds = [1];
-
-                //if we are accessing an inspection that has already been started, we get it's get ID from the $location.search() property (AngularJS hashed get param)
-                if ($location.search().inspectionId) {
-                    inspectionId = $location.search().inspectionId
-                } else {
-                    inspectionId = '';
-                }
-
-                //set up our $q object so that we can either return a promise on success or break the promise chain on error
-                var inspectionDefer = $q.defer();
-
-                hazardInventoryFactory
-                    .initialiseInspection(PIKeyID, inspectorIds, inspectionId)
-                    .then(function (inspection) {
-                            //set our get params so that this inspection can be quickly accessed on page reload
-                            $location.search('inspectionId', inspection.Key_id);
-                            $location.search("pi", inspection.PrincipalInvestigator.Key_id);
-
-                            //set up our list of buildings
-                            $scope.buildings = hazardInventoryFactory.parseBuildings(inspection.Rooms);
-
-                            //set our inspection scope object
-                            $scope.inspection = inspection;
-
-                            //we return the inspection's rooms so that we can query for hazards
-                            inspectionDefer.resolve(inspection.Rooms);
-                        },
-                        function (noRooms) {
-                            if (noRooms) {
-                                //there was no error, but this PI doesn't have any rooms, so we can't inspect
-                                $scope.noRoomsAssigned = true;
-                            } else {
-                                $scope.error = "There was a problem creating the Inspection.  Please check your internet connection and try selecting a Principal Investigator again.";
-                            }
-                            //call our $q object's reject method to break the promise chain
-                            inspectionDefer.reject();
-                        });
-
-                return inspectionDefer.promise;
-            },
-            resetInspectionRooms = function (roomIds, inspectionId) {
-                //set up our $q object so that we can either return a promise on success or break the promise chain on error
-                var resetInspectionDefer = $q.defer();
-                $scope.hazards = [];
-                $scope.hazardsLoading = true;
-                hazardInventoryFactory
-                    .resetInspectionRooms(roomIds, inspectionId)
-                    .then(function (hazards) {
-                            if (!hazards.InspectionRooms) hazards.InspectionRooms = [];
-                            $scope.hazards = hazards.ActiveSubHazards;
-                            $scope.hazardsLoading = false;
-                            $scope.needNewHazards = false;
-                            //angular.forEach($scope.hazards, function(hazard, key){
-                            //if(hazard.IsPresent)$scope.getShowRooms(hazard);
-                            //});
-
-                            resetInspectionDefer.resolve(hazards);
-                        },
-                        function () {
-                            $scope.error = 'There was a problem getting the new list of hazards.  Please check your internet connection and try again.';
-                            resetInspectionDefer.reject();
-                        });
-                return resetInspectionDefer.promise;
-            },
-            initiateInspection = function (piKey_id) {
-                //start our inspeciton creation/load process
-                //chained promises to get a PI, Inspection, and Hazards
-                getPi(piKey_id)
-                    .then(setInspection)
-                    .then(getHazards);
-            };
-        $scope.piPromise = getAllPIs()
+            }
+        
+        $scope.piPromise = 
+            getAllPIs()
             .then(
                 function (pis) {
                     $scope.pis = pis;
+                    console.log($location);
+                    if($location.search()){
+
+                        if ($location.search().pi){
+                            var pi = dataStoreManager.getById("PrincipalInvestigator",$location.search().pi);
+                            if($location.search().room){
+                                $scope.onSelectPi(pi, $location.search().room);
+                            }else{
+                                $scope.onSelectPi(pi);
+                            }
+                        }
+                    }
                 }
             );
 
 
-        $scope.onSelectPi = function (pi) {
+        $scope.onSelectPi = function (pi, roomId) {
             $scope.PI = pi;
-            $scope.hazardPromise = getHazards(pi.Key_id);
+            if(!roomId)roomId = false;
+            $scope.hazardPromise = getHazards(pi.Key_id, roomId);
             $scope.selectPI = false;
-        }
-
-        //local functions for ordering hazards.  in controller because it's only for the view ordering
-        $scope.order = function (hazard) {
-            return parseFloat(hazard.Order_index);
-        }
-
-        $scope.name = function (hazard) {
-            return parseFloat(hazard.getName());
-        }
-
-        //view filter for displaying hazards with the matching Is_active state
-        $scope.hazardFilter = function (hazard) {
-            if ($scope.hazardFilterSetting.Is_active == 'both') {
-                return true;
-            } else if ($scope.hazardFilterSetting.Is_active == 'active') {
-                if (hazard.Is_active == true) return true;
-            } else if ($scope.hazardFilterSetting.Is_active == 'inactive') {
-                if (hazard.Is_active == false) return true;
-            }
-            return false;
-        }
-
-        //view filter for displaying hazards with the matching Is_active state
-        $scope.hazardFilter = function (hazard) {
-            if ($scope.hazardFilterSetting.Is_active == 'both') {
-                return true;
-            } else if ($scope.hazardFilterSetting.Is_active == 'active') {
-                if (hazard.Is_active == true) return true;
-            } else if ($scope.hazardFilterSetting.Is_active == 'inactive') {
-                if (hazard.Is_active == false) return true;
-            }
-            return false;
         }
 
         $scope.getShowRooms = function(hazard){
@@ -220,12 +124,20 @@ angular.module('HazardInventory')
             });
         }
 
-        $scope.openMultiplePIsModal = function (thing) {
+        $scope.openMultiplePIsModal = function (hazardDto, room) {
             var modalData = {};
-            af.getPIs(thing)
+            if(!room){
+                var room = false;
+            }else{
+                modalData[room.Class] = room;
+            }
+            if(!hazardDto){
+                var hazardDto = false;
+            }else{
+                modalData.HazardDto = hazardDto;
+            }
+            $scope.pisPromise = af.getPIs(hazardDto, room)
                 .then(function(pis){
-                    console.log(pis);
-                    modalData[thing.Class] = thing;
                     modalData.PIs = pis;
                     af.setModalData(modalData);
                     var modalInstance = $modal.open({
@@ -245,7 +157,7 @@ angular.module('HazardInventory')
         console.log()
 
         $scope.close = function () {
-            $modalInstance.dismiss();
             af.deleteModalData();
+            $modalInstance.dismiss();
         }
     });

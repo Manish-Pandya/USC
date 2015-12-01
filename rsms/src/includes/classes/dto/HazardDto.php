@@ -81,28 +81,35 @@ class HazardDto {
         	//while we're at it, determine if any of these relations belong to other PIs
         	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
         		$this->hasMultiplePis = true;
+        		$relation->setHasMultiplePis(true);
+        	}else{
+        		$relation->setHasMultiplePis(false);
         	}
-            $relationHashMap[$relation->getRoom_id()] = $relation;
+        	
+        	if(!isset($relationHashMap[$relation->getRoom_id()])){
+        		$relationHashMap[$relation->getRoom_id()] = array();
+        	}
+        	array_push($relationHashMap[$relation->getRoom_id()], $relation);
         }
-        
+        $this->isPresent = false;
+        $this->stored_only = false;
         foreach ($rooms as &$room){
+        	$room->setContainsHazard(false);
+        	$room->setHasMultiplePis(false);
             if( isset($relationHashMap[$room->getRoom_id()])) {
-            	$room->setStatus($relationHashMap[$room->getRoom_id()]->getStatus());
-                if($relationHashMap[$room->getRoom_id()]->getPrincipal_investigator_id() == $this->getPrincipal_investigator_id() ){
-                    $room->setContainsHazard(true);
-                    $this->isPresent = true;
-                    $this->setStored_only($room->getStatus() == "Stored Only");
-                }else{
-                	$room->setContainsHazard( false );
-                	$room->setStatus("OTHER_PI");
-                	$this->setHasMultiplePis(true);
-                }
-            }else{
-            	$room->setContainsHazard( false );
-            }
-        }
-        if($this->getIsPresent() == false){
-        	$this->setStored_only(false);
+            	//see if there's a relation for this room and hazard with this pi id
+            	foreach ($relationHashMap[$room->getRoom_id()] as $relation){
+            		if($relation->getPrincipal_investigator_id() == $this->getPrincipal_investigator_id() ){
+            			$room->setContainsHazard(true);
+            			$this->isPresent = true;
+            			$this->setStored_only($room->getStatus() == "Stored Only");
+            			$room->setStatus($relation->getStatus());
+            		}
+            		if($relation->getHasMultiplePis() == true){
+            			$room->setHasMultiplePis(true);
+            		}
+            	}
+            }            
         }
     }
 

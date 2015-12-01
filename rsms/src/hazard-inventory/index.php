@@ -125,7 +125,10 @@ echo "</script>";
 
 <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid">
 
-<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:pisPromise,message:'Loading Principal Investigators',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
      <div class="navbar">
         <ul class="nav pageMenu row-fluid redBg">
             <li class="span12">
@@ -141,7 +144,7 @@ echo "</script>";
         <form class="form">
             <div class="control-group span4">
                 <label class="control-label" for="name">
-                       <h3>Principal Investigator</h3>
+                   <h3 style="height:34px;">Principal Investigator</h3>
                 </label>
                 <div class="controls">
                     <span ng-if="!PIs">
@@ -187,7 +190,7 @@ echo "</script>";
                        </div>
                        <div class="roomsForBuidling span6">
                            <ul>
-                               <li ng-repeat="(key, room) in building.Rooms | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                               <li ng-repeat="(key, room) in building.Rooms | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                             </ul>
                         </div>
                         </li>
@@ -243,7 +246,7 @@ echo "</script>";
                         </span>
                     </div>
                     <ul class="subRooms" ng-if="getShowRooms(child)" ng-repeat="(key, building) in child.InspectionRooms | groupBy: 'Building_name'">
-                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}">{{ room.Room_name }}<span ng-if="!$last">, </span></span></li>
+                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}"><a ng-click="openMultiplePIsModal(child, room)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span></li>
                     </ul>
                     <ul>
                         <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
@@ -283,7 +286,7 @@ echo "</script>";
                         </span>
                     </div>
                     <ul class="subRooms" ng-if="getShowRooms(child)" ng-repeat="(key, building) in child.InspectionRooms | groupBy: 'Building_name'">
-                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}">{{ room.Room_name }}<span ng-if="!$last">, </span></span></li>
+                        <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}"><a ng-click="openMultiplePIsModal(child, room)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span></li>
                     </ul>
                     <ul>
                         <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">

@@ -867,22 +867,28 @@ class GenericDAO {
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
 	
-	function getHazardRoomDtosByPIId( $pIId ){
+	function getHazardRoomDtosByPIId( $pIId, $roomId = null ){
 		$LOG = Logger::getLogger(__CLASS__);
 		
 		// Get the db connection
 		global $db;
 		
 		//get this pi's rooms
-		$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a 
-							 LEFT JOIN building b on a.building_id = b.key_id 
-							 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
-		$stmt = $db->prepare($roomsQueryString);
-		$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
+		if($roomId == null){
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a 
+								 LEFT JOIN building b on a.building_id = b.key_id 
+								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
+			$stmt = $db->prepare($roomsQueryString);
+			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);				
+		}else{
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
+								 LEFT JOIN building b on a.building_id = b.key_id
+								 where a.key_id = :roomId";
+			$stmt = $db->prepare($roomsQueryString);
+			$stmt->bindParam(':roomId', $roomId, PDO::PARAM_INT);				
+		}
 		$stmt->execute();
 		$rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
-		
-		
 		
 		$roomIds = array();
 		foreach($rooms as $room){			
@@ -921,19 +927,21 @@ class GenericDAO {
 		//get this pi's rooms
 		$queryString = 'SELECT *
 					    FROM principal_investigator
-					    WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . '))';
+					    WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
 	
 		if($hazardId != null){
-			$queryString .= " & hazard_id = :hazardId";
+			$queryString .= " AND hazard_id = $hazardId";
 		}
+		
+		$queryString .= ')';
 		
 		$LOG->fatal($queryString);
 		
 		$stmt = $db->prepare($queryString);
-		
+		/*
 		if($hazardId != null){
 			$stmt->bindValue(":hazardId", $hazardId, PDO::PARAM_INT);
-		}	
+		}	*/
 		// bindvalue is 1-indexed, so $k+1
 		foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);

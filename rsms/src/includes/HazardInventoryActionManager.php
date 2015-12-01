@@ -9,15 +9,23 @@
  */
 class HazardInventoryActionManager extends ActionManager {
 	
-	public function getHazardRoomDtosByPIId($piId = null) {
+	public function getHazardRoomDtosByPIId($piId = null, $roomId = null) {
 		 
 		if($piId == NULL){
 			$piId = $this->getValueFromRequest('id', $piId);
 		}
+		
+		if($roomId == NULL){
+			$roomId = $this->getValueFromRequest('roomId', $roomId);
+		}
 		 
 		if( $piId !== NULL ){
 			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			return $dao->getHazardRoomDtosByPIId($piId);
+			if($roomId == null){
+				return $dao->getHazardRoomDtosByPIId($piId);
+			}else{
+				return $dao->getHazardRoomDtosByPIId($piId, $roomId);
+			}
 		}
 		else{
 			//error
@@ -109,6 +117,7 @@ class HazardInventoryActionManager extends ActionManager {
 				$relation->setRoom_id($decodedObject->getRoom_id());
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
+				$LOG->fatal($relation);
 			}
 		}
 		return $decodedObject;
@@ -138,6 +147,8 @@ class HazardInventoryActionManager extends ActionManager {
 	public function getBuildingsByPIID(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$id = $this->getValueFromRequest("id", $id);
+		$roomId = $this->getValueFromRequest("roomId", $roomId);
+		
 		$pi = $this->getPIById($id);
 		$rooms = $pi->getRooms();
 		$buildings = array();
@@ -156,13 +167,20 @@ class HazardInventoryActionManager extends ActionManager {
 		$buildingMaps[] = new EntityMap("lazy","getCampus_id");
 		$buildingMaps[] = new EntityMap("lazy","getPhysical_address");
             foreach($rooms as $room){
-                if(!in_array($room->getBuilding(), $buildings)){
-                    $buildings[] = $room->getBuilding();
-                }
+            	if($roomId == NULL){
+	                if(!in_array($room->getBuilding(), $buildings)){
+	                    $buildings[] = $room->getBuilding();
+	                }
+            	}else{
+            		if($room->getKey_id() == $roomId){
+            			$buildings[] = $room->getBuilding();
+            			$pi->setRooms(array($room));
+            		}
+            	}
             }
 
             foreach($buildings as $building){
-                $rooms = array();
+                $rooms = array();                
                 foreach($pi->getRooms() as $room){
                     if($room->getBuilding_id() == $building->getKey_id()){
                         $room->setEntityMaps($roomMaps);

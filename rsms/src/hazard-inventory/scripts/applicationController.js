@@ -27,7 +27,7 @@ angular
         ac.getAllHazardDtos = function(id, roomId){
             dataStore.HazardDto = null;
             var urlSegment = "getHazardRoomDtosByPIId&id="+id;
-            if(roomId) urlSegment = urlSegment +"room="+roomId;
+            if(roomId) urlSegment = urlSegment +"&roomId="+roomId;
 
             return genericAPIFactory.read( urlSegment )
                     .then(
@@ -141,8 +141,10 @@ angular
             }
         }
 
-        ac.getBuildings = function(id){
+        ac.getBuildings = function(id, roomId){
             var urlSegment = "getBuildingsByPIID&id="+id;
+            if(roomId) urlSegment = urlSegment +"&roomId="+roomId;
+
             return genericAPIFactory.read( urlSegment )
                     .then(
                         function( returnedPromise ){
@@ -153,19 +155,35 @@ angular
                     );
         }
 
-        ac.getPIs = function(roomOrHazarDto){
+        ac.getPIs = function(hazardDto, room){
 
             var urlSegment = "getPisByHazardAndRoomIDs";
             var ids = [];
-            if(roomOrHazarDto.Class == "Room"){
-                urlSegment += "&"+$.param({roomIds:[roomOrHazarDto.Key_id]});
-            }else{
-                var i = roomOrHazarDto.InspectionRooms.length;
-                while(i--){
-                    ids.push(roomOrHazarDto.InspectionRooms[i].Room_id);
+            
+            //specify a single room
+            if(room){
+                //we've passed a room object from the top of the view, where we display all of the pis rooms and buildings
+                if(room.Class == "Room"){
+                    var id = room.Key_id
                 }
-                console.log(ids);
-                urlSegment += "&"+$.param({roomIds:ids});
+                //we've passed a PIHazardRoomDto object from a HazardDtos collection of inspection rooms
+                else{
+                    var id = room.Room_id
+                }
+                urlSegment += "&"+$.param({roomIds:[id]});
+            }
+            
+            if(hazardDto){
+                //we didn't specify a single room, so get the ids for each room in the hazards inspection rooms
+                if(!room){
+                    var i = hazardDto.InspectionRooms.length;
+                    while(i--){
+                        ids.push(hazardDto.InspectionRooms[i].Room_id);
+                    }
+                    console.log(ids);
+                    urlSegment += "&"+$.param({roomIds:ids});
+                }
+                urlSegment += "&hazardId="+hazardDto.Hazard_id;
             }
 
             return genericAPIFactory.read( urlSegment )

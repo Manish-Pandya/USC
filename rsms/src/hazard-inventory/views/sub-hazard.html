@@ -53,7 +53,7 @@
 </div>
 
 <ul class="subRooms" ng-if="getShowRooms(child)" ng-repeat="(key, building) in child.InspectionRooms | groupBy: 'Building_name'">
-    <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}">{{ room.Room_name }}<span ng-if="!$last">, </span></span></li>
+    <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}"><a ng-click="openMultiplePIsModal(child, room)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span></li>
 </ul>
 
 <ul>

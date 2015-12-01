@@ -11,6 +11,7 @@ class PIHazardRoomDto {
 	private $principal_investigator_hazard_room_relation_id;
 	private $containsHazard;
 	private $status;
+	private $hasMultiplePis;
 	
 	public function getPrincipal_investigator_id(){
 		return $this->principal_investigator_id;
@@ -82,6 +83,14 @@ class PIHazardRoomDto {
 	
 	public function setStatus($status){
 		$this->status = $status;
+	}
+	
+	public function getHasMultiplePis(){
+		return $this->hasMultiplePis;
+	}
+	
+	public function setHasMultiplePis($hasMultiplePis){
+		$this->hasMultiplePis = $hasMultiplePis;
 	}
 }
 ?>
