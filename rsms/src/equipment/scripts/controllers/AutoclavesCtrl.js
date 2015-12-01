@@ -10,9 +10,19 @@
 angular.module('EquipmentModule')
   .controller('AutoclavesCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
   		var af = $scope.af = actionFunctionsFactory;
-
-        $scope.autoclaves = [];
     
+        var getAllAutoclaves = function(){
+  			af.getAllAutoclaves()
+  			.then(
+  				function(autoclaves){  	
+  					$scope.autoclaves = dataStore.Autoclave;
+  				},
+  				function(){}
+  			)
+  		}
+
+  		getAllAutoclaves();
+
         $scope.deactivate = function(autoclave) {
             var copy = dataStoreManager.createCopy(autoclave);
             copy.Retirement_date = new Date();

@@ -151,7 +151,98 @@ angular
             af.deleteModalData = function() {
                 dataStore.modalData = [];
             }
+            
+            /********************************************************************
+            **
+            **      AUTOCLAVE            **
+            ********************************************************************/
 
+            af.getAutuclaveById = function(key_id) {
+                var urlSegment = 'getAutuclaveById&id=' + key_id;
+
+                if( store.checkCollection( 'Autuclave', key_id ) ) {
+                    var autoclave = store.getById( 'Autuclave', key_id )
+                        .then(function(autoclave) {
+                            return autoclave;
+                        });
+                }
+                else {
+                    var autoclave = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store autoclave in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return autoclave;
+            }
+            
+            af.getAllAutoclaves = function(key_id) {
+                return dataSwitchFactory.getAllObjects('Autoclave');
+            }
+            
+            af.saveAutoclave = function(copy, autoclave) {
+                af.clearError();
+                console.log(copy);
+                return this.save(copy)
+                    .then(
+                        function(returnedAutoclave){
+                            returnedAutoclave = modelInflatorFactory.instateAllObjectsFromJson(returnedAutoclave);
+                            if(autoclave){
+                                angular.extend(autoclave, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedAutoclave);
+                                dataStoreManager.store(returnedAutoclave);
+                            }
+                        },
+                        af.setError('The Autoclave could not be saved')
+                    )
+            }
+            
+            /********************************************************************
+            **
+            **      BioSafetyCabinet            **
+            ********************************************************************/
+            
+            af.getBioSafetyCabinetById = function(key_id) {
+                var urlSegment = 'getBioSafetyCabinetById&id=' + key_id;
+
+                if( store.checkCollection( 'BioSafetyCabinet', key_id ) ) {
+                    var bioSafetyCabinet = store.getById( 'BioSafetyCabinet', key_id )
+                        .then(function(bioSafetyCabinet) {
+                            return bioSafetyCabinet;
+                        });
+                }
+                else {
+                    var bioSafetyCabinet = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store bioSafetyCabinet in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return bioSafetyCabinet;
+            }
+            
+            af.getAllBioSafetyCabinets = function(key_id) {
+                return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
+            }
+            
+            af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
+                af.clearError();
+                console.log(copy);
+                return this.save(copy)
+                    .then(
+                        function(returnedBioSafetyCabinet){
+                            returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
+                            if(bioSafetyCabinet){
+                                angular.extend(bioSafetyCabinet, copy)
+                            }else{
+                                dataStoreManager.addOnSave(returnedBioSafetyCabinet);
+                                dataStoreManager.store(returnedBioSafetyCabinet);
+                            }
+                        },
+                        af.setError('The BioSafetyCabinet could not be saved')
+                    )
+            }
             
             /********************************************************************
             **
@@ -239,8 +330,7 @@ angular
                                 }
                             )
             }
-
-
+            
             /********************************************************************
             **
             **      HANDY FUNCTIONS
