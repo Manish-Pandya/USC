@@ -48,5 +48,4 @@
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },  
         'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           }
-
 };
