@@ -110,7 +110,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 
 <!-- models -->
-<!--script src="./scripts/models/someModel.js"></script-->
+<script src="./scripts/models/Autoclave.js"></script>
+<script src="./scripts/models/BioSafetyCabinet.js"></script>
+<script src="./scripts/models/ChemFumeHood.js"></script>
+<script src="./scripts/models/Laser.js"></script>
+<script src="./scripts/models/XRay.js"></script>
 
 </head>
 <body>

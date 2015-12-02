@@ -17,7 +17,10 @@
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
         'Autoclave'             : {getById: "getAutoclaveById"             , getAll: "getAllAutoclaves"             , save: "saveAutoclave"              },
-        'BioSafetyCabinet'      : {getById: "getBioSafetyCabinetById"      , getAll: "getAllBioSafetyCabinets"      , save: "saveBioSafetyCabinet"       }
+        'BioSafetyCabinet'      : {getById: "getBioSafetyCabinetById"      , getAll: "getAllBioSafetyCabinets"      , save: "saveBioSafetyCabinet"       },
+        'ChemFumeHood'          : {getById: "getChemFumeHoodById"          , getAll: "getAllChemFumeHoods"          , save: "saveChemFumeHood"           },
+        'Lasers'                : {getById: "getLaserById"                 , getAll: "getAllLasers"                 , save: "saveLaser"                  },
+        'XRay'                  : {getById: "getXRayById"                  , getAll: "getAllXRays"                  , save: "saveXRay"                   }
 };
 
 urlMapper.list = equipmentUrlMapper.list;
