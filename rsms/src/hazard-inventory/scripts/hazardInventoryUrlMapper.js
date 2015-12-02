@@ -17,7 +17,9 @@
         'User'                  : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUsers"                                     },
         'HazardDto'             : {getById: "getHazardDtoById"             , getAll: "getAllRadPis"                 , save: "savePIHazardRoomMappings"                      },
         'PIHazardRoomDto'       : {getById: ""                             , getAll: ""                             , save: "savePrincipalInvestigatorHazardRoomRelation"   },
+        'Inspection'            : {getById: ""                             , getAll: ""                             , save: ""   },
 
+     //getInspectionsByPIId
      //PIHazardRoomDto
 };
 

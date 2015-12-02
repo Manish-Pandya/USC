@@ -86,10 +86,10 @@ angular
                                 dataSwitch.recursivelyInstantiate(instatedObjects);
                             }
 
-                            deferred.resolve(instatedObjects);
-
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
+                            deferred.resolve(dataStoreManager.get(instatedObjects[0].Class));
+
                         });
                     }
 

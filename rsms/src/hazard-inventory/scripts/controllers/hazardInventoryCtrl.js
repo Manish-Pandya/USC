@@ -56,16 +56,16 @@ angular.module('HazardInventory')
                     );
 
             }
-        
-        $scope.piPromise = 
+
+        $scope.piPromise =
             getAllPIs()
             .then(
                 function (pis) {
                     $scope.pis = pis;
                     console.log($location);
                     if($location.search()){
-
                         if ($location.search().pi){
+                            console.log(dataStore);
                             var pi = dataStoreManager.getById("PrincipalInvestigator",$location.search().pi);
                             if($location.search().room){
                                 $scope.onSelectPi(pi, $location.search().room);
@@ -83,6 +83,9 @@ angular.module('HazardInventory')
             if(!roomId)roomId = false;
             $scope.hazardPromise = getHazards(pi.Key_id, roomId);
             $scope.selectPI = false;
+            $location.search("pi",pi.Key_id);
+            console.log($scope.PI);
+            $scope.PI.loadInspections();
         }
 
         $scope.getShowRooms = function(hazard){
@@ -117,6 +120,7 @@ angular.module('HazardInventory')
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
+            modalData.Parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/rooms-modal.html',
@@ -148,14 +152,53 @@ angular.module('HazardInventory')
 
         }
 
+        $scope.openNotes = function(){
+             var modalData = {};
+             modalData.PI = $scope.PI;
+             af.setModalData( modalData );
+             var modalInstance = $modal.open({
+                templateUrl: 'views/modals/inspection-notes-modal.html',
+                controller: 'HazardInventoryModalCtrl'
+              });
+
+              modalInstance.result.then(function () {
+
+              });
+        }
+
+        $scope.openPreviousInspections = function(){
+             var modalData = {};
+             modalData.PI = $scope.PI;
+             af.setModalData( modalData );
+             var modalInstance = $modal.open({
+                templateUrl: 'views/modals/archived-reports.html',
+                controller: 'HazardInventoryModalCtrl'
+              });
+
+              modalInstance.result.then(function () {
+
+              });
+        }
+
+        $scope.startInspection = function(){
+             var modalData = {};
+             modalData.PI = $scope.PI;
+             af.setModalData( modalData );
+             var modalInstance = $modal.open({
+                templateUrl: 'views/modals/open-inspections.html',
+                controller: 'HazardInventoryModalCtrl'
+              });
+
+              modalInstance.result.then(function () {
+
+              });
+        }
 
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance) {
         var af = applicationControllerFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log()
-
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();

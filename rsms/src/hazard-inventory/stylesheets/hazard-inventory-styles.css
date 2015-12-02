@@ -21,3 +21,6 @@ li.hazard-room label label span.metro-checkbox:after{
     width:12px !important;
     line-height:15px;
 }
+.equipment-list{
+    margin-bottom: 180px !important;
+}

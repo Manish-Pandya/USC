@@ -3341,7 +3341,7 @@ class ActionManager {
         //Get responses for Inspection
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
-        $piId = $this->getValueFromRequest('piId', $piId);
+        $piId = $this->getValueFromRequest('id', $piId);
 
         if( $piId !== NULL ){
 

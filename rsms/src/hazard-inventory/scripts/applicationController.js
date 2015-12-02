@@ -52,8 +52,32 @@ angular
             copy.IsPresent                 = hazardDto.IsPresent;
 
             copy.InspectionRooms = [];
+
+            //the key ids of all the hazards that are direct children of the root hazard.  Our "branch" level hazards.
+            //TODO:  make an application constant for this
+            var branchLevelIDs = [1, 9999, 10009, 10010];
+
+            //see if our hazard has a parent that isn't a branch level hazard
+            if(branchLevelIDs.indexOf(hazardDto.Parent_hazard_id)<0){
+                var parentHazard = dataStoreManager.getById("HazardDto", hazardDto.Parent_hazard_id);
+            }
+            console.log(parentHazard);
+            console.log(hazardDto.Parent_hazard_id);
+
             for(var i =0; i < hazardDto.InspectionRooms.length; i++){
-                copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], copy.IsPresent );
+                if(!parentHazard){
+                    copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], copy.IsPresent );
+                }
+                //make sure we don't put this hazard in a room that its parent isn't in
+                else{
+                    var isPresent = false;
+                    //hazard can only be put in room if it has been checked AND the parent is in the same room
+                    if(copy.IsPresent && parentHazard.InspectionRooms[i].ContainsHazard){
+                        isPresent = true;
+                    }
+                    console.log(isPresent);
+                    copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], isPresent );
+                }
             }
 
 
@@ -65,7 +89,7 @@ angular
                     function(){
                         hazardDto.IsPresent = copy.IsPresent;
                         for(var i =0; i < hazardDto.InspectionRooms.length; i++){
-                            hazardDto.InspectionRooms[i].ContainsHazard = copy.IsPresent;
+                            hazardDto.InspectionRooms[i].ContainsHazard = copy.InspectionRooms[i].ContainsHazard;
                         }
 
                     },
@@ -159,7 +183,7 @@ angular
 
             var urlSegment = "getPisByHazardAndRoomIDs";
             var ids = [];
-            
+
             //specify a single room
             if(room){
                 //we've passed a room object from the top of the view, where we display all of the pis rooms and buildings
@@ -172,7 +196,7 @@ angular
                 }
                 urlSegment += "&"+$.param({roomIds:[id]});
             }
-            
+
             if(hazardDto){
                 //we didn't specify a single room, so get the ids for each room in the hazards inspection rooms
                 if(!room){
@@ -193,6 +217,20 @@ angular
                            return  returnedPromise.data;
                         }
                     );
+        }
+
+        ac.savePI = function(pi, copy){
+            console.log(copy);
+            this.save(copy)
+                .then(
+                    function(returned){
+                        pi.Inspection_notes = returned.Inspection_notes;
+                        pi.editNote = false;
+                    },
+                    function(){
+                        ac.setError("Something went wrong.");
+                    }
+                )
         }
 
         return ac;

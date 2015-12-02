@@ -57,12 +57,11 @@ angular
                         }
 
                     }
-                
-                    modelledObject.setPropertiesFromPrototype()
+                    modelledObject.setPropertiesFromPrototype();
                     if(recurse){
                         for(var prop in modelledObject){
                             if((modelledObject[prop] && modelledObject[prop].Class && window[modelledObject[prop].Class] && !modelledObject[prop] instanceof window[modelledObject[prop].Class])
-                                || 
+                                ||
                                (modelledObject[prop] instanceof Array && modelledObject[prop][0] && modelledObject[prop][0].Class && window[modelledObject[prop][0].Class])
                               ){
                                 modelledObject[prop] = inflator.instateAllObjectsFromJson( modelledObject[prop], null, true );
@@ -94,8 +93,8 @@ angular
                         if( !objectFlavor ) objectFlavor = json.Class;
                         return inflator.instantiateObjectFromJson( json, objectFlavor, recurse );
                     }
-                
-                    
+
+
             }
 
             //dynamically generate accessors for an object

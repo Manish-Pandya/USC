@@ -226,7 +226,7 @@ class HazardInventoryActionManager extends ActionManager {
 		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getDepartments");
-		$entityMaps[] = new EntityMap("eager","getUser");
+		$entityMaps[] = new EntityMap("lazy","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
 		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");

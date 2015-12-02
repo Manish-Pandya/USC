@@ -116,19 +116,21 @@ echo "</script>";
 <!-- models -->
 <script type="text/javascript" src="scripts/models/HazardDto.js"></script>
 <script type="text/javascript" src="scripts/models/PIHazardRoomDto.js"></script>
+<script type="text/javascript" src="scripts/models/PrincipalInvestigator.js"></script>
+<script type="text/javascript" src="scripts/models/User.js"></script>
 
 <!-- filters -->
-<script type="text/javascript" src="scripts/filters/isEquipmentFilter.js"></script>
-<script type="text/javascript" src="scripts/filters/subRoomsFilter.js"></script>
+<script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
 </head>
 <body>
 
-<div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid">
+<div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" div id>
 
 <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:pisPromise,message:'Loading Principal Investigators',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
      <div class="navbar">
         <ul class="nav pageMenu row-fluid redBg">
             <li class="span12">
@@ -259,7 +261,7 @@ echo "</script>";
             <br/><br/><br/>
             <h1 ng-class="{narrow: hazard.hidden}" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Hazard_name == 'Biological Safety' || hazard.Hazard_name == 'Chemical and Physical Safety' || hazard.Hazard_name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Hazard_name.indexOf('adiation') > -1">Equipment/Device</span></h1>
             <hr style="margin-bottom:4px;">
-            <ul ng-if="!hazard.hidden" class="topChildren" ng-init="hazard.loadSubhazards()">
+            <ul ng-if="!hazard.hidden" class="topChildren equipment-list" ng-init="hazard.loadSubhazards()">
                 <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                     <label class="checkbox inline">
                         <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)"/>
@@ -297,4 +299,12 @@ echo "</script>";
             </ul>
         </li>
     </ul>
+    <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
+    <ul class="container-fluid whitebg" style="padding:0 70px !Important">
+        <li><a ng-click="openPreviousInspections()"><img src="../img/clipboard.png"/><span>Archived Reports</span></a></li>
+        <li><a href="<?php echo WEB_ROOT?>views/hubs/PIHub.php#/personnel?pi={{PI.Key_id}}&inspection=true" target="_blank"><img src="../img/phone.png"/><span>Laboratory Personnel</span></a></li>
+        <li><a ng-click="openNotes()"><img src="../img/speechBubble.png"/><span>Inspection Comments</span></a></li>
+        <li><a ng-click="startInspection()"><img src="../img/checkmarkFooter.png"/><span>Inspect Labs</a></span></li>
+    </ul>
+</div>
 </div>

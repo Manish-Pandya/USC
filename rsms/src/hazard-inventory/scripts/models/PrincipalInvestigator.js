@@ -32,6 +32,14 @@ PrincipalInvestigator.prototype = {
         paramValue:  'Key_id'
     },
 
+    InspectionsRelationship: {
+        className:    'Inspection',
+        keyReference:  'Principal_investigator_id',
+        methodString:  'getInspectionsByPIId',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+
 
     Buildings: {},
 
@@ -43,13 +51,16 @@ PrincipalInvestigator.prototype = {
         if(!this.User && this.User_id) {
             dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
         }
+    },
+    loadInspections: function() {
+        dataLoader.loadOneToManyRelationship( this, 'Inspections', this.InspectionsRelationship );
     }
 
 }
 
 
 //inherit from and extend GenericPrincipalInvestigator
-extend(PrincipalInvestigator, GenericPrincipalInvestigator);
+extend(PrincipalInvestigator, GenericModel);
 
 //create an angular module for the model, so it can be injected downstream
 angular
