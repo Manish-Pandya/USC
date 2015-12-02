@@ -34,7 +34,7 @@ angular.module('EquipmentModule')
         }
 
   })
-  .controller('AutoclavesModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+  .controller('XRayModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();

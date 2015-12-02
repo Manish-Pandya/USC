@@ -39,12 +39,12 @@ angular.module('EquipmentModule')
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/autoclave-modal.html',
-                controller: 'AutoclavesModalCtrl'
+                controller: 'AutoclaveModalCtrl'
             });
         }
 
   })
-  .controller('AutoclavesModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+  .controller('AutoclaveModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
 		$scope.modalData = af.getModalData();
