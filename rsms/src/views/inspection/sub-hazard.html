@@ -32,12 +32,6 @@
                 <input ng-disabled="!$parent.$parent.$parent.$parent.$parent.child.InspectionRooms[$index].ContainsHazard" type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard"/>
                 <span class="metro-checkbox">{{room.Name}}<img ng-if="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
             </label>
-<!--
-            <label class="checkbox inline disallowed" ng-if="!$parent.$parent.$parent.child.InspectionRooms[$index].ContainsHazard">
-                <input type="checkbox"  ng-model="room.ContainsHazard"  disabled>
-                <span class="metro-checkbox">{{room.Name}}<img ng-if="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-            </label>
--->
         </li>
     </ul>
 </div>

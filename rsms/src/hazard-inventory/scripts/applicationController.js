@@ -213,8 +213,8 @@ angular
             return genericAPIFactory.read( urlSegment )
                     .then(
                         function( returnedPromise ){
-                            console.log(returnedPromise.data)
-                           return  returnedPromise.data;
+                           console.log(returnedPromise.data)
+                           return  modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                         }
                     );
         }
@@ -231,6 +231,49 @@ angular
                         ac.setError("Something went wrong.");
                     }
                 )
+        }
+
+        ac.saveInspectionRoomRelationship = function(inspection, room){
+            if(typeof room.checked == 'undefined')room.checked = false;
+                room.userChecked = room.checked;
+                var deferred = $q.defer();
+                var url = "saveInspectionRoomRelation&roomId="+room.Key_id+"&inspectionId="+inspection.Key_id+"&add="+room.checked;
+
+                $rootScope.RoomSaving = genericAPIFactory.read(url).then(
+                                        function(promise){
+                                            room.IsDirty = false;
+                                            return room;
+                                          },
+                                          function(promise){
+                                            room.IsDirty = false;
+                                            room.checked = !room.checked;
+                                            deferred.reject();
+                                          }
+                                        );
+                return $rootScope.RoomSaving;
+        }
+
+        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad){
+            //if we don't have a pi, get one from the server
+            if(!inspectorIds)inspectorIds=[10];
+            var url = 'initiateInspection&piId='+PI.Key_id+'&'+$.param({inspectorIds:inspectorIds});
+            if(rad)url = url+"&rad=true";
+
+            if(inspectionId) url+='&inspectionId='+inspectionId;
+            var temp = this;
+             $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
+                                              function( returned ){
+                                                  var inspection = returned.data;
+                                                  console.log(inspection);
+                                                  if(rad){
+                                                    //navigate to checklist for rad inspection.
+                                                    window.location = "../views/inspection/InspectionChecklist.php#?inspection="+inspection.Key_id;
+                                                  }else{
+                                                    inspection.Is_new = true;
+                                                    PI.Inspections.push(inspection);
+                                                  }
+                                              }
+                                        );
         }
 
         return ac;

@@ -52,7 +52,7 @@ angular.module('HazardInventory')
                         }
 
                     ).then(
-                        af.getBuildings(id,roomId).then(function(buildings){;$scope.buildings=buildings;})
+                        af.getBuildings(id,roomId).then(function(rooms){;$scope.PI.Rooms=rooms;})
                     );
 
             }
@@ -79,13 +79,12 @@ angular.module('HazardInventory')
 
 
         $scope.onSelectPi = function (pi, roomId) {
+            pi.loadInspections();
             $scope.PI = pi;
             if(!roomId)roomId = false;
             $scope.hazardPromise = getHazards(pi.Key_id, roomId);
             $scope.selectPI = false;
             $location.search("pi",pi.Key_id);
-            console.log($scope.PI);
-            $scope.PI.loadInspections();
         }
 
         $scope.getShowRooms = function(hazard){
@@ -183,6 +182,7 @@ angular.module('HazardInventory')
         $scope.startInspection = function(){
              var modalData = {};
              modalData.PI = $scope.PI;
+             modalData.openInspections = true;
              af.setModalData( modalData );
              var modalInstance = $modal.open({
                 templateUrl: 'views/modals/open-inspections.html',
@@ -195,12 +195,26 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance) {
+    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods) {
         var af = applicationControllerFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+
+        $scope.processRooms = function(inspection, rooms){
+            for(var j = 0; j<inspection.Rooms.length; j++){
+                inspection.Rooms[j].checked = true;
+            }
+            for(var k = 0; k<rooms.length; k++){
+                if(!convenienceMethods.arrayContainsObject(inspection.Rooms, rooms[k])){
+                    inspection.Rooms.push(rooms[k]);
+                }
+            }
+        }
+
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();
         }
+
+
     });

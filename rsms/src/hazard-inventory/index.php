@@ -131,6 +131,10 @@ echo "</script>";
 <div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:RoomSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+    <div cg-busy="{promise:InspectionSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+
      <div class="navbar">
         <ul class="nav pageMenu row-fluid redBg">
             <li class="span12">
@@ -174,29 +178,29 @@ echo "</script>";
                             <h3 class="span6">Building(s):</h3>
                             <h3 class="span6">
                                Laboratory Rooms:
-                               </h3>
-                            <span ng-if="!buildings.length">
+                           </h3>
+                            <span ng-if="!PI.Rooms">
                                <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
                                    Select a Principal Investigator.
                                </p>
-                                <P ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-                    <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
-                            </p>
+                                <p ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
+                                <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
+                                </p>
                             </span>
 
-                            <span ng-if="buildings && PI">
-                   <ul class="selectedBuildings">
-                       <li ng-repeat="(key, building) in buildings">
-                       <div class="span6">
-                           <h4 >{{building.Name}}</h4>
-                       </div>
-                       <div class="roomsForBuidling span6">
-                           <ul>
-                               <li ng-repeat="(key, room) in building.Rooms | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                        <span ng-if="PI.Rooms">
+                           <ul class="selectedBuildings">
+                               <li ng-repeat="(key, building) in PI.Rooms | groupBy: 'Building.Name'">
+                                   <div class="span6">
+                                       <h4 >{{key}}</h4>
+                                   </div>
+                                   <div class="roomsForBuidling span6">
+                                       <ul>
+                                           <li ng-repeat="(key, room) in building | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
-                        </div>
-                        </li>
-                        </ul>
                         </span>
                     </div>
             </div>
