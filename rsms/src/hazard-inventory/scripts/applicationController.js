@@ -53,16 +53,13 @@ angular
 
             copy.InspectionRooms = [];
 
-            //the key ids of all the hazards that are direct children of the root hazard.  Our "branch" level hazards.
-            //TODO:  make an application constant for this
-            var branchLevelIDs = [1, 9999, 10009, 10010];
+            //the key ids of all the hazards that are direct children of the root hazard, our "branch" level hazards.
+            var branchLevelIDs = Constants.BRANCH_HAZARD_IDS;
 
             //see if our hazard has a parent that isn't a branch level hazard
             if(branchLevelIDs.indexOf(hazardDto.Parent_hazard_id)<0){
                 var parentHazard = dataStoreManager.getById("HazardDto", hazardDto.Parent_hazard_id);
             }
-            console.log(parentHazard);
-            console.log(hazardDto.Parent_hazard_id);
 
             for(var i =0; i < hazardDto.InspectionRooms.length; i++){
                 if(!parentHazard){
@@ -75,7 +72,6 @@ angular
                     if(copy.IsPresent && parentHazard.InspectionRooms[i].ContainsHazard){
                         isPresent = true;
                     }
-                    console.log(isPresent);
                     copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], isPresent );
                 }
             }
@@ -83,7 +79,6 @@ angular
 
             hazardDto.IsPresent = !hazardDto.IsPresent;
             this.clearError();
-            console.log(copy);
             this.save(copy)
                 .then(
                     function(){
@@ -106,7 +101,6 @@ angular
         ac.savePIHazardRoom = function(room, hazard, changed){
             var copy = ac.copyInpectionRoom(room);
             this.clearError();
-            console.log(copy);
 
             //the room has been added or removed, as opposed to having its status changed
             if(changed){
@@ -136,7 +130,6 @@ angular
 
             if(containsHazard != null){
                 copy.ContainsHazard = containsHazard;
-                console.log('setting to parent value');
             }else{
                 copy.ContainsHazard = room.ContainsHazard;
             }
@@ -204,7 +197,6 @@ angular
                     while(i--){
                         ids.push(hazardDto.InspectionRooms[i].Room_id);
                     }
-                    console.log(ids);
                     urlSegment += "&"+$.param({roomIds:ids});
                 }
                 urlSegment += "&hazardId="+hazardDto.Hazard_id;
@@ -213,14 +205,12 @@ angular
             return genericAPIFactory.read( urlSegment )
                     .then(
                         function( returnedPromise ){
-                           console.log(returnedPromise.data)
                            return  modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                         }
                     );
         }
 
         ac.savePI = function(pi, copy){
-            console.log(copy);
             this.save(copy)
                 .then(
                     function(returned){
@@ -264,7 +254,6 @@ angular
              $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
                                               function( returned ){
                                                   var inspection = returned.data;
-                                                  console.log(inspection);
                                                   if(rad){
                                                     //navigate to checklist for rad inspection.
                                                     window.location = "../views/inspection/InspectionChecklist.php#?inspection="+inspection.Key_id;

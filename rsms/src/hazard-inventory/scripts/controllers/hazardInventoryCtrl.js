@@ -139,6 +139,7 @@ angular.module('HazardInventory')
             }else{
                 modalData.HazardDto = hazardDto;
             }
+            modalData.PI = $scope.PI;
             $scope.pisPromise = af.getPIs(hazardDto, room)
                 .then(function(pis){
                     modalData.PIs = pis;
@@ -196,6 +197,7 @@ angular.module('HazardInventory')
 
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods) {
+        $scope.constants = Constants;
         var af = applicationControllerFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();

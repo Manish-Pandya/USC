@@ -19,7 +19,7 @@ var Constants = (function () {
 
         }
     };
-    
+
     constants.ROLE = {
         NAME:{
             ADMIN:"Admin",
@@ -35,7 +35,7 @@ var Constants = (function () {
             OCCUPATIONAL_HEALTH:"Occupational Health"
         }
     };
-    
+
     constants.CARBOY_USE_CYCLE = {
         STATUS:{
             AVAILABLE:"Available",
@@ -45,7 +45,7 @@ var Constants = (function () {
             AT_RSO:"AT RSO"
         }
     };
-    
+
     constants.INSPECTION = {
         STATUS:{
             NOT_ASSIGNED:"NOT ASSIGNED",
@@ -60,7 +60,7 @@ var Constants = (function () {
             OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
         }
     };
-    
+
     constants.CORRECTIVE_ACTION = {
         STATUS:{
             INCOMPLETE:"Incomplete",
@@ -69,14 +69,14 @@ var Constants = (function () {
             ACCEPTED:"Accepted"
         }
     };
-    
+
     constants.DRUM = {
         STATUS:{
             SHIPPED: "Shipped",
-            
+
         }
     };
-    
+
     constants.PICKUP = {
         STATUS:{
             PICKED_UP:"PICKED UP",
@@ -84,7 +84,7 @@ var Constants = (function () {
             REQUESTED:"REQUESTED",
         }
     };
-    
+
     constants.PARCEL = {
         STATUS:{
             ARRIVED:"Arrived",
@@ -95,7 +95,7 @@ var Constants = (function () {
             DISPOSED:"Disposed"
         }
     };
-    
+
     constants.INVENTORY = {
         STATUS:{
             LATE:"Late",
@@ -103,7 +103,7 @@ var Constants = (function () {
             NA:"N/A"
         }
     };
-    
+
     constants.ISOTOPE = {
         EMITTER_TYPE:{
             ALPHA: "Alpha",
@@ -111,14 +111,22 @@ var Constants = (function () {
             GAMMA: "Gamma"
         }
     };
-    
+
     constants.WIPE_TEST = {
         READING_TYPE:{
             LSC:"LSC",
             ALPHA_BETA:"Alpha/Beta",
             MCA:"MCA"
         }
-    };  
-    
+    };
+
+    constants.BRANCH_HAZARD_IDS = [1, 9999, 10009, 10010];
+    constants.HAZARD_PI_ROOM = {
+        STATUS:{
+            STORED_ONLY: "Stored Only",
+            OTHER_PI: "Used by another PI's lab",
+            IN_USER: "In Use"
+        }
+    }
     return constants;
 })();

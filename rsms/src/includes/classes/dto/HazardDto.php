@@ -14,6 +14,7 @@ class HazardDto {
     private $stored_only;
     private $hasChildren;
     private $order_index;
+    private $belongsToOtherPI;
 
 
     public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
@@ -32,7 +33,7 @@ class HazardDto {
     public function getHasChildren(){return (bool) $this->hasChildren;}
 	public function getIs_equipment(){return (bool) $this->is_equipment;}
 	public function getOrder_index(){return (int) $this->order_index;}
-	
+	public function getBelongsToOtherPI(){return (bool) $this->belongsToOtherPI;}
     
     public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
     public function setHazard_id($newId) { $this->hazard_id = $newId; }
@@ -48,7 +49,9 @@ class HazardDto {
     public function setHasChildren($hasChildren){$this->hasChildren = $hasChildren;}
 	public function setIs_equipment($is){ $this->is_equipment = $is; }
 	public function setOrder_index($idx){ $this->order_index = $idx;}
-    
+	public function setBelongsToOtherPI($belongs){$this->belongsToOtherPI = $belongs;}
+	
+	
     public function setAndFilterInspectionRooms($rooms) {
     	$LOG = Logger::getLogger( __CLASS__ );
     	 
@@ -110,6 +113,11 @@ class HazardDto {
             		}
             	}
             }            
+        }
+        
+        //if Another PI has this hazard in one of these rooms, but the relevant PI does not
+        if($this->getHasMultiplePis() == true && $this->getIsPresent() == false){
+        	$this->belongsToOtherPI = true;
         }
     }
 
