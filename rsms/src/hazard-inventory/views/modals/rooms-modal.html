@@ -1,0 +1,24 @@
+<div class="modal-header footer-present" style="padding:0;">
+    <h2 style="padding:5px;" class="redBg">{{modalData.Hazard.Hazard_name}}</h2>
+</div>
+<div class="modal-body">
+    <ul>
+        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms" class="hazard-room">
+            <label class="checkbox inline">
+                <input type="checkbox" ng-model="room.ContainsHazard" ng-change="af.savePIHazardRoom(room, modalData.Hazard,true)" ng-disabled="!modalData.Parent.InspectionRooms[$index].ContainsHazard" />
+                <span class="metro-checkbox">
+                    {{room.Building_name}}, Room {{room.Room_name}}
+                </span>
+                <label class="checkbox inline" ng-if="room.ContainsHazard">
+                    <input type="checkbox" ng-model="room.storedOnly" ng-checked="room.Status == 'Stored Only' || modalData.Parent.InspectionRooms[$index].storedOnly" ng-change="room.Status = room.storedOnly ? 'Stored Only':'In Use';af.savePIHazardRoom(room, modalData.Hazard)" ng-disabled="!modalData.Parent.InspectionRooms[$index].storedOnly"/>
+                    <span class="metro-checkbox">Stored Only</span>
+                </label>
+            </label>
+            <div class="clearfix"></div>
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-danger left" ng-click="edit(false);close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
+

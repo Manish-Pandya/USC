@@ -1961,7 +1961,7 @@ ul.key li.deficiencies span {
   position:absolute;
 }
 li.yellowed label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after {
-    color: rgb(176, 176, 176);
+    color: rgb(211, 96, 96);
 }
 .stored{
     color:crimson;

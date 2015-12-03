@@ -41,6 +41,8 @@ class ActionDispatcher {
             $this->actionManagerType = "Rad_ActionManager";
         }else if( isVerificationEnabled() ){ 
             $this->actionManagerType = "Verification_ActionManager";
+        }else if ( isHazardInventoryEnabled() ){
+        	$this->actionManagerType = "HazardInventoryActionManager";
         }
         else {
             $this->actionManagerType = "ActionManager";
@@ -68,6 +70,10 @@ class ActionDispatcher {
             
             if( isVerificationEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
+            }
+            
+            if( isHazardInventoryEnabled() ) {
+            	$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
             }
 
             return $actionMappings;
