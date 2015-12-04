@@ -65,7 +65,7 @@ class HazardInventoryActionManager extends ActionManager {
 	* @ param PIHazardRoomDto decodedObject
 	* @ return PIHazardRoomDto dto
 	*/
-	public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
+public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
 		$LOG = Logger::getLogger("asdfaf");
 	
 		if($decodedObject == null){
@@ -87,12 +87,23 @@ class HazardInventoryActionManager extends ActionManager {
 	
 		//get the relevant PrincipalInvestigatorHazardRoomRelation
 		$relations = $this->getRelevantRelations($decodedObject);
-		$LOG->fatal($decodedObject);
 		//room doesn't contain the relevant hazard, so delete any relations
 		if($decodedObject->getContainsHazard() == false){
 			foreach($relations as $relation){
-				$LOG->fatal('here?');
 				$piHazardRoomDao->deleteById($relation->getKey_id());
+			}
+			
+			//since we've removed the hazard from the room for this PI, we should also remove any child hazards
+			$hazard = $this->getHazardById($decodedObject->getHazard_id());
+			$childHazards = $hazard->getActiveSubHazards();
+			foreach($childHazards as $child){
+				$childDto = new PIHazardRoomDto();
+				$childDto->setContainsHazard(0);
+				$childDto->setHazard_id($child->getKey_id());
+				$childDto->setRoom_id($decodedObject->getRoom_id());
+				$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
+				$LOG->fatal($childDto);				
+				$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
 			}
 		}
 		//this room contains the relevant hazard
@@ -108,9 +119,7 @@ class HazardInventoryActionManager extends ActionManager {
 			}
 			//no previous relations.  make a new one and save it
 			else{
-				$LOG->fatal('relations null');
 				$decodedObject->setContainsHazard(true);
-	
 				$relation = new PrincipalInvestigatorHazardRoomRelation();
 				$relation->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
 				$relation->setHazard_id($decodedObject->getHazard_id());
@@ -118,6 +127,19 @@ class HazardInventoryActionManager extends ActionManager {
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
 				$LOG->fatal($relation);
+			}
+			//if we have set the status to "Stored Only", we must also set the status to for each child hazard in this room
+			if($decodedObject->getStatus() == "Stored Only"){
+				$hazard = $this->getHazardById($decodedObject->getHazard_id());
+				$childHazards = $hazard->getActiveSubHazards();
+				foreach($childHazards as $child){
+					$childDto = new PIHazardRoomDto();
+					$childDto->setStatus("Stored Only");
+					$childDto->setHazard_id($child->getKey_id());
+					$childDto->setRoom_id($decodedObject->getRoom_id());
+					$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
+					$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
+				}
 			}
 		}
 		return $decodedObject;
