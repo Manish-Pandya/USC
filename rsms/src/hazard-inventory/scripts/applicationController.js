@@ -136,7 +136,7 @@ angular
             return copy;
         }
 
-        ac.evaluateHazardPresent = function(hazardDto){
+        ac.evaluateHazardPresent = function(hazardDto, notParent){
             var i = hazardDto.InspectionRooms.length;
             hazardDto.IsPresent = false;
             hazardDto.Status = "In Use";
@@ -144,10 +144,26 @@ angular
             var storedOnly = true;
 
             while(i--){
-                if(hazardDto.InspectionRooms[i].ContainsHazard == true){
-                    hazardDto.IsPresent = true;
-                    if(hazardDto.InspectionRooms[i].Status != "Stored Only"){
-                        storedOnly = false;
+                if(!notParent){
+                    if(hazardDto.InspectionRooms[i].ContainsHazard == true){
+                        hazardDto.IsPresent = true;
+                        if(hazardDto.InspectionRooms[i].Status != Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                            storedOnly = false;
+                        }
+                    }
+                }else{
+                    var parent = dataStoreManager.getById("HazardDto", hazardDto.Parent_hazard_id);
+                    if(parent.InspectionRooms[i].ContainsHazard == false){
+                        hazardDto.InspectionRooms[i].ContainsHazard = false;
+                    }else{
+                        hazardDto.IsPresent = true;
+                        if(parent.InspectionRooms[i].Status == Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                            hazardDto.InspectionRooms[i].Status = Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY;
+                        }else{
+                            if(hazardDto.InspectionRooms[i].ContainsHazard && !hazardDto.InspectionRooms[i].Status == Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                                storedOnly = false;
+                            }
+                        }
                     }
                 }
             }
@@ -155,6 +171,13 @@ angular
                 hazardDto.Stored_only = storedOnly;
             }else{
                 hazardDto.Stored_only = false;
+            }
+            
+            if(hazardDto.ActiveSubHazards){
+                var i = hazardDto.ActiveSubHazards.length;
+                while(i--){
+                     ac.evaluateHazardPresent(hazardDto.ActiveSubHazards[i], true);
+                }
             }
         }
 

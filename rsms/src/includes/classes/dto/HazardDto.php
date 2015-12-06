@@ -95,7 +95,7 @@ class HazardDto {
         	array_push($relationHashMap[$relation->getRoom_id()], $relation);
         }
         $this->isPresent = false;
-        $this->stored_only = false;
+        $storedOnly = true;
         foreach ($rooms as &$room){
         	$room->setContainsHazard(false);
         	$room->setHasMultiplePis(false);
@@ -105,8 +105,10 @@ class HazardDto {
             		if($relation->getPrincipal_investigator_id() == $this->getPrincipal_investigator_id() ){
             			$room->setContainsHazard(true);
             			$this->isPresent = true;
-            			$this->setStored_only($room->getStatus() == "Stored Only");
             			$room->setStatus($relation->getStatus());
+            			if($room->getStatus() != "Stored Only"){
+            				$storedOnly = false;
+            			}
             		}
             		if($relation->getHasMultiplePis() == true){
             			$room->setHasMultiplePis(true);
@@ -118,6 +120,11 @@ class HazardDto {
         //if Another PI has this hazard in one of these rooms, but the relevant PI does not
         if($this->getHasMultiplePis() == true && $this->getIsPresent() == false){
         	$this->belongsToOtherPI = true;
+        }
+        
+        //if the hazard is stored only in every room, and is present, set its stored_only property to true.
+        if($this->isPresent == true && $storedOnly == true){
+        	$this->stored_only = true;
         }
     }
 

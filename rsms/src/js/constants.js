@@ -120,7 +120,8 @@ var Constants = (function () {
         }
     };
 
-    constants.BRANCH_HAZARD_IDS = [1, 9999, 10009, 10010];
+    //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
+    constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",

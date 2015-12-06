@@ -133,12 +133,17 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$hazard = $this->getHazardById($decodedObject->getHazard_id());
 				$childHazards = $hazard->getActiveSubHazards();
 				foreach($childHazards as $child){
-					$childDto = new PIHazardRoomDto();
-					$childDto->setStatus("Stored Only");
-					$childDto->setHazard_id($child->getKey_id());
-					$childDto->setRoom_id($decodedObject->getRoom_id());
-					$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-					$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
+					//only do this for hazards the PI already has in this room.
+					if($this->getHasHazardInLab($decodedObject->getPrincipal_investigator_id(), $child->getKey_id(), $decodedObject->getRoom_id())){
+						$childDto = new PIHazardRoomDto();
+						$childDto->setStatus("Stored Only");
+						$childDto->setContainsHazard(true);
+						$childDto->setHazard_id($child->getKey_id());
+						$childDto->setRoom_id($decodedObject->getRoom_id());
+						$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
+						$LOG->fatal($childDto);
+						$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
+					}
 				}
 			}
 		}
@@ -246,5 +251,17 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		
 		return $pis;
 			
+	}
+	
+	private function getHasHazardInLab($piId, $hazardId, $roomId){
+		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
+		
+		$whereClauseGroup = new WhereClauseGroup(array(
+			new WhereClause($piId, "=", 'principal_investigator_id'),			
+			new WhereClause($hazardId, "=", 'hazard_id'),
+			new WhereClause($roomId, "=", 'room_id')				
+		));
+		
+		return count($piHazardRoomDao->getAllWhere($whereClauseGroup)) > 0;
 	}
 }
