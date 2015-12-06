@@ -8,9 +8,9 @@
  * Primary Controller of the EquipmentModule
  */
 angular.module('EquipmentModule')
-  .controller('MainCtrl', function ($scope, $rootScope, actionFunctionsFactory, $state, $modal) {
+  .controller('MainCtrl', function ($scope, $rootScope, applicationControllerFactory, $state, $modal) {
     //do we have access to action functions?
-    var af = $scope.af = actionFunctionsFactory;
+    var af = $scope.af = applicationControllerFactory;
     $scope.$state = $state;
 
   });

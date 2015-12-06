@@ -1,50 +1,25 @@
 <?php
 /**
- * Contains action functions specific to the Equipment module.
- *
- * If a non-fatal error occurs, should return an ActionError
- * (or subclass of ActionError) containing information about the error.
+ * Class that wraps a static accessor that returns all Equipment Module Action Mappings
  *
  * @author Matt Breeden
  */
-class Equipment_ActionManager extends ActionManager {
+class Equipment_ActionMappingFactory extends ActionMappingFactory {
 
+	public static function readActionConfig() {
+		$mappings = new Equipment_ActionMappingFactory();
 
-    /*****************************************************************************\
-     *                            Get Functions                                  *
-    \*****************************************************************************/
-    
-    public function getEquipmentModels(){
-    	//todo:  create dto for whole model.  
-    	$dto = new RadModelDto();
-    	
-    	$dto->setAuthorization($this->getAllAuthorizations());
-    	$dto->setPIAuthorization($this->getAllPIAuthorizations());
-    	$dto->setCarboy($this->getAllCarboys());
-    	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
-    	$dto->setDrum($this->getAllDrums());
-    	$dto->setInspectionWipe($this->getAllInspectionWipes());
-    	$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
-    	$dto->setIsotope($this->getAllIsotopes());
-    	$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
-    	$dto->setParcelUse($this->getAllParcelUses());
-    	$dto->setParcelWipe($this->getAllParcelWipes());
-    	$dto->setParcelWipeTest($this->getAllParcelWipeTests());
-    	$dto->setParcel($this->getAllParcels());
-    	$dto->setPickup($this->getAllPickups());
-    	$dto->setPurchaseOrder($this->getAllPurchaseOrders());
-    	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
-    	$dto->setQuarterlInventory($this->getMostRecentInventory());
-    	$dto->setScintVialCollection($this->getAllScintVialCollections());
-    	$dto->setWasteBag($this->getAllWasteBags());
-    	$dto->setSolidsContainer($this->getAllSolidsContainers());
-    	$dto->setWasteType($this->getAllWasteTypes());
-    	$dto->setUser($this->getAllRadUsers());
-    	$dto->setPrincipalInvestigator($this->getAllRadPis());
-    	 
-    	return $dto;
-    	
-    }
+		return $mappings->getConfig();
+
+	}
+
+	public function getConfig() {
+		return array(
+				"getAllBioSafetyCabinets" 		=> new ActionMapping("getAllBioSafetyCabinets", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getBioSafetyCabinetById" 		=> new ActionMapping("getBioSafetyCabinetById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"saveBioSafetyCabinet" 			=> new ActionMapping("saveBioSafetyCabinet", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				
+		);
+	}
 }
-
 ?>

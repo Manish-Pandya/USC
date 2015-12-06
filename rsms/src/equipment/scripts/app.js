@@ -14,14 +14,14 @@ angular
     'modelInflator',
     'genericAPI',
     'filtersApp',
-    'actionFunctionsModule',
     'dataSwitchModule',
     'cgBusy',
     'ui.bootstrap',
     'once',
     'ui.router',
     'modalPosition',
-    'convenienceMethodWithRoleBasedModule'
+    'convenienceMethodWithRoleBasedModule',
+    'rootApplicationController'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
@@ -82,14 +82,14 @@ angular
       });
 
   })
-  .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
+  .controller('NavCtrl', function ($rootScope, applicationControllerFactory, $state) {
     $rootScope.$on('$stateChangeStart ',function(){
       $rootScope.loading = true;
     });
     $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams, fromState, fromParams){
             $rootScope.loading = false;
-            var viewMap = actionFunctionsFactory.getViewMap($state.current);
+            var viewMap = applicationControllerFactory.getViewMap($state.current);
             $rootScope.viewLabel = viewMap.Label;
             $rootScope.bannerClass = viewMap.Name;
             $rootScope.dashboardView = viewMap.Dashboard;

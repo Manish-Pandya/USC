@@ -74,7 +74,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/app.js"></script>
 
 <!-- business logic-->
-<script type="text/javascript" src="./scripts/actionFunctions.js"></script>
+<script type="text/javascript" src="../client-side-framework/rootApplicationController.js"></script>
+<script type="text/javascript" src="./scripts/applicationController.js"></script>
 
 <!-- controllers -->
 <script type="text/javascript" src="./scripts/controllers/MainCtrl.js"></script>
@@ -93,7 +94,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- filters -->
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
-    
+
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>

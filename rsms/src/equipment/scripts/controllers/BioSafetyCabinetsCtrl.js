@@ -8,21 +8,29 @@
  * Controller of the EquipmentModule Biological Safety Cabinets view
  */
 angular.module('EquipmentModule')
-  .controller('BioSafetyCabinetsCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+        var af = $scope.af = applicationControllerFactory;
 
-        $scope.cabinets = [];
-    
+        af.getAllBioSafetyCabinets()
+            .then(
+                function(){
+                     $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                }
+            )
+
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
-            copy.Retirement_date = new Date();
+            copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
+            console.log(copy);
             af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
         }
-        
+
+
+
         $scope.report = function(cabinet) {
-            
+
         }
-    
+
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
@@ -38,20 +46,15 @@ angular.module('EquipmentModule')
         }
 
   })
-  .controller('BioSafetyCabinetsModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = $scope.af = actionFunctionsFactory;
+  .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance) {
+        var af = $scope.af = applicationControllerFactory;
 
-		$scope.modalData = af.getModalData();
+        $scope.modalData = af.getModalData();
         console.log($scope.modalData);
-        $scope.save = function(copy, bioSafetyCabinet) {
-            af.saveAutoclave(copy, bioSafetyCabinet)
-                .then($scope.close);
+
+        $scope.close = function(){
+            $modalInstance.dismiss();
+            af.deleteModalData();
         }
 
-		$scope.close = function(){
-            $modalInstance.dismiss();
-            dataStore.BioSafetyCabinet.push($scope.modalData.BioSafetyCabinetCopy);
-            af.deleteModalData();
-		}
-
-	});
+    });

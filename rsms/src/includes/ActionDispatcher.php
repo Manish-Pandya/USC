@@ -70,6 +70,10 @@ class ActionDispatcher {
             if( isVerificationEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
             }
+            
+            if ( isEquipmentEnabled() ){
+            	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
+            }
 
             return $actionMappings;
         }
