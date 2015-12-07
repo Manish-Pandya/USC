@@ -120,12 +120,11 @@ require_once '../top_view.php';
           Building Hazard List...
         </span>
                     <ul class="allHazardList">
-                        <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Name != 'General Safety'">
-                            <span ng-init="hazard.loadSubHazards()" />
+                        <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Hazard_name != 'General Safety'">
                             <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
                             <span ng-if="!hazard.hidden">
                     <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
-                        <span ng-if="hazard.Name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Name == 'Chemical/Physical Safety' || hazard.Name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Name == 'Radiation Safety'">Radiation Hazards</span>
+                        <span ng-if="hazard.Hazard_name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Hazard_name == 'Chemical/Physical Safety' || hazard.Hazard_name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Hazard_name == 'Radiation Safety'">Radiation Hazards</span>
                             </h1>
                             <hr>
                             <ul class="topChildren">
@@ -139,7 +138,7 @@ require_once '../top_view.php';
                                 </span>
                                     </a>
                                 </li>
-                                <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | everyThirdChecked | orderBy: 'Name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                                <li ng-class="{'yellowed': child.Status == 'Stored Only'}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | everyThirdChecked | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                                     <!--<h4 class="">-->
                                     <label class="checkbox inline">
                                         <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)" ng-init="child.IsPresent = child.checked" />
@@ -148,7 +147,7 @@ require_once '../top_view.php';
                                     </label>
                                     <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
                                         <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
-                                            {{child.Name}}
+                                            {{child.Hazard_name}}
                                             <span ng-if="child.Status == 'Stored Only'" class="stored">(Stored Only)</span>
                                         </span>
                                         <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
@@ -166,24 +165,6 @@ require_once '../top_view.php';
                                             <i class="icon-info" ng-click="openMultiplePIsModal(child)"></i>
                                         </span>
                                     </div>
-                                    <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px">
-                                        <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
-
-                                    </div>
-
-                                    <div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-                                        <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
-                                        <ul>
-                                            <li ng-repeat="(key, room) in child.InspectionRooms">
-                                                <label class="checkbox inline">
-                                                    <input type="checkbox" ng-change="handleRoom(room, child, hazard)" ng-model="room.ContainsHazard" />
-                                                    <span class="metro-checkbox" once-text="room.Name"><img ng-if="room.waitingForServer" class="" src="../../img/loading.gif"/></span>
-                                                </label>
-                                                <div class="clearfix"></div>
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                     <ul ng-if="getShowRooms(child)" class="subRooms">
                                         <li>Rooms:</li>
                                         <li ng-repeat="(key, room) in child.InspectionRooms | filter: {ContainsHazard: true}" class="" ng-class="{'last':$last}">
@@ -201,16 +182,16 @@ require_once '../top_view.php';
                             <br/>
                             <br/>
                             <br/>
-                            <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Name == 'Biological Safety' || hazard.Name == 'Chemical and Physical Safety' || hazard.Name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Name == 'Radiation Safety'">Equipment/Device</span></h1>
+                            <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">{{hazard.}}<span ng-if="hazard.Hazard_name == 'Biological Safety' || hazard.Hazard_name == 'Chemical and Physical Safety' || hazard.Hazard_name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Hazard_name == 'Radiation Safety'">Equipment/Device</span></h1>
                             <hr style="margin-bottom:4px;">
                             <ul class="topChildren">
                                 <li ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | everyThirdChecked" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                                     <!--<h4 class="">-->
                                     <label class="checkbox inline">
                                         <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)" ng-checked="child.IsPresent = child.checked " />
-                                        <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Name}}</span>
+                                        <a class="metro-checkbox targetHaz" ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(room)">{{child.Hazard_name}}</a><span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">{{child.Hazard_name}}</span>
 
-                                        <!--<span once-text="child.Name" class="nudge-up"></span>-->
+                                        <!--<span once-text="child.Hazard_name" class="nudge-up"></span>-->
 
                                         <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                                         <!--<pre>{{child | json}}</pre>-->
@@ -231,12 +212,12 @@ require_once '../top_view.php';
                                     </div>
 
                                     <div ng-class="{hidden: !child.showSubHazardsModal}" class="subHazardModal popUp skinny" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px">
-                                        <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
+                                        <h3 class="redBg"><span once-text="child.Hazard_name" class="nudge-up"></span><i style="float:right; margin-top:5px;" class="icon-cancel-2" ng-click="child.showSubHazardsModal = !child.showSubHazardsModal"></i></h3>
                                         <ul>
                                             <li ng-repeat="(key, child) in child.ActiveSubHazards">
                                                 <label class="checkbox inline">
                                                     <input type="checkbox" ng-model="child.IsPresent" ng-change="handleHazardChecked(child, hazard)" ng-checked="child.IsPresent = child.checked " />
-                                                    <span class="metro-checkbox" once-text="child.Name"></span>
+                                                    <span class="metro-checkbox" once-text="child.Hazard_name"></span>
                                                 </label>
                                                 <div class="clearfix"></div>
                                             </li>
@@ -244,7 +225,7 @@ require_once '../top_view.php';
                                     </div>
 
                                     <div class="roomsModal popUp skinny" ng-class="{hidden: !child.showRoomsModal}" style="left:{{child.calculatedOffset.x}}px;top:{{child.calculatedOffset.y}}px;width:{{child.calculatedOffset.w}}px">
-                                        <h3 class="redBg"><span once-text="child.Name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
+                                        <h3 class="redBg"><span once-text="child.Hazard_name" class="nudge-up"></span><i class="icon-cancel-2" ng-click="child.showRoomsModal = !child.showRoomsModal"></i></h3>
                                         <ul>
                                             <li ng-repeat="(key, room) in child.InspectionRooms">
                                                 <label class="checkbox inline">

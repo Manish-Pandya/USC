@@ -6,20 +6,30 @@
 var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
-    eagerAccessors: [],
-
+    eagerAccessors: [{method:"loadRooms",boolean:"Key_id" }],
+    
     RoomsRelationship:{
-        name: 	  'PrincipalInvestigatorRoomRelation',
-        className: 'Room',
-        keyReference: 'Principal_investigator_id',
-        otherKey:     'Room_id',
-        paramValue:  'Key_id'
+        table: 	  'principal_investigator_room',
+        childClass: 'Room',
+        parentProperty: 'Rooms',
+        isMaster: true
     },
+
 
     Buildings: {},
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, 'Room', this.RoomsRelationship, "getRoomsByPIId&id="+this.Key_id );
+        dataLoader.loadManyToManyRelationship( this, this.RoomsRelationship);
+    },
+    
+    loadBuildings: function(){
+        this.Buildings = [];
+        var i = this.Rooms.length;
+        while(i--){
+            if(this.Buildings.indexOf(this.Rooms[i].Building.Name)){
+                this.Buildings.push(this.Rooms[i].Building.Name);
+            }
+        }
     }
 
 }

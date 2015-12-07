@@ -95,6 +95,8 @@ class Parcel extends RadCrud {
     private $catalog_number;
     private $chemical_compound;
     
+    private $hasTests;
+    
 	public function __construct() {
 		// Define which subentities to load
 		$entityMaps = array();
@@ -238,6 +240,16 @@ class Parcel extends RadCrud {
     
     public function getChemical_compound() {return $this->chemical_compound;}
 	public function setChemical_compound($compound) {$this->chemical_compound = $compound;}
+	
+	public function getHasTests(){
+		if($this->hasTests == null){
+			$this->hasTests = false;
+			if($this->getWipe_test() != null){
+				$this->hasTests = true;
+			}
+		}
+		return $this->hasTests;
+	}
     
 }
 ?>

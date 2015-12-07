@@ -61,7 +61,7 @@ class SolidsContainer extends RadCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
-		$entityMaps[] = new EntityMap("eager", "getWasteBags");
+		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
 		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
 		$this->setEntityMaps($entityMaps);
 	}

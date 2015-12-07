@@ -2095,18 +2095,31 @@ angular
                         af.setError('The Quarterly Inventory could not be saved')
                     )
             }
-            
+
             af.getRadModels = function(){
                      return dataSwitchFactory.getAllObjects("RadModelDto")
-                        .then( function( returnedPromise) {
-                            var stuff = returnedPromise.data;
-                            for(var prop in stuff){
-                                if(stuff[prop] != null && window[prop]){
-                                    console.log(prop);
-                                    stuff[prop] = modelInflatorFactory.instateAllObjectsFromJson( stuff[prop] );
-                                    store.store(stuff[prop]);
-                                }
-                            }
+                        .then( function( dto ) {
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Authorization ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PIAuthorization ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteType ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Carboy ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipe ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipeTest ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ParcelWipe ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ParcelWipeTest ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ParcelUseAmount ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Parcel ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Pickup ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PurchaseOrder ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ScintVialCollection ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteBag ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PrincipalInvestigator ));
                         });
             }
 

@@ -152,32 +152,54 @@ angular
                 return bioSafetyCabinet;
             }
             
-            af.getAllBioSafetyCabinets = function(key_id) {
+            af.getAllBioSafetyCabinets = function() {
                 return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
             }
                         
-            af.getAllRooms = function(key_id) {
+            af.getAllRooms = function() {
                 return dataSwitchFactory.getAllObjects('Room');
             }
                         
-            af.getAllBuildings = function(key_id) {
+            af.getAllBuildings = function() {
                 return dataSwitchFactory.getAllObjects('Building');
             }
             
-            af.getAllPrincipalInvestigators = function(key_id) {
+            af.getAllPrincipalInvestigators = function() {
                 return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
             }   
             
             af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
                 af.clearError();
-                console.log(copy);
-                return this.save(copy)
+                
+                //flatten to avoid circular JSON structure
+                var secondCopy = {
+                            Certification_date: copy.Certification_date,
+                            Class: "BioSafetyCabinet",
+                            Frequency: copy.Frequency,
+                            Is_active: copy.Is_active,                            
+                            Make: copy.Make,
+                            Model: copy.Model,
+                            Principal_investigator_id: copy.Principal_investigator_id,
+                            Report_path: copy.Report_path,
+                            Room_id: copy.Room_id,
+                            Serial_number: copy.Serial_number,
+                            Type: copy.Type,
+                }
+                
+                if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
+                
+                return this.save(secondCopy)
                     .then(
                         function(returnedBioSafetyCabinet){
                             returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
                             if(bioSafetyCabinet){
-                                angular.extend(bioSafetyCabinet, copy)
+                                console.log(copy);
+                                angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
+                                bioSafetyCabinet.loadRoom();
+                                bioSafetyCabinet.loadPI();
                             }else{
+                                returnedBioSafetyCabinet.loadRoom();
+                                bioSafetyCabinet.loadPI();
                                 dataStoreManager.addOnSave(returnedBioSafetyCabinet);
                                 dataStoreManager.store(returnedBioSafetyCabinet);
                             }

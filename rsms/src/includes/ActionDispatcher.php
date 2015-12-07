@@ -39,11 +39,14 @@ class ActionDispatcher {
         // module is enabled.
         if( isRadiationEnabled() ) {
             $this->actionManagerType = "Rad_ActionManager";
-        } else if( isVerificationEnabled() ){ 
+        }else if( isVerificationEnabled() ){ 
             $this->actionManagerType = "Verification_ActionManager";
-        } else if ( isEquipmentEnabled() ){
+        }else if ( isHazardInventoryEnabled() ){
+        	$this->actionManagerType = "HazardInventoryActionManager";
+        }else if ( isEquipmentEnabled() ){
         	$this->actionManagerType = "Equipment_ActionManager";
-        } else {
+        }
+        else {
             $this->actionManagerType = "ActionManager";
         }
         $this->LOG->fatal( 'getting action manager type' );
@@ -71,7 +74,11 @@ class ActionDispatcher {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
             }
             
-            if ( isEquipmentEnabled() ){
+            if( isHazardInventoryEnabled() ) {
+            	$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
+            }        
+            
+            if( isEquipmentEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
             }
 

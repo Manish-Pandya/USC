@@ -4,15 +4,11 @@
 //constructor
 var Room = function() {};
 Room.prototype = {
-    eagerAccessors: [ {method:"loadBuilding", boolean:"Building_id"}],
-    BuildingRelationship: {
-        className: 	  'Building',
-        keyReference:  'Building_id',
-        queryString:  'getBuildingById'
-    },
+   // eagerAccessors: [ {method:"loadBuilding", boolean:"Building_id"}],
 
     loadBuilding: function(){
-        if(!this.Building && this.Buidling_id) {
+        alert('asdf')
+        if(!this.Building) {
             dataLoader.loadChildObject( this, 'Building', 'Building', this.Building_id );
         }
     }

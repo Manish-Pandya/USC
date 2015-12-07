@@ -1,7 +1,7 @@
-<!--div cg-busy="{promise:Saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
-<div class="right-column">
-    <pre>{{cabinets|json}}</pre>
+<div cg-busy="{promise:loading, message:'Loading', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:Saving, message:'BioSafetyCabinetSaving', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
+<div class="right-column">
     <div class="well full">
         <h1 class="card-header full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
             <a ng-click="showInactive()" class="btn left" style="margin-left:10px">Show Inactive</a>
@@ -30,7 +30,7 @@
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
                     </td>
                     <td>
-                        {{cabinet.Building.Name}}
+                        {{cabinet.Room.Building.Name}}
                     </td>
                     <td>
                         {{cabinet.Room.Name}}
@@ -39,25 +39,25 @@
                         {{cabinet.Type}}
                     </td>
                     <td>
-                        {{cabinet.SerialNum}}
+                        {{cabinet.Serial_number}}
                     </td>
                     <td>
-                        {{cabinet.make}}
+                        {{cabinet.Make}}
                     </td>
                     <td>
-                        {{cabinet.model}}
+                        {{cabinet.Model}}
                     </td>
                     <td>
-                        {{cabinet.CertDate}}
+                        {{cabinet.Certification_date | dateToISO}}
                     </td>
                     <td>
-                        {{cabinet.DueDate}}
+                        {{cabinet.Due_date | dateToISO}}
                     </td>
                     <td>
                         {{cabinet.Frequency}}
                     </td>
-                    <td>
-                        {{cabinet.Pi.Name}}
+                    <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
+                        {{cabinet.PrincipalInvestigator.User.Name}}
                     </td>
                     <td>
                         <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>

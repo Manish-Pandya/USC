@@ -16,25 +16,38 @@ angular.module('EquipmentModule')
                 .then(
                     function(){
                          $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                         return $scope.cabinets;
                     }
                 )
               
         },
         getAllPis = function(){
             return af.getAllPrincipalInvestigators()
-                        .then(function(){$scope.pis = dataStoreManager.get("PrincipalInvestigator");})
+                        .then(function(){$scope.pis = dataStoreManager.get("PrincipalInvestigator");return $scope.pis;})
         },
         getAllRooms = function(){
-            return af.getAllRooms();
+            return af.getAllRooms().then(
+                        function(){
+                                $scope.rooms = dataStoreManager.get("Room");
+                                console.log($scope.rooms);
+                                return $scope.rooms
+                            }
+                        );
         },
         getAllBuildings = function(){
-            return af.getAllBuildings();
+            return af.getAllBuildings()
+                        .then(
+                            function(){
+                                console.log( dataStoreManager.get("Building"));
+                                $scope.buildings = dataStoreManager.get("Building");
+                                return $scope.buildings
+                            }
+                        );
         }
     
         //init load
-        $scope.loading = getAllPis()
-                            .then(getAllBuildings())
-                            .then(getAllRooms())
+        $scope.loading = getAllRooms()
+                            .then(getAllPis())
                             .then(getAllBioSafetyCabinets());        
 
         $scope.deactivate = function(cabinet) {
@@ -55,6 +68,7 @@ angular.module('EquipmentModule')
                 object.Is_active = true;
                 object.Class = "BioSafetyCabinet";
             }
+            if(object.PrincipalInvestigator)object.PrincipalInvestigator.loadRooms();
             modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
@@ -66,9 +80,43 @@ angular.module('EquipmentModule')
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance) {
         var af = $scope.af = applicationControllerFactory;
-
+        
         $scope.modalData = af.getModalData();
         console.log($scope.modalData);
+        $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
+        if($scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator){
+            $scope.pi = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
+            $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
+        }
+    
+        $scope.onSelectPi = function(pi){
+            pi.loadRooms();
+            $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator = pi;
+            $scope.modalData.BioSafetyCabinetCopy.Principal_investigator_id = pi.Key_id;
+        }
+    
+        $scope.getBuilding = function(){
+            $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.Room.Building.Name;
+        }
+    
+        $scope.onSelectBuilding = function(){
+            $scope.roomFilter = $scope.modalData.SelectedBuilding;            
+        }
+    
+        $scope.onSelectRoom = function(){
+            $scope.modalData.BioSafetyCabinetCopy.Room_id = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
+        }
+        
+        $scope.$watch('modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms', function() {
+            $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator.loadBuildings();
+        });
+    
+        $scope.save = function(copy, orginal){
+            if(!orginal)orginal = null;
+            console.log(orginal);
+            af.saveBioSafetyCabinet(copy, orginal)
+                    .then(function(){$scope.close()})
+        }
 
         $scope.close = function(){
             $modalInstance.dismiss();

@@ -399,6 +399,7 @@ routeCtrl = function($scope, $location,$rootScope){
 }
 
 roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, locationHubFactory, roleBasedFactory){
+    $rootScope.modal = false;
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
     $rootScope.rbf = roleBasedFactory;
@@ -543,6 +544,7 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
 
 modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, convenienceMethods){
     $rootScope.validationError='';
+    $rootScope.modal = true;
 
     $scope.roomUses = [
         {Name:"Chemical Storage"},
@@ -592,6 +594,8 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
     }
 
     $scope.cancel = function () {
+       $rootScope.modal = false;
+
       $rootScope.validationError='';
       $modalInstance.dismiss();
         console.log($scope.use);
@@ -603,6 +607,8 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
     }
 
     $scope.save = function(obj){
+        $rootScope.modal = false;
+
         obj.IsDirty=true;
         //unset global error, if it exists.
         $scope.error = null;

@@ -17,31 +17,24 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(
                     function(pi){
-                        console.log(pi);
                        // pi = new window.PrincipalInvestigator();
-                        pi.loadPurchaseOrders();
+                        pi.loadUser();
+                        pi.loadRooms();
                         pi.loadActiveParcels();
+                        pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
                         $rootScope.pi = pi;
-                        console.log(pi);
-                        console.log(dataStore);
                         return pi;
                     },
                     function(){
                     }
                 );
     }
-    //get all the pis
-    if(!$rootScope.piPromise){
-        $rootScope.piPromise = af.getRadModels()
-                            .then(getRadPi);
-    }else{
-        $rootScope.piPromise().then(getRadPi);
-    }
 
-            
+    $rootScope.radPromise = af.getRadModels()
+                                .then(getRadPi);
 
 
     $scope.onSelectPi = function (pi)

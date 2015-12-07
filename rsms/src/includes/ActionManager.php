@@ -1703,59 +1703,70 @@ class ActionManager {
         }
     }
 
-    public function getAllRooms(){
+    public function getAllRooms($allLazy = NULL){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $dao = $this->getDao(new Room());
 
         $rooms = $dao->getAll();
 
+        // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
+        // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
+        $roomMaps = array();
+        if($allLazy == NULL){
+	        $roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+	        $roomMaps[] = new EntityMap("lazy","getHazards");
+	        $roomMaps[] = new EntityMap("lazy","getBuilding");
+	        $roomMaps[] = new EntityMap('eager', 'getBuilding_id');
+	        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+	        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+	        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+	         
+	        $piMaps = array();
+	        $piMaps[] = new EntityMap("lazy","getLabPersonnel");
+	        $piMaps[] = new EntityMap("lazy","getRooms");
+	        $piMaps[] = new EntityMap("eager","getDepartments");
+	        $piMaps[] = new EntityMap("eager","getUser");
+	        $piMaps[] = new EntityMap("lazy","getInspections");
+	        $piMaps[] = new EntityMap("lazy","getPi_authorization");
+	        $piMaps[] = new EntityMap("lazy", "getActiveParcels");
+	        $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+	        $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+	        $piMaps[] = new EntityMap("lazy", "getSolidsContainers");
+	        $piMaps[] = new EntityMap("lazy", "getPickups");
+	        $piMaps[] = new EntityMap("lazy", "getScintVialCollections");
+	        $piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+	        $piMaps[] = new EntityMap("lazy","getOpenInspections");
+	        $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+	        $piMaps[] = new EntityMap("lazy","getVerifications");
+	        $piMaps[] = new EntityMap("lazy","getBuidling");
+	        $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        }else{
+        	$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+        	$roomMaps[] = new EntityMap("lazy","getHazards");
+        	$roomMaps[] = new EntityMap("lazy","getBuilding");
+        	$roomMaps[] = new EntityMap('eager', 'getBuilding_id');
+        	$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+        	$roomMaps[] = new EntityMap("lazy","getHas_hazards");
+        	$roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        	 
+        }
         foreach($rooms as $room){
-            // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
-            // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-            $roomMaps = array();
-            $roomMaps[] = new EntityMap("eager","getPrincipalInvestigators");
-            $roomMaps[] = new EntityMap("lazy","getHazards");
-            $roomMaps[] = new EntityMap("lazy","getBuilding");
-            $roomMaps[] = new EntityMap('eager', 'getBuilding_id');
-            $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
-            $roomMaps[] = new EntityMap("lazy","getHas_hazards");
-
-            $piMaps = array();
-            $piMaps[] = new EntityMap("lazy","getLabPersonnel");
-            $piMaps[] = new EntityMap("lazy","getRooms");
-            $piMaps[] = new EntityMap("eager","getDepartments");
-            $piMaps[] = new EntityMap("eager","getUser");
-            $piMaps[] = new EntityMap("lazy","getInspections");
-            $piMaps[] = new EntityMap("lazy","getPi_authorization");
-            $piMaps[] = new EntityMap("lazy", "getActiveParcels");
-            $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-            $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-            $piMaps[] = new EntityMap("lazy", "getSolidsContainers");
-            $piMaps[] = new EntityMap("lazy", "getPickups");
-            $piMaps[] = new EntityMap("lazy", "getScintVialCollections");
-            $piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-            $piMaps[] = new EntityMap("lazy","getOpenInspections");
-            $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-            $piMaps[] = new EntityMap("lazy","getVerifications");
-            $piMaps[] = new EntityMap("lazy","getBuidling");
-            $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
-
-
-            foreach($room->getPrincipalInvestigators() as $pi){
-                $pi->setEntityMaps($piMaps);
-
-                $user = $pi->getUser();
-
-                $userMaps = array();
-                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-                $userMaps[] = new EntityMap("lazy","getInspector");
-                $userMaps[] = new EntityMap("lazy","getSupervisor");
-                $userMaps[] = new EntityMap("lazy","getRoles");
-                $userMaps[] = new EntityMap("lazy","getPrimary_department");
-                $user->setEntityMaps($userMaps);
-            }
-
+			if($allLazy == NULL){
+	            foreach($room->getPrincipalInvestigators() as $pi){
+	                $pi->setEntityMaps($piMaps);
+	
+	                $user = $pi->getUser();
+	
+	                $userMaps = array();
+	                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+	                $userMaps[] = new EntityMap("lazy","getInspector");
+	                $userMaps[] = new EntityMap("lazy","getSupervisor");
+	                $userMaps[] = new EntityMap("lazy","getRoles");
+	                $userMaps[] = new EntityMap("lazy","getPrimary_department");
+	                $user->setEntityMaps($userMaps);
+	            }
+			}
             $room->setEntityMaps($roomMaps);
 
         }
@@ -2599,75 +2610,6 @@ class ActionManager {
             return true;
         }
     }
-    
-    public function getHazardRoomDtosByPIId($piId = null) {
-    	
-    	if($piId == NULL){
-    		$piId = $this->getValueFromRequest('id', $piId);
-    	}
-    	
-    	if( $piId !== NULL ){
-    		$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-    		return $dao->getHazardRoomDtosByPIId($piId);
-    	}
-    	else{
-    		//error
-    		return new ActionError("No request parameter 'piId' was provided");
-    	}
-    	
-    }
-    
-    /**
-     * Given a PIHazardRoomDto, creates or deletes relevant relationships between PI, Hazard, and Room
-     *
-     * @param PIHazardRoomDto $decodedObject
-     * @return PIHazardRoomDto $dto
-     */
-    public function savePIHazardRoomMappings($decodedObject = NULL){
-    	//$decodedObject = $this->convertInputJson();
-    	
-    	if($decodedObject->getIsPresent() == false){
-    		//delete all the PrincipalInvestigatorHazardRoomRelations
-    		foreach($decodedObject->getInspectionRooms() as $room){
-    			//get the relevant PrincipalInvestigatorHazardRoomRelation
-    			$whereClauseGroup = new WhereClauseGroup(
-    				new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
-    				new WhereClause("principal_investigator_id","=",$decodedObject->getHazard_id()),
-    				new WhereClause("room_id","=",$room->getKey_id())
-    			);
-    			
-    			$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-    			$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
-    			foreach($relations as $relation){
-    				$piHazardRoomDao->deleteById($relation->getKey_id());
-    			}
-    		}
-    		
-    	}else{
-    		//delete all the PrincipalInvestigatorHazardRoomRelations
-    		foreach($decodedObject->getInspectionRooms() as $room){
-    			//get the relevant PrincipalInvestigatorHazardRoomRelation
-    			$whereClauseGroup = new WhereClauseGroup(
-    				new WhereClause("hazard_id","=",$decodedObject->getHazard_id()),
-    				new WhereClause("principal_investigator_id","=",$decodedObject->getHazard_id()),
-    				new WhereClause("room_id","=",$room->getKey_id())
-    			);
-    			
-    			$piHazardRoomDao =  $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-    			$relations = $piHazardRoomDao->getAllWhere($whereClauseGroup);
-    			foreach($relations as $relation){
-    				$relation = new PrincipalInvestigatorHazardRoomRelation();
-    				$room = new Room();
-    				if($room->getContainsHazard() == false){
-    					$piHazardRoomDao->deleteById($relation->getKey_id());
-    				}else{
-    					$relation->setRoom_id($room->getKey_id());
-    					//$relation->set7
-    				}
-    			}
-    		}
-    	}
-    }
 
     // Inspection, step 2 (Hazard Assessment)
 
@@ -2901,7 +2843,7 @@ class ActionManager {
 
             //get hazards
             $hazards = $room->getHazards();
-
+            
             // if subhazards is false, change all hazard subentities to lazy loading
             if ($subHazards == "false"){
                 $entityMaps = array();
@@ -2921,6 +2863,22 @@ class ActionManager {
                 }
 
             }
+            
+            //sort the hazards by parent
+            //10000 is the magic number, yes it is.
+            //this is because we arbitrarily decided that the ROOT hazard should have the key_id 10000
+            $sortedHazards = array();
+            $hashMap = array();
+            $nestMap = array();
+            
+            //this loops should be faster than repeatedly calling the db for the subhazards of every hazard
+            foreach ($hazards as $key=>$hazard) {
+            	if($nestMap[$hazard->getParent_hazard_id()] == null){
+            		$nestMap[$hazard->getParent_hazard_id()] = array();
+            	}
+            	array_push($nestMap[$hazard->getParent_hazard_id()], $hazard);
+            }
+                    
             return $hazards;
         }
         else{
@@ -2928,6 +2886,8 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided");
         }
     }
+    
+    
     public function getHazardRoomRelations( $roomIds = NULL ){
         $roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
 
@@ -3342,16 +3302,21 @@ class ActionManager {
             //iterate the rooms and find the hazards present
             foreach ($rooms as $room){
                 $hazardlist = $this->getHazardsInRoom($room->getKey_id());
+                $LOG->fatal($hazardlist);
+                
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
+                	 
                     // Check to see if we've already examined this hazard (in an earlier room)
                     if (!in_array($hazard->getKey_id(),$masterHazards)){
                         // if this is new hazard, add its keyid to the master array...
                         $masterHazards[] = $hazard->getKey_id();
                         // ... and get its checklist, if there is one
                         $checklist = $hazard->getChecklist();
+                        
                         // if this hazard had a checklist, add it to the checklists array
                         if (!empty($checklist)){
+                        	$checklist->setParent_hazard_id($hazard->getParent_hazard_id());
                             $checklists[] = $checklist;
                         }
                     }
@@ -3410,7 +3375,7 @@ class ActionManager {
         //Get responses for Inspection
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
-        $piId = $this->getValueFromRequest('piId', $piId);
+        $piId = $this->getValueFromRequest('id', $piId);
 
         if( $piId !== NULL ){
 
@@ -4094,6 +4059,31 @@ class ActionManager {
     public function getAllSupplementalObservations(){
         $dao = $this->getDao(new SupplementalObservation());
         return $dao->getAll();
+    }
+    
+    public function getRelationships( $class1 = NULL, $class2 = NULL ){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    
+    	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
+    	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+    
+    	// make sure first letter of class name is capitalized.
+    	$class1 = ucfirst($class1);
+    	$class2 = ucfirst($class2);
+    
+    	$relationshipFactory = new RelationshipMappingFactory();
+    	// get the relationship mapping for the relevant classes
+    	$relationship = $relationshipFactory->getRelationship($class1, $class2);
+
+    	if( $relationship instanceof ActionError ) {
+    		return $relationship;
+    	}
+    
+    	$dao = new GenericDAO(new RelationDto());
+    
+    	$relationships = $dao->getRelationships($relationship);
+    	//$LOG->fatal($relationships);
+    	return $relationships;
     }
 }
 ?>

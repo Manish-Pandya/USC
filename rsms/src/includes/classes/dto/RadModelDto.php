@@ -1,5 +1,6 @@
 <?php
 class RadModelDto {
+	private $user;
 	private $authorization;
 	private $building;
 	private $carboyUseCycle;
@@ -24,7 +25,7 @@ class RadModelDto {
     private $purchaseOrder;
     private $quarterlInventory;
     private $quarterlyIsotopeAmount;
-    private $radCrud;
+    private $room;
     private $scintVialCollection;
     private $solidsContainer;
     private $wasteBag;
@@ -222,12 +223,12 @@ class RadModelDto {
     	$this->quarterlyIsotopeAmount = $quarterlyIsotopeAmount;
     }
     
-    public function getRadCrud(){
-    	return $this->radCrud;
+    public function getRoom(){
+    	return $this->room;
     }
     
-    public function setRadCrud($radCrud){
-    	$this->radCrud = $radCrud;
+    public function setRoom($room){
+    	$this->room = $room;
     }
     
     public function getScintVialCollection(){

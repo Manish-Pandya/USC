@@ -1,0 +1,16 @@
+<h3 class="redBg">
+    <span class="nudge-up">Investigators</span>
+    <span class="nudge-up" ng-if="modalData.Room">assigned to {{modalData.Room.Building.Name}}, Room {{modalData.Room.Name}}</span>
+    <span class="nudge-up" ng-if="modalData.PIHazardRoomDto">assigned to {{modalData.PIHazardRoomDto.Building_name}}, Room {{modalData.PIHazardRoomDto.Room_name}}</span>
+    <span class="nudge-up" ng-if="modalData.HazardDto"> using {{modalData.HazardDto.Hazard_name}}</span>
+    <span class="nudge-up" ng-if="modalData.HazardDto && !modalData.Room && !modalData.PIHazardRoomDto"> in {{modalData.PI.User.Name}}'s room(s)</span>
+</h3>
+
+<div class="modal-body" style="border-bottom:none">
+    <ul>
+        <li ng-repeat="pi in modalData.PIs"><h3>{{pi.User.Name}}</h3></li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

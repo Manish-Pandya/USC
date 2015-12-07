@@ -283,18 +283,35 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 $rootScope.category = category;
                 var categoryLabel = category.split(" ")[0].toLowerCase();
 
-                var len = factory.inspection.Checklists.length;
-                var counter;
+                var len = factory.inspection.Checklists.length;            
                 var i = 0;
                 var selectedChecklists = [];
 
+            
+                if(!factory.checklistsOrdered){
+                    var checklists = factory.inspection.Checklists;
+                    var parentIds = factory.getParentIds(checklists);
+                    factory.findChecklistArray(checklists, 1000, 0);
+
+                    for( i; i < len;  i++){
+                        var checklist = checklists[i];
+                        if(parentIds.indexOf(checklist.Key_id)){
+                            factory.findChecklistArray(checklists, checklist.Key_id, i);
+                        }
+                    }
+                    console.log(checklists);
+                    factory.checklistsOrdered = true;
+                }
+            
                 innerFilter();
 
                 function innerFilter(){
-                    for( counter = 0; i < len && counter < 3; counter++, i++){
+                    for( var i = 0; i < len;  i++){
                         var checklist = factory.inspection.Checklists[i];
-                        if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  )selectedChecklists.push( checklist );
-                    }
+                        if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  ){
+                            selectedChecklists.push( checklist );
+                        }
+                    };
 
                     if(i == len){
                         factory.inspection.selectedCategory = selectedChecklists;
@@ -304,6 +321,31 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         $timeout(innerFilter, 10);
                     }
                 }
+        }
+        //pulls matching items out of an array and puts them in another array
+        factory.findChecklistArray = function(checklists, parentId, idx){
+            var matches = [];
+            for(var i = idx; i<checklists.length; i++){
+                if(checklists[i].Parent_hazard_id == parentId)
+                    matches.push(checklists[i]);
+            }
+            var i = matches.length;
+            while(i--){
+                checklists.splice(idx,0,matches[i]);
+            }
+        }
+
+        factory.getParentIds = function(checklists){
+            if(factory.parentIds == null){
+                factory.parentIds = [];
+                var i = checklists.length;
+                while(i--){
+                    if(factory.parentIds.indexOf(checklists[i].Parent_hazard_id < 0)){
+                        factory.parentIds.push(checklists[i].Parent_hazard_id);
+                    }
+                }
+            }
+            return factory.parentIds;
         }
 
         factory.evaluateCategories = function ()

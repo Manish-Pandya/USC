@@ -43,9 +43,6 @@ angular.module('00RsmsAngularOrmApp')
                             $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
                         });
             },
-
-
-
             getHazards = function () {
                 return actionFunctionsFactory
                     .getAllHazardDtos()
@@ -59,9 +56,14 @@ angular.module('00RsmsAngularOrmApp')
                     ).then(
                         function (hazards) {
                             console.log(dataStore);
-                            var hazard = dataStoreManager.getById('Hazard', 10000);
+                            var hazard = dataStoreManager.getById('HazardDto', 10000);
                             hazard.loadSubHazards();
                             $scope.hazard = hazard;
+                            var hazards = dataStoreManager.get("HazardDto");
+                            var i = hazards.length;
+                            while(i--){
+                                if(hazards[i].HasChildren)hazards[i].loadSubHazards();
+                            }
                         },
                         function () {
                             $scope.error = 'Couldn\'t find the right hazards.'

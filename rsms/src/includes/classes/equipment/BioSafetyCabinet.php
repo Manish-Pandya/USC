@@ -138,9 +138,24 @@ class BioSafetyCabinet extends GenericCrud {
 	}
 
 	public function getDue_date(){
+		
+		$dueDate = new DateTime($this->getCertification_date());
+		
+		if($this->getFrequency() == "Annually"){
+			$dueDate->modify('+1 year');
+		}else if($this->getFrequency() == "Bi-annually"){
+			$dueDate->modify('+2 years');
+				
+		}else if($this->getFrequency() == "Semi-annually"){
+			$dueDate->modify('+6 months');
+		}else{
+			return null;
+		}
+		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));		
+		
 		return $this->due_date;
 	}
-	public function setDue_date($due_date){
+	public function setDue_date($due_date){		
 		$this->due_date = $due_date;
 	}
 

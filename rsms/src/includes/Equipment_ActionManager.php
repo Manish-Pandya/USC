@@ -35,6 +35,10 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
+        	$decodedObject = new BioSafetyCabinet();
+        	if($decodedObject->getCertification_date() == NULL){
+        		$decodedObject->setCertification_date(date('Y-m-d H:i:s'));
+        	}
         	$dao = $this->getDao(new BioSafetyCabinet());
             $dao->save($decodedObject);
             return $decodedObject;
@@ -61,14 +65,14 @@ class Equipment_ActionManager extends ActionManager {
     }
     
     public function getRoomsWithoutComposing(){
-    	$rooms = $this->getAllRoom();
+    	$rooms = $this->getAllRooms();
     	
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
     	$entityMaps[] = new EntityMap("lazy","getHazards");
     	$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
     	$entityMaps[] = new EntityMap("lazy","getHas_hazards");
-    	$entityMaps[] = new EntityMap("lazy","getBuilding");
+    	$entityMaps[] = new EntityMap("eager","getBuilding");
     	$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
     	
     	foreach($rooms as $room){
