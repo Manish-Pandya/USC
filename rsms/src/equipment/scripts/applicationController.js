@@ -1,84 +1,14 @@
 'use strict';
 
 angular
-    .module('actionFunctionsModule',[])
-        .factory('actionFunctionsFactory', function actionFunctionsFactory( modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods ){
-            var af = {};
+    .module('EquipmentModule')
+        .factory('applicationControllerFactory', function applicationControllerFactory(rootApplicationControllerFactory, modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods ){
+            var af = rootApplicationControllerFactory;
             var store = dataStoreManager;
             //give us access to this factory in all views.  Because that's cool.
             $rootScope.af = this;
 
             store.$q = $q;
-
-
-            /********************************************************************
-            **
-            **      CLIENT MANAGEMENT CONVENIENCE
-            **
-            ********************************************************************/
-
-            af.copy = function( obj ) {
-                    store.createCopy( obj );
-                    //set the other objects in this one's collection to the non-edit state
-                    store.setEditStates( obj );
-            }
-
-            af.createCopy = function(obj) {
-                obj.edit = true;
-                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
-            }
-
-            af.cancelEdit = function( obj ) {
-                    obj.edit = false;
-                    $rootScope[obj.Class+'Copy'] = {};
-            }
-
-            af.setObjectActiveState = function( object ) {
-                    object.setIs_active( !object.Is_active );
-
-                    //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
-                        .then(
-                            function( returnedPromise ){
-                                if(typeof returnedPromise === 'object')angular.extend(object, returnedPromise);
-                                return true;
-                            },
-                            function( error )
-                            {
-                                object.setIs_active( !object.Is_active );
-                                $rootScope.error = 'error';
-                                return false;
-                            }
-                        );
-            }
-
-            af.save = function( object, saveChildren ) {
-                    if(!saveChildren)saveChildren = false;
-                    //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
-                        .then(
-                            function( returnedData ){
-                                return returnedData.data;
-                            },
-                            function( error )
-                            {
-                               // object.setIs_active( !object.Is_active );
-                                $rootScope.error = 'error';
-                            }
-                        );
-            }
-
-            af.getById = function( objectFlavor, key_id ) {
-                return store.getById(objectFlavor, key_id);
-            }
-
-            af.getAll = function(className) {
-                return dataSwitchFactory.getAllObjects(className);
-            }
-
-            af.getCachedCollection = function(flavor) {
-                return dataStore[flavor];
-            }
 
             af.getViewMap = function(current) {
                 var viewMap = [
@@ -225,6 +155,18 @@ angular
             af.getAllBioSafetyCabinets = function(key_id) {
                 return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
             }
+                        
+            af.getAllRooms = function(key_id) {
+                return dataSwitchFactory.getAllObjects('Room');
+            }
+                        
+            af.getAllBuildings = function(key_id) {
+                return dataSwitchFactory.getAllObjects('Building');
+            }
+            
+            af.getAllPrincipalInvestigators = function(key_id) {
+                return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
+            }   
             
             af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
                 af.clearError();

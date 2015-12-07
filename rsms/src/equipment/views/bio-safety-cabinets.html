@@ -1,70 +1,69 @@
 <!--div cg-busy="{promise:Saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
-
 <div class="right-column">
+    <pre>{{cabinets|json}}</pre>
+
     <div class="well full">
-        <h1 class="card full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
+        <h1 class="card-header full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
             <a ng-click="showInactive()" class="btn left" style="margin-left:10px">Show Inactive</a>
             <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
         </h1>
         <h3 ng-if="!cabinets.length">No Cabinets</h3>
-        <div class="card full bio-safety-cabinets" ng-if="cabinets.length">
-            <div class="fake-table bordered">
-                <div class="table-header">
-                    <h3>EDIT</h3>
-                    <h3>BUILDING</h3>
-                    <h3>ROOM</h3>
-                    <h3>TYPE</h3>
-                    <h3>SERIAL #</h3>
-                    <h3>MAKE</h3>
-                    <h3>MODEL</h3>
-                    <h3>CERT-DATE</h3>
-                    <h3>DUE-DATE</h3>
-                    <h3>FREQUENCY</h3>
-                    <h3>PI</h3>
-                    <h3>REPORT</h3>
-                </div>
-                <div class="table-row" ng-repeat="cabinet in cabinets | active">
-                    <div>
-                        <a ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
-                        <a ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></a>
-                    </div>
-                    <div>
+        <div class="full bio-safety-cabinets" ng-show="cabinets.length">
+            <table class="table table-striped">
+                <tr class="table-header">
+                    <th>EDIT</th>
+                    <th>BUILDING</th>
+                    <th>ROOM</th>
+                    <th>TYPE</th>
+                    <th>SERIAL #</th>
+                    <th>MAKE</th>
+                    <th>MODEL</th>
+                    <th>CERT-DATE</th>
+                    <th>DUE-DATE</th>
+                    <th>FREQUENCY</th>
+                    <th>PI</th>
+                    <th>REPORT</th>
+                </tr>
+                <tr class="table-row" ng-repeat="cabinet in cabinets">
+                    <td>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
+                    </td>
+                    <td>
                         {{cabinet.Building.Name}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.Room.Name}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.Type}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.SerialNum}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.make}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.model}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.CertDate}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.DueDate}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.Frequency}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         {{cabinet.Pi.Name}}
-                    </div>
-                    <div>
+                    </td>
+                    <td>
                         <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
-                    </div>
-                </div>
-            </div>
-
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
-
 </div>

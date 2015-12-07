@@ -20,7 +20,10 @@
         'BioSafetyCabinet'      : {getById: "getBioSafetyCabinetById"      , getAll: "getAllBioSafetyCabinets"      , save: "saveBioSafetyCabinet"       },
         'ChemFumeHood'          : {getById: "getChemFumeHoodById"          , getAll: "getAllChemFumeHoods"          , save: "saveChemFumeHood"           },
         'Lasers'                : {getById: "getLaserById"                 , getAll: "getAllLasers"                 , save: "saveLaser"                  },
-        'XRay'                  : {getById: "getXRayById"                  , getAll: "getAllXRays"                  , save: "saveXRay"                   }
+        'XRay'                  : {getById: "getXRayById"                  , getAll: "getAllXRays"                  , save: "saveXRay"                   },
+        'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: ""                           },
+        'Building'              : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: ""                           },
+        'PrincipalInvestigator' : {getById: "getPIById"                    , getAll: "getAllPIs"                    , save: ""                   },
 };
 
 urlMapper.list = equipmentUrlMapper.list;

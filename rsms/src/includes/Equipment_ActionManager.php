@@ -35,6 +35,7 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
+        	$dao = $this->getDao(new BioSafetyCabinet());
             $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -53,6 +54,29 @@ class Equipment_ActionManager extends ActionManager {
     		//error
     		return new ActionError("No request parameter 'id' was provided");
     	}
+    }
+    
+    public function getBuidlingsWithoutRooms(){
+    	return $this->getAllBuildings(null, true, true);	
+    }
+    
+    public function getRoomsWithoutComposing(){
+    	$rooms = $this->getAllRoom();
+    	
+    	$entityMaps = array();
+    	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+    	$entityMaps[] = new EntityMap("lazy","getHazards");
+    	$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
+    	$entityMaps[] = new EntityMap("lazy","getHas_hazards");
+    	$entityMaps[] = new EntityMap("lazy","getBuilding");
+    	$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+    	
+    	foreach($rooms as $room){
+    		$room->setEntityMaps($entityMaps);
+    	}
+    	
+    	return $rooms;
+    	
     }
 }
 

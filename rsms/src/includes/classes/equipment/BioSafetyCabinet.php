@@ -46,7 +46,7 @@ class BioSafetyCabinet extends GenericCrud {
 	private $principal_investigator;
 	private $certification_date;
 	private $due_date;
-	private $report_date;
+	private $report_path;
 
 	public function __construct(){
 		// Define which subentities to load
@@ -144,11 +144,11 @@ class BioSafetyCabinet extends GenericCrud {
 		$this->due_date = $due_date;
 	}
 
-	public function getReport_date(){
-		return $this->report_date;
+	public function getReport_path(){
+		return $this->report_path;
 	}
-	public function setReport_date($report_date){
-		$this->report_date = $report_date;
+	public function setReport_path($report_path){
+		$this->report_path = $report_path;
 	}
 
 }

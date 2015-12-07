@@ -11,12 +11,31 @@ angular.module('EquipmentModule')
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
 
-        af.getAllBioSafetyCabinets()
-            .then(
-                function(){
-                     $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
-                }
-            )
+        var getAllBioSafetyCabinets = function(){
+            return af.getAllBioSafetyCabinets()
+                .then(
+                    function(){
+                         $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                    }
+                )
+              
+        },
+        getAllPis = function(){
+            return af.getAllPrincipalInvestigators()
+                        .then(function(){$scope.pis = dataStoreManager.get("PrincipalInvestigator");})
+        },
+        getAllRooms = function(){
+            return af.getAllRooms();
+        },
+        getAllBuildings = function(){
+            return af.getAllBuildings();
+        }
+    
+        //init load
+        $scope.loading = getAllPis()
+                            .then(getAllBuildings())
+                            .then(getAllRooms())
+                            .then(getAllBioSafetyCabinets());        
 
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
@@ -24,8 +43,6 @@ angular.module('EquipmentModule')
             console.log(copy);
             af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
         }
-
-
 
         $scope.report = function(cabinet) {
 
@@ -35,6 +52,7 @@ angular.module('EquipmentModule')
             var modalData = {};
             if (!object) {
                 object = new window.BioSafetyCabinet();
+                object.Is_active = true;
                 object.Class = "BioSafetyCabinet";
             }
             modalData[object.Class] = object;
