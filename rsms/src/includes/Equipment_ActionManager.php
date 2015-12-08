@@ -35,7 +35,6 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
-        	$decodedObject = new BioSafetyCabinet();
         	if($decodedObject->getCertification_date() == NULL){
         		$decodedObject->setCertification_date(date('Y-m-d H:i:s'));
         	}

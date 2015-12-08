@@ -192,13 +192,14 @@ angular
                     .then(
                         function(returnedBioSafetyCabinet){
                             returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
-                            if(bioSafetyCabinet){
-                                console.log(copy);
+                            if(bioSafetyCabinet.Key_id){
+                                console.log(returnedBioSafetyCabinet);
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
                                 bioSafetyCabinet.loadRoom();
                                 bioSafetyCabinet.loadPI();
                             }else{
-                                returnedBioSafetyCabinet.loadRoom();
+                                console.log(returnedBioSafetyCabinet);
+                                bioSafetyCabinet.loadRoom();
                                 bioSafetyCabinet.loadPI();
                                 dataStoreManager.addOnSave(returnedBioSafetyCabinet);
                                 dataStoreManager.store(returnedBioSafetyCabinet);
