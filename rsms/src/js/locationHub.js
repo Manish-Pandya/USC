@@ -118,6 +118,12 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
     factory.buildings = [];
     factory.campuss = [];
     factory.modalData;
+    factory.isEditing = false;
+    
+    factory.editing = function(bool) {
+        factory.isEditing = bool;
+        console.log("dig", factory.isEditing);
+    }
 
     factory.getRooms = function(){
         //if we don't have a the list of pis, get it from the server
