@@ -246,7 +246,7 @@ echo "</script>";
             <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
                 {{child.Hazard_name}}
                 <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
-                <span ng-if="child.BelongsToOtherPI" class="stored">(Other Lab's Hazard)</span>
+                <span ng-if="child.BelongsToOtherPI  && !child.IsPresent" class="stored">(Other Lab's Hazard)</span>
                         </span>
                         </span>
                         <!--</h4>-->
@@ -266,10 +266,8 @@ echo "</script>";
                             <li>{{ key }}: <span ng-repeat="room in building | filter: {ContainsHazard: true}"><a ng-click="openMultiplePIsModal(child, room)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span>
                             </li>
                         </ul>
-                        <ul>
-                            <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
-                                <span ng-init="child.loadSubHazards()" data-ng-include="'views/sub-hazard.html'"></span>
-                            </li>
+                       <ul>
+                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
                         </ul>
                     </li>
                 </ul>
@@ -309,10 +307,9 @@ echo "</script>";
                             </li>
                         </ul>
                         <ul>
-                            <li ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" class="hazardLi" id="id-{{child.Key_Id}}">
-                                <span ng-init="child.loadSubHazards()" data-ng-include="'views/sub-hazard.html'"></span>
-                            </li>
+                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
                         </ul>
+
                     </li>
                 </ul>
             </li>

@@ -85,6 +85,9 @@ angular
                         hazardDto.IsPresent = copy.IsPresent;
                         for(var i =0; i < hazardDto.InspectionRooms.length; i++){
                             hazardDto.InspectionRooms[i].ContainsHazard = copy.InspectionRooms[i].ContainsHazard;
+                            hazardDto.InspectionRooms[i].Status = copy.InspectionRooms[i].Status;
+                            hazardDto.InspectionRooms[i].storeOnly = copy.InspectionRooms[i].storeOnly;
+                            ac.evaluateHazardPresent(hazardDto);
                         }
 
                     },
@@ -98,13 +101,25 @@ angular
         ac.saveHazardDto = function(){
         }
 
-        ac.savePIHazardRoom = function(room, hazard, changed){
+        ac.savePIHazardRoom = function(room, hazard, changed, confirmed){
             var copy = ac.copyInpectionRoom(room);
             this.clearError();
 
             //the room has been added or removed, as opposed to having its status changed
             if(changed){
                 room.ContainsHazard = !room.ContainsHazard;
+            }
+
+            //make sure that we don't need the user to confirm the save
+            if(ac.needsConfirmation(room, hazard)){
+               var confirm = window.confirm(hazard.Hazard_name + " has SubHazards hazards in " + room.Building_name + ", room" +room.Room_name + ". Are you sure you want to apply your change to all its SubHazards?");
+               if(confirm == false){
+                if(hazard.needsStoredOnlyConfimration){
+                    room.Status = "In Use";
+                    room.storedOnly = false;
+                }
+                return;
+               }
             }
 
             this.save(copy)
@@ -117,6 +132,35 @@ angular
                         ac.setError("Something went wrong.");
                     }
                 )
+        }
+
+        ac.needsConfirmation = function(room, hazard){
+            //get the index of the room in the hazards collection
+            var i = hazard.InspectionRooms.length;
+            while(i--){
+                if(hazard.InspectionRooms[i].Room_id == room.Room_id){
+                    var idx = i;
+                    //break;
+                }
+            }
+
+            var i = hazard.ActiveSubHazards.length;
+            while(i--){
+                //if we are removing the hazard from the room, warn the user that its children will be removed
+                if(!hazard.InspectionRooms[idx].ContainsHazard){
+                    if(hazard.ActiveSubHazards[i].InspectionRooms[idx].ContainsHazard){
+                        hazard.needs = true;
+                        return true;
+                    }
+                }
+                //if we are setting the hazard to "Stored Only" in the room, warn the user that we will be setting its children to same
+                else if(hazard.InspectionRooms[idx].Status == Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                    if(hazard.ActiveSubHazards[i].InspectionRooms[idx].ContainsHazard && hazard.ActiveSubHazards[i].InspectionRooms[idx].Status != Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                        hazard.needsStoredOnlyConfimration = true;
+                        return true;
+                    }
+                }
+            }
         }
 
         ac.copyInpectionRoom = function(room, containsHazard){
@@ -156,12 +200,17 @@ angular
                     if(parent.InspectionRooms[i].ContainsHazard == false){
                         hazardDto.InspectionRooms[i].ContainsHazard = false;
                     }else{
-                        hazardDto.IsPresent = true;
                         if(parent.InspectionRooms[i].Status == Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
                             hazardDto.InspectionRooms[i].Status = Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY;
+                            if(hazardDto.InspectionRooms[i].ContainsHazard){
+                                hazardDto.IsPresent = true;
+                            }
                         }else{
-                            if(hazardDto.InspectionRooms[i].ContainsHazard && !hazardDto.InspectionRooms[i].Status == Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
-                                storedOnly = false;
+                            if(hazardDto.InspectionRooms[i].ContainsHazard){
+                                hazardDto.IsPresent = true;
+                                if(!hazardDto.InspectionRooms[i].Status != Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY){
+                                    storedOnly = false;
+                                }
                             }
                         }
                     }
@@ -172,7 +221,7 @@ angular
             }else{
                 hazardDto.Stored_only = false;
             }
-            
+
             if(hazardDto.ActiveSubHazards){
                 var i = hazardDto.ActiveSubHazards.length;
                 while(i--){

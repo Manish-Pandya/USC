@@ -257,9 +257,9 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
 		
 		$whereClauseGroup = new WhereClauseGroup(array(
-			new WhereClause($piId, "=", 'principal_investigator_id'),			
-			new WhereClause($hazardId, "=", 'hazard_id'),
-			new WhereClause($roomId, "=", 'room_id')				
+			new WhereClause('principal_investigator_id', "=", $piId),			
+			new WhereClause('hazard_id', "=", $hazardId),
+			new WhereClause('room_id', "=", $roomId)				
 		));
 		
 		return count($piHazardRoomDao->getAllWhere($whereClauseGroup)) > 0;

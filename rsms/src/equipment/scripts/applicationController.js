@@ -43,7 +43,7 @@ angular
                         Dashboard: true
                     }
                 ];
-                
+
                 var i = viewMap.length;
                 while(i--){
                     if(current.name == viewMap[i].Name){
@@ -55,7 +55,7 @@ angular
             af.setSelectedView = function(view){
                 $rootScope.selectedView = view;
             }
-            
+
 
             /********************************************************************
             **
@@ -81,7 +81,7 @@ angular
             af.deleteModalData = function() {
                 dataStore.modalData = [];
             }
-            
+
             /********************************************************************
             **
             **      AUTOCLAVE            **
@@ -105,11 +105,11 @@ angular
                 }
                 return autoclave;
             }
-            
+
             af.getAllAutoclaves = function(key_id) {
                 return dataSwitchFactory.getAllObjects('Autoclave');
             }
-            
+
             af.saveAutoclave = function(copy, autoclave) {
                 af.clearError();
                 console.log(copy);
@@ -127,12 +127,12 @@ angular
                         af.setError('The Autoclave could not be saved')
                     )
             }
-            
+
             /********************************************************************
             **
             **      BioSafetyCabinet            **
             ********************************************************************/
-            
+
             af.getBioSafetyCabinetById = function(key_id) {
                 var urlSegment = 'getBioSafetyCabinetById&id=' + key_id;
 
@@ -151,32 +151,32 @@ angular
                 }
                 return bioSafetyCabinet;
             }
-            
+
             af.getAllBioSafetyCabinets = function() {
                 return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
             }
-                        
+
             af.getAllRooms = function() {
                 return dataSwitchFactory.getAllObjects('Room');
             }
-                        
+
             af.getAllBuildings = function() {
                 return dataSwitchFactory.getAllObjects('Building');
             }
-            
+
             af.getAllPrincipalInvestigators = function() {
                 return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
-            }   
-            
+            }
+
             af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
                 af.clearError();
-                
+
                 //flatten to avoid circular JSON structure
                 var secondCopy = {
                             Certification_date: copy.Certification_date,
                             Class: "BioSafetyCabinet",
                             Frequency: copy.Frequency,
-                            Is_active: copy.Is_active,                            
+                            Is_active: copy.Is_active,
                             Make: copy.Make,
                             Model: copy.Model,
                             Principal_investigator_id: copy.Principal_investigator_id,
@@ -185,15 +185,14 @@ angular
                             Serial_number: copy.Serial_number,
                             Type: copy.Type,
                 }
-                
+
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
-                
+
                 return this.save(secondCopy)
                     .then(
                         function(returnedBioSafetyCabinet){
                             returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
                             if(bioSafetyCabinet){
-                                console.log(copy);
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
                                 bioSafetyCabinet.loadRoom();
                                 bioSafetyCabinet.loadPI();
@@ -207,7 +206,7 @@ angular
                         af.setError('The BioSafetyCabinet could not be saved')
                     )
             }
-            
+
             /********************************************************************
             **
             **		USER MANAGEMENT
@@ -275,7 +274,7 @@ angular
                                 roomsPromise.resolve(rooms);
                             }
                         )
-                    
+
                     // TODO: Make specific to Equipment module, if this is even needed.
                     return all.then(
                                 function( model ){
@@ -294,7 +293,7 @@ angular
                                 }
                             )
             }
-            
+
             /********************************************************************
             **
             **      HANDY FUNCTIONS

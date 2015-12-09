@@ -74,7 +74,7 @@
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_REPORT">
                         <p>
                             (Started: {{inspection.Date_started | dateToISO}})
-                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                         </p>
                     </span>
 
@@ -87,7 +87,7 @@
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                         <p>
                             (Scheduled for {{inspection.Text_schedule_month}})
-                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                         </p>
                     </span>
 
