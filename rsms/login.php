@@ -5,10 +5,13 @@ if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
     include('Application.php');
 }
 session_start();
-print_r($_COOKIE);
 
 if( isset($_SESSION) && !isset($_SESSION['error']) ){
-    //session_destroy();
+	if(isset($_SESSION["REDIRECT"])){
+		$redirect = $_SESSION["REDIRECT"];
+	}
+    session_destroy();
+    $_SESSION["REDIRECT"] = $redirect;
 }
 ?>
 <!DOCTYPE html>

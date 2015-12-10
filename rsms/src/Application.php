@@ -15,7 +15,7 @@ if(isProduction()){
 	define('LOGIN_PAGE', 'http://radon.qa.sc.edu/rsms');
 }else{
 	define('WEB_ROOT', '/rsms/src/');
-	define('LOGIN_PAGE', 'http://erasmus.graysail.com/rsms/');	
+	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');	
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -38,8 +38,7 @@ session_start();
 <?php
 }
 	//if javascript is disabled, we still verify the user is logged in
-	//securityCheck();
-	print_r($_SERVER);
+	securityCheck();
 ?>
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
 <?php if(isset($_SESSION["USER"])){ ?>

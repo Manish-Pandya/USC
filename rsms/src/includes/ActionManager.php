@@ -159,7 +159,10 @@ class ActionManager {
                 else{
                     if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
                 }
-
+                if(isset($_SESSION["REDIRECT"])){
+                	$_SESSION['DESTINATION'] = $this->getDestination();
+                }
+                
                 // return true to indicate success
                 return true;
             } else {
@@ -346,9 +349,11 @@ class ActionManager {
          }
       }
       
-      if($_COOKIE["ATTEMPTED_PATH"] != null){
-      	$destination = $_COOKIE["ATTEMPTED_PATH"];
-      	unset($_COOKIE["ATTEMPTED_PATH"]);
+      if($_SESSION["REDIRECT"] != null){
+      	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
+      	$destination = str_replace("REDIRECT=/", "", $destination);
+      	
+      	//unset($_SESSION["REDIRECT"]);
       }
       
       return $destination;
