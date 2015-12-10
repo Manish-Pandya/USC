@@ -5,8 +5,10 @@ if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
     include('Application.php');
 }
 session_start();
+print_r($_COOKIE);
+
 if( isset($_SESSION) && !isset($_SESSION['error']) ){
-    session_destroy();
+    //session_destroy();
 }
 ?>
 <!DOCTYPE html>

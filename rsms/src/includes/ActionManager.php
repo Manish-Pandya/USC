@@ -66,7 +66,7 @@ class ActionManager {
             return new GenericDAO( $modelObject );
         }
     }
-
+    
     public function getCurrentUserRoles( $user = NULL ){
         $LOG = Logger::getLogger('Action:' . __function__);
 
@@ -333,7 +333,7 @@ class ActionManager {
     }
 
     private function getDestination(){
-        $LOG = Logger::getLogger("" . __function__);
+     $LOG = Logger::getLogger("" . __function__);
      //get the proper destination based on the user's role
      $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
      if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
@@ -345,6 +345,12 @@ class ActionManager {
             $destination = 'views/lab/MyLab.php';
          }
       }
+      
+      if($_COOKIE["ATTEMPTED_PATH"] != null){
+      	$destination = $_COOKIE["ATTEMPTED_PATH"];
+      	unset($_COOKIE["ATTEMPTED_PATH"]);
+      }
+      
       return $destination;
     }
 

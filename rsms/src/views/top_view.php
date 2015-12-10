@@ -7,10 +7,42 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMSCenter')){
     require_once('../../Application.php');
 }
 session_start();
+?>
+<?php if(!isset($_SESSION["USER"])){
 
+	if (isset($_SERVER['HTTP_COOKIE'])) {
+		$cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+		foreach($cookies as $cookie) {
+			$parts = explode('=', $cookie);
+			$name = trim($parts[0]);
+			setcookie($name, '', time()-1000);
+			setcookie($name, '', time()-1000, '/');
+		}
+	}
+	?>
+<script>
+//make sure the user is signed in, if not redirect them to the login page, but save the location they attempted to reach so we can send them there after authentication
+//if javascript is enabled, we can capture the full url, including the hash
+	var pathArray = window.location.pathname.split( '/' );
+	var attemptedPath = "";
+	for (i = 0; i < pathArray.length; i++) {
+		attemptedPath += "/";
+		attemptedPath += pathArray[i];
+	}
+	attemptedPath = window.location.protocol + attemptedPath;
+	document.cookie = 'ATTEMPTED_PATH='+attemptedPath;
+	document.cookie = 'HASH='+location.hash;
+	alert(document.cookie);
+	console.log(document.cookie);
+</script>
+<?php
+}
+	//if javascript is disabled, we still verify the user is logged in
+	//securityCheck();
+	print_r($_SERVER);
 ?>
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
-  <?php if($_SESSION != NULL){?>
+<?php if(isset($_SESSION["USER"])){ ?>
 <script>
     var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
     //grab usable properties from the session user object
@@ -19,15 +51,12 @@ session_start();
         Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
     }
     var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
-</script>
-<?php } ?>
-<script type="text/javascript">
 var isProductionServer;
 <?php
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
-
+}
 ?>
 </script>
 <!DOCTYPE html>

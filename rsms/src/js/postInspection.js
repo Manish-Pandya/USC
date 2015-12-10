@@ -451,7 +451,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
           //set view init values for email
           $scope.others = [{email:''}];
           $scope.defaultNote = {};
-          $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+          $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
 
           $scope.doneLoading = true;
           // call the manager's setter to store the inspection in the local model
@@ -463,7 +463,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       $scope.others = [{email:''}];
       $scope.defaultNote = {};
       $scope.inspection = postInspectionFactory.getInspection();
-      $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+      $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
     }
   }else{
     $scope.error = 'No inspection has been specified';
