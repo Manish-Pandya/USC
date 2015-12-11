@@ -104,7 +104,7 @@ class ActionManager {
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
         $destination = $this->getValueFromRequest('destination', $destination);
-
+        
         if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
         if(!isProduction()){
@@ -159,7 +159,9 @@ class ActionManager {
                 else{
                     if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
                 }
+                
                 if(isset($_SESSION["REDIRECT"])){
+                	$LOG->fatal("should redirect");
                 	$_SESSION['DESTINATION'] = $this->getDestination();
                 }
                 
@@ -348,17 +350,25 @@ class ActionManager {
             $destination = 'views/lab/MyLab.php';
          }
       }
-      
+      $LOG->fatal('getting destination');
       if($_SESSION["REDIRECT"] != null){
       	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
-      	$destination = str_replace("REDIRECT=/", "", $destination);
-      	
-      	//unset($_SESSION["REDIRECT"]);
+      	$destination = str_replace(LOGIN_PAGE, "", $destination);      	
       }
       
       return $destination;
     }
 
+    public function prepareRedirect(){
+    	$LOG = Logger::getLogger("redirect");
+    	$redirect = $this->getValueFromRequest('redirect', $redirect);
+    	
+    	$_SESSION["REDIRECT"] = $redirect;
+    	$LOG->fatal($_SESSION["REDIRECT"]);
+       	return true;
+    	
+    }
+    
     public function logoutAction(){
         session_destroy();
         return true;

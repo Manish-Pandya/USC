@@ -10,9 +10,13 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
 	if(isset($_SESSION["REDIRECT"])){
 		$redirect = $_SESSION["REDIRECT"];
 	}
-    session_destroy();
+    //session_destroy();
     $_SESSION["REDIRECT"] = $redirect;
 }
+echo "<pre>";
+print_r($_SESSION);
+echo "</pre>";
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +44,7 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
             <label for="exampleInputPassword1">Password</label>
             <input type="password" name="password" class="form-control" id="password" placeholder="Password">
          </div>
+         
          <?php if(isset($_SESSION) && isset($_SESSION['error']) && $_SESSION['error'] != NULL) {?>
          <div class="form-group" style="width: 588px;margin-top: 10px;">
              <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>
