@@ -13,9 +13,6 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
     //session_destroy();
     $_SESSION["REDIRECT"] = $redirect;
 }
-echo "<pre>";
-print_r($_SESSION);
-echo "</pre>";
 
 ?>
 <!DOCTYPE html>

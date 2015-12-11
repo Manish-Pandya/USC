@@ -21,7 +21,7 @@ session_start();
 	attemptedPath = window.location.protocol + "//" + window.location.hostname + attemptedPath + window.location.hash;
 	//remove the # and replace with %23, the HTTP espace for #, so it makes it to the server 
 	attemptedPath = attemptedPath.replace("#","%23");
-		prepareRedirect(attemptedPath);
+	prepareRedirect(attemptedPath);
 	function prepareRedirect(attemptedPath) {
 	    var xmlhttp = new XMLHttpRequest();
 	    xmlhttp.onreadystatechange = function() {
