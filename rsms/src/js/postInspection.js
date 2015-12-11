@@ -92,7 +92,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   factory.organizeChecklists = function(checklists){
 
     //set a checklists object that we can use elsewhere
-    this.checklists = checklists;
+    factory.checklists = checklists;
 
     //object with array properties to contain the checklists
     checklistHolder = {};
@@ -509,8 +509,12 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   function onSendEmail(data){
     $scope.sending = false;
     $scope.emailSent = 'success';
+    console.log(data);
+    //postInspectionFactory.inspection.Notification_date =
 
-    evaluateCloseInspection();
+    if(evaluateCloseInspection() == true){
+        setInspectionClosed();
+    }
 
   }
 
@@ -522,25 +526,44 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
 
   function evaluateCloseInspection(){
-    var setCompletedDate  = true;
-    $rootScope.inspection = $scope.inspection;
-    //$rootScope.Checklists = angular.copy($rootScope.inspection.Checklists);
-    angular.forEach($rootScope.Checklists, function(checklist, key){
-        angular.forEach(checklist.Questions, function(question, key){
-          if(question.Responses && question.Responses.DeficiencySelections){
-            angular.forEach(question.Responses.DeficiencySelections, function(defSel, key){
-              if(!defSel.Corrected_in_inspection)setCompletedDate = false;
-            });
-          }
-        });
-    });
-    if(setCompletedDate)setInspectionClosed();
+        var setCompletedDate  = true;
+        console.log(postInspectionFactory.inspection.Checklists.length);
+        //return false;
+        var i = postInspectionFactory.inspection.Checklists.length;
+        while(i--){
+            var checklist = postInspectionFactory.inspection.Checklists[i];
+            var j = checklist.Questions.length;
+            while(j--){
+                var question = checklist.Questions[j];
+                if(question.Responses && question.Responses.DeficiencySelections){
+                    var k = question.Responses.DeficiencySelections.length;
+                    while(k--){
+                        if(!question.Responses.DeficiencySelections[k].Corrected_in_inspection){
+                            console.log(question);
+                            return false;
+                        }
+                    }
+                }
+
+            }
+        }
+        return true;
   }
 
   function setInspectionClosed(){
-    var inspectionDto = angular.copy($rootScope.inspection);
-    inspectionDto.date_closed = new Date();
-    //console.log(inspectionDto);
+    var inspectionDto = {
+        Date_closed: convenienceMethods.setMysqlTime(Date()),
+        Key_id: postInspectionFactory.inspection.Key_id,
+        Principal_investigator_id:  postInspectionFactory.inspection.Principal_investigator_id,
+        Date_started: postInspectionFactory.inspection.Date_started,
+        Notification_date:  convenienceMethods.setMysqlTime(Date()),
+        Schedule_month: postInspectionFactory.inspection.Schedule_month,
+        Schedule_year: postInspectionFactory.inspection.Schedule_year,
+        Cap_submitted_date: postInspectionFactory.inspection.Cap_submitted_date,
+        Cap_complete: postInspectionFactory.inspection.Cap_complete,
+        Class: "Inspection"
+    };
+    console.log(inspectionDto);
     var url = "../../ajaxaction.php?action=saveInspection";
     convenienceMethods.updateObject( inspectionDto, null, onSetInspectionClosed, onFailSetInspecitonClosed, url);
   }
