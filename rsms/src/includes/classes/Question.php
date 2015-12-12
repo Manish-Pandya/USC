@@ -95,6 +95,8 @@ class Question extends GenericCrud {
 
 	/** Non-persisted value used to filter Responses for a particular inspection */
 	private $inspectionId;
+	
+	private $checklistName;
 
 	public function __construct(){
 
@@ -122,8 +124,8 @@ class Question extends GenericCrud {
 	public function setText($text){ $this->text = $text; }
 
 	public function getChecklist(){
-		if($this->checklist == null) {
-			$checklistDAO = new GenericDAO("Checklist");
+		if($this->getChecklist_id() != null && $this->checklist == null) {
+			$checklistDAO = new GenericDAO(new Checklist());
 			$this->checklist = $checklistDAO->getById($this->checklist_id);
 		}
 		return $this->checklist;
@@ -204,6 +206,17 @@ class Question extends GenericCrud {
 	public function getInspectionId(){ return $this->inspectionId; }
 	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
 
+	public function getChecklistName(){
+		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG->fatal('getting name');
+	
+		if($this->checklistName == null && $this->getChecklist_id() != null){
+			$dao = new GenericDAO(new Checklist());
+			$this->checklistName = $dao->getById($this->getChecklist_id())->getName();
+		}
+		return $this->checklistName;
+	}
+	
 	private function filterResponsesByInspection($responses){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		//$LOG->fatal("about to filter ".  count($responses) . " responses");

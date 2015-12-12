@@ -57,6 +57,8 @@ var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','c
 function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, roleBasedFactory) {
     var mlf = myLabFactory
     $scope.mlf = mlf;
+    
+    console.log(roleBasedFactory);
 
     var getUser = function(){
         return mlf.getCurrentUser()

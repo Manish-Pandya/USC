@@ -122,6 +122,14 @@ var Constants = (function () {
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
+    
+    constants.MASTER_HAZARDS_BY_ID = {
+        1: {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
+        9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
+        10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
+        10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
+    }
+    
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",

@@ -656,7 +656,7 @@ class ActionManager {
                 $parentIds = $hazard->getParentIds();
 
                 $master_hazard = null;
-
+				$master_id = null;
                 // If there are at least 2 hazards, get the second to last one (this is the master category)
                 if (!empty($parentIds)){
                     $count = count($parentIds);
@@ -671,7 +671,7 @@ class ActionManager {
                         $master_hazard = $hazard->getName();
                     }
                 }
-
+				$decodedObject->setMaster_id($masterHazardId);
                 $decodedObject->setMaster_hazard($master_hazard);
             }
 
@@ -691,8 +691,6 @@ class ActionManager {
             if ($checklist->getHazard_id() != null) {
                 $this->saveChecklist($checklist);
             }
-
-            $dao->save($checklist);
         }
         return $checklists;
     }
@@ -3323,8 +3321,7 @@ class ActionManager {
             //iterate the rooms and find the hazards present
             foreach ($rooms as $room){
                 $hazardlist = $this->getHazardsInRoom($room->getKey_id());
-                $LOG->fatal($hazardlist);
-                
+               
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
                 	 
@@ -3468,6 +3465,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
             $entityMaps[] = new EntityMap("eager","getChecklists");
             $inspection->setEntityMaps($entityMaps);
+            
 
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
@@ -3485,6 +3483,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspectionRooms");
                 $entityMaps[] = new EntityMap("eager","getQuestions");
                 $checklist->setEntityMaps($entityMaps);
+               
 
             }
             $inspection->setChecklists($checklists);
@@ -3730,7 +3729,7 @@ class ActionManager {
                 $inspectorEmails[] = $user->getEmail();
             }
 
-            $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university is and password.";
+            $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university ID and password.";
             // Send the email
             mail(implode($recipientEmails,","),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:no-reply@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode($inspectorEmails,","));
 

@@ -1553,7 +1553,8 @@ span.recs span{
 }
 /* line 1122, ../sass/style.scss */
 .inspectionReportTable td .row-fluid .span6 {
-  padding: 5px;
+    width: 58%;
+    padding: 16px;
 }
 /* line 1124, ../sass/style.scss */
 .inspectionReportTable td .row-fluid .span6:last-child {
@@ -1584,12 +1585,13 @@ td.reviewHeader {
   font-size: 25px;
   color: white;
   padding-left: 15px;
-  height: 38px;
+  height: 35px;
   background-position: 5px 7px;
   background-repeat: no-repeat;
   border: 3px solid #000;
   border-left:none;
   border-right:none;
+  padding-top: 10px !important;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1656,6 +1658,13 @@ td.reviewHeader {
 #radiationSafetyHeader,.radiationHazardsHeader {
   background-color: #6600cc;
   background-size: 40px 40px;
+}
+td.checklistHeader{
+    background: white !important;
+    font-size: 20px !important;
+    font-weight: bold;
+    vertical-align: middle !important;
+    padding: 10px 15px !important;
 }
 
 .reviewHeader i {

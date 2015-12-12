@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter'])
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -45,7 +45,18 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     {redirectTo: '/report'}
   );
 })
-
+.filter('isNegative', function(){
+    return function(questions){
+        var matches = [];
+        var i = questions.length;
+        while(i--){
+            if(questions[i].Responses && questions[i].Responses.Answer == 'no'){
+                matches.push(questions[i]);
+            }
+        }
+        return matches;
+    }
+})
 .factory('postInspectionFactory', function(convenienceMethods,$q){
 
   var factory = {};
@@ -849,6 +860,14 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
           $scope.error = "The corrective action could not be saved.  Please check your internet connection and try again."
         }
       )
+  }
+  
+  $scope.hasNegativeRespones = function(questions){
+      var i = questions.length;
+      while(i--){
+        if(questions[i].Responses && questions[i].Responses.Answer == 'no')return true;
+      }
+      return false;
   }
 
 }
