@@ -99,7 +99,7 @@
                        <i class="icon-cancel danger" ng-if="selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 2px;"></i>
                        <h3 ng-if="PI && !selectPI">{{PI.User.Name}}<i ng-click="selectPI = !selectPI" style="margin: 7px 2px;" class="icon-pencil primary"></i></h3> </span>
                         <ul>
-                            <li ng-repeat="department in modalData.PrincipalInvestigator.Departments"><a class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></a>{{department.Name}}<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
+                            <li ng-repeat="department in modalData.PrincipalInvestigator.Departments"><button class="btn btn-danger btn-mini" ng-click="removeDepartment(department)"><i class="icon-cancel"></i></button> {{department.Name}}<i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
                             </li>
                         </ul>
                         <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>

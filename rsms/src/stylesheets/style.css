@@ -226,7 +226,7 @@ a.btn i {
 }
 
 a.btn.btn-mini i {
-  margin: 1px 2px 1px 0px;
+  margin: 1px 4px 1px 0px;
 }
 .btn.left i{
   margin: 2px 6px 1px 2px !important
@@ -3497,7 +3497,13 @@ button.btn-large{
 }
 
 button.btn-mini i {
-    margin: 3px 0px 0px -2px !important;
+    margin: 3px 4px 0px -2px !important;
+}
+button.btn-mini {
+    margin: 3px 4px 0px -2px !important;
+}
+btn-mini {
+    margin: 3px 4px 0px -2px !important;
 }
 .modal ul .btn{margin-top: 2px;}
 
