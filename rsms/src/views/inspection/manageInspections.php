@@ -157,8 +157,12 @@ require_once '../top_view.php';
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
-                            <p>
+                            <p ng-if="dto.Inspections.Cap_submitted_date">
                                 (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
+                                <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            </p>
+                            <p ng-if="!dto.Inspections.Cap_submitted_date">
+                                (No deficiencies found.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>

@@ -217,7 +217,9 @@ class ActionMappingFactory {
                 "confirmPendingHazardChange"=>new ActionMapping("confirmPendingHazardChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
                 // GENERIC
-                "getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", "")
+                "getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", ""),
+        		"prepareRedirect"=>new ActionMapping("prepareRedirect", "", "")
+        		
         );
     }
 }

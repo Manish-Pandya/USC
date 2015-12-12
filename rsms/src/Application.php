@@ -9,12 +9,13 @@
 define('DIR_PATH', dirname(__FILE__) );
 define('URL_PATH', 'http://localhost');
 define('ADMIN_MAIL', 'hoke@graysail.com');
-define('LOGIN_PAGE', 'login.php');
 
 if(isProduction()){
 	define('WEB_ROOT', '/rsms/');
+	define('LOGIN_PAGE', 'http://radon.qa.sc.edu/rsms');
 }else{
 	define('WEB_ROOT', '/rsms/src/');
+	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +67,11 @@ function isAdminUser(){
 }
 
 function securityCheck(){
+	$LOG = Logger::getLogger('security');
+	$LOG->fatal("test");
+	
 	if (!isset($_SESSION["USER"])){
+		$LOG->fatal( $_SERVER['HTTP_COOKIE']);
 		//Forward to login page
 		header("location:" . LOGIN_PAGE);
 	}

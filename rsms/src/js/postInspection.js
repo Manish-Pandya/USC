@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter'])
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -45,7 +45,18 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     {redirectTo: '/report'}
   );
 })
-
+.filter('isNegative', function(){
+    return function(questions){
+        var matches = [];
+        var i = questions.length;
+        while(i--){
+            if(questions[i].Responses && questions[i].Responses.Answer == 'no'){
+                matches.push(questions[i]);
+            }
+        }
+        return matches;
+    }
+})
 .factory('postInspectionFactory', function(convenienceMethods,$q){
 
   var factory = {};
@@ -92,7 +103,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   factory.organizeChecklists = function(checklists){
 
     //set a checklists object that we can use elsewhere
-    this.checklists = checklists;
+    factory.checklists = checklists;
 
     //object with array properties to contain the checklists
     checklistHolder = {};
@@ -451,7 +462,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
           //set view init values for email
           $scope.others = [{email:''}];
           $scope.defaultNote = {};
-          $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+          $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
 
           $scope.doneLoading = true;
           // call the manager's setter to store the inspection in the local model
@@ -463,7 +474,7 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
       $scope.others = [{email:''}];
       $scope.defaultNote = {};
       $scope.inspection = postInspectionFactory.getInspection();
-      $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+      $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on "+$scope.inspection.viewDate_started+". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection="+$scope.inspection.Key_id+" .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
     }
   }else{
     $scope.error = 'No inspection has been specified';
@@ -509,8 +520,12 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
   function onSendEmail(data){
     $scope.sending = false;
     $scope.emailSent = 'success';
+    console.log(data);
+    //postInspectionFactory.inspection.Notification_date =
 
-    evaluateCloseInspection();
+    if(evaluateCloseInspection() == true){
+        setInspectionClosed();
+    }
 
   }
 
@@ -522,25 +537,44 @@ inspectionConfirmationController = function($scope, $location, $anchorScroll, co
 
 
   function evaluateCloseInspection(){
-    var setCompletedDate  = true;
-    $rootScope.inspection = $scope.inspection;
-    //$rootScope.Checklists = angular.copy($rootScope.inspection.Checklists);
-    angular.forEach($rootScope.Checklists, function(checklist, key){
-        angular.forEach(checklist.Questions, function(question, key){
-          if(question.Responses && question.Responses.DeficiencySelections){
-            angular.forEach(question.Responses.DeficiencySelections, function(defSel, key){
-              if(!defSel.Corrected_in_inspection)setCompletedDate = false;
-            });
-          }
-        });
-    });
-    if(setCompletedDate)setInspectionClosed();
+        var setCompletedDate  = true;
+        console.log(postInspectionFactory.inspection.Checklists.length);
+        //return false;
+        var i = postInspectionFactory.inspection.Checklists.length;
+        while(i--){
+            var checklist = postInspectionFactory.inspection.Checklists[i];
+            var j = checklist.Questions.length;
+            while(j--){
+                var question = checklist.Questions[j];
+                if(question.Responses && question.Responses.DeficiencySelections){
+                    var k = question.Responses.DeficiencySelections.length;
+                    while(k--){
+                        if(!question.Responses.DeficiencySelections[k].Corrected_in_inspection){
+                            console.log(question);
+                            return false;
+                        }
+                    }
+                }
+
+            }
+        }
+        return true;
   }
 
   function setInspectionClosed(){
-    var inspectionDto = angular.copy($rootScope.inspection);
-    inspectionDto.date_closed = new Date();
-    //console.log(inspectionDto);
+    var inspectionDto = {
+        Date_closed: convenienceMethods.setMysqlTime(Date()),
+        Key_id: postInspectionFactory.inspection.Key_id,
+        Principal_investigator_id:  postInspectionFactory.inspection.Principal_investigator_id,
+        Date_started: postInspectionFactory.inspection.Date_started,
+        Notification_date:  convenienceMethods.setMysqlTime(Date()),
+        Schedule_month: postInspectionFactory.inspection.Schedule_month,
+        Schedule_year: postInspectionFactory.inspection.Schedule_year,
+        Cap_submitted_date: postInspectionFactory.inspection.Cap_submitted_date,
+        Cap_complete: postInspectionFactory.inspection.Cap_complete,
+        Class: "Inspection"
+    };
+    console.log(inspectionDto);
     var url = "../../ajaxaction.php?action=saveInspection";
     convenienceMethods.updateObject( inspectionDto, null, onSetInspectionClosed, onFailSetInspecitonClosed, url);
   }
@@ -826,6 +860,14 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
           $scope.error = "The corrective action could not be saved.  Please check your internet connection and try again."
         }
       )
+  }
+  
+  $scope.hasNegativeRespones = function(questions){
+      var i = questions.length;
+      while(i--){
+        if(questions[i].Responses && questions[i].Responses.Answer == 'no')return true;
+      }
+      return false;
   }
 
 }

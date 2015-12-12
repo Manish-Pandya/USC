@@ -7,10 +7,47 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMSCenter')){
     require_once('../../Application.php');
 }
 session_start();
+?>
+<?php if(!isset($_SESSION["USER"])){ ?>
+<script>
+//make sure the user is signed in, if not redirect them to the login page, but save the location they attempted to reach so we can send them there after authentication
+//if javascript is enabled, we can capture the full url, including the hash
+	var pathArray = window.location.pathname.split( '/' );
+	var attemptedPath = "";
+	for (i = 0; i < pathArray.length; i++) {
+		if(i != 0)attemptedPath += "/";
+		attemptedPath += pathArray[i];
+	}
+	attemptedPath = window.location.protocol + "//" + window.location.hostname + attemptedPath + window.location.hash;
+	//remove the # and replace with %23, the HTTP espace for #, so it makes it to the server 
+	attemptedPath = attemptedPath.replace("#","%23");
+	prepareRedirect(attemptedPath);
+	function prepareRedirect(attemptedPath) {
+	    var xmlhttp = new XMLHttpRequest();
+	    xmlhttp.onreadystatechange = function() {
+	        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+	           if(xmlhttp.status == 200){
+	              // alert("Please sign in to view the requested page.  Once you're signed in, you'll be redirected to the page you were trying to reach.");
+	               window.location = "<?php echo LOGIN_PAGE;?>";
+	           }
+	           else if(xmlhttp.status == 400) {
+	              alert('There was an error 400')
+	           }
+	           else {
+	               alert('something else other than 200 was returned')
+	           }
+	        }
+	    }
 
+	    xmlhttp.open("GET", "<?php echo WEB_ROOT?>ajaxaction.php?action=prepareRedirect&redirect="+attemptedPath, true);
+	    xmlhttp.send();
+	}
+</script>
+<?php
+}
 ?>
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
-  <?php if($_SESSION != NULL){?>
+<?php if($_SESSION["USER"] != null){ ?>
 <script>
     var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
     //grab usable properties from the session user object
@@ -19,20 +56,21 @@ session_start();
         Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
     }
     var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
-</script>
-<?php } ?>
-<script type="text/javascript">
-var isProductionServer;
+	var isProductionServer;
 <?php
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
-
+}
 ?>
 </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<noscript>
+	This site requires JavaScript.  Please enable it.
+	<style>body{dipslay:none !important}</style>
+</noscript>
 <!-- stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap-responsive.css"/>
@@ -77,7 +115,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/phone-format.js"></script>
-
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
 
 </head>
 <body>

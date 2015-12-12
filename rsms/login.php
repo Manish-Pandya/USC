@@ -5,9 +5,15 @@ if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
     include('Application.php');
 }
 session_start();
+
 if( isset($_SESSION) && !isset($_SESSION['error']) ){
-    session_destroy();
+	if(isset($_SESSION["REDIRECT"])){
+		$redirect = $_SESSION["REDIRECT"];
+	}
+    //session_destroy();
+    $_SESSION["REDIRECT"] = $redirect;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +41,7 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
             <label for="exampleInputPassword1">Password</label>
             <input type="password" name="password" class="form-control" id="password" placeholder="Password">
          </div>
+         
          <?php if(isset($_SESSION) && isset($_SESSION['error']) && $_SESSION['error'] != NULL) {?>
          <div class="form-group" style="width: 588px;margin-top: 10px;">
              <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>
