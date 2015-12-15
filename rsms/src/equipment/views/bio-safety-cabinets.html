@@ -12,22 +12,37 @@
             <table class="table table-striped">
                 <tr class="table-header">
                     <th>EDIT</th>
-                    <th>BUILDING</th>
+                    <th>
+                        CAMPUS<br>
+                        <input ng-model="selectedCampus" style="width:150px;" placeholder="Filter by Campus"/>
+                    </th>
+                    <th>
+                        BUILDING<br>
+                        <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
+                    </th>
                     <th>ROOM</th>
                     <th>TYPE</th>
                     <th>SERIAL #</th>
                     <th>MAKE</th>
                     <th>MODEL</th>
-                    <th>CERT-DATE</th>
+                    <th>
+                        CERT-DATE<br>
+                        <select ng-options="(cabinet.Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'Certification_date'" ng-model="selectedCertificationDate">
+                            <option value="">All</option>
+                        </select>
+                    </th>
                     <th>DUE-DATE</th>
                     <th>FREQUENCY</th>
                     <th>PI</th>
                     <th>REPORT</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets">
+                <tr class="table-row" ng-repeat="cabinet in (filtered = (cabinets | filter:selectedCampus | filter:selectedBuilding | filter:selectedCertificationDate))">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
+                    </td>
+                    <td>
+                        {{cabinet.Room.Building.Campus.Name}}
                     </td>
                     <td>
                         {{cabinet.Room.Building.Name}}
