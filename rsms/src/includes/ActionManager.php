@@ -4047,7 +4047,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getRooms");
         $entityMaps[] = new EntityMap("lazy","getDepartments");
         $entityMaps[] = new EntityMap("eager","getUser");
-        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("eager","getInspections");
         $entityMaps[] = new EntityMap("lazy","getPi_authorization");
         $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
         $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
@@ -4056,7 +4056,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy", "getPickups");
         $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
         $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-        $entityMaps[] = new EntityMap("eager","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("eager","getVerifications");
         $entityMaps[] = new EntityMap("lazy","getBuidling");

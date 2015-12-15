@@ -1,5 +1,26 @@
 var myLab = angular.module('myLab', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','cgBusy'])
-
+.filter('openInspections', function () {
+  return function (inspections) {
+        if(!inspections)return;
+        var i = inspections.length;
+        var matches = [];
+        while(i--){
+            if(!inspections[i].Cap_submitted_date && !inspections[i].Date_closed)matches.push(inspections[i]);
+        }
+        return matches;
+  };
+})
+.filter('closedInspections', function () {
+  return function (inspections) {
+        if(!inspections)return;
+        var i = inspections.length;
+        var matches = [];
+        while(i--){
+            if(inspections[i].Cap_submitted_date || inspections[i].Date_closed)matches.push(inspections[i]);
+        }
+        return matches;
+  };
+})
 .factory('myLabFactory', function(convenienceMethods,$q,$rootScope){
 
         var factory = {};
