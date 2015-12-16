@@ -88,7 +88,6 @@
     </th>
     <th style="width:20%">COMPLIANCE DESCRIPTION</th>
     <th style="width:6%">COMPLIANCE REFERENCE</th>
-    
     <tr ng-if="questionsByChecklist.biologicalHazards.show">
         <td valign="top" colspan="4" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td>
     </tr>
@@ -98,8 +97,9 @@
     <tr ng-if="questionsByChecklist.chemicalHazards.show">
         <td valign="top" colspan="4" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td>
     </tr>
+
     <tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="4">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
-    <tbodyr ng-repeat="(key, q) in questionsByChecklist.chemicalHazards.Questions | groupBy:'ChecklistName'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-repeat="(key, q) in questionsByChecklist.chemicalHazards.Questions | groupBy:'ChecklistName'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
     <tr><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
     <tr ng-if="questionsByChecklist.generalHazards.message">
