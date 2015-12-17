@@ -11,3 +11,49 @@ angular
             return matches;
         }
     })
+    .filter("matchCabinetBuilding", function(){
+        return function(cabinets, string){
+            if(!cabinets) {
+                return;
+            } else if (!string) {
+                return cabinets;
+            }
+            var matches = [];
+            var i = cabinets.length;
+            while(i--){
+                if(cabinets[i].Room.Building && cabinets[i].Room.Building.Name.toLowerCase().indexOf(string) > -1) matches.unshift(cabinets[i]);
+            }
+            return matches;
+        }
+    })
+    .filter("matchCabinetCampus", function(){
+        return function(cabinets, string){
+            if(!cabinets) {
+                return;
+            } else if (!string) {
+                return cabinets;
+            }
+            var matches = [];
+            var i = cabinets.length;
+            while(i--){
+                if(cabinets[i].Room && cabinets[i].Room.Building.Campus.Name && cabinets[i].Room.Building.Campus.Name.toLowerCase().indexOf(string) > -1) matches.unshift(cabinets[i]);
+            }
+            return matches;
+        }
+    })
+    .filter("matchCabinetCertDate", function(){
+        return function(cabinets, string){
+            if(!cabinets) {
+                return;
+            } else if (!string) {
+                return cabinets;
+            }
+            var matches = [];
+            var i = cabinets.length;
+            while(i--){
+                console.log(string);
+                if(cabinets[i].Certification_date.indexOf(string) > -1) matches.unshift(cabinets[i]);
+            }
+            return matches;
+        }
+    })

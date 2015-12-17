@@ -27,7 +27,7 @@
                     <th>MODEL</th>
                     <th>
                         CERT-DATE<br>
-                        <select ng-options="(cabinet.Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'Certification_date'" ng-model="selectedCertificationDate">
+                        <select ng-options="cabinet.Certification_date as (cabinet.Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'Certification_date'" ng-model="selectedCertificationDate">
                             <option value="">All</option>
                         </select>
                     </th>
@@ -36,7 +36,7 @@
                     <th>PI</th>
                     <th>REPORT</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in (filtered = (cabinets | filter:selectedCampus | filter:selectedBuilding | filter:selectedCertificationDate))">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetCampus:selectedCampus | matchCabinetBuilding:selectedBuilding | matchCabinetCertDate:selectedCertificationDate">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
