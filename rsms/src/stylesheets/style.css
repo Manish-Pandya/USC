@@ -1553,7 +1553,6 @@ span.recs span{
 }
 /* line 1122, ../sass/style.scss */
 .inspectionReportTable td .row-fluid .span6 {
-    width: 58%;
     padding: 16px;
 }
 /* line 1124, ../sass/style.scss */
@@ -1666,6 +1665,19 @@ td.checklistHeader{
     vertical-align: middle !important;
     padding: 10px 15px !important;
 }
+tbody.biological td.checklistHeader {
+    background: rgba(221, 0, 0, 0.41) !important;
+}
+tbody.chemical td.checklistHeader {
+    background: rgba(243, 243, 6, 0.28) !important;
+}
+tbody.radiation td.checklistHeader {
+    background: rgba(102, 0, 204, .5) !important;
+}
+tbody.general td.checklistHeader {
+    background: rgba(0, 153, 0, 0.7) !important;
+}
+
 
 .reviewHeader i {
   font-weight: bold;

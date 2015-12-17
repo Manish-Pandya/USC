@@ -1,4 +1,4 @@
-<tr ng-if="hasNegativeRespones(q)"><td colspan="4" class="checklistHeader">{{key}}</td></tr>
+<tr ng-if="hasNegativeRespones(q)"><td colspan="4" class="checklistHeader {{q.ChecklistName}}">{{key}}</td></tr>
 <tr ng-repeat="question in q | isNegative">
 <td colspan="2" style="padding:0;">
 <!--<pre>{{question | json}}</pre>-->
@@ -19,16 +19,12 @@
                 <li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
                 <li ng-repeat="room in def.Rooms">{{room.Name}}</li>
             </ul>
-        </span
+        </span>
 
-        <span style="padding:16px;" class="span6 {{def.CorrectiveActions[0].Status}}">
-            <span ng-if="!def.Deficiency.Text">
-                Unknown Deficiency
-            </span>
-            <span ng-if="def.Deficiency.Text">
-                <span ng-if="def.Corrected_in_inspection < 1" class="corrective-action">
+        <span style="padding:16px;" class="span6 {{def.CorrectiveActions[0].Status}} corrective-action">
+                <span ng-if="def.Corrected_in_inspection < 1">
                     <div class="" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
-                        <div>
+                        <div style="text-align:center">
                             <a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
                                 <i class="icon-plus-2"></i>Add Corrective Action
                             </a>
@@ -62,12 +58,10 @@
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
 
                     </div>
-                </span>
             </span>
-
-                <h3 ng-if="def.Corrected_in_inspection > 0" class="bold">
-                    Corrected during inspection
-                </h3>
+            <h3 ng-if="def.Corrected_in_inspection > 0" class="bold">
+                Corrected during inspection
+            </h3>
         </span>
     </div>
 </span>

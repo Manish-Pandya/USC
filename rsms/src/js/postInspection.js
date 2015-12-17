@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter','ui.bootstrap.datetimepicker'])
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');
@@ -45,6 +45,16 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     {redirectTo: '/report'}
   );
 })
+.directive('correctiveAction', ['$window', function($window) {
+    return {
+        restrict: 'C',
+        link: function(scope, elem, attrs) {
+            var h = elem.closest('td').height();
+            elem.css({'minHeight': h});
+        }
+    }
+}])
+
 .filter('isNegative', function(){
     return function(questions){
         var matches = [];
@@ -192,16 +202,18 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   //set a matching view property for a mysql datetime property of an object
   factory.setDateForView = function(obj, dateProperty){
     var dateHolder = convenienceMethods.getDate(obj[dateProperty]);
-    obj['view'+dateProperty] = dateHolder.formattedString;
+    console.log(dateHolder);
+    obj['view'+dateProperty] = dateHolder;
     return obj;
   }
 
   factory.setDateForCalWidget = function(obj, dateProperty){
     //console.log(obj);
     if(obj[dateProperty]){
-      obj['view'+dateProperty] = new Date(obj[dateProperty].substring(0,10));
+      obj['view'+dateProperty] = new Date(obj[dateProperty]);
+        console.log(obj['view'+dateProperty]);
+      return obj;
     }
-    return obj;
   }
 
   factory.setDatesForServer = function(obj, dateProperty){
@@ -217,7 +229,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
   //calculate the inspection's scores
   factory.calculateScore = function(inspection){
-    //console.log(inspection);
+    console.log('calculation score');
     if(!inspection.score)inspection.score = {};
     inspection.score.itemsInspected = 0;
     inspection.score.deficiencyItems = 0;
@@ -279,7 +291,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                   var recLen = question.Responses.Recommendations.length;
 
                   for(var k = 0; k < recLen; k++){
-                        question.Responses.Recommendations[k].Question = question.Text;
+                        question.Responses.Recommendations[k].Question = question.ChecklistName;
                   }
 
                   this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
@@ -861,7 +873,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
         }
       )
   }
-  
+
   $scope.hasNegativeRespones = function(questions){
       var i = questions.length;
       while(i--){
@@ -880,9 +892,13 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
     data.deficiency.CorrectiveActions[0] = {
       Class:"CorrectiveAction",
       Deficiency_selection_id: data.deficiency.Key_id,
-      Status: Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE
+      Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING
     }
   }
+  $scope.dates = {};
+  if( data.deficiency.CorrectiveActions[0].Promised_date ) $scope.dates.promisedDate = data.deficiency.CorrectiveActions[0].Promised_date;
+  if( data.deficiency.CorrectiveActions[0].Completion_date ) $scope.dates.completionDate = data.deficiency.CorrectiveActions[0].Completion_date;
+
   if(data){
     $scope.question = data.question;
     $scope.def      = data.deficiency;
@@ -890,11 +906,13 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
 
   $scope.saveCorrectiveAction = function(copy){
     $scope.dirty = true;
-    if(copy.view_Promised_date)copy.Promised_date = convenienceMethods.setMysqlTime(copy.view_Promised_date);
-    if(copy.view_Completion_date)copy.Completion_date = convenienceMethods.setMysqlTime(copy.view_Completion_date);
+    console.log($scope);
+    if($scope.dates.promisedDate)copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
+    if($scope.dates.completionDate)copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
     $scope.validationError=''
     //call to factory to save, return, then close modal, passing data back
+    console.log(copy);
     postInspectionFactory.saveCorrectiveAction(copy)
       .then(
         function(returnedAction){
@@ -907,6 +925,7 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
         }
       )
   }
+  /*
 
   $scope.getIsValid = function(){
 
@@ -923,7 +942,7 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
             $scope.isValid = true;
         }
     }
-  }
+  }*/
 
   $scope.cancel = function(){
     $modalInstance.dismiss();
@@ -933,15 +952,16 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
   $scope.afterInspection = function(d){
     var calDate = Date.parse(d);
     //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
-    var inspectionDate = Date.parse(postInspectionFactory.getInspection().view_Date_started)-864000;
+    var inspectionDate = postInspectionFactory.getInspection().viewDate_started.getTime()-864000;
     var now = new Date();
-    if(calDate>=inspectionDate && calDate<=now.getTime()){
+    if(calDate >= inspectionDate && calDate <= now.getTime()){
       return true;
     }
     return false;
   }
 
   $scope.todayOrAfter = function(d){
+      console.log(d);
     var calDate = Date.parse(d);
     //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
     var now = new Date(),
