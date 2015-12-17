@@ -2099,6 +2099,7 @@ angular
             af.getRadModels = function(){
                      return dataSwitchFactory.getAllObjects("RadModelDto")
                         .then( function( dto ) {
+                            var dto = dto[0];
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Authorization ));
