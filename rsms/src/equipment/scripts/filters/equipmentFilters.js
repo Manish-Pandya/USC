@@ -41,18 +41,18 @@ angular
             return matches;
         }
     })
-    .filter("matchCabinetCertDate", function(){
-        return function(cabinets, string){
-            if(!cabinets) {
+    .filter("matchCertDate", function(){
+        return function(equipments, string){
+            if(!equipments) {
                 return;
             } else if (!string) {
-                return cabinets;
+                return equipments;
             }
             var matches = [];
-            var i = cabinets.length;
+            var i = equipments.length;
             while(i--){
                 console.log(string);
-                if(cabinets[i].Certification_date.indexOf(string) > -1) matches.unshift(cabinets[i]);
+                if(equipments[i].Certification_date.indexOf(string) > -1) matches.unshift(equipments[i]);
             }
             return matches;
         }
