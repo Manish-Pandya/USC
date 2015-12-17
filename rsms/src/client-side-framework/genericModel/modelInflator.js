@@ -78,7 +78,6 @@ angular
             inflator.instateAllObjectsFromJson = function(  json, objectFlavor, recurse  )
             {
                 if(!recurse)recurse = false;
-                console.log(json instanceof Array, Array.isArray(json), json, objectFlavor);
                 if ( json instanceof Array ) {
                     var models = [];
                     var i = json.length;

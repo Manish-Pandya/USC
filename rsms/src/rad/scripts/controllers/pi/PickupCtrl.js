@@ -112,7 +112,8 @@ angular.module('00RsmsAngularOrmApp')
             if(!collection)return false;
             var i = collection.length;
             while(i--){
-                    if(!collection[i].Pickup_id && collection[i].Contents.length){
+                // TODO: Should collection[i].Contents ever be null? Had to add null check here before getting length, because it's null sometimes.
+                if(!collection[i].Pickup_id && collection[i].Contents && collection[i].Contents.length){
                     hasPickupItems = true;
                 }
 
