@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter','ui.bootstrap.datetimepicker'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule','ngQuickDate','ngRoute','once','angular.filter'])
 .filter('joinBy', function () {
   return function (input,delimiter) {
     return (input || []).join(delimiter || ',');

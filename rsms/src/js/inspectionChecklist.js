@@ -286,8 +286,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 var len = factory.inspection.Checklists.length;            
                 var i = 0;
                 var selectedChecklists = [];
-
-            
+/*
                 if(!factory.checklistsOrdered){
                     var checklists = factory.inspection.Checklists;
                     var parentIds = factory.getParentIds(checklists);
@@ -302,28 +301,27 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     console.log(checklists);
                     factory.checklistsOrdered = true;
                 }
-            
+                */
                 innerFilter();
 
                 function innerFilter(){
                     for( var i = 0; i < len;  i++){
                         var checklist = factory.inspection.Checklists[i];
                         if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  ){
+                            console.log('yeppers');
+                            checklist.test = i;
                             selectedChecklists.push( checklist );
                         }
                     };
-
-                    if(i == len){
-                        factory.inspection.selectedCategory = selectedChecklists;
-                        $rootScope.loading = false;
-                    }
-                    else{
-                        $timeout(innerFilter, 10);
-                    }
+                    factory.inspection.selectedCategory = [];
+                    factory.inspection.selectedCategory = selectedChecklists;
+                    $rootScope.loading = false;
                 }
         }
         //pulls matching items out of an array and puts them in another array
         factory.findChecklistArray = function(checklists, parentId, idx){
+            console.log(idx);
+            console.log(checklists[idx]);   
             var matches = [];
             for(var i = idx; i<checklists.length; i++){
                 if(checklists[i].Parent_hazard_id == parentId)
@@ -443,11 +441,14 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.evaluateDeficiency = function( id ){
+        factory.evaluateDeficiency = function( def ){
                 var i = this.inspection.Deficiency_selections[0].length;
-
+                var id = def.Key_id;
                 while(i--){
-                    if( id == this.inspection.Deficiency_selections[0][i] )return true;
+                    if( id == this.inspection.Deficiency_selections[0][i] ){
+                        def.selected = true;
+                        return true;
+                    }
                 }
                 return false;
 
@@ -477,21 +478,29 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         roomIds.push( deficiency.InspectionRooms[i].Key_id );
                     }
                 }
-                else{
-                    this.room = room;
+                else{                    
                     while(i--){
                         if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
                     }
+                    room.checked = !room.checked;
+                    this.room = room;
+
                 }
+                
+                var showRooms = false;
+                if(roomIds.length < deficiency.InspectionRooms.length){
+                    showRooms = true;
+                }
+            
                 var defDto = {
                     Class: "DeficiencySelection",
                     RoomIds: roomIds,
                     Deficiency_id:  deficiency.Key_id,
                     Response_id: question.Responses.Key_id,
                     Inspection_id: this.inspection.Key_id,
-                    Show_rooms:  deficiency.Show_rooms
+                    Show_rooms:  showRooms
                 }
-
+            
                 //make sure we are persisting the state of Other deficiency selections
                 if(deficiency.Text == "Other"){
                     //find the right DeficiencySelection and update it's other text or Is_active property
@@ -516,29 +525,23 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
 
                         var url = '../../ajaxaction.php?action=saveDeficiencySelection';
+                        console.log(defDto);
                         convenienceMethods.saveDataAndDefer(url, defDto)
                             .then(
                                 function(returnedDeficiency){
                                     deficiency.IsDirty = false;
                                     deficiency.selected = true;
-                                    factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
+                                    if( factory.inspection.Deficiency_selections[0].indexOf( deficiency.Key_id ) < 0){                                        
+                                        factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
+                                    }
                                     if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
                                     question.Responses.DeficiencySelections.push( returnedDeficiency );
 
                                     if(factory.room){
-                                        var l = deficiency.InspectionRooms.length;
-                                        var m = 0;
-                                        while(l--){
-                                            var room = deficiency.InspectionRooms.length[l];
-                                            if( roomIds.indexOf( factory.room.Key_id ) > -1 ){
-                                                factory.room.checked = true;
-                                                m++
-                                            }else{
-                                                factory.room.checked = false;
-                                            }
-                                            //if no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
-                                            if(m == 0)factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf(deficiency.Key_id, 1 ) )
-
+                                        room.checked = !room.checked;
+                                        //f no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
+                                        if(roomIds.length == 0){
+                                            factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )
                                         }
                                     }
 
@@ -569,7 +572,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                  question.Responses.DeficiencySelections.splice( defSelectIdx, 1 );
                               },
                               function(error){
-                                  deficiency.IsDirty = false;
+                                deficiency.IsDirty = false;
                                 deficiency.selected = true;
                                 question.error = "The response could not be saved.  Please check your internet connection and try again."
                               }
