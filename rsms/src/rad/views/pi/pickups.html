@@ -12,21 +12,27 @@
     <div class="half float-left">
         <div class="card full pickups pickup-collection">
             <div>
-                <h1 class="card-header" ng-if="solidsContainersHavePickups(pi.SolidsContainers) || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>The following items can be picked up</h1>
+                <h1 class="card-header" ng-if="pi.SolidsContainers || hasPickupItems(pi.CurrentScintVialCollection) || hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>The following items can be picked up</h1>
 
-                <h3 class="card-header" ng-if="!solidsContainersHavePickups(pi.SolidsContainers) && !hasPickupItems(pi.CurrentScintVialCollection) && !hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>You don't have any waste ready for pickup.</h3>
+                <h3 class="card-header" ng-if="!pi.SolidsContainers && !hasPickupItems(pi.CurrentScintVialCollection) && !hasPickupItems(pi.CarboyUseCycles)"><i class="icon-box-remove"></i>You don't have any waste ready for pickup.</h3>
 
-                <div ng-if="solidsContainersHavePickups(pi.SolidsContainers) && pi.SolidsContainers">
+                <div ng-if="pi.SolidsContainers">
                     <h3><i class="icon-remove-2 solids-containers"></i>Solid Waste Containers</h3>
                     <ul>
-                        <li ng-repeat="container in pi.SolidsContainers" ng-if="container.WasteBagsForPickup.length">
-                            <label class="checkbox">
+                        <li ng-repeat="container in pi.SolidsContainers">
+                            <label class="checkbox" ng-if="solidsContainersHavePickups(pi.SolidsContainers)">
                                 <input type="checkbox" ng-true-value="yes" ng-model="container.include" />
                                 <span class="metro-checkbox bold">Bags removed from {{container.Name}} since last pickup:</span>
                                 <p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">
                                     <span class="metro-checkbox">Waste Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
                                 </p>
                             </label>
+                            
+                            <label class="checkbox" ng-if="!solidsContainersHavePickups(pi.SolidsContainers)">
+                                <input type="checkbox" disabled ng-true-value="yes" ng-model="container.include" />
+                                <span class="metro-checkbox bold">No bags removed from {{container.Name}} since last pickup</span>
+                            </label>
+                            
 
                             <label class="checkbox">
                                 <input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag" />

@@ -16,7 +16,6 @@ angular
             //treat this as a private method, only to be called locally
             inflator.instantiateObjectFromJson = function( json, objectFlavor, recurse )
             {
-
                     if( !objectFlavor ){
                         try {
                             objectFlavor = json.Class;
@@ -77,6 +76,7 @@ angular
             //treat this as a public method, called from controller layer
             inflator.instateAllObjectsFromJson = function(  json, objectFlavor, recurse  )
             {
+                if(!json)return null;
                 if(!recurse)recurse = false;
                 if ( json instanceof Array ) {
                     var models = [];

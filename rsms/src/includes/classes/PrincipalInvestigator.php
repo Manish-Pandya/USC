@@ -314,6 +314,9 @@ class PrincipalInvestigator extends GenericCrud {
 			}
 
 			$this->solidsContainers = $containers;
+			foreach($this->solidsContainers as $container){
+				$container->setPrincipal_investigator_id($this->getKey_id());
+			}
 		}
 		return $this->solidsContainers;
 	}
