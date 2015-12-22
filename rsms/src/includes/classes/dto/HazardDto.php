@@ -32,7 +32,7 @@ class HazardDto {
     public function getStored_only(){return $this->stored_only;}
     public function getHasChildren(){return (bool) $this->hasChildren;}
 	public function getIs_equipment(){return (bool) $this->is_equipment;}
-	public function getOrder_index(){return (int) $this->order_index;}
+	public function getOrder_index(){return (float) $this->order_index;}
 	public function getBelongsToOtherPI(){return (bool) $this->belongsToOtherPI;}
     
     public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
