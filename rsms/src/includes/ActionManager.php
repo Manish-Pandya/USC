@@ -524,6 +524,7 @@ class ActionManager {
                 $decodedObject->setIs_active(true);
             }
             $user = $dao->save( $decodedObject );
+                        
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
                 foreach($decodedObject->getRoles() as $role){
@@ -536,15 +537,30 @@ class ActionManager {
             //user was sent from client with Principal Investigator in roles array
             if(isset($savePI)){
                  //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-                if($user->getPrincipalInvestigator() != null){
-                    $pi = $user->getPrincipalInvestigator();
-                }else{
+                if($decodedObject->getPrincipalInvestigator() != null){
+                    $pi = $decodedObject->getPrincipalInvestigator();
+                }else{          	 
                     $pi = new PrincipalInvestigator();
                     $pi->setUser_id($user->getKey_id());
                 }
+                
+                $pi->setUser_id($user->getKey_id());               
                 $pi->setIs_active($user->getIs_active());
                 $piDao  = $this->getDao(new PrincipalInvestigator());
-                $user->setPrincipalInvestigator($this->savePI($pi));
+                $depts = $pi->getDepartments();
+                
+                $newPi = $this->savePI($pi);
+                
+                foreach($depts as $department){
+                	$dto = new RelationshipDto();
+                	$dto->setAdd(true);
+                	$dto->setMaster_id($newPi->getKey_id());
+                	$dto->setRelation_id($department["Key_id"]);
+                	$this->savePIDepartmentRelation($dto);
+                }
+                
+                $newPi->setDepartments($pi->getDepartments());
+                $user->setPrincipalInvestigator($newPi);
             }
 
             //user was sent from client with Saftey Inspector in roles array
