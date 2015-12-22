@@ -151,7 +151,7 @@ echo "</script>";
                     <h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
                         <img src="../img/hazard-icon.png"  style="height:50px" />
                         Laboratory Hazards & Equipment Inventory
-                        <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                        <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT?>views/RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
                     </h2>
                 </li>
             </ul>
@@ -182,7 +182,7 @@ echo "</script>";
             </span>
                             </span>
                         </div>
-                        <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!af.selectPI && PI"><a class="btn btn-info" href="../hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
+                        <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!af.selectPI && PI"><a class="btn btn-info" href="<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
                     </div>
                     <div class="span8" ng-if="PI || pi">
                         <div class="controls">
@@ -195,7 +195,7 @@ echo "</script>";
                        Select a Principal Investigator.
                    </p>
                     <p ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-                    <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'../hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
+                    <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
                             </p>
                             </span>
 
