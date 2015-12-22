@@ -1142,10 +1142,11 @@ html[xmlns] .clearfix {
 }
 /* line 835, ../sass/style.scss */
 .selectedBuildings li ul li {
-  font-size: 14px;
+  font-size: 18px;
   border: none;
   float: left;
   margin-right: 5px;
+  font-weight: bold;
 }
 /* line 840, ../sass/style.scss */
 .selectedBuildings li ul li:after {
@@ -1208,6 +1209,9 @@ html[xmlns] .clearfix {
 #editPiForm h3 {
   white-space: nowrap;
   height: 47px;
+}
+#editPiForm h3.span6{
+  text-decoration:underline;
 }
 /* line 899, ../sass/style.scss */
 #editPiForm h3 div a {
