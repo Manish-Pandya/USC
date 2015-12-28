@@ -82,6 +82,10 @@ class ActionDispatcher {
             	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
             }
 
+            if( isCommitteesEnabled() ){
+            	$actionMappings = array_merge($actionMappings, Committees_ActionMappingFactory::::readActionConfig());
+            }
+            
             return $actionMappings;
         }
         else{

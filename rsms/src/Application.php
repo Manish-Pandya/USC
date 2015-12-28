@@ -136,6 +136,11 @@ function isEquipmentEnabled(){
 	return false;
 }
 
+function isCommitteesEnabled(){
+	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-protocols/' ) || isset($_GET['biosafety-protocols']))return true;
+	return false;
+}
+
 //////////////////////////////////////////////////
 
 //TODO Application functions
