@@ -11,7 +11,7 @@ include_once 'GenericCrud.php';
 class BiosafetyProtocol extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "room";
+	protected static $TABLE_NAME = "biosafety_protocol";
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -20,7 +20,9 @@ class BiosafetyProtocol extends GenericCrud {
 		"principal_investigator_id" 	=> "integer",
 		"department_id"					=> "integer",
 		"hazard_id"						=> "integer",
-
+		"approval_date"					=> "timestamp",
+		"expiration_date"				=> "timestamp",
+				
 		//GenericCrud
 		"key_id"				=> "integer",
 		"date_created"			=> "timestamp",
@@ -32,6 +34,8 @@ class BiosafetyProtocol extends GenericCrud {
 
 	private $protocol_number;
 	private $project_title;
+	private $approval_date;
+	private $expiration_date;
 	
 	private $principal_investigator_id;
 	private $principalInvestigator;
@@ -75,6 +79,20 @@ class BiosafetyProtocol extends GenericCrud {
 	}	
 	public function setProject_title($project_title){
 		$this->project_title = $project_title;
+	}
+	
+	public function getApproval_date(){
+		return $this->approval_date;
+	}
+	public function setApproval_date($approval_date){
+		$this->approval_date = $approval_date;
+	}
+	
+	public function getExpiration_date(){
+		return $this->expiration_date;
+	}
+	public function setExpiration_date($expiration_date){
+		$this->expiration_date = $expiration_date;
 	}
 	
 	public function getPrincipal_investigator_id(){
