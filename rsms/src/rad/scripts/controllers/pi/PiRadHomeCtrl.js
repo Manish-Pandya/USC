@@ -14,6 +14,7 @@ angular.module('00RsmsAngularOrmApp')
   		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
   			.then(
   				function(pi){
+                    console.log(pi);
   					$scope.pi = pi;
   				},
   				function(){}

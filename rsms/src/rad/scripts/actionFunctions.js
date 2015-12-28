@@ -943,6 +943,7 @@ angular
                                     store.store(tempPI[prop].Authorizations);
                                 }
                             }
+                        
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();
@@ -956,8 +957,36 @@ angular
 
             af.getRadPIById = function(id)
             {
-                //var segment = "getRadPIById&id="+id+"&rooms=true";
-                return dataSwitchFactory.getObjectById('PrincipalInvestigator', id, true,'rooms');
+                if(dataStoreManager.getById("PrincipalInvestigator", id)) return;
+                var segment = "getRadPIById&id="+id+"&rooms=true";
+                    return genericAPIFactory.read(segment)
+                        .then( function( returned ) {
+                            var pi = returned.data;
+                            console.log(pi);
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi ));
+                            pi = dataStoreManager.getById("PrincipalInvestigator", id);
+                            if(pi){
+                                pi.loadActiveParcels();
+                                pi.loadRooms();
+                                pi.loadPurchaseOrders();
+                                pi.loadSolidsContainers();
+                                pi.loadCarboyUseCycles();
+                                pi.loadPickups();
+                                pi.loadPIAuthorizations();
+                                pi.loadUser();
+                                pi.loadWasteBags();
+                                pi.loadCurrentScintVialCollection();
+                            }
+                            return pi;
+                        });
             }
 
             af.getParcelUses = function(parcel)

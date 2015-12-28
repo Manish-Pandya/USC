@@ -96,6 +96,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.solidsContainersHavePickups = function(containers){
+            console.log(containers);
             if(!containers)return false;
             var i = containers.length;
             while(i--){

@@ -346,7 +346,7 @@ class Rad_ActionManager extends ActionManager {
         }
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("eager","getDepartments");
-        $entityMaps[] = new EntityMap("lazy","getUser");
+        $entityMaps[] = new EntityMap("eager","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("eager","getPi_authorization");
         $entityMaps[] = new EntityMap("eager", "getActiveParcels");
@@ -354,8 +354,8 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getPurchaseOrders");
         $entityMaps[] = new EntityMap("eager", "getSolidsContainers");
         $entityMaps[] = new EntityMap("eager", "getPickups");
-        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("eager", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
