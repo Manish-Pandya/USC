@@ -92,7 +92,7 @@ require_once '../top_view.php';
                 </span>
                 <h2 class="bold" style="margin:-35px 0 10px" ng-if="room && building">Room {{room.Name}}, {{building.Name}}</h2>
 
-                <h1 class="hazardHeader" ng-if="pisByRoom">EMERGENCY CONTACTS</h1>
+                <h1 class="hazardHeader" ng-if="pisByRoom && showingHazards">EMERGENCY CONTACTS</h1>
                 <table ng-if="hazards && pisByRoom && showingHazards" class="table table-striped pisTable table-bordered">
                     <tr class="blue-tr">
                         <th>Name</th>

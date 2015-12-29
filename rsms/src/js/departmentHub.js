@@ -28,6 +28,29 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
         return matches;
     }
 })
+.filter("removeNulls", function(){
+    return function(departments){
+        if(!departments)return;
+        var i = departments.length;
+        var matches = [];
+        while(i--){
+            var noPush = false;
+            if(!departments[i].Campus_name){
+                var j = departments.length
+                while(j--){
+                    if(j != i && departments[j].Department_name == departments[i].Department_name){
+                        noPush = true;
+                        break;
+                    }
+                }
+            }
+            if(!noPush){
+                matches.push(departments[i]);
+            }
+        }
+        return matches;
+    }
+})
 .factory('departmentFactory', function(convenienceMethods,$q){
     var factory = {};
     var inspection = {};
@@ -204,15 +227,22 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
     // overwrites department with modified $scope.departmentCopy
     // note that the department parameter is the department to be overwritten.
     $scope.saveDepartment = function(){
-/*
+        var prevent = false;
+        var depts = departmentFactory.getDepartments();
+        for(var i = 0; i < depts.length; i++){
+            if((depts[i].Department_name.toLowerCase() == $scope.department.Name.toLowerCase()) && (!$scope.department.Key_id || $scope.department.Key_id != depts[i].Department_id)){
+                prevent = true;
+            }
+        }
+        
+        
         // prevent user from changing name to an already existing department
-        if(!isEdited && convenienceMethods.arrayContainsObject($scope.departments, departmentDto, ['Name', 'Department_name'])) {
-            $scope.error = "Department with name " + $scope.departmentCopy.Name + " already exists!";
+        if(prevent)         {
+            $scope.error = "Department with name " + $scope.department.Name + " already exists!";
             // TODO: sort out department vs $scope.departmentCopy (ie department passed in, but still has to use departmentCopy, a scope variable)
             // Mixed up here, later in this method, and in departmentHub.php itself.
             return false;
         }
-*/
         $scope.isDirty = true;
         $scope.error = '';
         departmentFactory.saveDepartment($scope.department).then(

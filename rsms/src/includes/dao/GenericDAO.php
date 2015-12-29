@@ -811,18 +811,13 @@ class GenericDAO {
 						count(distinct f.key_id) building_count
 						
 						FROM
-						principal_investigator_room a,
-						principal_investigator_department b,
-						campus c,
-						department d,
-						room e,
-						building f
-						WHERE
-						e.key_id = a.room_id
-						AND a.principal_investigator_id = b.principal_investigator_id
-						AND d.key_id = b.department_id
-						AND f.key_id = e.building_id
-						AND c.key_id = f.campus_id
+						department d LEFT OUTER JOIN
+						principal_investigator_department b ON (d.key_id = b.department_id) LEFT OUTER JOIN
+						principal_investigator_room a ON (a.principal_investigator_id = b.principal_investigator_id) LEFT OUTER JOIN
+						room e ON (e.key_id = a.room_id) LEFT OUTER JOIN
+						building f ON (f.key_id = e.building_id) LEFT OUTER JOIN
+						campus c ON (c.key_id = f.campus_id)
+						
 						GROUP BY c.name, d.name
 						ORDER BY d.name, c.name";
 		$stmt = $db->prepare($queryString);
@@ -843,21 +838,15 @@ class GenericDAO {
 						count(distinct f.key_id) building_count
 						
 						FROM
-						principal_investigator_room a,
-						principal_investigator_department b,
-						campus c,
-						department d,
-						room e,
-						building f
-						WHERE
-						e.key_id = a.room_id
-						AND a.principal_investigator_id = b.principal_investigator_id
-						AND d.key_id = b.department_id
-						AND f.key_id = e.building_id
-						AND c.key_id = f.campus_id
-						AND d.key_id = :id
+						department d LEFT OUTER JOIN
+						principal_investigator_department b ON (d.key_id = b.department_id) LEFT OUTER JOIN
+						principal_investigator_room a ON (a.principal_investigator_id = b.principal_investigator_id) LEFT OUTER JOIN
+						room e ON (e.key_id = a.room_id) LEFT OUTER JOIN
+						building f ON (f.key_id = e.building_id) LEFT OUTER JOIN
+						campus c ON (c.key_id = f.campus_id)
+						WHERE d.key_id = :id
 						GROUP BY c.name, d.name
-						ORDER BY d.name, c.name;";
+						ORDER BY d.name, c.name";
 		$stmt = $db->prepare($queryString);
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();

@@ -40,7 +40,7 @@ require_once '../top_view.php';
                 </tr>
             </THEAD>
             <tbody>
-                <tr ng-repeat="department in filteredDepts = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:false | orderBy: ['Department_name'])" class="center-block" ng-class="{inactive:!department.Is_active}">
+                <tr ng-repeat="department in filteredDepts = (departments | removeNulls | matchCampus:selectedCampus | specialtyLab_trueFalse:false | orderBy: ['Department_name'])" class="center-block" ng-class="{inactive:!department.Is_active}">
                     <td style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
@@ -81,7 +81,7 @@ require_once '../top_view.php';
                 </tr>
             </THEAD>
             <tbody>
-                <tr ng-repeat="department in labs = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:true | orderBy: 'Department_name')" class="center-block" ng-class="{inactive:!department.Is_active}">
+                <tr ng-repeat="department in labs = (departments | removeNulls | matchCampus:selectedCampus | specialtyLab_trueFalse:true | orderBy: 'Department_name')" class="center-block" ng-class="{inactive:!department.Is_active}">
                     <td style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department, true)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
