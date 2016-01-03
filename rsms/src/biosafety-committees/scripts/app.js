@@ -2,9 +2,9 @@
 
 /**
  * @ngdoc overview
- * @name HazardInventory
+ * @name BiosafetyCommittees
  * @description
- * # HazardInventory
+ * # BiosafetyCommittees
  *
  * Main module of the application.
  */

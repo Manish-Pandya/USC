@@ -137,7 +137,9 @@ function isEquipmentEnabled(){
 }
 
 function isCommitteesEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-protocols/' ) || isset($_GET['biosafety-protocols']))return true;
+	$LOG = Logger::getLogger("committees");
+	$LOG->fatal('committees enabled');
+	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
 	return false;
 }
 

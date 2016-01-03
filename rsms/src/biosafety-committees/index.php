@@ -130,28 +130,34 @@ echo "</script>";
 
     <div ng-app="BiosafetyCommittees" ng-controller="BiosafetyCommitteesCtrl" class="container-fluid" style="margin-top:25px;">
 
-        <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:pisPromise,message:'Loading Principal Investigators',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:init,message:'Loading',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:BiosafetyProtocolSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:RoomSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:InspectionSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-
 
         <div class="navbar">
             <ul class="nav pageMenu row-fluid redBg">
                 <li class="span12">
                     <h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
                         <img src="../img/hazard-icon.png"  style="height:50px" />
-                        Institutional Biosafety Committee
+                        Institutional Biosafety Committees
                         <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT?>views/RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
                     </h2>
                 </li>
             </ul>
         </div>
         <div class="whiteBg" style="min-height:2000px;">
-
+            <table>
+                <tr ng-repeat="protocol in protocols">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+            <pre>{{protocols | json}}</pre>
         </div>
-    </div>777u
+    </div>
 </body>

@@ -31,6 +31,10 @@ angular
         ac.getAllProtocols = function(){
             return dataSwitchFactory.getAllObjects('BiosafetyProtocol');
         }
+        
+        ac.getAllDepartments = function(){
+            return dataSwitchFactory.getAllObjects('Department');
+        }
 
         return ac;
     });

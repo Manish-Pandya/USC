@@ -46,6 +46,9 @@ class ActionDispatcher {
         }else if ( isEquipmentEnabled() ){
         	$this->actionManagerType = "Equipment_ActionManager";
         }
+        else if ( isCommitteesEnabled() ){
+        	$this->actionManagerType = "Committees_ActionManager";
+        }
         else {
             $this->actionManagerType = "ActionManager";
         }
