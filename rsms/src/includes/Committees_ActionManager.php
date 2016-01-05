@@ -55,16 +55,19 @@ class Committees_ActionManager extends ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new BiosafetyProtocol());
-			$dao->save($decodedObject);
+			$decodedObject = $dao->save($decodedObject);
+			$LOG->fatal($decodedObject);
 			return $decodedObject;
 		}
 	}
 	
 	//upload the document for a BiosafteyProtocol
 	public function uploadProtocolDocument(){
+		$LOG = Logger::getLogger('Action:' . __function__);		//verify that this file is of a type we consider safe
+		$file = $_FILES[0];
 		
-		//verify that this file is of a type we consider safe
 		
+		return $fileName;
 		//is this for a protocol that already exists?
 		//if so, update the path of that protocol now and save it.
 		//find and delete the old protocol, if there is one

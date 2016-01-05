@@ -20,7 +20,7 @@ class Committees_ActionMappingFactory extends ActionMappingFactory {
 				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllDepartments" 			=> new ActionMapping("getAllDepartments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllPIs"	 					=> new ActionMapping("getAllPIs", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-				
+				"uploadProtocolDocument"	 	=> new ActionMapping("uploadProtocolDocument", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] )
 		);
 	}
 }
