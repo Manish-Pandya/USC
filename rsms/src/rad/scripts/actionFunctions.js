@@ -943,7 +943,7 @@ angular
                                     store.store(tempPI[prop].Authorizations);
                                 }
                             }
-                        
+
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();

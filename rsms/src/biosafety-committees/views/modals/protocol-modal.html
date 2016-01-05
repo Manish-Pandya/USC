@@ -45,10 +45,6 @@
             </select>
         </div>
     </div>
-    <!--
-                        {{use.Date_used | dateToISO:use:'Date_used'}}
-
-    -->
     <div class="control-group">
         <label class="control-label">Approval Date</label>
         <div class="controls">
@@ -61,12 +57,11 @@
             <input ng-model="modalData.BiosafetyProtocolCopy.view_Expiration_date" placehold="Label"/>
         </div>
     </div>
-
     <div class="control-group">
-        <div class="controls">
-            <input type="file" class="inputfile-2" placeholder="Protocol" file-upload key_id="{{modalData.BiosafetyProtocolCopy.Key_id}}"/>
-            <label class="control-label"><i class="icon-upload"></i>Upload Protocol Document</label>
-        </div>
+        <label>Protcol Document</label>
+        <a class="btn btn-large btn-success left view-report" ng-if="modalData.BiosafetyProtocolCopy.Report_path" href="protocol-documents/{{modalData.BiosafetyProtocolCopy.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
+        <input type="file" name="file" id="file" class="inputfile inputfile-1" multiple file-upload copy="modalData.BiosafetyProtocolCopy" original="modalData.BiosafetyProtocol"/>
+        <label for="file" ng-class="{'success':!modalData.BiosafetyProtocolCopy.Report_path,'danger':modalData.BiosafetyProtocolCopy.Report_path}"><strong><i class="icon-upload-4"></i><span ng-if="!modalData.BiosafetyProtocolCopy.Report_path">Upload</span><span ng-if="modalData.BiosafetyProtocolCopy.Report_path">Replace</span></strong></label><i class="success icon-checkmark" ng-if="dataStore.trackers.uploadSuccess"></i><i class="spinner small icon-spinnery-dealie" ng-if="dataStore.trackers.uploading"></i>{{dataStore.trackers}}
     </div>
 </div>
 

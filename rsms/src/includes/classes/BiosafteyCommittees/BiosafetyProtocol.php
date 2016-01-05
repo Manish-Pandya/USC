@@ -22,6 +22,7 @@ class BiosafetyProtocol extends GenericCrud {
 		"hazard_id"						=> "integer",
 		"approval_date"					=> "timestamp",
 		"expiration_date"				=> "timestamp",
+		"report_path"					=> "text",
 				
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -36,6 +37,7 @@ class BiosafetyProtocol extends GenericCrud {
 	private $project_title;
 	private $approval_date;
 	private $expiration_date;
+	private $report_path;
 	
 	private $principal_investigator_id;
 	private $principalInvestigator;
@@ -86,6 +88,13 @@ class BiosafetyProtocol extends GenericCrud {
 	}
 	public function setApproval_date($approval_date){
 		$this->approval_date = $approval_date;
+	}
+	
+	public function getReport_path(){
+		return $this->report_path;
+	}
+	public function setReport_path( $report_path ){
+		$this->report_path = $report_path;
 	}
 	
 	public function getExpiration_date(){

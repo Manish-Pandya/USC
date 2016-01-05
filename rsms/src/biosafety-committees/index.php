@@ -133,6 +133,7 @@ echo "</script>";
         <div cg-busy="{promise:init,message:'Loading',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:BiosafetyProtocolSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:uploadPromise,message:'Uploading Protocol',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
         <div class="navbar">
             <ul class="nav pageMenu row-fluid redBg">
@@ -172,9 +173,8 @@ echo "</script>";
                     <td>{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
                     <td>{{protocol.Hazard.Name}}</td>
                     <td>
-                        <a ng-if="protocol.Report_path">View</a>
-                        <a ng-if="protocol.Report_path">Replace</a>
-                        <a ng-if="!protocol.Report_path">Add</a>
+                        <a class="btn btn-large btn-success left view-report" ng-if="protocol.Report_path" href="protocol-documents/{{protocol.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
+                        <span ng-if="!protocol.Report_path">N/A</span>
                     </td>
                 </tr>
             </table>

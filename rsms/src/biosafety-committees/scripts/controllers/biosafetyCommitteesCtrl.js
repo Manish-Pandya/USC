@@ -11,17 +11,12 @@ angular.module('BiosafetyCommittees')
     .directive('fileUpload', function (applicationControllerFactory) {
         return {
             restrict: 'A',
-            scope: true,
+            scope: {copy: '=',original: '='},
             link: function (scope, element, attr) {
-
                 element.bind('change', function () {
-                    var id;
                     var formData = new FormData();
                     formData.append('file', element[0].files[0]);
-                    if(element.attr("key_id") != null){
-                        id = element.attr("key_id");
-                    }
-                    applicationControllerFactory.uploadBiosafteyProtocol( formData,id );
+                    applicationControllerFactory.uploadBiosafteyProtocol( formData, scope.copy, scope.original );
                 });
 
             }
@@ -107,7 +102,7 @@ angular.module('BiosafetyCommittees')
         }
 
     })
-    .controller('BiosafetyCommitteesModalCtrl', function ($scope, $q, $http, applicationControllerFactory,  $modalInstance,convenienceMethods) {
+    .controller('BiosafetyCommitteesModalCtrl', function ($scope, $q, $http, applicationControllerFactory,  $modalInstance, convenienceMethods) {
         $scope.constants = Constants;
         $scope.dataStore = dataStore;
         var af = applicationControllerFactory;
@@ -135,8 +130,6 @@ angular.module('BiosafetyCommittees')
         }
 
        $scope.save = function(copy, orginal){
-           console.log(copy);
-           return;
             if(!orginal)orginal = null;
             console.log(orginal);
             af.saveBiosafetyProtocol(copy, orginal)

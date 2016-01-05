@@ -71,26 +71,32 @@ angular
                     )
         }
 
-        ac.uploadBiosafteyProtocol = function(file, id){
+        ac.uploadBiosafteyProtocol = function(file, copy, original){
+            dataStore.trackers = {};
+            dataStore.trackers.uploadSuccess = false;
+            dataStore.trackers.uploading = true;
+            console.log(dataStore);
             var xhr = new XMLHttpRequest;
             var url = '../ajaxaction.php?action=uploadProtocolDocument';
-            if(id)url = url + "&id="+id;
+            if(copy.id)url = url + "&id="+id;
             xhr.open('POST', url, true);
             xhr.send(file);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState !== XMLHttpRequest.DONE) {
+                    //$rootScope.status.uploading = false;
                     return;
                 }
                 if (xhr.status !== 200) {
                     return;
                 }
+                if (xhr.status == 200){
+                    copy.Report_path = xhr.responseText;
+                    if(original.Key_id)original.Report_path = xhr.responseText;
+                    dataStore.trackers.uploadSuccess = true;
+                    dataStore.trackers.uploading = false;
+                }
             }
-                console.log(xhr.responseText);
-            };
-            /*
-            this.save(formData, false, segment)
-                .then(function(){})
-                */
+        };
 
         return ac;
     });
