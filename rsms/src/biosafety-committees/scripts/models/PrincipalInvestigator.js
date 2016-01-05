@@ -10,6 +10,13 @@ PrincipalInvestigator.prototype = {
         {method:"loadUser", boolean:"User_id"},
     ],
 
+    DepartmentsRelationship:{
+        table: 	  'principal_investigator_department',
+        childClass: 'Department',
+        parentProperty: 'Department',
+        isMaster: true
+    },
+
     UserRelationship: {
         className: 	  'User',
         keyReference:  'User_id',
@@ -17,6 +24,9 @@ PrincipalInvestigator.prototype = {
         queryParam:   ''
     },
 
+    loadDepartments: function() {
+        dataLoader.loadManyToManyRelationship( this, this.DepartmentsRelationship );
+    },
 
     loadUser:  function() {
         if(!this.User && this.User_id) {

@@ -19,7 +19,7 @@ angular.module('EquipmentModule')
                          return $scope.cabinets;
                     }
                 )
-              
+
         },
         getAllPis = function(){
             return af.getAllPrincipalInvestigators()
@@ -44,11 +44,11 @@ angular.module('EquipmentModule')
                             }
                         );
         }
-    
+
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
-                            .then(getAllBioSafetyCabinets());        
+                            .then(getAllBioSafetyCabinets());
 
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
@@ -80,7 +80,7 @@ angular.module('EquipmentModule')
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance) {
         var af = $scope.af = applicationControllerFactory;
-        
+
         $scope.modalData = af.getModalData();
         console.log($scope.modalData);
         $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
@@ -88,30 +88,32 @@ angular.module('EquipmentModule')
             $scope.pi = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
             $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
         }
-    
+
         $scope.onSelectPi = function(pi){
             pi.loadRooms();
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator = pi;
             $scope.modalData.BioSafetyCabinetCopy.Principal_investigator_id = pi.Key_id;
         }
-    
+
         $scope.getBuilding = function(){
             $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.Room.Building.Name;
         }
-    
+
         $scope.onSelectBuilding = function(){
-            $scope.roomFilter = $scope.modalData.SelectedBuilding;            
+            $scope.roomFilter = $scope.modalData.SelectedBuilding;
         }
-    
+
         $scope.onSelectRoom = function(){
             $scope.modalData.BioSafetyCabinetCopy.Room_id = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
         }
-        
+
         $scope.$watch('modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms', function() {
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator.loadBuildings();
         });
-    
+
         $scope.save = function(copy, orginal){
+            console.log(copy);
+            return;
             if(!orginal)orginal = null;
             console.log(orginal);
             af.saveBioSafetyCabinet(copy, orginal)

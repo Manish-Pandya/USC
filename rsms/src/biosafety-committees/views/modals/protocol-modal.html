@@ -1,0 +1,76 @@
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Create or edit Cabinet</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Protocol #</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.Protocol_number" placeholder="Protocol #"/>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Principal Investigator</label>
+        <div class="controls">
+            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
+                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
+                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Department</label>
+        <div class="controls">
+            <select ng-init="getBuilding()" ng-model="modalData.selectedDepartment" ng-change="onSelectDepartment(modalData.selectedDepartment)" ng-options="department as department.Name for department in modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Project Title</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.Project_title" placehold="Label"/>
+        </div>
+    </div>
+        <div class="control-group">
+        <label class="control-label">Biological Hazard</label>
+        <div class="controls">
+            <select ng-model="modalData.selectedHazard" ng-change="onSelectHazard(modalData.selectedHazard)" ng-options="hazard as hazard.Name for hazard in dataStore.Hazard">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </div>
+    <!--
+                        {{use.Date_used | dateToISO:use:'Date_used'}}
+
+    -->
+    <div class="control-group">
+        <label class="control-label">Approval Date</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.view_Approval_date" placehold="Label"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Expiration Date</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.view_Expiration_date" placehold="Label"/>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <input type="file" class="inputfile-2" placeholder="Protocol" file-upload key_id="{{modalData.BiosafetyProtocolCopy.Key_id}}"/>
+            <label class="control-label"><i class="icon-upload"></i>Upload Protocol Document</label>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-large btn-success left" ng-click="save(modalData.BiosafetyProtocolCopy, modalData.BiosafetyProtocol)"><i class="icon-checkmark"></i>Save</button>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

@@ -14,7 +14,7 @@ BiosafetyProtocol.prototype = {
     ],
 
     loadPI:  function() {
-        if(!this.PrincipalInvestigator && this.User_id) {
+        if(!this.PrincipalInvestigator && this.Principal_investigator_id) {
             dataLoader.loadChildObject( this, 'PrincipalInvestigator', 'PrincipalInvestigator', this.Principal_investigator_id );
         }
     },

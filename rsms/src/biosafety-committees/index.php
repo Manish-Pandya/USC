@@ -138,7 +138,6 @@ echo "</script>";
             <ul class="nav pageMenu row-fluid redBg">
                 <li class="span12">
                     <h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
-                        <img src="../img/hazard-icon.png"  style="height:50px" />
                         Institutional Biosafety Committees
                         <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT?>views/RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
                     </h2>
@@ -146,18 +145,39 @@ echo "</script>";
             </ul>
         </div>
         <div class="whiteBg" style="min-height:2000px;">
-            <table>
-                <tr ng-repeat="protocol in protocols">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+            <h1>Biosafety Protocols <a class="btn btn-success btn-large left" ng-click="openProtocolModal()"><i class="icon-plus-2"></i>Add</a></h1>
+            <table class="table table-striped table-hover table-bordered" ng-if="protocols">
+                <tr>
+                    <th>Edit</th>
+                    <th>Protocol #</th>
+                    <th>Principal Investigator</th>
+                    <th>Department</th>
+                    <th>Project Title</th>
+                    <th>Approval Date</th>
+                    <th>Expiration Date</th>
+                    <th>Biological Hazard</th>
+                    <th>Biosafety Protocol</th>
+                </tr>
+                <tr ng-repeat="protocol in protocols" ng-class="{'inactive':!protocol.Is_active}">
+                    <td>
+                        <a class="btn btn-primary" ng-click="openProtocolModal(protocol)"><i class="icon-pencil"></i></a>
+                        <a ng-if="protocol.Is_active" ng-click="af.setObjectActiveState(protocol)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!protocol.Is_active" ng-click="af.setObjectActiveState(protocol)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                    </td>
+                    <td>{{protocol.Protocol_number}}</td>
+                    <td>{{protocol.PrincipalInvestigator.User.Name}}</td>
+                    <td>{{protocol.Department.Name}}</td>
+                    <td>{{protocol.Project_title}}</td>
+                    <td>{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
+                    <td>{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
+                    <td>{{protocol.Hazard.Name}}</td>
+                    <td>
+                        <a ng-if="protocol.Report_path">View</a>
+                        <a ng-if="protocol.Report_path">Replace</a>
+                        <a ng-if="!protocol.Report_path">Add</a>
+                    </td>
                 </tr>
             </table>
-            <pre>{{protocols | json}}</pre>
         </div>
     </div>
 </body>

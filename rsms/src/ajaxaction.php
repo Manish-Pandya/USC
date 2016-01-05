@@ -17,6 +17,7 @@ session_start();
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
 
+
 $actionDispatcher = new ActionDispatcher($dataSource, $sessionSource);
 
 // Attempt to dispatch to the requested action

@@ -81,7 +81,6 @@ angular
                 console.log(url);
                 if(saveChildren)url = url + "&saveChildren=true";
 
-                console.log(object);
                 var promise = $http.post(url, object)
                     .success( function( data ){
                         object = data;
