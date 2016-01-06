@@ -12,13 +12,13 @@ class EquipmentInspection extends GenericCrud{
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-        "room_id"		            	=> "text",
-        "principal_investigator_id"		=> "text",
+        "room_id"		            	=> "integer",
+        "principal_investigator_id"		=> "principal_investigator_id",
         "certification_date"          	=> "timestamp",
         "due_date"     		    		=> "timestamp",
         "report_path"		        	=> "text",
         "equipment_id"                  => "integer",
-        "equipment_class"               => "integer",
+        "equipment_class"               => "text",
 				
 		//GenericCrud
 		"key_id"			    => "integer",
