@@ -116,7 +116,6 @@ class Committees_ActionManager extends ActionManager {
 		
 		
 		/////////////////////////////////////
-		
 		//
 		// return the name of the file, as it was saved on the server, saving the relevant protocol if one exists already
 		//

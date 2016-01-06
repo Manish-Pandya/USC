@@ -245,3 +245,13 @@ td .view-report{
     margin-top: 10px !Important;
     margin-right: 11px !important;
 }
+.upload-icon{
+    font-size:30px;
+    height:30px;
+    width:30px;
+    margin-top:-20px;
+    margin-left:5px;
+}
+.upload-icon.spinner{
+    margin-top:-27px
+}

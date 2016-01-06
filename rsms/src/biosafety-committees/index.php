@@ -133,7 +133,7 @@ echo "</script>";
         <div cg-busy="{promise:init,message:'Loading',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:BiosafetyProtocolSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:PIHazardRoomDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:uploadPromise,message:'Uploading Protocol',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:uploadDocument,message:'Uploading Protocol',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
         <div class="navbar">
             <ul class="nav pageMenu row-fluid redBg">
@@ -147,32 +147,33 @@ echo "</script>";
         </div>
         <div class="whiteBg" style="min-height:2000px;">
             <h1>Biosafety Protocols <a class="btn btn-success btn-large left" ng-click="openProtocolModal()"><i class="icon-plus-2"></i>Add</a></h1>
-            <table class="table table-striped table-hover table-bordered" ng-if="protocols">
+            <h2 ng-if="!protocols">No Protocols saved</h2>
+            <table class="table table-striped table-hover table-bordered" ng-if="protocols" style="margin-top:10px;">
                 <tr>
                     <th>Edit</th>
                     <th>Protocol #</th>
-                    <th>Principal Investigator</th>
-                    <th>Department</th>
+                    <th>P.I. <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/> </th>
+                    <th>Department <input class="span2" ng-model="search.department" placeholder="Filter by Department"/> </th>
                     <th>Project Title</th>
-                    <th>Approval Date</th>
-                    <th>Expiration Date</th>
-                    <th>Biological Hazard</th>
-                    <th>Biosafety Protocol</th>
+                    <th>Approved</th>
+                    <th>Expires</th>
+                    <th>Hazard <input class="span2" ng-model="search.hazard" placeholder="Filter by Hazard"/> </th>
+                    <th>Protocol</th>
                 </tr>
-                <tr ng-repeat="protocol in protocols" ng-class="{'inactive':!protocol.Is_active}">
-                    <td>
+                <tr ng-repeat="protocol in protocols | genericFilter:search | orderBy: 'PrincipalInvestigator.User.Name'" ng-class="{'inactive':!protocol.Is_active}">
+                    <td style="width:7%">
                         <a class="btn btn-primary" ng-click="openProtocolModal(protocol)"><i class="icon-pencil"></i></a>
                         <a ng-if="protocol.Is_active" ng-click="af.setObjectActiveState(protocol)" class="btn btn-danger"><i class="icon-remove"></i></a>
                         <a ng-if="!protocol.Is_active" ng-click="af.setObjectActiveState(protocol)" class="btn btn-success"><i class="icon-checkmark"></i></a>
                     </td>
-                    <td>{{protocol.Protocol_number}}</td>
-                    <td>{{protocol.PrincipalInvestigator.User.Name}}</td>
-                    <td>{{protocol.Department.Name}}</td>
-                    <td>{{protocol.Project_title}}</td>
-                    <td>{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
-                    <td>{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
-                    <td>{{protocol.Hazard.Name}}</td>
-                    <td>
+                    <td style="width:10%">{{protocol.Protocol_number}}</td>
+                    <td style="width:10%">{{protocol.PrincipalInvestigator.User.Name}}</td>
+                    <td style="width:15%">{{protocol.Department.Name}}</td>
+                    <td style="width:19%">{{protocol.Project_title}}</td>
+                    <td style="width:8%">{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
+                    <td style="width:7%">{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
+                    <td style="width:14%">{{protocol.Hazard.Name}}</td>
+                    <td style="width:10%">
                         <a class="btn btn-large btn-success left view-report" ng-if="protocol.Report_path" href="protocol-documents/{{protocol.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
                         <span ng-if="!protocol.Report_path">N/A</span>
                     </td>
