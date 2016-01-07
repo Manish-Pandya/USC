@@ -29,7 +29,7 @@ angular.module('EquipmentModule')
             return af.getAllRooms().then(
                         function(){
                                 $scope.rooms = dataStoreManager.get("Room");
-                                console.log($scope.rooms);
+                                //console.log($scope.rooms);
                                 return $scope.rooms
                             }
                         );

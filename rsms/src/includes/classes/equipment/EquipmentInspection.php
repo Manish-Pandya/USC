@@ -29,6 +29,14 @@ class EquipmentInspection extends GenericCrud{
 		"created_user_id"	    => "integer"
 	);
     
+    public function __construct(){
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getDue_date");
+		$this->setEntityMaps($entityMaps);
+		
+	}
+    
     private $room_id;
     private $principal_investigator_id;
     private $certification_date;
@@ -58,7 +66,18 @@ class EquipmentInspection extends GenericCrud{
 		$this->certification_date = $certification_date;
 	}
 
-	public function getDue_date(){
+    public function getDue_date(){
+		$dueDate = new DateTime($this->getCertification_date());
+		
+		if($this->getFrequency() == "Annually"){
+			$dueDate->modify('+1 year');
+		}else if($this->getFrequency() == "Bi-annually"){
+			$dueDate->modify('+2 years');
+        }else{
+			return null;
+		}
+		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));		
+		
 		return $this->due_date;
 	}
 	public function setDue_date($due_date){

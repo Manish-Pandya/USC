@@ -10,8 +10,31 @@ include_once '../GenericCrud.php';
  */
 class BioSafetyCabinet extends Equipment {
 
+    /** Name of the DB Table */
+	protected static $TABLE_NAME = "biosafety_cabinet";
+
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+        "type"		            		=> "text",
+        "serial_number"		        	=> "text",
+        "make"          	   			=> "text",
+        "model"     		    		=> "text",
+        "frequency"		        		=> "text",
+        "equipment_class"               => "text",
+				
+		//GenericCrud
+		"key_id"			    => "integer",
+		"date_created"		    => "timestamp",
+		"date_last_modified"    => "timestamp",
+		"is_active"			    => "boolean",
+		"last_modified_user_id"	=> "integer",
+		"created_user_id"	    => "integer"
+	);
+    
 	public function __construct(){
 		// Define which subentities to load
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->fatal( get_parent_class(get_parent_class(get_parent_class($this))) );
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
@@ -26,23 +49,7 @@ class BioSafetyCabinet extends Equipment {
 
 	public function getColumnData(){
         //return array_merge(parent::$COLUMN_NAMES_AND_TYPES, this:);
-		return this::$COLUMN_NAMES_AND_TYPES;
-	}
-
-	public function getDue_date(){
-		
-		$dueDate = new DateTime($this->getCertification_date());
-		
-		if($this->getFrequency() == "Annually"){
-			$dueDate->modify('+1 year');
-		}else if($this->getFrequency() == "Bi-annually"){
-			$dueDate->modify('+2 years');
-        }else{
-			return null;
-		}
-		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));		
-		
-		return $this->due_date;
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
 }
