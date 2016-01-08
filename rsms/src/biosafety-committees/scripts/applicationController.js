@@ -25,7 +25,14 @@ angular
         }
 
         ac.getAllHazards = function(){
-            return dataSwitchFactory.getAllObjects('Hazard');
+            //temp list of hazard names to be store as strings in stopgap version
+
+            //still want to return promise from this method to allow promise chaining in view controller
+            var defer = $q.defer();
+            defer.resolve(Constants.PROTOCOL_HAZARDS);
+            return defer.promise;
+
+            //return dataSwitchFactory.getAllObjects('Hazard');
         }
 
         ac.getAllProtocols = function(){
@@ -49,8 +56,9 @@ angular
                 Project_title: copy.Project_title,
                 Protocol_number: copy.Protocol_number,
                 Is_active: copy.Is_active,
-                Hazard_id: copy.Hazard_id,
-                Key_id: copy.Key_id ? copy.Key_id : null
+                Hazards: copy.Hazards,
+                Key_id: copy.Key_id ? copy.Key_id : null,
+                Report_path: copy.Report_path
             }
 
             console.log(saveCopy);
@@ -62,7 +70,7 @@ angular
                             if(protocol.Key_id){
                                 angular.extend(protocol, copy)
                             }else{
-                                dataStoreManager.store(returnedProtocol);
+                                dataStoreManager.addOnSave(returnedProtocol);
                             }
                             return protocol;
                         },

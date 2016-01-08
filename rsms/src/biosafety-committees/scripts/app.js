@@ -19,6 +19,7 @@ angular
         'once',
         'modalPosition',
         'convenienceMethodWithRoleBasedModule',
-        'angular.filter'
+        'angular.filter',
+        'angularjs-dropdown-multiselect'
     ])
     .controller('NavCtrl', function ($rootScope, applicationControllerFactory) {});

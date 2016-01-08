@@ -38,24 +38,22 @@ angular.module('BiosafetyCommittees')
                 }
 
                 while(i--){
-
                     //we filter for every set search filter, looping through the collection only once
-
                     var item=items[i];
                     item.matched = true;
 
                     if(search.pi){
-                        if( item.PrincipalInvestigator && item.PrincipalInvestigator.User.Name && item.PrincipalInvestigator.User.Name.toLowerCase().indexOf(search.pi.toLowerCase() ) < 0 ){
+                        if( !item.PrincipalInvestigator || (item.PrincipalInvestigator && item.PrincipalInvestigator.User.Name && item.PrincipalInvestigator.User.Name.toLowerCase().indexOf(search.pi.toLowerCase() ) < 0 ) ){
                             item.matched = false;
                         }
                     }
 
                     if(search.department){
-                        if( item.Department && item.Department.Name && item.Department.Name.toLowerCase().indexOf(search.department.toLowerCase()) < 0 )  item.matched = false;
+                        if( !item.Department || (item.Department && item.Department.Name && item.Department.Name.toLowerCase().indexOf(search.department.toLowerCase()) < 0 ) )  item.matched = false;
                     }
 
                     if(search.hazard){
-                        if( item.Hazard && item.Hazard.Name && item.Hazard.Name.toLowerCase().indexOf(search.hazard.toLowerCase()) < 0 )  item.matched = false;
+                        if( !item.Hazards || (item.Hazards && item.Hazards.toLowerCase().indexOf(search.hazard.toLowerCase()) < 0 ) ) item.matched = false;
                     }
 
                     if(item.matched == true)filtered.push(item);
@@ -68,13 +66,11 @@ angular.module('BiosafetyCommittees')
             }
         };
     })
-        .controller('BiosafetyCommitteesCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location) {
+    .controller('BiosafetyCommitteesCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location) {
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         var af = applicationControllerFactory;
-
-        $scope.contstants = Constants;
-        dataStoreManager.store(Constants.PROTOCOL_HAZARDS)
+        $scope.constants = Constants;
 
         var getPIs = function () {
             return af
@@ -131,7 +127,7 @@ angular.module('BiosafetyCommittees')
 
         $scope.init = getHazards()
                         .then(getDepartments)
-                        //.then(getHazards)
+                        .then(getHazards)
                         .then(getPIs)
                         .then(getProtocols);
 
@@ -183,8 +179,13 @@ angular.module('BiosafetyCommittees')
         }
 
         $scope.onSelectDepartment = function(department){
+            console.log(department)
             $scope.modalData.BiosafetyProtocolCopy.Department = department;
-            $scope.modalData.BiosafetyProtocolCopy.Department_id = department.Key_id;
+            if(department){
+                $scope.modalData.BiosafetyProtocolCopy.Department_id = department.Key_id;
+            }else{
+                $scope.modalData.BiosafetyProtocolCopy.Department_id = null;
+            }
         }
 
         $scope.onSelectHazard = function(hazard){
@@ -202,6 +203,17 @@ angular.module('BiosafetyCommittees')
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();
+        }
+
+        $scope.handleHazardChecked = function(hazard, protocol){
+            //we will be storing the protocols' hazards as pipe separated strings in the stopgap version
+            if(!protocol.Hazards)protocol.Hazards = '';
+            if(hazard.checked && protocol.Hazards.indexOf(hazard.Name) < 0){
+                //putting the hazard at the beginning of the string will make it easier to manage when we need to remove one
+                protocol.Hazards = hazard.Name + ' | ' + protocol.Hazards;
+            }else{
+                protocol.Hazards = protocol.Hazards.replace(hazard.Name+" | ", '');
+            }
         }
 
         $scope.$on('fileUpload', function(event, formData) {

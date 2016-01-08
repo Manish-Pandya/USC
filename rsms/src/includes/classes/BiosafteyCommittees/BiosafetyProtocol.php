@@ -19,7 +19,7 @@ class BiosafetyProtocol extends GenericCrud {
 		"project_title"					=> "text",
 		"principal_investigator_id" 	=> "integer",
 		"department_id"					=> "integer",
-		"hazard_id"						=> "integer",
+		"hazards"						=> "text",
 		"approval_date"					=> "timestamp",
 		"expiration_date"				=> "timestamp",
 		"report_path"					=> "text",
@@ -45,8 +45,7 @@ class BiosafetyProtocol extends GenericCrud {
 	private $department_id;
 	private $department;
 	
-	private $hazard_id;
-	private $hazard;
+	private $hazards;
 	
 	
 	public function __construct(){
@@ -132,18 +131,11 @@ class BiosafetyProtocol extends GenericCrud {
 		$this->department = $department;
 	}
 	
-	public function getHazard_id(){
-		return $this->hazard_id;
+	public function getHazards(){
+		return $this->hazards;
 	}
-	public function setHazard_id($hazard_id){
-		$this->hazard_id = $hazard_id;
-	}
-	
-	public function getHazard(){
-		return $this->hazard;
-	}
-	public function setHazard($hazard){
-		$this->hazard = $hazard;
+	public function setHazards($hazards){
+		$this->hazards = $hazards;
 	}
 
 }

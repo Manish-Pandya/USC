@@ -9,9 +9,8 @@ BiosafetyProtocol.prototype = {
     eagerAccessors: [
         {method:"loadPI", boolean:"Principal_investigator_id"},
         {method:"loadDepartment", boolean:"Department_id"},
-        {method:"loadHazard", boolean:"Hazard_id"},
-
     ],
+
 
     loadPI:  function() {
         if(!this.PrincipalInvestigator && this.Principal_investigator_id) {
@@ -25,11 +24,6 @@ BiosafetyProtocol.prototype = {
         }
     },
 
-    loadHazard:  function() {
-        if(!this.Hazard && this.Hazard_id) {
-            dataLoader.loadChildObject( this, 'Hazard', 'Hazard', this.Hazard_id );
-        }
-    }
 
 }
 

@@ -61,6 +61,7 @@ class Committees_ActionManager extends ActionManager {
 		}
 	}
 	
+	
 	//upload the document for a BiosafteyProtocol
 	public function uploadProtocolDocument( $id = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);		

@@ -25,7 +25,7 @@
     <div class="control-group">
         <label class="control-label">Department</label>
         <div class="controls">
-            <select ng-init="getBuilding()" ng-model="modalData.selectedDepartment" ng-change="onSelectDepartment(modalData.selectedDepartment)" ng-options="department as department.Name for department in modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments">
+            <select ng-model="modalData.selectedDepartment" ng-change="onSelectDepartment(modalData.selectedDepartment)" ng-options="department as department.Name for department in modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments">
                 <option value="">--Select--</option>
             </select>
         </div>
@@ -40,24 +40,29 @@
         <div class="control-group">
         <label class="control-label">Biological Hazard</label>
         <div class="controls">
-            <ui-select class="span3" style="margin-left:0" ng-model="hazard.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
-                <ui-select-match placeholder="Select or search for a Biological Hazard">{{$select.selected.Name}}</ui-select-match>
-                <ui-select-choices repeat="hazard in dataStore.Hazard | orderBy:'Name' | propsFilter: {Name: $select.search}">
-                  <div ng-bind-html="hazard.Name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+             <ul>
+                <li ng-repeat="(key, hazard) in constants.PROTOCOL_HAZARDS">
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-model="hazard.checked" ng-change="handleHazardChecked(hazard, modalData.BiosafetyProtocolCopy)" ng-init="hazard.checked = modalData.BiosafetyProtocolCopy.Hazards.indexOf(hazard.Name) > -1" />
+                        <span class="metro-checkbox" once-text="hazard.Name"></span>
+                    </label>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Approval Date</label>
         <div class="controls">
             <input ng-model="modalData.BiosafetyProtocolCopy.view_Approval_date" placehold="Label"/>
+            <span class="help-block" style="">mm/dd/yy</span>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Expiration Date</label>
         <div class="controls">
             <input ng-model="modalData.BiosafetyProtocolCopy.view_Expiration_date" placehold="Label"/>
+            <span class="help-block" style="">mm/dd/yy</span>
         </div>
     </div>
     <div class="control-group">

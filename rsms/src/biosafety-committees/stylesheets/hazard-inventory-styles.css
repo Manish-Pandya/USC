@@ -255,3 +255,21 @@ td .view-report{
 .upload-icon.spinner{
     margin-top:-27px
 }
+
+td ul{
+    margin:0 5px;
+    list-style: none;
+    list-style-type: none;
+}
+td ul li{
+    font-size:14px;
+    border-bottom:1px solid #ccc;
+    padding:5px
+}
+td ul li:first-child{
+    padding-top:0
+}
+td ul li:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+}

@@ -146,14 +146,7 @@ var Constants = (function () {
         }
     }
 
-    constants.PROTOCOL_HAZARDS = [
-        {Class: "Hazard", Name: "", Key_id:1},
-        {Class: "Hazard", Name: "", Key_id:1},
-        {Class: "Hazard", Name: "", Key_id:1},
-        {Class: "Hazard", Name: "", Key_id:1},
-        {Class: "Hazard", Name: "", Key_id:1},
-
-    ]
+    constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
 
     return constants;
 })();
