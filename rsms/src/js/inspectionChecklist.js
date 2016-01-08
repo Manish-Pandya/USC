@@ -1,4 +1,4 @@
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once'])
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','angular.filter'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
             if( !category ) return false;
@@ -37,6 +37,47 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 }
             }
             return questions;
+    }
+})
+.filter('fancyOrderingMachine', function () {
+    return function ( checklists ) {
+        if( !checklists ) return;
+        var orderedChecklists = [];
+        //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "Order_index"];
+        
+        var recurse = function(currentHazardId) {
+            var currentIndex = -1;
+            var i = checklists.length;
+            while(i--){
+               if (checklists[i].Hazard_id < currentHazardId) {
+                   currentIndex = i;
+                   currentHazardId = checklists[i].Hazard_id;
+               }
+            }
+            if (currentIndex == -1) {
+                // return to escape out of recursive loop
+                return;
+            } else {
+                orderedChecklists.push( checklists.splice(currentIndex, 1) );
+                // loop for Parent_hazard_id match
+                i = checklists.length;
+                while(i--){
+                   if (checklists[i].Parent_hazard_id == currentHazardId) {
+                       currentIndex = i;
+                       // TODO: loop for Order_index
+                       //
+                       // then add match
+                       orderedChecklists.push( checklists[i] );
+                   }
+                }
+                recurse(Number.MAX_VALUE);
+            }
+        }
+
+        recurse(Number.MAX_VALUE);
+        
+        console.log("LOOK:", orderedChecklists);
+        return orderedChecklists;
     }
 })
 .filter('evaluateChecklist', function () {
@@ -158,7 +199,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             return false;
         }
-
+        
         factory.getInspection = function( id )
         {
             var deferred = $q.defer();
@@ -316,8 +357,52 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     factory.inspection.selectedCategory = [];
                     factory.inspection.selectedCategory = selectedChecklists;
                     $rootScope.loading = false;
+                    
+                    factory.orderChecklistByHazardHierarchy(selectedChecklists);
                 }
         }
+        
+        factory.orderChecklistByHazardHierarchy = function(checklists) {
+            if( !checklists ) return;
+            console.log(checklists.length);
+            var orderedChecklists = [];
+            //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "Order_index"];
+
+            var recurse = function(currentHazardId) {
+                var currentIndex = -1;
+                var i = checklists.length;
+                while(i--){
+                    if (checklists[i].Hazard_id < currentHazardId) {
+                       currentIndex = i;
+                       currentHazardId = checklists[i].Hazard_id; // our new lowest hazard_id
+                    }
+                }
+                if (currentIndex == -1) {
+                    // return to escape out of recursive loop
+                    return;
+                } else {
+                    orderedChecklists.push( checklists.splice(currentIndex, 1)[0] );
+                    
+                    i = checklists.length;
+                    while(i--){
+                        if (checklists[i].Parent_hazard_id == currentHazardId) {
+                            // TODO: loop for Order_index
+                            //
+                            // then add match
+                            orderedChecklists.push( checklists.splice(i, 1)[0] );
+                        }
+                    }
+                    
+                    recurse(Number.MAX_VALUE);
+                }
+            }
+
+            recurse(Number.MAX_VALUE);
+
+            console.log(orderedChecklists.length, orderedChecklists);
+            return orderedChecklists;
+        }
+        
         //pulls matching items out of an array and puts them in another array
         factory.findChecklistArray = function(checklists, parentId, idx){
             console.log(idx);

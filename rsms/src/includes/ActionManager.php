@@ -3351,6 +3351,7 @@ class ActionManager {
                         // if this hazard had a checklist, add it to the checklists array
                         if (!empty($checklist)){
                         	$checklist->setParent_hazard_id($hazard->getParent_hazard_id());
+                            $checklist->setOrderIndex($hazard->getOrder_index());
                             $checklists[] = $checklist;
                         }
                     }

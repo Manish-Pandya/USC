@@ -51,6 +51,7 @@ class Checklist extends GenericCrud {
 	private $hazard;
 	private $hazard_id;
 	private $parent_hazard_id;
+    private $orderIndex;
 
 	/** The name of the master hazard category assigned to this checklist's hazard, e.g. Chemical, Biological Radiological */
 	private $master_hazard;
@@ -216,6 +217,14 @@ class Checklist extends GenericCrud {
 		
 		$this->inspectionRooms = $inspectionRooms;
 	}
+    
+    public function getOrderIndex(){
+        return $this->orderIndex;
+    }
+    
+    public function setOrderIndex($idx){
+        $this->orderIndex = $idx;
+    }
 
 }
 ?>
