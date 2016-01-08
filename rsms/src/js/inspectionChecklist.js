@@ -39,47 +39,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             return questions;
     }
 })
-.filter('fancyOrderingMachine', function () {
-    return function ( checklists ) {
-        if( !checklists ) return;
-        var orderedChecklists = [];
-        //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "Order_index"];
-        
-        var recurse = function(currentHazardId) {
-            var currentIndex = -1;
-            var i = checklists.length;
-            while(i--){
-               if (checklists[i].Hazard_id < currentHazardId) {
-                   currentIndex = i;
-                   currentHazardId = checklists[i].Hazard_id;
-               }
-            }
-            if (currentIndex == -1) {
-                // return to escape out of recursive loop
-                return;
-            } else {
-                orderedChecklists.push( checklists.splice(currentIndex, 1) );
-                // loop for Parent_hazard_id match
-                i = checklists.length;
-                while(i--){
-                   if (checklists[i].Parent_hazard_id == currentHazardId) {
-                       currentIndex = i;
-                       // TODO: loop for Order_index
-                       //
-                       // then add match
-                       orderedChecklists.push( checklists[i] );
-                   }
-                }
-                recurse(Number.MAX_VALUE);
-            }
-        }
-
-        recurse(Number.MAX_VALUE);
-        
-        console.log("LOOK:", orderedChecklists);
-        return orderedChecklists;
-    }
-})
 .filter('evaluateChecklist', function () {
     return function (questions, checklist) {
             checklist.completedQuestions = 0;
@@ -301,8 +260,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.setImage = function( category )
-        {
+        factory.setImage = function( category ) {
                 if( category == 'Biological Safety' ){
                         return 'biohazard-largeicon.png';
                 }else if( category == 'Chemical Safety' ){
@@ -314,8 +272,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 }
         }
 
-        factory.selectCategory = function( category )
-        {
+        factory.selectCategory = function( category ) {
                 //if(!category)category = "Biological Safety";
                 $rootScope.loading = true;
                 $rootScope.image = factory.setImage( category );
@@ -349,24 +306,20 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     for( var i = 0; i < len;  i++){
                         var checklist = factory.inspection.Checklists[i];
                         if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  ){
-                            console.log('yeppers');
                             checklist.test = i;
                             selectedChecklists.push( checklist );
                         }
                     };
-                    factory.inspection.selectedCategory = [];
-                    factory.inspection.selectedCategory = selectedChecklists;
+                    factory.inspection.selectedCategory = factory.orderChecklistByHazardHierarchy(selectedChecklists);
                     $rootScope.loading = false;
-                    
-                    factory.orderChecklistByHazardHierarchy(selectedChecklists);
                 }
         }
         
         factory.orderChecklistByHazardHierarchy = function(checklists) {
-            if( !checklists ) return;
-            console.log(checklists.length);
+            if (!checklists) return [];
+            
             var orderedChecklists = [];
-            //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "Order_index"];
+            //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "OrderIndex"];
 
             var recurse = function(currentHazardId) {
                 var currentIndex = -1;
@@ -378,19 +331,22 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     }
                 }
                 if (currentIndex == -1) {
-                    // return to escape out of recursive loop
-                    return;
+                    return; // return to escape out of recursive loop
                 } else {
                     orderedChecklists.push( checklists.splice(currentIndex, 1)[0] );
-                    
+                    var tempArray = [];
                     i = checklists.length;
                     while(i--){
                         if (checklists[i].Parent_hazard_id == currentHazardId) {
-                            // TODO: loop for Order_index
-                            //
-                            // then add match
-                            orderedChecklists.push( checklists.splice(i, 1)[0] );
+                            tempArray.push( checklists.splice(i, 1)[0] );
                         }
+                    }
+                    if (tempArray.length) {
+                        // Sort matches OrderIndex before adding to return array
+                        tempArray.sort(function(obj1, obj2) {
+                            return obj1.OrderIndex - obj2.OrderIndex;
+                        });
+                        orderedChecklists = orderedChecklists.concat(tempArray);
                     }
                     
                     recurse(Number.MAX_VALUE);
@@ -399,7 +355,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
             recurse(Number.MAX_VALUE);
 
-            console.log(orderedChecklists.length, orderedChecklists);
             return orderedChecklists;
         }
         
