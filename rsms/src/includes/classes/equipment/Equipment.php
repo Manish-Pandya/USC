@@ -9,14 +9,13 @@ include '../GenericCrud.php';
 
 abstract class Equipment extends GenericCrud{
 
-    private $type;
-    private $make;
-    private $model;
-    private $frequency;
-    private $equipment_class;
-    private $serial_number;
+    protected $type;
+    protected $make;
+    protected $model;
+    protected $frequency;
+    protected $equipment_class;
+    protected $serial_number;
     
-    public $gotEquipment = true;
     
 	public function __construct(){
         $LOG = Logger::getLogger(__CLASS__);
@@ -24,7 +23,6 @@ abstract class Equipment extends GenericCrud{
 		// Define which subentities to load
 		$entityMaps = array();
 		$this->setEntityMaps($entityMaps);
-
 	}
     
     public function getType(){

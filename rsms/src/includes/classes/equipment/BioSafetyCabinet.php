@@ -34,12 +34,11 @@ class BioSafetyCabinet extends Equipment {
 	public function __construct(){
 		// Define which subentities to load
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal( get_parent_class(get_parent_class(get_parent_class($this))) );
+        $LOG->fatal( get_parent_class($this) );
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
 		$this->setEntityMaps($entityMaps);
-
 	}
     
 	// Required for GenericCrud
