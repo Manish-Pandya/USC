@@ -32,9 +32,10 @@ class EquipmentInspection extends GenericCrud{
     public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getRoom");
+        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy","getDue_date");
 		$this->setEntityMaps($entityMaps);
-		
 	}
     
     private $room_id;
@@ -103,6 +104,16 @@ class EquipmentInspection extends GenericCrud{
 	}
 	public function setEquipment_class($equipment_class){
 		$this->equipment_class = $equipment_class;
+	}
+    
+    // Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+
+	public function getColumnData(){
+        //return array_merge(parent::$COLUMN_NAMES_AND_TYPES, this:);
+		return self::$COLUMN_NAMES_AND_TYPES;
 	}
     
 }

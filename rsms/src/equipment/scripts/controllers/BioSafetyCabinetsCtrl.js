@@ -10,8 +10,18 @@
 angular.module('EquipmentModule')
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
-
-        var getAllBioSafetyCabinets = function(){
+        
+        var getAllEquipmentInspections = function(){
+            return af.getAllEquipmentInspections()
+                .then(
+                    function(){
+                         $scope.equipmentInspections = dataStoreManager.get("EquipmentInspection");
+                        console.log($scope.equipmentInspections);
+                         return $scope.equipmentInspections;
+                    }
+                )
+        },
+        getAllBioSafetyCabinets = function(){
             return af.getAllBioSafetyCabinets()
                 .then(
                     function(){
@@ -48,6 +58,7 @@ angular.module('EquipmentModule')
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
+                            .then(getAllEquipmentInspections())
                             .then(getAllBioSafetyCabinets());        
 
         $scope.deactivate = function(cabinet) {

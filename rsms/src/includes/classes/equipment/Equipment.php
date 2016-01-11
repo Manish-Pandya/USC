@@ -13,7 +13,6 @@ abstract class Equipment extends GenericCrud{
     protected $make;
     protected $model;
     protected $frequency;
-    protected $equipment_class;
     protected $serial_number;
     
     
@@ -53,13 +52,6 @@ abstract class Equipment extends GenericCrud{
 		$this->frequency = $frequency;
 	}
 
-	public function getEquipment_class(){
-		return $this->equipment_class;
-	}
-	public function setEquipment_class($equipment_class){
-		$this->equipment_class = $equipment_class;
-    } 
-    
     public function getSerial_number(){
 		return $this->serial_number;
 	}

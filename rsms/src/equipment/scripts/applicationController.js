@@ -130,6 +130,34 @@ angular
             
             /********************************************************************
             **
+            **      EquipmentInspection            **
+            ********************************************************************/
+            
+             af.getEquipmentInspectionById = function(key_id) {
+                var urlSegment = 'getEquipmentInspectionById&id=' + key_id;
+
+                if( store.checkCollection( 'EquipmentInspection', key_id ) ) {
+                    var equipmentInspection = store.getById( 'EquipmentInspection', key_id )
+                        .then(function(equipmentInspection) {
+                            return equipmentInspection;
+                        });
+                }
+                else {
+                    var equipmentInspection = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store bioSafetyCabinet in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return equipmentInspection;
+            }
+            
+            af.getAllEquipmentInspections = function() {
+                return dataSwitchFactory.getAllObjects('EquipmentInspection');
+            }
+            
+            /********************************************************************
+            **
             **      BioSafetyCabinet            **
             ********************************************************************/
             

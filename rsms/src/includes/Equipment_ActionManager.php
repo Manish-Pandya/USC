@@ -15,6 +15,50 @@ class Equipment_ActionManager extends ActionManager {
      *                            Get Functions                                  *
     \*****************************************************************************/
     
+    public function getAllEquipmentInspections(){
+        $equipmentInspectionDao = $this->getDao(new EquipmentInspection());
+    	return $equipmentInspectionDao->getAll();
+    }
+    
+    public function getEquipmentInspectionsById( $id = NULL ){
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    
+    	$id = $this->getValueFromRequest('id', $id);
+    
+    	if( $id !== NULL ){
+    		$dao = $this->getDao(new EquipmentInspection());
+    		return $dao->getById($id);
+    	}
+    	else{
+    		//error
+    		return new ActionError("No request parameter 'id' was provided");
+    	}
+    }
+    
+    public function saveEquipmentInspection( EquipmentInspection $inspection = NULL ){
+        $LOG = Logger::getLogger('Action:' . __function__);
+        if($inspection !== NULL) {
+            $decodedObject = $inspection;
+        }
+        else {
+            $decodedObject = $this->convertInputJson();
+        }
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to Question');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
+        	if($decodedObject->getCertification_date() == NULL){
+        		$decodedObject->setCertification_date(date('Y-m-d H:i:s'));
+        	}
+        	$dao = $this->getDao(new EquipmentInspection());
+            $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+    
     public function getAllBioSafetyCabinets(){
     	$bioSafetyCabinetDao = $this->getDao(new BioSafetyCabinet());
     	return $bioSafetyCabinetDao->getAll();

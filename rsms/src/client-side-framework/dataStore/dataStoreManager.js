@@ -178,8 +178,9 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
                     getIt = true;
 
                     //do we have a whereClause in our "query"?
+                    // whereClause looks like this: [{propertyToEvaluate: 'valueToBeCompared'}]
                     if(whereClause){
-                        console.log(whereClause)
+                        console.log(whereClause);
                         var j = whereClause.length;
                         while(j--){
                             for(var prop in whereClause[j]){
@@ -193,6 +194,7 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
                                 }else{
                                     //the object property is neither "NOT NULL" or "IS NULL"
                                     console.log(whereClause[j][prop]+' is neither "NOT NULL" or "IS NULL"');
+                                    if(current[prop] != whereClause[j][prop]) getIt = false;
                                 }
                                 /*
                                 //whereClause[j][prop] is neither "NOT NULL" or "IS NULL", so compare
