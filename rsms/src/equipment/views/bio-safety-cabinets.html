@@ -3,13 +3,12 @@
 
 <div class="right-column">
     <div class="well full">
-        <h1 class="card-header full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
-            <a ng-click="showInactive()" class="btn left" style="margin-left:10px">Show Inactive</a>
+        <h1 class="card full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
+            <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
             <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
         </h1>
-        
         <br>
-        <h3 style="text-align:center">Complete Certifications</h3>
+        <h3 style="text-align:center; padding-top:60">Complete Certifications</h3>
         <h3 ng-if="!cabinets.length">No Cabinets</h3>
         <div class="full bio-safety-cabinets" ng-show="cabinets.length">
             <table class="table table-striped">
@@ -34,7 +33,7 @@
                     <th>REPORT</th>
                     <th>COMMENTS</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
@@ -99,7 +98,7 @@
                     <th>REPORT</th>
                     <th>STATUS</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedDueDate">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedDueDate | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
