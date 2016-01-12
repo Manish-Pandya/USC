@@ -30,9 +30,9 @@
                             <option value="">All</option>
                         </select>
                     </th>
-                    <th>PI</th>
-                    <th>FREQUENCY</th>
+                    <th>INVESTIGATOR</th>
                     <th>REPORT</th>
+                    <th>COMMENTS</th>
                 </tr>
                 <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate">
                     <td>
@@ -64,10 +64,10 @@
                         {{cabinet.PrincipalInvestigator.User.Name}}
                     </td>
                     <td>
-                        {{cabinet.Frequency}}
+                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
                     </td>
                     <td>
-                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
+                        {{cabinet.EquipmentInspections[0].Comment}}
                     </td>
                 </tr>
             </table>
@@ -95,9 +95,9 @@
                             <option value="">All</option>
                         </select>
                     </th>
-                    <th>PI</th>
-                    <th>FREQUENCY</th>
+                    <th>INVESTIGATOR</th>
                     <th>REPORT</th>
+                    <th>STATUS</th>
                 </tr>
                 <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedDueDate">
                     <td>
@@ -129,10 +129,10 @@
                         {{cabinet.PrincipalInvestigator.User.Name}}
                     </td>
                     <td>
-                        {{cabinet.Frequency}}
+                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
                     </td>
                     <td>
-                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
+                        {{cabinet.EquipmentInspections[0].Status}}
                     </td>
                 </tr>
             </table>

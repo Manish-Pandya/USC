@@ -17,8 +17,6 @@ abstract class Equipment extends GenericCrud{
     
     
 	public function __construct(){
-        $LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal('equipment exists');
 		// Define which subentities to load
 		$entityMaps = array();
 		$this->setEntityMaps($entityMaps);
@@ -58,4 +56,5 @@ abstract class Equipment extends GenericCrud{
 	public function setSerial_number($serial_number){
 		$this->serial_number = $serial_number;
     }
+    
 }

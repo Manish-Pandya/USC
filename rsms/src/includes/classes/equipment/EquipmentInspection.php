@@ -19,6 +19,8 @@ class EquipmentInspection extends GenericCrud{
         "report_path"		        	=> "text",
         "equipment_id"                  => "integer",
         "equipment_class"               => "text",
+        "comment"                       => "text",
+        "status"                        => "text",
 				
 		//GenericCrud
 		"key_id"			    => "integer",
@@ -45,6 +47,18 @@ class EquipmentInspection extends GenericCrud{
     private $report_path;
     private $equipment_id;
     private $equipment_class;
+    private $comment;
+    private $status;
+    
+    // Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+
+	public function getColumnData(){
+        //return array_merge(parent::$COLUMN_NAMES_AND_TYPES, this:);
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
 
     public function getRoom_id(){
 		return $this->room_id;
@@ -106,14 +120,18 @@ class EquipmentInspection extends GenericCrud{
 		$this->equipment_class = $equipment_class;
 	}
     
-    // Required for GenericCrud
-	public function getTableName(){
-		return self::$TABLE_NAME;
+    public function getComment(){
+		return $this->comment;
 	}
-
-	public function getColumnData(){
-        //return array_merge(parent::$COLUMN_NAMES_AND_TYPES, this:);
-		return self::$COLUMN_NAMES_AND_TYPES;
+	public function setComment($comment){
+		$this->comment = $comment;
+	}
+    
+    public function getStatus(){
+		return $this->status;
+	}
+	public function setStatus($status){
+		$this->status = $status;
 	}
     
 }
