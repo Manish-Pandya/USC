@@ -7,15 +7,14 @@
             <a ng-click="showInactive()" class="btn left" style="margin-left:10px">Show Inactive</a>
             <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
         </h1>
+        
+        <br>
+        <h3 style="text-align:center">Complete Certifications</h3>
         <h3 ng-if="!cabinets.length">No Cabinets</h3>
         <div class="full bio-safety-cabinets" ng-show="cabinets.length">
             <table class="table table-striped">
                 <tr class="table-header">
                     <th>EDIT</th>
-                    <th>
-                        CAMPUS<br>
-                        <input ng-model="selectedCampus" style="width:150px;" placeholder="Filter by Campus"/>
-                    </th>
                     <th>
                         BUILDING<br>
                         <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
@@ -27,22 +26,18 @@
                     <th>MODEL</th>
                     <th>
                         CERT-DATE<br>
-                        <select ng-options="cabinet.Certification_date as (cabinet.Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'Certification_date'" ng-model="selectedCertificationDate">
+                        <select ng-options="cabinet.EquipmentInspections[0].Certification_date as (cabinet.EquipmentInspections[0].Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Certification_date'" ng-model="selectedCertificationDate">
                             <option value="">All</option>
                         </select>
                     </th>
-                    <th>DUE-DATE</th>
-                    <th>FREQUENCY</th>
                     <th>PI</th>
+                    <th>FREQUENCY</th>
                     <th>REPORT</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetCampus:selectedCampus | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
-                    </td>
-                    <td>
-                        {{cabinet.Room.Building.Campus.Name}}
                     </td>
                     <td>
                         {{cabinet.Room.Building.Name}}
@@ -63,16 +58,78 @@
                         {{cabinet.Model}}
                     </td>
                     <td>
-                        {{cabinet.Certification_date | dateToISO}}
+                        {{cabinet.EquipmentInspections[0].Certification_date | dateToISO}}
                     </td>
-                    <td>
-                        {{cabinet.Due_date | dateToISO}}
+                    <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
+                        {{cabinet.PrincipalInvestigator.User.Name}}
                     </td>
                     <td>
                         {{cabinet.Frequency}}
                     </td>
+                    <td>
+                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <br>
+        <h3 style="text-align:center">Incomplete Certifications</h3>
+        <h3 ng-if="!cabinets.length">No Cabinets</h3>
+        <div class="full bio-safety-cabinets" ng-show="cabinets.length">
+            <table class="table table-striped">
+                <tr class="table-header">
+                    <th>EDIT</th>
+                    <th>
+                        BUILDING<br>
+                        <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
+                    </th>
+                    <th>ROOM</th>
+                    <th>TYPE</th>
+                    <th>SERIAL #</th>
+                    <th>MAKE</th>
+                    <th>MODEL</th>
+                    <th>
+                        DUE-DATE<br>
+                        <select ng-options="cabinet.EquipmentInspections[0].Due_date as (cabinet.EquipmentInspections[0].Due_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Due_date'" ng-model="selectedDueDate">
+                            <option value="">All</option>
+                        </select>
+                    </th>
+                    <th>PI</th>
+                    <th>FREQUENCY</th>
+                    <th>REPORT</th>
+                </tr>
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedDueDate">
+                    <td>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
+                    </td>
+                    <td>
+                        {{cabinet.Room.Building.Name}}
+                    </td>
+                    <td>
+                        {{cabinet.Room.Name}}
+                    </td>
+                    <td>
+                        {{cabinet.Type}}
+                    </td>
+                    <td>
+                        {{cabinet.Serial_number}}
+                    </td>
+                    <td>
+                        {{cabinet.Make}}
+                    </td>
+                    <td>
+                        {{cabinet.Model}}
+                    </td>
+                    <td>
+                        {{cabinet.EquipmentInspections[0].Due_date | dateToISO}}
+                    </td>
                     <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
                         {{cabinet.PrincipalInvestigator.User.Name}}
+                    </td>
+                    <td>
+                        {{cabinet.Frequency}}
                     </td>
                     <td>
                         <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
