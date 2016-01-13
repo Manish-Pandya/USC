@@ -208,7 +208,6 @@ class Question extends GenericCrud {
 
 	public function getChecklistName(){
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
-		$LOG->fatal('getting name');
 	
 		if($this->checklistName == null && $this->getChecklist_id() != null){
 			$dao = new GenericDAO(new Checklist());

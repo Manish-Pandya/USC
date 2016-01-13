@@ -591,6 +591,19 @@ class ActionManager {
         }
         return new ActionError('Could not save');
     }
+    
+    private function recurseHazardTree( $hazard = null, $weight = null){
+    	$LOG = Logger::getLogger(__FUNCTION__);
+    	if($hazard == null){	
+    		$hazard = $this->getHazardById(10000);
+    	}
+    	
+    	foreach($hazard->getActiveSubHazards() as $child){
+    		$this->recurseHazardTree($child);
+    	}
+    	    	
+    	return $hazard;
+    }
 
     public function getAllRoles() {
         $rolesDao = $this->getDao( new Role() );
@@ -681,10 +694,13 @@ class ActionManager {
                         $hazardDao = $this->getDao ($hazard);
                         $masterHazard = $hazardDao->getById($masterHazardId);
                         $master_hazard = $masterHazard->getName();
+                        $LOG->fatal($master_hazard . ' | ' . $masterHazardId);
                     }else{
                         //if we don't have a parent hazard, other than Root, we set the master hazard to be the hazard
                         //i.e. Biological Hazards' checklist should have Biological Hazards as its master hazard
                         $master_hazard = $hazard->getName();
+                        $masterHazardId = $hazard->getKey_id();
+                        
                     }
                 }
 				$decodedObject->setMaster_id($masterHazardId);
@@ -2577,7 +2593,7 @@ class ActionManager {
             $inspection = new Inspection();
         }
 
-        if($decodedObject->getInspections()->getSchedule_month())$inspection->setSchedule_month( $decodedObject->getInspections()->getSchedule_month() );
+        $inspection->setSchedule_month( $decodedObject->getInspections()->getSchedule_month() );
         if($decodedObject->getInspections()->getSchedule_year())$inspection->setSchedule_year( $decodedObject->getInspections()->getSchedule_year() );
 
         $inspection->setPrincipal_investigator_id($decodedObject->getPi_key_id());
@@ -3473,8 +3489,36 @@ class ActionManager {
                     $dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 }
             }
+            
 
+            // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+            
+            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+            $hazardIds = array();
+            // add the checklists to this inspection
+            foreach ($checklists as $checklist){
 
+                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                $checklist->setInspectionId($inspection->getKey_id());
+                $checklist->setRooms($inspection->getRooms());
+                $checklist->filterRooms();                
+                
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("lazy","getHazard");
+                $entityMaps[] = new EntityMap("lazy","getRooms");
+                $entityMaps[] = new EntityMap("eager","getInspectionRooms");
+                $entityMaps[] = new EntityMap("eager","getQuestions");
+                $checklist->setEntityMaps($entityMaps);
+                $hazardIds[] = $checklist->getHazard_id();
+
+            }
+            
+			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
+            $orderedChecklists = array();
+            $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+            $LOG->fatal($orderedChecklists);
+            $inspection->setChecklists( $orderedChecklists );
+            
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getInspectors");
             $entityMaps[] = new EntityMap("eager","getRooms");
@@ -3483,27 +3527,6 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getChecklists");
             $inspection->setEntityMaps($entityMaps);
             
-
-            // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-            // add the checklists to this inspection
-            foreach ($checklists as $checklist){
-
-                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-                $checklist->setInspectionId($inspection->getKey_id());
-                $checklist->setRooms($inspection->getRooms());
-                $checklist->filterRooms();
-
-                $entityMaps = array();
-                $entityMaps[] = new EntityMap("lazy","getHazard");
-                $entityMaps[] = new EntityMap("lazy","getRooms");
-                $entityMaps[] = new EntityMap("eager","getInspectionRooms");
-                $entityMaps[] = new EntityMap("eager","getQuestions");
-                $checklist->setEntityMaps($entityMaps);
-               
-
-            }
-            $inspection->setChecklists($checklists);
             return $inspection;
         }
         else{
@@ -3512,7 +3535,41 @@ class ActionManager {
         }
     }
 
-
+    private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
+    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	 
+    	if($hazard == null){
+    		//get the "Root hazard".  It's key_id is 10000, hence the magic number
+    		$hazard = $this->getHazardById(10000);
+    	}
+    	if($orderedChecklists == NULL){
+    		$orderedChecklists = array();
+    	}
+	    foreach($hazard->getActiveSubHazards() as $child){	    	
+	    	
+	    	if(in_array($child->getKey_id(), $hazardIds)  && $idx = $this->findChecklist( $child->getChecklist(), $checklists )){
+	    		array_push($orderedChecklists, $checklists[$idx]);
+	    		unset($checklists[$idx]);
+	    	}
+	    	
+    		$this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $child);
+	    }
+	    //$LOG->fatal($checklists);
+	    return $orderedChecklists;
+	    
+	}
+	
+	private function findChecklist($checklist, $lists){
+		if($checklist == NULL)return false;
+		$LOG = Logger::getLogger(__FUNCTION__);
+		foreach($lists as $key=>$list){
+			if($list->getKey_id() == $checklist->getKey_id()){
+				return $key;
+			}
+		}
+		return false;
+	}
+    
     public function getDeficiencySelectionById( $id = NULL ){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -3879,7 +3936,7 @@ class ActionManager {
             $year = $this->getCurrentYear();
         }
                 // Call the database
-
+		$LOG->fatal('getting schedule for ' . $year);
         $dao = $this->getDao(new Inspection());
         $inspectionSchedules = $dao->getInspectionsByYear($year);
 

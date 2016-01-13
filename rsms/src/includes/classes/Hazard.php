@@ -90,14 +90,16 @@ class Hazard extends GenericCrud {
 	/** Boolean to indicate whether this Hazard is a piece of equipment **/
 	private $is_equipment;
 
+	private $checklistWeight;
+	
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
 	public function __construct(){
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getSubHazards");
-		$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+		$entityMaps[] = new EntityMap("lazy","getSubHazards");
+		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
@@ -314,6 +316,7 @@ class Hazard extends GenericCrud {
 		if($this->subHazards == null)$this->subHazards = array();
 		array_push($this->subHazards, $hazard);
 	}
+	
 }
 
 ?>

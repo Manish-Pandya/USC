@@ -20,32 +20,14 @@ require_once '../top_view.php';
 <div id="side-nav" ng-show="showMenu">
     <ul class="nav nav nav-pills nav-stacked" id="sideNav">
           <li class="nav-header" style="font-size: 30px;padding: 20px 3px;">Checklists</li>
-          <li ng-show="biological">
-              <a ng-click="cf.selectCategory('Biological Safety')" class="checklistListNavHeader" id="biologicalMaterialsHeader"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL SAFETY</span></a>
-              <ul ng-if="category.indexOf('Biological') > -1 && !loading">
-                  <li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory track by $index"></li>
+          <li ng-repeat="cat in cf.categories | showNavItem">
+              <a ng-click="cf.selectCategory(cat)" class="checklistListNavHeader" id="{{cat.cssID}}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a>
+              <ul ng-if="cat.Key_id == cf.selectedCategory.Key_id">
+                  <li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.Checklists | relevantLists track by $index"></li>
               </ul>
           </li>
-        <li ng-show="chemical">
-            <a ng-click="cf.selectCategory('Chemical Safety')" class="checklistListNavHeader" id="chemicalSafetyHeader"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL SAFETY</span></a>
-            <ul ng-if="category.indexOf('Chemical') > -1 && !loading">
-                  <li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory track by $index"></li>
-              </ul>
-          </li>
-        <li>
-            <a ng-click="cf.selectCategory('General Hazards')" class="checklistListNavHeader" id="generalSafetyHeader"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL SAFETY</span></a>
-            <ul ng-if="category.indexOf('General') > -1 && !loading">
-                  <li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
-              </ul>
-          </li>
-        <li ng-show="radiation">
-            <a ng-click="cf.selectCategory('Radiation Safety')" class="checklistListNavHeader" id="radiationSafetyHeader"><img src="../../img/radiation-large-icon.png"/><span>RADIATION SAFETY</span></a>
-            <ul ng-if="category.indexOf('Radiation') > -1 && !loading">
-                  <li ng-include="'checklist-subnav.html'" ng-if="list.activeQuestions.length" ng-repeat="list in inspection.selectedCategory"></li>
-              </ul>
-        </li>
     </ul>
-</div><!--/span-->
+</div><
 
 <div class="row-fluid">
     <div class="loading" ng-show='!inspection && !error' style="margin-top:20px;" >
@@ -56,10 +38,7 @@ require_once '../top_view.php';
         <h2>{{error}}</h2>
     </div>
     <ul class="postInspectionNav row" style="margin-left:11px;">
-        <li ng-show="biological"><a ng-click="cf.selectCategory('Biological Safety')" class="btn btn-large checklistNav" id="biologicalMaterialsHeader" ng-class="{selected: category.indexOf('Biological') > -1}"><img src="../../img/biohazard-white-con.png"/><span>BIOLOGICAL</span></a></li>
-        <li ng-show="chemical"><a ng-click="cf.selectCategory('Chemical Safety')" class="btn btn-large checklistNav" id="chemicalSafetyHeader" ng-class="{selected: category.indexOf('Chemical') > -1}"><img src="../../img/chemical-safety-large-icon.png"/><span>CHEMICAL</span></a></li>
-        <li ng-show="general"><a ng-click="cf.selectCategory('General Hazards')" class="btn btn-large checklistNav" id="generalSafetyHeader" ng-class="{selected: category.indexOf('General') > -1}"><img src="../../img/gen-hazard-large-icon.png"/><span>GENERAL</span></a></li>
-        <li ng-show="radiation && inspection.Is_rad"><a ng-click="cf.selectCategory('Radiation Safety')" class="btn btn-large checklistNav"  id="radiationSafetyHeader" ng-class="{selected: category.indexOf('Radiation') > -1}"><img style="margin:1px 5px 2px 0 !important" src="../../img/radiation-large-icon.png"/><span>RADIATION</span></a></li>
+        <li ng-repeat="cat in cf.categories | showNavItem"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
         <li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a title="Inspection Comments" ng-click="openNotes()" class="btn btn-large btn-info checklistNav" ><i class="icon-clipboard-2" style="  font-size: 33px !important;margin: 2px 5px 3px -12px;"></i></a></li>
     </ul>
     <div class="loading" ng-show='loading' style="margin-left:11px;">
@@ -67,11 +46,12 @@ require_once '../top_view.php';
       <span>Getting Checklist Category...</span>
     </div>
     <!-- todo:  write function to get image path -->
-    <h2 ng-if="category && !loading" style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{category}}</span></h2>
+    <h2 ng-if="cf.selectedCategory && !loading" style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{cf.selectedCategory.Label}}</span></h2>
 
-    <!-- begin checklist for this inspection -->
+        <!-- begin checklist for this inspection -->
         <accordion close-others="true" ng-hide="loading">
-            <accordion-group ng-show="checklist.activeQuestions.length"  ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.selectedCategory | activeOnly track by $index" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
+            <!--| selectedChecklist:cf.selectedCategory--->
+            <accordion-group ng-show="checklist.activeQuestions.length"  ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.Checklists | relevantLists" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
                 <accordion-heading>
                     <span style="margin-top:20px;" id="{{checklist.key_id}}"></span>
                     <input type="hidden" ng-model="checklist.AnsweredQuestions"/>

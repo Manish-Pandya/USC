@@ -2355,16 +2355,23 @@ li.active a {
   background: rgba(0,0,0,.7);
   z-index: 1049;
   position: fixed;
-  margin-top: 59px;
   width: 100%;
-  min-height: 100%;
+  top:84px;
+  bottom:0;
+  overflow-y: scroll;
 }
 #side-nav > ul{
   padding: 0 5px 0 0;
   overflow-y: scroll;
   background: white;
   width:360px;
+  bottom:10px;
   height:100%;
+  position:fixed;
+  box-sizing:border-box;
+  margin-bottom:-5px;
+  top:84px;
+  padding-bottom:250px
 }
 /* line 663, ../sass/style.scss */
 /* line 1705, ../sass/style.scss */

@@ -93,6 +93,41 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             return checklist.activeQuestions;
     }
 })
+.filter("showNavItem", function(checklistFactory){
+        return function (items){
+            if(!items)return;
+            var relevantItems = [];
+            var lists = checklistFactory.inspection.Checklists;
+            if(!lists)return;
+            for(var i = 0; i < items.length; i++){
+                var push = false;
+                for (var j = 0; j < lists.length; j++){
+                    if(lists[j].Is_active && lists[j].Master_id == items[i].Key_id){
+                        if(!checklistFactory.selectedCategory)checklistFactory.selectCategory( items[i] );
+                        push = true;
+                    }
+                }
+                if(push) relevantItems.push(items[i]);
+            }
+            return relevantItems;
+        }
+    }
+)
+.filter("relevantLists", function(checklistFactory){
+        return function (checklists){
+            if(!checklists) return;
+            if(!checklistFactory.selectedCategory)return;
+            var relevantLists = [];
+            for(var i = 0; i < checklists.length; i++){
+                var push = false;
+                if(checklists[i].Is_active && checklists[i].Master_id == checklistFactory.selectedCategory.Key_id){
+                    relevantLists.push( checklists[i] );
+                }
+            }
+            return relevantLists;
+        }
+    }
+)
 .directive("otherDeficiency",["checklistFactory", function(checklistFactory){
     return {
         restrict: "E"  , //E = element, A = attribute, C = class, M = comment
@@ -143,6 +178,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         var factory = {};
         factory.inspection = [];
+        factory.categories = Constants.CHECKLIST_CATEGORIES_BY_MASTER_ID;
 
         factory.getHasOtherDeficiency  = function(question){
             if(question.Responses && question.Responses.DeficiencySelections){
@@ -158,7 +194,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             return false;
         }
-        
+
         factory.getInspection = function( id )
         {
             var deferred = $q.defer();
@@ -260,12 +296,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.setImage = function( category ) {
-                if( category == 'Biological Safety' ){
+        factory.setImage = function( id ) {
+                if( id == 1 ){
                         return 'biohazard-largeicon.png';
-                }else if( category == 'Chemical Safety' ){
+                }else if( id == 10009  ){
                         return 'chemical-safety-large-icon.png';
-                }else if( category.toLowerCase().indexOf('general') > -1 ){
+                }else if( id == 9999 ){
                         return 'gen-hazard-large-icon.png';
                 }else{
                         return 'radiation-large-icon.png';
@@ -273,95 +309,18 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         }
 
         factory.selectCategory = function( category ) {
-                //if(!category)category = "Biological Safety";
                 $rootScope.loading = true;
-                $rootScope.image = factory.setImage( category );
+                $rootScope.image = factory.setImage( category.Key_id );
                 $rootScope.inspection = factory.inspection
-                $rootScope.inspection.selectedChecklists = [];
                 $rootScope.category = category;
-                var categoryLabel = category.split(" ")[0].toLowerCase();
+                factory.selectedCategory = category;
+                $rootScope.loading = false;
 
-                var len = factory.inspection.Checklists.length;            
-                var i = 0;
-                var selectedChecklists = [];
-/*
-                if(!factory.checklistsOrdered){
-                    var checklists = factory.inspection.Checklists;
-                    var parentIds = factory.getParentIds(checklists);
-                    factory.findChecklistArray(checklists, 1000, 0);
-
-                    for( i; i < len;  i++){
-                        var checklist = checklists[i];
-                        if(parentIds.indexOf(checklist.Key_id)){
-                            factory.findChecklistArray(checklists, checklist.Key_id, i);
-                        }
-                    }
-                    console.log(checklists);
-                    factory.checklistsOrdered = true;
-                }
-                */
-                innerFilter();
-
-                function innerFilter(){
-                    for( var i = 0; i < len;  i++){
-                        var checklist = factory.inspection.Checklists[i];
-                        if( checklist.Master_hazard.toLowerCase().indexOf(categoryLabel) > -1  ){
-                            checklist.test = i;
-                            selectedChecklists.push( checklist );
-                        }
-                    };
-                    factory.inspection.selectedCategory = factory.orderChecklistByHazardHierarchy(selectedChecklists);
-                    $rootScope.loading = false;
-                }
         }
-        
-        factory.orderChecklistByHazardHierarchy = function(checklists) {
-            if (!checklists) return [];
-            
-            var orderedChecklists = [];
-            //var MasterIdNames = ["Hazard_id", "Parent_hazard_id", "OrderIndex"];
-
-            var recurse = function(currentHazardId) {
-                var currentIndex = -1;
-                var i = checklists.length;
-                while(i--){
-                    if (checklists[i].Hazard_id < currentHazardId) {
-                       currentIndex = i;
-                       currentHazardId = checklists[i].Hazard_id; // our new lowest hazard_id
-                    }
-                }
-                if (currentIndex == -1) {
-                    return; // return to escape out of recursive loop
-                } else {
-                    orderedChecklists.push( checklists.splice(currentIndex, 1)[0] );
-                    var tempArray = [];
-                    i = checklists.length;
-                    while(i--){
-                        if (checklists[i].Parent_hazard_id == currentHazardId) {
-                            tempArray.push( checklists.splice(i, 1)[0] );
-                        }
-                    }
-                    if (tempArray.length) {
-                        // Sort matches OrderIndex before adding to return array
-                        tempArray.sort(function(obj1, obj2) {
-                            return obj1.OrderIndex - obj2.OrderIndex;
-                        });
-                        orderedChecklists = orderedChecklists.concat(tempArray);
-                    }
-                    
-                    recurse(Number.MAX_VALUE);
-                }
-            }
-
-            recurse(Number.MAX_VALUE);
-
-            return orderedChecklists;
-        }
-        
         //pulls matching items out of an array and puts them in another array
         factory.findChecklistArray = function(checklists, parentId, idx){
             console.log(idx);
-            console.log(checklists[idx]);   
+            console.log(checklists[idx]);
             var matches = [];
             for(var i = idx; i<checklists.length; i++){
                 if(checklists[i].Parent_hazard_id == parentId)
@@ -389,7 +348,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         factory.evaluateCategories = function ()
         {
                 var i = this.inspection.Checklists.length;
-                this.selectCategory( this.inspection.Checklists[0].Master_hazard );
                 while(i--){
                     var list = this.inspection.Checklists[i].Master_hazard;
                     $rootScope[list.substring(0, list.indexOf(' ')).toLowerCase()] = true;
@@ -518,7 +476,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         roomIds.push( deficiency.InspectionRooms[i].Key_id );
                     }
                 }
-                else{                    
+                else{
                     while(i--){
                         if( deficiency.InspectionRooms[i].checked )roomIds.push( deficiency.InspectionRooms[i].Key_id );
                     }
@@ -526,12 +484,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     this.room = room;
 
                 }
-                
+
                 var showRooms = false;
                 if(roomIds.length < deficiency.InspectionRooms.length){
                     showRooms = true;
                 }
-            
+
                 var defDto = {
                     Class: "DeficiencySelection",
                     RoomIds: roomIds,
@@ -540,7 +498,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     Inspection_id: this.inspection.Key_id,
                     Show_rooms:  showRooms
                 }
-            
+
                 //make sure we are persisting the state of Other deficiency selections
                 if(deficiency.Text == "Other"){
                     //find the right DeficiencySelection and update it's other text or Is_active property
@@ -571,7 +529,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                 function(returnedDeficiency){
                                     deficiency.IsDirty = false;
                                     deficiency.selected = true;
-                                    if( factory.inspection.Deficiency_selections[0].indexOf( deficiency.Key_id ) < 0){                                        
+                                    if( factory.inspection.Deficiency_selections[0].indexOf( deficiency.Key_id ) < 0){
                                         factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
                                     }
                                     if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
@@ -1038,6 +996,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 function checklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory, $modal) {
 
     $scope.cf = checklistFactory;
+    $scope.constants = Constants;
 
     if($location.search().inspection){
       $scope.inspId = $location.search().inspection;

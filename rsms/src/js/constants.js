@@ -48,16 +48,16 @@ var Constants = (function () {
 
     constants.INSPECTION = {
         STATUS:{
-            NOT_ASSIGNED:"NOT ASSIGNED",
             NOT_SCHEDULED:"NOT SCHEDULED",
             SCHEDULED:"SCHEDULED",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             CLOSED_OUT:"CLOSED OUT",
             INCOMPLETE_REPORT:"INCOMPLETE REPORT",
-            COMPLETE:"COMPLETE",
             OVERDUE_CAP:"OVERDUE CAP",
-            PENDING_EHS_APPROVAL:"PENDING EHS APPROVAL",
             OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
+        },
+        SCHEDULE_STATUS:{
+            NOT_ASSIGNED:"NOT ASSIGNED",
         }
     };
 
@@ -122,14 +122,21 @@ var Constants = (function () {
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
-    
+
     constants.MASTER_HAZARDS_BY_ID = {
         1: {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
         9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
         10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
         10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
     }
-    
+
+    constants.CHECKLIST_CATEGORIES_BY_MASTER_ID = [
+        {Key_id: 1,     Label:'Biological', Image:'biohazard-white-con.png',        cssID:'biologicalMaterialsHeader'},
+        {Key_id: 10009,  Label:'Chemical',   Image:'chemical-safety-large-icon.png', cssID:'chemicalSafetyHeader'},
+        {Key_id: 10010, Label:'Radiation',  Image:'radiation-large-icon.png',       cssID:'radiationSafetyHeader'},
+        {Key_id: 9999, Label:'General',    Image:'gen-hazard-large-icon.png',      cssID:'generalSafetyHeader'}
+    ]
+
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
@@ -137,7 +144,7 @@ var Constants = (function () {
             IN_USER: "In Use"
         }
     }
-    
+
     constants.BIOSAFETY_CABINET = {
         FREQUENCY: {
             ANNUALLY: "Annually",

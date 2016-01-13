@@ -251,7 +251,6 @@ class GenericDAO {
 			}
 		}
 		
-		$this->LOG->fatal("DIG: $sql");
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		foreach($whereClauses as $key=>$clause){
