@@ -13,8 +13,8 @@
    </span>
    <span ng-if="!openInspections.length">
        <h3>{{pi.User.Name}} has no pending inspections.</h3>
-       <a class="btn left" ng-click="af.initialiseInspection(PI)"><i class="icon-plus-2"></i>New Inspection</a>
-         <a class="btn left" ng-click="af.initialiseInspection(PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
+       <a class="btn left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
+         <a class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
           <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
    </span>
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->

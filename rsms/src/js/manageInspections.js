@@ -53,7 +53,7 @@ var getDate = function(time){
 
 
 var locationHub = angular.module('manageInspections', ['convenienceMethodWithRoleBasedModule','once','ui.bootstrap'])
-.filter('genericFilter', function () {
+.filter('genericFilter', function ($rootScope) {
     return function (items,search,convenienceMethods) {
         if(search){
             var i = 0;
@@ -65,54 +65,58 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
                 return false;
             }
 
+            $rootScope.filtering = true;
+
             while(i--){
                 //we filter for every set search filter, looping through the collection only once
                 var item=items[i];
-                item.matched = true;
+                var matched = true;
 
                 if(search.building){
                     if( item.Building_name && item.Building_name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
-                        item.matched = false;
+                        matched = false;
                     }
 
                 }
 
                 if(search.inspector){
                     if(item.Inspections){
-                        if(item.Inspections.Inspectors){
+                        if(item.Inspections.Inspectors && item.Inspections.Inspectors.length){
                             var z = item.Inspections.Inspectors.length;
                             var longString = "";
                             while(z--){
                                 longString += item.Inspections.Inspectors[z].User.Name;
                             }
-                            if(longString.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0)item.matched = false;
+                            if(longString.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0)matched = false;
                         }else{
-                            item.matched = false;
+                            if(Constants.INSPECTION.SCHEDULE_STATUS.NOT_ASSIGNED.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0){
+                                matched = false;
+                            }
                         }
 
                     }else{
-                        item.matched = false;
+                        matched = false;
                     }
 
                 }
 
                 if( search.campus ) {
-                    if(item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0)item.matched = false;
+                    if(item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0)matched = false;
                 }
 
                 if(search.pi && item.Pi_name){
-                    if(item.Pi_name.toLowerCase().indexOf(search.pi.toLowerCase()) < 0)item.matched = false;
+                    if(item.Pi_name.toLowerCase().indexOf(search.pi.toLowerCase()) < 0) matched = false;
                 }
 
                 if(search.status){
                     if(item.Inspections)var status = item.Inspections.Status;
                     if(!item.Inspections)var status = Constants.INSPECTION.STATUS.NOT_SCHEDULED;
-                    if(status.toLowerCase().indexOf(search.status.toLowerCase()) < 0) item.matched = false;
+                    if(status.toLowerCase() != search.status.toLowerCase()) matched = false;
                 }
 
                 if(search.date){
                     if(!item.Inspections || !item.Inspections.Date_started && !item.Inspections.Schedule_month){
-                        item.matched = false;
+                        matched = false;
                     }else{
                         if(item.Inspections && item.Inspections.Date_started)var tempDate = getDate(item.Inspections.Date_started);
                         if(tempDate && tempDate.formattedString.indexOf(search.date) < 0){
@@ -129,14 +133,15 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
                                 }
                             }
                         }
-                        if(!goingToMatch)item.matched = false;
+                        if(!goingToMatch) matched = false;
                     }
                 }
 
 
-                if(item.matched == true)filtered.unshift(item);
+                if(matched == true)filtered.unshift(item);
 
             }
+            $rootScope.filtering = false;
             return filtered;
         }else{
             return items;
@@ -190,7 +195,7 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
     factory.currentYear;
     factory.years = [];
     factory.Inspectors = [];
-    factory.minYear = 2010;
+    factory.minYear = 2015;
     factory.months = [];
 
     factory.getCurrentYear = function()
@@ -359,6 +364,7 @@ var locationHub = angular.module('manageInspections', ['convenienceMethodWithRol
                 Is_active: true
             }
 
+            console.log(dto);
 
             var url = '../../ajaxaction.php?action=scheduleInspection';
             return convenienceMethods.saveDataAndDefer(url, dto)
@@ -494,6 +500,7 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
     $scope.rbf = roleBasedFactory;
     $scope.mif = manageInspectionsFactory;
     $scope.convenienceMethods = convenienceMethods;
+    $scope.constants = Constants;
     $scope.years = [];
 
     var getDtos = function( year )
@@ -512,9 +519,10 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
             return manageInspectionsFactory.getYears()
                 .then(
                     function( years ){
-                        $scope.years = years;
-                        $scope.selectedYear = years[0];
-                        return $scope.selectedYear;
+                        $scope.yearHolder = {};
+                        $scope.yearHolder.years = years;
+                        $scope.yearHolder.selectedYear = $scope.yearHolder.years[0];
+                        return $scope.yearHolder.selectedYear;
                     },
                     function( error ){
                         $scope.error = 'Uh oh';
@@ -552,10 +560,15 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
 
     $scope.selectYear = function()
     {
-        manageInspectionsFactory.getInspectionScheduleDtos( $scope.selectedYear )
+        $scope.loading = true;
+        $scope.dtos = [];
+
+        manageInspectionsFactory.getInspectionScheduleDtos( $scope.yearHolder.selectedYear )
             .then(
-                function( dtos ){
+                function(dtos){
+                    console.log(dtos);
                     $scope.dtos = dtos;
+                    $scope.loading = false;
                 },
                 function( error ){
                     $scope.error = "The system could not retrieve the list of inspections for the selected year.  Please check your internet connection and try again."
