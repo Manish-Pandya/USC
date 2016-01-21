@@ -15,9 +15,9 @@ angular.module('EquipmentModule')
             return af.getAllBioSafetyCabinets()
                 .then(
                     function(){
-                         $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                        $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
                         console.log($scope.cabinets);
-                         return $scope.cabinets;
+                        return $scope.cabinets;
                     }
                 )
               

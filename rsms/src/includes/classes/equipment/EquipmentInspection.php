@@ -21,6 +21,7 @@ class EquipmentInspection extends GenericCrud{
         "equipment_class"               => "text",
         "comment"                       => "text",
         "status"                        => "text",
+        "frequency"                     => "text",
 				
 		//GenericCrud
 		"key_id"			    => "integer",
@@ -31,12 +32,15 @@ class EquipmentInspection extends GenericCrud{
 		"created_user_id"	    => "integer"
 	);
     
-    public function __construct(){
+    public function __construct($equipment_class = null, $frequency = null, $equipmentId = null){
+        if ($equipment_class) $this->setEquipment_class($equipment_class);
+        if ($frequency) $this->setFrequency($frequency);
+        if ($equipmentId) $this->setEquipment_id($equipmentId);
+
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
-		$entityMaps[] = new EntityMap("lazy","getDue_date");
 		$this->setEntityMaps($entityMaps);
 	}
     
@@ -49,6 +53,7 @@ class EquipmentInspection extends GenericCrud{
     private $equipment_class;
     private $comment;
     private $status;
+    private $frequency;
     
     // Required for GenericCrud
 	public function getTableName(){
@@ -79,19 +84,21 @@ class EquipmentInspection extends GenericCrud{
 	}
 	public function setCertification_date($certification_date){
 		$this->certification_date = $certification_date;
+        // new instance will be spawned in the controller
 	}
 
     public function getDue_date(){
-		$dueDate = new DateTime($this->getCertification_date());
+        $LOG = Logger::getLogger('my hairy balls');
+        if ($this->getFrequency() == null) return null;
+
+		$dueDate = new DateTime($this->getDate_created());
 		
 		if($this->getFrequency() == "Annually"){
 			$dueDate->modify('+1 year');
 		}else if($this->getFrequency() == "Bi-annually"){
-			$dueDate->modify('+2 years');
-        }else{
-			return null;
-		}
-		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));		
+			$dueDate->modify('+6 months'); // twice a year
+        }
+		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));
 		
 		return $this->due_date;
 	}
@@ -132,6 +139,13 @@ class EquipmentInspection extends GenericCrud{
 	}
 	public function setStatus($status){
 		$this->status = $status;
+	}
+    
+    public function getFrequency(){
+		return $this->frequency;
+	}
+	public function setFrequency($frequency){
+		$this->frequency = $frequency;
 	}
     
 }

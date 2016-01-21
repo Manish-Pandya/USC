@@ -79,12 +79,11 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
-        	if($decodedObject->getCertification_date() == NULL){
-        		$decodedObject->setCertification_date(date('Y-m-d H:i:s'));
-        	}
         	$dao = $this->getDao(new BioSafetyCabinet());
-            $dao->save($decodedObject);
-            return $decodedObject;
+            $cabinet = $dao->save($decodedObject);
+            $cabinet->conditionallyCreateEquipmentInspection();
+            $LOG->fatal($cabinet);
+            return $cabinet;
         }
     }
     

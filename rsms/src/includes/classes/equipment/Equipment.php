@@ -14,7 +14,7 @@ abstract class Equipment extends GenericCrud{
     protected $model;
     protected $frequency;
     protected $serial_number;
-    protected $equipment_inspections;
+    protected $equipmentInspections; //array
     
     /** Relationships */
 	protected static $INSPECTIONS_RELATIONSHIP = array(
@@ -28,7 +28,7 @@ abstract class Equipment extends GenericCrud{
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
 		$this->setEntityMaps($entityMaps);
 	}
     
@@ -68,19 +68,30 @@ abstract class Equipment extends GenericCrud{
     }
     
     public function getEquipmentInspections(){
-		if($this->inspections === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO( new EquipmentInspection() );
+        if($this->equipmentInspections === NULL){
+            $thisDAO = new GenericDAO( new EquipmentInspection() );
             // TODO: this would be a swell place to sort
             $whereClauseGroup = new WhereClauseGroup(
-				array(
-						new WhereClause("equipment_class", "=", get_class($this)),
-						new WhereClause("equipment_id", "=" , $this->getKey_id())
-				)
-			);
-			$this->equipment_inspections = $thisDAO->getAllWhere($whereClauseGroup);
-		}
+                array(
+                    new WhereClause("equipment_class", "=", get_class($this)),
+                    new WhereClause("equipment_id", "=" , $this->getKey_id())
+                )
+            );
+            $this->equipmentInspections = $thisDAO->getAllWhere($whereClauseGroup);
+        }
+        
 		return $this->equipment_inspections;
 	}
 	public function setEquipmentInspections($inspections){ $this->equipment_inspections = $inspections; }
+    
+    public function conditionallyCreateEquipmentInspection(){
+        if ($this->hasPrimaryKeyValue()) {
+            if ($this->frequency != null) {
+                $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
+                $inspectionDao = new GenericDao($inspection);
+                $this->equipmentInspections = array( $inspectionDao->save($inspection) );
+            }
+        }
+    }
     
 }

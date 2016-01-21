@@ -14,7 +14,7 @@ BioSafetyCabinet.prototype = {
     },
     
     eagerAccessors: [        
-        {method:"loadEquipmentInspection", boolean:"Key_id"}
+        {method:"loadEquipmentInspections", boolean:"Key_id"}
     ],
     loadRoom:  function() {
         /*if(!this.Room) {
@@ -26,7 +26,7 @@ BioSafetyCabinet.prototype = {
             dataLoader.loadChildObject( this, 'PrincipalInvestigator', 'PrincipalInvestigator', this.Principal_investigator_id );
         }*/
     },
-    loadEquipmentInspection:  function() {
+    loadEquipmentInspections:  function() {
         dataLoader.loadOneToManyRelationship( this, 'EquipmentInspections', this.EquipmentInspectionRelationship, [{Equipment_class:"BioSafetyCabinet"}]);
     }
 
