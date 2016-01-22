@@ -69,7 +69,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0" ng-options="v as v for (k,v) in constants.INSPECTION.STATUS">
+                    <select ng-model="search.status" style="margin-bottom:0" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
                         <option value="">Select a status</option>
                     </select>
                 </th>
@@ -144,41 +144,47 @@ require_once '../top_view.php';
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
-                        <!--
-                            {{dto.Inspections.Date_started}}<br>{{dto.Inspections.Key_id}}<br>
-                        -->
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
                                 ({{dto.Inspections.Schedule_month | getMonthName}})
+                                <br>
+                                <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
                         </span>
 
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
                             <p>
+                                <br>
                                 (Report Sent: {{dto.Inspections.Notification_date | dateToISO | date:"MM/dd/yy"}})
-                                <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p ng-if="dto.Inspections.Cap_submitted_date">
                                 (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
-                                <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                                <br>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                             <p ng-if="!dto.Inspections.Cap_submitted_date">
                                 (No deficiencies found.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
-                                <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                                <br>
+                                <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                         </span>
-                        <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_REPORT">
+                        <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
                             <p>
                                 (Started :{{dto.Inspections.Date_started | dateToISO | date:"MM/dd/yy"}})
-                                <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-danger" href="InspectionChecklist.php#?inspection={{dto.Inspections.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i></a>
+                                <br>
+                                <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{dto.Inspections.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
                             <span><br>(Due Date:{{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
-                            <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i></a>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}}, {{dto.Inspections.Schedule_year}})</span>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>

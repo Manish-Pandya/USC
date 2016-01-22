@@ -1945,6 +1945,7 @@ table {
   border: 1px solid #dddddd;
 }
 .table-bordered td {
+  vertical-align: middle !important;
   border: 1px solid #dddddd;
   padding-top:10px;
   padding-bottom:10px;
@@ -2019,7 +2020,7 @@ table {
 }
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
-  background-color: #EEEcee;
+  background-color: #FFFFFF;
 }
 
 .table-hover tbody tr:hover td,

@@ -129,22 +129,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
       if(checklist.Master_hazard.toLowerCase().indexOf('biological') > -1){
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
-        checklistHolder.biologicalHazards.checklists.push(checklist);
+        checklistHolder.biologicalHazards.checklists.unshift(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
-        checklistHolder.chemicalHazards.checklists.push(checklist);
+        checklistHolder.chemicalHazards.checklists.unshift(checklist);
         checklistHolder.chemicalHazards.Questions = checklistHolder.chemicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('radiation') > -1){
         if(!checklistHolder.radiationHazards.Questions)checklistHolder.radiationHazards.Questions = [];
-        checklistHolder.radiationHazards.checklists.push(checklist);
+        checklistHolder.radiationHazards.checklists.unshift(checklist);
         checklistHolder.radiationHazards.Questions = checklistHolder.radiationHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('general') > -1){
         if(!checklistHolder.generalHazards.Questions)checklistHolder.generalHazards.Questions = [];
-        checklistHolder.generalHazards.checklists.push(checklist);
+        checklistHolder.generalHazards.checklists.unshift(checklist);
         checklistHolder.generalHazards.Questions = checklistHolder.generalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
     }

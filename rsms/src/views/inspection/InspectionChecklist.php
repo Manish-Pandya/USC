@@ -12,7 +12,7 @@ require_once '../top_view.php';
             <img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 85px;">Inspection Checklist  <span style="margin-left:10px;" ng-if="inspection">({{inspection.PrincipalInvestigator.User.Name}})</span>
                 <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
-                <a style="float:right; margin:7px 10px 0 0;" class="btn" href="hazardInventory.php#?pi={{inspection.PrincipalInvestigator.Key_id}}">Hazard Inventory</a>
+                <a style="float:right; margin:7px 10px 0 0;" class="btn" href="../../hazard-inventory/#?pi={{inspection.PrincipalInvestigator.Key_id}}">Hazard Inventory</a>
             </h2>
         </li>
     </ul>
@@ -92,14 +92,14 @@ require_once '../top_view.php';
                                 <li ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )">
                                     <span  ng-if="deficiency.Text != 'Other'">
                                         <label class="checkbox inline">
-                                            <input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency )"/>
+                                            <input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency, question )"/>
                                             <span class="metro-checkbox"><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span style="margin-top:0" once-text="deficiency.Text"></span></span>
                                         </label>
                                     </span>
                                     <span ng-if="deficiency.Text == 'Other'">
                                         <other-deficiency checked-on-init="cf.getHasOtherDeficiency(question)" param="question" selected-title="question.Other_text" textarea-placeholder="Enter a deficiency" unselected-title="Other" text-area-content="" selection-change="cf.conditionallySaveOtherDeficiency(question)"/>
                                     </span>
-                                        <span ng-if="cf.evaluateDeficiency( deficiency ) && !question.edit">
+                                        <span ng-if="cf.evaluateDeficiency( deficiency, question ) && !question.edit">
                                             <i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
                                         </span>
 
@@ -123,7 +123,7 @@ require_once '../top_view.php';
                                             </ul>
                                         </div>
 
-                                        <ul style="margin:4px 0 9px 25px;" ng-if="cf.evaluateDeficiency( deficiency.Key_id )">
+                                        <ul style="margin:4px 0 9px 25px;" ng-if="(!$last && cf.evaluateDeficiency( deficiency, question )) || $last && cf.getHasOtherDeficiency(question)">
                                             <li>
                                                 <label class="checkbox inline">
                                                     <input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-checked="inspection.Deficiency_selections[1].indexOf(deficiency.Key_id) > -1" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />

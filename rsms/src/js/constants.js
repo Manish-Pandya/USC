@@ -50,11 +50,10 @@ var Constants = (function () {
         STATUS:{
             NOT_SCHEDULED:"NOT SCHEDULED",
             SCHEDULED:"SCHEDULED",
+            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                               INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
-            CLOSED_OUT:"CLOSED OUT",
-            INCOMPLETE_REPORT:"INCOMPLETE REPORT",
             OVERDUE_CAP:"OVERDUE CAP",
-            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
+            CLOSED_OUT:"CLOSED OUT"
         },
         SCHEDULE_STATUS:{
             NOT_ASSIGNED:"NOT ASSIGNED",

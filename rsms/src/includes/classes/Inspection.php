@@ -261,8 +261,8 @@ class Inspection extends GenericCrud {
                 //Begin Inspection
             } else {
                 // If it is 30 days past due, it's overdue for inspection
-                return 'OVERDUE FOR INSPECTION';
-                //Begin Inspection                
+                return 'OVERDUE_FOR_INSPECTION';
+                //Begin Inspection
             }
         }
         //It's been started, but we know it hasn't been finished, because we checked above for date_closed
@@ -291,7 +291,7 @@ class Inspection extends GenericCrud {
                     //Is the Corrective Action Plan overdue?
                     if($now->diff($notificationDate) < -14){
                         return "OVERDUE CAP";
-                        //View Report                        
+                        //View Report
                     }else{
                         return "PENDING CLOSEOUT";
                         //View Report

@@ -52,7 +52,16 @@ var getDate = function(time){
         }
 
 
-var locationHub = angular.module('manageInspections', ['convenienceMethodWithRoleBasedModule','once','ui.bootstrap'])
+var manageInspections = angular.module('manageInspections', ['convenienceMethodWithRoleBasedModule','once','ui.bootstrap'])
+.filter('toArray',function(){
+    return function(object){
+        var array = [];
+        for (var prop in object){
+            array.push(object[prop]);
+        }
+        return array;
+    }
+})
 .filter('genericFilter', function ($rootScope) {
     return function (items,search,convenienceMethods) {
         if(search){
