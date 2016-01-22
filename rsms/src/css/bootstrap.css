@@ -3792,11 +3792,6 @@ input[type="submit"].btn.btn-mini {
   display: block;
 }
 
-.nav > li > a:hover, :not(.pageMenu li a:hover) {
-  text-decoration: none;
-  background-color: #eeeeee;
-}
-
 .nav > .pull-right {
   float: right;
 }
@@ -3973,7 +3968,7 @@ input[type="submit"].btn.btn-mini {
 
 .nav-tabs.nav-stacked > li > a:hover {
   z-index: 2;
- 
+
 }
 
 .nav-pills.nav-stacked > li > a {
@@ -4262,8 +4257,8 @@ input[type="submit"].btn.btn-mini {
 }
 
 .navbar .btn,
-.navbar .btn-group, 
-:not(.pageMenu li a) {
+.navbar .btn-group,
+ {
   margin-top: 5px;
 }
 
@@ -4424,7 +4419,7 @@ input[type="submit"].btn.btn-mini {
 .navbar .nav > li > a {
   padding: 10px 15px 10px;
 }
-.navbar .nav > li > a, :not(.pageMenu li a) {
+.navbar .nav > li > a,  {
   float: none;
   color: #777777;
   text-decoration: none;
@@ -4435,26 +4430,7 @@ input[type="submit"].btn.btn-mini {
   margin-top: 8px;
 }
 
-.navbar .nav > li > a:focus,
-.navbar .nav > li > a:hover,
-:not(.pageMenu li a:hover)
- {
-  color: #333333;
-  text-decoration: none;
-  background-color: transparent;
-}
 
-.navbar .nav > .active > a,
-.navbar .nav > .active > a:hover,
-.navbar .nav > .active > a:focus, 
-:not(.pageMenu li a:hover) {
-  color: #555555;
-  text-decoration: none;
-  background-color: #e5e5e5;
-  -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-     -moz-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-          box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-}
 
 .navbar .btn-navbar {
   display: none;

@@ -256,10 +256,10 @@ a.win-command, button, input[type=button], input[type=reset], input[type=submit]
    border-style: solid;
    background-clip: padding-box;
    font-weight: 600;
-   line-height: 1.3636; 
+   line-height: 1.3636;
 }
 a.win-command {
-   min-height: 32px; 
+   min-height: 32px;
 }
 
 */
@@ -525,7 +525,7 @@ Back button.
 }
 .win-backbutton::before {
    font-weight: normal;
-	font-family: 'IcoMoon';
+    font-family: 'IcoMoon';
    content: "\e05d";
    vertical-align: 24%;
 }
@@ -850,8 +850,8 @@ Menu commands.
 Menu toggle buttons.
 */
 .win-menu-toggle button.win-command::before {
-	font-family: 'IcoMoon';
-	content: "\e20c";
+    font-family: 'IcoMoon';
+    content: "\e20c";
    visibility: hidden;
    letter-spacing: 0;
 }
@@ -1635,7 +1635,7 @@ Dropdown submenu
    min-width: 14px;
    min-height: 18px;
    padding: 0 3px;
-	font-family: 'IcoMoon';
+    font-family: 'IcoMoon';
    font-size: inherit;
    font-weight: normal;
    line-height: 1;
@@ -2121,10 +2121,10 @@ header h1 {display: inline;}
 }
 
 .table th, .table td {
-	font-size: 1.5em;
-	vertical-align: top;
-	color: #333;
-	border-top: 0;
+    font-size: 1.5em;
+    vertical-align: top;
+    color: #333;
+    border-top: 0;
 }
 .table th{
    font-size: 1.9em;
@@ -2166,11 +2166,11 @@ header h1 {display: inline;}
 }
 .pager .previous a:before {
    font-family: 'IcoMoon';
-	content: "\e0f4";
+    content: "\e0f4";
 }
 .pager .next a:after {
    font-family: 'IcoMoon';
-	content: "\e0f1";
+    content: "\e0f1";
 }
 
 
@@ -2222,10 +2222,6 @@ Thumbnail
       -moz-border-radius: 0;
       border-radius: 0;
    }
-   .nav > li > a:hover, :not(.pageMenu li a) {
-      text-decoration: none;
-      background-color: inherit;
-   }
    #content-filters .nav-pills > .active > a,
    #content-filters .nav-pills > .active > a:hover {
       color: inherit;
@@ -2266,7 +2262,7 @@ Thumbnail
    min-height: 0;
    width: 30px;
    height: 30px;
-	font-family: 'IcoMoon';
+    font-family: 'IcoMoon';
    font-weight: normal;
    font-size: 12px;
    line-height: 12px;
