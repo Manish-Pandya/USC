@@ -63,40 +63,48 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                 }
 
                 if( search.campus ) {
-                    if( !item.Building || !item.Building.Campus ){
+                    if( item.Class != "Building" && (!item.Building || !item.Building.Campus) ){
                         item.matched = false;
                         console.log('set false because no building or campus')
                     }
-                    if( item.Building.Campus && item.Building.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
+                    if( item.Building && item.Building.Campus && item.Building.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
+                        item.matched = false;
+                        console.log('set false because of lack of match');
+                    }
+                    if(item.Class == "Building" && item.Campus && item.Campus.Name && item.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
                         item.matched = false;
                         console.log('set false because of lack of match');
                     }
                 }
 
-                if(search.pi || search.department && item.PrincipalInvestigators){
+                if( ( search.pi || search.department ) && item.PrincipalInvestigators){
                     if(!item.PrincipalInvestigators.length){
                         console.log('no pis in room '+item.Name);
                         item.PrincipalInvestigators = [{Class:"PrincipalInvestigator",User:{Name: 'Unassigned', Class:"User"}, Departments:[{Name: 'Unassigned'}] }];
                     }
 
                     var j = item.PrincipalInvestigators.length
-                    item.matched = false
+                    item.matched = false;
+                    var deptMatch = false;
                     while(j--){
 
                         var pi = item.PrincipalInvestigators[j];
-                        if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ) item.matched = true;
+                        if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
+                            item.matched = true;
+                            var piMatch = true;
+                        }
 
                         if(search.department){
+                            deptMatch = false;
                             if(!pi.Departments || !pi.Departments.length){
                                 pi.Departments = [{Name: 'Unassigned'}];
                             }else{
-                                item.matched = false;
                                 var k = pi.Departments.length;
                                 while(k--){
-                                    if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) item.matched = true;
+                                    if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
                                 }
                             }
-
+                            if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item.matched = true;
                         }
                     }
 
@@ -119,7 +127,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
     factory.campuss = [];
     factory.modalData;
     factory.isEditing = false;
-    
+
     factory.editing = function(bool) {
         factory.isEditing = bool;
         console.log("dig", factory.isEditing);
