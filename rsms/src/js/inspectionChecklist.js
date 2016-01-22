@@ -228,11 +228,15 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             question.saving = true;
 
             //find the right DeficiencySelection and update it's other text or Is_active property
-            var i = question.Responses.DeficiencySelections.length;
-            while(i--){
-                if(question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id){
-                    var defSelection = question.Responses.DeficiencySelections[i];
+            if(question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
+                var i = question.Responses.DeficiencySelections.length;
+                while(i--){
+                    if(question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id){
+                        var defSelection = question.Responses.DeficiencySelections[i];
+                    }
                 }
+            }else{
+                question.Responses.DeficiencySelections = [];
             }
 
 
@@ -439,11 +443,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.evaluateDeficiency = function( def ){
-                var i = this.inspection.Deficiency_selections[0].length;
+        factory.evaluateDeficiency = function( def, question ){
+                if(!question.Responses || !question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length)return false;
+                var i = question.Responses.DeficiencySelections.length;
                 var id = def.Key_id;
                 while(i--){
-                    if( id == this.inspection.Deficiency_selections[0][i] ){
+                    console.log(id + ' \ ' + question.Responses.DeficiencySelections[i].Deficiency_id)
+                    if( id == question.Responses.DeficiencySelections[i].Deficiency_id ){
                         def.selected = true;
                         return true;
                     }

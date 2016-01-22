@@ -92,20 +92,20 @@
         <td valign="top" colspan="4" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td>
     </tr>
     <tr ng-if="questionsByChecklist.biologicalHazards.message"><td colspan="4">{{questionsByChecklist.biologicalHazards.message}}</td></tr>
-    <tbody ng-repeat="(key, q) in questionsByChecklist.biologicalHazards.Questions | groupBy:'ChecklistName'" class="biological" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-repeat="checklist in questionsByChecklist.biologicalHazards.checklists" class="biological" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
     <tr ng-if="questionsByChecklist.chemicalHazards.show">
         <td valign="top" colspan="4" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td>
     </tr>
 
     <tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="4">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
-    <tbody ng-repeat="(key, q) in questionsByChecklist.chemicalHazards.Questions | groupBy:'ChecklistName'" class="chemical" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-repeat="checklist in questionsByChecklist.chemicalHazards.checklists" class="chemical " ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
     <tr><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
     <tr ng-if="questionsByChecklist.generalHazards.message">
         <td colspan="4">{{questionsByChecklist.generalHazards.message}}</td>
     </tr>
-    <tbody ng-repeat="(key, q) in questionsByChecklist.generalHazards.Questions | groupBy:'ChecklistName'" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
     <tr ng-if="questionsByChecklist.radiationHazards.show">
         <td valign="top" colspan="4" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>
         RADIATION SAFETY
@@ -113,7 +113,7 @@
         </td>
     </tr>
     <tr ng-if="questionsByChecklist.radiationHazards.message"><td colspan="4">{{questionsByChecklist.radiationHazards.message}}</td></tr>
-    <tbody ng-repeat="(key, q) in questionsByChecklist.radiationHazards.Questions | groupBy:'ChecklistName'" class="radiation" ng-if="question.Responses.Answer == 'no'" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-repeat="checklist in questionsByChecklist.radiationHazards.checklists" class="radiation" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 </table>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
     <tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
