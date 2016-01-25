@@ -57,7 +57,7 @@
                 <div class="controls span4" style="padding-left: 5px;">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
 
-                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)">
+                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)" required>
                         <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
                             <div ng-bind-html="pi.Name | highlight: $select.search"></div>
@@ -102,7 +102,7 @@
         </form>
     <div class="modal-footer">
         <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
-        <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark"/>Save</button>
+        <button class="btn btn-success left btn-large" ng-disabled="form.$invalid || !modalData.Supervisor"><i class="icon-checkmark"/>Save</button>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
     </div>
 </form>

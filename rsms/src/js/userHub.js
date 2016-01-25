@@ -325,7 +325,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         deferred.resolve(factory.roles);
         return deferred.promise;
       }
-      
+
       var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllRoles&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
         function(roles){
@@ -1026,12 +1026,19 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     }
 
     $scope.saveUser = function(){
-      $scope.modalData.IsDirty = true;
-      var user = $scope.modalData;
-      $scope.modalError="";
-      saveUser( user )
-        .then(saveRoles)
-        .then(closeModal)
+        $scope.modalData.IsDirty = true;
+
+        if($scope.isPIRequired($scope.modalData) && !$scope.modalData.Supervisor){
+            $scope.modalError = 'A Lab Contact must be assigned to a Principal Investigator.';
+            $scope.modalData.IsDirty = false;
+            return;
+        }
+        var user = $scope.modalData;
+
+        $scope.modalError="";
+        saveUser( user )
+                .then(saveRoles)
+                .then(closeModal)
     }
 
     $scope.onAddDepartmentToPi = function(department){

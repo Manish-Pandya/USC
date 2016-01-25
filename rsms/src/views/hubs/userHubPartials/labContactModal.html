@@ -4,7 +4,6 @@
         <h2 style="padding:5px" ng-hide="modalData.Key_id" class="greenBg">Create a New Lab Contact</h2>
     </div>
     <div class="modal-body">
-        <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         <form class="form-horizontal form">
 
             <div class="control-group">
@@ -108,6 +107,7 @@
 
         </form>
     <div class="modal-footer">
+        <h3 class="alert alert-danger" ng-if="modalError" style="text-align:left">{{modalError}}</h3>
         <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
         <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark"/>Save</button>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
