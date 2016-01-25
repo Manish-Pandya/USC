@@ -39,9 +39,10 @@ angular
                     );
         }
 
-        ac.handleHazardChecked = function(hazardDto){
+        ac.handleHazardChecked = function(hazardDto, hazard){
             var copy = new window.HazardDto();
             copy.Class                     = hazardDto.Class;
+            copy.MasterHazardId            = hazard.Key_id;
             copy.HasChildren               = hazardDto.HasChildren;
             copy.Hazard_id                 = hazardDto.Hazard_id;
             copy.Hazard_name               = hazardDto.Hazard_name;
@@ -62,6 +63,7 @@ angular
             }
 
             for(var i =0; i < hazardDto.InspectionRooms.length; i++){
+                hazardDto.InspectionRooms[i].MasterHazardId = hazard.Key_id;
                 if(!parentHazard){
                     copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], copy.IsPresent );
                 }
@@ -75,7 +77,7 @@ angular
                     copy.InspectionRooms[i] = this.copyInpectionRoom( hazardDto.InspectionRooms[i], isPresent );
                 }
             }
-
+            console.log(copy);
 
             hazardDto.IsPresent = !hazardDto.IsPresent;
             this.clearError();
@@ -101,8 +103,9 @@ angular
         ac.saveHazardDto = function(){
         }
 
-        ac.savePIHazardRoom = function(room, hazard, changed, confirmed){
+        ac.savePIHazardRoom = function(room, hazard, changed, parent){
             var copy = ac.copyInpectionRoom(room);
+            copy.MasterHazardId = parent.Key_id;
             this.clearError();
 
             //the room has been added or removed, as opposed to having its status changed
@@ -171,6 +174,7 @@ angular
             copy.Hazard_id                 = room.Hazard_id;
             copy.Room_id                   = room.Room_id;
             copy.Status                    = room.Status;
+            copy.MasterHazardId            = room.MasterHazardId;
 
             if(containsHazard != null){
                 copy.ContainsHazard = containsHazard;

@@ -26,6 +26,12 @@
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room"/>
             </th>
             <th>
+                Room Hazards
+                <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                    <option value="">Select</option>
+                </select>
+            </th>
+            <th>
                 Room Use
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use"/>
             </th>
@@ -55,17 +61,23 @@
                 <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
             </td>
 
-            <td style="width:15%">
+            <td style="width:10%">
                 {{lhf.getBuildingByRoom(room).Name}}
             </td>
 
             <td once-text="room.Name" style="width:12%;">
             </td>
 
-            <td once-text="room.Purpose" style="width:17%;">
+            <td style="width:9%" class="hazard-icons">
+                <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png"/></span>
+                <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png"/></span>
+                <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png"/></span>
             </td>
 
-            <td  style="width:32%">
+            <td once-text="room.Purpose" style="width:15%;">
+            </td>
+
+            <td  style="width:30%">
                 <ul ng-if="room.PrincipalInvestigators.length">
                     <li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
                         <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>

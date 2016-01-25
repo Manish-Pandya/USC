@@ -239,7 +239,7 @@ echo "</script>";
                     </li>
                     <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: false} | orderBy: 'Order_index'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                         <label class="checkbox inline">
-                            <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)" />
+                            <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, hazard)" />
                             <span class="metro-checkbox"></span>
                         </label>
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
@@ -252,7 +252,7 @@ echo "</script>";
                         <!--</h4>-->
                         <div class="icons">
                             <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
-                <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
+                <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>
             </span>
                             <span ng-if="child.IsPresent">
                 <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>

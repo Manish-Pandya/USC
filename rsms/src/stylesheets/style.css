@@ -952,7 +952,12 @@ a.selected:hover{
 .locationTable td > ul{
   margin:-4px -8px -1px !important;
 }
-
+td.hazard-icons{
+    text-align: center;
+}
+td.hazard-icons img{
+    width:30px;
+}
 .locationTable td > ul li{
   padding: 10px 8px 3px;
   border-bottom: 1px solid #d7d7d7 !important;

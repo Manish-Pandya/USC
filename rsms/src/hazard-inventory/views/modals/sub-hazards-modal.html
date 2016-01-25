@@ -5,7 +5,7 @@
     <ul>
         <li ng-repeat="(key, child) in modalData.Hazard.ActiveSubHazards | orderBy: 'Order_index'">
             <label class="checkbox inline">
-                <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)" />
+                <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, modalData.Parent)" />
                 <span class="metro-checkbox" once-text="child.Hazard_name"></span>
             </label>
             <div class="clearfix"></div>

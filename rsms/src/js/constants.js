@@ -86,6 +86,7 @@ var Constants = (function () {
 
     constants.PARCEL = {
         STATUS:{
+            REQUESTED: "Requested",
             ARRIVED:"Arrived",
             PRE_ORDER:"Pre-order",
             ORDERED:"Ordered",
@@ -151,5 +152,12 @@ var Constants = (function () {
             SEMI_ANNUALLY: "Semi-annually"
         }
     }
+
+    constants.ROOM_HAZARDS = {
+        BIO_HAZARDS_PRESENT:  {label: "Biological Hazards", value:"Bio_hazards_present"},
+        CHEM_HAZARDS_PRESENT: {label: "Chemical Hazards",   value:"Chem_hazards_present"},
+        RAD_HAZARDS_PRESENT:  {label: "Radiation Hazards",  value:"Rad_hazards_present"}
+    }
+
     return constants;
 })();

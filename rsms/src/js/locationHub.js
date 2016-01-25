@@ -54,6 +54,10 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
                 }
 
+                if(search.hazards){
+                    if(item.Class == "Room" && !item[search.hazards]) item.matched = false;
+                }
+
                 if(search.room){
                     if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item.matched = false;
                 }
@@ -417,6 +421,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
     $rootScope.rbf = roleBasedFactory;
+    $scope.constants = Constants;
 
     locationHubFactory.getBuildings()
         .then(
