@@ -696,7 +696,6 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
                     originalRoom.PrincipalInvestigators.splice(idx,1);
                 }else{
                     room.PrincipalInvestigators.push(pi);
-                    originalRoom.PrincipalInvestigators.push(pi);
                 }
                 pi.saving = false;
             },
