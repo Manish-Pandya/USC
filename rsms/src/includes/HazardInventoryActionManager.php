@@ -84,7 +84,8 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		}
 		
 		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
-	
+		$roomDao = $this->getDao(new Room());
+
 		//get the relevant PrincipalInvestigatorHazardRoomRelation
 		$relations = $this->getRelevantRelations($decodedObject);
 		//room doesn't contain the relevant hazard, so delete any relations
@@ -93,6 +94,26 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$piHazardRoomDao->deleteById($relation->getKey_id());
 			}
 			
+			// If this is a master category, remove the appropriate master category flag from the Room
+			// Case 1, Biohazards
+			if($decodedObject->getHazardId() == 1){
+				$room = $roomDao->getById($decodedObject->getRoom_id());
+				$room->setBio_hazards_present(false);
+				$roomDao->save($room);
+			}
+			// Case 2, Checm hazards
+			if($decodedObject->getHazardId() == 9999){
+				$room = $roomDao->getById($decodedObject->getRoom_id());
+				$room->setChem_hazards_present(false);
+				$roomDao->save($room);
+			}
+			// Case 3, Rad hazards
+			if($decodedObject->getHazardId() == 10009){
+				$room = $roomDao->getById($decodedObject->getRoom_id());
+				$room->setRad_hazards_present(false);
+				$roomDao->save($room);
+			}
+				
 			//since we've removed the hazard from the room for this PI, we should also remove any child hazards
 			$hazard = $this->getHazardById($decodedObject->getHazard_id());
 			$childHazards = $hazard->getActiveSubHazards();
@@ -146,7 +167,25 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 					}
 				}
 			}
+
+			// Flag the master category on the room object
+			
+				$room = $roomDao->getById($decodedObject->getRoom_id());
+					if ($decodedObject->getMasterHazardId() == 1) {
+					$room->setBio_hazards_present(true);
+				}
+					if ($decodedObject->getMasterHazardId() == 9999) {
+					$room->setChem_hazards_present(true);
+				}
+					if ($decodedObject->getMasterHazardId() == 10009) {
+					$room->setRad_hazards_present(true);
+				}
+
+				$roomDao->save($room);
+
 		}
+		
+		
 		return $decodedObject;
 	}
 	/*

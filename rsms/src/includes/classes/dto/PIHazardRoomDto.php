@@ -4,6 +4,7 @@ class PIHazardRoomDto {
 	
 	private $principal_investigator_id;
 	private $hazard_id;
+	private $masterHazardId;
 	private $room_name;
 	private $room_id;
 	private $building_id;
@@ -28,6 +29,14 @@ class PIHazardRoomDto {
 	public function setHazard_id($hazard_id){
 		$this->hazard_id = $hazard_id;
 	}
+	
+	public function getMasterHazardId(){
+		return $this->$masterHazardId;
+	}
+	
+	public function setMasterHazardId($masterHazardId){
+		$this->masterHazardId = $masterHazardId;
+	}	
 	
 	public function getRoom_name(){
 		return $this->room_name;

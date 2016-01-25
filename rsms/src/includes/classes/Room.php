@@ -19,7 +19,10 @@ class Room extends GenericCrud {
 		"name"		=> "text",
 		"safety_contact_information" 	=> "text",
 		"building_id"		=> "integer",
-
+		"chem_hazards_present"			=> "boolean",
+		"rad_hazards_present"			=> "boolean",
+		"bio_hazards_present"			=> "boolean",
+				
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
@@ -83,6 +86,15 @@ class Room extends GenericCrud {
 	private $hazard_room_relations;
 
 	private $has_hazards;
+
+	/** String containing emergency contact information */
+	private $chem_hazards_present;
+
+	/** String containing emergency contact information */
+	private $rad_hazards_present;
+
+	/** String containing emergency contact information */
+	private $bio_hazards_present;
 	
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
@@ -120,6 +132,16 @@ class Room extends GenericCrud {
 	public function getPurpose(){ return $this->purpose; }
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
 
+	public function getChem_hazards_present() { return $this->chem_hazards_present; }
+	public function setChem_hazards_present($chem_hazards_present){ $this->chem_hazards_present = $chem_hazards_present; }
+
+	public function getRad_hazards_present() { return $this->rad_hazards_present; }
+	public function setRad_hazards_present($rad_hazards_present){ $this->rad_hazards_present = $rad_hazards_present; }
+
+	public function getBio_hazards_present() { return $this->bio_hazards_present; }
+	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = $bio_hazards_present; }
+	
+	
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
 
