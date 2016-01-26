@@ -14,15 +14,15 @@
             <table class="table table-striped">
                 <tr class="table-header">
                     <th>EDIT</th>
+                    <th>TYPE</th>
+                    <th>SERIAL #</th>
+                    <th>MAKE</th>
+                    <th>MODEL</th>
                     <th>
                         BUILDING<br>
                         <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
                     </th>
                     <th>ROOM</th>
-                    <th>TYPE</th>
-                    <th>SERIAL #</th>
-                    <th>MAKE</th>
-                    <th>MODEL</th>
                     <th>
                         CERT-DATE<br>
                         <select ng-options="cabinet.EquipmentInspections[0].Certification_date as (cabinet.EquipmentInspections[0].Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Certification_date'" ng-model="selectedCertificationDate">
@@ -37,12 +37,6 @@
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
-                    </td>
-                    <td>
-                        {{cabinet.Room.Building.Name}}
-                    </td>
-                    <td>
-                        {{cabinet.Room.Name}}
                     </td>
                     <td>
                         {{cabinet.Type}}
@@ -60,10 +54,16 @@
                         <table>
                             <tr ng-repeat="inspection in cabinet.EquipmentInspections">
                                 <td>
+                                    {{inspection.Room.Building.Name}}
+                                </td>
+                                <td>
+                                    {{inspection.Room.Name}}
+                                </td>
+                                <td>
                                     {{inspection.Certification_date | dateToISO}}
                                 </td>
-                                <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
-                                    {{inspection.Principal_investigator_id}}
+                                <td>
+                                    {{inspection.PrincipalInvestigator.User.Name}}
                                 </td>
                                 <td>
                                     <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
@@ -85,15 +85,15 @@
             <table class="table table-striped">
                 <tr class="table-header">
                     <th>EDIT</th>
+                    <th>TYPE</th>
+                    <th>SERIAL #</th>
+                    <th>MAKE</th>
+                    <th>MODEL</th>
                     <th>
                         BUILDING<br>
                         <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
                     </th>
                     <th>ROOM</th>
-                    <th>TYPE</th>
-                    <th>SERIAL #</th>
-                    <th>MAKE</th>
-                    <th>MODEL</th>
                     <th>
                         DUE-DATE<br>
                         <select ng-options="cabinet.EquipmentInspections[0].Due_date as (cabinet.EquipmentInspections[0].Due_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Due_date'" ng-model="selectedDueDate">
@@ -104,16 +104,10 @@
                     <th>REPORT</th>
                     <th>STATUS</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedDueDate | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDueDate:selectedDueDate | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
-                    </td>
-                    <td>
-                        {{cabinet.Room.Building.Name}}
-                    </td>
-                    <td>
-                        {{cabinet.Room.Name}}
                     </td>
                     <td>
                         {{cabinet.Type}}
@@ -131,10 +125,16 @@
                         <table>
                             <tr ng-repeat="inspection in cabinet.EquipmentInspections">
                                 <td>
+                                    {{inspection.Room.Building.Name}}
+                                </td>
+                                <td>
+                                    {{inspection.Room.Name}}
+                                </td>
+                                <td>
                                     {{inspection.Due_date | dateToISO}}
                                 </td>
-                                <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
-                                    {{inspection.Principal_investigator_id}}
+                                <td>
+                                    {{inspection.PrincipalInvestigator.User.Name}}
                                 </td>
                                 <td>
                                     <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
