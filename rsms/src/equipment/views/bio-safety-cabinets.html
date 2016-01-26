@@ -128,16 +128,25 @@
                         {{cabinet.Model}}
                     </td>
                     <td>
-                        {{cabinet.EquipmentInspections[0].Due_date | dateToISO}}
-                    </td>
-                    <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
-                        {{cabinet.PrincipalInvestigator.User.Name}}
-                    </td>
-                    <td>
-                        <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
-                    </td>
-                    <td>
-                        {{cabinet.EquipmentInspections[0].Status}}
+                        <table>
+                            <tr ng-repeat="inspection in cabinet.EquipmentInspections">
+                                <td>
+                                    {{inspection.Due_date | dateToISO}}
+                                </td>
+                                <td ng-init="cabinet.PrincipalInvestigator.loadRooms()">
+                                    {{inspection.Principal_investigator_id}}
+                                </td>
+                                <td>
+                                    <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
+                                </td>
+                                <td>
+                                    {{inspection.Status}}
+                                </td>
+                                <td>
+                                    <button ng-disabled="inspection.edit" ng-class="{'disabled':inspection.edit}" ng-click="openModal(inspection)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>
