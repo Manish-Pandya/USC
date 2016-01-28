@@ -261,7 +261,7 @@ class Inspection extends GenericCrud {
                 //Begin Inspection
             } else {
                 // If it is 30 days past due, it's overdue for inspection
-                return 'OVERDUE_FOR_INSPECTION';
+                return 'OVERDUE FOR INSPECTION';
                 //Begin Inspection
             }
         }
@@ -279,7 +279,6 @@ class Inspection extends GenericCrud {
             }
             //PI has been notified of the results
             else{
-                $notificationDate = new DateTime($this->notification_date);
 
                 //CAP has been submitted
                 if($this->cap_submitted_date != null && $this->cap_submitted_date != '0000-00-00 00:00:00'){
@@ -288,8 +287,11 @@ class Inspection extends GenericCrud {
                 }
                 //CAP not been submitted
                 else{
+                	$notificationDate = new DateTime($this->getNotification_date());
+                	 
+                	$LOG->fatal($now->diff($notificationDate));
                     //Is the Corrective Action Plan overdue?
-                    if($now->diff($notificationDate) < -14){
+                    if($now->diff($notificationDate)->d > 14){
                         return "OVERDUE CAP";
                         //View Report
                     }else{
@@ -332,14 +334,16 @@ class Inspection extends GenericCrud {
         return 'N/A';
     }
     public function getCap_complete() {return $this->cap_complete;}
-    public function setCapComplete($cap_complete) {$this->cap_complete = $cap_complete;}
-    public function getCapDueDate() {
+    public function setCap_complete($cap_complete) {$this->cap_complete = $cap_complete;}
+    public function getCap_due_date() {
         if($this->getNotification_date() == NULL)return;
-
+        $LOG = Logger::getLogger(__CLASS__);
+        
         //14 days after notification date
         $noteficationDate = new DateTime($this->getNotification_date());
         $interval = new DateInterval('P14D');
-        $this->cap_due_date = $noteficationDate->add($interval);
+        $this->cap_due_date = $noteficationDate->add($interval)->format('Y-m-d H:i:s');
+        $LOG->fatal($this);
         return $this->cap_due_date;
     }
 

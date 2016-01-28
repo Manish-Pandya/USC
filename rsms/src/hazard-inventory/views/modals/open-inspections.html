@@ -1,7 +1,7 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:5px;" class="redBg">{{modalData.PI.User.Name}}'s scheduled inspections
         <a class="btn left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2" style="color: rgba(255,255,255,.7);"></i>New Inspection</a>
-           <a class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
+           <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
            <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>
 </div>
@@ -21,22 +21,17 @@
     <table class="table table-bordered table-striped">
     <table ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
     <thead>
-            <th>Inspect Lab</th>
             <th>Rooms</th>
             <th>Year</th>
             <th>Month</th>
             <th>Inspector(s)</th>
-            <th>Hazards</th>
-            <th>Report</th>
+            <th>Inspection Hazards</th>
+            <th>Status / Action</th>
         </thead>
         <tbody>
-            <tr ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections | orderBy:'Date_started':reverse | inspectionClosed:false)" ng-class="{new:inspection.Is_new}">
-                <td style="width:14%; vertical-align:middle;text-align:center;">
-                    <span ng-if="openInspections.length && modalData.PI.Rooms" ng-init="processRooms(inspection, modalData.PI.Rooms)"></span>
-                    <a ng-disalbed="inspection.Notification_date" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i class="icon-zoom-in"></i>Inspect Labs</a>
-                </td>
+            <tr ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections | orderBy:'Date_started':reverse | inspectionClosed:false)" ng-class="{new:inspection.Is_new, inactive:inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP}">
                 <td>
-                    <ul>
+                    <ul ng-init="processRooms(inspection, modalData.PI.Rooms)">
                         <li ng-repeat="(key, building) in inspection.Rooms | groupBy: 'Building.Name'">
                         <span class="bold underline">{{key}}</span>
                             <ul style="margin:5px;">
@@ -58,27 +53,48 @@
                     </ul>
                 </td>
                 <td>
-                    <span ng-if="!inspection.Is_rad"><img src="../img/biohazard-largeicon.png" style="width: 21px;"/><img src="../img/chemical-safety-large-icon.png" style="width: 21px;"/></span><img src="../img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 21px;"/>
+                    <span ng-if="!inspection.Is_rad">
+                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)">
+                            <img src="../img/biohazard-largeicon.png" style="width: 21px;"/>
+                        </span>
+                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)">
+                            <img src="../img/chemical-safety-large-icon.png" style="width: 21px;"/>
+                        </span>
+                    </span>
+                    <img src="../img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 21px;"/>
                 </td>
 
                 <td>
-                    <span ng-if="inspection.Status != Constants.INSPECTION.STATUS.SCHEDULED">{{inspection.Status}}</span>
-
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
+                    {{inspection.Status}}
+                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.SCHEDULED">
+                         ({{inspection.Schedule_month | getMonthName}})
+                        <br>
+                        <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                    </span>
+                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
+                        <p>
+                            (Date: {{inspection.Cap_submitted_date | dateToISO}})
+                            <br>
+                            <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                        </p>
+                    </span>
+                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP">
                         <p>
                             (Due: {{inspection.Cap_due_date | dateToISO}})
-                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            <br>
+                            <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </p>
                     </span>
 
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_REPORT">
+                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
                         <p>
                             (Started: {{inspection.Date_started | dateToISO}})
-                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            <br>
+                            <a target="_blank" style="margin:5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-zoom-in"></i>Continue Inspection</a>
                         </p>
                     </span>
 
-                    <span ng-if="!inspection.Status || inspection.Status == Constants.INSPECTION.STATUS.SCHEDULED">
+                    <span ng-if="!inspection.Status">
                         <p>
                             N/A
                         </p>
@@ -87,7 +103,8 @@
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                         <p>
                             (Scheduled for {{inspection.Text_schedule_month}})
-                            <a target="_blank" style="margin-top: 0px;margin-left: 6px;padding: 2px 3px 3px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </p>
                     </span>
 
@@ -101,5 +118,5 @@
 
 </div>
 <div class="modal-footer">
-    <a class="btn btn-large" ng-click="close()">Close</a>
+    <a class="btn btn-large btn-danger" ng-click="close()">Close</a>
 </div>

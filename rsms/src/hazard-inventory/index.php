@@ -161,7 +161,7 @@ echo "</script>";
                 <form class="form">
                     <div class="control-group span4">
                         <label class="control-label" for="name">
-                            <h3 style="height:34px;">Principal Investigator</h3>
+                            <h3 style="height:34px; text-decoration:underline">Principal Investigator</h3>
                         </label>
                         <div class="controls">
                             <span ng-if="!PIs">
@@ -280,7 +280,7 @@ echo "</script>";
                 <ul ng-if="!hazard.hidden" class="topChildren equipment-list" ng-init="hazard.loadSubhazards()">
                     <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                         <label class="checkbox inline">
-                            <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child)" />
+                            <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, hazard)" />
                             <span class="metro-checkbox"></span>
                         </label>
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">

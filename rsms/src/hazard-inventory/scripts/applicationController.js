@@ -39,6 +39,15 @@ angular
                     );
         }
 
+        ac.hasHazardType = function(typeId){
+            for(var i = 0 ; i<dataStore.HazardDto.length; i++){
+                if(dataStore['hasHazardType' + typeId.toString()] || (dataStore.HazardDto[i].Parent_hazard_id == typeId && dataStore.HazardDto[i].IsPresent)) {
+                    dataStore['hasHazardType' + typeId.toString()] = true;
+                    return true;
+                }
+            }
+        }
+
         ac.handleHazardChecked = function(hazardDto, hazard){
             var copy = new window.HazardDto();
             copy.Class                     = hazardDto.Class;

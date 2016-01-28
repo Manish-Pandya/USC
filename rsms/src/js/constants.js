@@ -50,14 +50,28 @@ var Constants = (function () {
         STATUS:{
             NOT_SCHEDULED:"NOT SCHEDULED",
             SCHEDULED:"SCHEDULED",
-            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                               INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
+            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                                                   INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             OVERDUE_CAP:"OVERDUE CAP",
             CLOSED_OUT:"CLOSED OUT"
         },
         SCHEDULE_STATUS:{
             NOT_ASSIGNED:"NOT ASSIGNED",
-        }
+        },
+        MONTH_NAMES:[
+                        {val:"01", string:"January"},
+                        {val:"02", string:"February"},
+                        {val:"03", string:"March"},
+                        {val:"04", string:"April"},
+                        {val:"05", string:"May"},
+                        {val:"06", string:"June"},
+                        {val:"07", string:"July"},
+                        {val:"08", string:"August"},
+                        {val:"09", string:"September"},
+                        {val:"10", string:"October"},
+                        {val:"11", string:"November"},
+                        {val:"12", string:"December"}
+                    ]
     };
 
     constants.CORRECTIVE_ACTION = {
@@ -128,6 +142,12 @@ var Constants = (function () {
         9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
         10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
         10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
+    }
+
+        constants.MASTER_HAZARD_IDS = {
+        BIOLOGICAL : 1,
+        CHEMICAL: 10009,
+        RADIATION: 10010
     }
 
     constants.CHECKLIST_CATEGORIES_BY_MASTER_ID = [

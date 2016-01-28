@@ -96,19 +96,19 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 			
 			// If this is a master category, remove the appropriate master category flag from the Room
 			// Case 1, Biohazards
-			if($decodedObject->getHazardId() == 1){
+			if($decodedObject->getMasterHazardId() == 1){
 				$room = $roomDao->getById($decodedObject->getRoom_id());
 				$room->setBio_hazards_present(false);
 				$roomDao->save($room);
 			}
 			// Case 2, Checm hazards
-			if($decodedObject->getHazardId() == 10009){
+			if($decodedObject->getMasterHazardId() == 10009){
 				$room = $roomDao->getById($decodedObject->getRoom_id());
 				$room->setChem_hazards_present(false);
 				$roomDao->save($room);
 			}
 			// Case 3, Rad hazards
-			if($decodedObject->getHazardId() == 10010){
+			if($decodedObject->getMasterHazardId() == 10010){
 				$room = $roomDao->getById($decodedObject->getRoom_id());
 				$room->setRad_hazards_present(false);
 				$roomDao->save($room);
