@@ -29,6 +29,10 @@ class InspectionScheduleDto {
 	private $inspections;
 	
 	private $inspection_id;
+	private $bio_hazards_present;
+	private $chem_hazards_present;
+	private $rad_hazards_present;
+	
 
 
 	public function getPi_name(){return $this->pi_name;}
@@ -41,6 +45,9 @@ class InspectionScheduleDto {
 	public function getCampus_key_id() {return $this->campus_key_id;}
 	public function getBuilding_key_id() {return $this->building_key_id;}
 	public function getInspection_id() {return $this->inspection_id;}
+	public function getBio_hazards_present() {return $this->bio_hazards_present;}
+	public function getChem_hazards_present() {return $this->chem_hazards_present;}
+	public function getRad_hazards_present() {return $this->rad_hazards_present;}
 	
 
 	public function setPi_name($pi_name){$this->pi_name = $pi_name;}
@@ -53,6 +60,9 @@ class InspectionScheduleDto {
 	public function setCampus_key_id($campus_key_id){$this->campus_key_id = $campus_key_id;}
 	public function setBuilding_key_id($building_key_id){$this->building_key_id = $building_key_id;}
 	public function setInspection_id($inspection_id){$this->inspection_id = $inspection_id;}
+	public function setBio_hazards_present($present){$this->bio_hazards_present = $present;}
+	public function setChem_hazards_present($present){$this->chem_hazards_present = $present;}
+	public function setRad_hazards_present($present){$this->rad_hazards_present = $present;}
 	
 }
 ?>
