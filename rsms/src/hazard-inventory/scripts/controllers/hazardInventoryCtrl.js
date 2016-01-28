@@ -104,10 +104,11 @@ angular.module('HazardInventory')
 
         }
 
-        $scope.openSubsModal = function (hazard) {
+        $scope.openSubsModal = function (hazard,parent) {
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
+            modalData.Parent = parent;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/sub-hazards-modal.html',
@@ -115,10 +116,13 @@ angular.module('HazardInventory')
             });
         }
 
-        $scope.openRoomsModal = function (hazard) {
+        $scope.openRoomsModal = function (hazard, parent) {
+            console.log(parent);
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
+            modalData.GrandParent = parent;
+
             modalData.Parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
             af.setModalData(modalData);
             var modalInstance = $modal.open({

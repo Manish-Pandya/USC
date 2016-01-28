@@ -29,9 +29,9 @@ class PIHazardRoomDto {
 	public function setHazard_id($hazard_id){
 		$this->hazard_id = $hazard_id;
 	}
-	
+
 	public function getMasterHazardId(){
-		return $this->$masterHazardId;
+		return $this->masterHazardId;
 	}
 	
 	public function setMasterHazardId($masterHazardId){

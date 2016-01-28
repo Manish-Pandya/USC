@@ -102,13 +102,13 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$roomDao->save($room);
 			}
 			// Case 2, Checm hazards
-			if($decodedObject->getHazardId() == 9999){
+			if($decodedObject->getHazardId() == 10009){
 				$room = $roomDao->getById($decodedObject->getRoom_id());
 				$room->setChem_hazards_present(false);
 				$roomDao->save($room);
 			}
 			// Case 3, Rad hazards
-			if($decodedObject->getHazardId() == 10009){
+			if($decodedObject->getHazardId() == 10010){
 				$room = $roomDao->getById($decodedObject->getRoom_id());
 				$room->setRad_hazards_present(false);
 				$roomDao->save($room);
@@ -167,17 +167,17 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 					}
 				}
 			}
-
+			$LOG->fatal($decodedObject);
 			// Flag the master category on the room object
 			
 				$room = $roomDao->getById($decodedObject->getRoom_id());
-					if ($decodedObject->getMasterHazardId() == 1) {
+				if ($decodedObject->getMasterHazardId() == 1) {
 					$room->setBio_hazards_present(true);
 				}
-					if ($decodedObject->getMasterHazardId() == 9999) {
+				if ($decodedObject->getMasterHazardId() == 10009) {
 					$room->setChem_hazards_present(true);
 				}
-					if ($decodedObject->getMasterHazardId() == 10009) {
+				if ($decodedObject->getMasterHazardId() == 10010) {
 					$room->setRad_hazards_present(true);
 				}
 

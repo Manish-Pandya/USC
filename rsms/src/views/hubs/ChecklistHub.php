@@ -18,17 +18,17 @@ require_once '../top_view.php';
   <i class="icon-spinnery-dealie spinner large"></i>
   <span>Loading Checklist</span>
 </span>
-
-    <h1 ng-hide="!checklist" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary left" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a></h1>
+    <h1 ng-hide="!checklist.Key_id" id="currentChecklist"><span class="underline">Checklist Title:</span>  {{checklist.Name}}<a class="btn btn-primary left" style="margin-left:10px;" ng-click="edit = !edit" ng-show="!edit" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i>Edit</a></h1>
     <h2 ng-if="noChecklist && !checklist" style="">{{hazard.Name}}</h2>
     <a ng-if="!edit && doneLoading && !checklist"  style="margin-top:5px;" ng-click="editChecklist()" class="btn btn-primary">Create Checklist</a>
-   <form ng-show="edit" style="margin-top:5px;">
+    <form ng-show="checklist && (edit || !checklist.Key_id)" style="margin-top:5px;">
+        {{edit}}
         <input ng-model="checklistCopy.Name" class="span6" placeholder="Enter a name for this checklist."/>
-        <a class="btn btn-success " ng-click="saveChecklist(checklistCopy, checklist)"><i class="icon-checkmark"></i>Save Checklist</a>
-        <a class="btn btn-danger " ng-show="!noChecklist" ng-click="edit = false"><i class="icon-cancel"></i>Cancel</a>
+        <a class="btn btn-success left" ng-click="saveChecklist(checklistCopy, checklist)"><i class="icon-checkmark"></i>Save Checklist</a>
+        <a class="btn btn-danger left" ng-show="!noChecklist" ng-click="edit = false"><i class="icon-cancel"></i>Cancel</a>
         <img ng-show="checklistCopy.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
     </form>
-    <span ng-hide="!checklist">
+    <span ng-hide="!checklist.Key_id">
         <span class="spacer"></span>
         <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-hide="!showInactive.Is_active" href="QuestionHub.php#?checklist_id={{checklist.Key_id}}" class="btn btn-success left btn-large">
          <i class="icon-plus-2"></i>Add Question
@@ -40,7 +40,7 @@ require_once '../top_view.php';
         </a>
       </h3>
       <span class="spacer"></span>
-      <table class="table table-striped table-hover table-bordered large questionList" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
+      <table ng-if="checklist.Questions" class="table table-striped table-hover table-bordered large questionList" id="sortable"><!--<a class="btn btn-large hazardBtn" node-id="'+node.id+'" ng-class="{'btn-danger': question.Is_active == true, 'btn-success' :  question.Is_active == false}" ng-click="handleHazardActive(question)" ></a>-->
 
         <tr class="blue-tr">
           <th><h1>Checklist Questions<a style="margin: -5px 15px 0;" class="btn btn-large left" ng-click="showAll = !showAll"><i ng-class="{'icon-plus-2':!showAll,'icon-minus-2' : showAll}"></i><span ng-if="!showAll">Show</span><span ng-if="showAll">Hide</span> All</a></h1></th>

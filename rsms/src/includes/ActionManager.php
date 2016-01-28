@@ -637,7 +637,11 @@ class ActionManager {
             if (!empty($checklist)) {
                     return $checklist;
             } else {
-                return true;
+            	$checklist = new Checklist();
+            	$checklist->setHazard_id($hazard->getKey_id());
+            	$checklist->setName($hazard->getName());
+            	$checklist->setIs_active(true);
+            	return $checklist;
             }
         }
         else{
