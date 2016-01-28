@@ -12,13 +12,13 @@ require_once '../top_view.php';
       <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
   </h1>
 </div>
-    <!--
+
 <div class="alert savingBox" ng-if="filtering">
   <h1>
       <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
       <span style="margin-left: 13px;display: inline-block;">Filtering Inspections...</span>
   </h1>
-</div>-->
+</div>
 
 <div class="navbar fixed">
     <ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
@@ -69,8 +69,14 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
+                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
                         <option value="">Select a status</option>
+                    </select>
+                </th>
+                <th>
+                    Inspection Hazards
+                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                        <option value="">Select</option>
                     </select>
                 </th>
             </tr>
@@ -78,10 +84,10 @@ require_once '../top_view.php';
         <tbody>
 
             <tr ng-repeat="dto in (filtered = (dtos | genericFilter:search:convenienceMethods))" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}">
-                <td><span once-text="dto.Pi_name"></span></td>
-                <td><span once-text="dto.Campus_name"></span></td>
-                <td><span once-text="dto.Building_name"></span></td>
-                <td>
+                <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
+                <td style="width:8.5%"><span once-text="dto.Campus_name"></span></td>
+                <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
+                <td style="width:8.5%">
                     <ul ng-if="!dto.Inspection_rooms">
                         <li ng-repeat="room in dto.Building_rooms"><span once-text="room.Name"></span></li>
                     </ul>
@@ -89,7 +95,7 @@ require_once '../top_view.php';
                         <li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
                     </ul>
                 </td>
-                <td>
+                <td style="width:7.5%">
                     <span ng-if="dto.Inspection_id">
                         <span ng-if="dto.Inspections.Date_started">
                             <span ng-repeat="month in months" ng-if="month.val==dto.Inspections.Schedule_month">{{month.string}}</span>
@@ -105,7 +111,7 @@ require_once '../top_view.php';
                     </select>
 
                 </td>
-                <td>
+                <td style="width:7.5%">
                     <div ng-if="!dto.Inspections.Inspectors.length">
                         {{constants.INSPECTION.SCHEDULE_STATUS.NOT_ASSIGNED}}<br>
                     </div>
@@ -140,20 +146,20 @@ require_once '../top_view.php';
                     </ul>
 
                 </td>
-                <td>
+                <td style="width:8.5%">
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
-                                ({{dto.Inspections.Schedule_month | getMonthName}})
+                                <br>Scheduled ({{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
                         </span>
 
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
                             <p>
-                                <br>
                                 (Report Sent: {{dto.Inspections.Notification_date | dateToISO | date:"MM/dd/yy"}})
+                                <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>
                         </span>
@@ -179,7 +185,7 @@ require_once '../top_view.php';
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
                             <span><br>(Due Date:{{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}}, {{dto.Inspections.Schedule_year}})</span>
@@ -188,6 +194,11 @@ require_once '../top_view.php';
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
+                </td>
+                <td style="width:9.5%" class="hazard-icons">
+                    <span ng-if="dto.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png"/></span>
+                    <span ng-if="dto.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png"/></span>
+                    <span ng-if="dto.Rad_hazards_present"><img src="../../img/radiation-large-icon.png"/></span>
                 </td>
             </tr>
         </tbody>

@@ -926,13 +926,18 @@ class GenericDAO {
 		global $db;
 		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
 	
-		//get this pi's rooms
-		$queryString = 'SELECT *
-					    FROM principal_investigator
-					    WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
+		
 	
 		if($hazardId != null){
 			$queryString .= " AND hazard_id = $hazardId";
+			//get this pi's rooms
+			$queryString = 'SELECT *
+							FROM principal_investigator
+							WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
+		}else{
+			$queryString = 'SELECT *
+							FROM principal_investigator
+							WHERE key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
 		}
 		
 		$queryString .= ')';

@@ -64,31 +64,28 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 })
 .filter('genericFilter', function ($rootScope) {
     return function (items,search,convenienceMethods) {
+        if(!items) return;
+        if(!search) return items;
+
         if(search){
-            var i = 0;
-            if(items)i = items.length;
+            var i = items.length;
             var filtered = [];
-
-            var isMatched = function(input, item){
-                if(item.Name == input)return true;
-                return false;
-            }
-
             $rootScope.filtering = true;
-
+            var matched;
             while(i--){
                 //we filter for every set search filter, looping through the collection only once
-                var item=items[i];
-                var matched = true;
+                var item = items[i];
+                matched = true;
 
                 if(search.building){
                     if( item.Building_name && item.Building_name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
                         matched = false;
+                        continue;
                     }
 
                 }
 
-                if(search.inspector){
+                if(matched && search.inspector){
                     if(item.Inspections){
                         if(item.Inspections.Inspectors && item.Inspections.Inspectors.length){
                             var z = item.Inspections.Inspectors.length;
@@ -100,32 +97,44 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                         }else{
                             if(Constants.INSPECTION.SCHEDULE_STATUS.NOT_ASSIGNED.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0){
                                 matched = false;
+                                continue;
                             }
                         }
 
                     }else{
                         matched = false;
+                        continue;
                     }
 
                 }
 
-                if( search.campus ) {
-                    if(item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0)matched = false;
+                if( matched && search.campus ) {
+                    if(item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0){
+                        matched = false;
+                        continue;
+                    }
                 }
 
-                if(search.pi && item.Pi_name){
-                    if(item.Pi_name.toLowerCase().indexOf(search.pi.toLowerCase()) < 0) matched = false;
+                if(matched && search.pi && item.Pi_name){
+                    if(item.Pi_name.toLowerCase().indexOf(search.pi.toLowerCase()) < 0){
+                        matched = false;
+                        continue;
+                    }
                 }
 
-                if(search.status){
+                if(matched && search.status){
                     if(item.Inspections)var status = item.Inspections.Status;
                     if(!item.Inspections)var status = Constants.INSPECTION.STATUS.NOT_SCHEDULED;
-                    if(status.toLowerCase() != search.status.toLowerCase()) matched = false;
+                    if(status.toLowerCase() != search.status.toLowerCase()){
+                        matched = false;
+                        continue;
+                    }
                 }
 
-                if(search.date){
+                if(matched && search.date){
                     if(!item.Inspections || !item.Inspections.Date_started && !item.Inspections.Schedule_month){
                         matched = false;
+                        continue;
                     }else{
                         if(item.Inspections && item.Inspections.Date_started)var tempDate = getDate(item.Inspections.Date_started);
                         if(tempDate && tempDate.formattedString.indexOf(search.date) < 0){
@@ -142,18 +151,24 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                                 }
                             }
                         }
-                        if(!goingToMatch) matched = false;
+                        if(!goingToMatch){
+                            matched = false;
+                            continue;
+                        }
                     }
                 }
-
+                if(matched && search.hazards){
+                    if(!item[search.hazards]){
+                        matched = false;
+                        continue;
+                    }
+                }
 
                 if(matched == true)filtered.unshift(item);
 
             }
             $rootScope.filtering = false;
             return filtered;
-        }else{
-            return items;
         }
     };
 })
@@ -162,7 +177,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     var date = new Date(input);
     var duePoint = date.setDate(date.getDate() + 14);
     dueDate = new Date(duePoint).toISOString();
-    console.log(dueDate);
     return dueDate;
   };
 })
