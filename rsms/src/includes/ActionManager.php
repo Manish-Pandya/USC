@@ -3958,8 +3958,16 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getStatus");
 
                 $inspection->setEntityMaps($entityMaps);
-
-                $is->setInspection_rooms($inspection->getRooms());
+                
+                $filteredRooms = array();
+                $rooms = $inspection->getRooms();
+                foreach( $rooms as $key=>$room ){
+                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                		array_push($filteredRooms, $room);
+                	}
+                }
+                $is->setInspection_rooms($filteredRooms);
+                
                 $is->setInspections($inspection);
             }
 
