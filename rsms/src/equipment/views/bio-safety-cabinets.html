@@ -25,7 +25,7 @@
                     <th>ROOM</th>
                     <th>
                         CERT-DATE<br>
-                        <select ng-options="cabinet.EquipmentInspections[0].Certification_date as (cabinet.EquipmentInspections[0].Certification_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Certification_date'" ng-model="selectedCertificationDate">
+                        <select ng-options="cabinet.EquipmentInspections[0].Certification_date as cabinet.EquipmentInspections[0].Certification_date.split('-')[0] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Certification_date'" ng-model="selectedCertificationDate">
                             <option value="">All</option>
                         </select>
                     </th>
@@ -33,7 +33,7 @@
                     <th>REPORT</th>
                     <th>COMMENTS</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchCertDate:selectedCertificationDate | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDate:selectedCertificationDate:'Certification_date' | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
@@ -96,7 +96,7 @@
                     <th>ROOM</th>
                     <th>
                         DUE-DATE<br>
-                        <select ng-options="cabinet.EquipmentInspections[0].Due_date as (cabinet.EquipmentInspections[0].Due_date | dateToISO).split('/')[2] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Due_date'" ng-model="selectedDueDate">
+                        <select ng-options="cabinet.EquipmentInspections[0].Due_date as cabinet.EquipmentInspections[0].Due_date.split('-')[0] for cabinet in cabinets | orderBy:'EquipmentInspections[0].Due_date'" ng-model="selectedDueDate">
                             <option value="">All</option>
                         </select>
                     </th>
@@ -104,7 +104,7 @@
                     <th>REPORT</th>
                     <th>STATUS</th>
                 </tr>
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDueDate:selectedDueDate | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDate:selectedDueDate:'Due_date' | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>

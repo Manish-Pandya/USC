@@ -41,42 +41,22 @@ angular
             return matches;
         }
     })
-    .filter("matchCertDate", function(){
-        return function(equipments, string){
+    .filter("matchDate", function(){
+        return function(equipments, dateString, dateProp){
             if(!equipments) {
                 return;
-            } else if (!string) {
+            } else if (!dateString || !dateProp) {
                 return equipments;
             }
+            var year = dateString.split('-')[0];
+            console.log(year, dateProp);
             var matches = [];
             var i = equipments.length;
             while(i--){
-                console.log(string);
                 var j = equipments[i].EquipmentInspections.length;
                 while(j--){
-                    if(equipments[i].EquipmentInspections[j].Certification_date){
-                        if(equipments[i].EquipmentInspections[j].Certification_date.indexOf(string) > -1) matches.unshift(equipments[i]);
-                    }
-                }
-            }
-            return matches;
-        }
-    })
-    .filter("matchDueDate", function(){
-        return function(equipments, string){
-            if(!equipments) {
-                return;
-            } else if (!string) {
-                return equipments;
-            }
-            var matches = [];
-            var i = equipments.length;
-            while(i--){
-                console.log(string);
-                var j = equipments[i].EquipmentInspections.length;
-                while(j--){
-                    if(equipments[i].EquipmentInspections[j].Due_date){
-                        if(equipments[i].EquipmentInspections[j].Due_date.indexOf(string) > -1) matches.unshift(equipments[i]);
+                    if(equipments[i].EquipmentInspections[j][dateProp]){
+                        if(equipments[i].EquipmentInspections[j][dateProp].indexOf(year) > -1) matches.unshift(equipments[i]);
                     }
                 }
             }

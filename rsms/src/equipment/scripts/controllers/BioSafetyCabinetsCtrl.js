@@ -16,7 +16,7 @@ angular.module('EquipmentModule')
                 .then(
                     function(){
                         $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
-                        console.log($scope.cabinets);
+                        console.log($scope.cabinets[0].EquipmentInspections);
                         return $scope.cabinets;
                     }
                 )
@@ -30,7 +30,6 @@ angular.module('EquipmentModule')
             return af.getAllRooms().then(
                         function(){
                                 $scope.rooms = dataStoreManager.get("Room");
-                                //console.log($scope.rooms);
                                 return $scope.rooms
                             }
                         );
@@ -39,17 +38,16 @@ angular.module('EquipmentModule')
             return af.getAllBuildings()
                         .then(
                             function(){
-                                console.log( dataStoreManager.get("Building"));
                                 $scope.buildings = dataStoreManager.get("Building");
                                 return $scope.buildings
                             }
                         );
         }
-    
+        
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
-                            .then(getAllBioSafetyCabinets());        
+                            .then(getAllBioSafetyCabinets());
 
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
@@ -60,6 +58,32 @@ angular.module('EquipmentModule')
 
         $scope.report = function(cabinet) {
 
+        }
+        
+        $scope.getUniqueCertYears = function() {
+            if ($scope.certYears) {
+                return $scope.certYears;
+            } else {
+                $scope.certYears = [];
+                var i = $scope.cabinets.length;
+                while(i--){
+                    var j = $scope.cabinets[i].EquipmentInspections ? $scope.cabinets[i].EquipmentInspections.length : 0;
+                    console.log($scope.cabinets[i].EquipmentInspections);
+                    while(j--){
+                        var certYear = $scope.cabinets[i].EquipmentInspections.Certification_date.split('-')[0];
+                        var dueYear = $scope.cabinets[i].EquipmentInspections.Due_date.split('-')[0];
+                        if ($scope.certYears.indexOf(certYear) == -1) {
+                            $scope.certYears.push(certYear);
+                        }
+                        if ($scope.dueYears.indexOf(dueYear) == -1) {
+                            $scope.dueYears.push(dueYear);
+                        }
+                    }
+                }
+                console.log($scope.certYears);
+                console.log($scope.dueYears);
+                return $scope.certYears;
+            }
         }
 
         $scope.openModal = function(object) {
