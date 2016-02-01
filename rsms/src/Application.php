@@ -13,10 +13,14 @@ define('ADMIN_MAIL', 'hoke@graysail.com');
 if(isProduction()){
 	define('WEB_ROOT', '/rsms/');
 	define('LOGIN_PAGE', 'http://radon.qa.sc.edu/rsms');
+	
 }else{
 	define('WEB_ROOT', '/rsms/src/');
 	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');	
 }
+define('UPLOAD_DIR_PATH', getcwd());
+
+define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', 'D:/git/00_rsms/rsms/src/biosafety-committees/protocol-documents/');
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -133,6 +137,13 @@ function isHazardInventoryEnabled(){
 
 function isEquipmentEnabled(){
 	if(	strstr($_SERVER["HTTP_REFERER"], '/equipment/' ) || isset($_GET['equipment']))return true;
+	return false;
+}
+
+function isCommitteesEnabled(){
+	$LOG = Logger::getLogger("committees");
+	$LOG->fatal('committees enabled');
+	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
 	return false;
 }
 

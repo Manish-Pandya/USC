@@ -56,6 +56,21 @@ class ActionManager {
             return new ActionError("Unable to decode JSON. Cause: $e");
         }
     }
+    
+    public function getInputFile(){
+    	try{
+    		$decodedObject = JsonManager::getFile();
+    
+    		if( $decodedObject === NULL ){
+    			return new ActionError('No data read from input stream');
+    		}
+    
+    		return $decodedObject;
+    	}
+    	catch(Exception $e){
+    		return new ActionError("Unable to decode FILE. Cause: $e");
+    	}
+    }
 
     public function getDao( $modelObject = NULL ){
         //FIXME: Remove MockDAO

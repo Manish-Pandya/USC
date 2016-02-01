@@ -7,9 +7,9 @@ if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
 session_start();
 
 if( isset($_SESSION) && !isset($_SESSION['error']) ){
-	if(isset($_SESSION["REDIRECT"])){
-		$redirect = $_SESSION["REDIRECT"];
-	}
+    if(isset($_SESSION["REDIRECT"])){
+        $redirect = $_SESSION["REDIRECT"];
+    }
     //session_destroy();
     $_SESSION["REDIRECT"] = $redirect;
 }
@@ -18,6 +18,7 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width,initial-scale=.9,shrink-to-fit=no">
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap-responsive.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootmetro.css"/>
@@ -27,6 +28,26 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
+    <script>
+        function whackWebkitMatchesSelector() {
+            var oldMatches = Element.prototype.webkitMatchesSelector
+
+            function newMatches(selector) {
+                try {
+                    return oldMatches.call(this, selector)
+                }
+                catch (err) {
+                    return false
+                }
+            }
+
+            Element.prototype.webkitMatchesSelector = newMatches
+        }
+
+        whackWebkitMatchesSelector()
+    </script>
+    <script src="http://192.168.1.118:8080/target/target-script-min.js#anonymous"></script>
+
 </head>
 <body>
 <div class="container-fluid">
@@ -41,7 +62,7 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
             <label for="exampleInputPassword1">Password</label>
             <input type="password" name="password" class="form-control" id="password" placeholder="Password">
          </div>
-         
+
          <?php if(isset($_SESSION) && isset($_SESSION['error']) && $_SESSION['error'] != NULL) {?>
          <div class="form-group" style="width: 588px;margin-top: 10px;">
              <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>

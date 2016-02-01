@@ -55,6 +55,41 @@ angular
 
             }
 
+
+            rac.getDate = function(dateString){
+                console.log(dateString)
+                console.log(Date.parse(dateString))
+                var seconds = Date.parse(dateString);
+                console.log(seconds);
+                //if( !dateString || isNaN(dateString) )return;
+                var t = new Date(1970,0,1);
+                t.setTime(seconds);
+                console.log(t);
+                return t;
+            }
+
+            rac.setObjectActiveState = function( object )
+            {
+                    object.setIs_active( !object.Is_active );
+
+                    //set a root scope marker as the promise so that we can use angular-busy directives in the view
+                    $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object )
+                        .then(
+                            function( returnedPromise ){
+                                if(typeof returnedPromise === 'object')angular.extend(object, returnedPromise);
+                                return true;
+                            },
+                            function( error )
+                            {
+                                //object.Name = error;
+                                object.setIs_active( !object.Is_active );
+                                $rootScope.error = 'error';
+                                return false;
+                            }
+                        );
+
+            }
+
             rac.save = function( object, saveChildren, url )
             {
                     if(!saveChildren)saveChildren = false;
@@ -100,7 +135,7 @@ angular
             {
                 $rootScope.error = null;
             }
-            
+
             /********************************************************************
             **
             **      MODALS
@@ -130,7 +165,7 @@ angular
             {
                 dataStore.modalData = [];
             }
-            
+
             /********************************************************************/
 
             return rac;

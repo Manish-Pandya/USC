@@ -112,6 +112,44 @@ class JsonManager {
 		}
 	}
 	
+	public static function getFile( $stream='php://input' ){
+		$LOG = Logger::getLogger('files test');
+		$LOG->fatal(file_get_contents($stream));
+		if( empty( $stream ) ){
+			//$this->LOG->error("No stream specified; cannot decode JSON");
+			return NULL;
+		}else{
+			return $stream;
+		}
+	
+		//read JSON from input stream
+		$input = file_get_contents( $stream );
+	
+		//$this->LOG->trace( 'Data read from input stream: ' . $input );
+	
+		//Only attempt to convert if data is read from the stream
+		if( !empty( $input) ){
+				
+			//decode JSON to object
+			try{
+				$decodedObject = JsonManager::decode($input);
+	
+				//$this->LOG->trace( 'Decoded to: ' . $decodedObject);
+	
+				return $decodedObject;
+			}
+			catch( Exception $e){
+				throw new Exception('Unable to decode JSON from Input Stream', NULL, $e);
+			}
+		}
+		else{
+			//No data read from input stream.
+			//$this->LOG->error( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			return NULL;
+		}
+	}
+	
+	
 	/**
 	 * Decodes the given JSON string and uses the key/value pairs to call
 	 * mutator methods on $object.

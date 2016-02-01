@@ -46,6 +46,9 @@ class ActionDispatcher {
         }else if ( isEquipmentEnabled() ){
         	$this->actionManagerType = "Equipment_ActionManager";
         }
+        else if ( isCommitteesEnabled() ){
+        	$this->actionManagerType = "Committees_ActionManager";
+        }
         else {
             $this->actionManagerType = "ActionManager";
         }
@@ -82,6 +85,10 @@ class ActionDispatcher {
             	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
             }
 
+            if( isCommitteesEnabled() ){
+            	$actionMappings = array_merge($actionMappings, Committees_ActionMappingFactory::readActionConfig());
+            }
+            
             return $actionMappings;
         }
         else{
