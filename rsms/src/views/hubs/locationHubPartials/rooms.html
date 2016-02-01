@@ -54,18 +54,18 @@
 
     <tbody>
         <tr ng-repeat="room in (filtered = (rooms |  orderBy:['index', 'Building.Campus.Name', 'Building.Name', 'Name'] | genericFilter:search))" ng-class="{'inactive': !room.Is_active, 'new': room.isNew}">
-            <td style="width:8%;">
+            <td style="width:6%;">
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-hide="contact.edit" class="edit btn btn btn-primary" ng-click="openRoomModal(room)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="room.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></a>
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active"><i class="icon-checkmark"></i></button>
                 <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
             </td>
 
-            <td style="width:10%">
+            <td style="width:20%">
                 {{lhf.getBuildingByRoom(room).Name}}
             </td>
 
-            <td once-text="room.Name" style="width:12%;">
+            <td once-text="room.Name" style="width:8%;">
             </td>
 
             <td style="width:9%" class="hazard-icons">
@@ -74,10 +74,10 @@
                 <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png"/></span>
             </td>
 
-            <td once-text="room.Purpose" style="width:15%;">
+            <td once-text="room.Purpose" style="width:10%;">
             </td>
 
-            <td  style="width:30%">
+            <td  style="width:34%">
                 <ul ng-if="room.PrincipalInvestigators.length">
                     <li ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
                         <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>
@@ -96,7 +96,7 @@
                 </ul>
             </td>
 
-            <td style="width:16%" once-text="room.Building.Campus.Name">
+            <td style="width:12%" once-text="room.Building.Campus.Name">
             </td>
         </tr>
     </tbody>
