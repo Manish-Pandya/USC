@@ -79,10 +79,8 @@ class Committees_ActionManager extends ActionManager {
 		*/
 		//validate the file, make sure it's a .doc or .pdf
 		//check the extension
-		$LOG->fatal($_FILES['file']);
 		$valid_file_extensions = array("doc","pdf");
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
-		$LOG->fatal(filesize($_FILES['file']["tmp_name"]));	
 		
 		if (!in_array($file_extension, $valid_file_extensions)) {
 			return new ActionError("Not a valid file extension");
@@ -126,7 +124,7 @@ class Committees_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		
+		$LOG->fatal($filename);
 		//get just the name of the file
 		$name = basename($filename);
 

@@ -13,14 +13,17 @@ define('ADMIN_MAIL', 'hoke@graysail.com');
 if(isProduction()){
 	define('WEB_ROOT', '/rsms/');
 	define('LOGIN_PAGE', 'http://radon.qa.sc.edu/rsms');
+	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', getcwd().'/biosafety-committees/protocol-documents/');
+	
 	
 }else{
 	define('WEB_ROOT', '/rsms/src/');
-	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');	
+	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');
+	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', 'D:/git/00_rsms/rsms/src/biosafety-committees/protocol-documents/');
+	
 }
 define('UPLOAD_DIR_PATH', getcwd());
 
-define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', 'D:/git/00_rsms/rsms/src/biosafety-committees/protocol-documents/');
 
 ////////////////////////////////////////////////////////////////////////////////
 //

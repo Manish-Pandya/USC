@@ -155,12 +155,12 @@ echo "</script>";
                 <tr>
                     <th>Edit</th>
                     <th>Protocol #</th>
-                    <th>P.I. <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/> </th>
+                    <th>Investigator <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/> </th>
                     <th>Department <input class="span2" ng-model="search.department" placeholder="Filter by Department"/> </th>
                     <th>Project Title</th>
                     <th>Approved</th>
                     <th>Expires</th>
-                    <th>Hazard <input class="span2" ng-model="search.hazard" placeholder="Filter by Hazard"/> </th>
+                    <th>Hazard <br><input class="span2" ng-model="search.hazard" placeholder="Filter by Hazard"/> </th>
                     <th>Protocol</th>
                 </tr>
                 <tr ng-repeat="protocol in protocols | genericFilter:search | orderBy: 'PrincipalInvestigator.User.Name'" ng-class="{'inactive':!protocol.Is_active}">
@@ -170,17 +170,17 @@ echo "</script>";
                         <a ng-if="!protocol.Is_active" ng-click="af.setObjectActiveState(protocol)" class="btn btn-success"><i class="icon-checkmark"></i></a>
                     </td>
                     <td style="width:10%">{{protocol.Protocol_number}}</td>
-                    <td style="width:10%">{{protocol.PrincipalInvestigator.User.Name}}</td>
+                    <td style="width:13%">{{protocol.PrincipalInvestigator.User.Name}}</td>
                     <td style="width:15%">{{protocol.Department.Name}}</td>
-                    <td style="width:19%">{{protocol.Project_title}}</td>
+                    <td style="width:13%">{{protocol.Project_title}}</td>
                     <td style="width:8%">{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
                     <td style="width:7%">{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
-                    <td style="padding:10px 0;width:14%">
+                    <td style="padding:10px 0;width:18%">
                         <ul>
                             <li ng-repeat="hazard in constants.PROTOCOL_HAZARDS" ng-if="protocol.Hazards.indexOf(hazard.Name) > -1">{{hazard.Name}}</li>
                         </ul>
                     </td>
-                    <td style="width:10%">
+                    <td style="width:9%">
                         <a class="btn btn-large btn-success left view-report" ng-if="protocol.Report_path" href="protocol-documents/{{protocol.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
                         <span ng-if="!protocol.Report_path">N/A</span>
                     </td>

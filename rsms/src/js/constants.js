@@ -144,7 +144,7 @@ var Constants = (function () {
         10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
     }
 
-        constants.MASTER_HAZARD_IDS = {
+    constants.MASTER_HAZARD_IDS = {
         BIOLOGICAL : 1,
         CHEMICAL: 10009,
         RADIATION: 10010
@@ -178,6 +178,9 @@ var Constants = (function () {
         CHEM_HAZARDS_PRESENT: {label: "Chemical Hazards",   value:"Chem_hazards_present"},
         RAD_HAZARDS_PRESENT:  {label: "Radiation Hazards",  value:"Rad_hazards_present"}
     }
+
+    constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
+
 
     return constants;
 })();

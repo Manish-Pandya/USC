@@ -457,11 +457,18 @@ div.rsmsCenterIconContainer a p {
     text-align: center;
   }
   /* line 292, ../sass/style.scss */
-  .centerIcons div.rsmsCenterIconContainer a img {
+  .centerIcons div.rsmsCenterIconContainer a img, .centerIcons div.rsmsCenterIconContainer a i {
     margin: 0 auto;
     height: 250px;
     display: block;
   }
+  .centerIcons div.rsmsCenterIconContainer a i{
+    font-size: 230px;
+    margin-top: 120px;
+    margin-bottom: -120px;
+    margin-left: 33px;
+    color: white !Important;
+   }
 }
 @media (min-width: 773px) and (max-width: 999px) {
   /* line 300, ../sass/style.scss */

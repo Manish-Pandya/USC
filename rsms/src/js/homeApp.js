@@ -27,6 +27,12 @@ homeApp
                     controller: adminController
                 }
             )
+            .when('/biosafety-programs',
+                {
+                    templateUrl: '../views/rsmsCenterPartials/biosafety-programs.html',
+                    controller: adminController
+                }
+            )
             .otherwise(
                 {
                     redirectTo: '/home'

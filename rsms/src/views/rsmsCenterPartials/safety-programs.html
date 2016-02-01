@@ -7,7 +7,7 @@
       </a>
     </div>
     <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'], ])">
-      <a href="../rad/#/admin" class="span12 bio">
+      <a ng-click="setRoute('biosafety-programs')"  class="span12 bio">
         <img class="" src="../img/biohazard-largeicon.png" />
         <p>Biological Safety</p>
       </a>
