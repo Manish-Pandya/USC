@@ -4,6 +4,23 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     return (input || []).join(delimiter || ',');
   };
 })
+.filter('toArray', function () {
+  return function (obj, addKey) {
+    if (!angular.isObject(obj)) return obj;
+    if ( addKey === false ) {
+      return Object.keys(obj).map(function(key) {
+        return obj[key];
+      });
+    } else {
+      return Object.keys(obj).map(function (key) {
+        var value = obj[key];
+        return angular.isObject(value) ?
+          Object.defineProperty(value, '$key', { enumerable: false, value: key}) :
+          { $key: key, $value: value };
+      });
+    }
+  };
+})
 
 //configure datepicker util
 .config(function(ngQuickDateDefaultsProvider) {
@@ -45,24 +62,47 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     {redirectTo: '/report'}
   );
 })
-.directive('correctiveAction', ['$window', function($window) {
+.directive('nestedTable', ['$window', function($window) {
     return {
+        scope: {watched: "@"},
         restrict: 'C',
         link: function(scope, elem, attrs) {
-            var h = elem.closest('td').height();
-            elem.css({'minHeight': h});
+            /*
+            scope.$watch('watched', function(oldVal, newVal){
+                if(oldVal != newVal)sizeThinguses(scope, elem, attrs);
+            })*/
+            window.setTimeout(
+                function(){
+                    var td = elem.parents('td');
+                    console.log( td.next() );
+                    var h = td.next()[0].offsetHeight;
+                    elem.css({'height': h});
+                },10
+            )
+
         }
     }
 }])
 
 .filter('isNegative', function(){
     return function(questions){
+        if(!questions)return;
         var matches = [];
         var i = questions.length;
         while(i--){
+            var push = false;
             if(questions[i].Responses && questions[i].Responses.Answer == 'no'){
-                matches.push(questions[i]);
+                var j = questions[i].Responses.DeficiencySelections.length;
+                while(j--){
+                    var def = questions[i].Responses.DeficiencySelections[j];
+                    if(def.Deficiency.Text == 'Other'){
+                        if(def.Is_active)push = true;
+                    }else{
+                        push = true;
+                    }
+                }
             }
+            if(push)matches.push(questions[i]);
         }
         return matches;
     }
@@ -124,27 +164,27 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
     //group the checklists by parent hazard
     //get the questions for each checklist and store them in a property that the view can access easily
-    for(i=0;i<checklists.length;i++){
+    for( var i = 0; i < checklists.length; i++){
       var checklist = checklists[i];
-
+      checklist.masterOrder = i;
       if(checklist.Master_hazard.toLowerCase().indexOf('biological') > -1){
         if(!checklistHolder.biologicalHazards.Questions)checklistHolder.biologicalHazards.Questions = [];
-        checklistHolder.biologicalHazards.checklists.unshift(checklist);
+        checklistHolder.biologicalHazards.checklists.push(checklist);
         checklistHolder.biologicalHazards.Questions = checklistHolder.biologicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('chemical') > -1){
         if(!checklistHolder.chemicalHazards.Questions)checklistHolder.chemicalHazards.Questions = [];
-        checklistHolder.chemicalHazards.checklists.unshift(checklist);
+        checklistHolder.chemicalHazards.checklists.push(checklist);
         checklistHolder.chemicalHazards.Questions = checklistHolder.chemicalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('radiation') > -1){
         if(!checklistHolder.radiationHazards.Questions)checklistHolder.radiationHazards.Questions = [];
-        checklistHolder.radiationHazards.checklists.unshift(checklist);
+        checklistHolder.radiationHazards.checklists.push(checklist);
         checklistHolder.radiationHazards.Questions = checklistHolder.radiationHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
       else if(checklist.Master_hazard.toLowerCase().indexOf('general') > -1){
         if(!checklistHolder.generalHazards.Questions)checklistHolder.generalHazards.Questions = [];
-        checklistHolder.generalHazards.checklists.unshift(checklist);
+        checklistHolder.generalHazards.checklists.push(checklist);
         checklistHolder.generalHazards.Questions = checklistHolder.generalHazards.Questions.concat(this.getQuestionsByChecklist(checklist));
       }
     }
@@ -875,6 +915,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
   }
 
   $scope.hasNegativeRespones = function(questions){
+      if(!questions || questions.length == 0)return false;
       var i = questions.length;
       while(i--){
         if(questions[i].Responses && questions[i].Responses.Answer == 'no')return true;

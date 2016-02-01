@@ -753,7 +753,11 @@ class ActionManager {
                 $checklist = $checklistDao->getById($decodedObject->getChecklist_id());
                 $qCount    = count($checklist->getQuestions())-1;
                 $questions = $checklist->getQuestions();
-                $index     = $questions[$qCount]->getOrder_index();
+                if($questions != null){
+                	$index     = $questions[$qCount]->getOrder_index();
+                }else{
+                	$index = -1;
+                }
                 $decodedObject->setOrder_index($index + 1);
             }
             $dao->save($decodedObject);

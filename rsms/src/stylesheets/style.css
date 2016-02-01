@@ -229,7 +229,7 @@ a.btn.btn-mini i {
   margin: 1px 4px 1px 0px;
 }
 .btn.left i{
-  margin: 2px 6px 1px 2px !important
+  margin: 2px 5px 1px 2px !important;
 }
 .btn.left img{
   margin: -1px 6px -2px 2px !important;
@@ -1756,7 +1756,7 @@ td.checklistHeader{
     padding: 10px 15px !important;
 }
 tbody.biological td.checklistHeader {
-    background: rgba(221, 0, 0, 0.41) !important;
+    background: rgba(221, 0, 0, 0.2) !important;
 }
 tbody.chemical td.checklistHeader {
     background: rgba(243, 243, 6, 0.28) !important;
@@ -1765,7 +1765,7 @@ tbody.radiation td.checklistHeader {
     background: rgba(102, 0, 204, .5) !important;
 }
 tbody.general td.checklistHeader {
-    background: rgba(0, 153, 0, 0.7) !important;
+    background: rgba(0, 153, 0, 0.4) !important;
 }
 
 

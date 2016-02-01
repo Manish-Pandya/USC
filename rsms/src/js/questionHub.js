@@ -1,7 +1,7 @@
 var questionHub = angular.module('questionHub', ['convenienceMethodWithRoleBasedModule', 'once']);
 
 function QuestionHubController($scope, $q, $rootElement, $location, convenienceMethods) {
-    
+
     function init(){
         if($location.search().id){
             getQuestionById($location.search().id);
@@ -297,6 +297,7 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
                     //if this question is new, set up the view booleans so that we don't show the form after saving
                     if(newQuestion){
                         $scope.question = angular.copy( question );
+                        $location.search("id",returnedQuestion.Key_id);
                         $scope.noQuestion = false;
                     }
                 },
