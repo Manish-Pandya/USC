@@ -25,6 +25,7 @@ class Parcel extends RadCrud {
 		"authorization_id"				=> "integer",
         "catalog_number"                => "text",
         "chemical_compound"             => "text",
+		"comments"						=> "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -94,6 +95,7 @@ class Parcel extends RadCrud {
 
     private $catalog_number;
     private $chemical_compound;
+    private $comments;
     
     private $hasTests;
     
@@ -240,6 +242,9 @@ class Parcel extends RadCrud {
     
     public function getChemical_compound() {return $this->chemical_compound;}
 	public function setChemical_compound($compound) {$this->chemical_compound = $compound;}
+	
+	public function getComments(){return $this->comments;}
+	public function setComments($comments){$this->comments = $comments;}
 	
 	public function getHasTests(){
 		if($this->hasTests == null){

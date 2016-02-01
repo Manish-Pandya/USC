@@ -19,6 +19,7 @@
                 <li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>
                 <li><a class="carboys" ui-sref="radmin.carboys"><i class="icon-carboy"></i>Carboys</a></li>
                 <li><a class="isotopes" style="color:black" ui-sref="radmin.isotopes"><img src="../img/radiation-large-icon.png"/ style="width:20px;">Isotopes</a></li>
+                <li><a class="parcels" ui-sref="radmin.orders"><i class="icon-box-add"></i>Orders</a></li>
 
             </ul>
             <h4 class="section-header"><img src="../img/pi-icon.png"/>Search by PI
@@ -33,11 +34,6 @@
                           <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
-                   <h3 style="display:inline" ng-if="PI && !selectPI">{{PI.User.Name}}</h3>
-                    <span ng-click="selectPI = !selectPI">
-                        <i  ng-if="PI && !selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
-                        <i class="icon-cancel danger" ng-if="PI && selectPI" ng-click="selectPI = !selectPI" style="margin: 6px 5px;"></i>
-                    </span>
                 </span>
             </h4>
             <ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">

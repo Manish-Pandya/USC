@@ -22,7 +22,7 @@
             </h3>
             <div ng-if="parcel.show">
                 <div class="spacer small"></div>
-                <h4 class="padding">Wipe Test <a ng-if="!parcel.Wipe_test.length && !parcel.Creating_wipe" class="btn-success btn left" ng-click="editWipeParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
+                <h4 class="padding">Wipe Test <a ng-if="!parcel.Wipe_test.length && !parcel.Creating_wipe" class="btn-success btn left" ng-click="editParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
                 <div class="fake-table" ng-if="parcel.Wipe_test.length || parcel.Creating_wipe">
                     <div class="table-header">
                         <h3>Edit</h3>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="table-row">
                         <div ng-class="{'small-extra-top': parcel.Creating_wipe}">
-                            <a class="btn btn-primary left" ng-disabled="parcel.Creating_wipe" ng-click="editWipeParcelWipeTest(parcel, parcel.Wipe_test[0])"><i class="icon-pencil"></i>Edit</a>
+                            <a class="btn btn-primary left" ng-disabled="parcel.Creating_wipe" ng-click="editParcelWipeTest(parcel, parcel.Wipe_test[0])"><i class="icon-pencil"></i>Edit</a>
                         </div>
 
                         <div ng-if="!parcel.Creating_wipe" ng-if="smear.edit">

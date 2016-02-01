@@ -3,7 +3,7 @@
 </div>
 
 <div class="modal-body wide-modal wipes-modal">
-    <h4 class="padding">Wipe Test <a ng-if="!modalData.ParcelCopy.Wipe_test.length && !modalData.Parcel.Creating_wipe" class="btn-success btn left" ng-click="editWipeParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
+    <h4 class="padding">Wipe Test <a ng-if="!modalData.ParcelCopy.Wipe_test.length && !modalData.Parcel.Creating_wipe" class="btn-success btn left" ng-click="editParcelWipeTest(parcel)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
     <div class="fake-table" ng-if="modalData.ParcelCopy.Wipe_test.length || modalData.Parcel.Creating_wipe">
         <div class="table-header">
             <h3>Edit</h3>
@@ -14,7 +14,7 @@
         </div>
         <div class="table-row">
             <div ng-class="{'small-extra-top': modalData.Parcel.Creating_wipe}">
-                <a class="btn btn-primary left" ng-disabled="modalData.Parcel.Creating_wipe" ng-click="editWipeParcelWipeTest(parcel, modalData.ParcelCopy.Wipe_test[0])"><i class="icon-pencil"></i>Edit</a>
+                <a class="btn btn-primary left" ng-disabled="modalData.Parcel.Creating_wipe" ng-click="editParcelWipeTest(modalData.ParcelCopy, modalData.Parcel, true)"><i class="icon-pencil"></i>Edit</a>
             </div>
 
             <div ng-if="!modalData.Parcel.Creating_wipe" ng-if="smear.edit">

@@ -147,7 +147,11 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.selectPO = function(po){
-            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Purchase_order_id = $scope.modalData.ParcelCopy.Purchase_order.Key_id;
+            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.PurchaseOrderrder = dataStoreManager.getById("PurchaseOrder",$scope.modalData.ParcelCopy.Purchase_order_id);
+        }
+
+        $scope.selectAuth = function(po){
+            if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Authorization = dataStoreManager.getById("Authorization",$scope.modalData.ParcelCopy.Authorization_id)
         }
 
         $scope.close = function(){

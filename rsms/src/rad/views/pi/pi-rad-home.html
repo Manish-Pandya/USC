@@ -1,30 +1,29 @@
   <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
     <div class="centerIcons" ng-if="pi">
-
+      <div class="span2 rsmsCenterIconContainer" style=" ">
+        <a class="span12 parcels" style="background: rgb(122, 6, 109);" ui-sref="pi-orders({ pi: pi.Key_id})">
+          <i class="icon-box"></i>
+          <p>Orders</p>
+        </a>
+      </div>
     <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
-      <a class="bg-color-green span12" style="background: rgb(251, 37, 37);" ui-sref="solids({ pi: pi.Key_id})">
-      <i class="icon-remove-2"></i>
-        <p>Waste Recepticals</p>
+      <a href="hubs/emergencyInformationHub.php" class="span12" style="background: #e67e1d;" ui-sref="use-log({ pi: pi.Key_id})">
+          <i class="icon-list-2"></i>
+        <p>Use Logs</p>
       </a>
     </div>
-<!--
-  	<div class="span2 rsmsCenterIconContainer" style=" ">
-	    <a class="span12" style="background: rgb(122, 6, 109);" ui-sref="carboys({ pi: pi.Key_id})">
-	      <i class="icon-carboy"></i>
-	      <p>Carboys</p>
-	    </a>
-  	</div>
-    -->
+
     <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
         <a class="span12" style="background: rgb(122, 6, 109);" ui-sref="pickups({ pi: pi.Key_id})">
           <i class="icon-box-remove"></i>
           <p>Pickups</p>
         </a>
     </div>
-  	<div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
-      <a href="hubs/emergencyInformationHub.php" class="span12" style="background: #e67e1d;" ui-sref="use-log({ pi: pi.Key_id})">
-      	<i class="icon-list-2"></i>	
-        <p>Use Logs</p>
+
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+      <a class="bg-color-green span12" style="background: rgb(251, 37, 37);" ui-sref="solids({ pi: pi.Key_id})">
+      <i class="icon-remove-2"></i>
+        <p>Waste Recepticals</p>
       </a>
     </div>
 

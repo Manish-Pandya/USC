@@ -6,6 +6,7 @@ class RadModelDto {
 	private $carboyUseCycle;
 	private $carboy;
 	private $carboyReadingAmount;
+	private $department;
 	private $drum;
 	private $inspectionWipe;
     private $inspectionWipeTest;
@@ -69,6 +70,13 @@ class RadModelDto {
     
     public function setCarboyReadingAmount($carboyReadingAmount){
     	$this->carboyReadingAmount = $carboyReadingAmount;
+    }
+    
+    public function getDepartment(){
+    	return $this->department;
+    }
+    public function setDepartment($department){
+    	$this->department = $department;
     }
     
     public function getDrum(){

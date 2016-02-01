@@ -1,0 +1,85 @@
+<div cg-busy="{promise:parcelPromise, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div class="right-column">
+    <h1 class="parcels" ng-show="needs.length"><i class="icon-box"></i>Requested Packages</h1>
+    <h1 class="parcels" ng-show="!needs.length"><i class="icon-box"></i>No Requested Packages</h1>
+    <div class="card full parcels" ng-repeat="pi in needs = ( pis | pisNeedingPackages )">
+        <h3 class="card-header padding"><i class="icon-box"></i>{{pi.User.Name}} has requested a package.</h3>
+        <div class="card-content">
+            <div class="fake-table striped bordered">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>P.O. Number</h3>
+                    <h3>R.S. Number</h3>
+                    <h3>Status</h3>
+                    <h3>Isotope</h3>
+                    <h3>Arrival Date</h3>
+                    <h3>Original Quantity</h3>
+                    <h3>Remaining Quantity</h3>
+                    <h3>Chemical Compound</h3>
+                    <h3>Vendor</h3>
+                    <h3>Catalog Number</h3>
+                    <h3>Comments</h3>
+                </div>
+                <div class="table-row" ng-repeat="parcel in pi.undelivered = (pi.ActiveParcels | notDelivered)" ng-class="{'inactive':!parcel.Is_active}">
+                    <div>
+                        <a class="btn btn-primary" ng-click="openModal( parcel, pi )"><i class="icon-pencil"></i></a>
+                        <a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel, pi )" class="btn btn-danger"><i class="icon-remove"></i></a>
+                        <a ng-if="!parcel.Is_active" ng-click="af.setObjectActiveState(parcel, pi )" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                        <p>
+                            <a ng-click="openWipeTestModal(parcel, pi)" class="btn btn-primary left" style="padding:4px 6px; white-space:nowrap"><i class="icon-paper"></i>{{parcel.Wipe_test[0].Parcel_wipes.length ? parcel.Wipe_test[0].Parcel_wipes.length : '0'}} Wipe Test<span ng-if="parcel.Wipe_test[0].Parcel_wipes.length != 1">s</span></a>
+                            <a ng-if="parcel.Status == Constants.PARCEL.STATUS.REQUESTED" ng-click="updateParcelStatus(pi, parcel, Constants.PARCEL.STATUS.ORDERED)" class="btn btn-success left"><i class="icon-checkmark"></i>{{Constants.PARCEL.STATUS.ORDERED}}</a>
+                            <a ng-if="parcel.Status == Constants.PARCEL.STATUS.WIPE_TESTED" ng-click="updateParcelStatus(pi, parcel, Constants.PARCEL.STATUS.DELIVERED)" class="btn btn-success left"><i class="icon-checkmark"></i>{{Constants.PARCEL.STATUS.DELIVERED}}</a>
+                        </p>
+                    </div>
+
+                    <div>
+                        {{parcel.PurchaseOrder.Purchase_order_number}}
+                    </div>
+
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
+
+
+                    <div>
+                        {{parcel.Status}}
+                    </div>
+
+                    <div ng-init="parcel.loadAuthorization()">
+                        {{parcel.Authorization.IsotopeName}}<br>
+                        ({{parcel.Authorization.Form}})
+                    </div>
+
+                    <div>
+                        {{parcel.Arrival_date | dateToISO}}
+                    </div>
+
+                    <div>
+                        {{parcel.Quantity}} mCi
+                    </div>
+
+                    <div>
+                        {{parcel.Remainder}} mCi
+                    </div>
+
+                    <div>
+                        {{parcel.Chemical_compound}}
+                    </div>
+
+                    <div>
+                        {{parcel.PurchaseOrder.Vendor}}
+                    </div>
+
+                    <div>
+                        {{parcel.Catalog_number}}
+                    </div>
+
+                    <div>
+                        {{parcel.Comments}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

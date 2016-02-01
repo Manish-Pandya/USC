@@ -1,0 +1,37 @@
+<div cg-busy="{promise:parcelPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:ParcelSaving,message:'Saving Use', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div style="margin-top:70px;" ng-if="pi">
+    <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
+    <h1>
+        {{pi.User.Name}}'s Orders <a class="btn btn-success left" ng-click="openModal()"><i class="icon-box"></i>Request Package</a>
+    </h1>
+    <h2 ng-show="!undelivered.length">
+        You don't have any packages that haven't been delivered right now.
+    </h2>
+    <table class="table table-bordered card two-thirds" ng-show="undelivered.length">
+        <tr>
+            <th>Edit</th>
+            <th>Status</th>
+            <th>Purchase Order</th>
+            <th>Vendor</th>
+            <th>Catalog Number</th>
+            <th>Isotope</th>
+            <th>Qauntity</th>
+            <th>Form</th>
+        </tr>
+        <tr ng-repeat="parcel in undelivered = (pi.ActiveParcels | notDelivered)">
+            <td>
+                <button class="btn btn-primary left" ng-click="openModal(parcel)" ng-disabled="parcel.Status != constants.PARCEL.STATUS.REQUESTED"><i class="icon-pencil"></i>Edit Order</button>
+                <p ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED">This order has already been approved.  If you need to make changes, contact the Radiation Safety Office.</p>
+            </td>
+            <td once-text="parcel.Status"></td>
+            <td once-text="parcel.PurchaseOrder.Purchase_order_number"></td>
+            <td once-text="parcel.PurchaseOrder.Vendor"></td>
+            <td once-text="parcel.Catalog_number"></td>
+            <td once-text="parcel.Authorization.Isotope.Name"></td>
+            <td><span once-text="parcel.Quantity"></span>mCi</td>
+            <td once-text="parcel.Authorization.Form"></td>
+        </tr>
+    </table>
+</div>

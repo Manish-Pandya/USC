@@ -40,7 +40,7 @@ angular.module('00RsmsAngularOrmApp')
         getParcels()
             .then(getMiscTests);
 
-        $scope.editWipeParcelWipeTest = function (parcel, test) {
+        $scope.editParcelWipeTest = function (parcel, test) {
             $rootScope.ParcelWipeTestCopy = {}
 
             if (!test) {
@@ -51,13 +51,7 @@ angular.module('00RsmsAngularOrmApp')
             } else {
                 af.createCopy(test);
             }
-
-            var i = $scope.wipeTestParcels.length
-            while (i--) {
-                $scope.wipeTestParcels[i].Creating_wipe = false;
-            }
             parcel.Creating_wipe = true;
-
         }
 
         $scope.cancelParcelWipeTestEdit = function (parcel) {
@@ -205,9 +199,8 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        editWipeParcelWipeTest($scope.modalData.ParcelCopy, $scope.modalData.Parcel);
 
-        function editWipeParcelWipeTest(parcel, originalParcel) {
+        $scope.editParcelWipeTest = function(parcel, originalParcel, force) {
             if (!parcel.Wipe_test || !parcel.Wipe_test.length) {
                 parcel.Wipe_test = [modelInflatorFactory.instantiateObjectFromJson(new window.ParcelWipeTest())];
                 parcel.Wipe_test[0].parcel_id = parcel.Key_id
@@ -223,22 +216,22 @@ angular.module('00RsmsAngularOrmApp')
                     if (i == 0) wipe.Location = "Background";
                     parcel.Wipe_test[0].Parcel_wipes.push(wipe);
                 }
-                console.log(parcel.Wipe_test[0]);
+                if(!force) var force = true;
             } else {
                 console.log(parcel);
                 af.createCopy(parcel.Wipe_test[0]);
             }
-
-            originalParcel.Creating_wipe = true;
-
+            if(force)originalParcel.Creating_wipe = true;
         }
+
+        $scope.editParcelWipeTest($scope.modalData.ParcelCopy, $scope.modalData.Parcel);
 
         $scope.cancelParcelWipeTestEdit = function (parcel) {
             parcel.Creating_wipe = false;
             $rootScope.ParcelWipeTestCopy = {}
         }
 
-        $scope.editWipeParcelWipe = function (wipeTest, wipe) {
+        $scope.editWipeParcelWipe = function (wipeTest, wipe, force) {
             $rootScope.ParcelWipeCopy = {}
             if (!wipeTest.Parcel_wipes) wipeTest.Parcel_wipes = [];
             var i = wipeTest.Parcel_wipes.length;
@@ -336,6 +329,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.close = function () {
+            $scope.modalData.Parcel.Creating_wipe = false;
             af.deleteModalData();
             $modalInstance.dismiss();
         }

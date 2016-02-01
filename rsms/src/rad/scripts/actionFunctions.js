@@ -72,6 +72,7 @@ angular
                             },
                             function( error )
                             {
+                                console.log(error);
                                 //object.Name = error;
                                // object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
@@ -137,12 +138,22 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'radmin.orders',
+                        Label: 'Radiation Administration -- Packages',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
                     },
                     {
                         Name:'solids',
+                        Label: 'My Radiation Laboratory',
+                        Dashboard:true
+                    },
+                    {
+                        Name:'pi-orders',
                         Label: 'My Radiation Laboratory',
                         Dashboard:true
                     },
@@ -943,7 +954,7 @@ angular
                                     store.store(tempPI[prop].Authorizations);
                                 }
                             }
-                        
+
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();
@@ -957,36 +968,40 @@ angular
 
             af.getRadPIById = function(id)
             {
-                if(dataStoreManager.getById("PrincipalInvestigator", id)) return;
+                if(dataStoreManager.getById("PrincipalInvestigator", id)){
+                    var defer = $q.defer();
+                    defer.resolve(dataStoreManager.getById("PrincipalInvestigator", id));
+                    return defer.promise;
+                }
                 var segment = "getRadPIById&id="+id+"&rooms=true";
-                    return genericAPIFactory.read(segment)
-                        .then( function( returned ) {
-                            var pi = returned.data;
-                            console.log(pi);
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi ));
-                            pi = dataStoreManager.getById("PrincipalInvestigator", id);
-                            if(pi){
-                                pi.loadActiveParcels();
-                                pi.loadRooms();
-                                pi.loadPurchaseOrders();
-                                pi.loadSolidsContainers();
-                                pi.loadCarboyUseCycles();
-                                pi.loadPickups();
-                                pi.loadPIAuthorizations();
-                                pi.loadUser();
-                                pi.loadWasteBags();
-                                pi.loadCurrentScintVialCollection();
-                            }
-                            return pi;
-                        });
+                return genericAPIFactory.read(segment)
+                    .then( function( returned ) {
+                        var pi = returned.data;
+                        console.log(pi);
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi ));
+                        pi = dataStoreManager.getById("PrincipalInvestigator", id);
+                        if(pi){
+                            pi.loadActiveParcels();
+                            pi.loadRooms();
+                            pi.loadPurchaseOrders();
+                            pi.loadSolidsContainers();
+                            pi.loadCarboyUseCycles();
+                            pi.loadPickups();
+                            pi.loadPIAuthorizations();
+                            pi.loadUser();
+                            pi.loadWasteBags();
+                            pi.loadCurrentScintVialCollection();
+                        }
+                        return pi;
+                    });
             }
 
             af.getParcelUses = function(parcel)
@@ -1186,10 +1201,10 @@ angular
             af.saveParcel = function( copy, parcel, pi )
             {
                 af.clearError();
-                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedParcel){
+                            console.log(returnedParcel);
                             returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
                             if(copy.Key_id){
                                 angular.extend(parcel, copy)
@@ -1197,8 +1212,7 @@ angular
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
                             }
-                        },
-                        af.setError('The authorization could not be saved')
+                        }
                     )
             }
 
@@ -1206,6 +1220,7 @@ angular
             {
                 af.clearError();
                 console.log(copy);
+                copy.Status = Constants.PARCEL.STATUS.WIPE_TESTED;
                  return $rootScope.SavingParcelWipe = genericAPIFactory.save( copy, 'saveParcelWipesAndChildren' )
                     .then(
                         function(returnedParcel){
@@ -1222,7 +1237,7 @@ angular
                                 }
                             }
                         },
-                        af.setError('The authorization could not be saved')
+                        af.setError('The package could not be saved')
                     )
             }
 

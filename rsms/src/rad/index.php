@@ -96,6 +96,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
 
 
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
@@ -126,6 +128,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/filters/disposalCycles.js"></script>
 <script type="text/javascript" src="./scripts/filters/disposalSolids.js"></script>
 <script type="text/javascript" src="./scripts/filters/inventoryStatus.js"></script>
+<script type="text/javascript" src="./scripts/filters/nonDeliveredOrders.js"></script>
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>

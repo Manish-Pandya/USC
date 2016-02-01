@@ -357,7 +357,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getScintVialCollections");
         $entityMaps[] = new EntityMap("eager", "getCurrentScintVialCollections");
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
-        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("eager","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getVerifications");
 
@@ -708,6 +708,8 @@ class Rad_ActionManager extends ActionManager {
     function saveParcel() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
+        $LOG->fatal($decodedObject);
+        
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Parcel', 202);
         }
@@ -717,6 +719,7 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new Parcel());
             $decodedObject = $dao->save($decodedObject);
+            $LOG->fatal($decodedObject);
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
             $entityMaps[] = new EntityMap("lazy", "getPurchase_order");
@@ -2056,6 +2059,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setCarboy($this->getAllCarboys());
     	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
     	$dto->setDrum($this->getAllDrums());
+    	$dto->setDepartment($this->getAllDepartments());
     	$dto->setInspectionWipe($this->getAllInspectionWipes());
     	$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
     	$dto->setIsotope($this->getAllIsotopes());

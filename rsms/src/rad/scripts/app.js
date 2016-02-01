@@ -51,6 +51,11 @@ angular
         templateUrl: "views/admin/disposals.html",
         controller: "disposalCtrl"
       })
+       .state('radmin.orders', {
+        url: "/packages",
+        templateUrl: "views/admin/parcels.html",
+        controller: "AllOrdersCtrl"
+      })
       //admin overview for a QuarterlyInventories
       .state('radmin.inventories', {
         url: "/inventories",
@@ -77,6 +82,11 @@ angular
         url:'/my-lab:pi',
         templateUrl: "views/pi/pi-rad-home.html",
         controller: "PiRadHomeCtrl"
+      })
+      .state('pi-orders', {
+        url:'/my-lab:pi/orders',
+        templateUrl: "views/pi/orders.html",
+        controller: "OrdersCtrl"
       })
       .state('use-log', {
         url:'/my-lab:pi/use-log',
@@ -117,11 +127,6 @@ angular
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",
         controller: "InspectionWipeCtrl"
-      })
-      .state('testpage', {
-        url: '/testpage',
-        templateUrl: 'views/testpage.php',
-        controller: "TestCtrl"
       })
 
        $provide.decorator('$q', function ($delegate) {

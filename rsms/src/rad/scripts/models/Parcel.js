@@ -8,6 +8,7 @@ Parcel.prototype = {
 
     eagerAccessors:[
         {method:"loadPurchaseOrder", boolean: 'Purchase_order_id'},
+        {method:"loadAuthorization", boolean: 'Authorization_id'},
         {method:"loadParcelWipeTest", boolean: 'HasTests'}
     ],
 
