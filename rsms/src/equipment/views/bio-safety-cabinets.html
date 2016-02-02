@@ -2,14 +2,13 @@
 <div cg-busy="{promise:Saving, message:'BioSafetyCabinetSaving', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
+    <h1 class="card full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
+        <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
+        <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
+    </h1>
     <div>
-        <h1 class="card full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
-            <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-            <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
-        </h1>
-        <br>
-        <h3 style="text-align:center; padding-top:60">Complete Certifications</h3>
-        <h3 ng-if="!cabinets.length">No Cabinets</h3>
+        <h2 style="padding-top:60">Complete Certifications</h2>
+        <h2 ng-if="!cabinets.length">No Cabinets</h2>
         <div class="full bio-safety-cabinets well full" ng-show="cabinets.length">
             <table class="table table-striped table-bordered">
                 <tr class="table-header">
@@ -79,8 +78,9 @@
         </div>
 
         <br>
-        <h3 style="text-align:center">Incomplete Certifications</h3>
-        <h3 ng-if="!cabinets.length">No Cabinets</h3>
+        <h2>Incomplete Certifications</h2>
+        <h2 ng-if="!cabinets.length">No Cabinets</h2>
+
         <div class="full bio-safety-cabinets well full" ng-show="cabinets.length">
             <table class="table table-striped">
                 <tr class="table-header">
@@ -151,5 +151,6 @@
                 </tr>
             </table>
         </div>
+
     </div>
 </div>
