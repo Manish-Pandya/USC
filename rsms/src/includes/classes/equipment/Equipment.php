@@ -14,7 +14,9 @@ abstract class Equipment extends GenericCrud{
     protected $model;
     protected $frequency;
     protected $serial_number;
-    protected $equipmentInspections; //array
+    protected $equipmentInspections; //array\
+    protected $principalInvestigatorId;
+    protected $roomId;
     
     /** Relationships */
 	protected static $INSPECTIONS_RELATIONSHIP = array(
@@ -67,6 +69,12 @@ abstract class Equipment extends GenericCrud{
 		$this->serial_number = $serial_number;
     }
     
+    public function getPrincipalInvestigatorId(){return $this->principalInvestigatorId;}
+    public function setPrincipalInvestigatorId($id){$this->principalInvestigatorId = $id;}
+    
+    public function getRoomId(){return $this->roomId;}
+    public function setRoomId($id){$this->roomId = $id;}
+    
     public function getEquipmentInspections(){
         if($this->equipmentInspections === NULL){
             $thisDAO = new GenericDAO( new EquipmentInspection() );
@@ -85,9 +93,16 @@ abstract class Equipment extends GenericCrud{
 	public function setEquipmentInspections($inspections){ $this->equipment_inspections = $inspections; }
     
     public function conditionallyCreateEquipmentInspection(){
+        $l = Logger::getLogger('asdfadf');
+
         if ($this->hasPrimaryKeyValue()) {
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
+                if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
+                if($this->getRoomId() != null)                  $inspection->setRoom_id($this->getRoomId());
+                
+                $l->fatal($inspection);
+
                 $inspectionDao = new GenericDao($inspection);
                 $this->equipmentInspections = array( $inspectionDao->save($inspection) );
             }

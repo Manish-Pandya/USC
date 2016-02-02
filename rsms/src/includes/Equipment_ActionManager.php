@@ -81,8 +81,8 @@ class Equipment_ActionManager extends ActionManager {
         else{
         	$dao = $this->getDao(new BioSafetyCabinet());
             $cabinet = $dao->save($decodedObject);
-            $cabinet->conditionallyCreateEquipmentInspection();
-            $LOG->fatal($cabinet);
+            $decodedObject->setKey_id($cabinet->getKey_id());
+            $decodedObject->conditionallyCreateEquipmentInspection();
             return $cabinet;
         }
     }

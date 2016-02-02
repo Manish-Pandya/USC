@@ -135,7 +135,9 @@ var Constants = (function () {
             ANNUALLY: "Annually",
             BI_ANNUALLY: "Bi-annually",
             SEMI_ANNUALLY: "Semi-annually"
-        }
+        },
+        EQUIPMENT_CLASS: "BioSafetyCabinet"
     }
+    
     return constants;
 })();

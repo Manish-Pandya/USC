@@ -88,8 +88,10 @@ class EquipmentInspection extends GenericCrud{
 	}
 
     public function getDue_date(){
-        $LOG = Logger::getLogger('my hairy balls');
-        if ($this->getFrequency() == null) return null;
+        $LOG = Logger::getLogger(__Class__);
+        if ($this->getFrequency() == null) {
+            return null;
+        }
 
 		$dueDate = new DateTime($this->getDate_created());
 		

@@ -10,13 +10,43 @@
 angular.module('EquipmentModule')
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
-        
-        var getAllBioSafetyCabinets = function(){
+        var nullReturn = function(){}
+        var getAllInspections = function(){
+            return af.getAllEquipmentInspections().then(
+                function(){
+                    var inspections = dataStoreManager.get("EquipmentInspection");
+                    $scope.certYears = [];
+                    $scope.dueYears = [];
+                    var i = inspections.length;
+                    while(i--){
+                        if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
+                            if (inspections[i].Certification_date) {
+                                var certYear = inspections[i].Certification_date.split('-')[0];
+                                if ($scope.certYears.indexOf(certYear) == -1) {
+                                    $scope.certYears.push(certYear);
+                                }
+                            }
+                            if (inspections[i].Due_date) {
+                                console.log()
+                                var dueYear = inspections[i].Due_date.split('-')[0];
+                                if ($scope.dueYears.indexOf(dueYear) == -1) {
+                                    $scope.dueYears.push(dueYear);
+                                }
+                            }
+                        }
+                    }
+                    console.log("cert", $scope.certYears);
+                    console.log("due", $scope.dueYears);
+                    return inspections;
+                }
+            );
+        },
+        getAllBioSafetyCabinets = function(){
+           // console.log('second one called')
             return af.getAllBioSafetyCabinets()
                 .then(
                     function(){
                         $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
-                        console.log($scope.cabinets[0].EquipmentInspections);
                         return $scope.cabinets;
                     }
                 )
@@ -47,6 +77,7 @@ angular.module('EquipmentModule')
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
+                            .then(getAllInspections())
                             .then(getAllBioSafetyCabinets());
 
         $scope.deactivate = function(cabinet) {
@@ -117,7 +148,8 @@ angular.module('EquipmentModule')
         $scope.onSelectPi = function(pi){
             pi.loadRooms();
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator = pi;
-            $scope.modalData.BioSafetyCabinetCopy.Principal_investigator_id = pi.Key_id;
+            $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId = pi.Key_id;
+            console.log($scope.modalData.BioSafetyCabinetCopy);
         }
     
         $scope.getBuilding = function(){
@@ -129,7 +161,7 @@ angular.module('EquipmentModule')
         }
     
         $scope.onSelectRoom = function(){
-            $scope.modalData.BioSafetyCabinetCopy.Room_id = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
+            $scope.modalData.BioSafetyCabinetCopy.RoomId = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
         }
         
         $scope.$watch('modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms', function() {

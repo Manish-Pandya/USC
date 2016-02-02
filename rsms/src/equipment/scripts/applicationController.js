@@ -212,10 +212,12 @@ angular
                             Room_id: copy.Room_id,
                             Serial_number: copy.Serial_number,
                             Type: copy.Type,
+                            RoomId: copy.RoomId,
+                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId
                 }
                 
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
-                
+                console.log(secondCopy);
                 return this.save(secondCopy)
                     .then(
                         function(returnedBioSafetyCabinet){
@@ -223,12 +225,8 @@ angular
                             if(bioSafetyCabinet.Key_id){
                                 console.log(returnedBioSafetyCabinet);
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
-                                bioSafetyCabinet.loadRoom();
-                                bioSafetyCabinet.loadPI();
                             }else{
                                 console.log(returnedBioSafetyCabinet);
-                                bioSafetyCabinet.loadRoom();
-                                bioSafetyCabinet.loadPI();
                                 dataStoreManager.addOnSave(returnedBioSafetyCabinet);
                                 dataStoreManager.store(returnedBioSafetyCabinet);
                             }
