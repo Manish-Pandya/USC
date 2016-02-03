@@ -61,9 +61,9 @@ angular
                 if (equipments[i].EquipmentInspections) {
                     var j = equipments[i].EquipmentInspections.length;
                     while(j--){
-                        if (equipments[i].EquipmentInspections[j][dateProp]){
-                            console.log(dateProp, dateString, dateString == "*", equipments[i].EquipmentInspections[j][dateProp]);
-                            if (dateString != "*" && equipments[i].EquipmentInspections[j][dateProp].indexOf(year) > -1) {
+                        if ( equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp) ) {
+                            var inspectionDate = equipments[i].EquipmentInspections[j][dateProp];
+                            if ( (!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1) ) {
                                 matches.unshift(equipments[i]);
                             }
                         }

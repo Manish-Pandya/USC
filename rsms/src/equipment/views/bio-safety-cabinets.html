@@ -107,7 +107,7 @@
                 </tr>
                 <!-- the following filter grabs cabinet inspections that have no Certification_date, stripping those with Certification_date set: matchDate:'*':'Certification_date' 
                 To bad it don't seem to work. Thoughts? -->
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDate:selectedDueDate:'Due_date' | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchCabinetBuilding:selectedBuilding | matchDate:'*':'Certification_date' | matchDate:selectedDueDate:'Due_date' | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>

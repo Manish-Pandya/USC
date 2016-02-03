@@ -10,7 +10,7 @@
 angular.module('EquipmentModule')
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
-        var nullReturn = function(){}
+    
         var getAllInspections = function(){
             return af.getAllEquipmentInspections().then(
                 function(){
@@ -26,8 +26,7 @@ angular.module('EquipmentModule')
                                     $scope.certYears.push(certYear);
                                 }
                             }
-                            if (inspections[i].Due_date) {
-                                console.log()
+                            if (inspections[i].Due_date && !inspections[i].Certification_date) {
                                 var dueYear = inspections[i].Due_date.split('-')[0];
                                 if ($scope.dueYears.indexOf(dueYear) == -1) {
                                     $scope.dueYears.push(dueYear);
@@ -42,7 +41,6 @@ angular.module('EquipmentModule')
             );
         },
         getAllBioSafetyCabinets = function(){
-           // console.log('second one called')
             return af.getAllBioSafetyCabinets()
                 .then(
                     function(){
@@ -91,32 +89,6 @@ angular.module('EquipmentModule')
 
         }
         
-        $scope.getUniqueCertYears = function() {
-            if ($scope.certYears) {
-                return $scope.certYears;
-            } else {
-                $scope.certYears = [];
-                var i = $scope.cabinets.length;
-                while(i--){
-                    var j = $scope.cabinets[i].EquipmentInspections ? $scope.cabinets[i].EquipmentInspections.length : 0;
-                    console.log($scope.cabinets[i].EquipmentInspections);
-                    while(j--){
-                        var certYear = $scope.cabinets[i].EquipmentInspections.Certification_date.split('-')[0];
-                        var dueYear = $scope.cabinets[i].EquipmentInspections.Due_date.split('-')[0];
-                        if ($scope.certYears.indexOf(certYear) == -1) {
-                            $scope.certYears.push(certYear);
-                        }
-                        if ($scope.dueYears.indexOf(dueYear) == -1) {
-                            $scope.dueYears.push(dueYear);
-                        }
-                    }
-                }
-                console.log($scope.certYears);
-                console.log($scope.dueYears);
-                return $scope.certYears;
-            }
-        }
-
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
