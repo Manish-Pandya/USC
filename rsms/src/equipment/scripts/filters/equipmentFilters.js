@@ -42,21 +42,31 @@ angular
         }
     })
     .filter("matchDate", function(){
+        /*
+        Passing '' for dateString will strip inspections where the dateProp value is not set.
+        For example, stripping equipment inspections where the Certification_date is null.
+        Passing '*' for dateString will strip inspections where the dateProp value exists.
+        For example, stripping equipment inspections where the Certification_date is is set.
+        */
         return function(equipments, dateString, dateProp){
             if(!equipments) {
                 return;
-            } else if (!dateString || !dateProp) {
+            } else if (dateString != '' && (!dateString || !dateProp)) {
                 return equipments;
             }
             var year = dateString.split('-')[0];
-            console.log(year, dateProp);
             var matches = [];
             var i = equipments.length;
             while(i--){
-                var j = equipments[i].EquipmentInspections.length;
-                while(j--){
-                    if(equipments[i].EquipmentInspections[j][dateProp]){
-                        if(equipments[i].EquipmentInspections[j][dateProp].indexOf(year) > -1) matches.unshift(equipments[i]);
+                if (equipments[i].EquipmentInspections) {
+                    var j = equipments[i].EquipmentInspections.length;
+                    while(j--){
+                        if (equipments[i].EquipmentInspections[j][dateProp]){
+                            console.log(dateProp, dateString, dateString == "*", equipments[i].EquipmentInspections[j][dateProp]);
+                            if (dateString != "*" && equipments[i].EquipmentInspections[j][dateProp].indexOf(year) > -1) {
+                                matches.unshift(equipments[i]);
+                            }
+                        }
                     }
                 }
             }
