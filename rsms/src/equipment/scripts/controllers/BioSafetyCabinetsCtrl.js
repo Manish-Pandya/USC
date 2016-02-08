@@ -34,8 +34,6 @@ angular.module('EquipmentModule')
                             }
                         }
                     }
-                    console.log("cert", $scope.certYears);
-                    console.log("due", $scope.dueYears);
                     return inspections;
                 }
             );
@@ -120,7 +118,7 @@ angular.module('EquipmentModule')
             console.log($scope.modalData.BioSafetyCabinetCopy);
         }
         
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator){
+        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator){
             $scope.pi = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator;
             $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator;
             $scope.onSelectPi($scope.pi);
@@ -131,11 +129,11 @@ angular.module('EquipmentModule')
         }
     
         $scope.onSelectBuilding = function(){
-            $scope.roomFilter = $scope.modalData.SelectedBuilding;       
+            $scope.roomFilter = $scope.modalData.SelectedBuilding;    
         }
     
         $scope.onSelectRoom = function(){
-            $scope.modalData.BioSafetyCabinetCopy.RoomId = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].Room.Key_id;
+            $scope.modalData.BioSafetyCabinetCopy.RoomId = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
         }
         
         $scope.$watch('modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms', function() {
