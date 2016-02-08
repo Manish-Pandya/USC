@@ -112,10 +112,6 @@ angular.module('EquipmentModule')
         $scope.modalData = af.getModalData();
         console.log($scope.modalData);
         $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
-        if($scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator){
-            $scope.pi = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
-            $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator;
-        }
     
         $scope.onSelectPi = function(pi){
             pi.loadRooms();
@@ -123,17 +119,23 @@ angular.module('EquipmentModule')
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId = pi.Key_id;
             console.log($scope.modalData.BioSafetyCabinetCopy);
         }
+        
+        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator){
+            $scope.pi = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator;
+            $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].PrincipalInvestigator;
+            $scope.onSelectPi($scope.pi);
+        }
     
         $scope.getBuilding = function(){
-            $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.Room.Building.Name;
+            $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].Room.Building.Name;
         }
     
         $scope.onSelectBuilding = function(){
-            $scope.roomFilter = $scope.modalData.SelectedBuilding;            
+            $scope.roomFilter = $scope.modalData.SelectedBuilding;       
         }
     
         $scope.onSelectRoom = function(){
-            $scope.modalData.BioSafetyCabinetCopy.RoomId = $scope.modalData.BioSafetyCabinetCopy.Room.Key_id;
+            $scope.modalData.BioSafetyCabinetCopy.RoomId = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[0].Room.Key_id;
         }
         
         $scope.$watch('modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms', function() {
