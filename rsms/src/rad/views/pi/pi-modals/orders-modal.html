@@ -1,0 +1,57 @@
+<div class="modal-header" style="padding:0;">
+    <h2 ng-show="!addRoom" style="padding:5px; background:rgba(153, 96, 40, 1); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an parcel for {{modalData.pi.User.Name}}</h2>
+</div>
+
+<div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="inputEmail">Purchase Order</label>
+        <div class="controls">
+            <select data-ng-change="selectPO()" data-ng-options="po.Key_id as po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.Purchase_order_id">
+                <option value="">Select a Purchase Order</option>
+            </select>
+        </div>
+    </div>
+<!--
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Vendor</label>
+        <div class="controls">
+            <input ng-model="modalData.ParcelCopy.Vendor" />
+        </div>
+    </div>
+-->
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Catalog Number</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Catalog_number" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Isotope</label>
+        <div class="controls">
+            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in modalData.pi.Pi_authorization.Authorizations" ng-change="selectAuth()">
+                <option selected="selected" value="">Select an authorization</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Quantity</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">mCi</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Comments</label>
+        <div class="controls input-append">
+            <textarea ng-model="modalData.ParcelCopy.Comments"></textarea>
+        </div>
+    </div>
+</div>
+
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

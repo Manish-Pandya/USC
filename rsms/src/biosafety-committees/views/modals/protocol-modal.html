@@ -1,0 +1,79 @@
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Create or edit Cabinet</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Protocol #</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.Protocol_number" placeholder="Protocol #"/>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Principal Investigator</label>
+        <div class="controls">
+            <ui-select class="span3" style="margin-left:0"  ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
+                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
+                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Department</label>
+        <div class="controls">
+            <select ng-model="modalData.selectedDepartment" ng-change="onSelectDepartment(modalData.selectedDepartment)" ng-options="department as department.Name for department in modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Project Title</label>
+        <div class="controls">
+            <textarea style="width:100%" ng-model="modalData.BiosafetyProtocolCopy.Project_title" rows="2" maxlength="255"></textarea>
+        </div>
+    </div>
+        <div class="control-group">
+        <label class="control-label">Biological Hazard</label>
+        <div class="controls">
+             <ul>
+                <li ng-repeat="(key, hazard) in constants.PROTOCOL_HAZARDS">
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-model="hazard.checked" ng-change="handleHazardChecked(hazard, modalData.BiosafetyProtocolCopy)" ng-init="hazard.checked = modalData.BiosafetyProtocolCopy.Hazards.indexOf(hazard.Name) > -1" />
+                        <span class="metro-checkbox" once-text="hazard.Name"></span>
+                    </label>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Approval Date</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.view_Approval_date" placehold="Label"/>
+            <span class="help-block" style="">mm/dd/yy</span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Expiration Date</label>
+        <div class="controls">
+            <input ng-model="modalData.BiosafetyProtocolCopy.view_Expiration_date" placehold="Label"/>
+            <span class="help-block" style="">mm/dd/yy</span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label>Protcol Document</label>
+        <a class="btn btn-large btn-success left view-report" ng-if="modalData.BiosafetyProtocolCopy.Report_path" href="protocol-documents/{{modalData.BiosafetyProtocolCopy.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
+        <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload/>
+        <label for="file" ng-class="{'success':!modalData.BiosafetyProtocolCopy.Report_path,'danger':modalData.BiosafetyProtocolCopy.Report_path}"><strong><i class="icon-upload-4"></i><span ng-if="!modalData.BiosafetyProtocolCopy.Report_path">Upload</span><span ng-if="modalData.BiosafetyProtocolCopy.Report_path">Replace</span></strong></label><i class="success icon-checkmark upload-icon" ng-if="modalData.BiosafetyProtocolCopy.reportUploaded"></i><i class="icon-spinnery-dealie spinner upload-icon" ng-if="modalData.BiosafetyProtocolCopy.reportUploading"></i>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-large btn-success left" ng-click="save(modalData.BiosafetyProtocolCopy, modalData.BiosafetyProtocol)"><i class="icon-checkmark"></i>Save</button>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

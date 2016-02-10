@@ -11,37 +11,42 @@ angular
             return matches;
         }
     })
-    .filter("matchCabinetBuilding", function(){
-        return function(cabinets, string){
-            if(!cabinets) {
+    .filter("matchEquipmentBuilding", function(){
+        return function(equipments, string){
+            if(!equipments) {
                 return;
             } else if (!string) {
-                return cabinets;
+                return equipments;
             }
             var matches = [];
-            var i = cabinets.length;
+            var i = equipments.length;
             while(i--){
-                if(cabinets[i].Room.Building && cabinets[i].Room.Building.Name.toLowerCase().indexOf(string) > -1) matches.unshift(cabinets[i]);
+                if (equipments[i].EquipmentInspections) {
+                    var j = equipments[i].EquipmentInspections.length;
+                    while(j--){
+                        if(equipments[i].EquipmentInspections[j].Room.Building && equipments[i].EquipmentInspections[j].Room.Building.Name.toLowerCase().indexOf(string) > -1) matches.unshift(equipments[i]);
+                    }
+                }
             }
             return matches;
         }
     })
-    .filter("matchCabinetCampus", function(){
-        return function(cabinets, string){
-            if(!cabinets) {
+    .filter("matchEquipmentCampus", function(){
+        return function(equipments, string){
+            if(!equipments) {
                 return;
             } else if (!string) {
-                return cabinets;
+                return equipments;
             }
             var matches = [];
-            var i = cabinets.length;
+            var i = equipments.length;
             while(i--){
-                if(cabinets[i].Room && cabinets[i].Room.Building.Campus.Name && cabinets[i].Room.Building.Campus.Name.toLowerCase().indexOf(string) > -1) matches.unshift(cabinets[i]);
+                if(equipments[i].Room && equipments[i].Room.Building.Campus.Name && equipments[i].Room.Building.Campus.Name.toLowerCase().indexOf(string) > -1) matches.unshift(equipments[i]);
             }
             return matches;
         }
     })
-    .filter("matchDate", function(){
+    .filter("matchEquipmentDate", function(){
         /*
         Passing '' for dateString will strip inspections where the dateProp value is not set.
         For example, stripping equipment inspections where the Certification_date is null.
@@ -61,9 +66,9 @@ angular
                 if (equipments[i].EquipmentInspections) {
                     var j = equipments[i].EquipmentInspections.length;
                     while(j--){
-                        if (equipments[i].EquipmentInspections[j][dateProp]){
-                            console.log(dateProp, dateString, dateString == "*", equipments[i].EquipmentInspections[j][dateProp]);
-                            if (dateString != "*" && equipments[i].EquipmentInspections[j][dateProp].indexOf(year) > -1) {
+                        if ( equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp) ) {
+                            var inspectionDate = equipments[i].EquipmentInspections[j][dateProp];
+                            if ( (!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1) ) {
                                 matches.unshift(equipments[i]);
                             }
                         }

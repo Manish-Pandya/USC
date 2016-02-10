@@ -1,0 +1,70 @@
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Certify Cabinet Inspection</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Principal Investigator : <span ng-show="!modalData.piEdit">{{modalData.BioSafetyCabinetCopy.PrincipalInvestigator.User.Name}} <i class="primary icon-pencil" ng-click="modalData.piEdit = !modalData.piEdit"></i></span></label>
+        <div class="controls" ng-show="modalData.piEdit" class="span4">
+            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
+                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
+                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select> 
+            <i ng-click="modalData.piEdit = !modalData.piEdit" class="icon-cancel danger"></i>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Building : <span ng-show="!modalData.buildingEdit">{{modalData.selectedBuilding}} <i class="primary icon-pencil" ng-click="modalData.buildingEdit = !modalData.buildingEdit"></i></span></label>
+        <div class="controls" ng-show="modalData.buildingEdit">
+            <select ng-init="getBuilding()" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
+                <option value="">--Select--</option>
+            </select>
+            <i ng-click="modalData.buildingEdit = !modalData.buildingEdit" class="icon-cancel danger"></i>
+        </div>
+    </div>    
+        
+    <span ng-if="modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinetCopy.PrincipalInvestigator.loadBuildings()"/>
+    <div class="control-group">
+        <label class="control-label">Room : <span ng-show="!modalData.roomEdit">{{modalData.BioSafetyCabinetCopy.Room.Name}} <i class="primary icon-pencil" ng-click="modalData.roomEdit = !modalData.roomEdit"></i></span></label>
+        <div class="controls" ng-show="modalData.roomEdit">
+            <select ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as room.Name for room in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms | matchBuilding:modalData.selectedBuilding">
+                <option value="">--Select--</option>
+            </select>
+            <i ng-click="modalData.roomEdit = !modalData.roomEdit" class="icon-cancel danger"></i>
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label class="control-label">Certification Frequency : <span ng-show="!modalData.freqEdit">{{modalData.BioSafetyCabinetCopy.Frequency}} <i class="primary icon-pencil" ng-click="modalData.freqEdit = !modalData.roomEdit"></i></span></label>
+        <div class="controls" ng-show="modalData.freqEdit">
+            <select ng-model="modalData.BioSafetyCabinetCopy.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
+                <option value="">--Select--</option>
+            </select>
+            <i ng-click="modalData.freqEdit = !modalData.freqEdit" class="icon-cancel danger"></i>
+        </div>
+    </div>
+    
+    
+    <div class="control-group">
+        <label class="control-label">Type:  {{modalData.BioSafetyCabinetCopy.Type}}</label>
+    </div>
+    <div class="control-group">
+        <label class="control-label">SERIAL #: {{modalData.BioSafetyCabinetCopy.Serial_number}}</label>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Make: {{modalData.BioSafetyCabinetCopy.Make}}</label>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Model: {{modalData.BioSafetyCabinetCopy.Model}}</label>
+    </div>
+    
+    
+    
+</div>
+
+<div class="modal-footer">
+    <button ng-disabled="!modalData.BioSafetyCabinetCopy.Room" class="btn btn-large btn-success left" ng-click="save(modalData.BioSafetyCabinetCopy, modalData.BioSafetyCabinet)"><i class="icon-checkmark"></i>Certify</button>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
