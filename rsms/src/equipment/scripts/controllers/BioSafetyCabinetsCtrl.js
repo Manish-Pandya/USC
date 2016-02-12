@@ -116,7 +116,6 @@ angular.module('EquipmentModule')
             pi.loadRooms();
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator = pi;
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId = pi.Key_id;
-            console.log($scope.modalData.BioSafetyCabinetCopy);
         }
         
         if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator){
@@ -132,6 +131,12 @@ angular.module('EquipmentModule')
         if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency){
             $scope.modalData.BioSafetyCabinetCopy.Frequency = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency;
         }
+    
+        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path){
+            $scope.modalData.BioSafetyCabinetCopy.Report_path = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path;
+        }
+    
+        console.log($scope.modalData.BioSafetyCabinetCopy);
     
         $scope.getBuilding = function(){
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections){
@@ -164,5 +169,32 @@ angular.module('EquipmentModule')
             $modalInstance.dismiss();
             af.deleteModalData();
         }
+        
+        $scope.$on('fileUpload', function(event, formData) {
+            console.log("DIG:", $scope.modalData.BioSafetyCabinetCopy);
+            $scope.modalData.BioSafetyCabinetCopy.reportUploaded = false;
+            $scope.modalData.BioSafetyCabinetCopy.reportUploading = true;
+            $scope.$apply();
+
+            var xhr = new XMLHttpRequest;
+            var url = '../ajaxaction.php?action=uploadProtocolDocument';
+            if($scope.modalData.BioSafetyCabinetCopy.Key_id)url = url + "&id="+$scope.modalData.BioSafetyCabinetCopy.Key_id;
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState !== XMLHttpRequest.DONE) {
+                    return;
+                }
+                if (xhr.status !== 200) {
+                    return;
+                }
+                if (xhr.status == 200){
+                    $scope.modalData.BioSafetyCabinetCopy.reportUploaded = true;
+                    $scope.modalData.BioSafetyCabinetCopy.reportUploading = false;
+                    $scope.modalData.BioSafetyCabinetCopy.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                    $scope.$apply();
+                }
+            }
+        });
 
     });

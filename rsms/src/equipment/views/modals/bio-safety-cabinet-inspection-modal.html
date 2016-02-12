@@ -60,7 +60,12 @@
         <label class="control-label">Model: {{modalData.BioSafetyCabinetCopy.Model}}</label>
     </div>
     
-    
+    <div class="control-group">
+        <label>Report Document</label>
+        <a class="btn btn-large btn-success left view-report" ng-if="modalData.BioSafetyCabinetCopy.Report_path" href="protocol-documents/{{modalData.BioSafetyCabinetCopy.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
+        <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload/>
+        <label for="file" ng-class="{'success':!modalData.BioSafetyCabinetCopy.Report_path,'danger':modalData.BioSafetyCabinetCopy.Report_path}"><strong><i class="icon-upload-4"></i><span ng-if="!modalData.BioSafetyCabinetCopy.Report_path">Upload</span><span ng-if="modalData.BioSafetyCabinetCopy.Report_path">Replace</span></strong></label><i class="success icon-checkmark upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploaded"></i><i class="icon-spinnery-dealie spinner upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploading"></i>
+    </div>
     
 </div>
 
