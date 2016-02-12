@@ -12,13 +12,6 @@
 .rsmsCenterIconContainer a {
     text-align: center;
 }
-.rsmsCenterIconContainer a i {
-    width: auto;
-    height: 250px;
-    color: white;
-    font-size: 220px;
-    line-height: normal;
-}
 .neg-marg {
     margin: 0 -30px;
 }
@@ -179,7 +172,7 @@
     background: rgba(0, 128, 0, 1);
 }
 .modal-header.parcels h2, a.parcels {
-    background: rgba(153, 96, 40, 1)
+    background: rgba(153, 96, 40, 1) !important;
 }
 .card.parcels {
     border-left: rgba(153, 96, 40, 1) solid 6px

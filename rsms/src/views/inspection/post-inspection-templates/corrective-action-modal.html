@@ -15,27 +15,25 @@
 
         <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status:</label>
         <select class="status"
-          ng-model="def.CorrectiveActions[0].Status"
+          ng-model="copy.Status"
           ng-options="status for status in options"
-          ng-init="def.CorrectiveActions[0].Status = def.CorrectiveActions[0].Status || options[0]"
+          ng-init="copy.Status = copy.Status || options[0]"
         >
         </select>
         <div class="control-group">
          <label class="control-label" for="inputEmail">Describe Corrective Action:</label>
          <div class="controls">
-             <textarea ng-model="def.CorrectiveActions[0].Text"></textarea>
+             <textarea ng-model="copy.Text"></textarea>
          </div>
         </div>
 
-        <div class="control-group" ng-if="def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
+        <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
          <label class="control-label" for="inputEmail">Anticipated Completion Date:</label>
          <div class="controls">
             <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
          </div>
         </div>
-{{dates.completionDate}}
-
-        <div class="control-group" ng-if="def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
+        <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
          <label class="control-label" for="inputEmail">Completion Date:</label>
          <div class="controls">
              <datepicker2  ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
@@ -45,12 +43,12 @@
 </div>
 <div class="modal-footer">
     <i class="icon-spinnery-dealie spinner small" ng-if="dirty"></i>
-    <span ng-if="def.CorrectiveActions[0].Text">
-        <a class="btn btn-success hazardBtn btn-large" ng-if="(def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && dates.promisedDate) || (def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && dates.completionDate)" ng-click="saveCorrectiveAction(def.CorrectiveActions[0])"><i class="icon-checkmark"></i>Save</a>
-        <a disabled="disabled" class="btn btn-success hazardBtn btn-large" ng-if="def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && !dates.promisedDate || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && !dates.completionDate"><i class="icon-checkmark"></i>Save</a>
+    <span ng-if="copy.Text">
+        <a class="btn btn-success hazardBtn btn-large" ng-if="(copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && dates.promisedDate) || (copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && dates.completionDate)" ng-click="saveCorrectiveAction(copy, copy)"><i class="icon-checkmark"></i>Save</a>
+        <a disabled="disabled" class="btn btn-success hazardBtn btn-large" ng-if="(copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && !dates.promisedDate) || (copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && !dates.completionDate)"><i class="icon-checkmark"></i>Save</a>
     </span>
-    <span ng-if="!def.CorrectiveActions[0].Text">
+    <span ng-if="!copy.Text">
         <a disabled="disabled" class="btn btn-success hazardBtn btn-large"><i class="icon-checkmark"></i>Save</a>
     </span>
-    <a class="btn btn-danger hazardBtn btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+    <a class="btn btn-danger hazardBtn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

@@ -782,7 +782,6 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
   }
 
   $scope.openModal = function(question, def){
-    //console.log('test')
     var modalData = {
       question: question,
       deficiency: def
@@ -792,7 +791,6 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       templateUrl: 'post-inspection-templates/corrective-action-modal.html',
       controller: modalCtrl
     });
-
 
     modalInstance.result.then(function (returnedCA) {
       if(def.CorrectiveActions.length && def.CorrectiveActions[0].Key_id){
@@ -927,27 +925,36 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
 
 modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance){
   var data = postInspectionFactory.getModalData();
-  $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE,Constants.CORRECTIVE_ACTION.STATUS.PENDING,Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
+  $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.PENDING,Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
   $scope.validationError='';
-  if(data.deficiency && !data.deficiency.CorrectiveActions.length){
-    data.deficiency.CorrectiveActions[0] = {
-      Class:"CorrectiveAction",
-      Deficiency_selection_id: data.deficiency.Key_id,
-      Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING
-    }
-  }
   $scope.dates = {};
-  if( data.deficiency.CorrectiveActions[0].Promised_date ) $scope.dates.promisedDate = data.deficiency.CorrectiveActions[0].Promised_date;
-  if( data.deficiency.CorrectiveActions[0].Completion_date ) $scope.dates.completionDate = data.deficiency.CorrectiveActions[0].Completion_date;
 
   if(data){
     $scope.question = data.question;
-    $scope.def      = data.deficiency;
+    $scope.def = data.deficiency;
+
+    if($scope.def.CorrectiveActions && $scope.def.CorrectiveActions[0]){
+        $scope.copy = {};
+        for(var prop in $scope.def.CorrectiveActions[0]){
+            console.log(prop);
+            console.log($scope.def.CorrectiveActions[0][prop]);
+            $scope.copy[prop] = $scope.def.CorrectiveActions[0][prop];
+        }
+    }else{
+        $scope.copy = {
+            Class: "CorrectiveAction",
+            Is_active:true,
+            Text: "",
+            Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING,
+            Deficiency_selection_id: $scope.def.Key_id
+        }
+    }
+    if ($scope.copy.Promised_date) $scope.dates.promisedDate = $scope.copy.Promised_date;
+    if ($scope.dates.completionDate) $scope.dates.completionDate = $scope.copy.Completion_date;
   }
 
-  $scope.saveCorrectiveAction = function(copy){
+  $scope.saveCorrectiveAction = function(copy, orig){
     $scope.dirty = true;
-    console.log($scope);
     if($scope.dates.promisedDate)copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
     if($scope.dates.completionDate)copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
@@ -966,24 +973,6 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
         }
       )
   }
-  /*
-
-  $scope.getIsValid = function(){
-
-    if($scope.def.CorrectiveActions
-      && $scope.def.CorrectiveActions.length
-      && $scope.def.CorrectiveActions[0].Text
-      ){
-
-        if($scope.def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING && $scope.def.CorrectiveActions[0].view_Promised_date){
-            $scope.isValid = true;
-        }
-
-        if($scope.def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE && $scope.def.CorrectiveActions[0].view_Completion_date){
-            $scope.isValid = true;
-        }
-    }
-  }*/
 
   $scope.cancel = function(){
     $modalInstance.dismiss();
@@ -1002,7 +991,6 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
   }
 
   $scope.todayOrAfter = function(d){
-      console.log(d);
     var calDate = Date.parse(d);
     //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
     var now = new Date(),

@@ -462,14 +462,14 @@ div.rsmsCenterIconContainer a p {
     height: 250px;
     display: block;
   }
-  .centerIcons div.rsmsCenterIconContainer a i{
-    font-size: 230px;
-    margin-top: 120px;
-    margin-bottom: -120px;
-    margin-left: 33px;
-    color: white !Important;
-   }
-}
+  .centerIcons div.rsmsCenterIconContainer a i {
+    text-align: center;
+    width: auto;
+    height: 250px;
+    color: white;
+    font-size: 220px;
+    line-height: normal;
+  }
 @media (min-width: 773px) and (max-width: 999px) {
   /* line 300, ../sass/style.scss */
   .centerIcons {
@@ -1667,10 +1667,10 @@ table tr td table.nested-table td > div > div{
 .modal-body p {
   font-size: 16px;
 }
-.Pending{
+table.nested-table tbody tr td.Pending{
   background: #ffffb9 !important;
 }
-.Complete{
+table.nested-table tbody tr td..Complete{
   background: rgb(86, 201, 86);
   background: rgba(86, 201, 86, 0.5) !important;
 }
