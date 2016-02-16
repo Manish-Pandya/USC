@@ -208,12 +208,14 @@ angular
                             Make: copy.Make,
                             Model: copy.Model,
                             Principal_investigator_id: copy.Principal_investigator_id,
-                            Report_path: copy.Report_path,
+                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId,
                             Room_id: copy.Room_id,
-                            Serial_number: copy.Serial_number,
-                            Type: copy.Type,
                             RoomId: copy.RoomId,
-                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId
+                            Equipment_id: copy.Equipment_id,
+                            EquipmentId: copy.EquipmentId,
+                            Report_path: copy.Report_path,
+                            Serial_number: copy.Serial_number,
+                            Type: copy.Type
                 }
                 
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
