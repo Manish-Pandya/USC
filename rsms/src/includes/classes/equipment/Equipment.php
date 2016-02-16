@@ -93,7 +93,7 @@ abstract class Equipment extends GenericCrud{
 	public function setEquipmentInspections($inspections){ $this->equipment_inspections = $inspections; }
     
     public function conditionallyCreateEquipmentInspection(){
-        $l = Logger::getLogger('asdfadf');
+        $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
 
         if ($this->hasPrimaryKeyValue()) {
             if ($this->frequency != null) {

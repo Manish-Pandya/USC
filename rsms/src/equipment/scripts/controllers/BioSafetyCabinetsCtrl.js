@@ -118,28 +118,30 @@ angular.module('EquipmentModule')
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId = pi.Key_id;
         }
         
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator){
-            $scope.pi = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator;
-            $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator;
-            $scope.onSelectPi($scope.pi);
+        if ($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections) {
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator){
+                $scope.pi = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator;
+                $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator;
+                $scope.onSelectPi($scope.pi);
+            }
+
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room){
+                $scope.modalData.BioSafetyCabinetCopy.Room = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room;
+            }
+
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency){
+                $scope.modalData.BioSafetyCabinetCopy.Frequency = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency;
+            }
+
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path){
+                $scope.modalData.BioSafetyCabinetCopy.Report_path = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path;
+            }
+
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id){
+                $scope.modalData.BioSafetyCabinetCopy.Equipment_id = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id;
+            }
         }
-    
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room){
-            $scope.modalData.BioSafetyCabinetCopy.Room = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room;
-        }
-    
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency){
-            $scope.modalData.BioSafetyCabinetCopy.Frequency = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency;
-        }
-    
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path){
-            $scope.modalData.BioSafetyCabinetCopy.Report_path = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path;
-        }
-    
-        if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections && $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id){
-            $scope.modalData.BioSafetyCabinetCopy.Equipment_id = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id;
-        }
-    
+        
         console.log($scope.modalData.BioSafetyCabinetCopy);
     
         $scope.getBuilding = function(){
