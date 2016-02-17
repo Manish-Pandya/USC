@@ -4,3 +4,6 @@
 .buildpath
 rsms/logs/*
 rsms/src/biosafety-committees/protocol-documents/
+.vs/config/applicationhost.config
+.vs/rsms/v14/.suo
+rsms.phpproj

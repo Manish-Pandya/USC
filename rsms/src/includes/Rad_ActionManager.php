@@ -360,13 +360,30 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getVerifications");
-
+        
+        $authMaps = array();
+        $authMaps[] = new EntityMap("lazy", "getRooms");
+        $authMaps[] = new EntityMap("eager", "getAuthorizations");
+        $authMaps[] = new EntityMap("lazy", "getDepartments");
+        
+        $parcelMaps = array();
+        
+        
+        if($pi->getPi_authorization() != NULL){
+        	$piAuth = $pi->getPi_authorization();
+        	$piAuth->setEntityMaps($authMaps);
+        	$auths = $piAuth->getAuthorizations();
+        	foreach($auths as &$auth){
+        		
+        	}
+        }
+        
         $pi->setEntityMaps($entityMaps);
         $LOG = Logger::getLogger(__CLASS__);
         return $pi;
 
     }
-
+   
     public function getAllSVCollections(){
         $dao = $this->getDao(new ScintVialCollection());
         $collections = $dao->getAll();

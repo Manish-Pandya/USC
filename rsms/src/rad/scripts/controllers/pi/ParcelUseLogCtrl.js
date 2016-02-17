@@ -14,11 +14,18 @@ angular.module('00RsmsAngularOrmApp')
           $scope.af = af;
 
           var getPi = function(){
-        return af.getRadPIById($stateParams.pi)
+          return af.getRadPIById($stateParams.pi)
                 .then(
                     function(){
-              $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
-              return $scope.pi;
+                          $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
+                          var i = $scope.pi.ActiveParcels.length;
+                          while(i--){
+                              var parcel = dataStoreManager.getById("Parcel",$scope.pi.ActiveParcels.Key_id);
+                              if(parcel)parcel.Authorization = $scope.pi.ActiveParcels.Authorization;
+                              console.log(parcel);
+                          }
+
+                          return $scope.pi;
                     },
                     function(){}
                 )

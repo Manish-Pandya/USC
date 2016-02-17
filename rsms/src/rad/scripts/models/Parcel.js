@@ -78,6 +78,7 @@ Parcel.prototype = {
         }
     },
     loadAuthorization: function() {
+        console.log(dataStore)
         if(!this.Authorization) {
            this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
         }

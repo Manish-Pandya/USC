@@ -979,8 +979,11 @@ angular
                         var pi = returned.data;
                         console.log(pi);
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
+                        if(pi.Pi_authorization.Authorizations){
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization.Authorizations ));
+                        }
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
@@ -996,6 +999,7 @@ angular
                             pi.loadCarboyUseCycles();
                             pi.loadPickups();
                             pi.loadPIAuthorizations();
+
                             pi.loadUser();
                             pi.loadWasteBags();
                             pi.loadCurrentScintVialCollection();

@@ -2470,7 +2470,7 @@ class ActionManager {
 
             $inspection->setPrincipal_investigator_id($piId);
 
-            if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
+            //if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
             // Save (or update) the inspection
             $dao->save($inspection);
             $pi = $inspection->getPrincipalInvestigator();
@@ -2513,7 +2513,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getResponses");
         $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
         $entityMaps[] = new EntityMap("lazy","getChecklists");
-        $entityMaps[] = new EntityMap("lazy","getStatus");
+        $entityMaps[] = new EntityMap("eager","getStatus");
 
         $inspection->setEntityMaps($entityMaps);
 

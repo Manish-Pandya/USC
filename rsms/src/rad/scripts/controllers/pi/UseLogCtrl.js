@@ -9,13 +9,14 @@
  */
 angular.module('00RsmsAngularOrmApp')
   .controller('UseLogCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
-  		var af = actionFunctionsFactory;
-  		$scope.af = af;
-  		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
-  			.then(
-  				function(pi){
-  					$scope.pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
-  				},
-  				function(){}
-  			)
+          var af = actionFunctionsFactory;
+          $scope.af = af;
+          $rootScope.piPromise = $scope.parcelPromise = af.getRadPIById($stateParams.pi)
+              .then(
+                  function(pi){
+                      $scope.pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
+                      console.log(dataStore);
+                  },
+                  function(){}
+              )
  });
