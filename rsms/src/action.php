@@ -44,7 +44,10 @@ else{
     else{
         $LOG->debug('action result truthy');
         unset($_SESSION['error']);
-        header("location:" . $_SESSION['DESTINATION']);
+		$LOG->fatal( $_SESSION['DESTINATION'] );
+		$_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
+		$_SESSION['DESTINATION'] = str_replace("//", "", $_SESSION['DESTINATION']);
+        header("location:" . WEB_ROOT . $_SESSION['DESTINATION']);
     }
     
 }

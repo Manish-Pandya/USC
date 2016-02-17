@@ -264,7 +264,6 @@ class ActionManager {
                     $_SESSION['USER'] = $user;
 
                     $_SESSION['DESTINATION'] = $this->getDestination();
-
                     // return true to indicate success
                     return true;
                 } else {
@@ -360,15 +359,16 @@ class ActionManager {
          $destination = 'views/RSMSCenter.php';
      }else{
          if(in_array("Emergency Account", $_SESSION['ROLE']['userRoles'])){
-            $destination = "views/hubs/emergencyInformationHub.php";
+            $destination = "rsms/views/hubs/emergencyInformationHub.php";
          }else{
-            $destination = 'views/lab/MyLab.php';
+			 $destination = 'rsms/views/lab/MyLab.php';
          }
       }
       $LOG->fatal('getting destination');
       if($_SESSION["REDIRECT"] != null){
+		$LOG->fatal('hadfafdadfadfadfasdf');
       	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
-      	$destination = str_replace(LOGIN_PAGE, "", $destination);      	
+      	$destination = str_replace(LOGIN_PAGE, "", $destination);
       }
       
       return $destination;
