@@ -4,7 +4,7 @@
 <div cg-busy="{promise:SavingSmears,message:'Saving Smears', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div class="inspection-well super well">
 	<h1 ng-if="inspection.PrincipalInvestigator">Inspection of {{inspection.PrincipalInvestigator.User.Name}}'s Labs started on {{inspection.Date_started|dateToISO}}
-	<a class="btn btn-info btn-large"  href="http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Inspection Report</a>
+	<a class="btn btn-info btn-large"  href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}">Inspection Report</a>
 	</h1>
 	<div class="card super wipe-tests" ng-if="inspection.PrincipalInvestigator">
 		
