@@ -2902,7 +2902,6 @@ class ActionManager {
 
     public function getHazardsInRoom( $roomId = NULL, $subHazards ){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
-
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
         $LOG->debug("subHazards is $subHazards, roomId is $roomId");
@@ -2936,21 +2935,6 @@ class ActionManager {
                     $hazard->setParentIds($parentIds);
                 }
 
-            }
-            
-            //sort the hazards by parent
-            //10000 is the magic number, yes it is.
-            //this is because we arbitrarily decided that the ROOT hazard should have the key_id 10000
-            $sortedHazards = array();
-            $hashMap = array();
-            $nestMap = array();
-            
-            //this loops should be faster than repeatedly calling the db for the subhazards of every hazard
-            foreach ($hazards as $key=>$hazard) {
-            	if($nestMap[$hazard->getParent_hazard_id()] == null){
-            		$nestMap[$hazard->getParent_hazard_id()] = array();
-            	}
-            	array_push($nestMap[$hazard->getParent_hazard_id()], $hazard);
             }
                     
             return $hazards;
@@ -3376,10 +3360,8 @@ class ActionManager {
             //iterate the rooms and find the hazards present
             foreach ($rooms as $room){
                 $hazardlist = $this->getHazardsInRoom($room->getKey_id());
-               
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
-                	 
                     // Check to see if we've already examined this hazard (in an earlier room)
                     if (!in_array($hazard->getKey_id(),$masterHazards)){
                         // if this is new hazard, add its keyid to the master array...
@@ -3509,7 +3491,9 @@ class ActionManager {
             if (!empty($oldChecklists)) {
                 // remove the old checklists
                 foreach ($oldChecklists as $oldChecklist) {
-                    $dao->removeRelatedItems($oldChecklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                    $dao->removeRelatedItems($oldChecklist->getKey_id(),
+                    						 $inspection->getKey_id(),
+                    						 DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 }
             }
             
@@ -3539,7 +3523,6 @@ class ActionManager {
 			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
             $orderedChecklists = array();
             $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
-            $LOG->fatal($orderedChecklists);
             $inspection->setChecklists( $orderedChecklists );
             
             $entityMaps = array();

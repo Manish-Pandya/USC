@@ -43,14 +43,14 @@ class Room extends GenericCrud {
 
 	public static $HAZARDS_RELATIONSHIP = array(
 			"className"	=>	"Hazard",
-			"tableName"	=>	"hazard_room",
+			"tableName"	=>	"principal_investigator_hazard_room",
 			"keyName"	=>	"hazard_id",
 			"foreignKeyName"	=>	"room_id"
 	);
 
 	public static $HAZARD_ROOMS_RELATIONSHIP = array(
-			"className"	=>	"Hazard_room_relation",
-			"tableName"	=>	"hazard_room",
+			"className"	=>	"PrincipalInvestigatorHazardRoomRelation",
+			"tableName"	=>	"principal_investigator_hazard_room",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"room_id"
 	);
