@@ -172,7 +172,7 @@ echo "</script>";
                     <td style="width:10%">{{protocol.Protocol_number}}</td>
                     <td style="width:13%">{{protocol.PrincipalInvestigator.User.Name}}</td>
                     <td style="width:15%">{{protocol.Department.Name}}</td>
-                    <td style="width:13%">{{protocol.Project_title}}</td>
+                    <td style="width:13%"><a class="btn" trigger="mouseenter" href="#" tooltip-popup-close-delay='1000' popover='{{protocol.Project_title}}'>Project Title</a></td>
                     <td style="width:8%">{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
                     <td style="width:7%">{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
                     <td style="padding:10px 0;width:18%">

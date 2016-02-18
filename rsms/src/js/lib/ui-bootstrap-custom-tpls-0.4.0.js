@@ -2113,7 +2113,6 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               // Get the height and width of the tooltip so we can center it.
               ttWidth = tooltip.prop( 'offsetWidth' );
               ttHeight = tooltip.prop( 'offsetHeight' );
-
               // Calculate the tooltip's top and left coordinates to center it with
               // this directive.
               switch ( scope.tt_placement ) {
@@ -2231,7 +2230,8 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
 
               // And now we remove it from the DOM. However, if we have animation, we 
               // need to wait for it to expire beforehand.
-              // FIXME: this is a placeholder for a port of the transitions library.
+                // FIXME: this is a placeholder for a port of the transitions library.
+              
               if ( scope.tt_animation ) {
                 transitionTimeout = $timeout(removeTooltip, 500);
               } else {
@@ -2377,8 +2377,8 @@ angular.module( 'ui.bootstrap.popover', [ 'ui.bootstrap.tooltip' ] )
   };
 })
 
-.directive( 'popover', [ '$tooltip', function ( $tooltip ) {
-  return $tooltip( 'popover', 'popover', 'click' );
+.directive('popover', ['$tooltip', function ($tooltip) {
+  return $tooltip( 'popover', 'popover', 'mouseenter' );
 }]);
 
 angular.module('ui.bootstrap.progressbar', ['ui.bootstrap.transition'])
