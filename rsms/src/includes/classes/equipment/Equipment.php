@@ -76,7 +76,9 @@ abstract class Equipment extends GenericCrud{
     public function setRoomId($id){$this->roomId = $id;}
     
     public function getEquipmentInspections(){
-        if($this->equipmentInspections === NULL){
+        $l = Logger::getLogger('getEquipmentInspections?');
+        
+        if($this->equipmentInspections === null){
             $thisDAO = new GenericDAO( new EquipmentInspection() );
             // TODO: this would be a swell place to sort
             $whereClauseGroup = new WhereClauseGroup(
@@ -87,6 +89,10 @@ abstract class Equipment extends GenericCrud{
             );
             $this->equipmentInspections = $thisDAO->getAllWhere($whereClauseGroup);
         }
+        $l->fatal($this->equipment_inspections);
+        $l->fatal($this->equipment_inspections == null);
+        $l->fatal($whereClauseGroup);
+        // This always returns null. What gives?
         
 		return $this->equipment_inspections;
 	}
@@ -95,7 +101,7 @@ abstract class Equipment extends GenericCrud{
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
 
-        if ($this->hasPrimaryKeyValue()) {
+        if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
                 if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
