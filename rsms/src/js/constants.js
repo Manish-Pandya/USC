@@ -165,11 +165,11 @@ var Constants = (function () {
         }
     }
 
-    constants.BIOSAFETY_CABINET = {
-        FREQUENCY: {
-            ANNUALLY: "Annually",
-            BI_ANNUALLY: "Bi-annually",
-            SEMI_ANNUALLY: "Semi-annually"
+    constants.HAZARD_PI_ROOM = {
+        STATUS: {
+            STORED_ONLY: "Stored Only",
+            OTHER_PI: "Used by another PI's lab",
+            IN_USER: "In Use"
         }
     }
 
