@@ -33,7 +33,7 @@
                     <th>COMMENTS</th>
                 </tr>
                 <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:'':'Certification_date' | matchEquipmentDate:selectedCertificationDate:'Certification_date' | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:'Certification_date' | matchEquipmentDate:'':'Certification_date' | filter:{Is_active: !showInactive}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
@@ -52,7 +52,7 @@
                     </td>
                     <td colspan="6">
                         <table class="table table-striped">
-                            <tr ng-repeat="inspection in cabinet.EquipmentInspections">
+                            <tr ng-repeat="inspection in cabinet.EquipmentInspections | filter:{Certification_date: ''}">
                                 <td>
                                     {{inspection.Room.Building.Name}}
                                 </td>
@@ -107,7 +107,7 @@
                 </tr>
                 <!-- the following filter grabs cabinet inspections that have no Certification_date, stripping those with Certification_date set: matchEquipmentDate:'*':'Certification_date' 
                 To bad it don't seem to work. Thoughts? -->
-                <tr class="table-row" ng-repeat="cabinet in cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:'*':'Certification_date' | matchEquipmentDate:selectedDueDate:'Due_date' | filter:{Is_active: !showInactive}">
+                <tr class="table-row" ng-repeat="cabinet in cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedDueDate:'Due_date' | matchEquipmentDate:'*':'Certification_date' | filter:{Is_active: !showInactive} track by $index">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
@@ -126,7 +126,7 @@
                     </td>
                     <td colspan="6">
                         <table class="table table-striped table-bordered">
-                            <tr ng-repeat="inspection in cabinet.EquipmentInspections">
+                            <tr ng-repeat="inspection in cabinet.EquipmentInspections | filter:{Certification_date: null}">
                                 <td>
                                     {{inspection.Room.Building.Name}}
                                 </td>
@@ -134,7 +134,7 @@
                                     {{inspection.Room.Name}}
                                 </td>
                                 <td>
-                                    {{inspection.Due_date | dateToISO}}
+                                    {{inspection.Due_date | dateToISO}} {{inspection.Key_id}}
                                 </td>
                                 <td>
                                     {{inspection.PrincipalInvestigator.User.Name}}

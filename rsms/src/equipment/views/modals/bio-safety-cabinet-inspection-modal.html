@@ -64,12 +64,15 @@
         <label>Report Document</label>
         <a class="btn btn-large btn-success left view-report" ng-if="modalData.BioSafetyCabinetCopy.Report_path" href="protocol-documents/{{modalData.BioSafetyCabinetCopy.Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
         <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload/>
-        <label for="file" ng-class="{'success':!modalData.BioSafetyCabinetCopy.Report_path,'danger':modalData.BioSafetyCabinetCopy.Report_path}"><strong><i class="icon-upload-4"></i><span ng-if="!modalData.BioSafetyCabinetCopy.Report_path">Upload</span><span ng-if="modalData.BioSafetyCabinetCopy.Report_path">Replace</span></strong></label><i class="success icon-checkmark upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploaded"></i><i class="icon-spinnery-dealie spinner upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploading"></i>
+        <label for="file" ng-class="{'success':!modalData.BioSafetyCabinetCopy.Report_path,'danger':modalData.BioSafetyCabinetCopy.Report_path}">
+            <strong><i class="icon-upload-4"></i><span ng-if="!modalData.BioSafetyCabinetCopy.Report_path">Upload</span><span ng-if="modalData.BioSafetyCabinetCopy.Report_path">Replace</span></strong>
+        </label>
+        <i class="success icon-checkmark upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploaded"></i><i class="icon-spinnery-dealie spinner upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploading"></i>
     </div>
     
 </div>
 
 <div class="modal-footer">
-    <button ng-disabled="!modalData.BioSafetyCabinetCopy.Room" class="btn btn-large btn-success left" ng-click="save(modalData.BioSafetyCabinetCopy, modalData.BioSafetyCabinet)"><i class="icon-checkmark"></i>Certify</button>
+    <button ng-disabled="!modalData.BioSafetyCabinetCopy.Room" class="btn btn-large btn-success left" ng-click="certify(modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex], modalData.BioSafetyCabinet.EquipmentInspections[modalData.inspectionIndex])"><i class="icon-checkmark"></i>Certify</button>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

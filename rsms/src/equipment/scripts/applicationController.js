@@ -69,7 +69,7 @@ angular
                   controller: 'GenericModalCtrl'
                 });
             }
-
+            
             af.setModalData = function(thing) {
                 dataStoreManager.setModalData(thing);
             }
@@ -153,7 +153,50 @@ angular
             }
             
             af.getAllEquipmentInspections = function() {
-                return dataSwitchFactory.getAllObjects('EquipmentInspection');
+                return dataSwitchFactory.getAllObjects('EquipmentInspection', true);
+            }
+            
+            af.saveEquipmentInspection = function(copy, equipmentInspection) {
+                af.clearError();
+                
+                //flatten to avoid circular JSON structure
+                var secondCopy = {
+                            Certification_date: copy.Certification_date,
+                            Due_date: copy.Due_date,
+                            Class: "EquipmentInspection",
+                            Comment: copy.Comment,
+                            Status: copy.Status,
+                            Frequency: copy.Frequency,
+                            Is_active: copy.Is_active,                            
+                            Principal_investigator_id: copy.Principal_investigator_id,
+                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId,
+                            Room_id: copy.Room_id,
+                            RoomId: copy.RoomId,
+                            Equipment_id: copy.Equipment_id,
+                            EquipmentId: copy.EquipmentId,
+                            Equipment_class: copy.Equipment_class,
+                            Report_path: copy.Report_path
+                }
+                
+                if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
+                console.log(secondCopy);
+                return this.save(secondCopy)
+                    .then(
+                        function(returnedEquipmentInspections){
+                            returnedEquipmentInspections = modelInflatorFactory.instateAllObjectsFromJson(returnedEquipmentInspections);
+                            if(equipmentInspection.Key_id){
+                                console.log(returnedEquipmentInspections);
+                                angular.extend(dataStoreManager.getById("EquipmentInspection",equipmentInspection.Key_id), returnedEquipmentInspections[0]);
+                            }else{
+                                console.log(returnedEquipmentInspections);
+                                dataStoreManager.addOnSave(returnedEquipmentInspections);
+                                dataStoreManager.store(returnedEquipmentInspections);
+                            }
+                            var cabinet = dataStoreManager.getById("BioSafetyCabinet",equipmentInspection.Equipment_id);
+                            if (returnedEquipmentInspections[1]) cabinet.EquipmentInspections.push(returnedEquipmentInspections[1]);
+                        },
+                        af.setError('The EquipmentInspection could not be saved')
+                    )
             }
             
             /********************************************************************

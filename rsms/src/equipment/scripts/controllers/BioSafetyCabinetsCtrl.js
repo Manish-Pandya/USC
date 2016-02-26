@@ -8,6 +8,24 @@
  * Controller of the EquipmentModule Biological Safety Cabinets view
  */
 angular.module('EquipmentModule')
+    .directive('fileUpload', function (applicationControllerFactory) {
+        return {
+            restrict: 'A',
+            scope: true,
+            link: function (scope, element, attr) {
+                console.log(element);
+                element.bind('change', function () {
+                    var formData = new FormData();
+                    formData.append('file', element[0].files[0]);
+                    element.blur();
+                    $("label[for='"+element.attr('id')+"']").blur();
+                    scope.$emit("fileUpload",formData);
+                    return;
+                });
+
+            }
+        };
+    })
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
     
@@ -105,7 +123,7 @@ angular.module('EquipmentModule')
         }
 
   })
-  .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance) {
+  .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
         
         $scope.modalData = af.getModalData();
@@ -124,21 +142,20 @@ angular.module('EquipmentModule')
                 $scope.pi.selected = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].PrincipalInvestigator;
                 $scope.onSelectPi($scope.pi);
             }
-
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room){
                 $scope.modalData.BioSafetyCabinetCopy.Room = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room;
             }
-
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency){
                 $scope.modalData.BioSafetyCabinetCopy.Frequency = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Frequency;
             }
-
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path){
                 $scope.modalData.BioSafetyCabinetCopy.Report_path = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path;
             }
-
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id){
                 $scope.modalData.BioSafetyCabinetCopy.Equipment_id = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Equipment_id;
+            }
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date){
+                $scope.modalData.BioSafetyCabinetCopy.Certification_date = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date;
             }
         }
         
@@ -164,13 +181,20 @@ angular.module('EquipmentModule')
             }
         });
     
-        $scope.save = function(copy, orginal){
-            if(!orginal)orginal = null;
-            console.log(orginal);
-            af.saveBioSafetyCabinet(copy, orginal)
+        $scope.save = function(copy, original){
+            if(!original)original = null;
+            console.log(original);
+            af.saveBioSafetyCabinet(copy, original)
                     .then(function(){$scope.close()})
         }
-
+        
+        $scope.certify = function(copy, original){
+            if(!original)original = null;
+            copy.Certification_date = convenienceMethods.setMysqlTime(new Date());
+            af.saveEquipmentInspection(copy, original)
+                    .then(function(){$scope.close()})
+        }
+        
         $scope.close = function(){
             $modalInstance.dismiss();
             af.deleteModalData();
@@ -183,7 +207,7 @@ angular.module('EquipmentModule')
             $scope.$apply();
 
             var xhr = new XMLHttpRequest;
-            var url = '../ajaxaction.php?action=uploadProtocolDocument';
+            var url = '../ajaxaction.php?action=uploadReportCertDocument';
             if($scope.modalData.BioSafetyCabinetCopy.Key_id)url = url + "&id="+$scope.modalData.BioSafetyCabinetCopy.Key_id;
             xhr.open('POST', url, true);
             xhr.send(formData);

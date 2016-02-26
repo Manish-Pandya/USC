@@ -70,6 +70,7 @@ angular
                             var inspectionDate = equipments[i].EquipmentInspections[j][dateProp];
                             if ( (!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1) ) {
                                 matches.unshift(equipments[i]);
+                                break;
                             }
                         }
                     }
