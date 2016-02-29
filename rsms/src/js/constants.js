@@ -134,6 +134,15 @@ var Constants = (function () {
         }
     };
 
+    //match the key_id for each waste type to a readable string
+    constants.WASTE_TYPE = {
+        LIQUID: 1,
+        CADAVER: 2,
+        VIAL: 3,
+        OTHER: 4,
+        SOLID: 5
+    }
+
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
 
