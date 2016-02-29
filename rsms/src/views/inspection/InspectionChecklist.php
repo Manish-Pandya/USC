@@ -20,7 +20,7 @@ require_once '../top_view.php';
 <div id="side-nav" ng-show="showMenu">
     <ul class="nav nav nav-pills nav-stacked" id="sideNav">
           <li class="nav-header" style="font-size: 30px;padding: 20px 3px;">Checklists</li>
-          <li ng-repeat="cat in cf.categories | showNavItem">
+          <li ng-repeat="cat in cf.categories | showNavItem:inspection">
               <a ng-click="cf.selectCategory(cat)" class="checklistListNavHeader" id="{{cat.cssID}}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a>
               <ul ng-if="cat.Key_id == cf.selectedCategory.Key_id">
                   <li ng-include="'checklist-subnav.html'" ng-repeat="list in inspection.Checklists | relevantLists track by $index"></li>
@@ -38,7 +38,7 @@ require_once '../top_view.php';
         <h2>{{error}}</h2>
     </div>
     <ul class="postInspectionNav row" style="margin-left:11px;">
-        <li ng-repeat="cat in cf.categories | showNavItem"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
+                    <li ng-repeat="cat in cf.categories | showNavItem:inspection"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
         <li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a title="Inspection Comments" ng-click="openNotes()" class="btn btn-large btn-info checklistNav" ><i class="icon-clipboard-2" style="  font-size: 33px !important;margin: 2px 5px 3px -12px;"></i></a></li>
     </ul>
     <div class="loading" ng-show='loading' style="margin-left:11px;">

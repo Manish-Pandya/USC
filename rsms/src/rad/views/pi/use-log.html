@@ -2,6 +2,7 @@
     <div class="card full parcels">
         <h3 class="card-header  padding" ng-if="pi.ActiveParcels"><i class="icon-box"></i>You have <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span></h3>
         <h3 class="card-header parcels padding" ng-if="!pi.ActiveParcels.length">You have no Packages</h3>
+        <span ng-if="pi.SolidsContainers" ng-init="pi.loadWasteBags()"></span>
         <div class="card-content">
             <div class="fake-table striped bordered">
                 <div class="table-header">

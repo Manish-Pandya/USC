@@ -124,7 +124,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadSolidsContainers: function() {
-        dataLoader.loadOneToManyRelationship( this, 'SolidsContainers', this.SolidsContainersRelationship);
+        dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.SolidsContainersRelationship);
     },
 
     loadCarboyUseCycles: function() {
@@ -145,8 +145,9 @@ PrincipalInvestigator.prototype = {
         }
     },
 
-    loadWasteBags: function() {
-        if(!this.WasteBags && this.SolidsContainers){
+    loadWasteBags: function () {
+        console.log(this.SolidsContainers);
+        if((!this.WasteBags || !this.WasteBags.length) && this.SolidsContainers){
             this.WasteBags = [];
             var i = this.SolidsContainers.length;
             while(i--){

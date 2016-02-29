@@ -94,20 +94,38 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
     }
 })
 .filter("showNavItem", function(checklistFactory){
-        return function (items){
+        return function (items, inspection){
             if(!items)return;
             var relevantItems = [];
             var lists = checklistFactory.inspection.Checklists;
             if(!lists)return;
-            for(var i = 0; i < items.length; i++){
+            for (var i = 0; i < items.length; i++) {
                 var push = false;
+
                 for (var j = 0; j < lists.length; j++){
                     if(lists[j].Is_active && lists[j].Master_id == items[i].Key_id){
                         if(!checklistFactory.selectedCategory)checklistFactory.selectCategory( items[i] );
                         push = true;
                     }
                 }
-                if(push) relevantItems.push(items[i]);
+                var skips = [];
+                if (inspection) {
+                    if (inspection.Is_rad) {
+                        skips = ["Biological", "Chemical", "General"];
+                        //select radiation category
+                        if (items[i].Label == "Radiation") {
+                            checklistFactory.selectCategory(items[i]);
+                        }
+                    } else {
+                        skips = ["Radiation"];
+                    }
+
+                    if (skips.indexOf(items[i].Label) > -1) {
+                        push = false;
+                    }
+                }
+               
+                if (push) relevantItems.push(items[i]);
             }
             return relevantItems;
         }
@@ -448,7 +466,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 var i = question.Responses.DeficiencySelections.length;
                 var id = def.Key_id;
                 while(i--){
-                    console.log(id + ' \ ' + question.Responses.DeficiencySelections[i].Deficiency_id)
                     if( id == question.Responses.DeficiencySelections[i].Deficiency_id ){
                         def.selected = true;
                         return true;
