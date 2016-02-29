@@ -2992,13 +2992,14 @@ class ActionManager {
                     $hazardIds[] = $piHazardRoom->getHazard_id();
                     $hazards[] = $hazard;              
                 }
-           }
+            }
 
             //make sure we get all the general hazards, too
             $generalHazard = $this->getHazardById(9999);
             $generalHazards = $this->getFlatHazardBranch($generalHazard);
 
             $hazards = array_merge($hazards, $generalHazards);
+
 
             foreach($branchIds as $id){
                 if(!in_array($id, $hazardIds)){
@@ -3008,8 +3009,9 @@ class ActionManager {
                     }
                 }
             }
+            array_push($hazards, $this->getHazardById(9999));
 
-           return $hazards;
+            return $hazards;
         }
         else{
             //error
@@ -3042,7 +3044,7 @@ class ActionManager {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         if($hazards == null){
-            $hazards = array();
+            $hazards = array($hazard);
         }
         $hazards = array_merge($hazards, $hazard->getSubHazards());
         foreach($hazard->getSubHazards() as $child){
@@ -3617,8 +3619,6 @@ class ActionManager {
                 $LOG->fatal('should be retrieving old checklists');
                 $checklists = $oldChecklists;
             }
-            $LOG->fatal('report param:');
-            $LOG->fatal($report);
 
             $hazardIds = array();
             // add the checklists to this inspection
@@ -3671,10 +3671,9 @@ class ActionManager {
     	if($orderedChecklists == NULL){
     		$orderedChecklists = array();
     	}
-	    foreach($hazard->getActiveSubHazards() as $child){	    	
-	    	
-	    	if(in_array($child->getKey_id(), $hazardIds)  && $idx = $this->findChecklist( $child->getChecklist(), $checklists )){
-	    		array_push($orderedChecklists, $checklists[$idx]);
+	    foreach($hazard->getActiveSubHazards() as $child){
+	    	$idx = $this->findChecklist( $child->getChecklist(), $checklists );
+	    	if(in_array($child->getKey_id(), $hazardIds)  && (int) $idx !== false ){
 	    		unset($checklists[$idx]);
 	    	}
 	    	
@@ -3690,7 +3689,9 @@ class ActionManager {
 		$LOG = Logger::getLogger(__FUNCTION__);
 		foreach($lists as $key=>$list){
 			if($list->getKey_id() == $checklist->getKey_id()){
-				return $key;
+                $LOG->fatal($key);
+                $LOG->fatal(gettype($key));
+				return (int) $key;
 			}
 		}
 		return false;
