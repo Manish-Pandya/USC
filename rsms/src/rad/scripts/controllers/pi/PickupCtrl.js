@@ -13,8 +13,7 @@ angular.module('00RsmsAngularOrmApp')
           $scope.af = af;
           $rootScope.piPromise = af.getRadPIById($stateParams.pi)
               .then(
-                  function(pi){
-                      console.log(pi);
+                  function (pi) {
                       console.log(dataStore);
                       //pi.loadRooms();
                       if(pi.Pickups){
@@ -26,14 +25,48 @@ angular.module('00RsmsAngularOrmApp')
                             };
                           }
                       }
+                      var i = pi.SolidsContainers.length;
+                      while (i--) {
+                          pi.SolidsContainers[i].loadWasteBagsForPickup();
+                          pi.SolidsContainers[i].loadCurrentWasteBags();
+                      }
                     $scope.pi = pi;
                   },
                   function(){}
               )
+          $scope.solidsContainerHasPickups = function (container) {
+              if (!container) return false;
+
+              if ($scope.hasPickupItems(container.WasteBagsForPickup)) return true;
+
+              return false;
+          }
 
 
-       $scope.svTrays = 0;
+          $scope.hasPickupItems = function (collection) {
+              if (!collection || !collection.length) return false;
+              var hasPickupItems = false;
+              if (!collection) return false;
+              var i = collection.length;
+              while (i--) {
+                  // TODO: Should collection[i].Contents ever be null? Had to add null check here before getting length, because it's null sometimes.
+                  if (!collection[i].Pickup_id && collection[i].Class == "WasteBag" || (!collection[i].Pickup_id && collection[i].Contents && collection[i].Contents.length)) {
+                      hasPickupItems = true;
+                  }
 
+              }
+              return hasPickupItems;
+          }
+
+        $scope.svTrays = 0;
+
+        $scope.wasteInContainersScheduledScheduled = function (containers) {
+            var i = containers.length;
+            while (i--) {
+                if (containers[i].Pickup_id) return true;
+            }
+            return false;
+        }
 
         $scope.createPickup = function(pi){
             //collection of things to be picked up
@@ -59,22 +92,34 @@ angular.module('00RsmsAngularOrmApp')
 
 
             //include proper objects in pickup
-            if(pi.SolidsContainers){
+            if (pi.SolidsContainers) {
                 var i = pi.SolidsContainers.length;
                 while(i--){
                     var container = pi.SolidsContainers[i];
                     var j =  container.WasteBagsForPickup.length;
                     while(j--){
-                        if( container.include && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.WasteBagsForPickup[j]))pickup.Waste_bags.push( container.WasteBagsForPickup[j] );
+                        if (container.include && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.WasteBagsForPickup[j])) {
+                            pickup.Waste_bags.push(container.WasteBagsForPickup[j]);
+                        }
+                    }
+                    //conditionally include the current waste bag
+                    if (container.includeCurrentBag && !convenienceMethods.arrayContainsObject(pickup.Waste_bags, container.CurrentWasteBags[0])) {
+                        pickup.Waste_bags.push(container.CurrentWasteBags[0]);
                     }
                 }
             }
 
             if(pi.CurrentScintVialCollections){
                 var i = pi.CurrentScintVialCollections.length;
+                pickup.Scint_vial_trays = 0;
                 while(i--){
-                    pickup.Scint_vial_trays = pi.CurrentScintVialCollections[i].svTrays;
                     if( pi.CurrentScintVialCollections[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollections[i]) ) pickup.Scint_vial_collections.push( pi.CurrentScintVialCollections[i] );
+
+                    if (pi.CurrentScintVialCollections[i].svTrays) {
+                        pickup.Scint_vial_trays = parseInt(pickup.Scint_vial_trays) + parseInt(pi.CurrentScintVialCollections[i].svTrays);
+                    }
+                    console.log( parseInt(pi.CurrentScintVialCollections[i].svTrays));
+                    console.log(pickup.Scint_vial_trays);
                 }
             }
 
@@ -93,33 +138,6 @@ angular.module('00RsmsAngularOrmApp')
                 });
             }
 
-        }
-
-        $scope.solidsContainersHavePickups = function(containers){
-            console.log(containers);
-            if(!containers)return false;
-            var i = containers.length;
-            while(i--){
-                //if(!containers[i].WasteBagsForPickup.length)return false;
-                if($scope.hasPickupItems(containers[i].WasteBagsForPickup))return true;
-            }
-            return false;
-        }
-
-
-        $scope.hasPickupItems = function(collection){
-            //if(!collection.length)return false;
-            var hasPickupItems = false;
-            if(!collection)return false;
-            var i = collection.length;
-            while(i--){
-                // TODO: Should collection[i].Contents ever be null? Had to add null check here before getting length, because it's null sometimes.
-                if(!collection[i].Pickup_id && collection[i].Contents && collection[i].Contents.length){
-                    hasPickupItems = true;
-                }
-
-            }
-            return hasPickupItems;
         }
 
   })

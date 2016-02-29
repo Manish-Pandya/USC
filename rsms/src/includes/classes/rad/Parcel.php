@@ -156,9 +156,9 @@ class Parcel extends RadCrud {
 	public function setIsotope_id($newId) { $this->isotope_id = $newId; }
 
 	public function getIsotope() {
-		if($this->isotope == null) {
+		if($this->isotope == null && $this->getAuthorization_id() != null) {
 			$isotopeDAO = new GenericDAO(new Isotope());
-			$this->isotope = $isotopeDAO->getById($this->getIsotope_id());
+			$this->isotope = $isotopeDAO->getById($this->getAuthorization_id());
 		}
 		return $this->isotope;
 	}

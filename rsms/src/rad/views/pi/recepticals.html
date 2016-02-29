@@ -15,22 +15,20 @@
 
     <div class="card half block" ng-repeat="container in pi.SolidsContainers">
         <h3 class="card-header padding" ng-if="pi.SolidsContainers"><i class="icon-remove-2"></i>
-            {{container.Name}} in Room {{container.Room.Name}} has {{container.CurrentWasteBags.length}} waste bags. <a ng-click="openModal('views/pi/pi-modals/solids-container-modal', container)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Receptical</a>
-            <a class="btn btn-success left" ng-click="af.addWasteBagToSolidsContainer(container)"><i class="icon-plus-2"></i>Add Waste Bag</a>
-
+            {{container.Name}} in <span ng-if="container.Room">Room {{container.Room.Name}}</span> has {{container.CurrentWasteBags.length}} waste bags. <a ng-click="openModal('views/pi/pi-modals/solids-container-modal', container)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Receptical</a>
+            <a ng-if="!container.CurrentWasteBags.length"class="btn btn-success left" ng-click="af.addWasteBagToSolidsContainer(container)"><i class="icon-plus-2"></i>Add Waste Bag</a>
         </h3>
         <div class="fake-table striped bordered" ng-if="container.CurrentWasteBags.length">
                 <div class="table-header">
                     <h3>Remove</h3>
-                    <h3>Date Added</h3>
+                    <h3>Date Changed</h3>
                 </div>
                 <div class="table-row" ng-repeat="bag in container.CurrentWasteBags" ng-if="!bag.Date_removed || bag.Date_removed == '0000-00-00 00:00:00'" ng-class="{'inactive':!container.Is_active}">
-                    <div>
-                        <a ng-click="af.removeWasteBagFromContainer(container, bag)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                    <div style="width:22%">
+                        <a ng-click="af.changeWasteBag(container, bag)" class="btn btn-danger left"><i class="icon-remove"></i>Change Waste Bag</a>
                     </div>
                     <div>
                         {{bag.Date_added | dateToISO}}
-                        {{bag.Date_removed}}
                     </div>
                 </div>
             </div>

@@ -72,7 +72,6 @@ angular
                             },
                             function( error )
                             {
-                                console.log(error);
                                 //object.Name = error;
                                // object.setIs_active( !object.Is_active );
                                 $rootScope.error = 'error';
@@ -570,7 +569,6 @@ angular
             af.saveIsotope = function(copy, isotope)
             {
                 af.clearError();
-                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedIsotope){
@@ -690,7 +688,6 @@ angular
                 return genericAPIFactory.read(segment)
                         .then(
                             function(returnedDrum){
-                                console.log(returnedDrum.data);
                                 angular.extend(drum, returnedDrum.data);
                             }
                         )
@@ -705,7 +702,7 @@ angular
 
             af.getParcelById = function( key_id )
             {
-                return dataSwitchFactory.getObjectById("Parcel",key_id);
+                return dataSwitchFactory.getObjectById("Parcel",key_id, true);
             }
 
             af.getAllParcels = function( key_id )
@@ -977,7 +974,6 @@ angular
                 return genericAPIFactory.read(segment)
                     .then( function( returned ) {
                         var pi = returned.data;
-                        console.log(pi);
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
                         if(pi.Pi_authorization.Authorizations){
@@ -987,11 +983,36 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.SolidsContainers));
+                        
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
+
+                        var i = pi.ActiveParcels.length;
+                        while (i--) {
+                            if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
+                                store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
+                                var j = pi.ActiveParcels[i].ParcelUses.length;
+                                while (j--) {
+
+                                    if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
+                                        var k = pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts.length;
+                                        while (k--) {
+                                            store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts[k]));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
+                       
                         pi = dataStoreManager.getById("PrincipalInvestigator", id);
-                        if(pi){
+                        if (pi) {
+                            pi.loadPickups();
                             pi.loadActiveParcels();
                             pi.loadRooms();
                             pi.loadPurchaseOrders();
@@ -999,10 +1020,21 @@ angular
                             pi.loadCarboyUseCycles();
                             pi.loadPickups();
                             pi.loadPIAuthorizations();
-
                             pi.loadUser();
                             pi.loadWasteBags();
-                            pi.loadCurrentScintVialCollection();
+                            pi.loadCurrentScintVialCollections();
+                            var i = pi.Pickups.length;
+                            while (i--) {
+                                pi.Pickups[i].loadCurrentScintVialCollections();
+                                pi.Pickups[i].loadCarboyUseCycles();
+                            }
+
+                            var i = pi.SolidsContainers.length;
+                            while(i--){
+                                pi.SolidsContainers[i].loadCurrentWasteBags();
+                                pi.SolidsContainers[i].loadWasteBagsForPickup();
+                            }
+                           
                         }
                         return pi;
                     });
@@ -1015,10 +1047,8 @@ angular
                     return genericAPIFactory.read(segment)
                         .then(
                             function(returnedUses){
-                                //console.log(returnedUses.data);
                                 var uses = modelInflatorFactory.instateAllObjectsFromJson( returnedUses.data );
                                 store.store(uses);
-                                console.log(uses);
                                 var useAmounts = [];
                                 var i = uses.length;
                                 while(i--){
@@ -1162,7 +1192,6 @@ angular
             af.savePurchaseOrder = function( pi, copy, order )
             {
                 af.clearError();
-                console.log(copy.view_Start_date);
                 copy.Start_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Start_date));
                 copy.End_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_End_date));
 
@@ -1182,23 +1211,15 @@ angular
             }
 
             af.getDate = function(dateString){
-                console.log(dateString)
-                console.log(Date.parse(dateString))
                 var seconds = Date.parse(dateString);
-                console.log(seconds);
                 //if( !dateString || isNaN(dateString) )return;
                 var t = new Date(1970,0,1);
                 t.setTime(seconds);
-                console.log(t);
                 return t;
             }
 
             af.getIsExpired = function(dateString){
-                console.log(dateString)
-                console.log(Date.parse(dateString))
                 var seconds = Date.parse(dateString);
-                console.log(new Date().getTime())
-                console.log(seconds < new Date().getTime())
                 return seconds < new Date().getTime();
             }
 
@@ -1208,7 +1229,6 @@ angular
                 return this.save( copy )
                     .then(
                         function(returnedParcel){
-                            console.log(returnedParcel);
                             returnedParcel = modelInflatorFactory.instateAllObjectsFromJson( returnedParcel );
                             if(copy.Key_id){
                                 angular.extend(parcel, copy)
@@ -1223,7 +1243,6 @@ angular
             af.saveParcelWipesAndChildren = function( copy, parcel )
             {
                 af.clearError();
-                console.log(copy);
                 copy.Status = Constants.PARCEL.STATUS.WIPE_TESTED;
                  return $rootScope.SavingParcelWipe = genericAPIFactory.save( copy, 'saveParcelWipesAndChildren' )
                     .then(
@@ -1267,7 +1286,6 @@ angular
             af.saveCarboy = function( pi, copy, carboy )
             {
                 af.clearError();
-                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedCarboy){
@@ -1286,7 +1304,6 @@ angular
 
             af.saveCarboyUseCycle = function( copy, cycle, poured )
             {
-                console.log(copy);
                 af.clearError();
                 if(poured){
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
@@ -1337,7 +1354,6 @@ angular
                 return this.save( cycle )
                     .then(
                         function(returnedCycle){
-                            console.log(returnedCycle);
                             //angular.extend(cycle, returnedCycle);
                             //returnedCycle.Carboy = cycle.Carboy;
                             pi.CarboyUseCycles.push(cycle);
@@ -1356,8 +1372,21 @@ angular
                 $rootScope.error = null;
             }
 
-            af.addWasteBagToSolidsContainer = function(container)
+            af.changeWasteBag = function (container, bag)
             {
+                af.clearError();
+                return this.save( bag, false, "changeWasteBag" )
+                    .then(
+                        function(returnedBag){
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                            container.CurrentWasteBags.push(returnedBag);
+                            bag.Date_removed = returnedBag.Date_added;
+                        },
+                        af.setError('The Waste Bage could not be added to the Receptical.')
+                    )
+            }
+
+            af.addWasteBagToSolidsContainer = function (container) {
                 var bag = {
                     Date_added: convenienceMethods.setMysqlTime(new Date()),
                     Is_active: true,
@@ -1366,10 +1395,10 @@ angular
                 };
 
                 af.clearError();
-                return this.save( bag )
+                return this.save(bag)
                     .then(
-                        function(returnedBag){
-                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                        function (returnedBag) {
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson(returnedBag);
                             console.log(returnedBag);
                             angular.extend(bag, returnedBag);
                             container.CurrentWasteBags.push(returnedBag);
@@ -1379,15 +1408,12 @@ angular
             }
 
             af.removeWasteBagFromContainer = function(container, bag){
-                console.log(convenienceMethods.setMysqlTime(new Date()))
                 bag.Date_removed = convenienceMethods.setMysqlTime(new Date());
-                console.log(bag);
                 af.clearError();
                 return this.save( bag )
                     .then(
                         function(returnedBag){
-                            console.log(returnedBag);
-                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson(returnedBag);
                             angular.extend(bag, returnedBag)
                         },
                         af.setError('The Carboy could not be removed from the lab.')
@@ -1395,13 +1421,11 @@ angular
             }
 
             af.saveParcelUse = function(parcel, copy, use){
-                console.log(copy);
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
                     .then(
                         function(returnedUse){
-                            console.log(returnedUse);
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
@@ -1422,14 +1446,21 @@ angular
                             var total = 0;
                             var i = uses.length;
                             while(i--){
-                                total += parseInt(uses[i].Quantity);
+                                total += parseFloat(uses[i].Quantity);
                             }
-                            parcel.Quantity = parcel.Quantity-total;
+                            parcel.Remainder = Math.round( (parcel.Quantity - total) * 100000 ) / 100000;
                             use.edit = false;
                             af.clearError();
                             return parcel;
                         },
-                        function(){
+                        function () {
+                            if (use) {
+                                var i = use.ParcelUseAmounts.length;
+                                while (i--) {
+                                    use.ParcelUseAmounts[i].OldQuantity = use.ParcelUseAmounts[i].Curie_level;
+                                }
+                            }
+                            
                             af.setError('The usage could not be saved.')
                         }
                     )
@@ -1447,23 +1478,31 @@ angular
                 return this.save( editedPickup, saveChildren )
                     .then(
                         function(returnedPickup){
-                            returnedPickup = modelInflatorFactory.instateAllObjectsFromJson( returnedPickup );
+                            returnedPickup = modelInflatorFactory.instateAllObjectsFromJson(returnedPickup);
                             var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
-                            if(saveChildren){
+                            if (saveChildren) {
+                                console.log(returnedPickup);
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
                                 while(i--){
-
+                                        
                                         //find the cached WasteBag with the same key_id as the one from the server, and update its properties
-                                        angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id),returnedPickup.Waste_bags[i]);
-                                        console.log(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id));
                                         //remove this WasteBag from it's containers collection of WasteBags ready to be have a pickup requested.
                                         var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
                                         var j = container.WasteBagsForPickup.length;
-                                        while(j--){
-                                            if(container.WasteBagsForPickup[j].Pickup_id)container.WasteBagsForPickup.splice(i,1);
+                                        while (j--) {
+                                            if (container.WasteBagsForPickup[j].Key_id == returnedPickup.Waste_bags[i].Key_id) {
+                                                angular.extend(container.WasteBagsForPickup[j], returnedPickup.Waste_bags[i]);
+                                            }
+                                        }
+                                        //if we've added the container's current waste bag, add set its pickup id
+                                        if (container.includeCurrentBag) {
+                                            var bag = dataStoreManager.getById("WasteBag", container.CurrentWasteBags[0].Key_id);
+                                            bag.Pickup_id = returnedPickup.Key_id;
+                                            container.CurrentWasteBags[0].Pickup_id = returnedPickup.Key_id;
                                         }
                                 }
+                              
 
                                 var i = returnedPickup.Carboy_use_cycles.length;
                                 while(i--){
@@ -1474,15 +1513,25 @@ angular
                                 }
 
                                 var i = returnedPickup.Scint_vial_collections.length;
-                                while(i--){
+                                while (i--) {
+                                    /*
+                                    var j = pi.Scint_vial_collections.length;
+                                    while (j--) {
+
+                                    }
+                                    */
                                     if(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id)){
                                         //find the cached ScintVialCollection with the same key_id as the one from the server, and update its properties
                                         angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
                                     }
                                 }
                             }
+                            returnedPickup.loadCurrentScintVialCollections();
+                            returnedPickup.loadWasteBags();
+                            returnedPickup.loadCarboyUseCycles();
                              //the pickup is new, so add it to the cache and the PI's collection of pickups
-                            if(!originalPickup.Key_id){
+                            if (!originalPickup.Key_id) {
+                                console.log(returnedPickup);
                                 dataStoreManager.store(returnedPickup);
                                 pi.Pickups.push(returnedPickup);
                             }
@@ -1511,21 +1560,65 @@ angular
                     var label = "Scintillation Vials";
                 }
 
+                var pickup = dataStoreManager.getById("Pickup", object.Pickup_id);
+                console.log(dataStore);
+                //return;
+              
                 return this.save( copy )
                     .then(
                         function(returnedObj){
                             angular.extend(object, returnedObj);
                             if(copy.Class == "WasteBag" && !admin){
-                                var container = dataStoreManager.getById("SolidsContainer",copy.Container_id);
-                                container.WasteBagsForPickup.push(object);
+                                var container = dataStoreManager.getById("SolidsContainer", copy.Container_id);
+                                if (container.CurrentWasteBags && container.CurrentWasteBags.length) {
+                                    if (copy.Key_id == container.CurrentWasteBags[0].Key_id) {
+                                        container.includeCurrentBag = false;
+                                    }
+                                } else {
+                                    container.loadCurrentWasteBags();
+                                }
+                                
                             }
                             var i = pickupCollection.length;
-                            console.log(pickupCollection);
                             while(i--){
                                 if(object.Key_id == pickupCollection[i].Key_id)pickupCollection.splice(i,1);
                             }
+                            console.log(object);
+                            object.Pickup_id = null;
+                            //Set labels for each kind of child the pickup might have, so we can display a human readable error if the save fails.
+                            if (copy.Class == "CarboyUseCycle") {
+                            } else if (copy.Class == "WasteBag") {
+                            } else {
+                                pi.CurrentScintVialCollections[0].include = false;
+                            }
+                            return pickup;
                         },
                         af.setError('The ' + label + ' could not removed from the pickup.')
+                    ).then(
+                        function (pickup) {
+                            //if the pickup is now empty, delete it
+                            if (!pickup.Carboy_use_cycles.length
+                                && !pickup.Scint_vial_collections.length
+                                && !pickup.Waste_bags.length) {
+                                var urlSegment = "deletePickupById&id=" + pickup.Key_id;
+                                return genericAPIFactory.read(urlSegment)
+                                        .then(
+                                            function (returned) {
+                                                var pi = dataStoreManager.getById("PrincipalInvestigator", pickup.Principal_investigator_id);
+                                                var i = pi.Pickups.length;
+                                                while (i--) {
+                                                    if (pi.Pickups[i].Key_id == pickup.Key_id) {
+                                                        pi.Pickups.splice(i, 1);
+                                                    }
+                                                }
+
+                                                //this will remove the pikcup from the dataStore, but the reference to it in the PIs collection will persist, freed
+                                                delete dataStore.Pickup[dataStore.PickupMap[pickup.Key_id]];
+                                                //also remove it from the pi
+                                            }
+                                        )
+                                 }
+                            }
                     )
             }
 
@@ -1628,7 +1721,6 @@ angular
 
                                 returnedPWT = modelInflatorFactory.instateAllObjectsFromJson( returnedPWT );
                                 returnedPWT.adding = true;
-                                console.log(returnedPWT);
                                 returnedPWT.Parcel_wipes[0].Location = "Background";
                                 dataStoreManager.store(returnedPWT);
                                 parcel.Wipe_test.push(returnedPWT);
@@ -1641,7 +1733,6 @@ angular
 
             af.saveParcelWipe = function(wipeTest, copy, wipe) {
                 af.clearError();
-                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedWipe){
@@ -1661,13 +1752,11 @@ angular
 
             af.saveParcelWipes = function( test ) {
                 af.clearError();
-                console.log(test);
                 return $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveParcelWipes' )
                     .then(
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
                             dataStoreManager.store(returnedWipes);
-                            console.log(dataStore);
                             test.loadParcel_wipes();
                             test.adding = false;
                         },
@@ -1682,7 +1771,6 @@ angular
 
             af.saveMiscellaneousWipeTest = function(test) {
                 af.clearError();
-                console.log(test);
                 return this.save( test )
                     .then(
                         function(returnedMWT){
@@ -1702,7 +1790,6 @@ angular
                                 }
 
                                 returnedMWT = modelInflatorFactory.instateAllObjectsFromJson( returnedMWT );
-                                console.log(returnedMWT);
                                 dataStoreManager.store(returnedMWT);
                                 returnedMWT.adding = true;
                             }
@@ -1732,12 +1819,10 @@ angular
 
             af.saveMiscellaneousWipes = function( test ) {
                 af.clearError();
-                console.log(test);
                 return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveMiscellaneousWipes' )
                     .then(
                         function(returnedWipes){
                             returnedWipes = modelInflatorFactory.instateAllObjectsFromJson( returnedWipes.data );
-                            console.log(returnedWipes);
                             dataStoreManager.store(returnedWipes);
                             test.loadMiscellaneous_wipes();
                             test.adding = false;
@@ -1758,7 +1843,6 @@ angular
 
             af.saveInspectionWipeTest = function(copy, test, inspection)
             {
-                console.log(inspection);
                 af.clearError();
                 if(!copy){
                     copy = new window.InspectionWipeTest();
@@ -1813,7 +1897,6 @@ angular
                                     parent.Lab_background_level = wipe.Lab_curie_level;
                                 }
                             }else{
-                                console.log(returnedWipe);
                                 dataStoreManager.store(returnedWipe);
                                 wipeTest.Inspection_wipes.push(returnedWipe);
                                 var i = wipeTest.Inspection_wipes.length;
@@ -1821,7 +1904,6 @@ angular
                                     if(!wipeTest.Inspection_wipes[i].Key_id)wipeTest.Inspection_wipes.splice(i,1);
                                 }
                                 $rootScope.InspectionWipeCopy = {};
-                                console.log($rootScope);
                             }
                             wipe.edit = false;
                         },
@@ -1832,7 +1914,6 @@ angular
 
             af.saveInspectionWipes = function( test ) {
                 af.clearError();
-                console.log(test);
                 return  $rootScope.SavingSmears = genericAPIFactory.save( test, 'saveInspectionWipes' )
                     .then(
                         function(returnedWipes){
@@ -1987,8 +2068,6 @@ angular
                     if(dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id)){
                         var cachedObj = dataStoreManager.getById(obj[childProp][i].Class,obj[childProp][i].Key_id);
                         for(var prop in cachedObj){
-                            console.log(obj[childProp][i][prop]);
-                            console.log(obj[childProp][i][prop]);
                             if(obj[childProp][i][prop])obj[childProp][i][prop] = obj[childProp][i][prop];
                             obj[childProp][i] = cachedObj[prop];
                         }
@@ -2003,8 +2082,7 @@ angular
             **
             *********************************************************************************/
             af.createQuarterlyInventory = function($endDate, $dueDate){
-                console.log($endDate);
-                console.log($dueDate);
+ 
                 var endDate = convenienceMethods.setMysqlTime(af.getDate($endDate));
                 var dueDate = convenienceMethods.setMysqlTime(af.getDate($dueDate));
 
@@ -2012,7 +2090,6 @@ angular
                 return genericAPIFactory.read( urlSegment )
                         .then(
                             function(returned){
-                                console.log(returned);
                                 return  modelInflatorFactory.instateAllObjectsFromJson( returned.data );
                             }
                         )
@@ -2109,7 +2186,6 @@ angular
             }
 
             af.savePIAuthorization = function(copy, auth, pi){
-                console.log(copy);
                 copy.Rooms = [];
                 copy.Departments = [];
                 if(pi.Rooms){

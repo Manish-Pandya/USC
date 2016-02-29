@@ -126,8 +126,9 @@ class GenericDAO {
 			if ($stmt->execute()) {
 			// ... otherwise, die and echo the db error
 			} else {
-				$error = $stmt->errorInfo();
-				die($error[2]);
+				$errorInfo = $stmt->errorInfo();
+                $object = new ModifyError($errorInfo[2], $object);
+                $this->LOG->fatal('Returning ModifyError with message: ' . $object->getMessage());
 			}
 			return true;
 	}

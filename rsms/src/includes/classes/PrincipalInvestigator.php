@@ -340,7 +340,8 @@ class PrincipalInvestigator extends GenericCrud {
 			// added later if necessary.
 			$this->scintVialCollections = $thisDao->getRelatedItemsById(
 					$this->getKey_id(),
-					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTION_RELATIONSHIP)
+					DataRelationship::fromArray(self::$SCINT_VIAL_COLLECTION_RELATIONSHIP),
+                    array('key_id')
 			);
 		}
 		return $this->scintVialCollections;
@@ -351,7 +352,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$LOG = Logger::getLogger(__CLASS__);
 		$svCollections = $this->getScintVialCollections();
 		
-		$this->currentScintVialCollection = array();
+		$this->currentScintVialCollections = array();
 		foreach($svCollections as $collection){
 			if($collection->getPickup_id() == null)$this->currentScintVialCollections[] = $collection;
 		}

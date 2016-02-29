@@ -57,6 +57,12 @@ class Authorization extends GenericCrud {
 	/** varchar containing the physical form of the authorized isotope */
 	private $form;
 
+    /**
+     *  
+     * @var array of parcels ordered under this authorization
+     */
+    private $parcels;
+
 
 	public function __construct() {
 
@@ -75,6 +81,13 @@ class Authorization extends GenericCrud {
 	public function getColumnData() {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
+
+    public static $PARCELS_RELATIONSHIP = array(
+        "className" => "Parcel",
+        "tableName" => "parcel",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "authorization_id"
+    );
 
 	// Accessors / Mutators
 	public function getIsotope_id() { return $this->isotope_id; }
@@ -98,6 +111,8 @@ class Authorization extends GenericCrud {
 		return $this->isotopeName;
 	}
 	
+    public function getParcels(){}
+    public function setParcels($parcels){$this->parcels = $parcels;}
 	
 	public function getPi_authorization_id() { return $this->pi_authorization_id; }
 	public function setPi_authorization_id($newId) { $this->pi_authorization_id = $newId; }
@@ -110,7 +125,6 @@ class Authorization extends GenericCrud {
 
 	public function getRevocation_date() { return $this->revocation_date; }
 	public function setRevocation_date($newDate) { $this->revocation_date = $newDate; }
-
 
 	public function getForm(){return $this->form;}
 	public function setForm($form){$this->form = $form;}

@@ -158,8 +158,9 @@ PrincipalInvestigator.prototype = {
         }
     },
 
-    loadCurrentScintVialCollection: function(){
-        dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollection', this.CurrentScintVialCollectionRelationship, this.CurrentScintVialCollectionRelationship.where);
+    loadCurrentScintVialCollections: function () {
+        this.CurrentScintVialCollections = [];
+        dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
     }
 
 }

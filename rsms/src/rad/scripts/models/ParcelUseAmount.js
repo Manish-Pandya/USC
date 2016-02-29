@@ -10,8 +10,8 @@ ParcelUseAmount.prototype = {
 	],
 
     // Any future accessors, eager loaders, etc. will go here.
-    loadCarboy: function(){
-    	dataLoader.loadChildObject(this, "Carboy", "Carboy", this.Carboy_id);
+	loadCarboy: function () {
+    	dataLoader.loadChildObject(this, "Carboy", "CarboyUseCycle", this.Carboy_id);
     },
 
     // Any future accessors, eager loaders, etc. will go here.

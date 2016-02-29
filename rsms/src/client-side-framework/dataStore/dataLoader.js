@@ -45,8 +45,10 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             //cache result so we don't hit the server next time
             var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
             dataStoreManager.store(instatedObjects);
+            if (!whereClause) whereClause = false;
+            parent[property] = [];
             parent[property] = dataStoreManager.getChildrenByParentProperty(
-                relationship.className, relationship.keyReference, parent[relationship.paramValue]);
+                relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 
             if(recurse)dataLoader.recursivelyInstantiate(instatedObjects, parent);
 

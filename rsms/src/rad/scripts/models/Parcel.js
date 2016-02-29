@@ -67,8 +67,7 @@ Parcel.prototype = {
     loadPrincipalInvestigator: function() {
         if(!this.PrincipalInvestigator) {
             dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
-            console.log(this);
-            console.log(dataStore);
+
         }
     },
 
@@ -78,7 +77,6 @@ Parcel.prototype = {
         }
     },
     loadAuthorization: function() {
-        console.log(dataStore)
         if(!this.Authorization) {
            this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
         }

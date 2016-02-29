@@ -12,6 +12,7 @@ angular.module('00RsmsAngularOrmApp')
 
           var af = actionFunctionsFactory;
           $scope.af = af;
+          $scope.constants = Constants;
 
           var getPi = function(){
           return af.getRadPIById($stateParams.pi)
@@ -20,9 +21,8 @@ angular.module('00RsmsAngularOrmApp')
                           $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
                           var i = $scope.pi.ActiveParcels.length;
                           while(i--){
-                              var parcel = dataStoreManager.getById("Parcel",$scope.pi.ActiveParcels.Key_id);
+                              var parcel = dataStoreManager.getById("Parcel", $scope.pi.ActiveParcels.Key_id);
                               if(parcel)parcel.Authorization = $scope.pi.ActiveParcels.Authorization;
-                              console.log(parcel);
                           }
 
                           return $scope.pi;
@@ -32,21 +32,21 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       var getParcel = function(){
-        console.log(dataStore);
-        af.getParcelById($stateParams.parcel)
+        return af.getParcelById($stateParams.parcel)
             .then(
                 function(){
                     $scope.parcel = dataStoreManager.getById("Parcel",$stateParams.parcel);
                     $scope.parcel.loadUses();
-                    console.log($scope.parcel);
+                    return $scope.parcel;
                 }
             );
       }
 
-      $scope.parcelPromise = getPi()
-                              .then(getParcel);
+      $scope.parcelPromise = getParcel()
+                              .then(getPi);
 
-      $scope.addUsage = function(parcel){
+      $scope.addUsage = function (parcel) {
+          parcel.edit = true;
           if(!$scope.parcel.ParcelUses)$scope.parcel.ParcelUses = [];
           var i = $scope.parcel.ParcelUses.length;
           while(i--){
@@ -64,10 +64,10 @@ angular.module('00RsmsAngularOrmApp')
           var otherUsageAmount = new window.ParcelUseAmount();
 
           $rootScope.ParcelUseCopy.isNew = true;
-          solidUsageAmount.Waste_type_id = 4;
-          liquidUsageAmount.Waste_type_id = 1;
-          vialUsageAmount.Waste_type_id = 3;
-          otherUsageAmount.Waste_type_id = 5;
+          solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
+          liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
+          vialUsageAmount.Waste_type_id = Constants.WASTE_TYPE.VIAL;
+          otherUsageAmount.Waste_type_id = Constants.WASTE_TYPE.OTHER;
 
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
@@ -85,45 +85,49 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.ParcelUseCopy = {}
 
           af.createCopy(use);
-
-          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,4)){
+          
+          if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.SOLID)) {
             var solidUsageAmount = new window.ParcelUseAmount();
-            solidUsageAmount.Waste_type_id = 4;
+            solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
           }
-          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,1)){
+          if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.LIQUID)) {
             var liquidUsageAmount = new window.ParcelUseAmount();
-            liquidUsageAmount.Waste_type_id = 1;
+            liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
           }
-          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,3)){
+          if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.VIAL)) {
             var vialUsageAmount = new window.ParcelUseAmount();
-            vialUsageAmount.Waste_type_id = 3;
+            vialUsageAmount.Waste_type_id = Constants.WASTE_TYPE.VIAL;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(vialUsageAmount);
           }
-          if(!parcelUseHasUseAmountType($rootScope.ParcelUseCopy,5)){
+          if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.OTHER)) {
             var otherUsageAmount = new window.ParcelUseAmount();
-            otherUsageAmount.Waste_type_id = 5;
+            otherUsageAmount.Waste_type_id = Constants.WASTE_TYPE.OTHER;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(otherUsageAmount);
-            console.log(otherUsageAmount)
           }
 
+          var i = use.ParcelUseAmounts.length;
+          while (i--) {
+              if (use.ParcelUseAmounts[i].Carboy_id) console.log(use.ParcelUseAmounts[i].Carboy);
+              use.ParcelUseAmounts[i].OldQuantity = use.ParcelUseAmounts[i].Curie_level;
+          }
+         
           use.edit = true;
       }
 
       $scope.addAmount = function(type){
-          console.log(type);
           var amt = new window.ParcelUseAmount();
-          if(type == "Solids")amt.Waste_type_id = 4;
-          if(type == "Liquids")amt.Waste_type_id = 1;
-          if(type == "Vials")amt.Waste_type_id = 3;
-          if(type == "Others")amt.Waste_type_id = 5;
+          if (type == "Solids") amt.Waste_type_id = Constants.WASTE_TYPE.SOLID;
+          if (type == "Liquids") amt.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
+          if (type == "Vials") amt.Waste_type_id = Constants.WASTE_TYPE.VIAL;
+          if (type == "Others") amt.Waste_type_id = Constants.WASTE_TYPE.OTHER;
 
           $rootScope.ParcelUseCopy.ParcelUseAmounts.push(amt);
           $rootScope.ParcelUseCopy[type].push(amt);
       }
 
-      $scope.selectCarboy = function(useAmount){
+      $scope.selectCarboy = function (useAmount) {
           if( !useAmount.Carboy ){
             useAmount.Carboy_id = null;
           }else{
@@ -131,7 +135,8 @@ angular.module('00RsmsAngularOrmApp')
           }
       }
 
-      $scope.selectContainer = function(useAmount){
+      $scope.selectContainer = function (useAmount) {
+          console.log(useAmount);
           if(!useAmount.Waste_bag){
             useAmount.Waste_bag_id = null;
           }else{
@@ -144,52 +149,68 @@ angular.module('00RsmsAngularOrmApp')
             if(bags[i].Key_id == solid.Waste_bag_id)solid.Waste_bag = bags[i];
           }
       }
-      $scope.cancel = function(use){
+      $scope.cancel = function(use, parcel){
           if($rootScope.ParcelUseCopy.isNew == true)$scope.parcel.ParcelUses.shift();
           use.edit = false;
+          use.error = false;
           $rootScope.ParcelUseCopy = {};
+          
+          var i = use.ParcelUseAmounts.length;
+          while (i--) {
+              use.ParcelUseAmounts[i].Curie_level = use.ParcelUseAmounts[i].OldQuantity;
+          }
+          parcel.edit = false;
       }
 
-      $scope.validateRemainder = function(parcel) {
+      $scope.validateRemainder = function (parcel, copy, use) {
+          use.error = null;
           var uses = parcel.ParcelUses;
-          parcel.inValid = false;
+          var valid = true;
           var total = 0;
           var i = uses.length;
           while(i--){
-            console.log(uses[i].Quantity);
-            total += parseInt(uses[i].Quantity);
+              total += parseFloat(uses[i].Quantity);
           }
 
-          total += parseInt($rootScope.ParcelUseCopy.Quantity);
+          total += parseFloat(copy.Quantity);
           //if we are editing, subtract the total from the copied use so that it's total isn't included twice
-          if($rootScope.ParcelUseCopy.Key_id){
-            total = total - parseInt(dataStoreManager.getById("ParcelUse", $rootScope.ParcelUseCopy.Key_id).Quantity);
+          if (use.Quantity) {
+              total = total - parseFloat(use.Quantity);
           }
 
-          if(total > parcel.Quantity){
-            parcel.inValid = true;
-            $rootScope.error = 'Total usages must not be more than package quantity.';
+          if(total > parseFloat(parcel.Quantity)){
+            valid = false;
+            use.error = 'Total usages must not be more than remaining package quantity.';
           }
+          return valid;
 
+      }
+
+      $scope.saveParcelUse = function (parcel, copy, use) {
+          if ($scope.validateUseAmounts(copy, use) && $scope.validateRemainder(parcel, copy, use)) {
+              af.saveParcelUse(parcel, copy, use);
+          }
       }
 
       //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
       //which if you think about it, has sort of become an MVCVM
-      $scope.validateUseAmounts = function(use){
-          $rootScope.error = '';
+      $scope.validateUseAmounts = function(use, orig){
+          use.error = null;
           use.isValid = false;
           var total = 0;
 
           var i = use.ParcelUseAmounts.length;
           while(i--){
-            if(use.ParcelUseAmounts[i].Curie_level)total = total + parseInt(use.ParcelUseAmounts[i].Curie_level);
+            if(use.ParcelUseAmounts[i].Curie_level)total = total + parseFloat(use.ParcelUseAmounts[i].Curie_level);
           }
+          total = Math.round(total * 100000) / 100000;
 
-          if(use.Quantity == total){
+          if(parseFloat(use.Quantity) == total){
             use.isValid = true;
           }else{
-            $rootScope.error = 'Total disposal amount must equal use amount.';
+            orig.error = 'Total disposal amount must equal use amount.';
           }
+          return use.isValid;
       }
 
       var parcelUseHasUseAmountType = function(use, typeId){

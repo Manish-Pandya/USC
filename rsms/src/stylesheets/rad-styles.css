@@ -314,7 +314,7 @@ button.btn:not(.btn-large) {
     position: fixed;
     width: 100%;
     left: 0;
-    z-index: 900;
+    z-index: 1040;
 }
 .banner.radmin,
 .banner.radiation {
@@ -611,6 +611,17 @@ table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
 }
 .pickup-collection > div .row-fluid {
     padding: 10px inherit;
+}
+.pickups-modal ul li{
+    margin: 2px 0 0 5px;
+    font-size:15px;
+}
+
+.pickups-modal h4,.pickups-modal label{
+    margin-top:15px
+}
+.pickups-modal textarea{
+    width:90%
 }
 .indent {
     margin: 15px 25px 0;

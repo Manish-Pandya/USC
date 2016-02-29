@@ -14,9 +14,8 @@ angular.module('00RsmsAngularOrmApp')
   		$rootScope.piPromise = af.getRadPIById($stateParams.pi)
   			.then(
   				function(pi){
-  					console.log(pi);
   					var i = pi.SolidsContainers.length;
-  					while(i--){
+  					while (i--) {
 						pi.SolidsContainers[i].loadRoom();
   					}
   					pi.loadRooms();

@@ -22,16 +22,48 @@ angular
                     if (!$(e.target).hasClass('combobox') && !$(e.target).parents('.combobox').size()) {
                        scope.model.showDropDown = false;
                        scope.$apply();
-                       console.log(e.target);
                     }else{
                        console.log(e.target);
                     }
                 });
 
                 scope.onClick = function (option) {
-                    alert('yo nigga')
                     scope.model[scope.modelProp] = option;
                     scope.model.showDropDown = false
+                }
+            }
+        }
+    })
+    .directive('tableError', function ($parse) {
+        return {
+            restrict: 'A',
+            scope: {
+                obj: "=obj",
+            },
+            
+            transclude: false,
+            link: function (scope, element, attrs, controller) {
+                
+                
+                scope.$watch('obj.error',function(newVal, oldVal){
+                    if (newVal != oldVal) {
+                        addOrRemoveErrorDisplay(newVal);
+                    }
+                })
+                
+
+                function addOrRemoveErrorDisplay(error) {
+                    console.log('fired');
+                    var parent = element.parents('tbody') || element.parents('table');
+                    var cols = parent.children('tr').children('td').length;
+                    parent.children('tr.alert-danger.error').remove();
+                    if (error) {
+                        //find parent table
+                        var template = '<tr style="position:relative" class="danger alert-danger error">' +
+                                        '<td colspan="' + cols + '" style="background-color:#d00 !important; color:white !important;"><h3 style="text-align:center">' + error + '</h3></td>' +
+                                      '</tr>';
+                        parent.children('tbody tr.edit').after(template);
+                    } 
                 }
             }
         }
