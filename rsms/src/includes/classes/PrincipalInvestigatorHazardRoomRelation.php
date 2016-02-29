@@ -27,6 +27,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	private $room_id;
 	private $principal_investigator_id;
 	private $hazard_id;
+    private $hazard;
 	private $status;
 	private $hasMultiplePis;
 	
@@ -69,5 +70,13 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	public function setHasMultiplePis($hasMultiplePis){
 		$this->hasMultiplePis = $hasMultiplePis;
 	}
+
+    public function getHazard(){
+        if($this->hazard == null) {
+			$userDAO = new GenericDAO(new Hazard());
+			$this->hazard = $userDAO->getById($this->hazard_id);
+		}
+		return $this->hazard;
+    }
 }
 ?>

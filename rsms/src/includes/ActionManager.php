@@ -2916,7 +2916,7 @@ class ActionManager {
 
             //get hazards
             $hazards = $room->getHazards();
-            
+
             // if subhazards is false, change all hazard subentities to lazy loading
             if ($subHazards == "false"){
                 $entityMaps = array();
@@ -2936,7 +2936,7 @@ class ActionManager {
                 }
 
             }
-                    
+
             return $hazards;
         }
         else{
@@ -2944,8 +2944,115 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided");
         }
     }
-    
-    
+
+    public function getHazardsInRoomByPi( $roomId = NULL, $piId ){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $roomId = $this->getValueFromRequest('roomId', $roomId);
+        $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
+        $LOG->debug("subHazards is $subHazards, roomId is $roomId");
+
+
+        if( $roomId !== NULL ){
+
+            $whereClauseGroup = new WhereClauseGroup(
+                                    array(
+                                        new WhereClause("room_id", "=", $roomId),
+                                        new WhereClause("principal_investigator_id", "=", $piId),
+                                    )
+                                );
+
+            $piHazRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
+            $piHazRooms = $piHazRoomDao->getAllWhere($whereClauseGroup);
+
+            //key_ids of hazards which are at branch level.  we use these to make sure that branch hazards are not excluded when the PI has direct children of them 
+            $branchIds = array(1, 10009, 10010, 9999);
+            $branchChildIds= array();
+            foreach($branchIds as $id){
+                $branchChildIds[$id]  = $this->getBranchChildIds($id);
+            }
+
+            // if subhazards is false, change all hazard subentities to lazy loading
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy","getSubHazards");
+            $entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+            $entityMaps[] = new EntityMap("lazy","getChecklist");
+            $entityMaps[] = new EntityMap("lazy","getRooms");
+            $entityMaps[] = new EntityMap("lazy","getInspectionRooms");
+            $entityMaps[] = new EntityMap("eager","getParentIds");
+            $entityMaps[] = new EntityMap("lazy","getHasChildren");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+
+            $hazards = array();
+            $hazardIds = array();
+
+            foreach ($piHazRooms as $piHazardRoom){
+                if(!in_array($piHazardRoom->getHazard_id(), $hazardIds)){
+                    $hazard = $piHazardRoom->getHazard();
+                    $hazard->setEntityMaps($entityMaps);
+                    $hazardIds[] = $piHazardRoom->getHazard_id();
+                    $hazards[] = $hazard;              
+                }
+           }
+
+            //make sure we get all the general hazards, too
+            $generalHazard = $this->getHazardById(9999);
+            $generalHazards = $this->getFlatHazardBranch($generalHazard);
+
+            $hazards = array_merge($hazards, $generalHazards);
+
+            foreach($branchIds as $id){
+                if(!in_array($id, $hazardIds)){
+                    //if the id isn't in the array, do we need this branch parent?
+                    if($branchChildIds[$id] != null){
+                        array_push($hazards, $this->getHazardById($id));
+                    }
+                }
+            }
+
+           return $hazards;
+        }
+        else{
+            //error
+            return new ActionError("No request parameter 'id' was provided");
+        }
+    }
+
+    /**
+     * Returns an array of the ids of the children of a hazard
+     *
+     * @param int $branchHazardId
+     * @return array $ids
+     */
+    private function getBranchChildIds($branchHazardId){
+        $hazard = $this->getHazardById($branchHazardId);
+        $ids = array();
+        foreach($hazard->getSubHazards() as $hazard){
+            $ids[] = $hazard->getKey_id();
+        }
+        return $ids;
+    }
+
+    /**
+     * Returns a one-dimensional array of all hazards in a branch
+     *
+     * @param int $branchHazardId
+     * @return array $hazards
+     */
+    private function getFlatHazardBranch($hazard, &$hazards = null){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        if($hazards == null){
+            $hazards = array();
+        }
+        $hazards = array_merge($hazards, $hazard->getSubHazards());
+        foreach($hazard->getSubHazards() as $child){
+            $this->getFlatHazardBranch($child, $hazards);
+        }
+
+
+        return $hazards;
+    }
+
     public function getHazardRoomRelations( $roomIds = NULL ){
         $roomIdsCsv = getValueFromRequest('roomIds', $roomIds);
 
@@ -3358,8 +3465,10 @@ class ActionManager {
             $rooms = $inspection->getRooms();
             $masterHazards = array();
             //iterate the rooms and find the hazards present
+
+            $LOG->fatal($inspection->getPrincipal_investigator_id);
             foreach ($rooms as $room){
-                $hazardlist = $this->getHazardsInRoom($room->getKey_id());
+                $hazardlist = $this->getHazardsInRoomByPi($room->getKey_id(), $inspection->getPrincipal_investigator_id());
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
                     // Check to see if we've already examined this hazard (in an earlier room)
@@ -3447,7 +3556,7 @@ class ActionManager {
         }
     }
 
-    public function getArchivedInspectionsByPIId( $id = NULL ){
+    public function getArchivedInspectionsByPIId( $id = NULL){
         //Get responses for Inspection
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -3469,11 +3578,11 @@ class ActionManager {
         }
     }
 
-    public function resetChecklists( $id = NULL ){
+    public function resetChecklists( $id = NULL, $report = null  ){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $id = $this->getValueFromRequest('id', $id);
-
+        $report = $this->getValueFromRequest('report', $report);
         if( $id !== NULL ){
             $dao = $this->getDao(new Inspection());
 
@@ -3488,7 +3597,7 @@ class ActionManager {
 
             // Remove previous checklists (if any) and recalculate the required checklist.
             $oldChecklists = $inspection->getChecklists();
-            if (!empty($oldChecklists)) {
+            if (!empty($oldChecklists) && $report == null) {
                 // remove the old checklists
                 foreach ($oldChecklists as $oldChecklist) {
                     $dao->removeRelatedItems($oldChecklist->getKey_id(),
@@ -3499,16 +3608,27 @@ class ActionManager {
             
 
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-            
-            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+            if($report == null){
+                $LOG->fatal('should be getting new list of checklists');
+                $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+            }
+            //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
+            else{
+                $LOG->fatal('should be retrieving old checklists');
+                $checklists = $oldChecklists;
+            }
+            $LOG->fatal('report param:');
+            $LOG->fatal($report);
+
             $hazardIds = array();
             // add the checklists to this inspection
             foreach ($checklists as $checklist){
-
-                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-                $checklist->setInspectionId($inspection->getKey_id());
-                $checklist->setRooms($inspection->getRooms());
-                $checklist->filterRooms();                
+                if($report == null){
+                    $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                    $checklist->setInspectionId($inspection->getKey_id());
+                    $checklist->setRooms($inspection->getRooms());
+                    $checklist->filterRooms(); 
+                }
                 
                 $entityMaps = array();
                 $entityMaps[] = new EntityMap("lazy","getHazard");

@@ -440,7 +440,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
         var id = $location.search().inspection;
         if(!postInspectionFactory.getInspection()){
           $scope.doneLoading = false;
-          convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+          convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&report=true&callback=JSON_CALLBACK', onFailGetInspeciton)
             .then(function(promise){
               //console.log(promise.data);
 
@@ -653,7 +653,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
       var id = $location.search().inspection;
       if(!postInspectionFactory.getInspection()){
         $scope.doneLoading = false;
-        convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK', onFailGetInspeciton)
+        convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id='+id+'&report=true&callback=JSON_CALLBACK', onFailGetInspeciton)
           .then(function(promise){
 
             //if this is a radiation inspection, find any hot InspectionWipes
