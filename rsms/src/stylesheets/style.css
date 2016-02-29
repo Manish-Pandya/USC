@@ -5,6 +5,9 @@ a{cursor: pointer !important}
 h2 a{
     margin-left:5px;
 }
+tr.formError td{
+    padding-bottom:0 !important;
+}
 .user-info{
   box-shadow: 0px 3px 3px rgba(0,0,0,.2);
   z-index: 1060;
@@ -699,7 +702,7 @@ tr.edit {
 /* line 181, ../sass/style.scss */
 /* line 426, ../sass/style.scss */
 tr.edit td {
-  box-shadow: 6px 5px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 6px 5px 8px rgba(0, 0, 0, 0.1);
   background: #fff !important;
 }
 
@@ -728,7 +731,8 @@ tr.new td{
   color:white;
 }
 tr.inactive td {
-  background: pink !important;
+  border-color: pink;
+  background: #FFC0C0 !important;
 }
 h3.inactive, .unassigned{
   color:red;
@@ -1670,11 +1674,20 @@ table tr td table.nested-table td > div > div{
 table.nested-table tbody tr td.Pending{
   background: #ffffb9 !important;
 }
-table.nested-table tbody tr td..Complete{
+table.nested-table tbody tr td.Complete{
   background: rgb(86, 201, 86);
   background: rgba(86, 201, 86, 0.5) !important;
 }
-
+tr.formError td{
+    padding-bottom:0 !important;
+}
+tr.formError td input, tr.formError td select, tr.formError td textarea{
+    box-shadow: none;
+    border-color: #FC2323;
+}
+.vertical-align-middle {
+   vertical-align: middle !important; 
+}
 /* line 1133, ../sass/style.scss */
 td.reviewHeader {
   font-weight: bold;
