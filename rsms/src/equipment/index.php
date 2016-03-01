@@ -90,6 +90,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/someDirective.js"></script-->
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 
 
 <!-- filters -->

@@ -262,33 +262,82 @@ button.btn:not(.btn-large) {
 }
 
 .bio-safety-cabinets table tr th,.bio-safety-cabinets table tr td table tr td{
-    width: 220px;
+    /* width: 220px; */
     padding: 5px;
 }
 .bio-safety-cabinets table tr td table tr , .bio-safety-cabinets table tr td table tr td{
     background:none !important;
 }
-.bio-safety-cabinets table tr td:nth-of-type(6){
-    padding:0
+.bio-safety-cabinets table tr td:nth-of-type(6),.bio-safety-cabinets table tr th:nth-of-type(6){
+    padding:0;
+    width:65%;
+    cell-spacing:0;
+    cell-padding:0;
 }
-.bio-safety-cabinets table tr th:nth-of-type(6),.bio-safety-cabinets table tr td table tr td:nth-of-type(1){
-    width: 480px;
+.bio-safety-cabinets table tr td:nth-of-type(6) ul,.bio-safety-cabinets table tr th:nth-of-type(6) ul{
+    width: 100%;
+    margin-left:0
 }
-.bio-safety-cabinets table tr th:nth-of-type(7),.bio-safety-cabinets table tr td table tr td:nth-of-type(2){
-    width: 150px;
+.bio-safety-cabinets table tr th ul li,.bio-safety-cabinets table tr td ul li{
+    display:block;
+    /* background: pink; */
+    float:left;
+    padding:20px 5px;
+    height:60px;
+    border-right: 1px solid #DDDDDD;
+    box-sizing:border-box;
 }
-.bio-safety-cabinets table tr th:nth-of-type(8),.bio-safety-cabinets table tr td table tr td:nth-of-type(3){
-    width: 470px;
+.bio-safety-cabinets table tr th ul li{
+    min-height: 62px;
+    padding-top: 5px;
+    font-weight:bold;
 }
-.bio-safety-cabinets table tr th:nth-of-type(9),.bio-safety-cabinets table tr td table tr td:nth-of-type(4){
-    width:200px
+.bio-safety-cabinets table tr td{
+    vertical-align:middle;
 }
-.bio-safety-cabinets table tr th:nth-of-type(10),.bio-safety-cabinets table tr td table tr td:nth-of-type(5){
-    width:200px
+.bio-safety-cabinets table tr td ul li{
+ font-size: 17px;
 }
-.bio-safety-cabinets table tr th:nth-of-type(11),.bio-safety-cabinets table tr td table tr td:nth-of-type(6){
-    width:200px
+.bio-safety-cabinets table tr td ul{
+    border-bottom:1px solid #DDDDDD;
+}
+.bio-safety-cabinets table tr td ul:last-child li{
+   border-bottom:none;   
+}
+.bio-safety-cabinets table tr th ul li:last-child,.bio-safety-cabinets table tr td ul li:last-child{
+    border-right:none;
+}
+
+.bio-safety-cabinets table tr th ul li:nth-of-type(1),.bio-safety-cabinets table tr td ul li:nth-of-type(1){
+    width: 20%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(2),.bio-safety-cabinets table tr td ul li:nth-of-type(2){
+    width: 10%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(3),.bio-safety-cabinets table tr td ul li:nth-of-type(3){
+    width: 13.5%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(3) select{
+    width: 117px;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(4),.bio-safety-cabinets table tr td ul li:nth-of-type(4){
+    width: 17.9%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(5),.bio-safety-cabinets table tr td ul li:nth-of-type(5){
+    width: 11.5%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(6),.bio-safety-cabinets table tr td ul li:nth-of-type(6){
+    width:12.5%;
+}
+.bio-safety-cabinets table tr th ul li:nth-of-type(7),.bio-safety-cabinets table tr td ul li:nth-of-type(7){
+    width:6%
+}
+.bio-safety-cabinets table tr td ul li:nth-of-type(7){
+    text-align:center;
 }
 .bio-safety-cabinets table tr th, bio-safety-cabinets table tr td table tr td {
     padding:5px;
+}
+.bio-safety-cabinets table tr th ul li input, select{
+    margin-top:2px
 }
