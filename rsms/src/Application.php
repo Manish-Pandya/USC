@@ -131,6 +131,13 @@ function isEquipmentEnabled(){
 	return false;
 }
 
+function isCommitteesEnabled(){
+	$LOG = Logger::getLogger("committees");
+	$LOG->fatal('committees enabled');
+	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
+	return false;
+}
+
 //////////////////////////////////////////////////
 
 //TODO Application functions
