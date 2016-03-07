@@ -9,7 +9,7 @@
     <div>
         <h2 style="padding-top:60">Complete Certifications</h2>
         <h2 ng-if="!cabinets.length">No Cabinets</h2>
-        <div class="full bio-safety-cabinets well full" ng-show="completeCabinets">
+        <div class="full bio-safety-cabinets well full" ng-show="completeCabinets.length">
             <table class="table table-striped table-bordered">
                 <tr class="table-header">
                     <th>EDIT</th>
@@ -45,13 +45,13 @@
                     </th>
                 </tr>
                 <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
-                <tr class="table-row" ng-repeat="cabinet in (completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:'Certification_date' | matchEquipmentDate:'':'Certification_date' | filter:{Is_active: !showInactive}))">
+                <tr class="table-row" ng-repeat="cabinet in completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:'Certification_date' | matchEquipmentDate:'':'Certification_date' | filter:{Is_active: !showInactive})">
                     <td rowspan="{{inspections.legnth}}">
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
                     </td>
                     <td rowspan="{{inspections.legnth}}">
-                        {{cabinet.Type}} | {{inspections.legnth}}
+                        {{cabinet.Type}}
                     </td>
                     <td rowspan="{{inspections.legnth}}">
                         {{cabinet.Serial_number}}
@@ -95,7 +95,7 @@
         <h2 ng-if="!neededInspections.length">No Cabinets Need Certifications for {{dueYear}}</h2>
 
         <div class="full bio-safety-cabinets well full" ng-show="neededInspections.length">
-            <table class="table table-striped table-hover bio-safety-cabinets table-bordered ng-scope ng-isolate-scope" ng-if="!cabinets.length">
+            <table class="table table-striped table-hover bio-safety-cabinets table-bordered ng-scope ng-isolate-scope">
                 <tr class="table-header">
                     <th>EDIT</th>
                     <th>TYPE</th>
@@ -134,7 +134,7 @@
                  </tr>
                 <!-- the following filter grabs cabinet inspections that have no Certification_date, stripping those with Certification_date set: matchEquipmentDate:'*':'Certification_date' 
                 To bad it don't seem to work. Thoughts? -->
-                <tr class="table-row" ng-repeat="cabinet in neededInspections = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedDueDate:'Due_date' | matchEquipmentDate:'*':'Certification_date' | filter:{Is_active: !showInactive})">
+                <tr class="table-row" ng-repeat="cabinet in neededInspections = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedDueDate:'Due_date' | matchEquipmentDate:'*':'Certification_date' | filter:{Is_active: !showInactive}) track by $index">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
