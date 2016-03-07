@@ -116,14 +116,16 @@ angular.module('HazardInventory')
             });
         }
 
-        $scope.openRoomsModal = function (hazard, parent) {
+        $scope.openRoomsModal = function (hazard, masterHazard) {
             console.log(parent);
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
-            modalData.GrandParent = parent;
+            if(masterHazard)modalData.GrandParent = masterHazard;
 
             modalData.Parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
+            console.log(modalData);
+            
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/rooms-modal.html',
@@ -197,6 +199,16 @@ angular.module('HazardInventory')
               modalInstance.result.then(function () {
 
               });
+        }
+        
+        $scope.getDisabled = function(hazard){
+            var parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
+            
+            if(parent.Stored_only || parent.BelongsToOtherPI){
+                return true;
+            }
+            
+            return false;
         }
 
     })

@@ -254,7 +254,7 @@ echo "</script>";
                             <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>
             </span>
-                            <span ng-if="child.IsPresent">
+            <span ng-if="child.IsPresent">
                 <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
             </span>
 
@@ -267,7 +267,7 @@ echo "</script>";
                             </li>
                         </ul>
                        <ul>
-                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
+                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
                         </ul>
                     </li>
                 </ul>

@@ -1,4 +1,4 @@
-'use strict';
+    'use strict';
 
 angular
     .module('applicationControllerModule', ['rootApplicationController'])
@@ -114,7 +114,6 @@ angular
 
         ac.savePIHazardRoom = function(room, hazard, changed, parent){
             var copy = ac.copyInpectionRoom(room);
-            copy.MasterHazardId = parent.Key_id;
             this.clearError();
 
             //the room has been added or removed, as opposed to having its status changed

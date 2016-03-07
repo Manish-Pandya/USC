@@ -1,18 +1,19 @@
 <label class="checkbox inline">
-    <input type="checkbox" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, hazard)"/>
+    <input type="checkbox" ng-model="child.IsPresent" ng-disabled="getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)"/>
     <span class="metro-checkbox"></span>
 </label>
-<span style="font-size: 14px;font-weight: normal;line-height: 20px;">
-    <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
-        {{child.Hazard_name}}
-        <span ng-if="child.Stored_only || child.storedOnly" class="stored">(Stored Only)</span>    </span>
-    <img ng-if="child.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+<span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
+    {{child.Hazard_name}}
+    <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
+    <span ng-if="child.BelongsToOtherPI && !child.IsPresent" class="stored">(Other Lab's Hazard)</span>
 </span>
+            <!--</h4>-->           
 <div class="icons">
     <!--</h4>-->
     <span ng-if="child.ActiveSubHazards.length || child.HasChildren&& child.IsPresent ">
         <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>
     </span>
+   
     <span ng-if="child.IsPresent">
         <i class="icon-pencil primary" ng-click="openRoomsModal(child, hazard)"></i>
     </span>
