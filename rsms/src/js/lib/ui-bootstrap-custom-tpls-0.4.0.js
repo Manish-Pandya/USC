@@ -255,13 +255,9 @@ angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
         if ( value ) {
           var el = document.getElementById(element.attr('id')).parentNode;
           var top = el.offsetTop;
-          console.log(top);
           accordionCtrl.closeOthers(scope);
-          console.log(element)
-          console.log(el.offsetTop);
           $(window).scrollTop(top);
           setTimeout(function(){
-              console.log(el.offsetTop);
               $(window).scrollTop(top-50);
           }, 75);
         }
