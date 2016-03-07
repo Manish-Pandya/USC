@@ -3012,8 +3012,7 @@ table th[class*="span"],
 .fade.in {
   opacity: 1;
 }
-
-.collapse {
+.collapse:not(.panel-collapse) {
   position: relative;
   height: 0;
   overflow: hidden;
@@ -3022,7 +3021,15 @@ table th[class*="span"],
        -o-transition: height 0.35s ease;
           transition: height 0.35s ease;
 }
-
+.collapse.panel-collapse {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: height 0.05s ease;
+     -moz-transition: height 0.05s ease;
+       -o-transition: height 0.05s ease;
+          transition: height 0.05s ease;
+}
 .collapse.in {
   height: auto;
 }

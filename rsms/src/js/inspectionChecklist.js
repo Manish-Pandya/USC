@@ -1,3 +1,8 @@
+$(".collapse").bind("transition webkitTransition oTransition MSTransition", function(){
+    alert('transitions');
+});
+
+
 var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','angular.filter'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
@@ -414,13 +419,16 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         factory.saveResponse = function( question )
         {
                 question.error='';
+                var copy = convenienceMethods.copyObject(question);
                 if(!question.Responses){
                     question.Responses = {
                         Class: "Response",
                         Question_id: question.Key_id,
                     }
                 }
-                var response = question.Responses;
+                var copy = convenienceMethods.copyObject(question);
+
+                var response = copy.Responses;
 
                 question.IsDirty = true;
 
@@ -433,7 +441,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                 if(!responseDto.Answer)responseDto.Answer = '';
 
-
+                question.Responses.Answer = null;
                 var deferred = $q.defer();
                 return convenienceMethods.saveDataAndDefer(url, responseDto).then(
                     function(promise){
@@ -448,6 +456,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                     if(!question.Responses.Observations)question.Responses.Observations = [];
                                     if(!question.Responses.Observations)question.Responses.Observations = [];
                                     question.Responses.Key_id = returnedResponse.Key_id;
+                                    question.Responses.Answer = responseDto.Answer;
                                     return returnedResponse;
                                 }
                             )
@@ -1017,8 +1026,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 });
 
 function checklistController($scope,  $location, $anchorScroll, convenienceMethods, $window, checklistFactory, $modal) {
-
-    $scope.cf = checklistFactory;
+    var cf = $scope.cf = checklistFactory;
     $scope.constants = Constants;
 
     if($location.search().inspection){
@@ -1037,16 +1045,19 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
       }
 
     $scope.showRooms = function( event, deficiency, element, checklist, question ){
+        
         if(!deficiency.InspectionRooms){
+            if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( cf.inspection.Rooms );
             //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
             deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+            console.log(checklist.InspectionRooms);
         }
        // checklistFactory.evaluateDeficiecnyRooms( question, checklist );
 
         event.stopPropagation();
         calculateClickPosition(event,deficiency,element);
         deficiency.showRoomsModal = !deficiency.showRoomsModal;
-      }
+    }
 
     //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
     function calculateClickPosition(event, deficiency, element){

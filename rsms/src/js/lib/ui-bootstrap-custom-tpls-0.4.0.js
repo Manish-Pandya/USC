@@ -242,6 +242,7 @@ angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
       scope.isOpen = false;
       
       if ( attrs.isOpen ) {
+        scope.top = 
         getIsOpen = $parse(attrs.isOpen);
         setIsOpen = getIsOpen.assign;
 
@@ -252,7 +253,17 @@ angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
 
       scope.$watch('isOpen', function(value) {
         if ( value ) {
+          var el = document.getElementById(element.attr('id')).parentNode;
+          var top = el.offsetTop;
+          console.log(top);
           accordionCtrl.closeOthers(scope);
+          console.log(element)
+          console.log(el.offsetTop);
+          $(window).scrollTop(top);
+          setTimeout(function(){
+              console.log(el.offsetTop);
+              $(window).scrollTop(top-50);
+          }, 75);
         }
         if ( setIsOpen ) {
           setIsOpen(scope.$parent, value);
@@ -808,7 +819,6 @@ angular.module('ui.bootstrap.position', [])
           offsetParentBCR.top += offsetParentEl.clientTop - offsetParentEl.scrollTop;
           offsetParentBCR.left += offsetParentEl.clientLeft - offsetParentEl.scrollLeft;
         }
-
         var boundingClientRect = element[0].getBoundingClientRect();
         return {
           width: boundingClientRect.width || element.prop('offsetWidth'),

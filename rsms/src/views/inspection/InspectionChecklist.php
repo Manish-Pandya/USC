@@ -49,7 +49,7 @@ require_once '../top_view.php';
     <h2 ng-if="cf.selectedCategory && !loading" style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{cf.selectedCategory.Label}}</span></h2>
 
         <!-- begin checklist for this inspection -->
-        <accordion close-others="true" ng-hide="loading">
+        <accordion ng-hide="loading">
             <!--| selectedChecklist:cf.selectedCategory--->
             <accordion-group ng-show="checklist.activeQuestions.length"  ng-class="{active:checklist.currentlyOpen}" class="checklist" ng-repeat="checklist in inspection.Checklists | relevantLists" is-open="checklist.currentlyOpen" id="{{checklist.Key_id}}">
                 <accordion-heading>
