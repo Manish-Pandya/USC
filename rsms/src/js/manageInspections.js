@@ -380,7 +380,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             dto.Inspections = {
                 Class: "Inspection",
                 Key_id: dto.Inspection_id,
-                Schedule_month: dto.Schedule_month,
+                Schedule_month: dto.Schedule_month || dto.Inspections.Schedule_month,
                 Schedule_year:  year.Name,
                 Principal_investigator_id: dto.Pi_key_id,
                 Inspectors: inspectors,
