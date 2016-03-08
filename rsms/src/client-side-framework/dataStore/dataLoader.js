@@ -39,13 +39,14 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 
     // data not cached, get it from the server
     else {
+        console.log(relationship)
         var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
 
         parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
             //cache result so we don't hit the server next time
             var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
             dataStoreManager.store(instatedObjects);
-            if (!whereClause) whereClause = false;
+             if (!whereClause) whereClause = false;
             parent[property] = [];
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                 relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
@@ -122,7 +123,7 @@ dataLoader.loadManyToManyRelationship = function (parent, property, relationship
 dataLoader.loadManyToManyRelationship = function(parent, relationship){
     if(dataStoreManager.checkCollection(parent.Class) && dataStoreManager.checkCollection(relationship.table)){
         parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
-    } 
+    }
     // data not cached, but we already requested it from the server
     else if(dataStore['loading'+relationship.table]){
         dataStore['loading'+relationship.table].then(
@@ -153,7 +154,7 @@ dataLoader.loadManyToManyRelationship = function(parent, relationship){
             .then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 dataStoreManager.storeGerunds(returnedPromise.data, relationship.table);
-            
+
                 if (!dataStoreManager.checkCollection(relationship.childClass)) {
                     var action = parent.api.fetchActionString('getAll', relationship.childClass);
 

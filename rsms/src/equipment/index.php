@@ -34,6 +34,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/equipment-styles.css">
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/temp-file-upload.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <!-- included fonts
@@ -89,6 +90,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/someDirective.js"></script-->
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 
 
 <!-- filters -->
@@ -119,6 +121,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/Building.js"></script>
 <script src="./scripts/models/Room.js"></script>
 <script src="scripts/models/PrincipalInvestigator.js"></script>
+<script src="scripts/models/EquipmentInspection.js"></script>
 
 </head>
 <body>

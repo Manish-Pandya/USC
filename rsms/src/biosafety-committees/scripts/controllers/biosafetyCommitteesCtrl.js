@@ -173,13 +173,9 @@ angular.module('BiosafetyCommittees')
             $scope.hazard.selected = $scope.modalData.BiosafetyProtocolCopy.Hazard;
         }
 
-        $scope.onSelectPi = function (pi) {
+        $scope.onSelectPi = function(pi){
             $scope.modalData.BiosafetyProtocolCopy.PrincipalInvestigator = pi;
             $scope.modalData.BiosafetyProtocolCopy.Principal_investigator_id = pi.Key_id;
-            if ($scope.modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments && $scope.modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments.length) {
-                $scope.modalData.selectedDepartment = $scope.modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments[0];
-                $scope.onSelectDepartment( $scope.modalData.BiosafetyProtocolCopy.PrincipalInvestigator.Departments[0] );
-            }
         }
 
         $scope.onSelectDepartment = function(department){

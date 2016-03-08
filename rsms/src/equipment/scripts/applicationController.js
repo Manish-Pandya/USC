@@ -43,7 +43,7 @@ angular
                         Dashboard: true
                     }
                 ];
-
+                
                 var i = viewMap.length;
                 while(i--){
                     if(current.name == viewMap[i].Name){
@@ -55,7 +55,7 @@ angular
             af.setSelectedView = function(view){
                 $rootScope.selectedView = view;
             }
-
+            
 
             /********************************************************************
             **
@@ -69,7 +69,7 @@ angular
                   controller: 'GenericModalCtrl'
                 });
             }
-
+            
             af.setModalData = function(thing) {
                 dataStoreManager.setModalData(thing);
             }
@@ -81,7 +81,7 @@ angular
             af.deleteModalData = function() {
                 dataStore.modalData = [];
             }
-
+            
             /********************************************************************
             **
             **      AUTOCLAVE            **
@@ -105,11 +105,11 @@ angular
                 }
                 return autoclave;
             }
-
+            
             af.getAllAutoclaves = function(key_id) {
                 return dataSwitchFactory.getAllObjects('Autoclave');
             }
-
+            
             af.saveAutoclave = function(copy, autoclave) {
                 af.clearError();
                 console.log(copy);
@@ -127,12 +127,83 @@ angular
                         af.setError('The Autoclave could not be saved')
                     )
             }
+            
+            /********************************************************************
+            **
+            **      EquipmentInspection            **
+            ********************************************************************/
+            
+             af.getEquipmentInspectionById = function(key_id) {
+                var urlSegment = 'getEquipmentInspectionById&id=' + key_id;
 
+                if( store.checkCollection( 'EquipmentInspection', key_id ) ) {
+                    var equipmentInspection = store.getById( 'EquipmentInspection', key_id )
+                        .then(function(equipmentInspection) {
+                            return equipmentInspection;
+                        });
+                }
+                else {
+                    var equipmentInspection = genericAPIFactory.read( urlSegment )
+                        .then( function( returnedPromise ) {
+                            // store bioSafetyCabinet in cache here?
+                            return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        });
+                }
+                return equipmentInspection;
+            }
+            
+            af.getAllEquipmentInspections = function() {
+                return dataSwitchFactory.getAllObjects('EquipmentInspection', true);
+            }
+            
+            af.saveEquipmentInspection = function(copy, equipmentInspection) {
+                af.clearError();
+                
+                //flatten to avoid circular JSON structure
+                var secondCopy = {
+                            Certification_date: copy.Certification_date,
+                            Due_date: copy.Due_date,
+                            Class: "EquipmentInspection",
+                            Comment: copy.Comment,
+                            Status: copy.Status,
+                            Frequency: copy.Frequency,
+                            Is_active: copy.Is_active,                            
+                            Principal_investigator_id: copy.Principal_investigator_id,
+                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId,
+                            Room_id: copy.Room_id,
+                            RoomId: copy.RoomId,
+                            Equipment_id: copy.Equipment_id,
+                            EquipmentId: copy.EquipmentId,
+                            Equipment_class: copy.Equipment_class,
+                            Report_path: copy.Report_path
+                }
+                
+                if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
+                console.log(secondCopy);
+                return this.save(secondCopy)
+                    .then(
+                        function(returnedEquipmentInspections){
+                            returnedEquipmentInspections = modelInflatorFactory.instateAllObjectsFromJson(returnedEquipmentInspections);
+                            if(equipmentInspection.Key_id){
+                                console.log(returnedEquipmentInspections);
+                                angular.extend(dataStoreManager.getById("EquipmentInspection",equipmentInspection.Key_id), returnedEquipmentInspections[0]);
+                            }else{
+                                console.log(returnedEquipmentInspections);
+                                dataStoreManager.addOnSave(returnedEquipmentInspections);
+                                dataStoreManager.store(returnedEquipmentInspections);
+                            }
+                            var cabinet = dataStoreManager.getById("BioSafetyCabinet",equipmentInspection.Equipment_id);
+                            if (returnedEquipmentInspections[1]) cabinet.EquipmentInspections.push(returnedEquipmentInspections[1]);
+                        },
+                        af.setError('The EquipmentInspection could not be saved')
+                    )
+            }
+            
             /********************************************************************
             **
             **      BioSafetyCabinet            **
             ********************************************************************/
-
+            
             af.getBioSafetyCabinetById = function(key_id) {
                 var urlSegment = 'getBioSafetyCabinetById&id=' + key_id;
 
@@ -151,54 +222,56 @@ angular
                 }
                 return bioSafetyCabinet;
             }
-
+            
             af.getAllBioSafetyCabinets = function() {
                 return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
             }
-
+                        
             af.getAllRooms = function() {
                 return dataSwitchFactory.getAllObjects('Room');
             }
-
+                        
             af.getAllBuildings = function() {
                 return dataSwitchFactory.getAllObjects('Building');
             }
-
+            
             af.getAllPrincipalInvestigators = function() {
                 return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
-            }
-
+            }   
+            
             af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
                 af.clearError();
-
+                
                 //flatten to avoid circular JSON structure
                 var secondCopy = {
                             Certification_date: copy.Certification_date,
                             Class: "BioSafetyCabinet",
                             Frequency: copy.Frequency,
-                            Is_active: copy.Is_active,
+                            Is_active: copy.Is_active,                            
                             Make: copy.Make,
                             Model: copy.Model,
                             Principal_investigator_id: copy.Principal_investigator_id,
-                            Report_path: copy.Report_path,
+                            PrincipalInvestigatorId: copy.PrincipalInvestigatorId,
                             Room_id: copy.Room_id,
+                            RoomId: copy.RoomId,
+                            Equipment_id: copy.Equipment_id,
+                            EquipmentId: copy.EquipmentId,
+                            Report_path: copy.Report_path,
                             Serial_number: copy.Serial_number,
-                            Type: copy.Type,
+                            Type: copy.Type
                 }
-
+                
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
-
+                console.log(secondCopy);
                 return this.save(secondCopy)
                     .then(
                         function(returnedBioSafetyCabinet){
                             returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
-                            if(bioSafetyCabinet){
+                            if(bioSafetyCabinet.Key_id){
+                                console.log(returnedBioSafetyCabinet);
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
-                                bioSafetyCabinet.loadRoom();
-                                bioSafetyCabinet.loadPI();
                             }else{
-                                returnedBioSafetyCabinet.loadRoom();
-                                bioSafetyCabinet.loadPI();
+                                console.log(returnedBioSafetyCabinet);
                                 dataStoreManager.addOnSave(returnedBioSafetyCabinet);
                                 dataStoreManager.store(returnedBioSafetyCabinet);
                             }
@@ -206,7 +279,7 @@ angular
                         af.setError('The BioSafetyCabinet could not be saved')
                     )
             }
-
+            
             /********************************************************************
             **
             **		USER MANAGEMENT
@@ -274,7 +347,7 @@ angular
                                 roomsPromise.resolve(rooms);
                             }
                         )
-
+                    
                     // TODO: Make specific to Equipment module, if this is even needed.
                     return all.then(
                                 function( model ){
@@ -293,7 +366,7 @@ angular
                                 }
                             )
             }
-
+            
             /********************************************************************
             **
             **      HANDY FUNCTIONS

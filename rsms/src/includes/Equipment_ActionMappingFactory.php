@@ -15,12 +15,15 @@ class Equipment_ActionMappingFactory extends ActionMappingFactory {
 
 	public function getConfig() {
 		return array(
+                "getAllEquipmentInspections" 	=> new ActionMapping("getAllEquipmentInspections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getEquipmentInspectionById" 	=> new ActionMapping("getEquipmentInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "saveEquipmentInspection" 		=> new ActionMapping("saveEquipmentInspection", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllBioSafetyCabinets" 		=> new ActionMapping("getAllBioSafetyCabinets", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getBioSafetyCabinetById" 		=> new ActionMapping("getBioSafetyCabinetById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"saveBioSafetyCabinet" 			=> new ActionMapping("saveBioSafetyCabinet", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllBuildings" 				=> new ActionMapping("getBuidlingsWithoutRooms", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllRooms"	 				=> new ActionMapping("getRoomsWithoutComposing", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-				
+                "uploadReportCertDocument"      => new ActionMapping("uploadReportCertDocument", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] )
 		);
 	}
 }

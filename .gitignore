@@ -7,3 +7,8 @@ rsms/src/biosafety-committees/protocol-documents/
 .vs/config/applicationhost.config
 .vs/rsms/v14/.suo
 rsms.phpproj
+rsms.phpproj.user
+rsms.sln
+rsms/src/includes/classes/dto/RadPIDto.php
+rsms/src/js/lib/angularjs-dropdown-multiselect.js
+rsms/src/sql/erasmus_create_1-25-16.sql

@@ -5,20 +5,19 @@
 var BioSafetyCabinet = function() {};
 BioSafetyCabinet.prototype = {
     
-    eagerAccessors: [        
-        {method:"loadRoom", boolean:"Room_id"},
-        {method:"loadPI", boolean:"Principal_investigator_id"}
-    ],
-    
-    loadRoom:  function() {
-        if(!this.Room) {
-            dataLoader.loadChildObject( this, 'Room', 'Room', this.Room_id );
-        }
+    EquipmentInspectionRelationship: {
+        className:    'EquipmentInspection',
+        keyReference:  'Equipment_id',
+        methodString:  '',
+        paramValue: 'Key_id',
+        paramName: 'id'
     },
-    loadPI:  function() {
-        if(!this.PrincipalInvestigator && this.Principal_investigator_id) {
-            dataLoader.loadChildObject( this, 'PrincipalInvestigator', 'PrincipalInvestigator', this.Principal_investigator_id );
-        }
+    
+    eagerAccessors: [        
+        {method:"loadEquipmentInspections", boolean:"Key_id"}
+    ],
+    loadEquipmentInspections:  function() {
+        dataLoader.loadOneToManyRelationship( this, 'EquipmentInspections', this.EquipmentInspectionRelationship, [{Equipment_class:"BioSafetyCabinet"}]);
     }
 
 }

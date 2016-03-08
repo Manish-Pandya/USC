@@ -16,6 +16,7 @@
         /*
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
+        'EquipmentInspection'   : {getById: "getEquipmentInspectionById"   , getAll: "getAllEquipmentInspections"   , save: "saveEquipmentInspection"    },
         'Autoclave'             : {getById: "getAutoclaveById"             , getAll: "getAllAutoclaves"             , save: "saveAutoclave"              },
         'BioSafetyCabinet'      : {getById: "getBioSafetyCabinetById"      , getAll: "getAllBioSafetyCabinets"      , save: "saveBioSafetyCabinet"       },
         'ChemFumeHood'          : {getById: "getChemFumeHoodById"          , getAll: "getAllChemFumeHoods"          , save: "saveChemFumeHood"           },
@@ -23,7 +24,7 @@
         'XRay'                  : {getById: "getXRayById"                  , getAll: "getAllXRays"                  , save: "saveXRay"                   },
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: ""                           },
         'Building'              : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: ""                           },
-        'PrincipalInvestigator' : {getById: "getPIById"                    , getAll: "getAllPIs"                    , save: ""                   },
+        'PrincipalInvestigator' : {getById: "getPIById"                    , getAll: "getAllPIs"                    , save: ""                           },
 };
 
-urlMapper.list = equipmentUrlMapper.list;
+urlMapper.list = $.extend(urlMapper.list, equipmentUrlMapper.list);

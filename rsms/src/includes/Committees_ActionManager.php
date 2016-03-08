@@ -103,7 +103,7 @@ class Committees_ActionManager extends ActionManager {
 		// already in use, keep incrementing the timstamp until we find an unused filename.
 		// 99.999% of the time, this should work the first time, but better safe than sorry.
 		$now = time();
-		while( file_exists( $filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.str_ireplace( "#", "", $_FILES['file']['name'] ) ) )
+		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
 		{
 			$now++;
 		}

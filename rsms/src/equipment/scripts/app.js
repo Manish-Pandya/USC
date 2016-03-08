@@ -64,6 +64,17 @@ angular
       })
 
        $provide.decorator('$q', function ($delegate) {
+           /*
+        if(!$delegate.hasOwnProperty('then')){
+            console.log('adding then function')
+            $delegate.then = function(){
+                return {};
+            };
+        }
+        console.log($delegate.then);
+        console.log($delegate.then());
+        */
+           
         var defer = $delegate.defer;
         $delegate.defer = function() {
           var deferred = defer();
