@@ -64,7 +64,7 @@ echo "</script>";
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
-    <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery.hoverIntent.minified.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-mobile-menu.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/convenienceMethodsModule.js"></script>
@@ -81,7 +81,6 @@ echo "</script>";
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/lodash.min.js"></script>
 
-    <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angularjs-dropdown-multiselect.js"></script>
 
     <!-- Required for the ORM framework -->
     <!-- framework -->
@@ -117,6 +116,8 @@ echo "</script>";
     <script type="text/javascript" src="scripts/models/Department.js"></script>
     <script type="text/javascript" src="scripts/models/BiosafetyProtocol.js"></script>
 
+    <!-- directives -->
+    <script type="text/javascript" src="<?php echo WEB_ROOT?>js/poptop.js"></script>
 
     <!-- filters -->
 </head>
@@ -172,7 +173,9 @@ echo "</script>";
                     <td style="width:10%">{{protocol.Protocol_number}}</td>
                     <td style="width:13%">{{protocol.PrincipalInvestigator.User.Name}}</td>
                     <td style="width:15%">{{protocol.Department.Name}}</td>
-                    <td style="width:13%">{{protocol.Project_title}}</td>
+                    <td style="width:13%">                                
+                        <poptop content="protocol.Project_title" label="Project Title" title="Project Title" event="click"/>
+                    </td>
                     <td style="width:8%">{{protocol.Approval_date | dateToISO:protocol:'Approval_date':true}}</td>
                     <td style="width:7%">{{protocol.Expiration_date | dateToISO:protocol:'Expiration_date':true}}</td>
                     <td style="padding:10px 0;width:18%">

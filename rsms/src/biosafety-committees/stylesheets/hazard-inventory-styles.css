@@ -273,3 +273,45 @@ td ul li:last-child{
     border-bottom:none;
     padding-bottom:0;
 }
+div.poptop {
+	box-shadow:0 0 19px rgba(0,0,0,.3);
+	width:250px;
+	border:4px solid #aaa;
+	background:white;
+	border-radius:3px;
+	border-left-width: 3px;
+}
+div.poptop .poptop-content, div.poptop .poptop-title {
+    padding:5px;
+}
+div.poptop .poptop-title {
+    padding:5px;
+    background:#ddd;
+    font-weight:bold;
+    text-align:center;
+}
+div.poptop:after, div.poptop:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+
+}
+div.poptop:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-top-color: #fff;
+	border-width: 9px;
+	margin-left: -10px;
+
+}
+div.poptop:before {
+	border-color: rgba(85, 85, 85, 0);
+	border-top-color: #aaa;
+	border-width: 14px;
+	margin-left: -13px;
+	
+}

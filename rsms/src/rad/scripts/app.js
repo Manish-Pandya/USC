@@ -21,7 +21,7 @@ angular
     'once',
     'ui.router',
     'modalPosition',
-    'convenienceMethodWithRoleBasedModule'
+    'convenienceMethodWithRoleBasedModule',
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {

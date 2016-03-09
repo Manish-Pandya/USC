@@ -21,7 +21,8 @@ angular
     'ui.router',
     'modalPosition',
     'convenienceMethodWithRoleBasedModule',
-    'rootApplicationController'
+    'rootApplicationController',
+    'SideNav'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
