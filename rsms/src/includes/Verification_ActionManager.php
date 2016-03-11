@@ -329,6 +329,26 @@ class Verification_ActionManager extends ActionManager  {
     	}
     }
     
+    /*
+     * returns a nested array of leaf level hazard thingies for a given pi
+     * @param integer $piId
+     * @return array $hazardThingies
+     */
+    public function getVerificationHazards($id = null){
+    	if($id == null){
+    		$id = $this->getValueFromRequest("id", $id);
+    	}
+    	
+    	if($id == null){
+    		return new ActionError("No request param 'id' was provided");
+    	}
+    	
+    	$hazardThingyDao = $this->getDao(new LeafHazardPiDto());
+    	$hazardThingies = $hazardThingyDao->getLeafHazardsByPi($id);
+    	return $hazardThingies;
+    	
+    }
+    
     public function confirmPendingHazardChange(PendingHazardChange $pendingHazardChange = NULL){
     	 
     }

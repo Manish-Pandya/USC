@@ -104,6 +104,8 @@ class ActionMappingFactory {
                 "createOrderIndicesForHazards"=>new ActionMapping("createOrderIndicesForHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "reorderHazards"=>new ActionMapping("reorderHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+        		"setMasterHazardIds"=>new ActionMapping("setMasterHazardIds", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+        		
 
                 // Question Hub
                 "getQuestionById"=>new ActionMapping("getQuestionById", "", "", $this::$ROLE_GROUPS["EHS"]),

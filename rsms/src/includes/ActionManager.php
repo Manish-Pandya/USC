@@ -72,6 +72,11 @@ class ActionManager {
     	}
     }
 
+    /*
+     * 
+     * @return GenericDAO
+     */
+    
     public function getDao( $modelObject = NULL ){
         //FIXME: Remove MockDAO
         if( $modelObject === NULL ){
@@ -4313,6 +4318,64 @@ class ActionManager {
     	$relationships = $dao->getRelationships($relationship);
     	//$LOG->fatal($relationships);
     	return $relationships;
+    }
+    
+    public function setMasterHazardIds(){
+    	$l = Logger::getLogger("hazardthingus");
+    	$dao = new GenericDAO(new Hazard());
+    	$hazards = $dao->getLeafLevelHazards();
+    	
+    	$entityMaps = array();
+    	$entityMaps[] = new EntityMap("lazy","getSubHazards");
+    	$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
+    	$entityMaps[] = new EntityMap("lazy","getChecklist");
+    	$entityMaps[] = new EntityMap("lazy","getRooms");
+    	$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
+    	$entityMaps[] = new EntityMap("lazy","getHasChildren");
+    	$entityMaps[] = new EntityMap("lazy","getParentIds");
+    	$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+
+    	foreach($hazards as $hazard){
+    		$this->setMasterHazardId($hazard);
+    		$hazard->setEntityMaps($entityMaps);
+    	}
+  
+    	return $hazards;
+    }
+    /*
+     * sets a hazard's branch level parent's key id as its master_hazard_id and saves it
+     * @param Hazard $hazard
+     * @param Hazard $parent The parent of the hazard so we can recurce up the tree if we need to
+     * @return Hazard $hazard
+     */
+    private function setMasterHazardId(Hazard &$hazard, Hazard $parentId = null){
+    	$l = Logger::getLogger("hazardthingus");
+    	 
+    	//key_ids of the branch level hazards, which are children of the root hazard, plus root hazard's id
+    	$masterIds = array(1,9999,10009,10010,10000);
+    	
+    	if($parentId != null){
+    		$id = $parentId;
+    		if($id == null){
+    			return null;
+    		}
+    	}else{
+    		$id = $hazard->getParent_hazard_id();
+    		if($id == null){
+    			return null;
+    		}
+    	}
+    	
+    	if(in_array($id, $masterIds)){  
+    		$hazard->setMaster_hazard_id($id);
+    		$this->saveHazard($hazard);    		
+    	}else{
+    		$parentId = $this->getHazardById($id)->getParent_hazard_id();
+    		$this->setMasterHazardId($hazard, $parentId);
+    	}
+    	return null;
+    	//return $this->saveHazard($hazard);
+    	
     }
 }
 ?>

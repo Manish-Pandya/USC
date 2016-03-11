@@ -27,7 +27,8 @@ class Hazard extends GenericCrud {
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
-		"created_user_id"	=> "integer"
+		"created_user_id"	=> "integer",
+		"master_hazard_id"	=> "integer"
 	);
 
 	/** Relationships */
@@ -91,6 +92,8 @@ class Hazard extends GenericCrud {
 	private $is_equipment;
 
 	private $checklistWeight;
+	
+	private $master_hazard_id;
 	
 	//TODO: Room relationship should/may contain information about Equipment, etc
 
@@ -311,6 +314,13 @@ class Hazard extends GenericCrud {
 	{
 		$this->is_equipment = $is_equipment;
 	}
+	
+	public function getMaster_hazard_id(){
+		return $this->master_hazard_id;
+	}
+	public function setMaster_hazard_id($id){
+		$this->master_hazard_id = $id;
+	}	
 	
 	public function addSubhazard($hazard){
 		if($this->subHazards == null)$this->subHazards = array();

@@ -959,6 +959,65 @@ class GenericDAO {
 
 		return $pis;
 	}
+	
+	/*
+	 * returns a collection of all leaf level hazards, speficfying which ones belong to a given PI
+	 * @param integer $id  key_id of the relevant principal investigator
+	 * @return array $hazardDtos Array of leaf level hazards
+	 */
+	public function getLeafHazardsByPi($id){
+		$l = Logger::getLogger(__CLASS__);
+		
+		// Get the db connection
+		global $db;
+		
+		$queryString = "SELECT name as hazard_name, key_id as hazard_id, master_hazard_id
+						:id as principal_investigator_id 				
+						FROM hazard h
+						WHERE NOT EXISTS (SELECT 1 from hazard hh where hh.parent_hazard_id = h.key_id)";
+		
+		$stmt = $db->prepare($queryString);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$hazardDtos = $stmt->fetchAll(PDO::FETCH_CLASS, "LeafHazardPiDto");
+		return $hazardDtos;
+	}
+	
+	public function getLeafLevelHazards(){
+		// Get the db connection
+		global $db;
+		
+		$queryString = "SELECT *
+						FROM hazard h
+						WHERE NOT EXISTS (SELECT 1 from hazard hh where hh.parent_hazard_id = h.key_id)";
+		
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		
+		$hazards = $stmt->fetchAll(PDO::FETCH_CLASS, "Hazard");
+		return $hazards;
+	}
+	
+	public function getRoomIdsByPiAndHazarIds($piId, $hazardId){
+		$l = Logger::getLogger(__CLASS__);
+		
+		global $db;
+		
+		$queryString = "SELECT room_id
+						FROM principal_investigator_hazard_room
+						WHERE principal_investigator_id = :pi_id
+						AND hazard_id = :hazard_id";
+		
+		$stmt = $db->prepare($queryString);
+		
+		$stmt->bindParam(':pi_id', $piId, PDO::PARAM_INT);
+		$stmt->bindParam(':hazard_id', $hazardId, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$roomIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+		return $roomIds;
+	}
 
 
 }
