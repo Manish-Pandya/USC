@@ -1575,7 +1575,7 @@ span.recs span{
 
 .inspectionReportTable td{
   padding-top: 0px !important;
-  padding-top: 0px !important;
+  padding-top: 10px !important;
 }
 .inspectionReportTable td span:first-child{
   padding: 10px 0 0;
@@ -1701,6 +1701,7 @@ td.reviewHeader {
   border-left:none;
   border-right:none;
   padding-top: 10px !important;
+  border-bottom-width: 1px;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1758,15 +1759,18 @@ td.reviewHeader {
 
 /* line 1186, ../sass/style.scss */
 #chemicalSafetyHeader,.chemicalHazardsHeader {
-  background-color: #F3F306;
+  background-color: #F3F306 !important;
   color: black !important;
   background-size: 38px;
 }
 
 /* line 1192, ../sass/style.scss */
 #radiationSafetyHeader,.radiationHazardsHeader {
-  background-color: #6600cc;
+  background-color: #6600cc !important;
   background-size: 40px 40px;
+}
+tbody tr.no-hover:hover {
+    background: transparent !Important;
 }
 td.checklistHeader{
     background: white !important;
@@ -1774,7 +1778,10 @@ td.checklistHeader{
     font-weight: bold;
     vertical-align: middle !important;
     padding: 10px 15px !important;
+    border-bottom:2px solid black;
+    border-top:2px solid black;
 }
+
 tbody.biological td.checklistHeader {
     background: rgba(221, 0, 0, 0.2) !important;
 }
@@ -3558,10 +3565,7 @@ tbody tr:nth-child(even){
   background:#ECF0F1;
 }
 
-tbody tr:hover{
-background:#BDC3C7;
-  color:#FFFFFF;
-}
+tbody tr:hover{/* background:#BDC3C7; */color:#FFFFFF;}
 
 .fixed{
   position:fixed;

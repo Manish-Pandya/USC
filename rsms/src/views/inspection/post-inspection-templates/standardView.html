@@ -78,10 +78,16 @@
     <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
     <a ng-if="readyToSubmit" class="btn btn-success btn-large left" style="margin:10px 0;" ng-click="submit()"><i class="icon-checkmark"></i>Submit CAP</a>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
-    <th colspan="2" style="width:34%;">
+    <th colspan="2" style="width:24%; padding:0px">
         <div class="row-fluid">
-            <span class="span6">DEFICIENCY DESCRIPTION</span>
-            <span class="span6">CORRECTIVE ACTION STATUS<br><a ng-show="User.Roles[0] == 'Administrator'" class="btn btn-mini btn-info" ng-click="showMenu = !showMenu"><i class="icon-thumbs-up"></i>Accept All</a>
+            <span class="span7" style="height: 56px;
+                                padding: 7px;
+                                border-right: 2px solid #DDDDDD;
+                                width: 58%;">DEFICIENCY DESCRIPTION</span>
+            <span class="span5" style="height: 47px;
+                                padding: 7px;
+                                margin-left: 0;
+                                width: 42%;">CORRECTIVE ACTION STATUS<br><a ng-show="User.Roles[0] == 'Administrator'" class="btn btn-mini btn-info" ng-click="showMenu = !showMenu"><i class="icon-thumbs-up"></i>Accept All</a>
             <div ng-show="showMenu" class="correctiveAction"></div>
             </span>
         </div>
@@ -91,39 +97,39 @@
     <tr ng-if="questionsByChecklist.biologicalHazards.show">
         <td valign="top" colspan="4" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td>
     </tr>
-    <tr ng-if="questionsByChecklist.biologicalHazards.message"><td colspan="4">{{questionsByChecklist.biologicalHazards.message}}</td></tr>
+    <tr ng-if="questionsByChecklist.biologicalHazards.message"><td colspan="4" style="padding-top:10px">{{questionsByChecklist.biologicalHazards.message}}</td></tr>
     <tbody ng-repeat="checklist in questionsByChecklist.biologicalHazards.checklists" class="biological" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
     <tr ng-if="questionsByChecklist.chemicalHazards.show">
         <td valign="top" colspan="4" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td>
-    </tr>
+    </tr>   
 
-    <tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="4">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
+    <tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="4" style="padding-top:10px">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
     <tbody ng-repeat="checklist in questionsByChecklist.chemicalHazards.checklists" class="chemical " ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
-    <tr><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
-    <tr ng-if="questionsByChecklist.generalHazards.message">
+    <tr ng-if="inspection.Is_rad"><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
+    <tr ng-if="inspection.Is_rad" ng-if="questionsByChecklist.generalHazards.message">
         <td colspan="4">{{questionsByChecklist.generalHazards.message}}</td>
     </tr>
-    <tbody ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
-    <tr ng-if="questionsByChecklist.radiationHazards.show">
+    <tbody ng-if="inspection.Is_rad" ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tr ng-if="questionsByChecklist.radiationHazards.show && inspection.Is_rad">
         <td valign="top" colspan="4" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>
         RADIATION SAFETY
         <i class="icon-paper"></i><span ng-if="inspection.hotWipes>0">{{inspection.hotWipes}}</span><span ng-if="inspection.hotWipes<1">No</span> Hot Wipe<span ng-if="inspection.hotWipes!=1">s</span> <a class="btn" href="../../rad/#/inspection-wipes{{inspection.Key_id}}">Inspection Wipes</a>
         </td>
     </tr>
-    <tr ng-if="questionsByChecklist.radiationHazards.message"><td colspan="4">{{questionsByChecklist.radiationHazards.message}}</td></tr>
+    <tr ng-if="questionsByChecklist.radiationHazards.message && inspection.Is_rad"><td colspan="4" style="padding-top:10px">{{questionsByChecklist.radiationHazards.message}}</td></tr>
     <tbody ng-repeat="checklist in questionsByChecklist.radiationHazards.checklists" class="radiation" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 </table>
-<table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
-    <tr><th style="background:#355f91;color:white; text-align:center;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
+<table style="margin:35px 0" class="table table-bordered table-striped table-responsive inspectionReportTable" ng-if="recommendations.length">
+    <tr><th style="background:#355f91;color:white; text-align:center;width:33%" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center" align="center">EH&S RECOMMENDATIONS</th></tr>
     <tr ng-repeat="rec in recommendations" ng-if="rec.Is_active"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
-<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:70%; margin:35px auto;">
-    <tr><td valign="top" style="background: #c5d8f1; width:50%; font-weight:bold">Corrective Action Plan Submitted By:</td><td valign="top" style="font-weight:bold"><span ng-if="inspection.Date_closed">{{inspection.PrincipalInvestigator.User.Name}}</span></td></tr>
-</table>
+<div style="margin:30px 0;">
+   <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px 10px 5px 5px;">Corrective Action Plan Submitted By:</h3><span ng-if="inspection.Date_closed">{{inspection.PrincipalInvestigator.User.Name}}</span>
+</div>
 
-<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%; margin:35px auto;">
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%;">
     <tr><th align="center"># ITEMS INSPECTED</th><th align="center"># COMPLIANT ITEMS</th><th align="center"># DEFICIENCY ITEMS</th><th align="center">COMPLIANCE SCORE</th></tr>
     <tr style="background: #c5d8f1;">
         <td style="text-align:center" valign="top" align="center">{{inspection.score.itemsInspected}}</td>
