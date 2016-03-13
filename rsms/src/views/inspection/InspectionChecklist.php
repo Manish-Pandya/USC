@@ -100,20 +100,12 @@ require_once '../top_view.php';
                                         <other-deficiency checked-on-init="cf.getHasOtherDeficiency(question)" param="question" selected-title="question.Other_text" textarea-placeholder="Enter a deficiency" unselected-title="Other" text-area-content="" selection-change="cf.conditionallySaveOtherDeficiency(question)"/>
                                     </span>
                                         <span ng-if="cf.evaluateDeficiency( deficiency, question ) && !question.edit">
-                                            <i class="icon-enter checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
+                                            <i class="icon-enter checklistRoomIcon" ng-class="{'fa-door-open': getNeedsRooms(deficiency, checklist, question)}" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
                                         </span>
 
                                         <div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms && !question.edit" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
                                             <div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
                                             <ul>
-                                                <!--
-                                                <li class="show-rooms">
-                                                    <label class="checkbox inline">
-                                                        <input type="checkbox" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-model="deficiency.Show_rooms" ng-checked="cf.evaluateDeficienyShowRooms(deficiency.Key_id)"/>
-                                                        <span class="metro-checkbox">Show rooms in report<i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
-                                                    </label>
-                                                </li>
--->
                                                 <li ng-repeat="room in deficiency.InspectionRooms">
                                                     <label class="checkbox inline">
                                                         <input type="checkbox" ng-init="room.checked = cf.evaluateDeficiencyRoomChecked( room, question, deficiency )" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist, room )" ng-model="room.checked"/>

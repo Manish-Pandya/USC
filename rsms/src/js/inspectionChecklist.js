@@ -565,7 +565,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                         factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
                                     }
                                     if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
-                                    question.Responses.DeficiencySelections.push( returnedDeficiency );
 
                                     if(factory.room){
                                         room.checked = !room.checked;
@@ -573,6 +572,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                         if(roomIds.length == 0){
                                             factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )
                                         }
+                                    }else{
+                                        question.Responses.DeficiencySelections.push( returnedDeficiency );
+
                                     }
 
                                 },
@@ -654,7 +656,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     var j = question.Responses.DeficiencySelections[i].Rooms.length;
                     while(j--){
                         if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id ){
-                            return true;
+                            if(room.checked != false)return true;
                         }
                     }
                 }
@@ -1045,7 +1047,6 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
       }
 
     $scope.showRooms = function( event, deficiency, element, checklist, question ){
-        
         if(!deficiency.InspectionRooms){
             if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( cf.inspection.Rooms );
             //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
@@ -1059,6 +1060,22 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
         deficiency.showRoomsModal = !deficiency.showRoomsModal;
     }
 
+    $scope.getNeedsRooms = function(deficiency, checklist, question){
+        if(!deficiency.InspectionRooms){
+            if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( cf.inspection.Rooms );
+            //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
+            deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+        }else{
+            for (var i = 0; i < deficiency.InspectionRooms.length; i++ ){
+                if(!cf.evaluateDeficiencyRoomChecked( deficiency.InspectionRooms[i], question, deficiency )) return true;
+            }
+                
+        }
+        return false;
+        
+        console.log(deficiency);
+    }
+    
     //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
     function calculateClickPosition(event, deficiency, element){
         var x = event.clientX;
