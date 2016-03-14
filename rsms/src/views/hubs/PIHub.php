@@ -45,7 +45,7 @@ require_once '../top_view.php';
         <div class="btn-group" id="piButtons" style="">
             <a ng-click="setRoute('rooms')" id="editPI" class="btn btn-large btn-info left" style="margin-left:0"><i class="icon-enter"></i>PI's Laboratory Rooms</a>
             <a ng-click="setRoute('personnel')" class="btn btn-large btn-success left"><i class="icon-user-2"></i>Manage Lab Personnel</a>
-            <a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../inspection/HazardInventory.php#?inspectionId={{inspectionId}}&pi={{PI.Key_id}}">Return To Inspection</a>
+            <a ng-if="inspectionId" class="btn btn-large btn-danger left" href="../../hazard-inventory/#?pi={{PI.Key_id}}">Return To Inspection</a>
         </div>
     </span>
 
