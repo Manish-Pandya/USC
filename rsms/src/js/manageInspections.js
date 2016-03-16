@@ -84,6 +84,14 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
 
                 }
+                
+                if(search.type){
+                    console.log(search.type)
+                    if( item.Is_rad != (search.type == Constants.INSPECTION.TYPE.RAD) ){
+                        matched = false;
+                        continue;
+                    }
+                }
 
                 if(matched && search.inspector){
                     if(item.Inspections){

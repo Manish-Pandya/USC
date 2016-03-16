@@ -71,7 +71,8 @@ var Constants = (function () {
                         {val:"10", string:"October"},
                         {val:"11", string:"November"},
                         {val:"12", string:"December"}
-                    ]
+                    ],
+        TYPE: {BIO: "BioSafety Inspection", CHEM: "Chemical Inspection", RAD: "Radiation Inspection"}
     };
 
     constants.CORRECTIVE_ACTION = {
@@ -197,6 +198,6 @@ var Constants = (function () {
         },
         EQUIPMENT_CLASS: "BioSafetyCabinet"
     }
-
+    
     return constants;
 })();

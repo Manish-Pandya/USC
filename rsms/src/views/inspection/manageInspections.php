@@ -37,13 +37,25 @@ require_once '../top_view.php';
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
     </div>
-    <select ng-model="yearHolder.selectedYear" ng-if="dtos" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years" style="z-index: 1060;margin-top: -30px;position:fixed;">
-          <option value="">-- select year --</option>
-      </select>
+    <div class="filter-holder" ng-if="dtos" >
+        <div>
+            <label>Inspection Year:</label>
+            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
+                <option value="">-- select year --</option>
+            </select>
+        </div>
+        <div>
+            <label>Inspection Type:</label>
+            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE">
+                <option value="">All Types</option>
+            </select>
+        </div>
+    </div>
     <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
             <tr>
+                
                 <th>
                     Investigator<br>
                     <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
@@ -74,7 +86,7 @@ require_once '../top_view.php';
                     </select>
                 </th>
                 <th>
-                    Inspection Hazards
+                    Laboratory Hazards
                     <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
                         <option value="">Select</option>
                     </select>
@@ -196,9 +208,9 @@ require_once '../top_view.php';
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
                 </td>
                 <td style="width:9.5%" class="hazard-icons">
-                    <span ng-if="dto.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png"/></span>
-                    <span ng-if="dto.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png"/></span>
-                    <span ng-if="dto.Rad_hazards_present"><img src="../../img/radiation-large-icon.png"/></span>
+                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png"/></span>
+                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png"/></span>
+                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png"/></span>
                 </td>
             </tr>
         </tbody>

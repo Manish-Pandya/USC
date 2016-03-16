@@ -731,7 +731,7 @@ tr.new td{
   color:white;
 }
 tr.inactive td {
-  border-color: pink;
+  border-color: #EAEAEA;
   background: #FFC0C0 !important;
 }
 h3.inactive, .unassigned{
@@ -965,6 +965,10 @@ a.selected:hover{
 }
 td.hazard-icons img{
     width:25px;
+}
+.grayed-out img, img.grayed-out {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
 }
 .locationTable td > ul li{
   padding: 10px 8px 3px;
@@ -3770,3 +3774,22 @@ btn-mini {
 .fa-target:before { content: "\f111"; }
 .fa-tractor:before { content: "\f112"; }
 .fa-user-with-headset:before { content: "\f113"; }
+
+.filter-holder{
+  z-index: 1060;
+  margin-top: -31px;
+  position: fixed;
+}
+.filter-holder div{
+  margin-right: 15px;
+  display: inline-block;
+}
+.filter-holder div label{
+  font-size: 18px;
+  float:left;
+  font-weight: bold;
+  margin: 2px;
+}
+.filter-holder div select{
+  margin-top:0;
+}
