@@ -46,7 +46,7 @@ require_once '../top_view.php';
         </div>
         <div>
             <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="type as type for type in types = (constants.INSPECTION.TYPE | toArray)">
+            <select ng-model="search.type" ng-options="k as v for (k, v) in constants.INSPECTION.TYPE">
                 <option value="">All Types</option>
             </select>
         </div>
@@ -80,7 +80,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
+                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="k as v for (k, v) in constants.INSPECTION.STATUS">
                         <option value="">Select a status</option>
                     </select>
                 </th>
