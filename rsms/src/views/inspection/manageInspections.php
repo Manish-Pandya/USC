@@ -80,7 +80,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="k as v for (k, v) in constants.INSPECTION.STATUS">
+                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
                         <option value="">Select a status</option>
                     </select>
                 </th>
