@@ -64,6 +64,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 })
 .filter('genericFilter', function ($rootScope) {
     return function (items,search,convenienceMethods) {
+        console.log(!items, search);
         if(!items) return;
         if(!search) return items;
 
@@ -576,7 +577,7 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
 
     }
 
-    init = function()
+    var init = function()
     {
             $scope.loading = true;
             getAllInspectors()
@@ -584,7 +585,6 @@ manageInspectionCtrl = function($scope, manageInspectionsFactory, convenienceMet
                 .then(getDtos)
                 .then(getMonths)
     }
-
 
     init();
 

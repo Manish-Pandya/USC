@@ -37,7 +37,7 @@ require_once '../top_view.php';
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
     </div>
-    <div class="filter-holder" ng-if="dtos" >
+    <div class="filter-holder" ng-if="dtos.length">
         <div>
             <label>Inspection Year:</label>
             <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
@@ -46,7 +46,7 @@ require_once '../top_view.php';
         </div>
         <div>
             <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE">
+            <select ng-model="search.type" ng-options="type as type for type in types = (constants.INSPECTION.TYPE | toArray)">
                 <option value="">All Types</option>
             </select>
         </div>
@@ -55,7 +55,6 @@ require_once '../top_view.php';
         <thead>
             <tr><th colspan="7" style="padding:0"></th></tr>
             <tr>
-                
                 <th>
                     Investigator<br>
                     <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>

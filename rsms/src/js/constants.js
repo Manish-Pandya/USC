@@ -50,13 +50,19 @@ var Constants = (function () {
         STATUS:{
             NOT_SCHEDULED:"NOT SCHEDULED",
             SCHEDULED:"SCHEDULED",
-            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                                                   INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
+            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                                               
+            INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             OVERDUE_CAP:"OVERDUE CAP",
             CLOSED_OUT:"CLOSED OUT"
         },
         SCHEDULE_STATUS:{
-            NOT_ASSIGNED:"NOT ASSIGNED",
+            NOT_ASSIGNED:"NOT ASSIGNED"
+        },
+        TYPE:{
+            BIO:"BioSafety Inspection",
+            CHEM:"Chemical Inspection",
+            RAD:"Radiation Inspection"
         },
         MONTH_NAMES:[
                         {val:"01", string:"January"},
@@ -71,8 +77,7 @@ var Constants = (function () {
                         {val:"10", string:"October"},
                         {val:"11", string:"November"},
                         {val:"12", string:"December"}
-                    ],
-        TYPE: {BIO: "BioSafety Inspection", CHEM: "Chemical Inspection", RAD: "Radiation Inspection"}
+                    ]
     };
 
     constants.CORRECTIVE_ACTION = {
