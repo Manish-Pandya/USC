@@ -12,10 +12,14 @@ require_once '../top_view.php';
       <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
   </h1>
 </div>
-
-<div class="alert savingBox" ng-if="filtering">
+ 
+<div class="alert savingBox" ng-if="filtering"><!---->
   <h1>
-      <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
+      <i class="icon-clock large" style="margin-bottom: -30px;
+    font-size: 66px;
+    color: white;
+    width: 59px;
+    margin-top: 20px;"></i>
       <span style="margin-left: 13px;display: inline-block;">Filtering Inspections...</span>
   </h1>
 </div>
@@ -32,7 +36,6 @@ require_once '../top_view.php';
     </ul>
 </div>
 
-
     <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px; z-index:9999">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
@@ -44,49 +47,54 @@ require_once '../top_view.php';
                 <option value="">-- select year --</option>
             </select>
         </div>
-        <div>
-            <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="k as v for (k, v) in constants.INSPECTION.TYPE">
-                <option value="">All Types</option>
-            </select>
-        </div>
+        
     </div>
-    <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
+    <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
         <thead>
-            <tr><th colspan="7" style="padding:0"></th></tr>
+            <tr>
+                <th colspan="7" style="padding:0">
+                    <div>
+                        <label>Inspection Type:</label>
+                        <select ng-model="search.type" ng-options="k as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                </th>
+            </tr>
             <tr>
                 <th>
                     Investigator<br>
-                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
+                    <span><input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()"/><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Campus<br>
-                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
+                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()"/><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Building<br>
-                    <input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
+                    <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Lab Room(s)<br>
                 </th>
                 <th>
                     Month Scheduled<br>
-                    <input class="span2" ng-model="search.date" placeholder="Filter by Date"/>
+                    <input class="span2" ng-model="search.date" placeholder="Filter by Date" blur-it="genericFilter()" /><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     EHS Inspector<br>
-                    <input class="span2" ng-model="search.inspector" placeholder="Filter by Inspector"/>
+                    <input class="span2" ng-model="search.inspector" placeholder="Filter by Inspector" blur-it="genericFilter()" /><i ng-if="search.inspector" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
+                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
                 <th>
                     Laboratory Hazards
-                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
                 </th>
@@ -94,7 +102,7 @@ require_once '../top_view.php';
         </thead>
         <tbody>
 
-            <tr ng-repeat="dto in (filtered = (dtos | genericFilter:search:convenienceMethods))" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}">
+            <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
