@@ -62,127 +62,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         return array;
     }
 })
-.filter('genericFilter', function ($rootScope) {
-    return function (items, search, convenienceMethods, run) {
-        //console.log(!items, search);
-        if (!items) return;
-        if (!search || !run) return items;
-        alert(run);
-        if (search) {
-            var i = items.length;
-            var filtered = [];
-            $rootScope.filtering = true;
-            var matched;
-            while (i--) {
-                //we filter for every set search filter, looping through the collection only once
-                var item = items[i];
-                matched = true;
-
-                if (search.building) {
-                    if (item.Building_name && item.Building_name.toLowerCase().indexOf(search.building.toLowerCase()) < 0) {
-                        matched = false;
-                        continue;
-                    }
-
-                }
-
-                if (search.type) {
-                    console.log(search.type)
-                    if (item.Is_rad != (search.type == Constants.INSPECTION.TYPE.RAD)) {
-                        matched = false;
-                        continue;
-                    }
-                }
-
-                if (matched && search.inspector) {
-                    if (item.Inspections) {
-                        if (item.Inspections.Inspectors && item.Inspections.Inspectors.length) {
-                            var z = item.Inspections.Inspectors.length;
-                            var longString = "";
-                            while (z--) {
-                                longString += item.Inspections.Inspectors[z].User.Name;
-                            }
-                            if (longString.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0) matched = false;
-                        } else {
-                            if (Constants.INSPECTION.SCHEDULE_STATUS.NOT_ASSIGNED.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0) {
-                                matched = false;
-                                continue;
-                            }
-                        }
-
-                    } else {
-                        matched = false;
-                        continue;
-                    }
-
-                }
-
-                if (matched && search.campus) {
-                    if (item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
-                        matched = false;
-                        continue;
-                    }
-                }
-
-                if (matched && search.pi && item.Pi_name) {
-                    if (item.Pi_name.toLowerCase().indexOf(search.pi.toLowerCase()) < 0) {
-                        matched = false;
-                        continue;
-                    }
-                }
-
-                if (matched && search.status) {
-                    if (item.Inspections) var status = item.Inspections.Status;
-                    if (!item.Inspections) var status = Constants.INSPECTION.STATUS.NOT_SCHEDULED;
-                    if (status.toLowerCase() != search.status.toLowerCase()) {
-                        matched = false;
-                        continue;
-                    }
-                }
-
-                if (matched && search.date) {
-                    if (!item.Inspections || !item.Inspections.Date_started && !item.Inspections.Schedule_month) {
-                        matched = false;
-                        continue;
-                    } else {
-                        if (item.Inspections && item.Inspections.Date_started) var tempDate = getDate(item.Inspections.Date_started);
-                        if (tempDate && tempDate.formattedString.indexOf(search.date) < 0) {
-                            var goingToMatch = false;
-                        } else {
-                            var goingToMatch = true;
-                        }
-                        if (item.Inspections && item.Inspections.Schedule_month) {
-                            //console.log(item.Inspections.Schedule_month);
-                            var j = monthNames2.length
-                            while (j--) {
-                                if (monthNames2[j].val == item.Inspections.Schedule_month) {
-                                    if (monthNames2[j].string.toLowerCase().indexOf(search.date.toLowerCase()) > -1) var goingToMatch = true;
-                                }
-                            }
-                        }
-                        if (!goingToMatch) {
-                            matched = false;
-                            continue;
-                        }
-                    }
-                }
-                if (matched && search.hazards) {
-                    if (!item[search.hazards]) {
-                        matched = false;
-                        continue;
-                    }
-                }
-
-                if (matched == true) filtered.unshift(item);
-
-            }
-            $rootScope.filtering = false;
-            //search.run = false;
-            run = false;
-            return filtered;
-        }
-    };
-})
 .filter('getDueDate', function () {
     return function (input) {
         var date = new Date(input);
@@ -564,7 +443,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     $scope.convenienceMethods = convenienceMethods;
     $scope.constants = Constants;
     $scope.years = [];
-    $scope.search = null;
+    $scope.search = {init:true};
     $scope.run = false;
 
     var getDtos = function (year) {
@@ -573,7 +452,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 function (dtos) {
                     $scope.dtos = dtos;
                     $scope.loading = false;
-                    $scope.genericFilter();
+                    $scope.genericFilter(true);
                 }
             )
     },
@@ -635,11 +514,11 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             )
     }
 
-    $scope.genericFilter = function (thing) {
+    $scope.genericFilter = function (init) {
 
         var filtered = [];
         var defer = $q.defer();
-        if (!$scope.search) {
+        if (init) {
             filtered = $scope.dtos;
             defer.resolve(filtered);
             $scope.filtered = filtered;
@@ -670,12 +549,32 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
 
                     if (search.type) {
-                        if (item.Inspections && !item.Inspections.Is_rad) item.Inspections.Is_rad = false;
-                        if (!item.Inspections || (item.Inspections.Is_rad != (search.type == Constants.INSPECTION.TYPE.RAD))) {
-                            //console.log(search.type + ' | ' + Constants.INSPECTION.TYPE.RAD + ' | ' + item.Inspections.Is_rad)
+                        if (!item.Inspections) {
+                            matched = false;
+                            continue;
+                        }                 
+                        
+                        console.log(search.type + ' | ' + Constants.INSPECTION.TYPE.BIO)
+                        if (search.type == Constants.INSPECTION.TYPE.BIO) {
+                            console.log('bio');
+                            //only items with inspections that aren't rad inspection that have bio hazards
+                            if (item.Inspections.Is_rad || !item.Bio_hazards_present) {
+                                matched = false;
+                                continue;
+                            }
+                            console.log(item);
+                        } else if (search.type == Constants.INSPECTION.TYPE.CHEM) {
+                            //only items with inspections that aren't rad inspection that have bio hazards
+                            if (item.Inspections.Is_rad || !item.Chem_hazards_present) {
+                                matched = false;
+                                continue;
+                            }
+                        } else if(!item.Inspections.Is_rad) {
                             matched = false;
                             continue;
                         }
+
+                        
                     }
 
                     if (matched && search.inspector) {

@@ -32,7 +32,7 @@ class InspectionScheduleDto {
 	private $bio_hazards_present;
 	private $chem_hazards_present;
 	private $rad_hazards_present;
-	
+    private $deficiency_selection_count;	
 
 
 	public function getPi_name(){return $this->pi_name;}
@@ -63,6 +63,13 @@ class InspectionScheduleDto {
 	public function setBio_hazards_present($present){$this->bio_hazards_present = $present;}
 	public function setChem_hazards_present($present){$this->chem_hazards_present = $present;}
 	public function setRad_hazards_present($present){$this->rad_hazards_present = $present;}
+    public function getDeficiency_selection_count(){
+		return $this->deficiency_selection_count;
+	}
+
+	public function setDeficiency_selection_count($deficiency_selection_count){
+		$this->deficiency_selection_count = $deficiency_selection_count;
+	}
 	
 }
 ?>

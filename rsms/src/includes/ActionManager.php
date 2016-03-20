@@ -4075,7 +4075,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getInspectors");
                 $entityMaps[] = new EntityMap("lazy","getRooms");
                 $entityMaps[] = new EntityMap("lazy","getResponses");
-                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+                $entityMaps[] = new EntityMap("eager","getDeficiency_selections");
                 $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
                 $entityMaps[] = new EntityMap("lazy","getChecklists");
                 $entityMaps[] = new EntityMap("eager","getStatus");
