@@ -54,8 +54,9 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
                 }
 
-                if(search.hazards){
-                    if(item.Class == "Room" && !item[search.hazards]) item.matched = false;
+                if (search.hazards) {
+                    console.log(item.Name + ' | ' + item[search.hazards] + ' | ' + search.hazards)
+                    if ( item.Class == "Room" && !item[search.hazards] || item[search.hazards] == false || item[search.hazards] == "0" ) item.matched = false;
                 }
 
                 if(search.room){
