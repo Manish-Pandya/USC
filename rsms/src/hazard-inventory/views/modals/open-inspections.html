@@ -9,7 +9,7 @@
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
     <div ng-if="!openInspections.length">
         <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
-        <a class="btn left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
+        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
         <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
         <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </div>
@@ -21,7 +21,7 @@
                 <th>Year</th>
                 <th>Month</th>
                 <th>Inspector(s)</th>
-                <th>Inspection Hazards</th>
+                <th>Hazards</th>
                 <th>Status / Action</th>
             </tr>
         </thead>
@@ -52,13 +52,13 @@
                 <td>
                     <span ng-if="!inspection.Is_rad">
                         <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)">
-                            <img src="../img/biohazard-largeicon.png" style="width: 21px;"/>
+                            <img src="../img/biohazard-largeicon.png" style="width: 41px;"/>
                         </span>
                         <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)">
-                            <img src="../img/chemical-safety-large-icon.png" style="width: 21px;"/>
+                            <img src="../img/chemical-safety-large-icon.png" style="width: 41px;"/>
                         </span>
                     </span>
-                    <img src="../img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 21px;"/>
+                    <img src="../img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 41px;"/>
                 </td>
 
                 <td>
@@ -70,7 +70,7 @@
                     </span>
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
                         <p>
-                            (Date: {{inspection.Cap_submitted_date | dateToISO}})
+                            (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                             <br>
                             <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                         </p>
