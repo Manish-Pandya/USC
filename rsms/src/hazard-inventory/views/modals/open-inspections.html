@@ -1,7 +1,7 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:5px;" class="redBg">{{modalData.PI.User.Name}}'s scheduled inspections
-        <a class="btn left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2" style="color: rgba(255,255,255,.7);"></i>New Inspection</a>
-           <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
+        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
+           <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
            <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>
 </div>
@@ -9,8 +9,6 @@
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
     <div ng-if="!openInspections.length">
         <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
-        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
-        <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
         <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </div>
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->
