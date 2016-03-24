@@ -27,14 +27,14 @@
             <div>
                 <div class="inner-action" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
                     <div style="text-align:center">
-                        <a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
+                        <a class="btn btn-danger btn-larger left" ng-disabled="inspection.isArchived" ng-click="openModal(question, def)">
                             <i class="icon-plus-2"></i>Add Corrective Action
                         </a>
                     </div>
                 </div>
 
                 <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
-                    <a class="btn btn-primary left" ng-click="openModal(question, def)">
+                    <a class="btn btn-primary left" ng-disabled="inspection.isArchived" ng-click="openModal(question, def)">
                         <i class="icon-pencil"></i>Edit
                     </a>
                     <i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
-                    <a ng-click="openModal(question, def)" class="btn btn-primary left">
+                    <a ng-disabled="inspection.isArchived" ng-click="openModal(question, def)" class="btn btn-primary left">
                         <i class="icon-pencil"></i>Edit
                     </a>
                     <h4 class="bold">Completed Corrective Action:</h4>
