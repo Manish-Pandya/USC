@@ -12,10 +12,23 @@ Carboy.prototype = {
         paramValue: 'Key_id',
         paramName: 'id'
     },
+
+    eagerAccessors:[
+        {method:"loadCurrentCarboyUseCycle", boolean:"Current_carboy_use_cycle"}
+    ],
     
     // TODO eager accessors, relationships, method names.
     loadCarboyUseCycles:function(){
         return dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship );
+    },
+
+    //if this carboy has a current use cycle, make sure it is a reference to the appropriate on in the dataStore
+    loadCurrentCarboyUseCycle: function () {
+        if (this.Current_carboy_use_cycle && dataStoreManager && dataStore.CarboyUseCycle) {
+            this.Current_carboy_use_cycle = dataStoreManager.getById("CarboyUseCycle", this.Current_carboy_use_cycle.Key_id);
+            console.log(this.Current_carboy_use_cycle)
+
+        }
     }
 }
 

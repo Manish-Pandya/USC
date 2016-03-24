@@ -2229,9 +2229,9 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Authorization ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PIAuthorization ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteType ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.WasteType));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyUseCycle));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Carboy ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipe ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipeTest ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ParcelWipe ));

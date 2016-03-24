@@ -26,6 +26,10 @@ CarboyUseCycle.prototype = {
 
     loadCarboy_reading_amounts:function(){
         dataLoader.loadOneToManyRelationship( this, 'Carboy_reading_amounts', this.CarboyReadingAmountsRelationship);
+    },
+
+    loadPrincipalInvestigator: function () {
+        dataLoader.loadChildObject(this, 'Principal_investigator', 'PrincipalInvestigator', this.Principal_investigator_id);
     }
 }
 

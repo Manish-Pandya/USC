@@ -2,7 +2,7 @@
 
 <div class="right-column">
     <h1 class="parcels" ng-show="needs.length"><i class="icon-box"></i>Requested Packages</h1>
-    <h1 class="parcels" ng-show="!needs.length"><i class="icon-box"></i>No Requested Packages</h1>
+    <h1 class="parcels" ng-show="!needs.length"><i class="icon-box"></i>No PIs have requested packages.</h1>
     <div class="card full parcels" ng-repeat="pi in needs = ( pis | pisNeedingPackages )">
         <h3 class="card-header padding"><i class="icon-box"></i>{{pi.User.Name}} has requested a package.</h3>
         <div class="card-content">

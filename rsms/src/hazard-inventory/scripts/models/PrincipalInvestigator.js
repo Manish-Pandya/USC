@@ -61,8 +61,3 @@ PrincipalInvestigator.prototype = {
 
 //inherit from and extend GenericPrincipalInvestigator
 extend(PrincipalInvestigator, GenericModel);
-
-//create an angular module for the model, so it can be injected downstream
-angular
-    .module("principalInvestigator",[])
-    .value("PrincipalInvestigator",PrincipalInvestigator);

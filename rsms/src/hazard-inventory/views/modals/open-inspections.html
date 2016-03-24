@@ -49,13 +49,13 @@
                 </td>
                 <td>
                     <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
-                        <img src="../img/biohazard-largeicon.png" style="width: 41px;"/>
+                        <img src="../img/biohazard-largeicon.png" style="width: 41px; max-width:30%"/>
                     </span>
                     <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
-                        <img src="../img/chemical-blue-icon.png" style="width: 41px;"/>
+                        <img src="../img/chemical-blue-icon.png" style="width: 41px; max-width:30%"/>
                     </span>
                     <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)"  ng-class="{'grayed-out': !inspection.Is_rad}">
-                        <img src="../img/radiation-large-icon.png" style="width: 41px;"/>
+                        <img src="../img/radiation-large-icon.png" style="width: 41px; max-width:30%"/>
                     </span>
                 </td>
                 <td>
