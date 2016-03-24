@@ -315,7 +315,7 @@ echo "</script>";
             </li>
         </ul>
         <div id="footer" style="position:fixed; bottom:0; width:100%; background:white; left:0; z-index:1040; box-shadow:0 0 20px rgba(0,0,0,.5)" ng-if="PI">
-            <ul class="container-fluid whitebg" style="padding:0 70px !Important">
+            <ul class="container-fluid whitebg" style="padding:0 0 0 70px !Important">
                 <li>
                     <a ng-click="openPreviousInspections()"><img src="../img/clipboard.png" /><span>Archived Reports</span></a>
                 </li>

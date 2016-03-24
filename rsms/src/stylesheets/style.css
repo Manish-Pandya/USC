@@ -146,7 +146,7 @@ body {
   margin-top: 20px;
 }
 
-@media (max-height: 900px) {
+@media (max-width: 1024px) {
   /* line 93, ../sass/style.scss */
   .navbar {
     margin-bottom: 0;
@@ -473,6 +473,7 @@ div.rsmsCenterIconContainer a p {
     font-size: 220px;
     line-height: normal;
   }
+}
 @media (min-width: 773px) and (max-width: 999px) {
   /* line 300, ../sass/style.scss */
   .centerIcons {
@@ -502,6 +503,7 @@ div.rsmsCenterIconContainer a p {
         text-align: center;
     font-size: 17px;
   }
+}
 }
 /******************************************************
 * Emergency Info HUB STYLES
@@ -2758,6 +2760,7 @@ label.smaller {
 /* line 790, ../sass/style.scss */
 /* line 1886, ../sass/style.scss */
 #footer ul {
+  padding: 0 !Important;
   list-style: none;
   margin: 15px 0;
 }
