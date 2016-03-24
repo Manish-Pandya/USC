@@ -969,6 +969,7 @@ td.hazard-icons img{
 .grayed-out img, img.grayed-out {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
+    opacity: .4;
 }
 .locationTable td > ul li{
   padding: 10px 8px 3px;

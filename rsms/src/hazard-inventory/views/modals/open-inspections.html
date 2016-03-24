@@ -48,17 +48,16 @@
                     </ul>
                 </td>
                 <td>
-                    <span ng-if="!inspection.Is_rad">
-                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)">
-                            <img src="../img/biohazard-largeicon.png" style="width: 41px;"/>
-                        </span>
-                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)">
-                            <img src="../img/chemical-safety-large-icon.png" style="width: 41px;"/>
-                        </span>
+                    <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
+                        <img src="../img/biohazard-largeicon.png" style="width: 41px;"/>
                     </span>
-                    <img src="../img/radiation-large-icon.png" ng-if="inspection.Is_rad" style="width: 41px;"/>
+                    <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
+                        <img src="../img/chemical-blue-icon.png" style="width: 41px;"/>
+                    </span>
+                    <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)"  ng-class="{'grayed-out': !inspection.Is_rad}">
+                        <img src="../img/radiation-large-icon.png" style="width: 41px;"/>
+                    </span>
                 </td>
-
                 <td>
                     {{inspection.Status}}
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.SCHEDULED">
@@ -67,10 +66,13 @@
                         <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                     </span>
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
-                        <p>
-                            (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
+                        <p ng-if="inspection.Deficiency_selections[0].length">
+                            (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
                             <br>
-                            <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                            <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                        </p>
+                        <p ng-if="!inspection.Deficiency_selections[0].length">
+                            (No deficiencies.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
                         </p>
                     </span>
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP">
@@ -80,7 +82,6 @@
                             <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </p>
                     </span>
-
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
                         <p>
                             (Started: {{inspection.Date_started | dateToISO}})
@@ -88,13 +89,11 @@
                             <a target="_blank" style="margin:5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-zoom-in"></i>Continue Inspection</a>
                         </p>
                     </span>
-
                     <span ng-if="!inspection.Status">
                         <p>
                             N/A
                         </p>
                     </span>
-
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                         <p>
                             (Scheduled for {{inspection.Text_schedule_month}})
@@ -102,15 +101,11 @@
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </p>
                     </span>
-
                 </td>
-
-
             </tr>
         </tbody>
-    </table>
+   </table>
    <h3 ng-show="noHazards">{{noHazards}}</h3>
-
 </div>
 <div class="modal-footer">
     <a class="btn btn-large btn-danger" ng-click="close()">Close</a>
