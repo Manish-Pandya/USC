@@ -1447,6 +1447,7 @@ a.checklistNav span{
 }
 
 .checklistRoomIcon{
+  cursor: pointer;
   font-size: 15px;
   color: #808080;
   margin: 2px 0 0 3px;

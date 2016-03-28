@@ -187,6 +187,10 @@ class Inspection extends GenericCrud {
         $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
         return $this->rooms;
     }
+    public function setRooms($rooms){
+        $this->getRooms = $rooms;
+    }
+
     public function setResponses($responses){ $this->responses = $responses; }
 
     public function getDate_started(){ return $this->date_started; }

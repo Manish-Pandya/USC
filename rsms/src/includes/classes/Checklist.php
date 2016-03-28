@@ -70,6 +70,8 @@ class Checklist extends GenericCrud {
 	/** Array of Room entities relevant to a particular inspection */
 	private $inspectionRooms;
 
+    private $isOrdered;
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -158,6 +160,7 @@ class Checklist extends GenericCrud {
 		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
+   
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
@@ -178,23 +181,28 @@ class Checklist extends GenericCrud {
 			$this->inspectionRooms[] = $roomDao->getById($key_id);
 		}
 	}
+    public function pushInspectionRoom($room){
+        if($this->inspectionRooms == null){
+            $this->inspectionRooms = array();
+        }
+        array_push($this->inspectionRooms, $room);
+    }
 
-	public function filterRooms(){
+	public function filterRooms($piId = null){
+        if($piId == null)return null;
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for checklist: " . $this->getName() . ", key_id " . $this->getKey_id());
 
 		// Get the db connection
 		global $db;
 
-		foreach($this->rooms as $room){
+		foreach($this->getRooms() as $room){
 			$rooms[] = $room->getKey_id();
 		}
-		foreach($rooms as $room){
-			$LOG->debug("the room is: ".$room);
-		}
+		
 		$roomIds = implode (',',$rooms);
 
-		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->hazard_id AND room_id IN ( $roomIds )";
+		$queryString = "SELECT room_id FROM principal_investigator_hazard_room WHERE principal_investigator_id = $piId AND hazard_id = $this->hazard_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
@@ -207,14 +215,9 @@ class Checklist extends GenericCrud {
 		$inspectionRooms = array();
 
 		foreach ($this->rooms as $room){
-			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
-			$LOG->debug('roomId:  '.$roomId);
-			$LOG->debug($rooms);
 		    if( in_array ( $room->getKey_id() , $roomIdsToEval ) )array_push($inspectionRooms, $room);
 		}
 
-		$LOG->debug($inspectionRooms);
-		
 		$this->inspectionRooms = $inspectionRooms;
 	}
     
@@ -225,6 +228,9 @@ class Checklist extends GenericCrud {
     public function setOrderIndex($idx){
         $this->orderIndex = $idx;
     }
+
+    public function getIsOrdered(){return $this->getIsOrdered;}
+    public function setIsOrdered($is){$this->isOrdered = $id;}
 
 }
 ?>

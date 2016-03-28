@@ -3004,7 +3004,8 @@ class ActionManager {
             foreach($branchIds as $id){
                 if(!in_array($id, $hazardIds)){
                     //if the id isn't in the array, do we need this branch parent?
-                    if($branchChildIds[$id] != null){
+                    //check to see if our array of all relevant hazard key_ids has at least one of the key_ids of direct children of the branch level hazard
+                    if( $branchChildIds[$id] != null && array_intersect($branchChildIds[$id], $hazardIds) != null ){
                         array_push($hazards, $this->getHazardById($id));
                     }
                 }
@@ -3465,11 +3466,18 @@ class ActionManager {
             $inspection = $dao->getById($id);
             // get the rooms for the inspection
             $rooms = $inspection->getRooms();
+            //hash the rooms by their key ids so we can quickly push the relevant ones into a potentially large collection of checklists
+            $orderedRooms = array();
+            foreach($rooms as $room){
+                $orderedRooms[$room->getKey_id()] = $room;
+            }
+
+
             $masterHazards = array();
             //iterate the rooms and find the hazards present
 
             $LOG->fatal($inspection->getPrincipal_investigator_id);
-            foreach ($rooms as $room){
+            foreach ($orderedRooms as $room){
                 $hazardlist = $this->getHazardsInRoomByPi($room->getKey_id(), $inspection->getPrincipal_investigator_id());
                 // get each hazard present in the room
                 foreach ($hazardlist as $hazard){
@@ -3490,7 +3498,10 @@ class ActionManager {
                 }
             }
 
-
+            foreach($checklists as $checklist){
+                $checklist->setInspectionRooms($orderedRooms);
+            }
+            
             if (!empty($checklists)){
                 // return the list of checklist objects
                 return $checklists;
@@ -3627,7 +3638,7 @@ class ActionManager {
                     $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                     $checklist->setInspectionId($inspection->getKey_id());
                     $checklist->setRooms($inspection->getRooms());
-                    $checklist->filterRooms(); 
+                    $checklist->filterRooms($inspection->getPrincipal_investigator_id()); 
                 }
                 
                 $entityMaps = array();
@@ -3674,12 +3685,12 @@ class ActionManager {
 	    foreach($hazard->getActiveSubHazards() as $child){
 	    	$idx = $this->findChecklist( $child->getChecklist(), $checklists );
 	    	if(in_array($child->getKey_id(), $hazardIds)  && (int) $idx !== false ){
+                array_push($orderedChecklists,$checklists[$idx]);
 	    		unset($checklists[$idx]);
 	    	}
 	    	
     		$this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $child);
 	    }
-	    //$LOG->fatal($checklists);
 	    return $orderedChecklists;
 	    
 	}
@@ -3689,8 +3700,6 @@ class ActionManager {
 		$LOG = Logger::getLogger(__FUNCTION__);
 		foreach($lists as $key=>$list){
 			if($list->getKey_id() == $checklist->getKey_id()){
-                $LOG->fatal($key);
-                $LOG->fatal(gettype($key));
 				return (int) $key;
 			}
 		}

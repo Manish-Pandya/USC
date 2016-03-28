@@ -44,6 +44,21 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             return questions;
     }
 })
+.filter('roomChecked', function (checklistFactory) {
+    return function (rooms, question, deficiency ) {
+        if (!rooms) return;
+        matches = [];
+        for (var i = 0; i < rooms.length; i++) {
+            if (checklistFactory.evaluateDeficiencyRoomChecked(rooms[i], question, deficiency)) {
+                rooms[i].checked = true;
+                matches.push(rooms[i]);
+            } else {
+                rooms[i].checked = false;
+            }
+        }
+        return matches;
+    }
+})
 .filter('evaluateChecklist', function () {
     return function (questions, checklist) {
             checklist.completedQuestions = 0;
@@ -497,7 +512,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         {
                 deficiency.IsDirty = true;
                 question.error =  '';
-                if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
                 if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
                 //grab a collection of room ids
                 var i = deficiency.InspectionRooms.length;
