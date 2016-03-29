@@ -3,6 +3,8 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/inspectionChecklist.js"></script>
 <div ng-app="inspectionChecklist" ng-controller="checklistController" id="inspection-checklist" ng-cloak>
+<div cg-busy="{promise:loading,message:'Loading',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving,message:'Saving',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div class="tst">
 <div class="whitebg checklist">
 <div class="navbar">
@@ -118,10 +120,10 @@ require_once '../top_view.php';
                                         <div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms && !question.edit" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
                                             <div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
                                             <ul>
-                                                <li ng-repeat="room in deficiency.InspectionRooms">
+                                                <li ng-repeat="room in deficiency.InspectionRooms | orderBy: 'Building.Name'">
                                                     <label class="checkbox inline">
                                                         <input type="checkbox" ng-init="room.checked = cf.evaluateDeficiencyRoomChecked( room, question, deficiency )" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist, room )" ng-model="room.checked"/>
-                                                        <span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+                                                        <span class="metro-checkbox"><span once-text="room.Name"></span>, <span once-text="room.Building.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
                                                     </label>
                                                 </li>
                                             </ul>

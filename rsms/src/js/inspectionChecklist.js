@@ -3,7 +3,7 @@ $(".collapse").bind("transition webkitTransition oTransition MSTransition", func
 });
 
 
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','angular.filter'])
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
             if( !category ) return false;
@@ -241,7 +241,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 deferred.resolve(this.inspection);
             }else{
                 var url = '../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK';
-                convenienceMethods.getDataAsDeferredPromise(url).then(
+                $rootScope.loading = convenienceMethods.getDataAsDeferredPromise(url).then(
                     function(promise){
                         deferred.resolve(promise);
                     },
@@ -318,7 +318,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             defSelection.RoomIds = roomIds;
             //make save call
             var url = '../../ajaxaction.php?action=saveOtherDeficiencySelection';
-             return convenienceMethods.saveDataAndDefer(url, defSelection).then(
+             return $rootScope.saving = convenienceMethods.saveDataAndDefer(url, defSelection).then(
                     function(returnedSelection){
                         if(!question.saved){
                             question.Responses.DeficiencySelections.push(returnedSelection);
@@ -458,7 +458,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                 question.Responses.Answer = null;
                 var deferred = $q.defer();
-                return convenienceMethods.saveDataAndDefer(url, responseDto).then(
+                return $rootScope.saving = convenienceMethods.saveDataAndDefer(url, responseDto).then(
                     function(promise){
                         deferred.resolve(promise);
                         return deferred.promise
@@ -569,10 +569,9 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
 
                         var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-                        console.log(defDto);
-                        convenienceMethods.saveDataAndDefer(url, defDto)
+                        $rootScope.saving = convenienceMethods.saveDataAndDefer(url, defDto)
                             .then(
-                                function(returnedDeficiency){
+                                function (returnedDeficiency) {
                                     deficiency.IsDirty = false;
                                     deficiency.selected = true;
                                     if( factory.inspection.Deficiency_selections[0].indexOf( deficiency.Key_id ) < 0){
@@ -586,9 +585,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                         if(roomIds.length == 0){
                                             factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )
                                         }
-                                    }else{
-                                        question.Responses.DeficiencySelections.push( returnedDeficiency );
-
+                                    } else {
+                                        console.log(returnedDeficiency);
+                                        for (var i = 0; i < returnedDeficiency.Rooms.length; i++) {
+                                            returnedDeficiency.Rooms[i].checked = true;
+                                        }
+                                        question.Responses.DeficiencySelections.push(returnedDeficiency);
                                     }
 
                                 },
@@ -609,7 +611,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
                     }
                     var url = '../../ajaxaction.php?action=removeDeficiencySelection';
-                      convenienceMethods.saveDataAndDefer( url, defDto )
+                      $rootScope.saving = convenienceMethods.saveDataAndDefer( url, defDto )
                           .then(
                               function(returnedBool){
                                   deficiency.IsDirty = false;
@@ -738,7 +740,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 question.error = '';
                 observation.IsDirty = true;
                 var url = '../../ajaxaction.php?action=saveObservation';
-                      convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
+                      $rootScope.saving = convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
                           .then(
                               function(returnedObservation){
                                   factory.objectNullifactor($rootScope.ObservationCopy, question)
@@ -775,7 +777,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             question.error = '';
             recommendation.IsDirty = true;
             var url = '../../ajaxaction.php?action=saveRecommendation';
-                  convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
                       .then(
                           function(returnedRecommendation){
                               factory.objectNullifactor($rootScope.RecommendationCopy, question)
@@ -826,7 +828,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             question.error = '';
             var url = '../../ajaxaction.php?action=saveSupplementalObservation';
-                  convenienceMethods.saveDataAndDefer( url, soDto )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, soDto )
                       .then(
                           function( returnedSupplementalObservation ){
                               if( so ){
@@ -872,7 +874,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             question.error = '';
             var url = '../../ajaxaction.php?action=saveSupplementalRecommendation';
-                  convenienceMethods.saveDataAndDefer( url, srDto )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, srDto )
                       .then(
                           function( returnedSupplementalRecommendation ){
                             question.addRec = false;
@@ -912,7 +914,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         add:            !recommendation.checked
                     }
                     var url = '../../ajaxaction.php?action=saveRecommendationRelation';
-                    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+                    $rootScope.saving = convenienceMethods.saveDataAndDefer( url, relationshipDTO )
                           .then(
                               function(){
                                   recommendation.checked = !recommendation.checked;
@@ -952,7 +954,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 add:            !observation.checked
             }
             var url = '../../ajaxaction.php?action=saveObservationRelation';
-            convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+            $rootScope.saving = convenienceMethods.saveDataAndDefer( url, relationshipDTO )
                       .then(
                           function(){
                               observation.checked = !observation.checked;
@@ -1026,7 +1028,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         {
         var url = "../../ajaxaction.php?action=savePI";
         var deferred = $q.defer();
-          convenienceMethods.saveDataAndDefer(url, pi)
+          $rootScope.saving = convenienceMethods.saveDataAndDefer(url, pi)
             .then(
               function(promise){
                 deferred.resolve(promise);

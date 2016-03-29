@@ -503,7 +503,15 @@ div.rsmsCenterIconContainer a p {
         text-align: center;
     font-size: 17px;
   }
-}
+   .centerIcons div.rsmsCenterIconContainer a i {
+    text-align: center;
+    width: auto;
+    height: 160px !important;
+    color: white;
+    font-size: 140px;
+    line-height: normal;
+  }
+
 }
 /******************************************************
 * Emergency Info HUB STYLES
@@ -1288,12 +1296,12 @@ img.smallLoading {
 }
 /* line 935, ../sass/style.scss */
 .subHazardModal ul, .roomsModal ul {
-  margin: 3px 0;
+  margin: 3px 0 0 0 !important;
   max-height: 300px;
   overflow: auto;
   overflow-x: hidden;
   padding: 0px 1px 14px;
-  width: 100%;
+  width: 300px !important;
 }
 /* line 942, ../sass/style.scss */
 .subHazardModal ul li{
@@ -1302,14 +1310,21 @@ img.smallLoading {
   display: block;
   clear: both;
 }
+.roomsModal{
+  width:auto !important;
+}
 .roomsModal ul li {
-  font-weight: bold; */
+  font-weight: bold; 
   margin-left: -1px;
   width: 98%;
   padding: 5px 0;
   display: block;
   clear: both;
   margin-left:28px;
+  margin-left: 13px;
+}
+.roomsModal ul li span.metro-checkbox span {
+    margin-top: 1px !important;
 }
 .show-rooms{
   margin-bottom:3px;
@@ -2465,6 +2480,7 @@ li.active a {
 /* line 660, ../sass/style.scss */
 /* line 1700, ../sass/style.scss */
 .checklist ul {
+  margin-left: 0;
   list-style: none !important;
 }
 .navicon {
