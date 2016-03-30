@@ -59,7 +59,7 @@
                 </tr>
                 <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-class="{'edit' : use.edit, 'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
                     <td ng-class="{'vertical-align-middle': use.edit}" ng-init="use.loadParcelUseAmounts()">
-                        <button ng-if="!use.edit" class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.edit || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
+                        <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.edit || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
                     </td>
                     <td ng-if="!use.edit">
                         {{use.Date_used | dateToISO:use:'Date_used':true}}
@@ -78,10 +78,10 @@
                         {{use.Experiment_use}}
                     </td>
                     <td ng-if="use.edit" class="push-top">
-                        <div class="control-group">
+                        <div class="control-group" style="max-width:90px">
                             <label class="control-label" for="experiment-use">Use:</label>
                             <div class="controls">
-                                <textarea rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
+                                <textarea style="max-width:124px" rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
                             </div>
                         </div>
                     </td>
