@@ -9,7 +9,7 @@
     <h2 ng-show="!undelivered.length">
         You don't have any packages that haven't been delivered right now.
     </h2>
-    <table class="table table-bordered card two-thirds" ng-show="undelivered.length">
+    <table class="table table-bordered card full" ng-show="undelivered.length">
         <tr>
             <th>Edit</th>
             <th>Status</th>
@@ -17,20 +17,22 @@
             <th>Vendor</th>
             <th>Catalog Number</th>
             <th>Isotope</th>
-            <th>Qauntity</th>
+            <th>Quantity</th>
+            <th>Chemical Compound</th>
             <th>Form</th>
         </tr>
         <tr ng-repeat="parcel in undelivered = (pi.ActiveParcels | notDelivered)">
             <td>
-                <button class="btn btn-primary left" ng-click="openModal(parcel)" ng-disabled="parcel.Status != constants.PARCEL.STATUS.REQUESTED"><i class="icon-pencil"></i>Edit Order</button>
-                <p ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED">This order has already been approved.  If you need to make changes, contact the Radiation Safety Office.</p>
-            </td>
+                <button disabled="disabled" ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left" ng-click="openModal(parcel)" title="This order has already been approved.  If you need to make changes, contact the Radiation Safety Office."><i class="icon-pencil"></i>Edit Order</button>
+                <button ng-if="parcel.Status == constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Order</button>
+             </td>
             <td once-text="parcel.Status"></td>
             <td once-text="parcel.PurchaseOrder.Purchase_order_number"></td>
             <td once-text="parcel.PurchaseOrder.Vendor"></td>
             <td once-text="parcel.Catalog_number"></td>
             <td once-text="parcel.Authorization.Isotope.Name"></td>
             <td><span once-text="parcel.Quantity"></span>mCi</td>
+            <td><span once-text="parcel.Chemical_compound"></span></td>
             <td once-text="parcel.Authorization.Form"></td>
         </tr>
     </table>
