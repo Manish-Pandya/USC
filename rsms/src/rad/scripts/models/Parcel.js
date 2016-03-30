@@ -78,14 +78,14 @@ Parcel.prototype = {
     },
     loadAuthorization: function() {
         if(!this.Authorization) {
-           this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
+            this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
         }
     },
     loadParcelWipeTest: function() {
         if(!this.Wipe_test) {
             dataLoader.loadOneToManyRelationship( this, 'Wipe_test', this.ParcelWipeTestRelationship);
         }
-    },
+    }
 }
 
 // inherit from GenericModel

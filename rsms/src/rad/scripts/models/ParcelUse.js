@@ -24,6 +24,18 @@ ParcelUse.prototype = {
             console.log('hello');
             dataLoader.loadOneToManyRelationship(this,"ParcelUseAmounts",this.AmountsRelationship);
         }
+    },
+    getIsPickedUp: function () {
+        if (!this.IsPickedUp) {
+            this.IsPickedUp = true;
+            for (var i = 0; i < this.ParcelUseAmounts.length; i++){
+                if (!this.ParcelUseAmounts[i].IsPickedUp) {
+                    this.IsPickedUp = false;
+                    break;
+                }
+            }
+        }
+        return this.IsPickedUp;
     }
 
 }

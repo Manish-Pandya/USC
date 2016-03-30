@@ -260,11 +260,9 @@ class Parcel extends RadCrud {
 	}
 
     public function getAmountOnHand(){
-        $l = Logger::getLogger("amount on hand");
         global $db;
-        $l->fatal('hello');
 
-		$queryString = "SELECT SUM(a.curie_level) from parcel_use_amount a
+		$queryString = "SELECT ROUND(SUM(a.curie_level),7) from parcel_use_amount a
                         JOIN parcel_use b
                         ON a.parcel_use_id = b.key_id
                         left join waste_bag c
@@ -284,7 +282,6 @@ class Parcel extends RadCrud {
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
 		while($sum = $stmt->fetchColumn()){
-            $l->fatal($sum);
 			$totalPickedUp = $sum;
 		}
 

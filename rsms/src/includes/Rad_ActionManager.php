@@ -943,6 +943,9 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps = array();
 		    $entityMaps[] = new EntityMap("eager", "getParcel");
 		    $entityMaps[] = new EntityMap("eager", "getParcelUseAmounts");
+            $entityMaps[] = new EntityMap("eager", "getParcelAmountOnHand");
+            $entityMaps[] = new EntityMap("eager", "getParcelRemainder");
+
             $use->setEntityMaps($entityMaps);
             return $use;
         }

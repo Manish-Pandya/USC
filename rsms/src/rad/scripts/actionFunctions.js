@@ -1427,7 +1427,8 @@ angular
                 return this.save( copy )
                     .then(
                         function(returnedUse){
-                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
+                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
+                            console.log(returnedUse);
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
@@ -1443,13 +1444,10 @@ angular
                                 parcel.ParcelUses.push(returnedUse)
                             }
                             $rootScope.ParcelUseCopy = {};
-                            var uses = parcel.ParcelUses;
-                            var total = 0;
-                            var i = uses.length;
-                            while(i--){
-                                total += parseFloat(uses[i].Quantity);
-                            }
-                            parcel.Remainder = Math.round( (parcel.Quantity - total) * 100000 ) / 100000;
+                            
+                            parcel.Remainder = returnedUse.ParcelRemainder;
+                            parcel.AmountOnHand = returnedUse.ParcelAmountOnHand;
+
                             use.edit = false;
                             af.clearError();
                             return parcel;

@@ -75,6 +75,9 @@ include_once 'RadCrud.php';
     /* The key_id of the isotope up in this ParcelUseAmount */
     private $isotope_id;
 
+    /** boolean to indicate if this ParcelUseAmount's container has been picked up **/
+    private $isPickedUp;
+
     public function __construct() {
 
     	// Define which subentities to load
@@ -176,6 +179,35 @@ include_once 'RadCrud.php';
 		$this->isotope_id = $isotope->getKey_id();
 		return $this->isotope_id;
 	}
+
+    public function getIsPickedUp(){
+        $this->isPickedUp = false;
+        global $db;
+		$queryString = "SELECT EXISTS
+                            (
+	                            SELECT a.key_id as isPickedUp from parcel_use_amount a
+	                            left join waste_bag c
+	                            ON a.waste_bag_id = c.key_id
+	                            left join carboy_use_cycle d
+	                            ON a.carboy_id = d.key_id
+	                            left join scint_vial_collection e
+	                            ON a.scint_vial_collection_id = e.key_id
+	                            join pickup f
+	                            ON c.pickup_id = f.key_id
+	                            OR d.pickup_id = f.key_id
+	                            OR e.pickup_id = f.key_id
+	                            where a.key_id = ?
+	                            AND f.status != 'REQUESTED'
+                        );";
+
+		$stmt = $db->prepare($queryString);
+        $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
+		$stmt->execute();
+		while($exists = $stmt->fetchColumn()){
+			$this->isPickedUp = $exists;
+		}
+        return (boolean) $this->isPickedUp;
+    }
     
 }
 ?>
