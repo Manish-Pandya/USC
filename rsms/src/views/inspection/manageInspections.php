@@ -214,9 +214,9 @@ require_once '../top_view.php';
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
                 </td>
                 <td style="width:9.5%" class="hazard-icons">
-                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png"/></span>
-                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png"/></span>
-                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png"/></span>
+                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png"/></span>
+                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png"/></span>
+                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png"/></span>
                 </td>
             </tr>
         </tbody>
