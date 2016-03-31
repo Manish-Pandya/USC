@@ -107,11 +107,11 @@
     <tr ng-if="questionsByChecklist.chemicalHazards.message"><td colspan="4" style="padding-top:10px">{{questionsByChecklist.chemicalHazards.message}}</td></tr>
     <tbody ng-repeat="checklist in questionsByChecklist.chemicalHazards.checklists" class="chemical " ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
 
-    <tr ng-if="inspection.Is_rad"><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
-    <tr ng-if="inspection.Is_rad" ng-if="questionsByChecklist.generalHazards.message && questionsByChecklist.generalHazards.checklists">
+    <tr ng-if="!inspection.Is_rad"><td valign="top" colspan="4" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
+    <tr ng-if="!inspection.Is_rad && questionsByChecklist.generalHazards.message">
         <td colspan="4">{{questionsByChecklist.generalHazards.message}}</td>
     </tr>
-    <tbody ng-if="inspection.Is_rad" ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
+    <tbody ng-if="!inspection.Is_rad" ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" class="general" ng-include="'post-inspection-templates/deficiencyPartial.html'"></tbody>
     <tr ng-if="questionsByChecklist.radiationHazards.show && inspection.Is_rad && questionsByChecklist.radiationHazards.checklists">
         <td valign="top" colspan="4" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>
         RADIATION SAFETY
