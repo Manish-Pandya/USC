@@ -256,40 +256,60 @@ angular
                     );
         }
 
-        ac.getPIs = function(hazardDto, room){
+        ac.getPIs = function (hazardDto, room) {
 
-            var urlSegment = "getPisByHazardAndRoomIDs";
+            var urlSegment = "getPisByRoomIDs";
             var ids = [];
 
             //specify a single room
-            if(room){
+            if (room) {
                 //we've passed a room object from the top of the view, where we display all of the pis rooms and buildings
-                if(room.Class == "Room"){
+                if (room.Class == "Room") {
                     var id = room.Key_id
                 }
-                //we've passed a PIHazardRoomDto object from a HazardDtos collection of inspection rooms
-                else{
+                    //we've passed a PIHazardRoomDto object from a HazardDtos collection of inspection rooms
+                else {
                     var id = room.Room_id
                 }
-                urlSegment += "&"+$.param({roomIds:[id]});
+                urlSegment += "&" + $.param({ roomIds: [id] });
             }
 
-            if(hazardDto){
+            if (hazardDto) {
                 //we didn't specify a single room, so get the ids for each room in the hazards inspection rooms
-                if(!room){
+                if (!room) {
                     var i = hazardDto.InspectionRooms.length;
-                    while(i--){
+                    while (i--) {
                         ids.push(hazardDto.InspectionRooms[i].Room_id);
                     }
-                    urlSegment += "&"+$.param({roomIds:ids});
+                    urlSegment += "&" + $.param({ roomIds: ids });
                 }
-                urlSegment += "&hazardId="+hazardDto.Hazard_id;
+                urlSegment += "&hazardId=" + hazardDto.Hazard_id;
             }
 
-            return genericAPIFactory.read( urlSegment )
+            return genericAPIFactory.read(urlSegment)
                     .then(
-                        function( returnedPromise ){
-                           return  modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                        function (returnedPromise) {
+                            return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                        }
+                    );
+        }
+
+        ac.getPiHazards = function (hazardDto, room) {
+
+            var urlSegment = "getPisByHazardAndRoomIDs&hazardId=" + hazardDto.Hazard_id;
+            var ids = [];
+
+            
+            var i = hazardDto.InspectionRooms.length;
+            while (i--) {
+                ids.push(hazardDto.InspectionRooms[i].Room_id);
+            }
+            urlSegment += "&" + $.param({ roomIds: ids });          
+
+            return genericAPIFactory.read(urlSegment)
+                    .then(
+                        function (returnedPromise) {
+                            return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
                         }
                     );
         }
