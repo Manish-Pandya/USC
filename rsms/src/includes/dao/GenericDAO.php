@@ -903,7 +903,6 @@ class GenericDAO {
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
-		$this->LOG->fatal(count($dtos));
 		
 		foreach($dtos as $dto){
 			$dto->setRoomIds($roomIds);
@@ -959,6 +958,40 @@ class GenericDAO {
 
 		return $pis;
 	}
+
+
+    function getPIHazardRoomsByRoomAndHazardIds($roomIds, $hazardId, $piIds){
+        global $db;
+        $newPiIds = implode(',', array_fill(0, count($piIds), '?'));
+        $queryString = "SELECT a.*,
+                        concat(c.first_name, ' ', c.last_name) as piName
+                        FROM principal_investigator_hazard_room a
+                        JOIN principal_investigator b
+                        ON b.key_id = a.principal_investigator_id
+                        JOIN erasmus_user c
+                        ON c.key_id = b.user_id
+                        WHERE a.room_id IN ( $newRoomIds )
+                        AND a.principal_investigator_id IN ( $newPiIds )
+                        AND a.hazard_id = ?";
+
+		$stmt = $db->prepare($queryString);
+        // bindvalue is 1-indexed, so $k+1
+
+		foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
+        $skips = $k+2;
+        // bindvalue is 1-indexed, so $k+1
+		foreach ($piIds as $k => $id){
+		    $stmt->bindValue(($k+$skips), $id);
+		}
+
+        $stmt->bindValue(($k+$skips+1), $hazardId);
+        $stmt->execute();
+        $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
+
+        return $piHazRooms;
+    }
 
 
 }

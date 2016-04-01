@@ -1204,7 +1204,7 @@ html[xmlns] .clearfix {
 }
 /* line 860, ../sass/style.scss */
 .subRooms li {
-  font-size: 12px;
+  font-size: 11px;
   border: none;
   float: left;
   margin-right: 5px;
@@ -2095,7 +2095,13 @@ ul.key li.deficiencies span {
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
   color: rgba(73, 175, 205, 0.62)
 }
-
+.hazardList ul li span span{
+  font-size:14px;
+}
+.hazardList ul li ul li span span{
+  font-size: 12px !Important;
+  margin-top: -4px !important;
+}
 /* line 1391, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter:hover {
   color: #49afcd;
@@ -2666,7 +2672,11 @@ span.red {
 /* line 730, ../sass/style.scss */
 /* line 1793, ../sass/style.scss */
 span.green {
-  color: #090;
+  color: #006500;
+}
+
+span.yellow {
+  color: #A95D0F;
 }
 
 /* line 734, ../sass/style.scss */
@@ -2685,7 +2695,7 @@ span.green {
   padding: 4px 0;
 }
 .hazardLi:not(.topChild){
-  padding-top:10px;
+  padding-top: 10px;
 }
 
 /* line 737, ../sass/style.scss */

@@ -1,13 +1,29 @@
 angular
     .module('HazardInventory')
-    .filter("Is_equipment", function(){
-        return function(hazards, bool){
-            if(!hazards)return;
+    .filter("Is_equipment", function () {
+        return function (hazards, bool) {
+            if (!hazards) return;
             var matches = [];
             var i = hazards.length;
-            while(i--){
-                if(hazards[i].Is_equipment == bool)matches.unshift(hazards[i]);
+            while (i--) {
+                if (hazards[i].Is_equipment == bool) matches.unshift(hazards[i]);
             }
+            return matches;
+        }
+    })
+    .filter("roomIdMatches", function () {
+        return function (phrs, roomId, piId) {
+            if (!phrs) return;
+            var matches = [];
+            var i = phrs.length;
+            while (i--) {
+                if (phrs[i].Principal_investigator_id == piId) phrs[i].current = true;
+                if (phrs[i].Room_id == roomId) {
+                    matches.unshift(phrs[i]);
+                }
+            }
+
+
             return matches;
         }
     })

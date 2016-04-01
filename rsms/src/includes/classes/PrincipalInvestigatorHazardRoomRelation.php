@@ -30,6 +30,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
     private $hazard;
 	private $status;
 	private $hasMultiplePis;
+    private $piName;
 	
 	public function __construct(){
 
@@ -78,5 +79,26 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 		}
 		return $this->hazard;
     }
+
+    public function getPiName(){
+        if($this->piName == null && $this->principal_investigator_id != null){
+            global $db;
+            $queryString = "SELECT concat(c.first_name, ' ', c.last_name) as piName
+                            FROM principal_investigator_hazard_room a
+                            JOIN principal_investigator b
+                            ON b.key_id = a.principal_investigator_id
+                            JOIN erasmus_user c
+                            ON c.key_id = b.user_id
+                            AND b.key_id = :piId";
+            $stmt = $db->prepare($queryString);
+            $stmt->bindParam(':piId', $this->principal_investigator_id, PDO::PARAM_INT);
+            $stmt->execute();
+            while($name = $stmt->fetchColumn()){
+                $this->piName = $name;
+            }
+        }
+        return $this->piName;
+    }
+    public function setPiName($name){$this->piName = $name;}
 }
 ?>
