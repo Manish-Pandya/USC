@@ -4030,7 +4030,7 @@ class ActionManager {
                 $beforeOrderIdx = $beforeHazard->getOrder_index();
             }else{
                 $LOG->debug('There is no before hazard');
-                $beforeOrderIdx = 0;
+                $beforeOrderIdx = $hazard->getOrder_index() - 1;
             }
 
             //if we are moving a hazard to the last index, we won't have a hazard after it.

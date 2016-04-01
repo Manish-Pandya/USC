@@ -263,7 +263,7 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 	
 	}
 	
-	public function getPisByHazardAndRoomIDs( $roomIds = null, $hazardId = null){
+	public function getPisByRoomIDs( $roomIds = null, $hazardId = null){
 
 		$LOG = Logger::getLogger(__Class__);
 		
@@ -283,12 +283,8 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		}
 		
 		$piDao = $this->getDao(new PrincipalInvestigator());
-		
-		if($hazardId != null){
-			$pis = $piDao->getPisByHazardAndRoomIDs($roomIds, $hazardId);
-		}else{
-			$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
-		}
+		$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
+	
 		
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -316,6 +312,102 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		return $pis;
 			
 	}
+
+
+	public function getPisByHazardAndRoomIDs( $roomIds = null, $hazardId = null){
+
+		$LOG = Logger::getLogger(__Class__);
+
+		if($roomIds == NULL){
+			$roomIds = $this->getValueFromRequest('roomIds', $roomIds);
+		}
+
+		if($hazardId == NULL){
+			$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
+		}
+
+		if($roomIds == NULL && $hazardId == NULL){
+			return new ActionError("roomId and hazardId params both required");
+		}
+
+        global $db;
+        $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
+
+		$queryString = "SELECT principal_investigator_id FROM principal_investigator_room WHERE room_id IN ( $newRoomIds ) group by principal_investigator_id";
+		$stmt = $db->prepare($queryString);
+        foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
+		$stmt->execute();
+		$piIds = array();
+		while($id = $stmt->fetchColumn()){
+			array_push($piIds,$id);
+		}
+
+        $newPiIds = implode(',', array_fill(0, count($piIds), '?'));
+        $queryString = "SELECT a.*,
+                        concat(c.first_name, ' ', c.last_name) as piName
+                        FROM principal_investigator_hazard_room a
+                        JOIN principal_investigator b
+                        ON b.key_id = a.principal_investigator_id
+                        JOIN erasmus_user c
+                        ON c.key_id = b.user_id
+                        WHERE a.room_id IN ( $newRoomIds )
+                        AND a.principal_investigator_id IN ( $newPiIds )
+                        AND a.hazard_id = ?";
+
+		$stmt = $db->prepare($queryString);
+        // bindvalue is 1-indexed, so $k+1
+        
+		foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
+        $skips = $k+2;
+        // bindvalue is 1-indexed, so $k+1
+		foreach ($piIds as $k => $id){
+		    $stmt->bindValue(($k+$skips), $id);
+		}
+
+        $stmt->bindValue(($k+$skips+1), $hazardId);     
+        $stmt->execute();
+        $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
+
+        //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
+        $finalPiHazardRooms = $piHazRooms;
+        foreach($roomIds as $roomId){
+            $neededPiIds[$roomId] = array();
+            //does each pi have a PrincipalInvestigatorHazardRoomRelation for this room?
+            foreach($piIds as $piId){
+                $needed = true;
+                foreach($piHazRooms as $pihr){
+                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() == $piId){
+                        $needed = false;
+                    }
+                }
+                if($needed == true){
+                    //create one
+                    $createdPiHazRoom = new PrincipalInvestigatorHazardRoomRelation();
+                    $createdPiHazRoom->setPrincipal_investigator_id($piId);
+                    $createdPiHazRoom->setHazard_id($hazardId);
+                    $createdPiHazRoom->setRoom_id($roomId);
+                    $createdPiHazRoom->setStatus("Other Lab's Hazard");
+                    $createdPiHazRoom->setPiName($this->getPIById($piId)->getUser()->getName());
+                    array_push($finalPiHazardRooms, $createdPiHazRoom);
+                }
+            }
+        }
+
+
+        // Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy","getHazard");
+        foreach($finalPiHazardRooms as $pi){
+            $pi->setEntityMaps($entityMaps);
+        }
+
+		return $finalPiHazardRooms;
+
+	}
 	
 	private function getHasHazardInLab($piId, $hazardId, $roomId){
 		$piHazardRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
@@ -328,4 +420,11 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		
 		return count($piHazardRoomDao->getAllWhere($whereClauseGroup)) > 0;
 	}
+
+    private function  getExists($objects, $piId, $roomId){
+        foreach($objects as $object){
+            if($object->getPrincipal_investigator_id() == $piId && $object->getRoom_id())return true;
+        }
+        return false;
+    }
 }
