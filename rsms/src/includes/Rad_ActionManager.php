@@ -1706,6 +1706,11 @@ class Rad_ActionManager extends ActionManager {
         }
         
         $inventory->setPi_quarterly_inventories($piInventories);
+        $entityMaps = array();
+    	$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
+    	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
+        $inventory->setEntityMaps($entityMaps);
+
         return $inventory;
     }
 

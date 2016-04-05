@@ -2666,13 +2666,16 @@ li.active a {
 /* line 727, ../sass/style.scss */
 /* line 1788, ../sass/style.scss */
 span.red {
-  color: #f00;
+  /* color: #f00; */
 }
 
 /* line 730, ../sass/style.scss */
 /* line 1793, ../sass/style.scss */
 span.green {
-  color: #006500;
+  color: #009900;
+}
+tr td.new span.green {
+  color: #005800;
 }
 
 span.yellow {

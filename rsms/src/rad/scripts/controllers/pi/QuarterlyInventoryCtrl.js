@@ -30,8 +30,7 @@ angular.module('00RsmsAngularOrmApp')
         return af.getQuartleryInventory(pi.Key_id)
                   .then(
                     function(inventory){
-                      console.log(inventory);
-                      $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory",inventory.Key_id);
+                      $scope.pi_inventory = inventory;
                     }
                   )
       }

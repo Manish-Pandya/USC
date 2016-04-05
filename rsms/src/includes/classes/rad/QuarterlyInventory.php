@@ -55,7 +55,7 @@ include_once 'RadCrud.php';
     	// Define which subentities to load
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
-    	$entityMaps[] = new EntityMap("lazy", "getPi_quarterly_inventories");
+    	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
     	
     	$this->setEntityMaps($entityMaps);
     }

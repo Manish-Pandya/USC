@@ -30,15 +30,15 @@
 				<div class="table-row" ng-repeat="amount in pi_inventory.Quarterly_isotope_amounts">
 					<div>{{amount.Authorization.Isotope.Name}} ({{amount.Authorization.Form}})</div>
 					<div>{{amount.Authorization.Max_quantity}} mCi</div>
-					<div>{{amount.Starting_amount}} mCi</div>
-					<div>{{amount.Total_ordered}} mCi</div>
-					<div>{{amount.Transfer_in}} mCi</div>
+					<div>{{amount.Starting_amount | roundFloat}} mCi</div>
+					<div>{{amount.Total_ordered | roundFloat}} mCi</div>
+					<div>{{amount.Transfer_in | roundFloat}} mCi</div>
 					<div>0 mCi</div>
-					<div>{{amount.Solid_waste}} mCi</div>
-					<div>{{amount.Liquid_waste}} mCi</div>
-					<div>{{amount.Scint_vial_waste}} mCi</div>
-					<div>{{amount.Other_waste}} mCi</div>
-					<div>{{amount.On_hand}} mCi</div>
+					<div>{{amount.Solid_waste | roundFloat}} mCi</div>
+					<div>{{amount.Liquid_waste | roundFloat}} mCi</div>
+					<div>{{amount.Scint_vial_waste | roundFloat}} mCi</div>
+					<div>{{amount.Other_waste | roundFloat}} mCi</div>
+					<div>{{amount.On_hand | roundFloat}} mCi</div>
 				</div>
 			</div>
 		</div>

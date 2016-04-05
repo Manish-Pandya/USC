@@ -11,7 +11,7 @@ include_once 'RadCrud.php';
  */
  
  class PIQuarterlyInventory extends RadCrud {
-
+ 
     /** Name of the DB Table */
     protected static $TABLE_NAME = "pi_quarterly_inventory";
 
@@ -61,6 +61,9 @@ include_once 'RadCrud.php';
 	
 	/** End of date range for this inventory **/
 	private $end_date;
+
+    /** Due date for this inventory **/
+    private $due_date;
 	
     public function __construct() {
 
@@ -134,7 +137,13 @@ include_once 'RadCrud.php';
 		}
 		return $this->quarterly_inventory;
 	}
-	
+
+    public function getDue_date(){
+        if($this->getQuarterly_inventory() != NULL){
+            $this->due_date = $this->getQuarterly_inventory()->getDue_date();
+        }
+        return $this->due_date;
+    }	
 	
 }
 ?>
