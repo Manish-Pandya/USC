@@ -73,7 +73,14 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
 }
 .ui-select-container{
     text-align:left;
-    position:relative;
+    position: relative;
+}
+.modal-body .ui-select-container{
+    text-align:left;
+    position: static;
+}
+.modal .selectize-input>div{
+    max-width:200px !important;
 }
 .control-group ul{
     display: block;
