@@ -12,7 +12,7 @@
 		<li class="observations">Notes <!--<span></span>--></li>
 	</ul>
 
-	<table class="table detailsReportTable table-bordered" ng-if="questionsByChecklist.biologicalHazards.show">
+	<table class="table detailsReportTable table-bordered detailsReportHeaderTable" ng-if="questionsByChecklist.biologicalHazards.show">
 		<tr><td valign="top" colspan="5" id="biologicalMaterialsHeader" class="reviewHeader" align="center"><img src="../../img/biohazard-white-con.png"/>BIOLOGICAL SAFETY </td></tr>
 		<tr ng-if="questionsByChecklist.biologicalHazards.message && questionsByChecklist.biologicalHazards.message.indexOf('deficiencies') < 0">
 			<td colspan="5">{{questionsByChecklist.biologicalHazards.message}}</td>
@@ -25,7 +25,7 @@
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
-	<table class="table table-bordered detailsReportTable" ng-if="questionsByChecklist.chemicalHazards.show">
+	<table class="table table-bordered detailsReportHeaderTable" ng-if="questionsByChecklist.chemicalHazards.show">
 		<tr><td valign="top" colspan="5" id="chemicalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/chemical-safety-large-icon.png"/>CHEMICAL SAFETY</td></tr>
 		<tr ng-if="questionsByChecklist.chemicalHazards.message && questionsByChecklist.chemicalHazards.message.indexOf('deficiencies') < 0">
 			<td colspan="5">{{questionsByChecklist.chemicalHazards.message}}</td>
@@ -38,7 +38,7 @@
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
-	<table class="table detailsReportTable"  ng-if="questionsByChecklist.generalHazards.show">
+	<table class="table detailsReportHeaderTable"  ng-if="questionsByChecklist.generalHazards.show">
 		<tr><td valign="top" colspan="5" id="generalSafetyHeader" class="reviewHeader" align="center"><img src="../../img/gen-hazard-large-icon.png"/>GENERAL LABORATORY SAFETY</td></tr>
 		<tr ng-if="questionsByChecklist.generalHazards.message && questionsByChecklist.generalHazards.message.indexOf('deficiencies') < 0">
 			<td colspan="5">{{questionsByChecklist.generalHazards.message}}</td>
@@ -51,7 +51,7 @@
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
 
-	<table class="table detailsReportTable" ng-if="inspection.Is_rad">
+	<table class="table detailsReportHeaderTable" ng-if="inspection.Is_rad">
 		<tr><td valign="top" colspan="5" id="radiationSafetyHeader" class="reviewHeader" align="center"><img src="../../img/radiation-large-icon.png"/>RADIATION SAFETY</td></tr>
 		<tr ng-if="questionsByChecklist.radiationHazards.message && questionsByChecklist.radiationHazards.message.indexOf('deficiencies') < 0">
 			<td colspan="5">{{questionsByChecklist.radiationHazards.message}}</td>

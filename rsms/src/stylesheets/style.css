@@ -1987,10 +1987,24 @@ ul.key li.deficiencies span {
 
 /* inspection details report */
 .detailsReportTable{
-  margin-top:6px;
+  margin-top:0x;
   margin-bottom:6px;
+  border:3px solid black !important;
+  border-top:none !important;
+  border-radius:0
 }
-
+.detailsReportTable + .detailsReportTable{
+  margin-top:-6px
+}
+.detailsReportHeaderTable{
+  margin-top:6px;
+  margin-bottom:0;
+  border:3px solid black !important;
+  border-top:none;
+}
+detailsReportHeaderTable tr td {
+    border-radius:0
+}
 .detailsReportTable th.bioHeader{
   background: #eed3cf !important;
 }
