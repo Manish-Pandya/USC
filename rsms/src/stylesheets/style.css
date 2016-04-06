@@ -2002,6 +2002,10 @@ ul.key li.deficiencies span {
   border:3px solid black !important;
   border-top:none;
 }
+.detailsReportTable + .detailsReportHeaderTable {
+  margin-top:15px;
+}
+
 detailsReportHeaderTable tr td {
     border-radius:0
 }
