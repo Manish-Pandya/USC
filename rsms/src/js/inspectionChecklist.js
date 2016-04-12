@@ -581,6 +581,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                                     if(factory.room){
                                         room.checked = !room.checked;
+                                        factory.room = !factory.room;
                                         //f no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
                                         if(roomIds.length == 0){
                                             factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )

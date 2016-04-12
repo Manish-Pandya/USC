@@ -290,7 +290,7 @@ echo "</script>";
                         <!--</h4>-->
                         <div class="icons">
                             <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
-                                <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child)"></i>
+                                <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>
                             </span>
                             <span ng-if="child.IsPresent">
                                 <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
