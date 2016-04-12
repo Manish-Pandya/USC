@@ -3637,8 +3637,12 @@ class ActionManager {
                 if($report == null){
                     $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                     $checklist->setInspectionId($inspection->getKey_id());
-                    $checklist->setRooms($inspection->getRooms());
-                    $checklist->filterRooms($inspection->getPrincipal_investigator_id()); 
+                    $checklist->setRooms($inspection->getRooms());                    
+                    //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
+                    //9999 is the key_id for General Hazard
+                    if($checklist->getMaster_id() != 9999){
+                        $checklist->filterRooms($inspection->getPrincipal_investigator_id());
+                    }
                 }
                 
                 $entityMaps = array();
