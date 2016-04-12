@@ -18,6 +18,8 @@ class CurrentIsotopeInventoryDto
     private $amount_on_hand;
     private $amount_disposed;
     private $usable_amount;
+    private $auth_limit;
+    private $max_order;
 
     public function getPrincipal_investigator_id(){
 		return $this->principal_investigator_id;
@@ -97,5 +99,21 @@ class CurrentIsotopeInventoryDto
 
 	public function setUsable_amount($usable_amount){
 		$this->usable_amount = $usable_amount;
+	}
+
+    public function getAuth_limit(){
+		return $this->auth_limit;
+	}
+
+	public function setAuth_limit($auth_limit){
+		$this->auth_limit = $auth_limit;
+	}
+
+    public function getMax_order(){
+		return $this->max_order;
+	}
+
+	public function setMax_order($maxOrder){
+		$this->max_order = $maxOrder;
 	}
 }
