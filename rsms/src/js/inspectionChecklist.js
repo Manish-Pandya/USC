@@ -666,6 +666,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.evaluateDeficiencyRoomChecked = function( room, question, deficiency )
         {
+            if (!question.Responses.DeficiencySelections) return false;
             var i = question.Responses.DeficiencySelections.length;
             while(i--){
                 if( question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id ){

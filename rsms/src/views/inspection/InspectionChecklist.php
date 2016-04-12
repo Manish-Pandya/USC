@@ -59,7 +59,6 @@ require_once '../top_view.php';
                     <input type="hidden" ng-model="checklist.AnsweredQuestions"/>
                     <h2>
                         <span once-text="checklist.Name"></span><span style="float:right" ng-class="{'red' : checklist.completedQuestions>0&&checklist.completedQuestions<checklist.activeQuestions.length, 'green' : checklist.completedQuestions==checklist.activeQuestions.length&&checklist.completedQuestions!=0}">{{checklist.completedQuestions}}/{{checklist.activeQuestions.length}}</span>
-                        {{checklist.InspectionRooms.length}}
                     </h2>
                 </accordion-heading>
                  <ul style="margin-left:0;">
@@ -99,15 +98,15 @@ require_once '../top_view.php';
                                         <span  ng-if="deficiency.Text != 'Other'">
                                             <label class="checkbox inline">
                                                 <input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency, question )"/>
-                                                        <span class="metro-checkbox">
-                                                            <i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i>
-                                                            <span style="margin-top:0" once-text="deficiency.Text"></span>
-                                                            <span ng-if="deficiency.selected && getNeedsRooms(deficiency, checklist, question)" style="margin-top:0">
-                                                                (Room(s):
-                                                                <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">{{room.Name}}
-                                                                <span ng-if="!$last">,&nbsp;</span></span>)
-                                                            </span>
-                                                        </span>
+                                                <span class="metro-checkbox">
+                                                    <i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i>
+                                                    <span style="margin-top:0" once-text="deficiency.Text"></span>
+                                                    <span ng-if="deficiency.selected && getNeedsRooms(deficiency, checklist, question) && question.DeficiencySelections.length" style="margin-top:0">
+                                                        (Room(s):
+                                                        <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">{{room.Name}}
+                                                        <span ng-if="!$last">,&nbsp;</span></span>)
+                                                    </span>
+                                                </span>
                                             </label>
                                         </span>
                                         <span ng-if="deficiency.Text == 'Other'">
@@ -225,7 +224,7 @@ require_once '../top_view.php';
                             </ul>
                         </span>
                      </li>
-                     <div style="clear:both"></div>
+                     <li style="clear:both"></li>
                  </ul>
             </accordion-group>
             <span style="padding: 7px 11px 14px;display: block;">
