@@ -38,7 +38,9 @@
     <div class="control-group">
         <label class="control-label" for="inputEmail">Quantity</label>
         <div class="controls input-append">
-            <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">mCi</span>
+            <input ng-disabled="!modalData.ParcelCopy.Authorization_id" ng-model="modalData.ParcelCopy.Quantity" ng-change="checkMaxOrder(modalData.ParcelCopy)"/><span class="add-on">mCi</span>
+            <span ng-if="!modalData.ParcelCopy.Authorization_id" class="help-block red">Please select an authorization.</span>
+            <span ng-if="!checkMaxOrder(modalData.ParcelCopy)" class="help-block red">You can order up to {{relevantInventory.Max_order}}mCi of {{relevantInventory.Isotope_name}}.</span>
         </div>
     </div>
 
@@ -59,6 +61,6 @@
 
 </div>
 <div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
+    <button ng-disabled="!checkMaxOrder(modalData.ParcelCopy)" class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</button>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

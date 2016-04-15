@@ -1004,11 +1004,11 @@ class GenericDAO {
                         c.name as isotope_name,
                         b.form as authorized_form,
                         ROUND(b.max_quantity, 7) as auth_limit,
-                        ROUND(SUM(b.max_quantity) - (SUM(d.quantity) - picked_up.amount_picked_up), 7) as max_order,
+                        ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up) ) as max_order,
                         ROUND(picked_up.amount_picked_up, 7) as amount_picked_up,
                         ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
                         ROUND(total_used.amount_picked_up, 7) as amount_disposed,
-                        ROUND(SUM(d.quantity) - total_used.amount_picked_up, 7) as usable_amount,
+                        ROUND(SUM(d.quantity) - total_used.amount_picked_up, 7) as usable_amount
                         from pi_authorization a
                         LEFT OUTER JOIN authorization b
                         ON b.pi_authorization_id = a.key_id
