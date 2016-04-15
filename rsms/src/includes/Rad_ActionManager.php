@@ -900,7 +900,6 @@ class Rad_ActionManager extends ActionManager {
                         else{
                             $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                         }
-                        $LOG->fatal($newAmount);
                     }
                     if($amount['Carboy_id'] != NULL){
                         $newAmount->setCarboy_id($amount['Carboy_id']);
@@ -915,11 +914,14 @@ class Rad_ActionManager extends ActionManager {
 
                     if($newAmount->getWaste_type()->getName() == "Vial"){
                         //get the pi
-                        $authDao = $this->getDao(new Authorization());
                         $use = $this->getParcelUseById($newAmount->getParcel_use_id());
-                        $auth = $authDao->getById($use->getKey_id());
+                        $parcelDao = $this->getDao(new Parcel());
+                        $parcel = $parcelDao->getById($use->getParcel_id());
+                        $authDao = $this->getDao(new Authorization());
+                        $auth = $authDao->getById($parcel->getAuthorization_id());
                         $piAuthDao = $this->getDao(new PIAuthorization());
-                        $piAuth = $piAuthDao->getById($auth->getKey_id());
+                        $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                        $LOG->fatal($piAuth);
                         $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
                         if($pi->getCurrentScintVialCollections() == null){
                             
@@ -929,9 +931,13 @@ class Rad_ActionManager extends ActionManager {
                             $collection->setIs_active(true);
                             $collection->setPrincipal_investigator_id($pi->getKey_id());
                             $collection = $collectionDao->save($collection);
+
+                            //$LOG->fatal($collection);
+
                             $newAmount->setScint_vial_collection_id($collection->getKey_id());
                         }else{
                             $id = end($pi->getCurrentScintVialCollections())->getKey_id();
+                            $LOG->fatal($pi);
                             $newAmount->setScint_vial_collection_id($id);
                         }
                     }
@@ -962,13 +968,11 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Pickup());
-            $LOG->debug($decodedObject);
+            $LOG->fatal($decodedObject);
             $pickup = $dao->save($decodedObject);
             $wasteBags = $decodedObject->getWaste_bags();
             $svCollections = $decodedObject->getScint_vial_collections();
             $carboys = $decodedObject->getCarboy_use_cycles();
-            $LOG->debug("collections logged on line 590");
-            $LOG->debug($svCollections);
             $saveChildren = $this->getValueFromRequest('saveChildren', $saveChildren);
 
             if($saveChildren != NULL){
@@ -1000,7 +1004,7 @@ class Rad_ActionManager extends ActionManager {
                         $timestamp = date('Y-m-d G:i:s');
                         $cycle->setHotroom_date($timestamp);
                     }
-                    elseif($decodedObject->getStatus() == "AT RSO"){
+                    elseif($decodedObject->getStatus() == "PICKED UP"){
                         $cycle->setStatus("Picked up");
                         $cycle->setHotroom_date(NULL);
                     }

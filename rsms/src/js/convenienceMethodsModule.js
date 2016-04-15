@@ -324,6 +324,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             //console.log(formattedTime);
             return formattedTime;
         },
+        /*
+        *
+        *	Converts a Javascript date object to a MYSQL datetime formatted string
+        *	@param (date, Date)  JS Date to convert
+        */
         setMysqlTime: function(date){
             var date;
             //console.log(date);

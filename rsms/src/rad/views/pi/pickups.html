@@ -86,8 +86,9 @@
 
     <div class="half float-left" style="margin-left:10px;">
 
-        <div class="card full pickups pickup-collection" ng-repeat="pickup in pi.Pickups" ng-if="pi.Pickups.length">
-            <h3 class="card-header padding"><i class="icon-box-remove"></i>You requested a pickup on {{pickup.Requested_date | dateToISO}}
+        <div class="card full pickups pickup-collection" ng-repeat="pickup in pi.Pickups" ng-if="pi.Pickups.length && !pickup.Pickup_date">
+        <h3 class="card-header padding">
+            <i class="icon-box-remove"></i>You requested a pickup on {{pickup.Requested_date | dateToISO}}
         </h3>
             <div ng-if="!pickup.Pickup_date">
                 <span ng-if="pickup.Notes">
@@ -99,7 +100,7 @@
                     <div class="fake-table condensed">
                         <div ng-repeat="bag in pickup.Waste_bags" class="table-row">
                             <div class="button-cell">
-                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(bag, pickup.Waste_bags, pi)"><i class="icon-remove"></i>Remove</a>
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(bag, pickup.Waste_bags, pi)"><i class="icon-cancel-2"></i>Don't pickup</a>
                             </div>
                             <div>
                                 <p>
@@ -115,7 +116,7 @@
                     <div class="fake-table condensed">
                         <div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles">
                             <div class="button-cell">
-                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(cycle, pickup.Carboy_use_cycles, pi)"><i class="icon-remove"></i>Remove</a>
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(cycle, pickup.Carboy_use_cycles, pi)"><i class="icon-cancel-2"></i>Don't pickup</a>
                             </div>
                             <div>
                                 <p>Carboy Number {{cycle.Carboy.Carboy_number}} Contents: (<span ng-if="!cycle.Contents.length">Empty Bag</span><span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
@@ -129,17 +130,15 @@
                     <div class="fake-table condensed">
                         <div class="table-row" ng-repeat="collection in pickup.Scint_vial_collections">
                             <div class="button-cell">
-                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(collection, pickup.Scint_vial_collections, pi)"><i class="icon-remove"></i>Remove</a>
+                                <a class="btn btn-danger left" ng-click="af.removeFromPickup(collection, pickup.Scint_vial_collections, pi)"><i class="icon-cancel-2"></i>Don't pickup</a>
                             </div>
                             <div>
-                                <h5>Trays: {{pickup.Scint_vial_trays}}</h5>
+                                <p>{{pickup.Scint_vial_trays}} Trays</p>
+                                <p><span ng-if="collection.Contents.length">Contents:</span> (<span ng-if="!collection.Contents.length">No Contents</span><span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
                             </div>
-                        </div>
-                        <!--
-                    <div class="span10">
-                        <p>Contents: (<span ng-if="!collection.Contents.length">Empty Bag</span><span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
-                    </div>
-                    -->
+                            
+                        </div>                        
+                        
                     </div>
                 </div>
             </div>

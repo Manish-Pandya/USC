@@ -10,7 +10,6 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
           var af = actionFunctionsFactory;
-
           var getAllPickups = function(){
               af.getAllPickups()
               .then(
@@ -24,8 +23,24 @@ angular.module('00RsmsAngularOrmApp')
           }
 
           $scope.af = af;
-          $rootScope.pickupsPromise = af.getAllPIs()
-                                          .then(getAllPickups);
+          $rootScope.pickupsPromise = af.getRadModels()
+                                        .then(
+                                            function () {
+                                                var pickups = dataStoreManager.get("Pickup");
+                                                for (var i = 0; i < pickups.length; i++) {
+                                                    if (pickups[i].Status == Constants.PICKUP.STATUS.PICKED_UP
+                                                        || ( pickups[i].Status == Constants.PICKUP.STATUS.REQUESTED && pickups[i].Waste_bags.length )
+                                                        || pickups[i].Scint_vial_collections.length
+                                                        || pickups[i].Carboy_use_cycles.length) {
+                                                            pickups[i].loadCarboyUseCycles();
+                                                            pickups[i].loadWasteBags();
+                                                            pickups[i].loadCurrentScintVialCollections();
+                                                    }
+                                                }
+                                                
+                                                $scope.pickups = dataStoreManager.get("Pickup");
+                                            }
+                                        )
 
         $scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
             console.log(status);
@@ -45,7 +60,7 @@ angular.module('00RsmsAngularOrmApp')
                 }
             }
 
-            af.savePickup(pickup,pickupCopy);
+            af.savePickup(pickup,pickupCopy, true);
 
         }
 

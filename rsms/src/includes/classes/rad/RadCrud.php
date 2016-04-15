@@ -19,10 +19,19 @@ abstract class RadCrud extends GenericCrud {
 	public function sumUsages($useAmounts){
 		$LOG = Logger::getLogger(__CLASS__);
 		$isotopeAmounts = array();
-		
-		foreach($useAmounts as $amount){				
-			$isotopeName = $amount->getIsotope_name();
-			$isotopeId   = $amount->getIsoptope_id();		
+
+		foreach($useAmounts as $amount){		
+            $useDao = new GenericDAO(new ParcelUse());
+            $use = $useDao->getById($amount->getParcel_use_id());
+            $parcelDao = new GenericDAO(new Parcel());
+            $parcel = $parcelDao->getById($use->getParcel_id());
+            $authDao = new GenericDAO(new Authorization());
+            $auth = $authDao->getById($parcel->getAuthorization_id());
+            $isotopeDao = new GenericDAO(new Isotope());
+            $isotope = $isotopeDao->getById($auth->getIsotope_id());
+
+			$isotopeName = $isotope->getName();
+			$isotopeId   = $isotope->getKey_id();		
 			if(!array_key_exists($isotopeName, $isotopeAmounts)){
 				$isotopeAmount = new IsotopeAmountDTO();
 				$isotopeAmount->setIsotope_name($isotopeName);

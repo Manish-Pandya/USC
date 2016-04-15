@@ -86,6 +86,8 @@ class CarboyUseCycle extends RadCrud {
 		
 	private $carboy_reading_amounts;
 
+    private $carboyNumber;
+
 	public function __construct() {
 
 		// Define which subentities to load
@@ -260,6 +262,11 @@ class CarboyUseCycle extends RadCrud {
 	public function getVolume() {return $this->volume;}
 	public function setVolume($volume) {$this->volume = $volume;}
 	
-	
+	public function getCaboyNumber(){
+        if($this->getCarboy_id() != null){
+            $this->carboyNumber = $this->getCarboy()->getCarboy_number();
+        }
+        return $this->carboyNumber;
+    }
 }
 ?>
