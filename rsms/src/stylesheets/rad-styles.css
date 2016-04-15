@@ -75,7 +75,7 @@
 }
 .card .card-header {
     border-bottom: 1px solid #ccc;
-    padding: 0 0 5px;
+    padding: 0px 0 7px;
     margin: 0;
 }
 .padding {
@@ -258,8 +258,13 @@ i.solids-containers {
 .card.pickups h1 i:first-child,
 .card.pickups h2 i:first-child,
 .card.pickups h3 i:first-child {
+    font-size: 30px;
     color: rgb(91, 183, 91);
-    margin: 7px 19px 0 0;
+    margin: 14px 32px 0 5px !important;
+}
+.card.pickups h2 i:first-child,
+.card.pickups h3 i:first-child {
+    margin: 1px 19px 0 5px !important;
 }
 .left-nav ul li a.pickups {
     background: rgba(91, 183, 91, .64);
@@ -583,6 +588,14 @@ table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
 .pickup-collection > div > div ul {
     list-style: none;
 }
+.pickup-collection.admin div.fake-table div.button-cell{
+    width:50px;
+}
+.pickup-collection:not(.admin) div.fake-table div.button-cell{
+    min-width: 112px;
+    width: 13%;
+}
+
 .pickup-collection > div > div > h3 {}
 .pickup-collection > div > div > h3 i {
     margin: 3px 14px 0px 0px !important;
@@ -599,9 +612,27 @@ table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
 .pickup-collection ul li:last-child {
     border: none;
 }
+.pickup-collection p, .pickup-collection label{
+    font-weight:bold
+}
 .pickup-collection > div > div p {
     font-size: 14px;
     margin: -6px 0 -5px 3px;
+}
+.pickup-collection > div > div p + p{
+    margin-top:5px
+}
+.pickup-collection.admin > div > div p {
+    font-size: 18px;
+    margin: -6px 0 -5px 3px;
+}
+.pickup-collection.admin span.bag-date{
+    font-size: 14px;
+    display:inline-block;
+    margin: 0px 0 5px 3px;
+}
+.pickup-collection.admin > div > div p + p{
+    margin-top:5px
 }
 .pickup-collection span.metro-checkbox {
     display: block;

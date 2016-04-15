@@ -26,8 +26,6 @@ Carboy.prototype = {
     loadCurrentCarboyUseCycle: function () {
         if (this.Current_carboy_use_cycle && dataStoreManager && dataStore.CarboyUseCycle) {
             this.Current_carboy_use_cycle = dataStoreManager.getById("CarboyUseCycle", this.Current_carboy_use_cycle.Key_id);
-            console.log(this.Current_carboy_use_cycle)
-
         }
     }
 }
