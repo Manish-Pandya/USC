@@ -129,6 +129,7 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
+        if (!cycle.Carboy_reading_amounts) cycle.Carboy_reading_amounts = [];
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }
     

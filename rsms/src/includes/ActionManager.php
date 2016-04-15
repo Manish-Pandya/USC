@@ -17,7 +17,7 @@ class ActionManager {
      *
      * If $valueName is not present in $_REQUEST, NULL is returned.
      *
-     * @param unknown $valueName
+     * @param string|unkown $valueName
      * @param string $paramValue
      * @return string|unknown|NULL
      */
