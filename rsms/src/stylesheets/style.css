@@ -146,7 +146,7 @@ body {
   margin-top: 20px;
 }
 
-@media (max-height: 900px) {
+@media (max-width: 1024px) {
   /* line 93, ../sass/style.scss */
   .navbar {
     margin-bottom: 0;
@@ -473,6 +473,7 @@ div.rsmsCenterIconContainer a p {
     font-size: 220px;
     line-height: normal;
   }
+}
 @media (min-width: 773px) and (max-width: 999px) {
   /* line 300, ../sass/style.scss */
   .centerIcons {
@@ -502,6 +503,15 @@ div.rsmsCenterIconContainer a p {
         text-align: center;
     font-size: 17px;
   }
+   .centerIcons div.rsmsCenterIconContainer a i {
+    text-align: center;
+    width: auto;
+    height: 160px !important;
+    color: white;
+    font-size: 140px;
+    line-height: normal;
+  }
+
 }
 /******************************************************
 * Emergency Info HUB STYLES
@@ -731,7 +741,7 @@ tr.new td{
   color:white;
 }
 tr.inactive td {
-  border-color: pink;
+  border-color: #EAEAEA;
   background: #FFC0C0 !important;
 }
 h3.inactive, .unassigned{
@@ -966,6 +976,11 @@ a.selected:hover{
 td.hazard-icons img{
     width:25px;
 }
+.grayed-out img, img.grayed-out {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: .4;
+}
 .locationTable td > ul li{
   padding: 10px 8px 3px;
   border-bottom: 1px solid #d7d7d7 !important;
@@ -1189,7 +1204,7 @@ html[xmlns] .clearfix {
 }
 /* line 860, ../sass/style.scss */
 .subRooms li {
-  font-size: 12px;
+  font-size: 11px;
   border: none;
   float: left;
   margin-right: 5px;
@@ -1281,12 +1296,12 @@ img.smallLoading {
 }
 /* line 935, ../sass/style.scss */
 .subHazardModal ul, .roomsModal ul {
-  margin: 3px 0;
+  margin: 3px 0 0 0 !important;
   max-height: 300px;
   overflow: auto;
   overflow-x: hidden;
   padding: 0px 1px 14px;
-  width: 100%;
+  width: 300px !important;
 }
 /* line 942, ../sass/style.scss */
 .subHazardModal ul li{
@@ -1295,14 +1310,21 @@ img.smallLoading {
   display: block;
   clear: both;
 }
+.roomsModal{
+  width:auto !important;
+}
 .roomsModal ul li {
-  font-weight: bold; */
+  font-weight: bold; 
   margin-left: -1px;
   width: 98%;
   padding: 5px 0;
   display: block;
   clear: both;
   margin-left:28px;
+  margin-left: 13px;
+}
+.roomsModal ul li span.metro-checkbox span {
+    margin-top: 1px !important;
 }
 .show-rooms{
   margin-bottom:3px;
@@ -1440,7 +1462,15 @@ a.checklistNav span{
 }
 
 .checklistRoomIcon{
+  cursor: pointer;
+  font-size: 15px;
+  color: #808080;
   margin: 2px 0 0 3px;
+}
+.checklistRoomIcon.fa-door-open{
+  font-size: 19px;
+  color: #323232;
+  /* text-shadow: 1px 1px 1px rgba(0,0,0,0.3); */
 }
 
 .checkbox.inline .metro-checkbox{
@@ -1575,7 +1605,7 @@ span.recs span{
 
 .inspectionReportTable td{
   padding-top: 0px !important;
-  padding-top: 0px !important;
+  padding-top: 10px !important;
 }
 .inspectionReportTable td span:first-child{
   padding: 10px 0 0;
@@ -1701,6 +1731,7 @@ td.reviewHeader {
   border-left:none;
   border-right:none;
   padding-top: 10px !important;
+  border-bottom-width: 1px;
 }
 
 /* line 1142, ../sass/style.scss */
@@ -1758,15 +1789,18 @@ td.reviewHeader {
 
 /* line 1186, ../sass/style.scss */
 #chemicalSafetyHeader,.chemicalHazardsHeader {
-  background-color: #F3F306;
+  background-color: #F3F306 !important;
   color: black !important;
   background-size: 38px;
 }
 
 /* line 1192, ../sass/style.scss */
 #radiationSafetyHeader,.radiationHazardsHeader {
-  background-color: #6600cc;
+  background-color: #6600cc !important;
   background-size: 40px 40px;
+}
+tbody tr.no-hover:hover {
+    background: transparent !Important;
 }
 td.checklistHeader{
     background: white !important;
@@ -1774,7 +1808,10 @@ td.checklistHeader{
     font-weight: bold;
     vertical-align: middle !important;
     padding: 10px 15px !important;
+    border-bottom:2px solid black;
+    border-top:2px solid black;
 }
+
 tbody.biological td.checklistHeader {
     background: rgba(221, 0, 0, 0.2) !important;
 }
@@ -1950,10 +1987,28 @@ ul.key li.deficiencies span {
 
 /* inspection details report */
 .detailsReportTable{
-  margin-top:6px;
+  margin-top:0x;
   margin-bottom:6px;
+  border:3px solid black !important;
+  border-top:none !important;
+  border-radius:0
+}
+.detailsReportTable + .detailsReportTable{
+  margin-top:-6px
+}
+.detailsReportHeaderTable{
+  margin-top:6px;
+  margin-bottom:0;
+  border:3px solid black !important;
+  border-top:none;
+}
+.detailsReportTable + .detailsReportHeaderTable {
+  margin-top:15px;
 }
 
+detailsReportHeaderTable tr td {
+    border-radius:0
+}
 .detailsReportTable th.bioHeader{
   background: #eed3cf !important;
 }
@@ -2058,7 +2113,13 @@ ul.key li.deficiencies span {
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
   color: rgba(73, 175, 205, 0.62)
 }
-
+.hazardList ul li span span{
+  font-size:14px;
+}
+.hazardList ul li ul li span span{
+  font-size: 12px !Important;
+  margin-top: -4px !important;
+}
 /* line 1391, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter:hover {
   color: #49afcd;
@@ -2443,6 +2504,7 @@ li.active a {
 /* line 660, ../sass/style.scss */
 /* line 1700, ../sass/style.scss */
 .checklist ul {
+  margin-left: 0;
   list-style: none !important;
 }
 .navicon {
@@ -2622,13 +2684,20 @@ li.active a {
 /* line 727, ../sass/style.scss */
 /* line 1788, ../sass/style.scss */
 span.red {
-  color: #f00;
+  color: #c00; 
 }
 
 /* line 730, ../sass/style.scss */
 /* line 1793, ../sass/style.scss */
 span.green {
-  color: #090;
+  color: #009900;
+}
+tr td.new span.green {
+  color: #005800;
+}
+
+span.yellow {
+  color: #A95D0F;
 }
 
 /* line 734, ../sass/style.scss */
@@ -2647,7 +2716,7 @@ span.green {
   padding: 4px 0;
 }
 .hazardLi:not(.topChild){
-  padding-top:10px;
+  padding-top: 10px;
 }
 
 /* line 737, ../sass/style.scss */
@@ -2739,6 +2808,7 @@ label.smaller {
 /* line 790, ../sass/style.scss */
 /* line 1886, ../sass/style.scss */
 #footer ul {
+  padding: 0 !Important;
   list-style: none;
   margin: 15px 0;
 }
@@ -3288,14 +3358,27 @@ table.large tr th{
 .savingBox{
   background: rgba(0,0,0,.5) !important;
   position: fixed;
-  left: 50px;
-  right: 50px;
-  top: 30%;
-  height: 70px;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 67px;
   border-color: black;
   box-shadow: 0 0 6px rgba(0,0,0,.7);
+  z-index:99999;
+  text-align: center;
+  padding: 9px 0 0;
 }
-
+.manage-inspections-table tr th i.icon-magnifying-glass{
+  position: absolute;
+  margin-left: -25px;
+  margin-top: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  color:#666;
+}
+.manage-inspections-table tr th i.icon-magnifying-glass:hover {
+    color:black;
+}
 .absolute{
   position:absolute;
 }
@@ -3558,10 +3641,7 @@ tbody tr:nth-child(even){
   background:#ECF0F1;
 }
 
-tbody tr:hover{
-background:#BDC3C7;
-  color:#FFFFFF;
-}
+tbody tr:hover{/* background:#BDC3C7; */color:#FFFFFF;}
 
 .fixed{
   position:fixed;
@@ -3678,4 +3758,103 @@ btn-mini {
 }
 .modal-body{
     min-height: 112px;
+}
+
+/*
+  Icon Font: custom-font-icons
+*/
+
+@font-face {
+  font-family: "custom-font-icons";
+  src: url("../font/custom-font-icons.eot");
+  src: url("../font/custom-font-icons.eot?#iefix") format("embedded-opentype"),
+       url("../font/custom-font-icons.woff") format("woff"),
+       url("../font/custom-font-icons.ttf") format("truetype"),
+       url("../font/custom-font-icons.svg#custom-font-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "custom-font-icons";
+    src: url("../font/custom-font-icons.svg#custom-font-icons") format("svg");
+  }
+}
+
+[data-icon]:before { content: attr(data-icon); }
+
+[data-icon]:before,
+.fa-admin:before,
+.fa-broom:before,
+.fa-coin-bag:before,
+.fa-coins:before,
+.fa-deaf:before,
+.fa-dice:before,
+.fa-door-closed:before,
+.fa-door-open:before,
+.fa-factory:before,
+.fa-hourglass:before,
+.fa-id-card:before,
+.fa-map:before,
+.fa-robot:before,
+.fa-shopping-basket:before,
+.fa-shower:before,
+.fa-stop-watch:before,
+.fa-t-shirt:before,
+.fa-target:before,
+.fa-tractor:before,
+.fa-user-with-headset:before {
+  display: inline-block;
+  font-family: "custom-font-icons";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+}
+
+.fa-admin:before { content: "\f100"; }
+.fa-broom:before { content: "\f101"; }
+.fa-coin-bag:before { content: "\f102"; }
+.fa-coins:before { content: "\f103"; }
+.fa-deaf:before { content: "\f104"; }
+.fa-dice:before { content: "\f105"; }
+.fa-door-closed:before { content: "\f106"; }
+.fa-door-open:before { content: "\f107"; }
+.fa-factory:before { content: "\f108"; }
+.fa-hourglass:before { content: "\f109"; }
+.fa-id-card:before { content: "\f10a"; }
+.fa-map:before { content: "\f10b"; }
+.fa-robot:before { content: "\f10c"; }
+.fa-shopping-basket:before { content: "\f10d"; }
+.fa-shower:before { content: "\f10e"; }
+.fa-stop-watch:before { content: "\f10f"; }
+.fa-t-shirt:before { content: "\f110"; }
+.fa-target:before { content: "\f111"; }
+.fa-tractor:before { content: "\f112"; }
+.fa-user-with-headset:before { content: "\f113"; }
+
+.filter-holder{
+  z-index: 1060;
+  margin-top: -31px;
+  position: fixed;
+}
+.filter-holder div{
+  margin-right: 15px;
+  display: inline-block;
+}
+.filter-holder div label{
+  font-size: 18px;
+  float:left;
+  font-weight: bold;
+  margin: 2px;
+}
+.filter-holder div select{
+  margin-top:0;
 }

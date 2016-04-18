@@ -5,7 +5,7 @@ angular.module('modalPosition', [])
     return {
 	    restrict : 'C',
 	    link : function(scope, element, attributes) {
-	    	scope.onResize = function() {
+	    	var onResize = function() {
 	            var topMargin = $window.innerHeight - element[0].clientHeight;
                 $(element[0]).css({maxHeight: $window.innerHeight*.95, minHeight:'250px'});	    
                 $(element[0]).find('.modal-content').css({maxHeight: ($window.innerHeight*.95-50), minHeight:'250px'});          
@@ -22,15 +22,20 @@ angular.module('modalPosition', [])
                         $(element[0]).css({'left':$window.innerWidth*.005+'px', 'marginLeft': 0});
                     }
                 }
-        	}
-        	scope.onResize();
+	    	}
+
+        	onResize();
 
             angular.element($(element[0])).bind('DOMNodeInserted', function() {
-                scope.onResize();
+                onResize();
             })
 
             angular.element($window).bind('resize', function() {
-                scope.onResize();
+                onResize();
+            });
+
+            $(window).on("orientationchange", function () {
+                //window.setTimeout(function () { onResize(); }, 300);
             });
       	}
     }

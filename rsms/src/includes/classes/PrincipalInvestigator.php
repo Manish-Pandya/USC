@@ -175,6 +175,7 @@ class PrincipalInvestigator extends GenericCrud {
 	
 	private $verifications;
 	private $currentVerifications;
+    private $currentIsotopeInventories;
 	
 	public function __construct(){
 
@@ -436,6 +437,14 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->pi_authorization;
 	}
+
+    public function getCurrentIsotopeInventories(){
+        if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getPi_authorization() != null){
+            $inventoriesDao = new GenericDAO($this);
+            $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id);
+        }
+        return $this->currentIsotopeInventories;
+    }
 
 }
 

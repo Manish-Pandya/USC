@@ -78,6 +78,9 @@ class Parcel extends RadCrud {
 	/** Float ammount of isotope that has not been used yet. */
 	private $remainder;
 
+    /** Float ammount of isotope that has not been picked up yet. */
+	private $amountOnHand;
+
 	/** Array of parcel uses that pertain to this parcel. */
 	private $parcelUses;
 
@@ -255,6 +258,41 @@ class Parcel extends RadCrud {
 		}
 		return $this->hasTests;
 	}
+
+    public function getAmountOnHand(){
+        global $db;
+
+		$queryString = "SELECT ROUND(SUM(a.curie_level),7) from parcel_use_amount a
+                        JOIN parcel_use b
+                        ON a.parcel_use_id = b.key_id
+                        left join waste_bag c
+                        ON a.waste_bag_id = c.key_id
+                        left join carboy_use_cycle d
+                        ON a.carboy_id = d.key_id
+                        left join scint_vial_collection e
+                        ON a.scint_vial_collection_id = e.key_id
+                        join pickup f
+                        ON c.pickup_id = f.key_id
+                        OR d.pickup_id = f.key_id
+                        OR e.pickup_id = f.key_id
+                        where a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
+                        AND f.status != 'REQUESTED'";
+
+		$stmt = $db->prepare($queryString);
+        $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
+		$stmt->execute();
+		while($sum = $stmt->fetchColumn()){
+			$totalPickedUp = $sum;
+		}
+
+        if($totalPickedUp == null){
+            return $this->getQuantity();
+        }
+
+        $this->amountOnHand = $this->getQuantity() - $totalPickedUp;
+
+        return $this->amountOnHand;
+    }
     
 }
 ?>

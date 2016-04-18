@@ -75,15 +75,15 @@
             <h3></h3>
         </div>
 
-        <div class="table-row" ng-repeat="smear in modalData.ParcelCopy.Wipe_test[0].Parcel_wipes | orderBy:'Key_id'">
+        <div class="table-row" ng-repeat="smear in smears = (modalData.ParcelCopy.Wipe_test[0].Parcel_wipes | orderBy:'Key_id')" ng-class="{'inactive': smear.Curie_level >= smears[0].Curie_level*3}">
             <div>
                 <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editWipeParcelWipe(modalData.ParcelCopy.Wipe_test[0], smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
             </div>
 
-            <div ng-if="!smear.edit">
+            <div ng-if="!smear.edit || smear.Location == 'Background'">
                 {{smear.Location}}
             </div>
-            <div ng-if="smear.edit">
+            <div ng-if="smear.edit && smear.Location != 'Background'">
                 <span ng-init="smear.DropLocation = {Name:smear.Location}" ng-if="smear.Location"/>
                 <ui-select tagging="defaultAddOtherTag" ng-model="smear.DropLocation" theme="selectize" ng-disabled="disabled" on-select="smear.Location = $select.selected.Name">
                     <ui-select-match placeholder="Select or input a Room Use">{{$select.selected.Name}}</ui-select-match>
@@ -122,9 +122,9 @@
 
             <div style="min-width:0;">
                 <span ng-if="smear.edit && ParcelWipeCopy">
-                                <a class="btn btn-success left" ng-click="af.saveParcelWipe(modalData.ParcelCopy.Wipe_test[0], ParcelWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
-                                <a class="btn btn-danger left" ng-click="cancelParcelWipeEdit(smear,modalData.ParcelCopy.Wipe_test[0])"><i class="icon-cancel-2"></i>Cancel</a>
-                            </span>
+                    <a class="btn btn-success left" ng-click="af.saveParcelWipe(modalData.ParcelCopy.Wipe_test[0], ParcelWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+                    <a class="btn btn-danger left" ng-click="cancelParcelWipeEdit(smear,modalData.ParcelCopy.Wipe_test[0])"><i class="icon-cancel-2"></i>Cancel</a>
+                </span>
             </div>
         </div>
         <div class="table-row hover-white" ng-if="modalData.ParcelCopy.Wipe_test[0].adding">

@@ -140,6 +140,7 @@ angular.module('00RsmsAngularOrmApp')
                 }
             )
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
+        console.log(af.getCachedCollection('CarboyUseCycle'));
 
         $scope.selectIsotope = function(isotope){
             if($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
@@ -204,11 +205,19 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.addCarboyToLab = function(cycle, pi){
-            cycle.loadCarboy();
+            //cycle.loadCarboy();
             cycle.Is_active = false;
             $modalInstance.dismiss();
+            var cycleCopy = {
+                Class: "CarboyUseCycle",
+                Room_id: cycle.Room.Key_id,
+                Principal_investigator_id: pi.Key_id,
+                Key_id: cycle.Key_id || null,
+                Carboy_id: carboy.Key_id
+            }
+            console.log(cycleCopy);
             af.deleteModalData();
-            af.addCarboyToLab(cycle, pi);
+            af.addCarboyToLab(cycleCopy,pi);
         }
 
         $scope.roomIsAuthorized = function(room, authorization){

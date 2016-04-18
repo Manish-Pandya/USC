@@ -181,6 +181,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'current-inventories',
+                        Label: 'Current Inventories',
+                        Dashboard: true
+                    },
+                    {
                         Name:'quarterly-inventory',
                         Label: 'Quarterly Inventory',
                         Dashboard: true
@@ -1345,19 +1350,20 @@ angular
             }
 
             af.addCarboyToLab = function(cycle, pi, room){
-                cycle.Principal_investigator_id = pi.Key_id;
-                cycle.Room_id = cycle.Room.Key_id;
                 cycle.Lab_date = convenienceMethods.setMysqlTime(new Date());
                 cycle.Status = Constants.CARBOY_USE_CYCLE.STATUS.IN_USE;
                 cycle.Is_active = true;
-
+                console.log(cycle);
                 af.clearError();
                 return this.save( cycle )
                     .then(
-                        function(returnedCycle){
-                            //angular.extend(cycle, returnedCycle);
+                        function (returnedCycle) {
+                            var storedCycle = dataStoreManager.getById('CarboyUseCycle', returnedCycle.Key_id);
+                            angular.extend(storedCycle, returnedCycle);
                             //returnedCycle.Carboy = cycle.Carboy;
-                            pi.CarboyUseCycles.push(cycle);
+                            storedCycle.loadRoom();
+                            storedCycle.loadCarboy();
+                            pi.CarboyUseCycles.push(storedCycle);
                         },
                         af.setError('The Carboy could not be added to the lab.')
                     )
@@ -1427,7 +1433,8 @@ angular
                 return this.save( copy )
                     .then(
                         function(returnedUse){
-                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson( returnedUse );
+                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
+                            console.log(returnedUse);
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
@@ -1443,13 +1450,10 @@ angular
                                 parcel.ParcelUses.push(returnedUse)
                             }
                             $rootScope.ParcelUseCopy = {};
-                            var uses = parcel.ParcelUses;
-                            var total = 0;
-                            var i = uses.length;
-                            while(i--){
-                                total += parseFloat(uses[i].Quantity);
-                            }
-                            parcel.Remainder = Math.round( (parcel.Quantity - total) * 100000 ) / 100000;
+                            
+                            parcel.Remainder = returnedUse.ParcelRemainder;
+                            parcel.AmountOnHand = returnedUse.ParcelAmountOnHand;
+
                             use.edit = false;
                             af.clearError();
                             return parcel;
@@ -1475,14 +1479,15 @@ angular
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
                 if(editedPickup.Status == Constants.PICKUP.STATUS.PICKED_UP || editedPickup.Status == Constants.PICKUP.STATUS.AT_RSO && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
-
-                return this.save( editedPickup, saveChildren )
+                return this.save(editedPickup, saveChildren)
                     .then(
-                        function(returnedPickup){
+                        function (returnedPickup) {
+                            console.log(returnedPickup);
+
                             returnedPickup = modelInflatorFactory.instateAllObjectsFromJson(returnedPickup);
-                            var pi = dataStoreManager.getById("PrincipalInvestigator",  returnedPickup.Principal_investigator_id);
+                            var pi = dataStoreManager.getById("PrincipalInvestigator", returnedPickup.Principal_investigator_id);
+                            console.log(returnedPickup);
                             if (saveChildren) {
-                                console.log(returnedPickup);
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
                                 while(i--){
@@ -1490,6 +1495,7 @@ angular
                                         //find the cached WasteBag with the same key_id as the one from the server, and update its properties
                                         //remove this WasteBag from it's containers collection of WasteBags ready to be have a pickup requested.
                                         var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
+                                        console.log(container);
                                         var j = container.WasteBagsForPickup.length;
                                         while (j--) {
                                             if (container.WasteBagsForPickup[j].Key_id == returnedPickup.Waste_bags[i].Key_id) {
@@ -1515,12 +1521,6 @@ angular
 
                                 var i = returnedPickup.Scint_vial_collections.length;
                                 while (i--) {
-                                    /*
-                                    var j = pi.Scint_vial_collections.length;
-                                    while (j--) {
-
-                                    }
-                                    */
                                     if(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id)){
                                         //find the cached ScintVialCollection with the same key_id as the one from the server, and update its properties
                                         angular.extend(dataStoreManager.getById('ScintVialCollection', returnedPickup.Scint_vial_collections[i].Key_id),returnedPickup.Scint_vial_collections[i]);
@@ -1532,8 +1532,8 @@ angular
                             returnedPickup.loadCarboyUseCycles();
                              //the pickup is new, so add it to the cache and the PI's collection of pickups
                             if (!originalPickup.Key_id) {
-                                console.log(returnedPickup);
                                 dataStoreManager.store(returnedPickup);
+                                if (!pi.Pickups) pi.Pickups = [];
                                 pi.Pickups.push(returnedPickup);
                             }
                             //the pickup had a key id, so we are mutating a pickup that already existed.
@@ -2229,9 +2229,10 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Authorization ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PIAuthorization ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteType ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Carboy ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.WasteType));
+                            //store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Carboy));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyUseCycle));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipe ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipeTest ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ParcelWipe ));

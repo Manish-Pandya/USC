@@ -7,14 +7,15 @@
     <div class="card full parcels">
         <div class="card-content">
             <div class="fake-table striped">
-                <div class="table-header">
+                <div class="table-header" ng-class="{'inactive': parcel.AmountOnHand == 0}">
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Orginal Quantity</h3>
-                    <h3>Remaining Quantity</h3>
+                    <h3>Orginal Activity</h3>
+                    <h3>Usable Activity</h3>
+                    <h3>Amount On Hand</h3>
                 </div>
-                <div class="table-row">
+                <div class="table-row" ng-class="{'inactive': parcel.AmountOnHand == 0}">
                     <div>
                         {{parcel.Rs_number}}
                     </div>
@@ -34,6 +35,11 @@
                     <div>
                         {{parcel.Remainder}} mCi
                     </div>
+
+                    <div>
+                        {{parcel.AmountOnHand}} mCi
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -51,10 +57,9 @@
                     <th>Disposals</th>
                     <!--<th></th>-->
                 </tr>
-                <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-class="{'edit' : use.edit, 'formError': use.error}" table-error="{{use.error}}" obj="use">
+                <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-class="{'edit' : use.edit, 'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
                     <td ng-class="{'vertical-align-middle': use.edit}" ng-init="use.loadParcelUseAmounts()">
-                        <a ng-if="!use.edit" class="btn btn-primary" ng-click="editUse(use)"><i class="icon-pencil"></i></a>
-                        <a ng-if="use.edit" disabled="disabled" class="btn btn-primary"><i class="icon-pencil"></i></a>
+                        <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.edit || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
                     </td>
                     <td ng-if="!use.edit">
                         {{use.Date_used | dateToISO:use:'Date_used':true}}
@@ -73,10 +78,10 @@
                         {{use.Experiment_use}}
                     </td>
                     <td ng-if="use.edit" class="push-top">
-                        <div class="control-group">
+                        <div class="control-group" style="max-width:90px">
                             <label class="control-label" for="experiment-use">Use:</label>
                             <div class="controls">
-                                <textarea rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
+                                <textarea style="max-width:124px" rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
                             </div>
                         </div>
                     </td>
@@ -99,19 +104,19 @@
                             <tr class="table-row row-fluid">
                                 <td class="use-amount solids">
                                     <div ng-repeat="solid in use.solids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
-                                        <span class="bold">Sol: </span>{{solid.Curie_level}} mCi in {{solid.Container_name}}
+                                        <span class="bold">Sol: </span>{{solid.Curie_level}} mCi in {{solid.Container_name}}<i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i>
                                     </div>
                                     <div ng-if="!use.solids.length">No Solid Disposals</div>
                                 </td>
                                 <td class="use-amount liquids">
                                     <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-                                        <span class="bold">Liq:</span> {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy.Carboy_number}}
+                                        <span class="bold">Liq:</span> {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy.Carboy_number}} <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i>
 </div>
                                     <div ng-if="!liquids.length">No Liquid Disposals</div>
                                 </td>
                                 <td class="use-amount vials">
                                     <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
-                                        <span class="bold">S/V:</span> {{vial.Curie_level}} mCi
+                                        <span class="bold">S/V:</span> {{vial.Curie_level}} mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i>
 </div>
                                     <div ng-if="!vials.length">No vial Disposals</div>
                                 </td>
@@ -130,11 +135,11 @@
                                     <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
                                         <div class="control-group">
                                             <div class="controls input-append">
-                                                <input style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
-                                                <select ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags">
+                                                <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
+                                                <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags">
                                                     <option value="">Select Receptical</option>
                                                 </select>
-                                                <span class="help-block " style="">mCi</span>
+                                                <span class="help-block " style="">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
                                             </div>
                                         </div>
                                     </div>
@@ -144,12 +149,12 @@
                                     <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
                                         <div class="control-group">
                                             <div class="controls input-append">
-                                                <input name="liquid-curies" ng-model="liquid.Curie_level">
+                                                <input name="liquid-curies" ng-model="liquid.Curie_level" ng-disabled="liquid.IsPickedUp">
 
-                                                <select ng-change="selectCarboy(liquid)" ng-init="liquid.Carboy = selectedCarboy(liquid, pi.CarboyUseCycles)" ng-model="liquid.Carboy_id" ng-options="cycle.Key_id as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
+                                                <select ng-disabled="liquid.IsPickedUp" ng-init="liquid.Carboy = selectedCarboy(liquid, pi.CarboyUseCycles)" ng-model="liquid.Carboy_id" ng-options="cycle.Key_id as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
                                                     <option value="">Select Carboy</option>
                                                 </select>
-                                                <span class="help-block " style="">mCi</span>
+                                                <span class="help-block " style="">mCi <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
                                             </div>
                                         </div>
                                     </div>
@@ -159,8 +164,8 @@
                                     <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
                                         <div class="control-group">
                                             <div class="controls input-append">
-                                                <input style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
-                                                <span class="help-block " style="">mCi</span>
+                                                <input ng-disabled="vial.IsPickedUp" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
+                                                <span class="help-block " style="">mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
                                             </div>
                                         </div>
                                     </div>

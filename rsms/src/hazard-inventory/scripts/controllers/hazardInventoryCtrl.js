@@ -98,8 +98,8 @@ angular.module('HazardInventory')
                 }else{
                     notAll = true;
                 }
+                if (atLeastOne && notAll) return true;
             }
-            if(atLeastOne && notAll)return true;
             return false;
 
         }
@@ -124,7 +124,6 @@ angular.module('HazardInventory')
             if(masterHazard)modalData.GrandParent = masterHazard;
 
             modalData.Parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
-            console.log(modalData);
             
             af.setModalData(modalData);
             var modalInstance = $modal.open({
@@ -152,6 +151,23 @@ angular.module('HazardInventory')
                     af.setModalData(modalData);
                     var modalInstance = $modal.open({
                         templateUrl: 'views/modals/multiple-PIs-modal.html',
+                        controller: 'HazardInventoryModalCtrl'
+                    });
+                })
+
+        }
+
+        $scope.openMultiplePIHazardsModal = function (hazardDto) {
+            var modalData = {};
+            modalData.HazardDto = hazardDto;
+            modalData.PI = $scope.PI;
+            $scope.pisPromise = af.getPiHazards(hazardDto)
+                .then(function (pHRS) {
+                    modalData.pHRS = pHRS;
+                    af.setModalData(modalData);
+                    console.log(modalData)
+                    var modalInstance = $modal.open({
+                        templateUrl: 'views/modals/multiple-PI-hazards-modal.html',
                         controller: 'HazardInventoryModalCtrl'
                     });
                 })
@@ -201,13 +217,20 @@ angular.module('HazardInventory')
               });
         }
         
-        $scope.getDisabled = function(hazard){
+        $scope.getDisabled = function (hazard) {
             var parent = dataStoreManager.getById("HazardDto",hazard.Parent_hazard_id);
-            
-            if(parent.Stored_only || parent.BelongsToOtherPI){
+            if (Constants.BRANCH_HAZARD_IDS.indexOf(hazard.Parent_hazard_id) < 0 && (parent.Stored_only || parent.BelongsToOtherPI)) {
                 return true;
             }
-            
+
+            hazard.loadSubHazards();
+            if (!hazard.ActiveSubHazards) return false;
+            var subs = hazard.ActiveSubHazards;
+            for (var i = 0; i < subs.length; i++) {
+                if ( subs[i].IsPresent || subs[i].Stored_only ) {
+                    return true;
+                }
+            }            
             return false;
         }
 

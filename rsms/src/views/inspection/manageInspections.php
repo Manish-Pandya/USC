@@ -12,10 +12,14 @@ require_once '../top_view.php';
       <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
   </h1>
 </div>
-
-<div class="alert savingBox" ng-if="filtering">
+ 
+<div class="alert savingBox" ng-if="filtering"><!---->
   <h1>
-      <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
+      <i class="icon-clock large" style="margin-bottom: -30px;
+    font-size: 66px;
+    color: white;
+    width: 59px;
+    margin-top: 20px;"></i>
       <span style="margin-left: 13px;display: inline-block;">Filtering Inspections...</span>
   </h1>
 </div>
@@ -32,50 +36,66 @@ require_once '../top_view.php';
     </ul>
 </div>
 
-
     <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px; z-index:9999">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
     </div>
-    <select ng-model="yearHolder.selectedYear" ng-if="dtos" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years" style="z-index: 1060;margin-top: -30px;position:fixed;">
-          <option value="">-- select year --</option>
-      </select>
-    <table class="table table-striped table-bordered userList" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
+    <div class="filter-holder" ng-if="dtos.length">
+        <div>
+            <label>Inspection Year:</label>
+            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
+                <option value="">-- select year --</option>
+            </select>
+        </div>
+        <div>
+            <label>Inspection Type:</label>
+            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
+                <option value="">All Types</option>
+            </select>
+        </div>
+        
+    </div>
+    <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
         <thead>
-            <tr><th colspan="7" style="padding:0"></th></tr>
+            <tr>
+                <th colspan="7" style="padding:0">
+                    
+                </th>
+            </tr>
             <tr>
                 <th>
                     Investigator<br>
-                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI"/>
+                    <span><input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()"/><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Campus<br>
-                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus"/>
+                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()"/><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Building<br>
-                    <input class="span2" ng-model="search.building" placeholder="Filter by Building"/>
+                    <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     Lab Room(s)<br>
                 </th>
                 <th>
                     Month Scheduled<br>
-                    <input class="span2" ng-model="search.date" placeholder="Filter by Date"/>
+                    <input class="span2" ng-model="search.date" placeholder="Filter by Date" blur-it="genericFilter()" /><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
                 <th>
                     EHS Inspector<br>
-                    <input class="span2" ng-model="search.inspector" placeholder="Filter by Inspector"/>
+                    <input class="span2" ng-model="search.inspector" placeholder="Filter by Inspector" blur-it="genericFilter()" /><i ng-if="search.inspector" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)">
+                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
                 <th>
-                    Inspection Hazards
-                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                    Laboratory Hazards
+                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
                 </th>
@@ -83,7 +103,7 @@ require_once '../top_view.php';
         </thead>
         <tbody>
 
-            <tr ng-repeat="dto in (filtered = (dtos | genericFilter:search:convenienceMethods))" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}">
+            <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
@@ -151,7 +171,7 @@ require_once '../top_view.php';
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
-                                <br>Scheduled ({{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})
+                                <br>Scheduled ({{dto.Inspections.Schedule_month | getMonthName}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
                         </span>
@@ -164,31 +184,29 @@ require_once '../top_view.php';
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.CLOSED_OUT">
-                            <p ng-if="dto.Inspections.Cap_submitted_date">
+                            <p ng-if="dto.Inspections.Deficiency_selections[0].length">
                                 (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
-                            <p ng-if="!dto.Inspections.Cap_submitted_date">
-                                (No deficiencies found.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
-                                <br>
-                                <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                            <p ng-if="!dto.Inspections.Deficiency_selections[0].length">
+                                (No deficiencies.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
                             <p>
-                                (Started :{{dto.Inspections.Date_started | dateToISO | date:"MM/dd/yy"}})
+                                (Started: {{dto.Inspections.Date_started | dateToISO | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{dto.Inspections.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
-                            <span><br>(Due Date:{{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
+                            <span><br>(Due Date: {{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
-                            <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}}, {{dto.Inspections.Schedule_year}})</span>
+                            <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
                         </span>
@@ -196,9 +214,9 @@ require_once '../top_view.php';
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
                 </td>
                 <td style="width:9.5%" class="hazard-icons">
-                    <span ng-if="dto.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png"/></span>
-                    <span ng-if="dto.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png"/></span>
-                    <span ng-if="dto.Rad_hazards_present"><img src="../../img/radiation-large-icon.png"/></span>
+                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png"/></span>
+                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png"/></span>
+                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png"/></span>
                 </td>
             </tr>
         </tbody>

@@ -425,7 +425,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
   return factory;
 });
 
-mainController = function($scope, $location, postInspectionFactory,convenienceMethods, $rootScope, roleBasedFactory){
+mainController = function($scope, $location, postInspectionFactory, convenienceMethods, $rootScope, roleBasedFactory){
   $scope.route = $location.path();
   $scope.loc = $location.search();
   $scope.setRoute = function(route){
@@ -466,8 +466,7 @@ inspectionDetailsController = function($scope, $location, $anchorScroll, conveni
 
               //console.log($scope.questionsByChecklist);
             });
-        }
-         else{
+        }else{
           $scope.inspection = postInspectionFactory.getInspection();
           $scope.inspection = postInspectionFactory.calculateScore($scope.inspection);
           $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);

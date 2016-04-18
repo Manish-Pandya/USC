@@ -127,14 +127,6 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.ParcelUseCopy[type].push(amt);
       }
 
-      $scope.selectCarboy = function (useAmount) {
-          if( !useAmount.Carboy ){
-            useAmount.Carboy_id = null;
-          }else{
-            useAmount.Carboy_id = useAmount.Carboy.Key_id;
-          }
-      }
-
       $scope.selectContainer = function (useAmount) {
           console.log(useAmount);
           if(!useAmount.Waste_bag){

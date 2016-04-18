@@ -88,7 +88,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/users.js"></script>
 <script type="text/javascript" src="./scripts/controllers/hazardHub.js"></script>
 <script type="text/javascript" src="./scripts/controllers/hazardInventory.js"></script>
-<script type="text/javascript" src="./scripts/controllers/testCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/pi/InventoryViewCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/admin-pickup-ctrl.js"></script>

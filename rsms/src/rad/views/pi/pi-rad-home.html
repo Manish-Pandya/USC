@@ -1,5 +1,8 @@
   <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
     <div class="centerIcons" ng-if="pi">
+      <div class="alert alert-info" ng-if="pi && pi.Quarterly_inventories.length && !pi.Quarterly_inventories[0].Sign_of_date">
+          <h3>You have an inventory due on {{pi.Quarterly_inventories[0].Due_date | dateToISO}} <a ui-sref="quarterly-inventory({ pi: pi.Key_id})" class="btn pull-right" >View Inventory</a></h3>
+      </div>
       <div class="span2 rsmsCenterIconContainer" style=" ">
         <a class="span12 parcels" style="background: rgb(122, 6, 109);" ui-sref="pi-orders({ pi: pi.Key_id})">
           <i class="icon-box"></i>
@@ -25,6 +28,13 @@
       <i class="icon-remove-2"></i>
         <p>Waste Recepticals</p>
       </a>
+    </div>
+
+    <div class="span2 rsmsCenterIconContainer" style=" margin-bottom:30px;">
+        <a class="bg-color-blue span12" style="background: rgb(251, 37, 37);" ui-sref="current-inventories({ pi: pi.Key_id})">
+            <i class="icon-clipboard-2"></i>
+            <p>Current Inventories</p>
+        </a>
     </div>
 
   </div>

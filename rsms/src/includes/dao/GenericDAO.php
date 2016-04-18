@@ -903,7 +903,6 @@ class GenericDAO {
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
-		$this->LOG->fatal(count($dtos));
 		
 		foreach($dtos as $dto){
 			$dto->setRoomIds($roomIds);
@@ -1019,6 +1018,113 @@ class GenericDAO {
 		return $roomIds;
 	}
 
+
+    function getPIHazardRoomsByRoomAndHazardIds($roomIds, $hazardId, $piIds){
+        global $db;
+        $newPiIds = implode(',', array_fill(0, count($piIds), '?'));
+        $queryString = "SELECT a.*,
+                        concat(c.first_name, ' ', c.last_name) as piName
+                        FROM principal_investigator_hazard_room a
+                        JOIN principal_investigator b
+                        ON b.key_id = a.principal_investigator_id
+                        JOIN erasmus_user c
+                        ON c.key_id = b.user_id
+                        WHERE a.room_id IN ( $newRoomIds )
+                        AND a.principal_investigator_id IN ( $newPiIds )
+                        AND a.hazard_id = ?";
+
+		$stmt = $db->prepare($queryString);
+        // bindvalue is 1-indexed, so $k+1
+
+		foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
+        $skips = $k+2;
+        // bindvalue is 1-indexed, so $k+1
+		foreach ($piIds as $k => $id){
+		    $stmt->bindValue(($k+$skips), $id);
+		}
+
+        $stmt->bindValue(($k+$skips+1), $hazardId);
+        $stmt->execute();
+        $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
+
+        return $piHazRooms;
+    }
+
+    function getCurrentInvetoriesByPiId($id){
+
+        global $db;
+
+        $queryString = "SELECT a.principal_investigator_id as principal_investigator_id,
+                        b.isotope_id,
+                        b.key_id as authorization_id,
+                        ROUND(SUM(d.quantity) ,7) as ordered,
+                        c.name as isotope_name,
+                        b.form as authorized_form,
+                        ROUND(b.max_quantity, 7) as auth_limit,
+                        ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up) ) as max_order,
+                        ROUND(picked_up.amount_picked_up, 7) as amount_picked_up,
+                        ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
+                        ROUND(total_used.amount_picked_up, 7) as amount_disposed,
+                        ROUND(SUM(d.quantity) - total_used.amount_picked_up, 7) as usable_amount
+                        from pi_authorization a
+                        LEFT OUTER JOIN authorization b
+                        ON b.pi_authorization_id = a.key_id
+                        LEFT OUTER JOIN isotope c
+                        ON c.key_id = b.isotope_id
+                        LEFT OUTER JOIN parcel d
+                        ON d.authorization_id = b.key_id
+                        LEFT OUTER JOIN (
+	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
+	                        from parcel_use_amount a
+	                        join parcel_use b
+	                        on a.parcel_use_id = b.key_id
+	                        JOIN parcel c
+	                        ON b.parcel_id = c.key_id
+	                        JOIN authorization d
+	                        ON c.authorization_id = d.key_id
+	                        JOIN isotope e
+	                        ON d.isotope_id = e.key_id
+	                        left join waste_bag f
+	                        ON a.waste_bag_id = f.key_id
+	                        left join carboy_use_cycle g
+	                        ON a.carboy_id = g.key_id
+	                        left join scint_vial_collection h
+	                        ON a.scint_vial_collection_id = h.key_id
+	                        join pickup i
+	                        ON f.pickup_id = i.key_id
+	                        OR g.pickup_id = i.key_id
+	                        OR h.pickup_id = i.key_id
+	                        AND i.status != 'REQUESTED'
+	                        group by e.name, e.key_id
+                        ) as picked_up
+                        ON picked_up.isotope_id = b.isotope_id
+                        LEFT OUTER JOIN (
+	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
+	                        from parcel_use_amount a
+	                        join parcel_use b
+	                        on a.parcel_use_id = b.key_id
+	                        JOIN parcel c
+	                        ON b.parcel_id = c.key_id
+	                        JOIN authorization d
+	                        ON c.authorization_id = d.key_id
+	                        JOIN isotope e
+	                        ON d.isotope_id = e.key_id
+	                        group by e.name, e.key_id
+                        ) as total_used
+                        ON total_used.isotope_id = b.isotope_id
+                        where a.principal_investigator_id = ?
+                        group by b.key_id, b.form, b.max_quantity,c.name, c.key_id, a.principal_investigator_id";
+
+        $stmt = $db->prepare($queryString);
+
+        $stmt->bindValue(1, $id);
+        $stmt->execute();
+        $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
+        return $inventories;
+
+    }
 
 }
 ?>

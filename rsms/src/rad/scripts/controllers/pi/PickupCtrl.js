@@ -14,7 +14,6 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.piPromise = af.getRadPIById($stateParams.pi)
               .then(
                   function (pi) {
-                      console.log(dataStore);
                       //pi.loadRooms();
                       if(pi.Pickups){
                           var i = pi.Pickups.length;
@@ -118,8 +117,6 @@ angular.module('00RsmsAngularOrmApp')
                     if (pi.CurrentScintVialCollections[i].svTrays) {
                         pickup.Scint_vial_trays = parseInt(pickup.Scint_vial_trays) + parseInt(pi.CurrentScintVialCollections[i].svTrays);
                     }
-                    console.log( parseInt(pi.CurrentScintVialCollections[i].svTrays));
-                    console.log(pickup.Scint_vial_trays);
                 }
             }
 
@@ -141,7 +138,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
   })
-  .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+  .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = actionFunctionsFactory;
         $scope.af = af;
 
@@ -157,16 +154,33 @@ angular.module('00RsmsAngularOrmApp')
 
         $scope.requestPickup = function(pickup){
             $scope.close();
-            var pickupCopy = dataStoreManager.createCopy(pickup);
-            af.savePickup(pickup,pickupCopy,true)
-                .then(
-                    function(){
+            //var pickupCopy = dataStoreManager.createCopy(pickup);
 
-                    },
-                    function(){
+            var pickupCopy = {
+                Class: "Pickup",
+                Key_id: pickup.Key_id || null,
+                Scint_vial_collections: pickup.Scint_vial_collections,
+                Waste_bags: pickup.Waste_bags,
+                Status: pickup.Status,
+                Principal_investigator_id: pickup.Principal_investigator_id,
+                Scint_vial_trays: pickup.Scint_vial_trays,
+                Requested_date: convenienceMethods.setMysqlTime(new Date())
+            }
 
+            pickupCopy.Carboy_use_cycles = [];
+            var i = pickup.Carboy_use_cycles.length;
+            while (i--) {
+                var originalCycle = pickup.Carboy_use_cycles[i];
+                var cycle = new CarboyUseCycle();
+                for (var prop in originalCycle) {
+                    if (typeof originalCycle[prop] != "object" && typeof originalCycle[prop] != "array") {
+                        cycle[prop] = originalCycle[prop];
                     }
-                )
+                }
+                pickupCopy.Carboy_use_cycles[i] = cycle;
+            }
+
+            af.savePickup(pickup, pickupCopy, true);
         }
 
 

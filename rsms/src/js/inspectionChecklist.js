@@ -3,7 +3,7 @@ $(".collapse").bind("transition webkitTransition oTransition MSTransition", func
 });
 
 
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu','convenienceMethodWithRoleBasedModule','once','angular.filter'])
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
             if( !category ) return false;
@@ -42,6 +42,21 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 }
             }
             return questions;
+    }
+})
+.filter('roomChecked', function (checklistFactory) {
+    return function (rooms, question, deficiency ) {
+        if (!rooms) return;
+        matches = [];
+        for (var i = 0; i < rooms.length; i++) {
+            if (checklistFactory.evaluateDeficiencyRoomChecked(rooms[i], question, deficiency)) {
+                rooms[i].checked = true;
+                matches.push(rooms[i]);
+            } else {
+                rooms[i].checked = false;
+            }
+        }
+        return matches;
     }
 })
 .filter('evaluateChecklist', function () {
@@ -226,7 +241,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 deferred.resolve(this.inspection);
             }else{
                 var url = '../../ajaxaction.php?action=resetChecklists&id='+id+'&callback=JSON_CALLBACK';
-                convenienceMethods.getDataAsDeferredPromise(url).then(
+                $rootScope.loading = convenienceMethods.getDataAsDeferredPromise(url).then(
                     function(promise){
                         deferred.resolve(promise);
                     },
@@ -303,7 +318,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             defSelection.RoomIds = roomIds;
             //make save call
             var url = '../../ajaxaction.php?action=saveOtherDeficiencySelection';
-             return convenienceMethods.saveDataAndDefer(url, defSelection).then(
+             return $rootScope.saving = convenienceMethods.saveDataAndDefer(url, defSelection).then(
                     function(returnedSelection){
                         if(!question.saved){
                             question.Responses.DeficiencySelections.push(returnedSelection);
@@ -443,7 +458,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                 question.Responses.Answer = null;
                 var deferred = $q.defer();
-                return convenienceMethods.saveDataAndDefer(url, responseDto).then(
+                return $rootScope.saving = convenienceMethods.saveDataAndDefer(url, responseDto).then(
                     function(promise){
                         deferred.resolve(promise);
                         return deferred.promise
@@ -497,7 +512,6 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         {
                 deficiency.IsDirty = true;
                 question.error =  '';
-                if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( factory.inspection.Rooms );
                 if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
                 //grab a collection of room ids
                 var i = deficiency.InspectionRooms.length;
@@ -555,24 +569,29 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
 
                         var url = '../../ajaxaction.php?action=saveDeficiencySelection';
-                        console.log(defDto);
-                        convenienceMethods.saveDataAndDefer(url, defDto)
+                        $rootScope.saving = convenienceMethods.saveDataAndDefer(url, defDto)
                             .then(
-                                function(returnedDeficiency){
+                                function (returnedDeficiency) {
                                     deficiency.IsDirty = false;
                                     deficiency.selected = true;
                                     if( factory.inspection.Deficiency_selections[0].indexOf( deficiency.Key_id ) < 0){
                                         factory.inspection.Deficiency_selections[0].push( deficiency.Key_id );
                                     }
                                     if(!question.Responses.DeficiencySelections)question.Responses.DeficiencySelections = [];
-                                    question.Responses.DeficiencySelections.push( returnedDeficiency );
 
                                     if(factory.room){
                                         room.checked = !room.checked;
+                                        factory.room = !factory.room;
                                         //f no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
                                         if(roomIds.length == 0){
                                             factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )
                                         }
+                                    } else {
+                                        console.log(returnedDeficiency);
+                                        for (var i = 0; i < returnedDeficiency.Rooms.length; i++) {
+                                            returnedDeficiency.Rooms[i].checked = true;
+                                        }
+                                        question.Responses.DeficiencySelections.push(returnedDeficiency);
                                     }
 
                                 },
@@ -593,7 +612,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
                     }
                     var url = '../../ajaxaction.php?action=removeDeficiencySelection';
-                      convenienceMethods.saveDataAndDefer( url, defDto )
+                      $rootScope.saving = convenienceMethods.saveDataAndDefer( url, defDto )
                           .then(
                               function(returnedBool){
                                   deficiency.IsDirty = false;
@@ -648,13 +667,14 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.evaluateDeficiencyRoomChecked = function( room, question, deficiency )
         {
+            if (!question.Responses.DeficiencySelections) return false;
             var i = question.Responses.DeficiencySelections.length;
             while(i--){
                 if( question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id ){
                     var j = question.Responses.DeficiencySelections[i].Rooms.length;
                     while(j--){
                         if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id ){
-                            return true;
+                            if(room.checked != false)return true;
                         }
                     }
                 }
@@ -722,7 +742,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 question.error = '';
                 observation.IsDirty = true;
                 var url = '../../ajaxaction.php?action=saveObservation';
-                      convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
+                      $rootScope.saving = convenienceMethods.saveDataAndDefer( url, $rootScope.ObservationCopy )
                           .then(
                               function(returnedObservation){
                                   factory.objectNullifactor($rootScope.ObservationCopy, question)
@@ -759,7 +779,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             question.error = '';
             recommendation.IsDirty = true;
             var url = '../../ajaxaction.php?action=saveRecommendation';
-                  convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, $rootScope.RecommendationCopy )
                       .then(
                           function(returnedRecommendation){
                               factory.objectNullifactor($rootScope.RecommendationCopy, question)
@@ -810,7 +830,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             question.error = '';
             var url = '../../ajaxaction.php?action=saveSupplementalObservation';
-                  convenienceMethods.saveDataAndDefer( url, soDto )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, soDto )
                       .then(
                           function( returnedSupplementalObservation ){
                               if( so ){
@@ -856,7 +876,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
             question.error = '';
             var url = '../../ajaxaction.php?action=saveSupplementalRecommendation';
-                  convenienceMethods.saveDataAndDefer( url, srDto )
+                  $rootScope.saving = convenienceMethods.saveDataAndDefer( url, srDto )
                       .then(
                           function( returnedSupplementalRecommendation ){
                             question.addRec = false;
@@ -896,7 +916,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         add:            !recommendation.checked
                     }
                     var url = '../../ajaxaction.php?action=saveRecommendationRelation';
-                    convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+                    $rootScope.saving = convenienceMethods.saveDataAndDefer( url, relationshipDTO )
                           .then(
                               function(){
                                   recommendation.checked = !recommendation.checked;
@@ -936,7 +956,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 add:            !observation.checked
             }
             var url = '../../ajaxaction.php?action=saveObservationRelation';
-            convenienceMethods.saveDataAndDefer( url, relationshipDTO )
+            $rootScope.saving = convenienceMethods.saveDataAndDefer( url, relationshipDTO )
                       .then(
                           function(){
                               observation.checked = !observation.checked;
@@ -1010,7 +1030,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         {
         var url = "../../ajaxaction.php?action=savePI";
         var deferred = $q.defer();
-          convenienceMethods.saveDataAndDefer(url, pi)
+          $rootScope.saving = convenienceMethods.saveDataAndDefer(url, pi)
             .then(
               function(promise){
                 deferred.resolve(promise);
@@ -1045,7 +1065,6 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
       }
 
     $scope.showRooms = function( event, deficiency, element, checklist, question ){
-        
         if(!deficiency.InspectionRooms){
             if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( cf.inspection.Rooms );
             //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
@@ -1059,6 +1078,22 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
         deficiency.showRoomsModal = !deficiency.showRoomsModal;
     }
 
+    $scope.getNeedsRooms = function(deficiency, checklist, question){
+        if(!deficiency.InspectionRooms){
+            if(!checklist.InspectionRooms || !checklist.InspectionRooms.length)checklist.InspectionRooms = convenienceMethods.copyObject( cf.inspection.Rooms );
+            //we haven't brought up this deficiency's rooms yet, so we should create a collection of inspection rooms
+            deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+        }else{
+            for (var i = 0; i < deficiency.InspectionRooms.length; i++ ){
+                if(!cf.evaluateDeficiencyRoomChecked( deficiency.InspectionRooms[i], question, deficiency )) return true;
+            }
+                
+        }
+        return false;
+        
+        console.log(deficiency);
+    }
+    
     //get the position of a mouseclick, set a properity on the clicked hazard to position an absolutely positioned div
     function calculateClickPosition(event, deficiency, element){
         var x = event.clientX;

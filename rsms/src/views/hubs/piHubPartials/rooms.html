@@ -9,8 +9,8 @@
     <tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
     <tr>
         <td colspan="5">
-            <a data-toggle="modal" ng-click="modalify(PI)" class="btn btn-info btn-large left">Assign Room</a>
-            <a class="btn btn-primary btn-large left">Create Room</a>
+            <a class="btn btn-info btn-large left" data-toggle="modal" ng-click="modalify(PI)">Assign Room</a>
+            <a class="btn btn-primary btn-large left" ng-click="modalify(PI, true)">Create Room</a>
         </td>
     </tr>
     <tr>
@@ -24,7 +24,7 @@
         <td width="25%">{{room.Building.Name}}</td>
         <td width="20%">{{room.Name}}</td>
         <td width="25%">{{room.Purpose}}</td>
-        <td><!--<a class="edit btn btn-large btn-warning left" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a>--><a class="edit btn btn-large btn-warning left" href="../inspection/hazardInventory.php#?pi={{PI.Key_id}}&room={{room.Key_id}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a></td>
+        <td><!--<a class="edit btn btn-large btn-warning left" ng-click="showHazards(room)"><i class="icon-lab"></i>Show Hazards</a>--><a class="edit btn btn-large btn-warning left" href="../../hazard-inventory/#?pi={{PI.Key_id}}&room={{room.Key_id}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a></td>
     </tr>
 </tbody>
 </table>

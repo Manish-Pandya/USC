@@ -109,6 +109,9 @@ class Inspection extends GenericCrud {
 
     private $cap_due_date;
 
+    /** is this inspection archived, or can it still be edited **/
+    private $isArchived;
+
     /** is this a radiation inspection **/
     private  $is_rad;
 
@@ -184,6 +187,10 @@ class Inspection extends GenericCrud {
         $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
         return $this->rooms;
     }
+    public function setRooms($rooms){
+        $this->getRooms = $rooms;
+    }
+
     public function setResponses($responses){ $this->responses = $responses; }
 
     public function getDate_started(){ return $this->date_started; }
@@ -354,6 +361,15 @@ class Inspection extends GenericCrud {
         $thisDAO = new GenericDAO($this);
         $this->inspection_wipe_tests = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTION_WIPES_TESTS_RELATIONSHIP));
         return $this->inspection_wipe_tests;
+    }
+
+    public function getIsArchived(){
+        $this->isArchived = ($this->getStatus() == "CLOSED OUT");
+        return $this->isArchived;
+    }
+
+    public function setIsArchived($archived){
+        $this->isArchived = $archived;
     }
 
 }

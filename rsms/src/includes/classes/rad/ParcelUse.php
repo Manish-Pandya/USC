@@ -60,12 +60,21 @@ class ParcelUse extends RadCrud {
 	/** Date the parcel was used **/
 	private $date_used;
 
+    /** Amount of parent parcel on hand**/
+    private $parcelAmountOnHand;
+
+    /** Amount of parent parcel available for use **/
+    private $parcelRemainder;
+
 	public function __construct() {
 
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getParcel");
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+        $entityMaps[] = new EntityMap("lazy", "getParcelAmountOnHand");
+        $entityMaps[] = new EntityMap("lazy", "getParcelRemainder");
+
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -113,5 +122,19 @@ class ParcelUse extends RadCrud {
 
     public function getDate_used() {return $this->date_used;}
     public function setDate_used($date_used) {$this->date_used = $date_used;}
+
+    public function getParcelAmountOnHand(){
+        $parentDao = new GenericDAO(new Parcel());
+        $parent = $parentDao->getById($this->getParcel_id());
+        $this->parcelAmountOnHand = $parent->getAmountOnHand();
+        return $this->parcelAmountOnHand;
+    }
+
+    public function getParcelRemainder(){
+        $parentDao = new GenericDAO(new Parcel());
+        $parent = $parentDao->getById($this->getParcel_id());
+        $this->parcelRemainder = $parent->getRemainder();
+        return $this->parcelRemainder;
+    }
 }
 ?>

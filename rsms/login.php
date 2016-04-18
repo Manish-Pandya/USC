@@ -28,26 +28,6 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
-    <script>
-        function whackWebkitMatchesSelector() {
-            var oldMatches = Element.prototype.webkitMatchesSelector
-
-            function newMatches(selector) {
-                try {
-                    return oldMatches.call(this, selector)
-                }
-                catch (err) {
-                    return false
-                }
-            }
-
-            Element.prototype.webkitMatchesSelector = newMatches
-        }
-
-        whackWebkitMatchesSelector()
-    </script>
-    <script src="http://192.168.1.118:8080/target/target-script-min.js#anonymous"></script>
-
 </head>
 <body>
 <div class="container-fluid">

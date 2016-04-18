@@ -1,4 +1,4 @@
-<tr ng-if="hasNegativeRespones(checklist.Questions)"><td colspan="4" class="checklistHeader {{checklist.Questions[0].ChecklistName}}">{{checklist.Name}}</td></tr>
+<tr ng-if="hasNegativeRespones(checklist.Questions)" class="no-hover"><td colspan="4" class="checklistHeader {{checklist.Questions[0].ChecklistName}}">{{checklist.Name}}</td></tr>
 <tr ng-repeat="question in (negs = checklist.Questions | isNegative | orderBy: 'Order_index')">
 <td colspan="2" style="padding:0;">
     <table class="table nested-table" style="border-spacing:0 !important" watched="{{question.Responses.DeficiencySelections.length}}">
@@ -6,13 +6,14 @@
         <td colspan=4>Unknown Deficiency</td>
     </tr>
     <tr ng-repeat="def in question.Responses.DeficiencySelections">
-        <td ng-if="def.Deficiency.Text" style="padding:16px !important;">
-            <span ng-if="def.Deficiency.Text != 'Other'" once-text="def.Deficiency.Text"></span>
-            <span ng-if="def.Deficiency.Text == 'Other'" once-text="def.Other_text"></span>
-            <ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0">
-                <li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
-                <li ng-repeat="room in def.Rooms">{{room.Name}}</li>
-            </ul>
+        <td ng-if="def.Deficiency.Text" style="padding:16px !important;width:58%">
+            <span ng-if="def.Deficiency.Text != 'Other'">
+                {{def.Deficiency.Text}}<span ng-if="def.Rooms.length && def.Show_rooms" style="display:inline"> (Room<span ng-if="def.Rooms.length>1">s</span>: <span ng-repeat="room in def.Rooms">{{room.Name}}<span ng-if="!$last">, </span></span>)</span>
+            </span>
+            <span ng-if="def.Deficiency.Text == 'Other'">
+                {{def.Other_text}}<span style="display:inline" ng-if="def.Rooms.length && def.Show_rooms"> (Room<span ng-if="def.Rooms.length>1">s</span>: <span ng-repeat="room in def.Rooms">{{room.Name}}<span ng-if="!$last">, </span></span>)</span>
+            </span>
+            
         </td>
         <td style="padding:16px !important;" ng-if="!def.Deficiency.Text">
             Unknown Deficiency
@@ -26,14 +27,14 @@
             <div>
                 <div class="inner-action" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
                     <div style="text-align:center">
-                        <a class="btn btn-danger btn-larger left" ng-click="openModal(question, def)">
+                        <a class="btn btn-danger btn-larger left" ng-disabled="inspection.isArchived" ng-click="openModal(question, def)">
                             <i class="icon-plus-2"></i>Add Corrective Action
                         </a>
                     </div>
                 </div>
 
                 <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
-                    <a class="btn btn-primary left" ng-click="openModal(question, def)">
+                    <a class="btn btn-primary left" ng-disabled="inspection.isArchived" ng-click="openModal(question, def)">
                         <i class="icon-pencil"></i>Edit
                     </a>
                     <i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
@@ -46,7 +47,7 @@
                 </div>
 
                 <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
-                    <a ng-click="openModal(question, def)" class="btn btn-primary left">
+                    <a ng-disabled="inspection.isArchived" ng-click="openModal(question, def)" class="btn btn-primary left">
                         <i class="icon-pencil"></i>Edit
                     </a>
                     <h4 class="bold">Completed Corrective Action:</h4>

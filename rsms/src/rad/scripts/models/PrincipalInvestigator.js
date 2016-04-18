@@ -127,7 +127,7 @@ PrincipalInvestigator.prototype = {
         dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.SolidsContainersRelationship);
     },
 
-    loadCarboyUseCycles: function() {
+    loadCarboyUseCycles: function () {
         dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
     },
 
@@ -146,7 +146,6 @@ PrincipalInvestigator.prototype = {
     },
 
     loadWasteBags: function () {
-        console.log(this.SolidsContainers);
         if((!this.WasteBags || !this.WasteBags.length) && this.SolidsContainers){
             this.WasteBags = [];
             var i = this.SolidsContainers.length;

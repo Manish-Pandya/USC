@@ -50,13 +50,19 @@ var Constants = (function () {
         STATUS:{
             NOT_SCHEDULED:"NOT SCHEDULED",
             SCHEDULED:"SCHEDULED",
-            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                                                   INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
+            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION",                                                               
+            INCOMPLETE_INSPECTION:"INCOMPLETE INSPECTION",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             OVERDUE_CAP:"OVERDUE CAP",
             CLOSED_OUT:"CLOSED OUT"
         },
         SCHEDULE_STATUS:{
-            NOT_ASSIGNED:"NOT ASSIGNED",
+            NOT_ASSIGNED:"NOT ASSIGNED"
+        },
+        TYPE:{
+            BIO:"BioSafety Inspection",
+            CHEM:"Chemical Inspection",
+            RAD:"Radiation Inspection"
         },
         MONTH_NAMES:[
                         {val:"01", string:"January"},
@@ -169,16 +175,8 @@ var Constants = (function () {
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
-            OTHER_PI: "Used by another PI's lab",
-            IN_USER: "In Use"
-        }
-    }
-
-    constants.HAZARD_PI_ROOM = {
-        STATUS: {
-            STORED_ONLY: "Stored Only",
-            OTHER_PI: "Used by another PI's lab",
-            IN_USER: "In Use"
+            OTHER_PI: "Other Lab's Hazard",
+            IN_USE: "In Use"
         }
     }
 
@@ -197,6 +195,6 @@ var Constants = (function () {
         },
         EQUIPMENT_CLASS: "BioSafetyCabinet"
     }
-
+    
     return constants;
 })();
