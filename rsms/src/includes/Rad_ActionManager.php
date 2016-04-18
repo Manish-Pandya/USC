@@ -577,6 +577,11 @@ class Rad_ActionManager extends ActionManager {
         return $dao->getAll();
     }
 
+    public function getAllCarboyReadingAmounts(){
+        $dao = $this->getDao(new CarboyReadingAmount());
+        return $dao->getAll();
+    }
+
     function getAllDrums() {
         $drumDao = $this->getDao(new Drum());
         return $drumDao->getAll();
@@ -753,6 +758,17 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new CarboyUseCycle());
             $decodedObject = $dao->save($decodedObject);
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getCarboy");
+            $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+            $entityMaps[] = new EntityMap("eager", "getContents");
+            $entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
+            $entityMaps[] = new EntityMap("lazy", "getRoom");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
+            $decodedObject->setEntityMaps($entityMaps);
             return $decodedObject;
         }
     }
@@ -1340,9 +1356,21 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyReadingAmount());
+            $LOG->fatal($decodedObject);
+
             $decodedObject = $dao->save($decodedObject);
+
             $cycle = $decodedObject->getCarboy_use_cycle();
-            $LOG->debug($cycle);
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getCarboy");
+            $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+            $entityMaps[] = new EntityMap("eager", "getContents");
+            $entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
+            $entityMaps[] = new EntityMap("lazy", "getRoom");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
+            $cycle->setEntityMaps($entityMaps);
             return $cycle;
         }
     }
@@ -2240,6 +2268,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setPIAuthorization($this->getAllPIAuthorizations());
     	$dto->setCarboy($this->getAllCarboys());
     	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
+        $dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
     	$dto->setDrum($this->getAllDrums());
     	$dto->setDepartment($this->getAllDepartments());
     	$dto->setInspectionWipe($this->getAllInspectionWipes());

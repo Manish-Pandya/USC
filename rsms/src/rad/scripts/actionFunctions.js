@@ -2018,12 +2018,14 @@ angular
                     )
             }
 
-            af.saveCarboyReadingAmount = function(cycle, copy){
+            af.saveCarboyReadingAmount = function (cycle, copy) {
+
                 af.clearError();
                 copy.Date_read = convenienceMethods.setMysqlTime(new Date());
                 return $rootScope.saving = this.save(copy)
                     .then(
-                        function(returnedCycle){
+                        function (returnedCycle) {
+                            console.log(returnedCycle);
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
                             var i = returnedCycle.Carboy_reading_amounts.length;
                             while(i--){
@@ -2226,6 +2228,7 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PIAuthorization ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.WasteType));
                             //store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyReadingAmount));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Carboy));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyUseCycle));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipe ));

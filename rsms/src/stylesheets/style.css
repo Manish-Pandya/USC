@@ -3523,10 +3523,10 @@ div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .t
   border-left: none;
 }
 .well >h1 > i {
-  margin-right: 10px;
+  margin-right: 5px;
   font-size: 35px;
   width: auto;
-  line-height: 53px;
+  line-height: 43px;
 }
 .well >h2 > i{
   margin-right: 7px;
