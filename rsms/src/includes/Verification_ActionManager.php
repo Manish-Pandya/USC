@@ -9,7 +9,7 @@
  */
 ?><?php
 
-class Verification_ActionManager extends ActionManager  {
+class Verification_ActionManager extends HazardInventoryActionManager {
 
     /***
      * 
