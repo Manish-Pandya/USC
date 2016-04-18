@@ -15,7 +15,7 @@ abstract class Equipment extends GenericCrud{
     protected $frequency;
     protected $serial_number;
     protected $equipmentInspections; //array\
-    protected $principalInvestigatorId;
+    protected $principaInvestigatorId;
     protected $roomId;
     
     /** Relationships */

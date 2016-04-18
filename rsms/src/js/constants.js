@@ -133,8 +133,7 @@ var Constants = (function () {
     constants.BIOSAFETY_CABINET = {
         FREQUENCY: {
             ANNUALLY: "Annually",
-            BI_ANNUALLY: "Bi-annually",
-            SEMI_ANNUALLY: "Semi-annually"
+            BI_ANNUALLY: "Bi-annually"
         },
         EQUIPMENT_CLASS: "BioSafetyCabinet"
     }

@@ -162,13 +162,31 @@ angular.module('EquipmentModule')
         console.log($scope.modalData.BioSafetyCabinetCopy);
     
         $scope.getBuilding = function(){
-            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections){
+            if ($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections) {
                 $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Room.Building.Name;
+            } else {
+                $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings[0];
+            }
+            
+        }
+
+        $scope.getRoom = function () {
+            if ($scope.modalData.BioSafetyCabinetCopy.RoomId) {
+
+            } else {
+                for (var i = 0; i < $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms.length; i++) {
+                    var room = $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms[i];
+                    if(room.Building.Name == $scope.modalData.selectedBuilding){
+                        $scope.modalData.BioSafetyCabinetCopy.Room = room;
+                        $scope.modalData.BioSafetyCabinetCopy.RoomId = room.Key_id;
+                    }
+                }
             }
         }
     
         $scope.onSelectBuilding = function(){
-            $scope.roomFilter = $scope.modalData.SelectedBuilding;    
+            $scope.roomFilter = $scope.modalData.SelectedBuilding;
+            $scope.getRoom();
         }
     
         $scope.onSelectRoom = function(){
