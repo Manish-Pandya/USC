@@ -117,6 +117,8 @@ include_once 'RadCrud.php';
 		date_default_timezone_set('America/New_York');
 		
 		$LOG = Logger::getLogger(__CLASS__);
+
+        $LOG->fatal("getPour_allowed_date");
 		
 		//the date this reading happened
 		$originalDate = new DateTime();

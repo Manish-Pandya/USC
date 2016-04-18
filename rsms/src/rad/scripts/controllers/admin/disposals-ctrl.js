@@ -44,8 +44,8 @@ angular.module('00RsmsAngularOrmApp')
             .then(
                 function(cycles){
                     console.log(cycles);
-                    if(!dataStore.CarboyUseCycle)dataStore.CarboyUseCycle=[];
-                    $scope.cycles = dataStore.CarboyUseCycle;
+                    if (!dataStore.CarboyUseCycle) dataStore.CarboyUseCycle = [];
+                    $scope.cycles = dataStoreManager.get("CarboyUseCycle");
                     return cycles;
                 }
             )
@@ -129,6 +129,7 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
+        $rootScope.CarboyReadingAmountCopy.Class = "CarboyReadingAmount";
         if (!cycle.Carboy_reading_amounts) cycle.Carboy_reading_amounts = [];
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }

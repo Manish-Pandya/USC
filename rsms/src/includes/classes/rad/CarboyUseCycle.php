@@ -99,7 +99,7 @@ class CarboyUseCycle extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getCarboy_reading_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
-		$entityMaps[] = new EntityMap("lazy", "getPour_allowed_date");
+		$entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
 		$this->setEntityMaps($entityMaps);
 
 	}

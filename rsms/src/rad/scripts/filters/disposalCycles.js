@@ -25,7 +25,6 @@ angular.module('00RsmsAngularOrmApp')
 					    console.log(now.getTime());
   						if(beginningOfPourDay.getTime() <= now.getTime())cycle.pourable = true;
   					}
-
   					disposalCycles.unshift(cycle);
 	  			}
 	  		}
