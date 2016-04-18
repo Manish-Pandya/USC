@@ -22,7 +22,6 @@ require_once '../top_view.php';
     <h2 ng-if="noChecklist && !checklist" style="">{{hazard.Name}}</h2>
     <a ng-if="!edit && doneLoading && !checklist"  style="margin-top:5px;" ng-click="editChecklist()" class="btn btn-primary">Create Checklist</a>
     <form ng-show="checklist && (edit || !checklist.Key_id)" style="margin-top:5px;">
-        {{edit}}
         <input ng-model="checklistCopy.Name" class="span6" placeholder="Enter a name for this checklist."/>
         <a class="btn btn-success left" ng-click="saveChecklist(checklistCopy, checklist)"><i class="icon-checkmark"></i>Save Checklist</a>
         <a class="btn btn-danger left" ng-show="!noChecklist" ng-click="edit = false"><i class="icon-cancel"></i>Cancel</a>
