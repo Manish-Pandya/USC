@@ -341,3 +341,17 @@ button.btn:not(.btn-large) {
 .bio-safety-cabinets table tr th ul li input, select{
     margin-top:2px
 }
+.modal-body .control-group{
+    margin-bottom:25px
+}
+.modal-body label{
+    font-weight:bold;
+    font-size:16px;
+}
+.modal-body label span {
+    font-weight:normal;
+}
+.modal-body .controls .ui-select-container{
+    float:left;
+    width: 80%;
+}
