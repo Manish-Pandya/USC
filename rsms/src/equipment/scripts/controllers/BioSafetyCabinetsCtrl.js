@@ -206,7 +206,14 @@ angular.module('EquipmentModule')
                     .then(function(){$scope.close()})
         }
         
-        $scope.certify = function(copy, original){
+        $scope.certify = function (copy, original) {
+            $scope.message = null;
+            console.log(copy);
+            if (!copy.Report_path) {
+                $scope.message = "Please upload a report.";
+                return;
+            }
+
             if(!original)original = null;
             copy.Certification_date = convenienceMethods.setMysqlTime(new Date());
             af.saveEquipmentInspection(copy, original)
@@ -239,7 +246,7 @@ angular.module('EquipmentModule')
                 if (xhr.status == 200){
                     $scope.modalData.BioSafetyCabinetCopy.reportUploaded = true;
                     $scope.modalData.BioSafetyCabinetCopy.reportUploading = false;
-                    $scope.modalData.BioSafetyCabinetCopy.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                    $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Report_path = xhr.responseText.replace(/['"]+/g, '');
                     $scope.$apply();
                 }
             }

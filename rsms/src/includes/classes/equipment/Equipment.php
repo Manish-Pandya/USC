@@ -100,7 +100,7 @@ abstract class Equipment extends GenericCrud{
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
                 if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
-                if($this->getRoomId() != null)                  $inspection->setRoom_id($this->getRoomId());
+                if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
                 
                 $l->fatal($inspection);
 
