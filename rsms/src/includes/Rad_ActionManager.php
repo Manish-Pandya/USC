@@ -734,17 +734,23 @@ class Rad_ActionManager extends ActionManager {
             $key_id = $decodedObject->getKey_id();
             $dao = $this->getDao(new Carboy());
             $carboy = $dao->save($decodedObject);
-            if ( $key_id == NULL ) {
+            if ( $decodedObject->getKey_id() == NULL ) {
+                $carboy->setCommission_date( date('Y-m-d H:i:s') );
+                $carboy = $dao->save($carboy);
+            }
+
+            if($carboy->getCarboy_use_cycles() == NULL){
                 $carboyCycle = new CarboyUseCycle();
                 $carboyCycle->setCarboy_id( $carboy->getKey_id() );
                 $carboyCycle->setStatus( "Available" );
-
-                $carboy->setCommission_date( date('Y-m-d H:i:s') );
-                $carboy = $dao->save($carboy);
-
                 $carboyUseCycle_dao = $this->getDao($carboyCycle);
                 $savedCarboyCycle = $carboyUseCycle_dao->save($carboyCycle);
             }
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
+            $carboy->setEntityMaps($entityMaps);
+
             return $carboy;
         }
     }

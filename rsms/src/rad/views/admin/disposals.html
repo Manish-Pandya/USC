@@ -151,10 +151,11 @@
 		</div>
 	</div>
 	<div class="well two-thirds">
-		<h1 class="disposals"><i class="icon-database"></i>Drums </h1>
+		<h1 class="disposals"><i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a></h1>
 		<div class="card full">
 			<div class="fake-table bordered">
 				<div class="table-header">
+                    <h3>Edit Drum</h3>
 					<h3>Label</h3>
 					<h3>Contents</h3>
 					<h3>Shipment Info</h3>
@@ -174,7 +175,7 @@
 					</div>
 
 					<div>
-						<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}</p>
+						<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}</p>
 					</div>
 
 					<div>

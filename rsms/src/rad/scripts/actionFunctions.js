@@ -1953,13 +1953,14 @@ angular
                     .then(
                         function(returnedDrum){
                             returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
-                            if(drum.Key_id){
+                            if(drum && drum.Key_id){
                                 angular.extend(drum, copy)
+                                drum.edit = false;
+
                             }else{
                                 dataStoreManager.store(returnedDrum);
                                 $rootScope.DrumCopy = {};
                             }
-                            drum.edit = false;
                         },
                         af.setError('The Drum could not be saved')
 
@@ -2003,26 +2004,7 @@ angular
 
                     )
             }
-
-            af.saveDrum = function(drum, copy){
-                af.clearError();
-                return this.save(copy)
-                    .then(
-                        function(returnedDrum){
-                            returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
-                            if(drum.Key_id){
-                                angular.extend(drum, copy)
-                            }else{
-                                dataStoreManager.store(returnedDrum);
-                                $rootScope.DrumCopy = {};
-                            }
-                            return returnedDrum;
-                        },
-                        af.setError('The Drum could not be saved')
-
-                    )
-            }
-
+            
             af.saveCarboyReadingAmount = function (cycle, copy) {
 
                 af.clearError();

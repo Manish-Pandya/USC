@@ -106,6 +106,21 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.editDrum = function (object) {
+        console.log(object);
+        var modalData = {};
+        if (!object) {
+            object = new window.Drum();
+            object.Class = "Drum";
+        }
+        modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/drum-modal.html',
+            controller: 'DrumShipCtrl'
+        });
+    }
+
     $scope.editCycle = function(cycle){
         cycle.edit=true;
         af.createCopy(cycle);
@@ -187,10 +202,14 @@ angular.module('00RsmsAngularOrmApp')
         $scope.af = af;
         $scope.modalData = af.getModalData();
         console.log($scope.modalData);
-                    $scope.close();
 
-        $scope.shipDrum = function(drum, copy){
+        $scope.shipDrum = function (drum, copy) {
             $rootScope.saving = af.saveDrum(drum, copy)
+        }
+
+        $scope.saveDrum = function (drum, copy) {
+            $rootScope.saving = af.saveDrum(drum, copy)
+            $scope.close();
         }
 
         $scope.close = function(){
