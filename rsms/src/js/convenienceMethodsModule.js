@@ -511,7 +511,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
 .filter('roundFloat', function () {
     return function (item) {
         var number = parseFloat(item);
-        return Math.round(number * 100000) / 100000;
+        return Math.round(number * 100000) / 100000 || "0";
     }
 })
 //is a user a lab contact?  run this fancy filter to find out.

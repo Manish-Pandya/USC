@@ -181,6 +181,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'current-inventories',
+                        Label: 'Current Inventories',
+                        Dashboard: true
+                    },
+                    {
                         Name:'quarterly-inventory',
                         Label: 'Quarterly Inventory',
                         Dashboard: true

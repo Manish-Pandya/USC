@@ -123,6 +123,11 @@ angular
         templateUrl: "views/pi/pickups.html",
         controller: "PickupCtrl"
       })
+      .state('current-inventories', {
+        url: '/my-lab:pi/current-inventories',
+        templateUrl: "views/pi/CurrentInventories.html",
+        controller: "InventoryViewCtrl"
+       })
       .state('inspection-wipes:inspection', {
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",
