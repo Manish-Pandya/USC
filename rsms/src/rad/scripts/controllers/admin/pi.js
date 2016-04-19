@@ -168,6 +168,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveAuthorization = function (pi, copy, auth) {
+            copy.Pi_authorization_id = copy.Pi_authorization_id || pi.Pi_authorization.Key_id;
             $modalInstance.dismiss();
             af.deleteModalData();
             af.saveAuthorization(pi, copy, auth)
@@ -204,7 +205,8 @@ angular.module('00RsmsAngularOrmApp')
             $scope.saveParcel(pi, copy, parcel);
         }
 
-        $scope.addCarboyToLab = function(cycle, pi){
+        $scope.addCarboyToLab = function (cycle, pi) {
+            console.log(cycle);
             //cycle.loadCarboy();
             cycle.Is_active = false;
             $modalInstance.dismiss();
@@ -213,7 +215,7 @@ angular.module('00RsmsAngularOrmApp')
                 Room_id: cycle.Room.Key_id,
                 Principal_investigator_id: pi.Key_id,
                 Key_id: cycle.Key_id || null,
-                Carboy_id: carboy.Key_id
+                Carboy_id: cycle.Carboy_id
             }
             console.log(cycleCopy);
             af.deleteModalData();
