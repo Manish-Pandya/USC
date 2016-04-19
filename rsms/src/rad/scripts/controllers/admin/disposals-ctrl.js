@@ -201,10 +201,10 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log($scope.modalData);
 
         $scope.shipDrum = function (drum, copy) {
-            $rootScope.saving = af.saveDrum(drum, copy)
+            $rootScope.saving = af.saveDrum(drum, copy);
+            $scope.close();
         }
 
         $scope.saveDrum = function (drum, copy) {
