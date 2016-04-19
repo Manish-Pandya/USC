@@ -114,6 +114,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/controllers/locationCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/confirmationCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/adminCtrl.js"></script>
+<script type="text/javascript" src="scripts/controllers/hazardVerificationCtrl.js"></script>
 
 
 <!-- models -->
@@ -126,7 +127,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/models/User.js"></script>
 <script type="text/javascript" src="scripts/models/Room.js"></script>
 <script type="text/javascript" src="scripts/models/Building.js"></script>
-<script type="text/javascript" src="scripts/models/Hazard.js"></script>
+<script type="text/javascript" src="scripts/models/HazardDto.js"></script>
 
 <script type="text/javascript" src="../js/lib/phone-format.js"></script>
 

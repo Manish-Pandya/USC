@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="card full" ng-show="roomChanges">
+<div class="card full" ng-show="roomChanges.length">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Locations</h3>
     <ul>
         <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED)">

@@ -1,1 +1,15 @@
-<h1>Coming Soon</h1>
+<h1>{{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}</h1>
+<a ng-click="incrementRoom(-1)" ng-if="roomIdx > 0 || buildingIdx != 0">Prev</a><a ng-if="(buildingIdx != PI.Buildings.length - 1) && (roomIdx != PI.Buildings[buildingIdx].Rooms.length - 1)" ng-click="incrementRoom(1)">Next</a>
+<br />bldg{{buildingIdx != PI.Buildings.length - 1}}  room{{PI.Buildings[buildingIdx].Rooms.length - 1}}
+<br />
+bldg:{{buildingIdx}} | room: {{roomIdx}}
+<ul>
+    <li ng-repeat="hazard in allHazards | orderBy: 'Hazard_name'">
+        {{hazard.Hazard_name}}
+        <ul>
+            <li ng-repeat="child in hazard.ActiveSubHazards">
+                {{child.Hazard_name}}
+            </li>
+        </ul>
+    </li>
+</ul>

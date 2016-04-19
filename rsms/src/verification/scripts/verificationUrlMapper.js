@@ -21,7 +21,8 @@
         'Building'              : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: "saveBuilding"               },
         'PrincipalInvestigator' : {getById: "getPIForVerification"         , getAll: "getAllRadPis"                 , save: "savePI"                     },
         'PendingUserChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingUserChange"      },
-        'PendingRoomChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingRoomChange"      }
+        'PendingRoomChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingRoomChange"      },
+        'Hazard'                : { getById: "getHazardRoomDtosByPIId"     , getAll: "getAllHazards"                , save: "saveHazard"                 }
 };
 
 urlMapper.list =  verificationUrlMapper.list;

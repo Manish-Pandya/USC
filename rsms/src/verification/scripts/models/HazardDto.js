@@ -1,9 +1,9 @@
 'use strict';
 
 //constructor
-var Hazard = function() {};
-Hazard.prototype = {
-    className: "Hazard",
+var HazardDto = function () { };
+HazardDto.prototype = {
+    className: "HazardDto",
 
     eagerAccessors:[
         {method:"loadPendingHazardChange", boolean:'Name'}
@@ -18,13 +18,26 @@ Hazard.prototype = {
                 this.PendingHazardChangeCopy = dataStoreManager.createCopy(this.PendingHazardChange)
             }else{
                 this.PendingHazardChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingHazardChange());
-                if(!this.PendingHazardChangeCopy.hasOwnProperty("Parent_class"))this.PendingHazardChangeCopy.Parent_class = "Hazard";
+                if (!this.PendingHazardChangeCopy.hasOwnProperty("Parent_class")) this.PendingHazardChangeCopy.Parent_class = "HazardDto";
                 this.PendingHazardChangeCopy.Parent_id = this.Key_id;
             }
-            this.PendingHazardChangeCopy.Is_active = true;        
+            this.PendingHazardChangeCopy.Is_active = true;
+        }
+    },
+
+    SubHazardsRelationship: {
+        className:    'HazardDto',
+        keyReference:  'Parent_hazard_id',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+
+    loadSubHazards: function(){
+        if(!this.ActiveSubHazards) {
+            return dataLoader.loadOneToManyRelationship( this, 'ActiveSubHazards', this.SubHazardsRelationship);
         }
     }
 }
 
 // inherit from GenericModel
-extend(Hazard, GenericModel);
+extend(HazardDto, GenericModel);

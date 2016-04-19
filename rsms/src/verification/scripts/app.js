@@ -51,7 +51,8 @@ angular
     })
     .state('verification.step4', {
         url: "/inventory",
-        templateUrl: "views/hazards.html"
+        templateUrl: "views/hazards.html",
+        controller: "HazardVerificationCtrl"
     })
     .state('verification.step5', {
         url: "/confirmation",
@@ -119,7 +120,7 @@ angular
             {
                 Name: 'verification.step4',
                 Label: 'Verify Hazard Inventory',
-                Message: 'Please verify the following personnel still work in your lab(s).',
+                Message: 'Please verify the following hazards are present in your lab(s).',
                 NavLabel:'Inventory',
                 Step:4
             },

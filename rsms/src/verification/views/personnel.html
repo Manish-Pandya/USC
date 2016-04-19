@@ -1,7 +1,7 @@
 <div class="added-list" ng-if="verification">
     <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Contacts</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:'Constants.PENDING_CHANGE.USER_STATUS.ADDED | activeOnly | pendingContactOrPersonnel:Constants.ROLE.NAME.LAB_CONTACT)">
+        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:Constants.PENDING_CHANGE.USER_STATUS.ADDED | activeOnly | pendingContactOrPersonnel:Constants.ROLE.NAME.LAB_CONTACT)">
             <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
             {{pendingUserChange.Name}}
         </li>
@@ -52,7 +52,7 @@
 <div class="added-list" ng-if="verification">
     <h3 class="card-header padding bg-color-blue" style="padding:5px">Added Lab Members</h3>
     <ul ng-if="verification">
-        <li ng-repeat="pendingUserChange in newChanges = (verification.PendingUserChanges | hasNewStatus:Constants.PENDING_CHANGE.USER_STATUS.ADDED | activeOnly | pendingContactOrPersonnel:Constants.ROLE.NAME.LAB_PERSONNEL)">
+        <li ng-repeat="pendingUserChange in verification.PendingUserChanges | hasNewStatus: Constants.PENDING_CHANGE.USER_STATUS.ADDED | activeOnly | pendingContactOrPersonnel: Constants.ROLE.NAME.LAB_PERSONNEL">
             <a style="margin:0 5px;" ng-click="ac.savePendingUserChange(selectedUser, verification.Key_id, pendingUserChange);" class="btn btn-danger left btn-mini"><i class="icon-remove"></i></a>                 
             {{pendingUserChange.Name}}
         </li>

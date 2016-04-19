@@ -36,6 +36,20 @@ angular
             return dataSwitchFactory.getAllObjects('User', null, true);
         }
 
+        ac.getAllHazards = function (id) {
+            dataStore.HazardDto = null;
+            var urlSegment = "getHazardRoomDtosByPIId&id=" + id;
+
+            return genericAPIFactory.read(urlSegment)
+                    .then(
+                        function (returnedPromise) {
+                            var hazards = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            store.store(hazards);
+                            return store.get('HazardDto');
+                        }
+                    );
+        }
+
         ac.getAllBuildings = function () {
             return dataSwitchFactory.getAllObjects('Building', true, true);
         }
