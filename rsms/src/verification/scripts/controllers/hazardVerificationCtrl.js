@@ -67,37 +67,38 @@
                      .then(
                          function (hazards) {
                              // get leaf parents
-                             // IDEA: Lets just store key_ids and use dataStoreManager.getById method.
-                             // That way, we can selectively push based on array.indexOf
                              var hazard,
-                                 leafParentHazards = [],
-                                 parentMap = [];
+                                 leafParentHazards = [];
                              var len = hazards.length;
                              for (var n = 0; n < len; n++) {
                                  hazard = hazards[n];
                                  hazard.loadSubHazards();
                                  var parent = dataStoreManager.getById("HazardDto", hazards[n].Parent_hazard_id);
-                                 if(parent && hazard.ActiveSubHazards && !hazard.ActiveSubHazards.length  && !parent.pushed){
-                                     leafParentHazards.push(parent);
-                                     parentMap.push(parent);
-                                     parent.pushed = true;
+                                 if (parent && hazard.ActiveSubHazards && !hazard.ActiveSubHazards.length && !parent.pushed) {
+                                     if (leafParentHazards.indexOf(hazard.Key_id) == -1 && leafParentHazards.indexOf(parent.Key_id) == -1) {
+                                         leafParentHazards.push(parent.Key_id);
+                                         parent.pushed = true;
+                                     }
                                  }
                              }
                              //http://erasmus.graysail.com/rsms/src/verification/#/inventory
                              var categorizedHazards = {
-                                 "1": [],
-                                 "10009": [],
-                                 "10010": [],
+                                 1: [],
+                                 10009: [],
+                                 10010: []
                              };
 
                              for (var x = 0; x < leafParentHazards.length; x++) {
-                                recurseUpTree(leafParentHazards[x]);
+                                 recurseUpTree(leafParentHazards[x]);
                              }
                              
-                             function recurseUpTree(hazard) {
+                             function recurseUpTree(hazardId) {
+                                 var hazard = dataStoreManager.getById("HazardDto", hazardId);
                                  if ( categorizedHazards.hasOwnProperty(hazard.Key_id) || categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id) ) {
-                                     if (categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) categorizedHazards[hazard.Parent_hazard_id].push(hazard);
-                                     return false;
+                                     if (categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) {
+                                        categorizedHazards[hazard.Parent_hazard_id].push(hazard);
+                                        return false;
+                                     }
                                  } else {
                                      var p = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
                                      //why is there a hazard with the same key_id as its parent_id???
@@ -110,7 +111,7 @@
                             
                              $scope.selectedCategory = 1;
                              $scope.allHazards = categorizedHazards;
-                             console.log(id, categorizedHazards);
+                             //console.log(id, categorizedHazards);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";

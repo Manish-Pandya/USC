@@ -121,6 +121,7 @@ angular
                 Name: 'verification.step4',
                 Label: 'Verify Hazard Inventory',
                 Message: 'Please verify the following hazards are present in your lab(s).',
+                ConfirmationMessage: 'I verify that all information provided is accurate and complete to the best of my knowledge',
                 NavLabel:'Inventory',
                 Step:4
             },
