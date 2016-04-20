@@ -40,7 +40,7 @@
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllHazards);
-
+        $scope.dsm = dataStoreManager;
 
         function getVerification(id) {
             return ac.getVerification(id)
@@ -67,6 +67,8 @@
                      .then(
                          function (hazards) {
                              // get leaf parents
+                             // IDEA: Lets just store key_ids and use dataStoreManager.getById method.
+                             // That way, we can selectively push based on array.indexOf
                              var hazard,
                                  leafParentHazards = [],
                                  parentMap = [];
@@ -81,9 +83,34 @@
                                      parent.pushed = true;
                                  }
                              }
+                             //http://erasmus.graysail.com/rsms/src/verification/#/inventory
+                             var categorizedHazards = {
+                                 "1": [],
+                                 "10009": [],
+                                 "10010": [],
+                             };
+
+                             for (var x = 0; x < leafParentHazards.length; x++) {
+                                recurseUpTree(leafParentHazards[x]);
+                             }
                              
-                             $scope.allHazards = leafParentHazards;
-                             console.log(id, leafParentHazards);
+                             function recurseUpTree(hazard) {
+                                 if ( categorizedHazards.hasOwnProperty(hazard.Key_id) || categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id) ) {
+                                     if (categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) categorizedHazards[hazard.Parent_hazard_id].push(hazard);
+                                     return false;
+                                 } else {
+                                     var p = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
+                                     //why is there a hazard with the same key_id as its parent_id???
+                                     if (!p || hazard.Key_id == hazard.Parent_hazard_id) return false;                                     
+                                     return recurseUpTree(p);
+                                 }
+                                 return false;
+                             }
+                             
+                            
+                             $scope.selectedCategory = 1;
+                             $scope.allHazards = categorizedHazards;
+                             console.log(id, categorizedHazards);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
