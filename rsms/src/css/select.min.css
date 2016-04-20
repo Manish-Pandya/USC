@@ -59,7 +59,7 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
   position: absolute;
   margin-top: 5px;
 }
-.selectize-control>.selectize-dropdown,.selectize-control>.selectize-input>input{width:100%}
+.selectize-control>.selectize-dropdown,.selectize-control>.selectize-input>input{margin-bottom: 0;width:100%;}
 .ui-select-choices ui-select-dropdown{
     max-height:50px;
     overflow-y: visible;
@@ -74,7 +74,12 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
 .ui-select-container{
     height: 27px;
     text-align:left;
-    position:relative;
+    position: relative;
+}
+.modal-body .ui-select-container{
+    height: 27px;
+    text-align:left;
+    position: static;
 }
 .control-group ul{
     display: block;

@@ -341,7 +341,7 @@ button.btn:not(.btn-large) {
 .bio-safety-cabinets table tr th ul li input, select{
     margin-top:2px
 }
-.modal-body .control-group{
+.modal-body.inspections .control-group{
     margin-bottom:25px
 }
 .modal-body label{
@@ -354,4 +354,10 @@ button.btn:not(.btn-large) {
 .modal-body .controls .ui-select-container{
     float:left;
     width: 80%;
+}
+.modal-body .selectize-input>div {
+    width: 262px !important;
+}
+.modal-body i.icon-cancel.danger {
+    margin-top:-5px
 }

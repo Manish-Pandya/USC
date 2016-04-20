@@ -39,7 +39,6 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 
     // data not cached, get it from the server
     else {
-        console.log(relationship)
         var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
 
         parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {

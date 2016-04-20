@@ -7,8 +7,9 @@
         <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
     <div>
-        <h2 style="padding-top:60">Complete Certifications</h2>
+        <h2 style="padding-top:60px">Complete Certifications</h2>
         <h2 ng-if="!cabinets.length">No Cabinets</h2>
+        <h2 ng-if="!completeCabinets.length">No cabinets have complete certifications.</h2>
         <div class="full bio-safety-cabinets well full" ng-show="completeCabinets.length">
             <table class="table table-striped table-bordered">
                 <tr class="table-header">
@@ -28,7 +29,7 @@
                             </li>
                             <li>
                                 CERT-DATE<br>
-                                <select ng-options="certYear as certYear for certYear in certYears" ng-model="selectedCertificationDate">
+                                <select ng-options="certYear as certYear for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate">
                                     <option value="">All</option>
                                 </select>
                             </li>
@@ -113,7 +114,7 @@
                             </li>
                             <li>
                                 DUE-DATE<br>
-                                <select ng-options="dueYear as dueYear for dueYear in dueYears" ng-model="selectedDueDate">
+                                <select ng-options="dueYear as dueYear for dueYear in dueYears | orderBy:'toString()'" ng-model="selectedDueDate">
                                     <option value="">All</option>
                                 </select>
                             </li>
