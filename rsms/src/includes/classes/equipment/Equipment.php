@@ -77,7 +77,7 @@ abstract class Equipment extends GenericCrud{
     
     public function getEquipmentInspections(){
         $l = Logger::getLogger('getEquipmentInspections?');
-        
+
         if($this->equipmentInspections == null){
             $thisDAO = new GenericDAO( new EquipmentInspection() );
             // TODO: this would be a swell place to sort
@@ -95,17 +95,16 @@ abstract class Equipment extends GenericCrud{
     
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
-        $l->fatal($this->getEquipmentInspections());
         if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
                 if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
                 if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
                 
-                $l->fatal($inspection);
 
                 $inspectionDao = new GenericDao($inspection);
-                $this->equipmentInspections = array( $inspectionDao->save($inspection) );
+                $inspection = $inspectionDao->save($inspection);
+                //$this->equipmentInspections = array( $inspection );
             }
         }
     }

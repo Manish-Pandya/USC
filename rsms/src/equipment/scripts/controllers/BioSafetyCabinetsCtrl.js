@@ -27,31 +27,13 @@ angular.module('EquipmentModule')
         };
     })
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-        var af = $scope.af = applicationControllerFactory;
-    
+        var af = $scope.af = applicationControllerFactory;    
         var getAllInspections = function(){
             return af.getAllEquipmentInspections().then(
                 function(){
                     var inspections = dataStoreManager.get("EquipmentInspection");
-                    $scope.certYears = [];
-                    $scope.dueYears = [];
-                    var i = inspections.length;
-                    while(i--){
-                        if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
-                            if (inspections[i].Certification_date) {
-                                var certYear = inspections[i].Certification_date.split('-')[0];
-                                if ($scope.certYears.indexOf(certYear) == -1) {
-                                    $scope.certYears.push(certYear);
-                                }
-                            }
-                            if (inspections[i].Due_date && !inspections[i].Certification_date) {
-                                var dueYear = inspections[i].Due_date.split('-')[0];
-                                if ($scope.dueYears.indexOf(dueYear) == -1) {
-                                    $scope.dueYears.push(dueYear);
-                                }
-                            }
-                        }
-                    }
+                    getYears();
+
                     return inspections;
                 }
             );
@@ -59,8 +41,9 @@ angular.module('EquipmentModule')
         getAllBioSafetyCabinets = function(){
             return af.getAllBioSafetyCabinets()
                 .then(
-                    function(){
+                    function () {
                         $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                        if (!$scope.cabinets) $scope.cabinets = [];
                         return $scope.cabinets;
                     }
                 )
@@ -86,6 +69,42 @@ angular.module('EquipmentModule')
                                 return $scope.buildings
                             }
                         );
+        },
+        getYears = function () {
+            var inspections = dataStoreManager.get("EquipmentInspection");
+            $scope.certYears = [];
+            $scope.dueYears = [];
+            if (!inspections) return;
+            var i = inspections.length;
+
+            while (i--) {
+                if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
+                    if (inspections[i].Certification_date) {
+                        var certYear = inspections[i].Certification_date.split('-')[0];
+                        if ($scope.certYears.indexOf(certYear) == -1) {
+                            $scope.certYears.push(certYear);
+                        }
+                    }
+                    if (inspections[i].Due_date && !inspections[i].Certification_date) {
+                        var dueYear = inspections[i].Due_date.split('-')[0];
+                        if ($scope.dueYears.indexOf(dueYear) == -1) {
+                            $scope.dueYears.push(dueYear);
+                        }
+                    }
+
+                    var currentYearString = new Date().getFullYear().toString();
+                    console.log(currentYearString);
+                    console.log(typeof currentYearString)
+                    if ($scope.dueYears.indexOf(currentYearString) < 0) {
+                        $scope.dueYears.push(currentYearString);
+                    }
+                    if ($scope.certYears.indexOf(currentYearString) < 0) {
+                        $scope.certYears.push(currentYearString);
+                    }
+                    $scope.selectedCertificationDate = currentYearString;
+                    $scope.selectedDueDate = currentYearString;
+                }
+            }
         }
         
         //init load
@@ -99,10 +118,6 @@ angular.module('EquipmentModule')
             copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
             console.log(copy);
             af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
-        }
-
-        $scope.report = function(cabinet) {
-
         }
         
         $scope.openModal = function(object, inspectionIndex) {
@@ -119,6 +134,10 @@ angular.module('EquipmentModule')
             var modalInstance = $modal.open({
                 templateUrl: isNaN(inspectionIndex) ? 'views/modals/bio-safety-cabinet-modal.html' : 'views/modals/bio-safety-cabinet-inspection-modal.html',
                 controller: 'BioSafetyCabinetsModalCtrl'
+            });
+
+            modalInstance.result.then(function () {
+                getAllBioSafetyCabinets();
             });
         }
 
@@ -233,7 +252,7 @@ angular.module('EquipmentModule')
         }
         
         $scope.close = function(){
-            $modalInstance.dismiss();
+            $modalInstance.close();
             af.deleteModalData();
         }
         

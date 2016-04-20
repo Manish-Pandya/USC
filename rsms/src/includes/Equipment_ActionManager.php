@@ -96,6 +96,7 @@ class Equipment_ActionManager extends ActionManager {
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
             $cabinet->setEntityMaps($entityMaps);
+            $LOG->fatal($cabinet->getEquipmentInspections());
             return $cabinet;
         }
     }
