@@ -81,18 +81,22 @@ angular
                         // get data
                         genericAPIFactory.read(action).then(function(returnedPromise) {
                             var instatedObjects = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                            
+
                             if(recurse){
                                 dataSwitch.recursivelyInstantiate(instatedObjects);
                             }
-                            
+
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
-                            // NOTE: It's possible for instatedObjects to be an object instead of an array of objects. Should that ever happen?
-                            deferred.resolve(dataStoreManager.get(instatedObjects[0] ? instatedObjects[0].Class : instatedObjects.Class));
+                            if (instatedObjects && instatedObjects.length) {
+                                deferred.resolve(dataStoreManager.get(instatedObjects[0].Class));
+                            } else {
+                                deferred.resolve();
+                            }
+
                         });
                     }
-                    
+
                     return deferred.promise;
                 }
             }
