@@ -92,15 +92,15 @@ class EquipmentInspection extends GenericCrud{
         if ($this->getFrequency() == null) {
             return null;
         }
-
-		$dueDate = new DateTime($this->getDate_created());
-		
-		if($this->getFrequency() == "Annually"){
-			$dueDate->modify('+1 year');
-		}else if($this->getFrequency() == "Bi-annually"){
-			$dueDate->modify('+6 months'); // twice a year
+        if($this->due_date == null){
+		    $dueDate = new DateTime($this->getDate_created());            
+		    if($this->getFrequency() == "Annually"){
+			    $dueDate->modify('+1 year');
+		    }else if($this->getFrequency() == "Bi-annually"){
+			    $dueDate->modify('+6 months'); // twice a year
+            }
+		    $this->setDue_date($dueDate->format('Y-m-d H:i:s'));
         }
-		$this->setDue_date($dueDate->format('Y-m-d H:i:s'));
 		
 		return $this->due_date;
 	}

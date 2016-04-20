@@ -122,6 +122,18 @@ angular.module('EquipmentModule')
             });
         }
 
+        $scope.isOverdue = function (cab) {
+            var d = new Date();
+            d.setHours(0,0,0,0);
+            var todayInSeconds = d.getTime();
+            for (var i = 0; i < cab.EquipmentInspections.length; i++) {
+                var insp = cab.EquipmentInspections[i];
+                var dueSeconds = convenienceMethods.getDate(insp.Due_date).getTime();
+                if (dueSeconds < todayInSeconds) return true;
+            }
+            return false;
+        }
+
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
