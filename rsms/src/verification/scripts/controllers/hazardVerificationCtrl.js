@@ -82,11 +82,10 @@
                                  }
                              }
                              //http://erasmus.graysail.com/rsms/src/verification/#/inventory
-                             var categorizedHazards = {
-                                 1: [],
-                                 10009: [],
-                                 10010: []
-                             };
+                             var categorizedHazards = {};
+                             categorizedHazards[Constants.MASTER_HAZARD_IDS.BIOLOGICAL] = [];
+                             categorizedHazards[Constants.MASTER_HAZARD_IDS.CHEMICAL] = [];
+                             categorizedHazards[Constants.MASTER_HAZARD_IDS.RADIATION] = [];
 
                              for (var x = 0; x < leafParentHazards.length; x++) {
                                  recurseUpTree(leafParentHazards[x]);
@@ -102,16 +101,16 @@
                                  } else {
                                      var p = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
                                      //why is there a hazard with the same key_id as its parent_id???
-                                     if (!p || hazard.Key_id == hazard.Parent_hazard_id) return false;                                     
+                                     if (!p || hazard.Key_id == hazard.Parent_hazard_id) return false;                                 
                                      return recurseUpTree(p);
                                  }
                                  return false;
                              }
                              
                             
-                             $scope.selectedCategory = 1;
+                             $scope.selectedCategory = Constants.MASTER_HAZARD_IDS.BIOLOGICAL;
                              $scope.allHazards = categorizedHazards;
-                             //console.log(id, categorizedHazards);
+                             //console.log(id, $scope.selectedCategory);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
