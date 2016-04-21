@@ -5,26 +5,35 @@
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
 
+        $scope.categoryIdx = 0;
         $scope.buildingIdx = 0;
         $scope.roomIdx = 0;
+        $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
         $scope.incrementRoom = function (int) {
-            $scope.buildingMax = false;
-            var bldg = $scope.PI.Buildings[$scope.buildingIdx];
-            if ($scope.roomIdx + int > -1) {
-                if ($scope.roomIdx + int < bldg.Rooms.length) {
-                    $scope.roomIdx += int;
+            if ($scope.categoryIdx + int > -1) {
+                if ($scope.categoryIdx + int < $scope.hazardCategories.length) {
+                    $scope.categoryIdx += int;
                 } else {
-                    $scope.roomIdx = 0;
-                    $scope.buildingIdx++;
+                    $scope.categoryIdx = 0;
+
+                    $scope.buildingMax = false;
+                    var bldg = $scope.PI.Buildings[$scope.buildingIdx];
+                    if ($scope.roomIdx + int > -1) {
+                        if ($scope.roomIdx + int < bldg.Rooms.length) {
+                            $scope.roomIdx += int;
+                        } else {
+                            $scope.roomIdx = 0;
+                            $scope.buildingIdx++;
+                        }
+                    }
+                    else if ($scope.buildingIdx > 0) {
+                        $scope.buildingIdx--;
+                        var bldg = $scope.PI.Buildings[$scope.buildingIdx];
+                        $scope.roomIdx = bldg.Rooms.length - 1;
+                    }
                 }
-            } 
-            else if ($scope.buildingIdx > 0) {
-                $scope.buildingIdx--;
-                var bldg = $scope.PI.Buildings[$scope.buildingIdx];
-                $scope.roomIdx = bldg.Rooms.length - 1;
             }
-            
         }
         /*
         $scope.selectRoom = function (idx) {
@@ -107,10 +116,8 @@
                                  return false;
                              }
                              
-                            
-                             $scope.selectedCategory = Constants.MASTER_HAZARD_IDS.BIOLOGICAL;
                              $scope.allHazards = categorizedHazards;
-                             //console.log(id, $scope.selectedCategory);
+                             console.log(id, $scope.hazardCategories[$scope.categoryIdx]);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";

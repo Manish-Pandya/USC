@@ -2,9 +2,9 @@
 <a ng-click="incrementRoom(-1)" ng-if="roomIdx > 0 || buildingIdx != 0">Prev</a> <a ng-if="buildingIdx < PI.Buildings.length - 1 ||  (buildingIdx == PI.Buildings.length - 1 && roomIdx < PI.Buildings[buildingIdx].Rooms.length - 1)" ng-click="incrementRoom(1)">Next</a>
 <br />
 bldg:{{buildingIdx}} | room: {{roomIdx}}
-<h1>{{dsm.getById("HazardDto", selectedCategory).Hazard_name}}</h1>
+<h1>{{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}}</h1>
 <ul>
-    <li ng-repeat="hazard in allHazards[selectedCategory] | orderBy: 'Hazard_name' track by $index" ng-if="hazard.ActiveSubHazards.length">
+    <li ng-repeat="hazard in allHazards[ hazardCategories[categoryIdx] ] | orderBy: 'Hazard_name' track by $index" ng-if="hazard.ActiveSubHazards.length">
         {{hazard.Hazard_name}}
         <ul>
             <li ng-repeat="child in hazard.ActiveSubHazards" ng-if="!child.ActiveSubHazards.length">
