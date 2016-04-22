@@ -122,6 +122,14 @@ var Constants = (function () {
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
+
+    constants.MASTER_HAZARDS_BY_ID = {
+        1: {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
+        9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
+        10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
+        10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
+    }
+
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
@@ -129,7 +137,7 @@ var Constants = (function () {
             IN_USER: "In Use"
         }
     }
-    
+
     constants.BIOSAFETY_CABINET = {
         FREQUENCY: {
             ANNUALLY: "Annually",
@@ -137,6 +145,8 @@ var Constants = (function () {
         },
         EQUIPMENT_CLASS: "BioSafetyCabinet"
     }
-    
+
+    constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
+
     return constants;
 })();
