@@ -83,3 +83,28 @@ angular.module('filtersApp',[])
             return activeObjects;
         };
     })
+    .filter('hazardRoomFilter', function () {
+        return function (hazards, roomId) {
+            if (!hazards) return;
+            if (!roomId) return hazards;
+            var matchedHazards = [];
+            var len = hazards.length;
+            for (var i = 0; i < len; i++){
+                var hazard = hazards[i];
+                hazard.matchedForOtherPi = false;
+                var roomLen = hazard.InspectionRooms.length;
+                for (var x = 0; x < roomLen; x++) {
+                    var room = hazard.InspectionRooms[x];
+                    if (room.Room_id == roomId) {
+                        if (room.ContainsHazard || room.HasMultiplePis) {
+                            console.log(room.ContainsHazard + ' | ' + room.HasMultiplePis)
+                            if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
+                            //based on model, should only ever push each matched hazard once
+                            matchedHazards.push(hazard);
+                        }
+                    }
+                }
+            }
+            return matchedHazards;
+        }
+    })
