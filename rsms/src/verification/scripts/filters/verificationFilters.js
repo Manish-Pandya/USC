@@ -97,7 +97,7 @@ angular.module('filtersApp',[])
                     var room = hazard.InspectionRooms[x];
                     if (room.Room_id == roomId) {
                         if (room.ContainsHazard || room.HasMultiplePis) {
-                            console.log(room.ContainsHazard + ' | ' + room.HasMultiplePis)
+                            //console.log(room.ContainsHazard + ' | ' + room.HasMultiplePis)
                             if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
                             //based on model, should only ever push each matched hazard once
                             matchedHazards.push(hazard);

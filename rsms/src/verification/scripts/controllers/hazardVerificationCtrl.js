@@ -11,14 +11,16 @@
         $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
         $scope.incrementRoom = function (int) {
-            if ($scope.categoryIdx + int < 0) $scope.categoryIdx = $scope.hazardCategories.length;
-
-            if ($scope.categoryIdx + int < $scope.hazardCategories.length) {
-                $scope.categoryIdx += int;
-            } else {
+            var turn = false;
+            $scope.categoryIdx += int;
+            if ($scope.categoryIdx > $scope.hazardCategories.length - 1) {
                 $scope.categoryIdx = 0;
-
-                $scope.buildingMax = false;
+                turn = true;
+            } else if ($scope.categoryIdx < 0) {
+                $scope.categoryIdx = $scope.hazardCategories.length - 1;
+                turn = true;
+            }
+            if (turn) {
                 var bldg = $scope.PI.Buildings[$scope.buildingIdx];
                 if ($scope.roomIdx + int > -1) {
                     if ($scope.roomIdx + int < bldg.Rooms.length) {
@@ -29,20 +31,11 @@
                     }
                 } else if ($scope.buildingIdx > 0) {
                     $scope.buildingIdx--;
-                    var bldg = $scope.PI.Buildings[$scope.buildingIdx];
+                    bldg = $scope.PI.Buildings[$scope.buildingIdx];
                     $scope.roomIdx = bldg.Rooms.length - 1;
                 }
             }
         }
-        /*
-        $scope.selectRoom = function (idx) {
-            var room;
-            for(var i = 0; )
-                
-        }
-        */
-
-       // var hazardCategories = [Constants.];
 
         var id = 1; // TODO: This shouldn't be set here. Just for testing.
 
