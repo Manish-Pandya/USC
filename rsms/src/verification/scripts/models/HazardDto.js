@@ -6,22 +6,22 @@ HazardDto.prototype = {
     className: "HazardDto",
 
     eagerAccessors:[
-        {method:"loadPendingHazardChange", boolean:'Name'}
+        {method:"loadPendingHazardDtoChange", boolean:'Name'}
     ],
 
-    loadPendingHazardChange: function()
+    loadPendingHazardDtoChange: function()
     {
         // not all users have a supervisor, don't try to load something that doesn't exist.
-        if(!this.PendingHazardChange) {
-            this.PendingHazardChange = dataStoreManager.getChildByParentProperty("PendingHazardChange", "Parent_id", this.Key_id);
-            if(this.PendingHazardChange){
-                this.PendingHazardChangeCopy = dataStoreManager.createCopy(this.PendingHazardChange)
+        if(!this.PendingHazardDtoChange) {
+            this.PendingHazardDtoChange = dataStoreManager.getChildByParentProperty("PendingHazardDtoChange", "Parent_id", this.Key_id);
+            if(this.PendingHazardDtoChange){
+                this.PendingHazardDtoChangeCopy = dataStoreManager.createCopy(this.PendingHazardDtoChange)
             }else{
-                this.PendingHazardChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingHazardChange());
-                if (!this.PendingHazardChangeCopy.hasOwnProperty("Parent_class")) this.PendingHazardChangeCopy.Parent_class = "HazardDto";
-                this.PendingHazardChangeCopy.Parent_id = this.Key_id;
+                this.PendingHazardDtoChangeCopy = this.inflator.instantiateObjectFromJson(new window.PendingHazardDtoChange());
+                if (!this.PendingHazardDtoChangeCopy.hasOwnProperty("Parent_class")) this.PendingHazardDtoChangeCopy.Parent_class = "HazardDto";
+                this.PendingHazardDtoChangeCopy.Parent_id = this.Key_id;
             }
-            this.PendingHazardChangeCopy.Is_active = true;
+            this.PendingHazardDtoChangeCopy.Is_active = true;
         }
     },
 

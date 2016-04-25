@@ -16,13 +16,13 @@
         /*
             BEHOLD! The beauty that is this here alignment. Break the pattern and you will be shot.
         */
-        'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },
-        'User'                  : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUser"                   },
-        'Building'              : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: "saveBuilding"               },
-        'PrincipalInvestigator' : {getById: "getPIForVerification"         , getAll: "getAllRadPis"                 , save: "savePI"                     },
-        'PendingUserChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingUserChange"      },
-        'PendingRoomChange'     : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingRoomChange"      },
-        'Hazard'                : { getById: "getHazardRoomDtosByPIId"     , getAll: "getAllHazards"                , save: "saveHazard"                 }
+        'Verification'           : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },
+        'User'                   : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUser"                   },
+        'Building'               : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: "saveBuilding"               },
+        'PrincipalInvestigator'  : {getById: "getPIForVerification"         , getAll: "getAllRadPis"                 , save: "savePI"                     },
+        'PendingUserChange'      : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingUserChange"      },
+        'PendingRoomChange'      : {getById: "getPendingUserChangeById"     , getAll: "getAllRadPis"                 , save: "savePendingRoomChange"      },
+        'PendingHazardDtoChange' : {getById: "getHazardRoomDtosByPIId"     , getAll: "getAllHazards"                 , save: "savePendingHazardDtoChange"    }
 };
 
 urlMapper.list =  verificationUrlMapper.list;

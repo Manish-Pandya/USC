@@ -1,14 +1,14 @@
 'use strict';
-/* Auto-generated stub file for the PendingHazardChange class. */
+/* Auto-generated stub file for the PendingHazardDtoChange class. */
 
 //constructor
-var PendingHazardChange = function() {};
-PendingHazardChange.prototype = {
-    Class:"PendingHazardChange",
-    className: "PendingHazardChange",
+var PendingHazardDtoChange = function () { };
+PendingHazardDtoChange.prototype = {
+    Class:"PendingHazardDtoChange",
+    className: "PendingHazardDtoChange",
     eagerAccessors:[],
     Parent_class:"Hazard"
 };
 
 // inherit from PendingChange
-extend(PendingHazardChange, PendingChange);
+extend(PendingHazardDtoChange, PendingChange);

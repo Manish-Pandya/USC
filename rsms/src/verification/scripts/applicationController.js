@@ -100,10 +100,6 @@ angular
                     ac.savePendingUserChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
                 }
 
-                if (thingToBeChanged["Pending" + thingToBeChanged.Class + "Change"].Parent_class == "Hazard") {
-                    ac.savePendingHazardChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
-                }
-
                 if (thingToBeChanged["Pending" + thingToBeChanged.Class + "Change"].Parent_class == "Room") {
                     ac.savePendingRoomChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
                 }
@@ -181,11 +177,10 @@ angular
 
         }
 
-        ac.savePendingHazardChange = function(hazard, verificationId, change) {
+        ac.savePendingHazardDtoChange = function(change, copy) {
             ac.clearError();
-            
-            copy = new window.PendingHazardChange();
-            angular.extend(copy, change);
+            console.log(copy);
+            console.log(change);
             copy.Is_active = false;
             
             copy.Verification_id = ac.getCachedVerification().Key_id;
@@ -195,9 +190,10 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
                         if (!copy.Key_id) {
                             dataStoreManager.pushIntoCollection(returnedChange);
-                            ac.getCachedVerification().PendingHazardChanges.push(dataStoreManager.getById("PendingHazardChange", returnedChange.Key_id));
+                            ac.getCachedVerification().PendingHazardDtoChanges.push(dataStoreManager.getById("PendingHazardDtoChange", returnedChange.Key_id));
                         }
                         angular.extend(copy, returnedChange);
+                        angular.extend(change, copy);
                     },
                     function () {
                         ac.setError('The change could not be saved');

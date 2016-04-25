@@ -736,7 +736,7 @@ tr.updated {
 
 /* line 199, ../sass/style.scss */
 /* line 447, ../sass/style.scss */
-tr.new td{
+tr.new td, li.new{
   background: rgba(91, 183, 91, .9) !important;
   color:white;
 }

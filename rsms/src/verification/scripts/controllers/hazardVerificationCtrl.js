@@ -10,6 +10,8 @@
         $scope.roomIdx = 0;
         $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
+        $scope.HazCat = {};
+
         $scope.incrementRoom = function (int) {
             var turn = false;
             $scope.categoryIdx += int;
@@ -37,11 +39,46 @@
             }
         }
 
+        $scope.getThatThereRoom = function (hazard, id) {
+            var len = hazard.InspectionRooms.length; 
+            for (var x = 0; x < len; x++) {
+                var room = hazard.InspectionRooms[x];
+                if (room.Room_id == id) {
+                    $scope.chiidRoomIdx = x;
+                    return;
+                }
+            }
+        }
+
         var id = 1; // TODO: This shouldn't be set here. Just for testing.
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllHazards);
         $scope.dsm = dataStoreManager;
+
+        var setEdit = function (hazard) {
+            var roomLen = hazard.InspectionRooms.length;           
+            for (var x = 0; x < roomLen; x++) {
+                var room = hazard.InspectionRooms[x];
+                if (room.ContainsHazard || room.HasMultiplePis) {
+                    //WE DON'T NEED TO CREATE A PendingHazardDtoChange IF THERE IS ALREADY ONE IN THE DATASTORE
+                    //if(NEED){
+                    
+                        //create PendingHazardDtoChange
+                    room.PendingHazardDtoChange = new window.PendingHazardDtoChange();
+                    room.PendingHazardDtoChange.Hazard_id = hazard.Key_id;
+                    room.PendingHazardDtoChange.Room_id = room.Room_id;
+                    room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
+                    room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
+                    room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
+
+
+                    //}
+                    room.PendingHazardDtoChangeCopy = new window.PendingHazardDtoChange();
+                    room.PendingHazardDtoChangeCopy = Object.assign(room.PendingHazardDtoChangeCopy, room.PendingHazardDtoChange);
+                }
+            }
+        }
 
         function getVerification(id) {
             return ac.getVerification(id)
@@ -76,10 +113,10 @@
                                  hazard.loadSubHazards();                                 
                                 
                                  if (hazard.ActiveSubHazards && !hazard.ActiveSubHazards.length) {
-                                    
-                                     if (leafParentHazards.indexOf(hazard.Parent_hazard_id) == -1) {
-                                         leafParentHazards.push(hazard.Parent_hazard_id);
-                                     }
+                                    setEdit(hazard);
+                                    if (leafParentHazards.indexOf(hazard.Parent_hazard_id) == -1) {
+                                        leafParentHazards.push(hazard.Parent_hazard_id);
+                                    }
                                  }
                              }
                              //http://erasmus.graysail.com/rsms/src/verification/#/inventory
