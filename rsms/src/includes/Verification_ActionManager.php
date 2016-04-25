@@ -192,14 +192,15 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     		return $decodedObject;
     	}
     }
-    
-    public function savePendingHazardChange(PendingHazardChange $pendingHazardChange = NULL){
+
+    public function savePendingHazardDtoChange(PendingHazardDtoChange $pendingHazardChange = NULL){
     	$LOG = Logger::getLogger('Action:' . __function__);
     	if($pendingHazardChange !== NULL) {
     		$decodedObject = $pendingHazardChange;
     	}
     	else {
     		$decodedObject = $this->convertInputJson();
+
     	}
     	if( $decodedObject === NULL ){
     		return new ActionError('Error converting input stream to Question');
@@ -208,8 +209,9 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     		return $decodedObject;
     	}
     	else{
-    		$dao = $this->getDao(new PendingHazardChange());
-    		$dao->save($decodedObject);
+    		$dao = $this->getDao(new PendingHazardDtoChange());
+    		$decodedObject = $dao->save($decodedObject);
+			$LOG->fatal($decodedObject);
     		return $decodedObject;
     	}
     }

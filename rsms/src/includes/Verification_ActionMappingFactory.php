@@ -46,7 +46,7 @@ class Verification_ActionMappingFactory extends ActionMappingFactory {
                 "getHazardRoomDtosByPIId" =>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePendingUserChange"=>new ActionMapping("savePendingUserChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePendingRoomChange"=>new ActionMapping("savePendingRoomChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"savePendingHazardChange"=>new ActionMapping("savePendingHazardChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"savePendingHazardDtoChange"=>new ActionMapping("savePendingHazardDtoChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"confirmPendingUserChange"=>new ActionMapping("confirmPendingUserChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"confirmPendingRoomChange"=>new ActionMapping("confirmPendingRoomChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"confirmPendingHazardChange"=>new ActionMapping("confirmPendingHazardChange", "", "", $this::$ROLE_GROUPS["ADMIN"])

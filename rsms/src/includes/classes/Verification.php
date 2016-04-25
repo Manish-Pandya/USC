@@ -38,7 +38,7 @@ class Verification extends GenericCrud{
 	
 	private $pendingRoomChanges;
 	private $pendingUserChanges;
-	private $pendingHazardChanges;
+	private $pendingHazardDtoChanges;
 	
 	public function __construct(){
 		
@@ -96,18 +96,18 @@ class Verification extends GenericCrud{
 		return $this->pendingUserChanges;
 	}
 	
-	public function getPendingHazardChanges(){
+	public function getPendingHazardDtoChanges(){
 		if($this->pendingHazardChanges === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO(new PendingHazardChange());
+			$thisDAO = new GenericDAO(new PendingHazardDtoChange());
 			$whereClauseGroup = new WhereClauseGroup(
 				array(
-					new WhereClause("parent_class", "=", "Hazard"),
+					new WhereClause("parent_class", "=", "PrincipalInvestigatorHazardRoomRelation"),
 					new WhereClause("verification_id", "=", $this->getKey_id())
 				)
 			);
-			$this->pendingHazardChanges = $thisDAO->getAllWhere($whereClauseGroup);
+			$this->pendingHazardDtoChanges = $thisDAO->getAllWhere($whereClauseGroup);
 		}
-		return $this->pendingHazardChanges;
+		return $this->pendingHazardDtoChanges;
 	}
 }
 

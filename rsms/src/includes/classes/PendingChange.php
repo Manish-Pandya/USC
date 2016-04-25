@@ -11,7 +11,7 @@ class PendingChange extends GenericCrud {
 	protected static $TABLE_NAME = "pending_change";
 	
 	/** Key/Value Array listing column names mapped to their types */
-	protected static $COLUMN_NAMES_AND_TYPES = array(
+	protected $COLUMN_NAMES_AND_TYPES = array(
 			"parent_id" 		=> "integer",
 			"verification_id"	=> "integer",
 			"new_status"		=> "text",
@@ -24,7 +24,6 @@ class PendingChange extends GenericCrud {
 			"name"				=> "name",
 			"phone_approved"	=> "boolean",
             "role"		    	=> "text",
-			"status_description"=> "text",
 				
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -45,7 +44,6 @@ class PendingChange extends GenericCrud {
 	protected $emergency_phone;
 	protected $name;
 	protected $phone_approved;
-	protected $status_description;
 	
 	public function __construct(){
 	
@@ -63,7 +61,7 @@ class PendingChange extends GenericCrud {
 	}
 	
 	public function getColumnData(){
-		return self::$COLUMN_NAMES_AND_TYPES;
+		return $this->COLUMN_NAMES_AND_TYPES;
 	}
 	
 	public function getVerification_id(){
@@ -113,9 +111,6 @@ class PendingChange extends GenericCrud {
 	public function setPhone_approved($phone){
 		$this->phone_approved = $phone;
 	}
-	
-	public function getStatus_description(){return $this->status_description;}
-	public function setStatus_description($desc){$this->status_description = $desc;}
 	
 	public function getName(){
 		if($this->name != null)return $this->name;
