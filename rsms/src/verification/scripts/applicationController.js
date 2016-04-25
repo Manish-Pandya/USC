@@ -181,6 +181,32 @@ angular
 
         }
 
+        ac.savePendingHazardChange = function(hazard, verificationId, change) {
+            ac.clearError();
+            
+            copy = new window.PendingHazardChange();
+            angular.extend(copy, change);
+            copy.Is_active = false;
+            
+            copy.Verification_id = ac.getCachedVerification().Key_id;
+            return ac.save(copy)
+                .then(
+                    function (returnedChange) {
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
+                        if (!copy.Key_id) {
+                            dataStoreManager.pushIntoCollection(returnedChange);
+                            ac.getCachedVerification().PendingHazardChanges.push(dataStoreManager.getById("PendingHazardChange", returnedChange.Key_id));
+                        }
+                        angular.extend(copy, returnedChange);
+                    },
+                    function () {
+                        ac.setError('The change could not be saved');
+                        copy = null;
+                    }
+                )
+
+        }
+
         ac.confirmChange = function (change, phone) {
             var copy = dataStoreManager.createCopy(change);
             console.log(change);
