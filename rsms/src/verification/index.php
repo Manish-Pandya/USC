@@ -139,6 +139,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
     
 <div ng-app="VerificationApp" ng-controller="NavCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
 <!-- VIEW NESTING -->
     <div ui-view class="noBg"></div>
 </div>

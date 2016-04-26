@@ -89,6 +89,8 @@ angular.module('filtersApp',[])
             if (!roomId) return hazards;
             var matchedHazards = [];
             var len = hazards.length;
+            var parent = dataStoreManager.getById("HazardDto", hazards[0].Parent_hazard_id);
+            parent.show = false;
             for (var i = 0; i < len; i++){
                 var hazard = hazards[i];
                 hazard.matchedForOtherPi = false;
@@ -96,10 +98,11 @@ angular.module('filtersApp',[])
                 for (var x = 0; x < roomLen; x++) {
                     var room = hazard.InspectionRooms[x];
                     if (room.Room_id == roomId) {
-                        if (room.ContainsHazard || room.HasMultiplePis) {
+                        if ((room.ContainsHazard || room.HasMultiplePis) && !hazard.ActiveSubHazards.length) {
                             if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
                             //based on model, should only ever push each matched hazard once
                             matchedHazards.push(hazard);
+                            parent.show = true;
                         }
                     }
                 }

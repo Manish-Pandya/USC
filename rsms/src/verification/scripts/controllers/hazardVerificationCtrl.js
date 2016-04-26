@@ -44,7 +44,7 @@
             for (var x = 0; x < len; x++) {
                 var room = hazard.InspectionRooms[x];
                 if (room.Room_id == id) {
-                    $scope.chiidRoomIdx = x;
+                    $scope.childRoomIdx = x;
                     return;
                 }
             }
@@ -62,22 +62,40 @@
                 var room = hazard.InspectionRooms[x];
                 if (room.ContainsHazard || room.HasMultiplePis) {
                     //WE DON'T NEED TO CREATE A PendingHazardDtoChange IF THERE IS ALREADY ONE IN THE DATASTORE
-                    //if(NEED){
-                    
+                    room.PendingHazardDtoChange = findRelevantPendingChange(room.Room_id, hazard.Hazard_id)
+                    if (!room.PendingHazardDtoChange) {
                         //create PendingHazardDtoChange
-                    room.PendingHazardDtoChange = new window.PendingHazardDtoChange();
-                    room.PendingHazardDtoChange.Hazard_id = hazard.Key_id;
-                    room.PendingHazardDtoChange.Room_id = room.Room_id;
-                    room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
-                    room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
-                    room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
+                        room.PendingHazardDtoChange = new window.PendingHazardDtoChange();
+                        room.PendingHazardDtoChange.Hazard_id = hazard.Key_id;
+                        room.PendingHazardDtoChange.Room_id = room.Room_id;
+                        room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
+                        room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
+                        room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
 
+                        //get the proper status
+                        room.PendingHazardDtoChange.New_status = getStatus(room);
 
-                    //}
+                    }
+                                        
                     room.PendingHazardDtoChangeCopy = new window.PendingHazardDtoChange();
                     room.PendingHazardDtoChangeCopy = Object.assign(room.PendingHazardDtoChangeCopy, room.PendingHazardDtoChange);
                 }
             }
+        }
+
+        function getStatus(room) {
+            console.log(room);
+        }
+
+        function findRelevantPendingChange(roomId, hazardId) {
+            var changes = dataStoreManager.get("PendingHazardDtoChange");
+            for (var x = 0; x < changes.length; x++) {
+                var change = changes[x];
+                if (change.Room_id == roomId && change.Hazard_id == hazardId) {
+                    return change;
+                }
+            }
+            return null;
         }
 
         function getVerification(id) {

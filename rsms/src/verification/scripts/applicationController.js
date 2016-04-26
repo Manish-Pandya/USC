@@ -121,7 +121,7 @@ angular
                 copy.Is_active = false;
             }
             copy.Verification_id = ac.getCachedVerification().Key_id;
-            return ac.save(copy)
+            return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
@@ -154,7 +154,7 @@ angular
             if (building) copy.Building_name = building.Name;
             if (room.PendingRoomChangeCopy.Answer == "No") room.PendingRoomChangeCopy.New_status = Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED;
 
-            return ac.save(copy)
+            return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
@@ -184,7 +184,7 @@ angular
             copy.Is_active = false;
             
             copy.Verification_id = ac.getCachedVerification().Key_id;
-            return ac.save(copy)
+            return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);

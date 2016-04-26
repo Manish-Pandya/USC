@@ -186,6 +186,12 @@ var Constants = (function () {
         RAD_HAZARDS_PRESENT:  {label: "Radiation Hazards",  value:"Rad_hazards_present"}
     }
 
+    constants.ROOM_HAZARD_STATUS = [
+        { IN_USE: "Used by my lab in this room" },
+        { STORED_ONLY: "Used by another lab in this room" },
+        { NOT_USED: "Not used by my lab in this room" }
+    ]
+
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
     
     constants.BIOSAFETY_CABINET = {

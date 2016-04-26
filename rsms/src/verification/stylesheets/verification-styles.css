@@ -210,3 +210,52 @@ span.metro-checkbox {
     font-size: 33px;
     margin-right: 20px;
 }
+.verification-hazards, .hazard-room{
+    width: 1320px;
+}
+.verification-hazards,.verification-hazards > li ul{
+    list-style-type:none;
+    margin-left:0;
+}
+.verification-hazards > li{
+    font-size:24px;
+    line-height:30px;
+    margin-bottom:10px;
+    border:1px solid #ddd;
+    padding:10px;
+    background:#f7f7f7;
+}
+.verification-hazards > li h3{
+    padding:10px 0;
+    font-size:24px
+}
+.verification-hazards > li ul li{
+    font-size:18px;
+    line-height:30px;
+    border:1px solid #ccc
+
+}
+.verification-hazards > li ul li:nth-of-type(odd){
+    background:#fff;
+}
+.verification-hazards > li ul li:nth-of-type(even){
+    background:#eee;
+}
+.verification-hazards > li ul li > div{
+    display:inline-block;
+    padding:10px
+}
+.verification-hazards > li ul li > div i{
+    text-shadow: 1px 1px 1px rgba(0,0,0,.1);
+    display:inline-block;
+    margin:3px 5px;
+    font-size: 22px;
+    color: #0072BC;
+}
+.verification-hazards > li ul li > div:first-child{
+    width: 350px;
+}
+.verification-hazards > li ul li > div:last-child{
+    width:500px;
+    border-left:1px solid #ccc;
+}
