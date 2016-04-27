@@ -333,7 +333,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                   for(var k = 0; k < recLen; k++){
                         question.Responses.Recommendations[k].Question = question.ChecklistName;
                   }
-
+                 
                   this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
                 }
                 if(question.Responses && question.Responses.SupplementalRecommendations) {
@@ -341,7 +341,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                   var recLen = question.Responses.SupplementalRecommendations.length;
 
                   for(var k = 0; k < recLen; k++){
-                        question.Responses.SupplementalRecommendations[k].Question = question.Text;
+                      question.Responses.SupplementalRecommendations[k].Question = question.ChecklistName;;
                   }
 
                   this.recommendations = this.recommendations.concat(question.Responses.SupplementalRecommendations);
