@@ -32,18 +32,14 @@ require_once '../top_view.php';
 </div><
 
 <div class="row-fluid">
-    <div class="loading" ng-show='!inspection && !error' style="margin-top:20px;" >
-      <i class="icon-spinnery-dealie spinner large"></i>
-      <span>Getting Checklists...</span>
-    </div>
     <div class="alert alert-error" ng-if="error" style="margin-top:10px;">
         <h2>{{error}}</h2>
     </div>
     <ul class="postInspectionNav row" style="margin-left:11px;">
-                    <li ng-repeat="cat in cf.categories | showNavItem:inspection"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
+        <li ng-repeat="cat in cf.categories | showNavItem:inspection"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
         <li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a title="Inspection Comments" ng-click="openNotes()" class="btn btn-large btn-info checklistNav" ><i class="icon-clipboard-2" style="  font-size: 33px !important;margin: 2px 5px 3px -12px;"></i></a></li>
     </ul>
-    <div class="loading" ng-show='loading' style="margin-left:11px;">
+    <div class="loading" ng-show='loading && !inspection' style="margin-left:11px;">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Getting Checklist Category...</span>
     </div>

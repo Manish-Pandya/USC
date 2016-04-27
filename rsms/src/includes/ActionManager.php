@@ -3668,12 +3668,47 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getChecklists");
             $inspection->setEntityMaps($entityMaps);
             
+            //make sure we get the right rooms for our branch level checklists
+            //ids of the branch level hazards, excluding general, which is always in every room
+            $realBranchIds = array(1,10009,100010);
+            $neededRoomIds = array();
+            $neededRooms   = array();
+            foreach($orderedChecklists as $list){
+                
+                if($list->getIsPresent() && in_array($list->getHazard_id(), $realBranchIds)){
+                    //if(!in_array(,$neededRoomIds))
+                    //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
+                    $childLists =  $this->getChildLists($list, $orderedChecklists);
+                    foreach($childLists as $childList){
+                        foreach($childList->getInspectionRooms() as $room){
+                            if(!in_array($room->getKey_id(), $neededRoomIds)){
+                                array_push($neededRoomIds, $room->getKey_id());
+                                array_push($neededRooms, $room);
+                            }
+                        }
+                    }
+                    $list->setInspectionRooms($neededRooms);
+                }
+            }
+
             return $inspection;
         }
         else{
             //error
             return new ActionError("No request parameter 'id' was provided");
         }
+
+        
+    }
+
+    private function getChildLists(Checklist $list, array $orderedChecklists){
+        $lists = array();
+        foreach($orderedChecklists as $child){
+            if($child->getKey_id() != $list->getKey_id() && $child->getMaster_id() == $list->getHazard_id()){
+                $lists[] = $child;
+            }        
+        }
+        return $lists;
     }
 
     private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
