@@ -88,7 +88,7 @@ require_once '../top_view.php';
                         <span style="clear:both; display:block; height:0;">&nbsp;</span>
                         <span ng-hide="!question.activeDeficiencies.length" ng-switch on="question.Responses.Answer">
                             <ul class="checklist-deficiencies" ng-show="question.Responses.Answer == 'no'">
-                                <h3>Deficiencies:</h3>
+                                <h3>Deficiencies:  {{question.Responses.Key_id}}</h3>
                                 <li ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )">
                                     <fieldset ng-disabled="inspection.isArchived">
                                         <span  ng-if="deficiency.Text != 'Other'">
@@ -105,8 +105,8 @@ require_once '../top_view.php';
                                                 </span>
                                             </label>
                                         </span>
-                                        <span ng-if="deficiency.Text == 'Other'">
-                                            <other-deficiency checked-on-init="cf.getHasOtherDeficiency(question)" param="question" selected-title="question.Other_text" textarea-placeholder="Enter a deficiency" unselected-title="Other" text-area-content="" selection-change="cf.conditionallySaveOtherDeficiency(question)"/>
+                                        <span ng-init="cf.getHasOtherDeficiencyies(question)">
+                                            <other-deficiency checked-on-init="deficiency.Selected" param="deficiency" selected-title="deficiency.Other_text" textarea-placeholder="Enter a deficiency" unselected-title="Other" text-area-content="" selection-change="cf.conditionallySaveOtherDeficiency(question)"/>
                                         </span>
                                         <span ng-if="cf.evaluateDeficiency( deficiency, question )">
                                             <i class="icon-pencil primary checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>

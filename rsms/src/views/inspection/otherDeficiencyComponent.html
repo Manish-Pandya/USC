@@ -12,7 +12,7 @@
         <span class="metro-checkbox"><i ng-if="param.saving" class="icon-spinnery-dealie spinner small deficiencySpinner"></i><span ng-hide="param.edit" style="margin-top:0">{{param.Other_text}}</span>
         </span>
     </label>
-    <i class="icon-pencil primary edit" ng-click="edit()" ng-if="param.saved && !param.edit"></i>
+    <a class="btn btn-mini btn-primary" ng-click="edit()" ng-if="param.saved && !param.edit">Edit</a>
     
     <div ng-hide="!param.edit">
         <textarea required placeholder="{{textareaPlaceholder}}" rows="2" cols="50" form="form" name="textArea" ng-model="param.freeText"></textarea>

@@ -82,7 +82,8 @@ var Constants = (function () {
                         { val: "10", string: "October" },
                         { val: "11", string: "November" },
                         { val: "12", string: "December" }
-        ]
+        ],
+        OTHER_DEFICIENCY_ID: 100032
     };
 
     constants.CORRECTIVE_ACTION = {

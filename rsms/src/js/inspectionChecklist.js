@@ -180,7 +180,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             selectedTitle:"=",
             unselectedTitle:"@",
             textAreaContent:"@",
-            param:"=",
+            param: "=",
+            paramChild: "=",
             checkedOnInit:"&",
             textareaPlaceholder:"@",
             saveCall: "&"
@@ -218,16 +219,44 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         factory.inspection = [];
         factory.categories = Constants.CHECKLIST_CATEGORIES_BY_MASTER_ID;
 
-        factory.getHasOtherDeficiency  = function(question){
-            if(question.Responses && question.Responses.DeficiencySelections){
+        factory.getHasOtherDeficiencyies = function (question) {
+            if (question.Responses && question.Responses.DeficiencySelections) {
+                if (!question.otherDefIds) question.otherDefIds = [];
                 var i = question.Responses.DeficiencySelections.length;
                 while(i--){
-                    if(question.Responses.DeficiencySelections[i].Other_text){
-                        question.Other_text = question.Responses.DeficiencySelections[i].Other_text;
-                        question.saved = true;
-                        question.selected = question.Responses.DeficiencySelections[i].Is_active;
-                        if(question.Responses.DeficiencySelections[i].Is_active)return true;
+                    if (question.Responses.DeficiencySelections[i].Other_text && question.otherDefIds.indexOf(question.Responses.DeficiencySelections[i].Key_id) < 0) {
+                        var otherDef = {
+                            Class: "Deficiency",
+                            Is_active: true,
+                            Question_id: question.Key_id,
+                            Other_text: question.Responses.DeficiencySelections[i].Other_text,
+                            Deficiency_selection_id: question.Responses.DeficiencySelections[i].Key_id,
+                            Text: "Other",
+                            Key_id: Constants.INSPECTION.OTHER_DEFICIENCY_ID, //the id of the "Other" deficiency,
+                            Selected: question.Responses.DeficiencySelections[i].Is_active
+                        }
+                        
+                        otherDef.saved = true;
+
+                        question.Deficiencies.push(otherDef);
+                        question.otherDefIds.push(question.Responses.DeficiencySelections[i].Key_id);
+                        console.log(question.otherDefIds)
+                        console.log(question.Responses.DeficiencySelections[i].Other_text)
+                        //question.Other_text = question.Responses.DeficiencySelections[i].Other_text;
+                        //question.selected = question.Responses.DeficiencySelections[i].Is_active;
+                        //if(question.Responses.DeficiencySelections[i].Is_active)return true;
                     }
+                }
+                if (!question.otherDefIds || !question.otherDefIds.length && !question.hasOther) {
+                    var otherDef = {
+                        Class: "Deficiency",
+                        Is_active: true,
+                        Question_id: question.Key_id,
+                        Text: "Other",
+                        Key_id: Constants.INSPECTION.OTHER_DEFICIENCY_ID, //the id of the "Other" deficiency,
+                    }
+                    question.hasOther = true;
+                    question.Deficiencies.push(otherDef);
                 }
             }
             return false;
