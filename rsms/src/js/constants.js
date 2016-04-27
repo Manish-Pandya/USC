@@ -20,6 +20,7 @@ var Constants = (function () {
         }
     };
 
+
     constants.ROLE = {
         NAME:{
             ADMIN:"Admin",
@@ -50,15 +51,38 @@ var Constants = (function () {
         STATUS:{
             NOT_ASSIGNED:"NOT ASSIGNED",
             NOT_SCHEDULED:"NOT SCHEDULED",
-            SCHEDULED:"SCHEDULED",
+            SCHEDULED: "SCHEDULED",
+            OVERDUE_FOR_INSPECTION: "OVERDUE FOR INSPECTION",
+            INCOMPLETE_INSPECTION: "INCOMPLETE INSPECTION",
             PENDING_CLOSEOUT:"PENDING CLOSEOUT",
             CLOSED_OUT:"CLOSED OUT",
             INCOMPLETE_REPORT:"INCOMPLETE REPORT",
             COMPLETE:"COMPLETE",
             OVERDUE_CAP:"OVERDUE CAP",
             PENDING_EHS_APPROVAL:"PENDING EHS APPROVAL",
-            OVERDUE_FOR_INSPECTION:"OVERDUE FOR INSPECTION"
-        }
+        },
+        SCHEDULE_STATUS:{
+            NOT_ASSIGNED:"NOT ASSIGNED"
+        },
+        TYPE: {
+            BIO: "BioSafety Inspection",
+            CHEM: "Chemical Inspection",
+            RAD: "Radiation Inspection"
+        },
+        MONTH_NAMES: [
+                        { val: "01", string: "January" },
+                        { val: "02", string: "February" },
+                        { val: "03", string: "March" },
+                        { val: "04", string: "April" },
+                        { val: "05", string: "May" },
+                        { val: "06", string: "June" },
+                        { val: "07", string: "July" },
+                        { val: "08", string: "August" },
+                        { val: "09", string: "September" },
+                        { val: "10", string: "October" },
+                        { val: "11", string: "November" },
+                        { val: "12", string: "December" }
+        ]
     };
 
     constants.CORRECTIVE_ACTION = {
@@ -86,7 +110,8 @@ var Constants = (function () {
     };
 
     constants.PARCEL = {
-        STATUS:{
+        STATUS: {
+            REQUESTED: "Requested",
             ARRIVED:"Arrived",
             PRE_ORDER:"Pre-order",
             ORDERED:"Ordered",
@@ -120,6 +145,15 @@ var Constants = (function () {
         }
     };
 
+    //match the key_id for each waste type to a readable string
+    constants.WASTE_TYPE = {
+        LIQUID: 1,
+        CADAVER: 2,
+        VIAL: 3,
+        OTHER: 4,
+        SOLID: 5
+    }
+
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
 
@@ -129,6 +163,19 @@ var Constants = (function () {
         10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
         10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
     }
+
+    constants.MASTER_HAZARD_IDS = {
+        BIOLOGICAL: 1,
+        CHEMICAL: 10009,
+        RADIATION: 10010
+    }
+
+    constants.CHECKLIST_CATEGORIES_BY_MASTER_ID = [
+        { Key_id: 1, Label: 'Biological', Image: 'biohazard-white-con.png', cssID: 'biologicalMaterialsHeader' },
+        { Key_id: 10009, Label: 'Chemical', Image: 'chemical-safety-large-icon.png', cssID: 'chemicalSafetyHeader' },
+        { Key_id: 10010, Label: 'Radiation', Image: 'radiation-large-icon.png', cssID: 'radiationSafetyHeader' },
+        { Key_id: 9999, Label: 'General', Image: 'gen-hazard-large-icon.png', cssID: 'generalSafetyHeader' }
+    ]
 
     constants.HAZARD_PI_ROOM = {
         STATUS:{
@@ -141,10 +188,21 @@ var Constants = (function () {
     constants.BIOSAFETY_CABINET = {
         FREQUENCY: {
             ANNUALLY: "Annually",
-            BI_ANNUALLY: "Bi-annually"
+            SEMI_ANNUALLY: "Semi-annually"
         },
         EQUIPMENT_CLASS: "BioSafetyCabinet"
     }
+
+    constants.ROOM_HAZARDS = {
+        BIO_HAZARDS_PRESENT: { label: "Biological Hazards", value: "Bio_hazards_present" },
+        CHEM_HAZARDS_PRESENT: { label: "Chemical Hazards", value: "Chem_hazards_present" },
+        RAD_HAZARDS_PRESENT: { label: "Radiation Hazards", value: "Rad_hazards_present" }
+    }
+    constants.ROOM_HAZARD_STATUS = [
+        { IN_USE: "Used by my lab in this room" },
+        { STORED_ONLY: "Used by another lab in this room" },
+        { NOT_USED: "Not used by my lab in this room" }
+    ]
 
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
 
