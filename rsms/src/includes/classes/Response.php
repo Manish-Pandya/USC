@@ -66,6 +66,13 @@ class Response extends GenericCrud {
 			"foreignKeyName"	=>	"response_id"
 	);
 
+    public static $SUPPLEMENTAL_DEFICIENCIES_RELATIONSHIP = array(
+			"className"	=>	"SupplementalDeficiency",
+			"tableName"	=>	"supplemental_deficiency",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"response_id"
+	);
+
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
@@ -86,6 +93,8 @@ class Response extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getObservations");
 		$entityMaps[] = new EntityMap("eager","getSupplementalRecommendations");
 		$entityMaps[] = new EntityMap("eager","getSupplementalObservations");
+        $entityMaps[] = new EntityMap("eager","getSupplementalDeficiencies");
+
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -114,8 +123,8 @@ class Response extends GenericCrud {
 	private $observations;
 
 	private $supplementalObservations;
-
 	private $supplementalRecommendations;
+    private $supplementalDeficiencies;
 
 
 
@@ -194,5 +203,12 @@ class Response extends GenericCrud {
 		return $this->supplementalObservations;
 	}
 	public function setSupplementalObservations($supplementalObservations){ $this->supplementalObservations = $supplementalObservations; }
+
+    public function getSupplementalDeficiencies(){
+		$thisDAO = new GenericDAO($this);
+		$this->supplementalDeficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SUPPLEMENTAL_DEFICIENCIES_RELATIONSHIP));
+		return $this->supplementalDeficiencies;
+	}
+	public function setSupplementalDeficiencies($supplementalDeficiencies){ $this->supplementalDeficiencies = $supplementalDeficiencies; }
 }
 ?>

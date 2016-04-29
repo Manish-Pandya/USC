@@ -220,6 +220,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
         factory.categories = Constants.CHECKLIST_CATEGORIES_BY_MASTER_ID;
 
         factory.getHasOtherDeficiencyies = function (question) {
+            alert('wtf')
             if (question.Responses && question.Responses.DeficiencySelections) {
                 if (!question.otherDefIds) question.otherDefIds = [];
                 var i = question.Responses.DeficiencySelections.length;
@@ -288,13 +289,21 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         }
 
-        factory.conditionallySaveOtherDeficiency = function( question, room )
+        factory.conditionallySaveOtherDeficiency = function( question, room, deficiency )
         {
-            var deficiency = question.activeDeficiencies[question.activeDeficiencies.length -1];
+//            var deficiency = question.activeDeficiencies[question.activeDeficiencies.length -1];
             //set saving flag so view displays spinner
             question.saving = true;
 
             //find the right DeficiencySelection and update it's other text or Is_active property
+            //On the c
+            //do we already have  DeficiencySelection for this Other Deficiency?
+            //if, it will have been set by the client
+            if (deficiency.Deficiency_selection_id) {
+            } else {
+            }
+
+
             if(question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length){
                 var i = question.Responses.DeficiencySelections.length;
                 while(i--){
