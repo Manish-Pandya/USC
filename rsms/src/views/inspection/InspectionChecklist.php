@@ -86,11 +86,21 @@ require_once '../top_view.php';
                             </label>
                         </fieldset>
                         <span style="clear:both; display:block; height:0;">&nbsp;</span>
-                        <h3 ng-if="question.Responses.Answer == 'no'">Deficiencies:  {{question.Responses.Key_id}}</h3>
-                         <pre>{{question.Responses | json}}</pre>
                         <ul class="checklist-deficiencies"ng-if="question.Responses.Answer == 'no'">
+                            <li>
+                                <h3 class="checklist-deficiencies-label" ng-if="question.Responses.Answer == 'no'">Deficiencies:  <a ng-if="!question.addDef" ng-disabled="inspection.isArchived" style="margin-left: 5px" class="btn btn-mini btn-success" ng-click="question.addDef = true"><i class="icon-plus-2"></i></a></h3>
+                            </li>
                             <li ng-include="'inspection-templates/deficiency.html'" ng-repeat="deficiency in question.activeDeficiencies = ( question.Deficiencies | activeOnly )"></li>
-                            <li ng-include="'inspection-templates/deficiency.html'" ng-repeat="deficiency in question.Responses.SupplementalDeficiencies"></li>
+                            <li ng-include="'inspection-templates/supplemental-deficiency.html'" ng-repeat="deficiency in question.Responses.SupplementalDeficiencies"></li>
+                            <li ng-if="question.addDef">
+                                <form ng-if="!question.edit">
+                                    <textarea ng-model="question.newDeficiencyText" rows="2" style="width:100%;"></textarea>
+                                    <input ng-class="{'disabled': !question.newDeficiencyText}" ng-disabled="!question.newDeficiencyText" class="btn btn-info" type="submit" style="height:32px" value="Save as Lab-Specific Deficiency" ng-click="cf.saveSupplementalDeficiency(question, true, null,checklist)" />
+                                    <input ng-class="{'disabled': !question.newDeficiencyText}" ng-disabled="!question.newDeficiencyText" class="btn btn-success" type="submit" style="height:32px" value="Save as Deficiency Option" ng-click="cf.createDeficiency(question, checklist)" />
+                                    <a class="btn btn-danger" ng-click="question.addDef = false;">Cancel</a>
+                                    <i ng-if="question.savingNew" class="icon-spinnery-dealie spinner small"></i>
+                                </form>
+                            </li>
                         </ul>                         
                              <span>
                                  <ul style="border-top: 1px solid #ccc;" class="recOrObsList">
@@ -109,6 +119,8 @@ require_once '../top_view.php';
                                              </span>
                                          </fieldset>
                                      </li>
+                                     
+
                                      <li ng-repeat="recommendation in question.Responses.SupplementalRecommendations" style="margin-bottom:3px;">
                                          <fieldset ng-disabled="inspection.isArchived">
                                              <label class="checkbox inline" ng-if="!recommendation.edit">

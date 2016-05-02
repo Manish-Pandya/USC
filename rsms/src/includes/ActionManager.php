@@ -860,6 +860,46 @@ class ActionManager {
         }
     }
 
+    public function saveSupplementalDeficiency(){
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to SupplementalRecommendation');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
+            $dao = $this->getDao(new SupplementalDeficiency());
+            $sd = $dao->save($decodedObject);
+            // check to see if the roomIds array is populated
+            $roomIds = $decodedObject->getRoomIds();
+
+            // remove the old rooms. if any
+            foreach ($sd->getRooms() as $room){
+                $dao->removeRelatedItems($room->getKey_id(),$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
+            }
+
+            // if roomIds were provided then save them
+            if (!empty($roomIds)){
+                foreach ($roomIds as $id){
+                    $LOG->fatal($id);
+                    $dao->addRelatedItems($id,$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
+                }
+
+                // else if no roomIds were provided, then just deactivate this DeficiencySelection
+            } else {
+                $sd->setIs_active(false);
+                $sd = $dao->save($sd);
+            }
+
+            $sd = $dao->getById($sd->getKey_id());
+            $LOG->debug($sd);
+
+            return $sd;
+        }
+    }
+
     // Hazards Hub
     public function getAllHazardsAsTree() {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1211,6 +1251,10 @@ class ActionManager {
 
             foreach ($response->getSupplementalObservations() as $child){
                 $dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
+            }
+
+            foreach ($response->getSupplementalDeficiencies() as $child){
+                $dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_DEFICIENCIES_RELATIONSHIP));
             }
 
             $dao->deleteById($id);

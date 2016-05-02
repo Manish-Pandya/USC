@@ -31,6 +31,9 @@ class CorrectiveAction extends GenericCrud {
 	/** DeficiencySelection entity describing the Deficiency to which this CorrectiveAction applies */
 	private $deficiencySelection;
 	private $deficiency_selection_id;
+
+    private $supplementalDeficiency;
+    private $supplemental_deficiency_id;
 	
 	/** String describing this CorrectiveAction plan */
 	private $text;
@@ -53,20 +56,34 @@ class CorrectiveAction extends GenericCrud {
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
-	
-	public function getDeficiencySelection(){ 
-		if($this->deficiencySelection == null) {
+
+	public function getDeficiencySelection(){
+		if($this->deficiencySelection == null && $this->deficiency_selection_id != null) {
 			$deficiencySelectionDAO = new GenericDAO(new DeficiencySelection());
 			$this->deficiencySelection = $deficiencySelectionDAO->getById($this->deficiency_selection_id);
 		}
-		return $this->deficiencySelection; 
+		return $this->deficiencySelection;
 	}
 	public function setDeficiencySelection($selection){
 		$this->deficiencySelection = $selection;
 	}
-	
+
 	public function getDeficiency_selection_id(){ return $this->deficiency_selection_id; }
 	public function setDeficiency_selection_id($deficiency_selection_id){ $this->deficiency_selection_id = $deficiency_selection_id; }
+
+    public function getSupplementalDeficiency(){
+		if($this->supplementalDeficiency == null && $this->supplemental_deficiency_id != null) {
+			$deficiencySelectionDAO = new GenericDAO(new SupplementalDeficiency());
+			$this->supplementalDeficiency = $deficiencySelectionDAO->getById($this->supplemental_deficiency_id);
+		}
+		return $this->supplementalDeficiency;
+	}
+	public function setSupplementalDeficiency($selection){
+		$this->supplementalDeficiency = $selection;
+	}
+
+	public function getSupplemental_deficiency_id(){ return $this->supplemental_deficiency_id; }
+	public function setSupplemental_deficiency_id($id){ $this->supplemental_deficiency_id = $id; }
 	
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }

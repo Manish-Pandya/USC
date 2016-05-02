@@ -605,6 +605,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                 if(deficiency.Key_id == ds.Deficiency_id)defDto.Key_id = ds.Key_id;
                             }
                         }
+                        console.log(defDto);
 
                         var url = '../../ajaxaction.php?action=saveDeficiencySelection';
                         $rootScope.saving = convenienceMethods.saveDataAndDefer(url, defDto)
@@ -705,14 +706,36 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
         factory.evaluateDeficiencyRoomChecked = function( room, question, deficiency )
         {
-            if (!question.Responses.DeficiencySelections) return false;
-            var i = question.Responses.DeficiencySelections.length;
-            while(i--){
-                if( question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id ){
-                    var j = question.Responses.DeficiencySelections[i].Rooms.length;
-                    while(j--){
-                        if( question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id ){
-                            if(room.checked != false)return true;
+            if (deficiency.Class == "Deficiency") {
+                if (!question.Responses.DeficiencySelections) return false;
+                var i = question.Responses.DeficiencySelections.length;
+                while (i--) {
+                    if (question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id) {
+                        var j = question.Responses.DeficiencySelections[i].Rooms.length;
+                        while (j--) {
+                            if (question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id) {
+                                if (room.checked != false) {
+                                    deficiency.checked = true;
+
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (!question.Responses.SupplementalDeficiencies) return false;
+                var i = question.Responses.SupplementalDeficiencies.length;
+                while (i--) {
+                    if (question.Responses.SupplementalDeficiencies[i].Key_id == deficiency.Key_id) {
+                        var j = question.Responses.SupplementalDeficiencies[i].Rooms.length;
+                        while (j--) {
+                            if (question.Responses.SupplementalDeficiencies[i].Rooms[j].Key_id == room.Key_id) {
+                                if (room.checked != false) {
+                                    deficiency.checked = deficiency.selected = deficiency.Is_active = true;
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -772,6 +795,21 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }
 
             this.saveObservation( question, $rootScope.ObservationCopy )
+        }
+
+        factory.createDeficiency = function (question, checklist) {
+            $rootScope.DeficiencyCopy = {
+                Class: "Deficiency",
+                Question_id: question.Key_id,
+                Text: question.newDeficiencyText,
+                selected: true,
+                edit: true,
+                new: true,
+                push: true,
+                Is_active: true
+            }
+
+            this.saveDeficiency(question, $rootScope.DeficiencyCopy, checklist)
         }
 
         factory.saveObservation = function( question, observation )
@@ -845,6 +883,41 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                             question.savingNew = false;
                           }
                       )
+        }
+
+        factory.saveDeficiency = function (question, deficiency, checklist) {
+            if ($rootScope.DeficiencyCopy.push) question.savingNew = true;
+            question.error = '';
+            deficiency.IsDirty = true;
+            var url = '../../ajaxaction.php?action=saveDeficiency';
+            $rootScope.saving = convenienceMethods.saveDataAndDefer(url, $rootScope.DeficiencyCopy)
+                .then(
+                    function (returnedDef) {
+                        factory.objectNullifactor($rootScope.DeficiencyCopy, question)
+                        if (!$rootScope.DeficiencyCopy.push) {
+                            deficiency.edit = false;
+                            angular.extend(deficiency, returnedDef);
+                        }
+                        else {
+                            returnedDef.new = true;
+                            question.Deficiencies.push(returnedDef);
+                            question.newDeficiencyText = '';
+                        }
+                        returnedDef.IsDirty = false;
+                        returnedDef.edit = false;
+                        returnedDef.selected = true;
+                        deficiency.IsDirty = false;
+                        if (!deficiency.Key_id) factory.saveDeficiencySelection(returnedDef, question, checklist);
+                        question.edit = false;
+                        question.savingNew = false;
+                        question.addRec = false;
+                    },
+                    function (error) {
+                        returnedDef.IsDirty = false;
+                        question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+                        question.savingNew = false;
+                    }
+                )
         }
 
         factory.saveSupplementalObservation = function( question, isNew, so )
@@ -938,6 +1011,86 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                             question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
                           }
                       )
+        }
+
+        factory.saveSupplementalDeficiency = function (question, isNew, sd, checklist, room, checked) {
+            if (!question.Responses.SupplementalDeficiencies) question.Responses.SupplementalDeficiencies = [];
+
+            var sdDto = {
+                Class: "SupplementalDeficiency",
+                Text: question.newDeficiencyText,
+                response_id: question.Responses.Key_id,
+            }
+            if (isNew) {
+                sdDto.Is_active = true;
+                question.savingNew = true;
+            }
+            else {
+                sdDto.Is_active = sd.checked
+                sdDto.Text = $rootScope.SupplementalDeficiencyCopy ? $rootScope.SupplementalDeficiencyCopy.Text : sd.Text;
+                sd.IsDirty = true;
+                sdDto.Key_id = sd.Key_id
+            }
+
+
+            if (!sdDto.InspectionRooms || !sdDto.InspectionRooms.length) sdDto.InspectionRooms = convenienceMethods.copyObject(checklist.InspectionRooms);
+            //grab a collection of room ids
+            var i = sdDto.InspectionRooms.length;
+            var roomIds = [];
+            if (!room) {
+                //we haven't passed in a room, so we should set relationships for all possible rooms
+                if (checked) {
+                    while (i--) {
+                        roomIds.push(sdDto.InspectionRooms[i].Key_id);
+                    }
+                    sdDto.RoomIds = roomIds;
+                } else {
+                    sdDto.RoomIds = [];
+                }
+            }
+            else {
+                while (i--) {
+                    if (sdDto.InspectionRooms[i].checked) roomIds.push(sdDto.InspectionRooms[i].Key_id);
+                }
+                room.checked = !room.checked;
+                this.room = room;
+
+            }
+
+            var showRooms = false;
+            if (roomIds.length < sdDto.InspectionRooms.length) {
+                showRooms = true;
+            }
+
+            console.log(sdDto);
+
+            question.error = '';
+            var url = '../../ajaxaction.php?action=saveSupplementalDeficiency';
+            $rootScope.saving = convenienceMethods.saveDataAndDefer(url, sdDto)
+                .then(
+                    function (returnedSupplementalDeficiency) {
+                        question.addDef = false;
+                        if (sd) {
+                            sdDto.checked = returnedSupplementalDeficiency.Is_active
+                            angular.extend(sd, returnedSupplementalDeficiency);
+                            sd.checked = sd.selected = sd.Is_active;
+                            sd.edit = false;
+                            sd.IsDirty = false;
+                        }
+                        else {
+                            returnedSupplementalDeficiency.checked = true;
+                            question.Responses.SupplementalDeficiencies.push(returnedSupplementalDeficiency);
+                            question.savingNew = false;
+                        }
+                        question.newDeficiencyText = '';
+                        if ($rootScope.SupplementalDeficiencyCopy) factory.objectNullifactor($rootScope.SupplementalDeficiencyCopy, question)
+                    },
+                    function (error) {
+                        question.savingNew = false;
+                        if (sr) sr.IsDirty = false;
+                        question.error = "The recommendation could not be saved.  Please check your internet connection and try again."
+                    }
+                )
         }
 
         factory.saveRecommendationRelation = function( question, recommendation )
@@ -1064,6 +1217,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             $rootScope.SupplementalObservationCopy = convenienceMethods.copyObject(observation)
             this.saveSupplementalObservation( question, false, observation, true );
         }
+
+        factory.supplementalDeficiencyChanged = function (question, def, checklist) {
+            $rootScope.SupplementalDeficiencyCopy = convenienceMethods.copyObject(def)
+            this.saveSupplementalDeficiency(question, false, def, checklist, null, def.checked);
+        }
+
+
         factory.savePi = function(pi)
         {
         var url = "../../ajaxaction.php?action=savePI";
