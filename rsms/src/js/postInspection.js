@@ -734,7 +734,11 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     def.CorrectiveActionCopy.isDirty = true;
 
     //if this is a new corrective action (we are not editing one), we set it's class and Deficiency_selection_id properties
-    if(!def.CorrectiveActionCopy.Deficiency_selection_id)def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+    if (def.Class == "Deficiency") {
+        if (!def.CorrectiveActionCopy.Deficiency_selection_id) def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+    } else {
+        if (!def.CorrectiveActionCopy.Supplemental_deficiency_id) def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+    }
     if(!def.CorrectiveActionCopy.Class)def.CorrectiveActionCopy.Class = "CorrectiveAction";
 
     //parse the dates for MYSQL
