@@ -2510,6 +2510,13 @@ li.active a {
   margin-left: 0;
   list-style: none !important;
 }
+.deficiency-rooms-list{
+  position: absolute;
+  font-size: 14px;
+  margin: 4px 0px 0 26px !important;
+  display: inline-block;
+  color: #666;
+}
 .navicon {
   padding: 0 !important;
   margin: 24px 42px -10px 9px;

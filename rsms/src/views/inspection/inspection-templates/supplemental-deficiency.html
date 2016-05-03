@@ -1,21 +1,22 @@
 ﻿<fieldset ng-disabled="inspection.isArchived">
     <label class="checkbox inline" ng-if="!deficiency.edit">
         <input type="checkbox" value="true" ng-model="deficiency.checked" ng-init="deficiency.checked = deficiency.Is_active" ng-change="cf.supplementalDeficiencyChanged(question, deficiency, checklist)" />
-        <span ng-if="deficiency.selected && getNeedsRooms(deficiency, checklist, question) && question.DeficiencySelections.length" style="margin-top:0">
-            (Room(s):
-            <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">
-                {{room.Name}}
-                <span ng-if="!$last">,&nbsp;</span>
-            </span>)
-        </span>
+        
         <span class="metro-checkbox labSpecific" ng-class="{edit:deficiency.edit}">
             {{deficiency.Text}}<!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>-->
             <a ng-click="cf.copyForEdit(question, deficiency)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit"><i class="icon-pencil"></i></a>
             <i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i>
         </span>
     </label>
+    <span ng-if="deficiency.Is_active && getNeedsRooms(deficiency, checklist, question)" style="margin-top:0" class="deficiency-rooms-list">
+        (Room(s):
+        <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">
+            {{room.Name}}
+            <span ng-if="!$last">,&nbsp;</span>
+        </span>)
+    </span>
     <i ng-if="deficiency.Is_active" class="icon-pencil primary checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
-
+   
     <span ng-if="deficiency.edit" style="margin: 8px 0 ;display: block;">
         <textarea ng-model="SupplementalDeficiencyCopy.Text" style="width:50%"></textarea><br>
         <a ng-show="deficiency.edit" ng-click="cf.saveSupplementalDeficiency(question, false, deficiency, checklist)" class="btn btn-success">Save</a>

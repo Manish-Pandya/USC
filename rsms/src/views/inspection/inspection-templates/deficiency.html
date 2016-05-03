@@ -5,7 +5,7 @@
             <span class="metro-checkbox">
                 <i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small deficiencySpinner"></i>
                 <span style="margin-top:0" once-text="deficiency.Text"></span>
-                <span ng-if="deficiency.selected && getNeedsRooms(deficiency, checklist, question) && question.DeficiencySelections.length" style="margin-top:0">
+                <span ng-if="(deficiency.selected || deficiency.checked) && getNeedsRooms(deficiency, checklist, question)" style="margin-top:0">
                     (Room(s):
                     <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">
                         {{room.Name}}

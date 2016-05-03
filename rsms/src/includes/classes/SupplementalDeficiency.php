@@ -20,6 +20,7 @@ class SupplementalDeficiency extends GenericCrud
 		"date_created"		=> "timestamp",
 		"date_last_modified"	=> "timestamp",
 		"is_active"			=> "boolean",
+        "show_rooms"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer"
 	);
@@ -110,6 +111,8 @@ class SupplementalDeficiency extends GenericCrud
 			$thisDAO = new GenericDAO($this);
 			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
+        $LOG=Logger::getLogger('adf');
+        $LOG->fatal($this);
 		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
