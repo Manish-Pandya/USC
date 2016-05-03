@@ -25,7 +25,7 @@ EquipmentInspection.prototype = {
         }
 	},
     
-    loadRoom:  function() {
+	loadRoom: function () {
         if(!this.Room && this.Room_id) {
             dataLoader.loadChildObject( this, 'Room', 'Room', this.Room_id );
         }

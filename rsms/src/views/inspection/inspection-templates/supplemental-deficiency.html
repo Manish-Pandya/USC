@@ -1,0 +1,47 @@
+﻿<fieldset ng-disabled="inspection.isArchived">
+    <label class="checkbox inline" ng-if="!deficiency.edit">
+        <input type="checkbox" value="true" ng-model="deficiency.checked" ng-init="deficiency.checked = deficiency.Is_active" ng-change="cf.supplementalDeficiencyChanged(question, deficiency, checklist)" />
+        
+        <span class="metro-checkbox labSpecific" ng-class="{edit:deficiency.edit}">
+            {{deficiency.Text}}<!--<span style="margin-left:3px;" class="label label-info">Lab Specific</span>-->
+            <a ng-click="cf.copyForEdit(question, deficiency)" class="btn btn-mini btn-primary" style="margin-left:5px;" alt="Edit" title="Edit"><i class="icon-pencil"></i></a>
+            <i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+        </span>
+    </label>
+    <span ng-if="deficiency.Is_active && getNeedsRooms(deficiency, checklist, question)" style="margin-top:0" class="deficiency-rooms-list">
+        (Room(s):
+        <span ng-repeat="room in deficiency.InspectionRooms | roomChecked:question:deficiency">
+            {{room.Name}}
+            <span ng-if="!$last">,&nbsp;</span>
+        </span>)
+    </span>
+    <i ng-if="deficiency.Is_active" class="icon-pencil primary checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
+   
+    <span ng-if="deficiency.edit" style="margin: 8px 0 ;display: block;">
+        <textarea ng-model="SupplementalDeficiencyCopy.Text" style="width:50%"></textarea><br>
+        <a ng-show="deficiency.edit" ng-click="cf.saveSupplementalDeficiency(question, false, deficiency, checklist)" class="btn btn-success">Save</a>
+        <a ng-show="deficiency.edit" ng-click="cf.objectNullifactor(deficiency, question)" class="btn btn-danger">Cancel</a><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+    </span>
+
+    <div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms && !question.edit" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
+        <div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
+        <ul>
+            <li ng-repeat="room in deficiency.InspectionRooms | orderBy: 'Building.Name'">
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-init="room.checked = cf.evaluateDeficiencyRoomChecked( room, question, deficiency )" ng-change="cf.saveSupplementalDeficiency(question, false, deficiency, checklist, room)" ng-model="room.checked" />
+                    <span class="metro-checkbox"><span once-text="room.Name"></span>, <span once-text="room.Building.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <ul style="margin:4px 0 9px 25px;" ng-if="cf.evaluateDeficiency( deficiency, question )">
+        <li>
+            <label class="checkbox inline">
+                <input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-checked="inspection.Deficiency_selections[1].indexOf(deficiency.Key_id) > -1" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />
+                <span class="metro-radio">corrected during inspection</span>
+            </label>
+        </li>
+    </ul>
+
+</fieldset>

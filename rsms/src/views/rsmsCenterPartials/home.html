@@ -28,4 +28,10 @@
         <p>Laboratory Inspections</p>
       </a>
     </div>
+    <div class="span2 rsmsCenterIconContainer" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.RADIATION_INSPECTOR] ])">
+        <a class="span12" style="background: #51a351;" href="../equipment/#/home/bio-safety-cabinets">
+            <img class="" src="../img/equipment-icon.png" />
+            <p>Equipment</p>
+        </a>
+    </div>
 </div>

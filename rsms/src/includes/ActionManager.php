@@ -860,6 +860,46 @@ class ActionManager {
         }
     }
 
+    public function saveSupplementalDeficiency(){
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to SupplementalRecommendation');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
+            $dao = $this->getDao(new SupplementalDeficiency());
+            $sd = $dao->save($decodedObject);
+            // check to see if the roomIds array is populated
+            $roomIds = $decodedObject->getRoomIds();
+
+            // remove the old rooms. if any
+            foreach ($sd->getRooms() as $room){
+                $dao->removeRelatedItems($room->getKey_id(),$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
+            }
+
+            // if roomIds were provided then save them
+            if (!empty($roomIds)){
+                foreach ($roomIds as $id){
+                    $LOG->fatal($id);
+                    $dao->addRelatedItems($id,$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
+                }
+
+                // else if no roomIds were provided, then just deactivate this DeficiencySelection
+            } else {
+                $sd->setIs_active(false);
+                $sd = $dao->save($sd);
+            }
+
+            $sd = $dao->getById($sd->getKey_id());
+            $LOG->debug($sd);
+
+            return $sd;
+        }
+    }
+
     // Hazards Hub
     public function getAllHazardsAsTree() {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
@@ -1211,6 +1251,10 @@ class ActionManager {
 
             foreach ($response->getSupplementalObservations() as $child){
                 $dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_OBSERVATIONS_RELATIONSHIP));
+            }
+
+            foreach ($response->getSupplementalDeficiencies() as $child){
+                $dao->removeRelatedItems($child->getKey_id(),$response->getKey_id(),DataRelationship::fromArray(Response::$SUPPLEMENTAL_DEFICIENCIES_RELATIONSHIP));
             }
 
             $dao->deleteById($id);
@@ -3368,7 +3412,7 @@ class ActionManager {
             // start by saving or updating the object.
             $dao = $this->getDao(new DeficiencySelection());
             $ds = $dao->save($decodedObject);
-
+            $LOG->fatal($decodedObject);
             // remove the old rooms. if any
             foreach ($ds->getRooms() as $room){
                 $dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
@@ -3668,12 +3712,47 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getChecklists");
             $inspection->setEntityMaps($entityMaps);
             
+            //make sure we get the right rooms for our branch level checklists
+            //ids of the branch level hazards, excluding general, which is always in every room
+            $realBranchIds = array(1,10009,100010);
+            $neededRoomIds = array();
+            $neededRooms   = array();
+            foreach($orderedChecklists as $list){
+                
+                if(in_array($list->getHazard_id(), $realBranchIds)){
+                    //if(!in_array(,$neededRoomIds))
+                    //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
+                    $childLists =  $this->getChildLists($list, $orderedChecklists);
+                    foreach($childLists as $childList){
+                        foreach($childList->getInspectionRooms() as $room){
+                            if(!in_array($room->getKey_id(), $neededRoomIds)){
+                                array_push($neededRoomIds, $room->getKey_id());
+                                array_push($neededRooms, $room);
+                            }
+                        }
+                    }
+                    $list->setInspectionRooms($neededRooms);
+                }
+            }
+
             return $inspection;
         }
         else{
             //error
             return new ActionError("No request parameter 'id' was provided");
         }
+
+        
+    }
+
+    private function getChildLists(Checklist $list, array $orderedChecklists){
+        $lists = array();
+        foreach($orderedChecklists as $child){
+            if($child->getKey_id() != $list->getKey_id() && $child->getMaster_id() == $list->getHazard_id()){
+                $lists[] = $child;
+            }        
+        }
+        return $lists;
     }
 
     private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {

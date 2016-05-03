@@ -173,7 +173,6 @@ angular
                             Room_id: copy.Room_id,
                             RoomId: copy.RoomId,
                             Equipment_id: copy.Equipment_id,
-                            EquipmentId: copy.EquipmentId,
                             Equipment_class: copy.Equipment_class,
                             Report_path: copy.Report_path
                 }
@@ -255,25 +254,28 @@ angular
                             Room_id: copy.Room_id,
                             RoomId: copy.RoomId,
                             Equipment_id: copy.Equipment_id,
-                            EquipmentId: copy.EquipmentId,
                             Report_path: copy.Report_path,
                             Serial_number: copy.Serial_number,
                             Type: copy.Type
                 }
                 
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
-                console.log(secondCopy);
                 return this.save(secondCopy)
                     .then(
-                        function(returnedBioSafetyCabinet){
-                            returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
+                        function (returnedBioSafetyCabinet) {
                             if(bioSafetyCabinet.Key_id){
-                                console.log(returnedBioSafetyCabinet);
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
-                            }else{
+                            } else {
                                 console.log(returnedBioSafetyCabinet);
-                                dataStoreManager.addOnSave(returnedBioSafetyCabinet);
-                                dataStoreManager.store(returnedBioSafetyCabinet);
+
+                                var newInspection = returnedBioSafetyCabinet.EquipmentInspections[0];
+                                console.log(newInspection);
+                                newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
+                                store.store(newInspection);
+                                newInspection.loadRoom();
+                                returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
+                                store.store(returnedBioSafetyCabinet);
+                                return newInspection;
                             }
                         },
                         af.setError('The BioSafetyCabinet could not be saved')

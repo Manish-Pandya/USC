@@ -129,7 +129,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
     <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
     <!-- NAVIGATION -->
       <div class="banner {{bannerClass | splitAtPeriod}} equipment" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-        <h1 style="color:white;">Lab Equipment <a style="float:right;margin: 11px 128px 0 0; color:white" href="<?php echo WEB_ROOT?>equipment/"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+        <h1 style="color:white;">Lab Equipment <a style="float:right;margin: 11px 128px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMScenter.php"><i class="icon-home" style="font-size:40px;"></i></a></h1>
       </div>
     <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>

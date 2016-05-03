@@ -93,6 +93,10 @@ class Equipment_ActionManager extends ActionManager {
             $cabinet = $dao->save($decodedObject);
             $decodedObject->setKey_id($cabinet->getKey_id());
             $decodedObject->conditionallyCreateEquipmentInspection();
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
+            $cabinet->setEntityMaps($entityMaps);
+            $LOG->fatal($cabinet->getEquipmentInspections());
             return $cabinet;
         }
     }
@@ -136,6 +140,7 @@ class Equipment_ActionManager extends ActionManager {
     
     //upload the document for a BiosafteyProtocol
 	public function uploadReportCertDocument( $id = NULL){
+        $l = Logger::getLogger("upload cert doc");
         define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/equipment/documents");
 		$LOG = Logger::getLogger('Action:' . __function__);		
 		//verify that this file is of a type we consider safe		
@@ -156,6 +161,7 @@ class Equipment_ActionManager extends ActionManager {
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
 		
 		if (!in_array($file_extension, $valid_file_extensions)) {
+            $l->fatal($file_extension);
 			return new ActionError("Not a valid file extension");
 		}else{
 			//make sure the file actually matches the extension, as best we can

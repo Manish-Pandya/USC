@@ -171,6 +171,7 @@ class ActionMappingFactory {
                 "saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "saveSupplementalDeficiency"=>new ActionMapping("saveSupplementalDeficiency", "", "", $this::$ROLE_GROUPS["EHS"]),              
                 "getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

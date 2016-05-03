@@ -271,7 +271,7 @@ button.btn:not(.btn-large) {
 }
 .bio-safety-cabinets table tr td:nth-of-type(6),.bio-safety-cabinets table tr th:nth-of-type(6){
     padding:0;
-    width:65%;
+    width: 67%;
     cell-spacing:0;
     cell-padding:0;
 }
@@ -325,7 +325,7 @@ button.btn:not(.btn-large) {
     width: 17.9%;
 }
 .bio-safety-cabinets table tr th ul li:nth-of-type(5),.bio-safety-cabinets table tr td ul li:nth-of-type(5){
-    width: 11.5%;
+    width: 16.5%;
 }
 .bio-safety-cabinets table tr th ul li:nth-of-type(6),.bio-safety-cabinets table tr td ul li:nth-of-type(6){
     width:12.5%;
@@ -341,4 +341,24 @@ button.btn:not(.btn-large) {
 }
 .bio-safety-cabinets table tr th ul li input, select{
     margin-top:2px
+}
+.modal-body.inspections .control-group{
+    margin-bottom:25px
+}
+.modal-body label{
+    font-weight:bold;
+    font-size:16px;
+}
+.modal-body label span {
+    font-weight:normal;
+}
+.modal-body .controls .ui-select-container{
+    float:left;
+    width: 80%;
+}
+.modal-body .selectize-input>div {
+    width: 262px !important;
+}
+.modal-body i.icon-cancel.danger {
+    margin-top:-5px
 }

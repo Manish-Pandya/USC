@@ -1240,6 +1240,9 @@ html[xmlns] .clearfix {
 #editPiForm {
   margin: 10px 0 40px;
 }
+#editPiForm .selectize-dropdown-content{
+  margin-top:0
+}
 /* line 895, ../sass/style.scss */
 #editPiForm h3 {
   white-space: nowrap;
@@ -2507,6 +2510,13 @@ li.active a {
   margin-left: 0;
   list-style: none !important;
 }
+.deficiency-rooms-list{
+  position: absolute;
+  font-size: 14px;
+  margin: 4px 0px 0 26px !important;
+  display: inline-block;
+  color: #666;
+}
 .navicon {
   padding: 0 !important;
   margin: 24px 42px -10px 9px;
@@ -2648,15 +2658,17 @@ li.active a {
 /* line 719, ../sass/style.scss */
 /* line 1776, ../sass/style.scss */
 .menuIcon:hover:active {
-  color: green !important t;
+  color: green !important;
 }
+
 .checklist-deficiencies{
   list-style-type: none;
   padding: 10px;
-  margin: 20px 0px 0 26px;
+  margin: 10px 0px 0 26px;
   border-top: 1px solid #ccc;
   background: rgb(239, 195, 195);
 }
+
 .recOrObsList{
   list-style-type: none;
   background: #CCDEDE;
@@ -2672,7 +2684,9 @@ li.active a {
 .recOrObsList li span.metro-checkbox i.small{
   margin: -2px 0 4px 5px;
 }
-
+.checklist-deficiencies form, .recOrObsList form{
+  margin-top:3px
+}
 /* line 722, ../sass/style.scss */
 /* line 1781, ../sass/style.scss */
 .pushLeft {
@@ -3175,7 +3189,9 @@ table.roomList h2 {
 .labSpecific {
   color: #49afcd !important;
 }
-
+.checklist-deficiencies .labSpecific{
+  color: #DD0000 !Important;
+}
 /* line 2124, ../sass/style.scss */
 .newRecOrObs {
   color: #5bb75b !important;

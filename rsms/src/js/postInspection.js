@@ -101,6 +101,12 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         push = true;
                     }
                 }
+
+                var j = questions[i].Responses.SupplementalDeficiencies.length;
+                while (j--) {
+                    var def = questions[i].Responses.SupplementalDeficiencies[j];
+                    if (def.Is_active) push = true;
+                }
             }
             if(push)matches.push(questions[i]);
         }
@@ -131,7 +137,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     return this.inspection = inspection;
   };
 
-  factory.saveCorrectiveAction = function(action){
+  factory.saveCorrectiveAction = function (action) {
     var url = "../../ajaxaction.php?action=saveCorrectiveAction";
     var deferred = $q.defer();
 
@@ -333,7 +339,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                   for(var k = 0; k < recLen; k++){
                         question.Responses.Recommendations[k].Question = question.ChecklistName;
                   }
-
+                 
                   this.recommendations = this.recommendations.concat(question.Responses.Recommendations);
                 }
                 if(question.Responses && question.Responses.SupplementalRecommendations) {
@@ -341,7 +347,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                   var recLen = question.Responses.SupplementalRecommendations.length;
 
                   for(var k = 0; k < recLen; k++){
-                        question.Responses.SupplementalRecommendations[k].Question = question.Text;
+                      question.Responses.SupplementalRecommendations[k].Question = question.ChecklistName;;
                   }
 
                   this.recommendations = this.recommendations.concat(question.Responses.SupplementalRecommendations);
@@ -734,7 +740,11 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     def.CorrectiveActionCopy.isDirty = true;
 
     //if this is a new corrective action (we are not editing one), we set it's class and Deficiency_selection_id properties
-    if(!def.CorrectiveActionCopy.Deficiency_selection_id)def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+    if (def.Class == "Deficiency") {
+        if (!def.CorrectiveActionCopy.Deficiency_selection_id) def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+    } else {
+        if (!def.CorrectiveActionCopy.Supplemental_deficiency_id) def.CorrectiveActionCopy.Supplemental_deficiency_id = def.Key_id;
+    }
     if(!def.CorrectiveActionCopy.Class)def.CorrectiveActionCopy.Class = "CorrectiveAction";
 
     //parse the dates for MYSQL
@@ -945,7 +955,8 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
             Is_active:true,
             Text: "",
             Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING,
-            Deficiency_selection_id: $scope.def.Key_id
+            Deficiency_selection_id: $scope.def.Class == "Deficiency" ? $scope.def.Key_id : null,
+            Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
         }
     }
     if ($scope.copy.Promised_date) $scope.dates.promisedDate = $scope.copy.Promised_date;
