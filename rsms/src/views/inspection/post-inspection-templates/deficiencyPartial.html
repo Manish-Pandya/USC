@@ -2,7 +2,7 @@
 <tr ng-repeat="question in (negs = checklist.Questions | isNegative | orderBy: 'Order_index')">
 <td colspan="2" style="padding:0;">
     <table class="table nested-table" style="border-spacing:0 !important" watched="{{question.Responses.DeficiencySelections.length}}">
-        <tr ng-if="!question.Responses.DeficiencySelections.length">
+        <tr ng-if="!question.Responses.DeficiencySelections.length && !question.Responses.SupplementalDeficiencies.length">
             <td colspan=4>Unknown Deficiency</td>
         </tr>
         <tr ng-repeat="def in question.Responses.DeficiencySelections">
@@ -67,9 +67,6 @@
                     </div>
                 </div>
             </td>
-        </tr>
-        <tr ng-if="!question.Responses.DeficiencySelections.length && !question.Responses.SupplementalDeficiencies.length">
-            <td colspan=4>Unknown Deficiency</td>
         </tr>
         <tr ng-repeat="def in question.Responses.SupplementalDeficiencies">
             <td ng-if="def.Text" style="padding:16px !important;width:58%">

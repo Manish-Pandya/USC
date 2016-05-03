@@ -551,6 +551,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 deficiency.IsDirty = true;
                 question.error =  '';
                 if( !deficiency.InspectionRooms || !deficiency.InspectionRooms.length) deficiency.InspectionRooms = convenienceMethods.copyObject( checklist.InspectionRooms );
+                console.log(checklist);
                 //grab a collection of room ids
                 var i = deficiency.InspectionRooms.length;
                 var roomIds = [];
@@ -568,6 +569,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     this.room = room;
 
                 }
+                console.log(roomIds);
 
                 var showRooms = false;
                 if(roomIds.length < deficiency.InspectionRooms.length){
@@ -1039,7 +1041,7 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             var roomIds = [];
             if (!room) {
                 //we haven't passed in a room, so we should set relationships for all possible rooms
-                if (checked) {
+                if (checked || !sd) {
                     while (i--) {
                         roomIds.push(sdDto.InspectionRooms[i].Key_id);
                     }
@@ -1079,6 +1081,8 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
                         else {
                             returnedSupplementalDeficiency.checked = true;
+                            returnedSupplementalDeficiency.checked = returnedSupplementalDeficiency.selected = returnedSupplementalDeficiency.Is_active;
+                            console.log(returnedSupplementalDeficiency);
                             question.Responses.SupplementalDeficiencies.push(returnedSupplementalDeficiency);
                             question.savingNew = false;
                         }

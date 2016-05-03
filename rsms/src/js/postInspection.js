@@ -101,6 +101,12 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         push = true;
                     }
                 }
+
+                var j = questions[i].Responses.SupplementalDeficiencies.length;
+                while (j--) {
+                    var def = questions[i].Responses.SupplementalDeficiencies[j];
+                    if (def.Is_active) push = true;
+                }
             }
             if(push)matches.push(questions[i]);
         }
@@ -131,7 +137,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     return this.inspection = inspection;
   };
 
-  factory.saveCorrectiveAction = function(action){
+  factory.saveCorrectiveAction = function (action) {
     var url = "../../ajaxaction.php?action=saveCorrectiveAction";
     var deferred = $q.defer();
 
@@ -737,7 +743,7 @@ inspectionReviewController = function($scope, $location, convenienceMethods, pos
     if (def.Class == "Deficiency") {
         if (!def.CorrectiveActionCopy.Deficiency_selection_id) def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
     } else {
-        if (!def.CorrectiveActionCopy.Supplemental_deficiency_id) def.CorrectiveActionCopy.Deficiency_selection_id = def.Key_id;
+        if (!def.CorrectiveActionCopy.Supplemental_deficiency_id) def.CorrectiveActionCopy.Supplemental_deficiency_id = def.Key_id;
     }
     if(!def.CorrectiveActionCopy.Class)def.CorrectiveActionCopy.Class = "CorrectiveAction";
 
@@ -949,7 +955,8 @@ modalCtrl = function($scope, $location, convenienceMethods, postInspectionFactor
             Is_active:true,
             Text: "",
             Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING,
-            Deficiency_selection_id: $scope.def.Key_id
+            Deficiency_selection_id: $scope.def.Class == "Deficiency" ? $scope.def.Key_id : null,
+            Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
         }
     }
     if ($scope.copy.Promised_date) $scope.dates.promisedDate = $scope.copy.Promised_date;

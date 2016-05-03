@@ -14,6 +14,8 @@ class CorrectiveAction extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//deficiency selection is a relationship
 		"deficiency_selection_id" => "integer",
+        "supplemental_deficiency_id" => "integer",
+
 		"text"		=> "text",
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -43,6 +45,8 @@ class CorrectiveAction extends GenericCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
+        $entityMaps[] = new EntityMap("lazy","getSupplementalDeficiency");
+
 		$this->setEntityMaps($entityMaps);
 		
 	}

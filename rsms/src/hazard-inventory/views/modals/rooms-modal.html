@@ -7,7 +7,7 @@
             <label class="checkbox inline">
                 <input type="checkbox" ng-model="room.ContainsHazard" ng-change="af.savePIHazardRoom(room, modalData.Hazard, true, modalData.GrandParent)" ng-disabled="constants.BRANCH_HAZARD_IDS.indexOf(modalData.Hazard.Parent_hazard_id) < 0 && !modalData.Parent.InspectionRooms[$index].ContainsHazard" />
                 <span class="metro-checkbox">
-                    {{room.Building_name}}, Room {{room.Room_name}} {{room.Class}}
+                    {{room.Building_name}}, Room {{room.Room_name}}
                 </span>
                 <label class="checkbox inline" ng-if="room.ContainsHazard">
                     <!-- must be checked and disabled if the corresponding room for the parent has a stored only status.  a hazard MUST be stored only if its parent is -->

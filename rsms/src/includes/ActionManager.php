@@ -3412,7 +3412,7 @@ class ActionManager {
             // start by saving or updating the object.
             $dao = $this->getDao(new DeficiencySelection());
             $ds = $dao->save($decodedObject);
-
+            $LOG->fatal($decodedObject);
             // remove the old rooms. if any
             foreach ($ds->getRooms() as $room){
                 $dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
@@ -3719,7 +3719,7 @@ class ActionManager {
             $neededRooms   = array();
             foreach($orderedChecklists as $list){
                 
-                if($list->getIsPresent() && in_array($list->getHazard_id(), $realBranchIds)){
+                if(in_array($list->getHazard_id(), $realBranchIds)){
                     //if(!in_array(,$neededRoomIds))
                     //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
                     $childLists =  $this->getChildLists($list, $orderedChecklists);
