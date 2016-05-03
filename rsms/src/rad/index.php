@@ -108,7 +108,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
-
+<script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
 
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>

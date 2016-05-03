@@ -157,6 +157,11 @@ angular
                         Dashboard:true
                     },
                     {
+                        Name:'pi-wipes',
+                        Label: 'My Radiation Laboratory -- Wipe Tests',
+                        Dashboard:true
+                    },
+                    {
                         Name:'use-log',
                         Label: 'Use Log',
                         Dashboard:true
@@ -2207,7 +2212,7 @@ angular
 
             af.getRadModels = function(){
                      return dataSwitchFactory.getAllObjects("RadModelDto")
-                        .then( function( dto ) {
+                        .then(function (dto) {
                             var dto = dto[0];
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
@@ -2231,7 +2236,9 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteBag ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PrincipalInvestigator ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
+                            console.log(dataStore);
+                            return dataStore;
                         });
             }
 
