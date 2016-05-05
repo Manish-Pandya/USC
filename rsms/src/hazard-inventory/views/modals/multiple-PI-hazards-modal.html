@@ -1,11 +1,11 @@
 ﻿<h3 class="redBg">{{modalData.HazardDto.Hazard_name}}</h3>
-<div class="modal-body" style="border-bottom:none">
+<div class="modal-body pi-hazard-rooms" style="border-bottom:none">
     <ul>
         <li ng-repeat="room in modalData.PI.Rooms">
-            <h3 style="margin-bottom:5px;">{{room.Building.Name}}, Room {{room.Name}}</h3>
+            <h3 style="margin-bottom:5px;">{{dataStoreManager.getById("Building", room.Building_id).Name || room.Building.Name}}, Room {{room.Name}}</h3>
             <table class="table table-bordered">
-                <tr ng-repeat="phr in modalData.pHRS | roomIdMatches:room.Key_id:modalData.PI.Key_id | orderBy:'current'" ng-class="{'new': phr.current}">
-                    <td>{{phr.PiName}} <span ng-if="phr.current">(Current PI)</span></td>
+                <tr ng-repeat="phr in modalData.pHRS | roomIdMatches:room.Key_id:modalData.PI.Key_id | orderBy:'current'" ng-class="{'new': phr.Principal_investigator_id == modalData.PI.Key_id}">
+                    <td>{{phr.PiName}} <span ng-if="phr.Principal_investigator_id == modalData.PI.Key_id">(Current PI)</span></td>
                     <td>
                         <span ng-class="{'green': phr.Status == constants.HAZARD_PI_ROOM.STATUS.IN_USE, 'yellow': phr.Status == constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY, 'red': phr.Status == constants.HAZARD_PI_ROOM.STATUS.OTHER_PI}">{{phr.Status}}</span>
                         <span ng-if="!phr.Status && phr.Key_id" class="green">In Use</span>

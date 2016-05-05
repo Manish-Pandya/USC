@@ -84,7 +84,7 @@ angular.module('filtersApp',[])
         };
     })
     .filter('hazardRoomFilter', function () {
-        return function (hazards, roomId) {
+        return function (hazards, roomId, flip) {
             if (!hazards) return;
             if (!roomId) return hazards;
             var matchedHazards = [];
@@ -98,15 +98,47 @@ angular.module('filtersApp',[])
                 for (var x = 0; x < roomLen; x++) {
                     var room = hazard.InspectionRooms[x];
                     if (room.Room_id == roomId) {
-                        if ((room.ContainsHazard || room.HasMultiplePis) && !hazard.ActiveSubHazards.length) {
+                        var push;
+                        if (!flip) {
+                            push = false;
+                            if (room.ContainsHazard || room.HasMultiplePis) {
+                                parent.show = true;
+                                push = true;
+                            }
+                            if (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id) {
+                                parent.show = true;
+                                push = true;
+                            }
+                        } else {
+                            push = true;
+                            if ((room.ContainsHazard || room.HasMultiplePis) || (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id)) {
+                                push = false
+                            }
+                            
+                        }
+                        if (push) matchedHazards.push(hazard);
+
+                        /*
+
+                        if (!flip && (((room.ContainsHazard || room.HasMultiplePis)) && !hazard.ActiveSubHazards.length || (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id))){
                             if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
                             //based on model, should only ever push each matched hazard once
                             matchedHazards.push(hazard);
                             parent.show = true;
                         }
+
+                        if (flip && ( (!room.ContainsHazard && !room.HasMultiplePis) || (!room.ContainsHazard && room.PendingHazardDtoChange && !room.PendingHazardDtoChange.Key_id) ) ) {
+                            if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
+                            
+
+                            //based on model, should only ever push each matched hazard once
+                            matchedHazards.push(hazard);
+                        }
+                        */
                     }
                 }
             }
             return matchedHazards;
         }
     })
+    .filter('roomIdMatches', function () { return function (things) { return things; }})

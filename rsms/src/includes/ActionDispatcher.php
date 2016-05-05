@@ -73,8 +73,10 @@ class ActionDispatcher {
                 $actionMappings = array_merge($actionMappings, Rad_ActionMappingFactory::readActionConfig());
             }
             
+			//Verfication's server-side controller (VerificationActionManager extends HazardInventory's, so we "extend" the ActionMappings as well)
             if( isVerificationEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
+				$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
             }
             
             if( isHazardInventoryEnabled() ) {

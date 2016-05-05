@@ -294,26 +294,6 @@ angular
                     );
         }
 
-        ac.getPiHazards = function (hazardDto, room) {
-
-            var urlSegment = "getPisByHazardAndRoomIDs&hazardId=" + hazardDto.Hazard_id;
-            var ids = [];
-
-            
-            var i = hazardDto.InspectionRooms.length;
-            while (i--) {
-                ids.push(hazardDto.InspectionRooms[i].Room_id);
-            }
-            urlSegment += "&" + $.param({ roomIds: ids });          
-
-            return genericAPIFactory.read(urlSegment)
-                    .then(
-                        function (returnedPromise) {
-                            return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-                        }
-                    );
-        }
-
         ac.savePI = function(pi, copy){
             this.save(copy)
                 .then(

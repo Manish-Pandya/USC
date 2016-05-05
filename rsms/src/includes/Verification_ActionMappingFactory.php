@@ -5,7 +5,7 @@
  *
  * @author Matt Breeden
  */
-class Verification_ActionMappingFactory extends ActionMappingFactory {
+class Verification_ActionMappingFactory extends HazardInventoryActionMappingFactory {
 
 	public static function readActionConfig() {
 		$mappings = new Verification_ActionMappingFactory();
@@ -43,7 +43,6 @@ class Verification_ActionMappingFactory extends ActionMappingFactory {
 				"saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
 				"closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getVerificationById"=>new ActionMapping("getVerificationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-                "getHazardRoomDtosByPIId" =>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePendingUserChange"=>new ActionMapping("savePendingUserChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePendingRoomChange"=>new ActionMapping("savePendingRoomChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePendingHazardDtoChange"=>new ActionMapping("savePendingHazardDtoChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

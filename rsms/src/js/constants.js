@@ -77,7 +77,7 @@ var Constants = (function () {
                         {val:"10", string:"October"},
                         {val:"11", string:"November"},
                         {val:"12", string:"December"}
-                    ]
+        ]
     };
 
     constants.CORRECTIVE_ACTION = {
@@ -186,11 +186,11 @@ var Constants = (function () {
         RAD_HAZARDS_PRESENT:  {label: "Radiation Hazards",  value:"Rad_hazards_present"}
     }
 
-    constants.ROOM_HAZARD_STATUS = [
-        { IN_USE: "Used by my lab in this room" },
-        { STORED_ONLY: "Used by another lab in this room" },
-        { NOT_USED: "Not used by my lab in this room" }
-    ]
+    constants.ROOM_HAZARD_STATUS = {
+         IN_USE: "Used by my lab",
+         STORED_ONLY: "Only stored by my lab",
+         NOT_USED: "Not used by my lab"
+    }
 
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
     

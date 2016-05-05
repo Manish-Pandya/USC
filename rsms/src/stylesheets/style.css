@@ -3759,6 +3759,9 @@ btn-mini {
 .modal-body{
     min-height: 112px;
 }
+.modal-body.pi-hazard-rooms ul li table tr.new td, .verification-hazards li.new{
+  background: #9DCE88 !Important;
+}
 
 /*
   Icon Font: custom-font-icons

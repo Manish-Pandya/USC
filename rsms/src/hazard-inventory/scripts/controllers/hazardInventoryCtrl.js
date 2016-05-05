@@ -240,6 +240,7 @@ angular.module('HazardInventory')
         var af = applicationControllerFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        $scope.dataStoreManager = dataStoreManager;
 
         $scope.processRooms = function(inspection, rooms){
             for(var j = 0; j<inspection.Rooms.length; j++){

@@ -2,7 +2,7 @@
 
 angular
     .module('applicationControllerModule', ['rootApplicationController'])
-    .factory('applicationControllerFactory', function applicationControllerFactory(modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods, rootApplicationControllerFactory) {
+    .factory('applicationControllerFactory', function applicationControllerFactory(modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods, rootApplicationControllerFactory, $anchorScroll, $location) {
         var ac = rootApplicationControllerFactory;
         var store = dataStoreManager;
         //give us access to this factory in all views.  Because that's cool.
@@ -177,20 +177,28 @@ angular
 
         }
 
-        ac.savePendingHazardDtoChange = function(change, copy) {
+        ac.savePendingHazardDtoChange = function (change, copy) {
+
             ac.clearError();
-            console.log(copy);
-            console.log(change);
             copy.Is_active = false;
             
+            var hazard = dataStoreManager.getById("HazardDto", copy.Hazard_id);
+
             copy.Verification_id = ac.getCachedVerification().Key_id;
             return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
+                        console.log(returnedChange);
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
                         if (!copy.Key_id) {
                             dataStoreManager.pushIntoCollection(returnedChange);
                             ac.getCachedVerification().PendingHazardDtoChanges.push(dataStoreManager.getById("PendingHazardDtoChange", returnedChange.Key_id));
+                            hazard.ContainsHazard = true;
+                            hazard.justAdded = true;
+                            $location.hash("hazard" + hazard.Hazard_id);
+                        } else {
+                            //set status for hazard
+                            console.log($location);
                         }
                         angular.extend(copy, returnedChange);
                         angular.extend(change, copy);

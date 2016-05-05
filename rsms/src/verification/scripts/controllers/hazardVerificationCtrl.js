@@ -1,9 +1,10 @@
 ﻿angular
     .module('VerificationApp')
-    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory) {
+    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $modal) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
+        $scope.Constants = Constants;
 
         $scope.categoryIdx = 0;
         $scope.buildingIdx = 0;
@@ -50,41 +51,76 @@
             }
         }
 
+        $scope.openMultiplePIHazardsModal = function (hazardDto, room) {
+            var modalData = {};
+            modalData.HazardDto = hazardDto;
+            $scope.PI.Rooms = [room];
+            modalData.PI = $scope.PI;
+            $scope.pisPromise = ac.getPiHazards(hazardDto, room)
+                .then(function (pHRS) {
+                    modalData.pHRS = pHRS;
+                    ac.setModalData(modalData);
+                    var modalInstance = $modal.open({
+                        templateUrl: '../hazard-inventory/views/modals/multiple-PI-hazards-modal.html',
+                        controller: 'HazardVerificationModalCtrl'
+                    });
+                })
+
+        }
+
+        $scope.onSelectHazard = function (hazard) {
+            $scope.selectedHazard = hazard;
+            
+            var roomId = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
+
+            for (var x = 0; x < hazard.InspectionRooms.length; x++) {
+                if (roomId === hazard.InspectionRooms[x].Room_id) {
+                    $scope.roomDto = hazard.InspectionRooms[x];
+                    continue;
+                }
+            }
+        }
+
         var id = 1; // TODO: This shouldn't be set here. Just for testing.
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllHazards);
         $scope.dsm = dataStoreManager;
 
-        var setEdit = function (hazard) {
+        var setHazardChangeDTO = function (hazard) {
             var roomLen = hazard.InspectionRooms.length;           
             for (var x = 0; x < roomLen; x++) {
                 var room = hazard.InspectionRooms[x];
-                if (room.ContainsHazard || room.HasMultiplePis) {
-                    //WE DON'T NEED TO CREATE A PendingHazardDtoChange IF THERE IS ALREADY ONE IN THE DATASTORE
-                    room.PendingHazardDtoChange = findRelevantPendingChange(room.Room_id, hazard.Hazard_id)
-                    if (!room.PendingHazardDtoChange) {
-                        //create PendingHazardDtoChange
-                        room.PendingHazardDtoChange = new window.PendingHazardDtoChange();
-                        room.PendingHazardDtoChange.Hazard_id = hazard.Key_id;
-                        room.PendingHazardDtoChange.Room_id = room.Room_id;
-                        room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
-                        room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
-                        room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
+                //WE DON'T NEED TO CREATE A PendingHazardDtoChange IF THERE IS ALREADY ONE IN THE DATASTORE
+                room.PendingHazardDtoChange = findRelevantPendingChange(room.Room_id, hazard.Hazard_id);
+                if (!room.PendingHazardDtoChange) {
+                    //create PendingHazardDtoChange
+                    room.PendingHazardDtoChange = new window.PendingHazardDtoChange();
+                    room.PendingHazardDtoChange.Hazard_id = hazard.Key_id;
+                    room.PendingHazardDtoChange.Room_id = room.Room_id;
+                    room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
+                    room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
+                    room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
 
-                        //get the proper status
-                        room.PendingHazardDtoChange.New_status = getStatus(room);
-
-                    }
-                                        
-                    room.PendingHazardDtoChangeCopy = new window.PendingHazardDtoChange();
-                    room.PendingHazardDtoChangeCopy = Object.assign(room.PendingHazardDtoChangeCopy, room.PendingHazardDtoChange);
+                    //get the proper status
+                    room.PendingHazardDtoChange.New_status = getStatus(room);
                 }
+                                        
+                room.PendingHazardDtoChangeCopy = new window.PendingHazardDtoChange();
+                room.PendingHazardDtoChangeCopy = Object.assign(room.PendingHazardDtoChangeCopy, room.PendingHazardDtoChange);
             }
         }
 
         function getStatus(room) {
-            console.log(room);
+            if(room.ContainsHazard){
+                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE) {
+                    return Constants.ROOM_HAZARD_STATUS.IN_USE;
+                } else {
+                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY;
+                } 
+            }else{
+                return Constants.ROOM_HAZARD_STATUS.NOT_USED;
+            }
         }
 
         function findRelevantPendingChange(roomId, hazardId) {
@@ -131,7 +167,7 @@
                                  hazard.loadSubHazards();                                 
                                 
                                  if (hazard.ActiveSubHazards && !hazard.ActiveSubHazards.length) {
-                                    setEdit(hazard);
+                                    setHazardChangeDTO(hazard);
                                     if (leafParentHazards.indexOf(hazard.Parent_hazard_id) == -1) {
                                         leafParentHazards.push(hazard.Parent_hazard_id);
                                     }
@@ -139,9 +175,14 @@
                              }
                              //http://erasmus.graysail.com/rsms/src/verification/#/inventory
                              var categorizedHazards = {};
+                             var categorizedLeafHazards = {};
                              categorizedHazards[Constants.MASTER_HAZARD_IDS.BIOLOGICAL] = [];
+                             categorizedLeafHazards[Constants.MASTER_HAZARD_IDS.BIOLOGICAL] = [];
                              categorizedHazards[Constants.MASTER_HAZARD_IDS.CHEMICAL] = [];
+                             categorizedLeafHazards[Constants.MASTER_HAZARD_IDS.CHEMICAL] = [];
                              categorizedHazards[Constants.MASTER_HAZARD_IDS.RADIATION] = [];
+                             categorizedLeafHazards[Constants.MASTER_HAZARD_IDS.RADIATION] = [];
+
                              var idsMap = [];
 
                              for (var x = 0; x < leafParentHazards.length; x++) {
@@ -160,6 +201,7 @@
                                      if (idsMap.indexOf(hazard.Key_id) == -1 && categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) {
                                          var leafParent = dataStoreManager.getById("HazardDto", originalHazardId);
                                          categorizedHazards[hazard.Parent_hazard_id].push(leafParent);
+                                         categorizedLeafHazards[hazard.Parent_hazard_id] = categorizedLeafHazards[hazard.Parent_hazard_id].concat(leafParent.ActiveSubHazards);
                                          idsMap.push(hazard.Key_id)
                                          return false;
                                      }
@@ -173,7 +215,8 @@
                              }
                              
                              $scope.allHazards = categorizedHazards;
-                             console.log(id, $scope.hazardCategories[$scope.categoryIdx]);
+                             $scope.allLeafHazards = categorizedLeafHazards;
+
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
@@ -181,5 +224,31 @@
                          }
                      );
         }
+
+    })
+
+    .controller('HazardVerificationModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods) {
+        $scope.constants = Constants;
+        var af = applicationControllerFactory;
+        $scope.af = af;
+        $scope.modalData = af.getModalData();
+        $scope.dataStoreManager = dataStoreManager;
+
+        $scope.processRooms = function (inspection, rooms) {
+            for (var j = 0; j < inspection.Rooms.length; j++) {
+                inspection.Rooms[j].checked = true;
+            }
+            for (var k = 0; k < rooms.length; k++) {
+                if (!convenienceMethods.arrayContainsObject(inspection.Rooms, rooms[k])) {
+                    inspection.Rooms.push(rooms[k]);
+                }
+            }
+        }
+
+        $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
 
     });
