@@ -4373,7 +4373,6 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
-
         $principalInvestigator->setEntityMaps($entityMaps);
 
         return $principalInvestigator;

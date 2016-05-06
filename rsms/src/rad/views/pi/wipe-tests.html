@@ -1,0 +1,92 @@
+﻿<div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:ParcelSaving,message:'Saving Use', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div style="margin-top:70px;" ng-if="pi">
+    <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
+    <pre>{{ pi.WipeTests | json}}</pre>
+
+    <div class="well full">
+        <h1>
+            {{pi.User.Name}}'s Wipe Tests <a class="btn btn-success left" ng-click="openModal()"><i class="icon-paper"></i>Add Wipe Test</a>
+        </h1>
+        <div class="card full wipe-tests" ng-repeat="test in pi.WipeTests">
+            <h3 class="card-header padding">
+                <i class="icon-paper"></i>
+                <span>
+                    {{test.Notes}} started on {{test.Date_created | dateToISO}}
+                </span>
+                <span class='pull-right' style="width:511px;">
+                    <a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> <a ng-disabled="smear.edit" ng-click="addMiscWipes(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Smears</a> <a ng-click="clouseOutMWT(test)" class="btn btn-info left"><i class="icon-exit"></i>Close</a><a style="margin-left:6px" ng-click="af.setObjectActiveState(test)" class="btn btn-danger left"><i class="icon-cancel-2"></i>Cancel</a>
+                </span>
+                <span class="clearfix"></span>
+            </h3>
+            <div class="fake-table" ng-if="test.PIWipes.length">
+                <div class="table-header">
+                    <h3>Edit</h3>
+                    <h3>Test Location</h3>
+                    <h3>Instrument</h3>
+                    <h3>Radioactivity</h3>
+                    <h3>Comments</h3>
+                    <h3></h3>
+                </div>
+
+                <div class="table-row" ng-repeat="smear in test.PIWipes | orderBy:'Key_id'">
+                    <div>
+                        <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editMiscWipe(test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                    </div>
+
+
+                    <div ng-if="!smear.edit">
+                        {{smear.Location}}
+                    </div>
+                    <div ng-if="smear.edit">
+                        <textarea placeholder="Location" ng-if="PIWipeCopy" ng-model="PIWipeCopy.Location"></textarea>
+                        <textarea placeholder="Location" ng-if="!PIWipeCopy" ng-model="smear.Location"></textarea>
+                    </div>
+
+                    <div>
+                        {{test.Reading_type}}
+                    </div>
+
+                    <div ng-if="!smear.edit">
+                        {{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
+                    </div>
+                    <div ng-if="smear.edit">
+                        <div class="control-group">
+                            <div class="controls input-append">
+                                <input class="span3" ng-if="PIWipeCopy" ng-model="PIWipeCopy.Curie_level">
+                                <input class="span3" ng-if="!PIWipeCopy" ng-model="smear.Curie_level">
+                                <span class="add-on">DPM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="!smear.edit">
+                        {{smear.Notes}}
+                    </div>
+                    <div ng-if="smear.edit">
+                        <textarea placeholder="Notes" ng-if="PIWipeCopy" ng-model="PIWipeCopy.Notes"></textarea>
+                        <textarea placeholder="Notes" ng-if="!PIWipeCopy" ng-model="smear.Notes"></textarea>
+                    </div>
+
+                    <div style="min-width:0;" ng-if="PIWipeCopy">
+                        <span ng-if="smear.edit">
+                            <a class="btn btn-success left" ng-click="af.savePIWipe(test, PIWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+                            <a class="btn btn-danger left" placeholder="Notes" ng-click="cancelMiscWipeEdit(test, smear)"><i class="icon-cancel-2"></i>Cancel</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="table-row hover-white" ng-if="test.adding">
+                    <div class="hover-white">
+                        <a class="btn btn-large left btn-success" ng-click="af.savePIWipes(test)"><i class="icon-checkmark"></i>Save Smears</a>
+                    </div>
+                    <div class="hover-white"></div>
+                    <div class="hover-white"></div>
+                    <div class="hover-white"></div>
+                    <div class="hover-white"></div>
+                    <div class="hover-white"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

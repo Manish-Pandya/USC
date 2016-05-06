@@ -173,6 +173,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/QuarterlyInventory.js"></script>
 <script src="./scripts/models/PIQuarterlyInventory.js"></script>
 <script src="./scripts/models/PIAuthorization.js"></script>
+<script src="./scripts/models/PIWipeTest.js"></script>
+<script src="./scripts/models/PIWipe.js"></script>
 
 </head>
 <body>

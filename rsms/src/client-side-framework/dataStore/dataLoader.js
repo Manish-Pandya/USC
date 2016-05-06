@@ -37,89 +37,43 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
     }
 
-    // data not cached, get it from the server
+    // data not cached, get it from the server, unless it was eagerly loaded on the server
     else {
-        var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
+        //the collection is present in the parent, but the objects have not been placed in the dataStore
+        if (parent[property]) {
+            console.log(parent[property])
+            dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[property]), relationship.className);
 
-        parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
-            //cache result so we don't hit the server next time
-            var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
-            dataStoreManager.store(instatedObjects);
-             if (!whereClause) whereClause = false;
-            parent[property] = [];
+            if (relationship.className == "PIWipeTest") {
+                alert('thisun')
+                console.log(dataStoreManager.getChildrenByParentProperty(
+                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause));
+            }
+
             parent[property] = dataStoreManager.getChildrenByParentProperty(
-                relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
+                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 
-            if(recurse)dataLoader.recursivelyInstantiate(instatedObjects, parent);
+            if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
 
-        });
-    }
-}
-/*
-dataLoader.loadManyToManyRelationship = function (parent, property, relationship, apiOverride) {
-    // if this type of relationship is cached, use it.
-    if (dataLoader[relationship.name]) {
-        var matches = dataLoader.getChildrenByParentProperty(
-            relationship.name, relationship.keyReference, parent[relationship.paramValue]);
-
-        var className = relationship.className;
-        var idProperty = className + '_id'; // property containing key id of desired item.
-
-        var instatedMatches = dataLoader.instateRelationItems(matches, className, idProperty);
-        parent[property] = instatedMatches;
-    }
-    // data not cached, get from the server
-    else {
-        var urlFragment = 'getRelationships';
-        var paramValue = '&class1=' + parent.Class + '&class2=' + relationship.className;
-        if(apiOverride)urlFragment = apiOverride;
-        parent.api.read(urlFragment, paramValue)
-            .then(function (returnedPromise) {
+        } else {
+            var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
+            parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
                 dataStoreManager.store(instatedObjects);
+                if (!whereClause) whereClause = false;
 
-                var matches = dataStoreManager.getChildrenByParentProperty(
-                    relationship.name, relationship.keyReference, parent[relationship.paramValue]);
+                parent[property] = dataStoreManager.getChildrenByParentProperty(
+                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 
-                var className = relationship.className;
-                var idProperty = relationship.otherKey; // property containing key id of desired item.
-
-
-                // *********************************************
-                // BEGIN MESSY AREA TO REFACTOR
-                // This could all be replaced with a DataSwitch.getAll call if we had access to it
-
-                // double check that the child class has been loaded, so instateRelationItems has something to instate.
-                if (!dataStoreManager.checkCollection(className)) {
-                    var action = parent.api.fetchActionString('getAll', className);
-
-                    // get data
-                    parent.api.read(action).then(function (returnedPromise) {
-                        var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
-                        console.log(instatedObjects);
-                        // add returned data to cache
-                        dataStoreManager.store(instatedObjects, true, className);
-
-                        // finally instate and set the result on parent.
-                        var instatedMatches = dataLoader.instateRelationItems(matches, className, idProperty);
-                        parent[property] = instatedMatches;
-                    });
-                } else {
-                    var instatedMatches = dataLoader.instateRelationItems(matches, className, idProperty);
-                    parent[property] = instatedMatches;
-                }
-
-                // END MESSY AREA TO REFACTOR
-                // ********************************************
-
+                if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
 
             });
+        }
     }
 }
-*/
 
-dataLoader.loadManyToManyRelationship = function(parent, relationship){
+dataLoader.loadManyToManyRelationship = function (parent, relationship) {
     if(dataStoreManager.checkCollection(parent.Class) && dataStoreManager.checkCollection(relationship.table)){
         parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
     }
@@ -128,7 +82,7 @@ dataLoader.loadManyToManyRelationship = function(parent, relationship){
         dataStore['loading'+relationship.table].then(
             function(){
                  // double check that the child class has been loaded, so instateRelationItems has something to instate.
-                if (!dataStoreManager.checkCollection(relationship.childClass)) {
+                if (!dataStoreManager.checkCollection(relationship.childClass) && !parent[relationship.parentProperty]) {
                     var action = parent.api.fetchActionString('getAll', relationship.childClass);
 
                    // get data
@@ -140,8 +94,16 @@ dataLoader.loadManyToManyRelationship = function(parent, relationship){
                         dataStore['loading'+relationship.table] = null;
                     });
                 } else {
+                    //the collection is present in the parent, but the objects have not been placed in the dataStore
+                    if (parent[relationship.parentProperty]) {
+                        console.log(relationship);
+                        dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[relationship.parentProperty]), relationship.className);
+                    }
+                    if (relationship.className == "PIWipeTest") {
+                        console.log(dataStoreManager.getManyToMany(parent, relationship));
+                    }
                    parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
-                    dataStore['loading'+relationship.table] = null;
+                   dataStore['loading'+relationship.table] = null;
                 }
             }
         )

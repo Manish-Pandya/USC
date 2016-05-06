@@ -996,6 +996,8 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.SolidsContainers));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
+
                         console.log(pi);
                         
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
@@ -1022,6 +1024,8 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
                        
                         pi = dataStoreManager.getById("PrincipalInvestigator", id);
+                        pi.loadPIWipeTests();
+
                         if (pi) {
                             pi.loadSolidsContainers();
                             pi.loadPickups();
@@ -1034,6 +1038,7 @@ angular
                             pi.loadUser();
                             pi.loadWasteBags();
                             pi.loadCurrentScintVialCollections();
+                            pi.loadPIWipeTests();
                             var i = pi.Pickups.length;
                             while (i--) {
                                 pi.Pickups[i].loadCurrentScintVialCollections();

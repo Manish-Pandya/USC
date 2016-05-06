@@ -391,6 +391,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("eager","getWipeTests");
         
         $authMaps = array();
         $authMaps[] = new EntityMap("lazy", "getRooms");
