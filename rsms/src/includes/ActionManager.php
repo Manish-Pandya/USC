@@ -490,6 +490,8 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getVerifications");
             $entityMaps[] = new EntityMap("lazy","getBuidling");
             $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+            $entityMaps[] = new EntityMap("lazy","getWipeTests");
+
 
 
 
@@ -1589,6 +1591,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("lazy","getVerifications");
                 $entityMaps[] = new EntityMap("lazy","getBuidling");
                 $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+		        $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
                 $pi->setEntityMaps($entityMaps);
             }
@@ -1665,6 +1668,8 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
             $entityMaps[] = new EntityMap("lazy","getVerifications");
             $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+            $entityMaps[] = new EntityMap("lazy","getWipeTests");
+
 
 
             $pi->setEntityMaps($entityMaps);
@@ -1706,6 +1711,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
             $entityMaps[] = new EntityMap("lazy","getVerifications");
             $entityMaps[] = new EntityMap("lazy","getBuidling");
+            $entityMaps[] = new EntityMap("lazy","getWipeTests");
             $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 
 
@@ -1751,6 +1757,7 @@ class ActionManager {
                 $piMaps[] = new EntityMap("lazy","getVerifications");
                 $piMaps[] = new EntityMap("lazy","getBuidling");
                 $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
+                $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
                 $pi->setEntityMaps($piMaps);
             }
@@ -1798,8 +1805,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getVerifications");
         $entityMaps[] = new EntityMap("lazy","getBuidling");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-
-
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
@@ -1859,6 +1865,8 @@ class ActionManager {
 	        $piMaps[] = new EntityMap("lazy","getVerifications");
 	        $piMaps[] = new EntityMap("lazy","getBuidling");
 	        $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
+            $piMaps[] = new EntityMap("lazy","getWipeTests");
+
         }else{
         	$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
         	$roomMaps[] = new EntityMap("lazy","getHazards");
@@ -1985,7 +1993,7 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getVerifications");
         $entityMaps[] = new EntityMap("lazy","getBuidling");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
@@ -4236,6 +4244,7 @@ class ActionManager {
                     $entityMaps[] = new EntityMap("lazy","getVerifications");
                     $entityMaps[] = new EntityMap("lazy","getBuidling");
                     $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+                    $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
                     foreach($pis as $pi){
                         $pi->setEntityMaps($entityMaps);
@@ -4362,6 +4371,8 @@ class ActionManager {
         $entityMaps[] = new EntityMap("eager","getVerifications");
         $entityMaps[] = new EntityMap("lazy","getBuidling");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
+
 
         $principalInvestigator->setEntityMaps($entityMaps);
 
