@@ -2943,12 +2943,11 @@ label.smaller {
 .quickdate-popup {
   z-index: 10;
   background-color: #fff;
-  border: solid 1px #000;
+  border: solid 1px #999;
   text-align: center;
   width: 250px;
-  display: none;
   position: absolute;
-  padding: 5px;
+  padding:10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
@@ -2959,10 +2958,7 @@ label.smaller {
 
 /* line 1975, ../sass/style.scss */
 .quickdate-close {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #333;
+  display: none;
 }
 
 /* line 1976, ../sass/style.scss */
@@ -3026,6 +3022,10 @@ table.quickdate-calendar {
 table.quickdate-calendar th, table.quickdate-calendar td {
   padding: 5px;
 }
+table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
+  background: #24A0DA;
+  color:white !important
+}
 
 /* line 1986, ../sass/style.scss */
 table.quickdate-calendar td:hover {
@@ -3050,7 +3050,9 @@ table.quickdate-calendar td:hover {
 
 /* line 1990, ../sass/style.scss */
 table.quickdate-calendar td.is-today {
-  color: #49afcd;
+  color: #000;
+  font-weight:bold;
+  background: rgba(18, 0, 28, 0.29) !important;
 }
 table.quickdate-calendar td.selected{
   background:#5BB75B!important;
@@ -3657,7 +3659,7 @@ tbody tr:nth-child(even){
   background:#ECF0F1;
 }
 
-tbody tr:hover{/* background:#BDC3C7; */color:#FFFFFF;}
+tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 
 .fixed{
   position:fixed;

@@ -1,5 +1,5 @@
 <div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:#428642; color:white">Create or edit Cabinet</h2>
+    <h2 style="padding:5px; background:#428642; color:white">Create or Edit Cabinet</h2>
 </div>
 
 <div class="modal-body">
@@ -18,10 +18,10 @@
         <label class="control-label">Building</label>
         <div class="controls">
             <select ng-if="modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-init="getBuilding()" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
-                <option value="">--Select--</option>
+                <option value="">--Select Building--</option>
             </select>   
             <select title="Please select a principal investigator first." disabled="disabled" ng-if="!modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
-                <option value="">--Select--</option>
+                <option value="">--Select PI--</option>
             </select>       
         </div>
     </div>    
@@ -31,10 +31,10 @@
         <label class="control-label">Room</label>
         <div class="controls">
             <select ng-init="getRoom()" ng-if="modalData.selectedBuilding" ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as room.Name for room in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms | matchBuilding:modalData.selectedBuilding">
-                <option value="">--Select--</option>
+                <option value="">--Select Room--</option>
             </select>  
             <select title="Please select a principal investigator and building first." disabled="disabled" ng-if="!modalData.selectedBuilding" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
-                <option value="">--Select--</option>
+                <option value="">--Select Room--</option>
             </select>   
         </div>
     </div>
@@ -43,7 +43,9 @@
     <div class="control-group">
         <label class="control-label">Type</label>
         <div class="controls">
-            <input ng-model="modalData.BioSafetyCabinetCopy.Type" placehold="Label"/>
+            <select  ng-model="modalData.BioSafetyCabinetCopy.Type" ng-options="type as type for (key,type) in Constants.BIOSAFETY_CABINET.TYPE">
+                <option value="">--Select Cabinet Type--</option>
+            </select>
         </div>
     </div>
     <div class="control-group">
@@ -69,6 +71,11 @@
         <select ng-model="modalData.BioSafetyCabinetCopy.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
             <option value="">--Select--</option>
         </select>
+    </div>
+
+    <div class="control-group" ng-if="!modalData.BioSafetyCabinet.Key_id">
+        <label class="control-label">Certification Date</label>
+        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.Certification_date' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
     </div>
 </div>
 

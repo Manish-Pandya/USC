@@ -17,6 +17,8 @@ abstract class Equipment extends GenericCrud{
     protected $equipmentInspections; //array\
     protected $principaInvestigatorId;
     protected $roomId;
+    private $equipment_class;
+
     
     /** Relationships */
 	protected static $INSPECTIONS_RELATIONSHIP = array(
@@ -97,16 +99,27 @@ abstract class Equipment extends GenericCrud{
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
             if ($this->frequency != null) {
-                $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id());
+                $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
                 if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
                 if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-                
+                if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
 
                 $inspectionDao = new GenericDao($inspection);
                 $inspection = $inspectionDao->save($inspection);
+                return $inspection;
                 //$this->equipmentInspections = array( $inspection );
             }
+        }else{
+            return null;
         }
     }
+
+    public function getCertification_date(){
+		return $this->certification_date;
+	}
+	public function setCertification_date($certification_date){
+		$this->certification_date = $certification_date;
+        // new instance will be spawned in the controller
+	}
     
 }

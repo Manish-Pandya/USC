@@ -13,7 +13,6 @@ angular.module('EquipmentModule')
             restrict: 'A',
             scope: true,
             link: function (scope, element, attr) {
-                console.log(element);
                 element.bind('change', function () {
                     var formData = new FormData();
                     formData.append('file', element[0].files[0]);
@@ -93,8 +92,6 @@ angular.module('EquipmentModule')
                     }
 
                     var currentYearString = new Date().getFullYear().toString();
-                    console.log(currentYearString);
-                    console.log(typeof currentYearString)
                     if ($scope.dueYears.indexOf(currentYearString) < 0) {
                         $scope.dueYears.push(currentYearString);
                     }
@@ -103,6 +100,7 @@ angular.module('EquipmentModule')
                     }
                     $scope.selectedCertificationDate = currentYearString;
                     $scope.selectedDueDate = currentYearString;
+                    console.log(currentYearString);
                 }
             }
         }
@@ -116,7 +114,6 @@ angular.module('EquipmentModule')
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
             copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
-            console.log(copy);
             af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
         }
         
@@ -158,7 +155,6 @@ angular.module('EquipmentModule')
         var af = $scope.af = applicationControllerFactory;
         
         $scope.modalData = af.getModalData();
-        console.log("modalData:", $scope.modalData);
         $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
     
         $scope.onSelectPi = function(pi){
@@ -188,9 +184,11 @@ angular.module('EquipmentModule')
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date){
                 $scope.modalData.BioSafetyCabinetCopy.Certification_date = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date;
             }
+
+            $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date || null);
+            console.log($scope.modalData.BioSafetyCabinetCopy.viewDate);
         }
         
-        console.log($scope.modalData.BioSafetyCabinetCopy);
     
         $scope.getBuilding = function(){
             if ($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections) {
@@ -231,22 +229,21 @@ angular.module('EquipmentModule')
         });
     
         $scope.save = function(copy, original){
-            if(!original)original = null;
-            console.log(original);
+            if (!original) original = null;
+            copy.Certification_date = convenienceMethods.setMysqlTime(copy.Certification_date);
             af.saveBioSafetyCabinet(copy, original)
                     .then(function(){$scope.close()})
         }
         
         $scope.certify = function (copy, original) {
             $scope.message = null;
-            console.log(copy);
             if (!copy.Report_path) {
                 $scope.message = "Please upload a report.";
                 return;
             }
 
             if(!original)original = null;
-            copy.Certification_date = convenienceMethods.setMysqlTime(new Date());
+            copy.Certification_date = convenienceMethods.setMysqlTime(copy.Certification_date);
             af.saveEquipmentInspection(copy, original)
                     .then(function(){$scope.close()})
         }
@@ -257,7 +254,6 @@ angular.module('EquipmentModule')
         }
         
         $scope.$on('fileUpload', function(event, formData) {
-            console.log("DIG:", $scope.modalData.BioSafetyCabinetCopy);
             $scope.modalData.BioSafetyCabinetCopy.reportUploaded = false;
             $scope.modalData.BioSafetyCabinetCopy.reportUploading = true;
             $scope.$apply();

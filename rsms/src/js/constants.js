@@ -191,7 +191,16 @@ var Constants = (function () {
             ANNUALLY: "Annually",
             SEMI_ANNUALLY: "Semi-annually"
         },
-        EQUIPMENT_CLASS: "BioSafetyCabinet"
+        EQUIPMENT_CLASS: "BioSafetyCabinet",
+        TYPE: ["Class I",
+               "Class II, Type A1",
+               "Class II, Type A2",
+               "Class II, Type A/B3",
+               "Class II, Type B1",
+               "Class II, Type B2",
+               "Horizontal Flow Clean Bench",
+               "Vertical Flow Clean Bench"
+              ]
     }
 
     constants.ROOM_HAZARDS = {
