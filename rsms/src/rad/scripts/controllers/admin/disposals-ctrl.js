@@ -44,8 +44,8 @@ angular.module('00RsmsAngularOrmApp')
             .then(
                 function(cycles){
                     console.log(cycles);
-                    if(!dataStore.CarboyUseCycle)dataStore.CarboyUseCycle=[];
-                    $scope.cycles = dataStore.CarboyUseCycle;
+                    if (!dataStore.CarboyUseCycle) dataStore.CarboyUseCycle = [];
+                    $scope.cycles = dataStoreManager.get("CarboyUseCycle");
                     return cycles;
                 }
             )
@@ -106,6 +106,21 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.editDrum = function (object) {
+        console.log(object);
+        var modalData = {};
+        if (!object) {
+            object = new window.Drum();
+            object.Class = "Drum";
+        }
+        modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/drum-modal.html',
+            controller: 'DrumShipCtrl'
+        });
+    }
+
     $scope.editCycle = function(cycle){
         cycle.edit=true;
         af.createCopy(cycle);
@@ -129,6 +144,8 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
+        $rootScope.CarboyReadingAmountCopy.Class = "CarboyReadingAmount";
+        if (!cycle.Carboy_reading_amounts) cycle.Carboy_reading_amounts = [];
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }
     
@@ -184,11 +201,15 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log($scope.modalData);
-                    $scope.close();
 
-        $scope.shipDrum = function(drum, copy){
+        $scope.shipDrum = function (drum, copy) {
+            $rootScope.saving = af.saveDrum(drum, copy);
+            $scope.close();
+        }
+
+        $scope.saveDrum = function (drum, copy) {
             $rootScope.saving = af.saveDrum(drum, copy)
+            $scope.close();
         }
 
         $scope.close = function(){

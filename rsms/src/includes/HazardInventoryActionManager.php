@@ -304,6 +304,8 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
+
 		
 		foreach($pis as $pi){
 			$pi->setEntityMaps($entityMaps);

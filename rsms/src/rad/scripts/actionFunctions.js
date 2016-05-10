@@ -157,6 +157,11 @@ angular
                         Dashboard:true
                     },
                     {
+                        Name:'lab-wipes',
+                        Label: 'My Radiation Laboratory -- Wipe Tests',
+                        Dashboard:true
+                    },
+                    {
                         Name:'use-log',
                         Label: 'Use Log',
                         Dashboard:true
@@ -991,6 +996,8 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.SolidsContainers));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
+
                         console.log(pi);
                         
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
@@ -1017,6 +1024,8 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
                        
                         pi = dataStoreManager.getById("PrincipalInvestigator", id);
+                        pi.loadPIWipeTests();
+
                         if (pi) {
                             pi.loadSolidsContainers();
                             pi.loadPickups();
@@ -1029,6 +1038,7 @@ angular
                             pi.loadUser();
                             pi.loadWasteBags();
                             pi.loadCurrentScintVialCollections();
+                            pi.loadPIWipeTests();
                             var i = pi.Pickups.length;
                             while (i--) {
                                 pi.Pickups[i].loadCurrentScintVialCollections();
@@ -1269,6 +1279,30 @@ angular
                         af.setError('The package could not be saved')
                     )
             }
+
+            af.savePIWipesAndChildren = function (copy, parcel) {
+                af.clearError();
+                copy.Status = Constants.PARCEL.STATUS.WIPE_TESTED;
+                return $rootScope.SavingParcelWipe = genericAPIFactory.save(copy, 'savePIWipesAndChildren')
+                   .then(
+                       function (returnedParcel) {
+                           returnedParcel = modelInflatorFactory.instateAllObjectsFromJson(returnedParcel);
+                           if (parcel) {
+                               angular.extend(parcel, copy, true);
+                               parcel.edit = false;
+                               parcel.Wipe_test[0].edit = false;
+                               var i = parcel.Wipe_test[0].Parcel_wipes.length;
+                               while (i--) {
+                                   parcel.Wipe_test[0].Parcel_wipes[i].edit = false;
+                                   angular.extend(parcel.Wipe_test[0].Parcel_wipes[i], copy.Wipe_test[0].Parcel_wipes[i]);
+                                   if (!parcel.Wipe_test[0].Parcel_wipes[i].Location) parcel.Wipe_test[0].Parcel_wipes.splice(i, 1);
+                               }
+                           }
+                       },
+                       af.setError('The package could not be saved')
+                   )
+            }
+
 
             af.saveSolidsContainer = function( pi, copy, container )
             {
@@ -1941,6 +1975,71 @@ angular
                 return dataSwitchFactory.getAllObjects('ScintVialCollection');
             }
 
+            /** PI Wipe Tests performed by lab personnel **/
+            af.savePIWipeTest = function(test) {
+                af.clearError();
+                return this.save( test )
+                    .then(
+                        function(returnedTest){
+                            returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
+                            if(test.Key_id){
+                                angular.extend(test, returnedTest);
+                            }else{
+                                //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+                                if (!returnedTest.PIWipes) returnedTest.PIWipes = [];
+                                var i = 10
+                                while(i--){
+                                    var wipe = new window.PIWipe();
+                                    wipe.PI_wipe_test_id = returnedTest.Key_id;
+                                    wipe.Class = "PIWipe";
+                                    wipe.edit = true;
+                                    returnedTest.PIWipes.push(miscellaneousWipe);
+                                }
+
+                                returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
+                                dataStoreManager.store(returnedTest);
+                                returnedTest.adding = true;
+                            }
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.savePIWipe = function(wipeTest, copy, wipe) {
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function (returnedWipe) {
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(wipe){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.PIWipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
+                        }
+                    )
+            }
+
+            af.savePIWipes = function (test) {
+                console.log(test.PIWipes);
+                af.clearError();
+                return $rootScope.SavingSmears = genericAPIFactory.save(test, 'savePIWipes')
+                    .then(
+                        function(returned){
+                            var returnedWipes = modelInflatorFactory.instateAllObjectsFromJson(returned.data);
+                            for (var i = 0; i < returnedWipes.length; i++) {
+                                returnedWipes[i].edit = false;
+                            }
+                            dataStoreManager.store(returnedWipes);
+                            test.loadPIWipes();
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
             /************************************************
             **
             **          DISPOSALS
@@ -1953,13 +2052,14 @@ angular
                     .then(
                         function(returnedDrum){
                             returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
-                            if(drum.Key_id){
+                            if(drum && drum.Key_id){
                                 angular.extend(drum, copy)
+                                drum.edit = false;
+
                             }else{
                                 dataStoreManager.store(returnedDrum);
                                 $rootScope.DrumCopy = {};
                             }
-                            drum.edit = false;
                         },
                         af.setError('The Drum could not be saved')
 
@@ -2003,32 +2103,15 @@ angular
 
                     )
             }
+            
+            af.saveCarboyReadingAmount = function (cycle, copy) {
 
-            af.saveDrum = function(drum, copy){
-                af.clearError();
-                return this.save(copy)
-                    .then(
-                        function(returnedDrum){
-                            returnedDrum = modelInflatorFactory.instateAllObjectsFromJson( returnedDrum );
-                            if(drum.Key_id){
-                                angular.extend(drum, copy)
-                            }else{
-                                dataStoreManager.store(returnedDrum);
-                                $rootScope.DrumCopy = {};
-                            }
-                            return returnedDrum;
-                        },
-                        af.setError('The Drum could not be saved')
-
-                    )
-            }
-
-            af.saveCarboyReadingAmount = function(cycle, copy){
                 af.clearError();
                 copy.Date_read = convenienceMethods.setMysqlTime(new Date());
                 return $rootScope.saving = this.save(copy)
                     .then(
-                        function(returnedCycle){
+                        function (returnedCycle) {
+                            console.log(returnedCycle);
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
                             var i = returnedCycle.Carboy_reading_amounts.length;
                             while(i--){
@@ -2223,7 +2306,7 @@ angular
 
             af.getRadModels = function(){
                      return dataSwitchFactory.getAllObjects("RadModelDto")
-                        .then( function( dto ) {
+                        .then(function (dto) {
                             var dto = dto[0];
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Isotope ));
@@ -2231,6 +2314,7 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PIAuthorization ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.WasteType));
                             //store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.CarboyUseCycle ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyReadingAmount));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Carboy));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.CarboyUseCycle));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.InspectionWipe ));
@@ -2246,7 +2330,9 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteBag ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PrincipalInvestigator ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
+                            console.log(dataStore);
+                            return dataStore;
                         });
             }
 

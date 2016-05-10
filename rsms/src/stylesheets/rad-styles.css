@@ -255,15 +255,14 @@ i.solids-containers {
 .card.pickups.pickup-collection:first-child {
     margin-top: 25px;
 }
-.card.pickups h1 i:first-child,
-.card.pickups h2 i:first-child,
-.card.pickups h3 i:first-child {
+.card.pickups h1 > i:first-child,
+.card.pickups h2 > i:first-child,
+.card.pickups h3 > i:first-child {
     font-size: 30px;
     color: rgb(91, 183, 91);
     margin: 14px 32px 0 5px !important;
 }
-.card.pickups h2 i:first-child,
-.card.pickups h3 i:first-child {
+.card.pickups h2 > i:first-child, .card.pickups h3 > i:first-child {
     margin: 1px 19px 0 5px !important;
 }
 .left-nav ul li a.pickups {
@@ -592,7 +591,7 @@ table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
     width:50px;
 }
 .pickup-collection:not(.admin) div.fake-table div.button-cell{
-    min-width: 112px;
+    min-width: 142px;
     width: 13%;
 }
 

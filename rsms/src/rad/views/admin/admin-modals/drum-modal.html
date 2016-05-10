@@ -1,0 +1,13 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Select Drum</h2>
+</div>
+
+<div class="modal-body">
+    <label>Label</label>
+    <input ng-model="modalData.DrumCopy.Label" />
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-success btn-large left"  ng-click="saveDrum(modalData.Drum, modalData.DrumCopy)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large  left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

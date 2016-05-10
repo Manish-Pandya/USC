@@ -4,7 +4,8 @@
 	<div class="well two-thirds">
 		<h1 class="carboys"><i class="icon-carboy"></i>Carboys</h1>
 		<h3 ng-show="!pourCarboys.length">No carboys in hot room.</h3>
-		<div class="card full carboys" ng-repeat="cycle in (pourCarboys = (cycles | disposalCycles))" ng-show="pourCarboys.length">
+		<div class="card full carboys" ng-repeat="cycle in (pourCarboys = (cycles | disposalCycles))" ng-show="pourCarboys.length" >
+            <span ng-init="cycle.loadCarboy_reading_amounts()"/>
 			<div class="fake-table bordered">
 				<div class="table-header">
 					<h3>Carboy Number</h3>
@@ -93,7 +94,7 @@
 					</div>
 
 					<div>
-						<button class="btn btn-success left" ng-click="af.createCopy(reading); af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
+						<button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
 						<button class="btn btn-danger left" ng-click="af.cancelEdit(reading)" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
 					</div>
 
@@ -150,21 +151,22 @@
 		</div>
 	</div>
 	<div class="well two-thirds">
-		<h1 class="disposals"><i class="icon-database"></i>Drums</h1>
+		<h1 class="disposals"><i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a></h1>
 		<div class="card full">
 			<div class="fake-table bordered">
 				<div class="table-header">
+                    <h3>Edit Drum</h3>
 					<h3>Label</h3>
 					<h3>Contents</h3>
 					<h3>Shipment Info</h3>
 					<h3>Ship</h3>
 				</div>
 				<div class="table-row" ng-repeat="drum in drums">
-					<!--
+				
 					<div>
 						<button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
 					</div>
-					-->
+				
 					<div ng-if="!drum.edit">
 						{{drum.Label}}
 					</div>
@@ -173,7 +175,7 @@
 					</div>
 
 					<div>
-						<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}</p>
+						<p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}</p>
 					</div>
 
 					<div>

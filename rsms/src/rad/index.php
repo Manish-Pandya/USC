@@ -108,7 +108,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
-
+<script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
 
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
@@ -173,6 +173,8 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/QuarterlyInventory.js"></script>
 <script src="./scripts/models/PIQuarterlyInventory.js"></script>
 <script src="./scripts/models/PIAuthorization.js"></script>
+<script src="./scripts/models/PIWipeTest.js"></script>
+<script src="./scripts/models/PIWipe.js"></script>
 
 </head>
 <body>

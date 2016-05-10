@@ -222,7 +222,7 @@ a.modalBtn i, .modal-footer a.btn i {
   margin: 4px 16px 0 3px;
 }
 
-a.btn i {
+.btn i {
   margin: 1px 2px;
   color:white !important;
   font-size: 16px !Important;
@@ -3541,10 +3541,10 @@ div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .t
   border-left: none;
 }
 .well >h1 > i {
-  margin-right: 10px;
+  margin-right: 5px;
   font-size: 35px;
   width: auto;
-  line-height: 53px;
+  line-height: 43px;
 }
 .well >h2 > i{
   margin-right: 7px;

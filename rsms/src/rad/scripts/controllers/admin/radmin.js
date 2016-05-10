@@ -15,8 +15,9 @@ angular.module('00RsmsAngularOrmApp')
         $scope.$state = $state;
         af.getRadModels()
             .then(
-                function () {
-                    var pis = af.getCachedCollection('PrincipalInvestigator');
+                function (models) {
+                    var pis = dataStoreManager.get('PrincipalInvestigator');
+                    console.log(dataStore);
                     $scope.typeAheadPis = [];
                     var i = pis.length;
                     while (i--) {

@@ -391,6 +391,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getQuarterly_inventories");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("eager","getWipeTests");
         
         $authMaps = array();
         $authMaps[] = new EntityMap("lazy", "getRooms");
@@ -577,6 +578,11 @@ class Rad_ActionManager extends ActionManager {
         return $dao->getAll();
     }
 
+    public function getAllCarboyReadingAmounts(){
+        $dao = $this->getDao(new CarboyReadingAmount());
+        return $dao->getAll();
+    }
+
     function getAllDrums() {
         $drumDao = $this->getDao(new Drum());
         return $drumDao->getAll();
@@ -680,6 +686,9 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Authorization());
+            if($decodedObject->getApproval_date == NULL){
+                $decodedObject->setApproval_date(date('Y-m-d H:i:s'));
+            }
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -726,17 +735,23 @@ class Rad_ActionManager extends ActionManager {
             $key_id = $decodedObject->getKey_id();
             $dao = $this->getDao(new Carboy());
             $carboy = $dao->save($decodedObject);
-            if ( $key_id == NULL ) {
+            if ( $decodedObject->getKey_id() == NULL ) {
+                $carboy->setCommission_date( date('Y-m-d H:i:s') );
+                $carboy = $dao->save($carboy);
+            }
+
+            if($carboy->getCarboy_use_cycles() == NULL){
                 $carboyCycle = new CarboyUseCycle();
                 $carboyCycle->setCarboy_id( $carboy->getKey_id() );
                 $carboyCycle->setStatus( "Available" );
-
-                $carboy->setCommission_date( date('Y-m-d H:i:s') );
-                $carboy = $dao->save($carboy);
-
                 $carboyUseCycle_dao = $this->getDao($carboyCycle);
                 $savedCarboyCycle = $carboyUseCycle_dao->save($carboyCycle);
             }
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
+            $carboy->setEntityMaps($entityMaps);
+
             return $carboy;
         }
     }
@@ -753,6 +768,17 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new CarboyUseCycle());
             $decodedObject = $dao->save($decodedObject);
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getCarboy");
+            $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+            $entityMaps[] = new EntityMap("eager", "getContents");
+            $entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
+            $entityMaps[] = new EntityMap("lazy", "getRoom");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
+            $decodedObject->setEntityMaps($entityMaps);
             return $decodedObject;
         }
     }
@@ -1329,6 +1355,65 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function savePIWipeTest() {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new PIWipeTest());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
+    function savePIWipes() {
+        $LOG = Logger::getLogger ( 'Action' . __FUNCTION__ );
+        $decodedObject =  $this->convertInputJson ();
+        if ($decodedObject === NULL) {
+            return new ActionError ( 'Error converting input stream to WasteType', 202 );
+        } else if ($decodedObject instanceof ActionError) {
+            return $decodedObject;
+        } else if ($decodedObject->getPIWipes() == null) {
+            return new ActionError ( 'No Parcel wipes were passed', 202 );
+        } else {
+            if ($decodedObject->getKey_id () == null) {
+                $wipeTestDao = $this->getDao ( new PIWipeTest () );
+                $test = $wipeTestDao->save ( $decodedObject );
+            }
+
+            $wipes = array ();
+            foreach ( $decodedObject->getPIWipes() as $wipe ) {
+                $wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+                if ($wipe->getLocation () != null) {
+                    $dao = $this->getDao ( new PIWipe () );
+                    $wipes [] = $dao->save ( $wipe );
+                }
+            }
+            return $wipes;
+        }
+    }
+
+    function savePIWipe() {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new PIWipe());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
     function saveCarboyReadingAmount($reading = null){
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
@@ -1340,9 +1425,21 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyReadingAmount());
+            $LOG->fatal($decodedObject);
+
             $decodedObject = $dao->save($decodedObject);
+
             $cycle = $decodedObject->getCarboy_use_cycle();
-            $LOG->debug($cycle);
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getCarboy");
+            $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+            $entityMaps[] = new EntityMap("eager", "getContents");
+            $entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
+            $entityMaps[] = new EntityMap("lazy", "getRoom");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
+            $cycle->setEntityMaps($entityMaps);
             return $cycle;
         }
     }
@@ -2240,6 +2337,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setPIAuthorization($this->getAllPIAuthorizations());
     	$dto->setCarboy($this->getAllCarboys());
     	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
+        $dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
     	$dto->setDrum($this->getAllDrums());
     	$dto->setDepartment($this->getAllDepartments());
     	$dto->setInspectionWipe($this->getAllInspectionWipes());
