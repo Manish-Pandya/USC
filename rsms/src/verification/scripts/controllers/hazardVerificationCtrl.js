@@ -70,7 +70,7 @@
 
         $scope.onSelectHazard = function (hazard) {
             $scope.selectedHazard = hazard;
-            
+            console.log(hazard);
             var roomId = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
 
             for (var x = 0; x < hazard.InspectionRooms.length; x++) {
@@ -79,6 +79,41 @@
                     continue;
                 }
             }
+        }
+
+        $scope.addNewHazard = function (name) {
+           
+            var newChange = new PendingHazardDtoChange();
+
+            newChange.Class = "PendingHazardDtoChange";
+            newChange.Hazard_name = name,
+            newChange.Room_id = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
+            newChange.Principal_investigator_id = $scope.PI.Key_id;
+            newChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
+            newChange.Verification_id = $scope.verification.Key_id;
+            newChange.New_status = null;
+
+            var roomDto = {
+                    Class: "PIHazardRoomDto",
+                    Principal_investigator_id: $scope.PI.Key_id,
+                    Room_id: $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id,
+                    ContainsHazard: true,
+                    PendingHazardDtoChangeCopy: newChange
+            }
+
+
+            var newHazard = new HazardDto();
+            newHazard.Class = "HazardDto";
+            newHazard.Principal_investigator_id = $scope.PI.Key_id;;
+            newHazard.Hazard_name = name,
+            newHazard.InspectionRooms = [roomDto];
+            newHazard.IsPresent = true;
+            newHazard.Name = name,
+            newHazard.RoomIds = [roomDto.Room_id];
+            
+            console.log()
+
+            return newHazard;
         }
 
         var id = 1; // TODO: This shouldn't be set here. Just for testing.

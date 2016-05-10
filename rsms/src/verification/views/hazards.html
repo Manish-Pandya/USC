@@ -12,7 +12,7 @@
     Add {{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}} hazard to {{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
 </h3>
 <div ng-if="HazCat.adding">
-    <ui-select ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item)" class="span4" style="margin-left:0">
+    <ui-select tagging="addNewHazard" ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item)" class="span4" style="margin-left:0">
         <ui-select-match placeholder="Select or search for a Hazard">{{selectedHazard.Hazard_name}} </ui-select-match>
         <ui-select-choices repeat="hazard in allLeafHazards[ hazardCategories[categoryIdx] ] | hazardRoomFilter:PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id:true | orderBy:'Hazard_name' | propsFilter: {Hazard_name: $select.search}">
             <div ng-bind-html="hazard.Hazard_name | highlight: $select.search"></div>

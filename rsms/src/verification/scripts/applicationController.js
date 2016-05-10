@@ -178,7 +178,7 @@ angular
         }
 
         ac.savePendingHazardDtoChange = function (change, copy) {
-
+            console.log(copy);
             ac.clearError();
             copy.Is_active = false;
             
