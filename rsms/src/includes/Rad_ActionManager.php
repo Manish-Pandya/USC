@@ -1355,6 +1355,65 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function savePIWipeTest() {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new PIWipeTest());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
+    function savePIWipes() {
+        $LOG = Logger::getLogger ( 'Action' . __FUNCTION__ );
+        $decodedObject =  $this->convertInputJson ();
+        if ($decodedObject === NULL) {
+            return new ActionError ( 'Error converting input stream to WasteType', 202 );
+        } else if ($decodedObject instanceof ActionError) {
+            return $decodedObject;
+        } else if ($decodedObject->getPIWipes() == null) {
+            return new ActionError ( 'No Parcel wipes were passed', 202 );
+        } else {
+            if ($decodedObject->getKey_id () == null) {
+                $wipeTestDao = $this->getDao ( new PIWipeTest () );
+                $test = $wipeTestDao->save ( $decodedObject );
+            }
+
+            $wipes = array ();
+            foreach ( $decodedObject->getPIWipes() as $wipe ) {
+                $wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+                if ($wipe->getLocation () != null) {
+                    $dao = $this->getDao ( new PIWipe () );
+                    $wipes [] = $dao->save ( $wipe );
+                }
+            }
+            return $wipes;
+        }
+    }
+
+    function savePIWipe() {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new PIWipe());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
     function saveCarboyReadingAmount($reading = null){
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();

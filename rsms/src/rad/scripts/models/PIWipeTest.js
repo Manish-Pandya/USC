@@ -9,16 +9,14 @@ PIWipeTest.prototype = {
     ],
     PIWIpesRelationship: {
         className: 'PIWipe',
-        keyReference: 'Pi_wipe_id',
+        keyReference: 'Pi_wipe_test_id',
         paramValue: 'Key_id',
         queryParam: ''
     },
 
     loadPIWipes: function () {
-        if (!this.PIWipes || !window.PIWipe) {
-            console.log('hello');
-            dataLoader.loadOneToManyRelationship(this, "PIWipes", this.PIWIpesRelationship);
-        }
+        console.log(this.PIWipes);
+        dataLoader.loadOneToManyRelationship(this, "PIWipes", this.PIWIpesRelationship);
     }
 }
 

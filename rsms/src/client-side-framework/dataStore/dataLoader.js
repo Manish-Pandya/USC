@@ -30,7 +30,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     }
 
     // if the required data is already cached get it from there.
-    else if (dataStore[relationship.className]) {
+    else if (dataStore[relationship.className] && dataStore[relationship.className].length) {
         if (!whereClause) whereClause = false;
         parent[property] = [];
         parent[property] = dataStoreManager.getChildrenByParentProperty(
@@ -40,16 +40,9 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     // data not cached, get it from the server, unless it was eagerly loaded on the server
     else {
         //the collection is present in the parent, but the objects have not been placed in the dataStore
-        if (parent[property]) {
-            console.log(parent[property])
+        if (parent[property] && parent[property].length) {
+
             dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[property]), relationship.className);
-
-            if (relationship.className == "PIWipeTest") {
-                alert('thisun')
-                console.log(dataStoreManager.getChildrenByParentProperty(
-                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause));
-            }
-
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                     relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 

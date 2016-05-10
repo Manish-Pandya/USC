@@ -128,7 +128,7 @@ angular
         templateUrl: "views/pi/CurrentInventories.html",
         controller: "InventoryViewCtrl"
       })
-      .state('pi-wipes', {
+      .state('lab-wipes', {
         url: '/my-lab:pi/wipe-tests',
         templateUrl: "views/pi/wipe-tests.html",
         controller: "PIWipeTestController"

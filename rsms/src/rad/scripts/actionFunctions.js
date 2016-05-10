@@ -157,7 +157,7 @@ angular
                         Dashboard:true
                     },
                     {
-                        Name:'pi-wipes',
+                        Name:'lab-wipes',
                         Label: 'My Radiation Laboratory -- Wipe Tests',
                         Dashboard:true
                     },
@@ -1280,6 +1280,30 @@ angular
                     )
             }
 
+            af.savePIWipesAndChildren = function (copy, parcel) {
+                af.clearError();
+                copy.Status = Constants.PARCEL.STATUS.WIPE_TESTED;
+                return $rootScope.SavingParcelWipe = genericAPIFactory.save(copy, 'savePIWipesAndChildren')
+                   .then(
+                       function (returnedParcel) {
+                           returnedParcel = modelInflatorFactory.instateAllObjectsFromJson(returnedParcel);
+                           if (parcel) {
+                               angular.extend(parcel, copy, true);
+                               parcel.edit = false;
+                               parcel.Wipe_test[0].edit = false;
+                               var i = parcel.Wipe_test[0].Parcel_wipes.length;
+                               while (i--) {
+                                   parcel.Wipe_test[0].Parcel_wipes[i].edit = false;
+                                   angular.extend(parcel.Wipe_test[0].Parcel_wipes[i], copy.Wipe_test[0].Parcel_wipes[i]);
+                                   if (!parcel.Wipe_test[0].Parcel_wipes[i].Location) parcel.Wipe_test[0].Parcel_wipes.splice(i, 1);
+                               }
+                           }
+                       },
+                       af.setError('The package could not be saved')
+                   )
+            }
+
+
             af.saveSolidsContainer = function( pi, copy, container )
             {
                 af.clearError();
@@ -1949,6 +1973,71 @@ angular
 
             af.getAllScintVialCollections = function(){
                 return dataSwitchFactory.getAllObjects('ScintVialCollection');
+            }
+
+            /** PI Wipe Tests performed by lab personnel **/
+            af.savePIWipeTest = function(test) {
+                af.clearError();
+                return this.save( test )
+                    .then(
+                        function(returnedTest){
+                            returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
+                            if(test.Key_id){
+                                angular.extend(test, returnedTest);
+                            }else{
+                                //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
+                                if (!returnedTest.PIWipes) returnedTest.PIWipes = [];
+                                var i = 10
+                                while(i--){
+                                    var wipe = new window.PIWipe();
+                                    wipe.PI_wipe_test_id = returnedTest.Key_id;
+                                    wipe.Class = "PIWipe";
+                                    wipe.edit = true;
+                                    returnedTest.PIWipes.push(miscellaneousWipe);
+                                }
+
+                                returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
+                                dataStoreManager.store(returnedTest);
+                                returnedTest.adding = true;
+                            }
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.savePIWipe = function(wipeTest, copy, wipe) {
+                af.clearError();
+                return this.save( copy )
+                    .then(
+                        function (returnedWipe) {
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson( returnedWipe );
+                            if(wipe){
+                                angular.extend(wipe, copy)
+                            }else{
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.PIWipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
+                        }
+                    )
+            }
+
+            af.savePIWipes = function (test) {
+                console.log(test.PIWipes);
+                af.clearError();
+                return $rootScope.SavingSmears = genericAPIFactory.save(test, 'savePIWipes')
+                    .then(
+                        function(returned){
+                            var returnedWipes = modelInflatorFactory.instateAllObjectsFromJson(returned.data);
+                            for (var i = 0; i < returnedWipes.length; i++) {
+                                returnedWipes[i].edit = false;
+                            }
+                            dataStoreManager.store(returnedWipes);
+                            test.loadPIWipes();
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
             }
 
             /************************************************
