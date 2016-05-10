@@ -39,10 +39,10 @@
                 </div>
 
                 <div class="table-row" ng-repeat="smear in smears = (test.PIWipes | orderBy:'Key_id')" ng-class="{'inactive':smear.Curie_level >= smears[0].Curie_level*3}">
+                    
                     <div>
                         <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editPIWipe(test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
                     </div>
-
 
                     <div ng-if="!smear.edit">
                         {{smear.Location}}
@@ -79,7 +79,7 @@
                     <div style="min-width:0;" ng-if="PIWipeCopy">
                         <span ng-if="smear.edit">
                             <a class="btn btn-success left" ng-click="af.savePIWipe(test, PIWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
-                            <a class="btn btn-danger left" placeholder="Notes" ng-click="cancelMiscWipeEdit(test, smear)"><i class="icon-cancel-2"></i>Cancel</a>
+                            <a class="btn btn-danger left" placeholder="Notes" ng-click="smear.edit = false"><i class="icon-cancel-2"></i>Cancel</a>
                         </span>
                     </div>
                 </div>
