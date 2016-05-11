@@ -11,6 +11,7 @@ class PendingHazardDtoChange extends PendingChange {
 	private $room_id;
 	private $hazard_id;
     private $hazard_name;
+    private $room_name;
 	
 	public function __construct(){
 
@@ -49,7 +50,24 @@ class PendingHazardDtoChange extends PendingChange {
 		$this->hazard_id = $hazard_id;
 	}
 
-    public function getHazard_name(){return $this->hazard_name;}
+    public function getHazard_name(){
+        if($this->hazard_name == null && $this->hazard_id != null && $this->hasPrimaryKeyValue()){
+            $hazardDao = new GenericDAO(new Hazard());
+            $hazard = $hazardDao->getById($this->hazard_id);
+            $this->hazard_name = $hazard->getName();
+        }
+        return $this->hazard_name;
+    }
     public function setHazard_name($name){$this->hazard_name = $name;}
+
+    public function getRoom_name(){
+        if($this->room_name == null && $this->room_id != null && $this->hasPrimaryKeyValue()){
+            $roomDao = new GenericDAO(new Room());
+            $room = $roomDao->getById($this->room_id);
+            $this->room_name = $room->getName();
+        }
+        return $this->room_name;
+    }
+    public function setRoom_name($name){$this->room_name = $name;}
 }
 ?>
