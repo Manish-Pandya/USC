@@ -184,9 +184,12 @@ angular.module('EquipmentModule')
             if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date){
                 $scope.modalData.BioSafetyCabinetCopy.Certification_date = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date;
             }
-
-            $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date || null);
-            console.log($scope.modalData.BioSafetyCabinetCopy.viewDate);
+            //set date for calendar widget
+            if($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date){
+                $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date(convenienceMethods.getDate($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections[$scope.modalData.inspectionIndex].Certification_date));
+            }else{
+                $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date();
+            }
         }
         
     
