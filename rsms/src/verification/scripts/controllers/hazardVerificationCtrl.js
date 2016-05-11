@@ -6,9 +6,7 @@
         $scope.dataStoreManager = dataStoreManager;
         $scope.Constants = Constants;
 
-        $scope.categoryIdx = 0;
-        $scope.buildingIdx = 0;
-        $scope.roomIdx = 0;
+        $scope.categoryIdx = $scope.buildingIdx = $scope.roomIdx = 0;
         $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
         $scope.HazCat = {};
@@ -82,11 +80,10 @@
         }
 
         $scope.addNewHazard = function (name) {
-           
             var newChange = new PendingHazardDtoChange();
 
             newChange.Class = "PendingHazardDtoChange";
-            newChange.Hazard_name = name,
+            newChange.Hazard_name = name;
             newChange.Room_id = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
             newChange.Principal_investigator_id = $scope.PI.Key_id;
             newChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
@@ -104,15 +101,13 @@
 
             var newHazard = new HazardDto();
             newHazard.Class = "HazardDto";
-            newHazard.Principal_investigator_id = $scope.PI.Key_id;;
-            newHazard.Hazard_name = name,
+            newHazard.Principal_investigator_id = $scope.PI.Key_id;
+            newHazard.Hazard_name = name;
             newHazard.InspectionRooms = [roomDto];
             newHazard.IsPresent = true;
-            newHazard.Name = name,
+            newHazard.Name = name;
             newHazard.RoomIds = [roomDto.Room_id];
             
-            console.log()
-
             return newHazard;
         }
 
@@ -194,8 +189,7 @@
                      .then(
                          function (hazards) {
                              // get leaf parents
-                             var hazard,
-                                 leafParentHazards = [];
+                             var hazard, leafParentHazards = [];
                              var len = hazards.length;
                              for (var n = 0; n < len; n++) {
                                  hazard = hazards[n];
@@ -237,7 +231,7 @@
                                          var leafParent = dataStoreManager.getById("HazardDto", originalHazardId);
                                          categorizedHazards[hazard.Parent_hazard_id].push(leafParent);
                                          categorizedLeafHazards[hazard.Parent_hazard_id] = categorizedLeafHazards[hazard.Parent_hazard_id].concat(leafParent.ActiveSubHazards);
-                                         idsMap.push(hazard.Key_id)
+                                         idsMap.push(hazard.Key_id);
                                          return false;
                                      }
                                  } else {
@@ -284,6 +278,5 @@
             af.deleteModalData();
             $modalInstance.dismiss();
         }
-
 
     });
