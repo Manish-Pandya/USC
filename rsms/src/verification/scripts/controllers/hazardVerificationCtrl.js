@@ -155,10 +155,12 @@
 
         function findRelevantPendingChange(roomId, hazardId) {
             var changes = dataStoreManager.get("PendingHazardDtoChange");
-            for (var x = 0; x < changes.length; x++) {
-                var change = changes[x];
-                if (change.Room_id == roomId && change.Hazard_id == hazardId) {
-                    return change;
+            if (changes) {
+                for (var x = 0; x < changes.length; x++) {
+                    var change = changes[x];
+                    if (change.Room_id == roomId && change.Hazard_id == hazardId) {
+                        return change;
+                    }
                 }
             }
             return null;

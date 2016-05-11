@@ -127,6 +127,8 @@ angular
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
                         if (!copy.Key_id) {
                             dataStoreManager.pushIntoCollection(returnedChange);
+                            $scope.changes = dataStore.PendingUserChange;
+                           
                             ac.getCachedVerification().PendingUserChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
                             if (contact) contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
@@ -183,6 +185,9 @@ angular
             copy.Is_active = false;
             
             var hazard = dataStoreManager.getById("HazardDto", copy.Hazard_id);
+            if (hazard) {
+                //copy.Hazard_name = hazard.Hazard_name;
+            }
 
             copy.Verification_id = ac.getCachedVerification().Key_id;
             return $rootScope.saving = ac.save(copy)
@@ -193,9 +198,11 @@ angular
                         if (!copy.Key_id) {
                             dataStoreManager.pushIntoCollection(returnedChange);
                             ac.getCachedVerification().PendingHazardDtoChanges.push(dataStoreManager.getById("PendingHazardDtoChange", returnedChange.Key_id));
-                            hazard.ContainsHazard = true;
-                            hazard.justAdded = true;
-                            $location.hash("hazard" + hazard.Hazard_id);
+                            if (hazard) {
+                                hazard.ContainsHazard = true;
+                                hazard.justAdded = true;
+                                $location.hash("hazard" + hazard.Hazard_id);
+                            }
                         } else {
                             //set status for hazard
                             console.log($location);
