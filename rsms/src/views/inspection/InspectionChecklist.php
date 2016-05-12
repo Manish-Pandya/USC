@@ -70,8 +70,8 @@ require_once '../top_view.php';
                                 <input type="checkbox" ng-true-value="yes" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
                                 <span class="metro-radio">Yes</span>
                             </label>
-                            <label class="checkbox inline" ng-class="{'disabled': !question.Deficiencies.length}">
-                                <input type="checkbox" ng-disabled="!question.Deficiencies.length" ng-true-value="no" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
+                            <label class="checkbox inline">
+                                <input type="checkbox" ng-true-value="no" ng-model="question.Responses.Answer" ng-change="cf.saveResponse( question )"/>
                                 <span class="metro-radio">No</span>
                             </label>
                             <label class="checkbox inline">
