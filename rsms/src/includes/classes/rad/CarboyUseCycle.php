@@ -26,6 +26,8 @@ class CarboyUseCycle extends RadCrud {
 		"pickup_id"						=> "integer",
 		"reading"						=> "float",
 		"volume"						=> "float",
+        "comments"                      => "text",
+
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -60,10 +62,10 @@ class CarboyUseCycle extends RadCrud {
 
 	/** timestamp containing the date this carboy was emptied. */
 	private $pour_date;
-	
+
 	/** date this carboy can be poured **/
 	private $pour_allowed_date;
-	
+
 	/** Reference to the room this carboy was sent to. */
 	private $room;
 	private $room_id;
@@ -71,22 +73,24 @@ class CarboyUseCycle extends RadCrud {
 	/** Reference to the pickup that removed this carboy from the lab. */
 	private $pickup;
 	private $pickup_id;
-	
+
 	/* parcel use amounts currently in the carboy */
 	private $parcel_use_amounts;
-	
+
 	/* currie level of each isotope in this carboy **/
 	private $contents;
-	
+
 	/** reading taken when carboy is returned to RSO after pickup*/
 	private $reading;
-	
+
 	/** the volume of the liquid in ml in this graduated carboy estimated by RSO staff to calculate decay time */
 	private $volume;
-		
+
 	private $carboy_reading_amounts;
 
     private $carboyNumber;
+
+    private $comments;
 
 	public function __construct() {
 
@@ -120,14 +124,14 @@ class CarboyUseCycle extends RadCrud {
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "carboy_id"
 	);
-	
+
 	protected static $CABOY_READING_AMOUNTS_RELATIONSHIP = array(
 			"className" => "CarboyReadingAmount",
 			"tableName" => "carboy_reading_amount",
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "carboy_use_cycle_id"
 	);
-	
+
 	// Accessors / Mutators
 	public function getCarboy() {
 		if($this->carboy == null) {
@@ -210,16 +214,16 @@ class CarboyUseCycle extends RadCrud {
 	public function setParcelUseAmounts($parcel_use_amounts) {
 		$this->parcel_use_amounts = $parcel_use_amounts;
 	}
-	
+
 	public function getReading(){return $this->reading;}
 	public function setReading($reading){$this->reading = $reading;}
-	
-	
+
+
 	public function getContents(){
 		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
 		return $this->contents;
 	}
-	
+
 	public function getCarboy_reading_amounts(){
 		if($this->carboy_reading_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
@@ -230,18 +234,18 @@ class CarboyUseCycle extends RadCrud {
 		$LOG->debug($this->carboy_reading_amounts);
 		return $this->carboy_reading_amounts;
 	}
-	
+
 	public function getPour_allowed_date(){
 		$LOG = Logger::getLogger(__CLASS__);
 
 		$readings = $this->getCarboy_reading_amounts();
 		if($readings == NULL)return NULL;
-		
+
 		//find the CarboyReadingAmount with furthest Pour_allowed_date
 		$initDate = date("Y-m-d H:i:s" ,0);
 		foreach ($readings as $reading){
 			$LOG->debug($initDate);
-				
+
 			if($reading->getPour_allowed_date() > $initDate){
 				$initDate = $reading->getPour_allowed_date();
 				$this->pour_allowed_date = $reading->getPour_allowed_date();
@@ -251,7 +255,7 @@ class CarboyUseCycle extends RadCrud {
 		$LOG->debug($this->pour_allowed_date);
 		return $this->pour_allowed_date;
 	}
-	
+
 	//get the time to decay to .01 mCi in days (or whatever unit we are storing half-lives in)
 	private function getDecayTime($halfLife, $mCi){
 		$LOG = Logger::getLogger(__CLASS__);
@@ -261,12 +265,15 @@ class CarboyUseCycle extends RadCrud {
 	}
 	public function getVolume() {return $this->volume;}
 	public function setVolume($volume) {$this->volume = $volume;}
-	
+
 	public function getCaboyNumber(){
         if($this->getCarboy_id() != null){
             $this->carboyNumber = $this->getCarboy()->getCarboy_number();
         }
         return $this->carboyNumber;
     }
+
+    public function getComments(){return $this->comments;}
+    public function setComments($comments){$this->comments = $comments;}
 }
 ?>

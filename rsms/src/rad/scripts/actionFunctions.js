@@ -1360,7 +1360,7 @@ angular
                                 }
                                 cycle.Volume = returnedCycle.Volume;
                                 cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
-
+                                if (copy.Comments) cycle.Comments = copy.Comments;
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
@@ -2073,7 +2073,8 @@ angular
                         function(returnedBag){
                             returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
                             if(bag.Key_id){
-                                angular.extend(bag, copy)
+                                angular.extend(bag, copy);
+                                bag.edit = false;
                             }else{
                                 dataStoreManager.store(returnedBag);
                                 $rootScope.WasteBagCopy = {};
@@ -2091,8 +2092,9 @@ angular
                     .then(
                         function(returnedCollection){
                             returnedCollection = modelInflatorFactory.instateAllObjectsFromJson( returnedCollection );
-                            if(collection.Key_id){
+                            if (collection.Key_id) {
                                 angular.extend(collection, copy)
+                                collection.edit = false;
                             }else{
                                 dataStoreManager.store(returnedCollection);
                                 $rootScope.ScintVialCollectionCopy = {};
