@@ -1361,6 +1361,7 @@ angular
                                 cycle.Volume = returnedCycle.Volume;
                                 cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
                                 if (copy.Comments) cycle.Comments = copy.Comments;
+                                angular.extend(cycle, copy);
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);

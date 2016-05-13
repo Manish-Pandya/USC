@@ -9,7 +9,8 @@ angular.module('00RsmsAngularOrmApp')
 	  			cycle.pourable = false;
   				if(cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING 
   					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
-  					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.PICKED_UP)
+  					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.PICKED_UP
+                    || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM)
   				{  	
 
   					if(cycle.Pour_allowed_date){
@@ -30,4 +31,21 @@ angular.module('00RsmsAngularOrmApp')
 	  		}
 	  		return disposalCycles;
 	  };
+	})
+    .filter('disposalStatuses', function () {
+        return function (statuses) {
+            console.log(statuses)
+            if (!statuses) return;
+            var disposalStatuses = [];
+            var i = statuses.length;
+	        for(var prop in statuses) {
+	            var status = statuses[prop];
+	            if (status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
+  					|| status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO  					
+                    || status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM) {
+	                disposalStatuses.unshift(status);
+	            }
+	        }
+	        return disposalStatuses;
+	    };
 	})
