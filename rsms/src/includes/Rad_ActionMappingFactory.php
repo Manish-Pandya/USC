@@ -44,7 +44,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPIAuthorizationByPIId"		=> new ActionMapping("getPIAuthorizationByPIId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				
+
 				// getAll functions
 				"getAllAuthorizations"			=> new ActionMapping("getAllAuthorizations", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllCarboys"                 => new ActionMapping("getAllCarboys", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -68,7 +68,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllParcelWipeTests"			=> new ActionMapping("getAllParcelWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllParcelWipes"				=> new ActionMapping("getAllParcelWipes", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				
+                "getAllCarboyReadingAmounts"				=> new ActionMapping("getAllCarboyReadingAmounts", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
+
 
 				// save functions
 				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -102,7 +104,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"savePIAuthorization"	=> new ActionMapping("savePIAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				
+
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"disposeParcelRemainder" 	   	 => new ActionMapping("disposeParcelRemainder", "","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
@@ -119,7 +121,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-		
+
 				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"])
 		);
 	}

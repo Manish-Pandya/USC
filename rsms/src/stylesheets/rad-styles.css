@@ -653,6 +653,19 @@ table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
 .pickups-modal textarea{
     width:90%
 }
+div.fake-table .table-row > div div.pickup-comments{
+    max-width: 800px;
+    padding:10px 3px !important;
+    display:block;
+    font-size:16px;
+    font-weight:normal;
+}
+div.fake-table .table-row > div div.pickup-comments i, div.fake-table .table-row > div div.pickup-comments .btn{
+   margin-left:5px;
+}
+div.fake-table .table-row > div div.pickup-comments .btn i {
+    margin-left:1px
+}
 .indent {
     margin: 15px 25px 0;
 }

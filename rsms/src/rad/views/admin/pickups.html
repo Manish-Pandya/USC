@@ -50,6 +50,18 @@
                             <span class="bag-date" ng-if="bag.Date_removed">Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}</span>
                             <span class="bag-date"  ng-if="!bag.Date_removed">(Waste Bag still in container)</span>
                             <p class="pickup-item-contents">Contents: <span ng-if="!bag.Contents">N/A</span><span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span></p>
+                            <div class="pickup-comments" style="padding:0;">
+                                <span ng-if="bag.Comments && !bag.edit">Comments: {{bag.Comments}}<i ng-click="af.createCopy(bag)" class="icon-pencil primary"></i></span>
+                                <span ng-if="!bag.Comments && !bag.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(bag)" ><i class="icon-plus-2 success"></i></a></span>
+                                <div class="control-group" ng-if="bag.edit">
+                                    <label class="control-label">Comments</label>
+                                    <div class="controls">
+                                        <textarea style="width:100%" ng-model="WasteBagCopy.Comments" rows="2" maxlength="255"></textarea>
+                                    </div>
+                                    <button class="btn-success btn left" ng-click="af.saveWasteBag(bag, WasteBagCopy);"><i class="icon-checkmark"></i></button>
+                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(bag)"><i class="icon-cancel-2"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -65,8 +77,19 @@
                         </div>
                         <div class="pickup-item-contents">
                             Contents: <span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
+                            <div class="pickup-comments" style="padding:0 !important;">
+                                <span ng-if="collection.Comments && !collection.edit">Comments: {{collection.Comments}}<i ng-click="af.createCopy(collection)" class="icon-pencil primary"></i></span>
+                                <span ng-if="!collection.Comments && !collection.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(collection)"><i class="icon-plus-2 success"></i></a></span>
+                                <div class="control-group" ng-if="collection.edit">
+                                    <label class="control-label">Comments</label>
+                                    <div class="controls">
+                                        <textarea style="width:100%" ng-model="ScintVialCollectionCopy.Comments" rows="2" maxlength="255"></textarea>
+                                    </div>
+                                    <button class="btn-success btn left" ng-click="af.saveSVCollection(collection, ScintVialCollectionCopy);"><i class="icon-checkmark"></i></button>
+                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(collection)"><i class="icon-cancel-2"></i></button>
+                                </div>
+                            </div>                  
                         </div>
-                    </div>
                 </div>
             </div>
 
@@ -84,7 +107,19 @@
                             <p ng-if="cycle.Contents.length">
                                 Contents: <span ng-repeat="content in cycle.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
                             </p>
-                        </div>
+                            <div class="pickup-comments">
+                                <span ng-if="cycle.Comments && !cycle.edit">Comments: {{cycle.Comments}}<i ng-click="af.createCopy(cycle)" class="icon-pencil primary"></i></span>
+                                <span ng-if="!cycle.Comments && !cycle.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(cycle)"><i class="icon-plus-2 success"></i></a></span>
+                                <div class="control-group" ng-if="cycle.edit">
+                                    <label class="control-label">Comments</label>
+                                    <div class="controls">
+                                        <textarea style="width:100%" ng-model="CarboyUseCycleCopy.Comments" rows="2" maxlength="255"></textarea>
+                                    </div>
+                                    <button class="btn-success btn left" ng-click="af.saveCarboyUseCycle(CarboyUseCycleCopy, cycle);"><i class="icon-checkmark"></i></button>
+                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(cycle)"><i class="icon-cancel-2"></i></button>
+                                </div>
+                            </div>     
+                        </div>                       
                     </div>
                 </div>
             </div>

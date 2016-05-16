@@ -43,7 +43,8 @@ var Constants = (function () {
             IN_USE:"In Use",
             DECAYING:"Decaying",
             PICKED_UP:"Picked Up",
-            AT_RSO:"AT RSO"
+            AT_RSO: "AT RSO",
+            HOT_ROOM: "In Hot Room"
         }
     };
 

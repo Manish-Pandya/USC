@@ -84,6 +84,8 @@ angular.module('00RsmsAngularOrmApp')
         .then(getAllDrums)
         .then(getCycles);
 
+    $scope.date = new Date();
+
     $scope.assignDrum = function(object){
         console.log(object);
         var modalData = {};
@@ -162,6 +164,19 @@ angular.module('00RsmsAngularOrmApp')
         }
     }
 
+    $scope.getIsPastHotRoomDate = function (cycle) {
+        var todayAtMidnight = new Date();
+        todayAtMidnight.setHours(0, 0, 0, 0);
+        var date = cycle.Hot_check_date;
+        var hotCheckSeconds = convenienceMethods.getDate(date).getTime();
+        console.log(hotCheckSeconds);
+        return hotCheckSeconds < todayAtMidnight.getTime();
+    }
+    $scope.resetHotRoomDate = function (cycle) {
+        af.createCopy(cycle);
+        $rootScope.CarboyUseCycleCopy.Hot_check_date = convenienceMethods.setMysqlTime(new Date());
+        af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle);
+    }
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
