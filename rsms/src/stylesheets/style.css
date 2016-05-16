@@ -3519,8 +3519,11 @@ div.fake-table .table-row > div{
 }
 div.fake-table.condensed .table-row > div{
   display: table-cell;
-  padding:5px;
-  font-size:16px;
+  padding: 1px 5px;
+  font-size: 16px;
+}
+.condensed{
+  margin-bottom:3px !Important;
 }
 div.fake-table div.button-cell{
   min-width: 112px;

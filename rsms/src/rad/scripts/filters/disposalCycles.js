@@ -22,8 +22,6 @@ angular.module('00RsmsAngularOrmApp')
 					        pourDay.getMonth(),
 					        pourDay.getDate(),
 					        0,0,0);
-
-					    console.log(now.getTime());
   						if(beginningOfPourDay.getTime() <= now.getTime())cycle.pourable = true;
   					}
   					disposalCycles.unshift(cycle);

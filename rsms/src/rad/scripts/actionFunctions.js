@@ -1349,6 +1349,12 @@ angular
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
                     copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
                 }
+
+                //we've changed the hot isotope, so set the date
+                if (!cycle.Hotroom_date && copy.Hot_isotope_id != cycle.Hot_isotope_id) {
+                    copy.Hotroom_date = convenienceMethods.setMysqlTime(new Date());
+                }
+                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedCycle){
@@ -1358,10 +1364,8 @@ angular
                                 while(i--){
                                     dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
                                 }
-                                cycle.Volume = returnedCycle.Volume;
-                                cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
-                                if (copy.Comments) cycle.Comments = copy.Comments;
-                                angular.extend(cycle, copy);
+                                
+                                angular.extend(cycle, returnedCycle);
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
@@ -2140,6 +2144,7 @@ angular
                                 }
                             }
                             cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
+                            cycle.readingEdit = false;
                             return cycle;
                         },
                         af.setError('The reading could not be saved')

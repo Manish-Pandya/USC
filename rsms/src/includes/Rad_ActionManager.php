@@ -802,7 +802,6 @@ class Rad_ActionManager extends ActionManager {
     function saveParcel() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
-        $LOG->fatal($decodedObject);
 
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Parcel', 202);
@@ -813,7 +812,6 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new Parcel());
             $decodedObject = $dao->save($decodedObject);
-            $LOG->fatal($decodedObject);
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
             $entityMaps[] = new EntityMap("lazy", "getPurchase_order");
@@ -916,7 +914,6 @@ class Rad_ActionManager extends ActionManager {
                             $bag = $this->getWasteBagById($amount['Waste_bag_id']);
                             $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
                             if( $oldBag == null || ( $oldBag->getContainer_id() != $bag->getContainer_id() ) ){
-                                $LOG->fatal('should be set');
                                 $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                             }else{
                                 $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
@@ -947,7 +944,6 @@ class Rad_ActionManager extends ActionManager {
                         $auth = $authDao->getById($parcel->getAuthorization_id());
                         $piAuthDao = $this->getDao(new PIAuthorization());
                         $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
-                        $LOG->fatal($piAuth);
                         $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
                         if($pi->getCurrentScintVialCollections() == null){
 
@@ -963,7 +959,6 @@ class Rad_ActionManager extends ActionManager {
                             $newAmount->setScint_vial_collection_id($collection->getKey_id());
                         }else{
                             $id = end($pi->getCurrentScintVialCollections())->getKey_id();
-                            $LOG->fatal($pi);
                             $newAmount->setScint_vial_collection_id($id);
                         }
                     }
@@ -994,7 +989,6 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new Pickup());
-            $LOG->fatal($decodedObject);
             $pickup = $dao->save($decodedObject);
             $wasteBags = $decodedObject->getWaste_bags();
             $svCollections = $decodedObject->getScint_vial_collections();
@@ -1023,7 +1017,6 @@ class Rad_ActionManager extends ActionManager {
                     $carboyDao = $this->getDao(new CarboyUseCycle());
                     $cycle = $carboyDao->getById($carboyArray['Key_id']);
                     $cycle->setPickup_id($pickup->getKey_id());
-                    $LOG->debug($cycle);
                     //carboy has been picked up.  If it is back at the radiation safety office, we set it to decaying and set its hot room date
                     if($decodedObject->getStatus() == "AT RSO"){
                         $cycle->setStatus("AT RSO");
@@ -1106,7 +1099,6 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new WasteBag());
-            $LOG->fatal($decodedObject);
             $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
@@ -1424,8 +1416,6 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyReadingAmount());
-            $LOG->fatal($decodedObject);
-
             $decodedObject = $dao->save($decodedObject);
 
             $cycle = $decodedObject->getCarboy_use_cycle();
@@ -1918,7 +1908,6 @@ class Rad_ActionManager extends ActionManager {
             $amounts[] = $newAmount;
 
         }
-		$LOG->fatal($amounts);
         $piInventory->setQuarterly_isotope_amounts($amounts);
         return $piInventory;
     }
@@ -2141,7 +2130,6 @@ class Rad_ActionManager extends ActionManager {
     	$inventoriesDao = $this->getDao(new PIAuthorization());
     	$clauses = array(new WhereClause("principal_investigator_id", "=", $id));
     	$whereClauseGroup = new WhereClauseGroup($clauses);
-    	$LOG->fatal($whereClauseGroup);
     	$auth =  reset($inventoriesDao->getAllWhere($whereClauseGroup));
     	return $auth;
     }
@@ -2178,12 +2166,10 @@ class Rad_ActionManager extends ActionManager {
 
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
-    			$LOG->fatal($room);
     			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
     		}
 
     		foreach($departments as $dept){
-    			$LOG->fatal($dept);
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
 

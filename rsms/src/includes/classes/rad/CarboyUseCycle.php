@@ -21,12 +21,14 @@ class CarboyUseCycle extends RadCrud {
 		"status"						=> "text",
 		"lab_date"						=> "timestamp",
 		"hotroom_date"					=> "timestamp",
+		"rso_date"  					=> "timestamp",
 		"pour_date"						=> "timestamp",
 		"room_id"						=> "integer",
 		"pickup_id"						=> "integer",
 		"reading"						=> "float",
 		"volume"						=> "float",
         "comments"                      => "text",
+        "hot_isotope_id"                => "integer",
 
 
 		//GenericCrud
@@ -59,6 +61,15 @@ class CarboyUseCycle extends RadCrud {
 
 	/** timestamp containing the date this carboy was sent to the hotroom. */
 	private $hotroom_date;
+
+    private $hot_isotope_id;
+    private $hot_isotope_name;
+    // 3 half-lives of hot isotope
+    private $hot_check_date;
+
+    /** timestamp containing the date this carboy was returned to the Radiation Safety Office after being picked up. */
+    private $rso_date;
+
 
 	/** timestamp containing the date this carboy was emptied. */
 	private $pour_date;
@@ -250,9 +261,7 @@ class CarboyUseCycle extends RadCrud {
 				$initDate = $reading->getPour_allowed_date();
 				$this->pour_allowed_date = $reading->getPour_allowed_date();
 			}
-			$LOG->debug(  $reading->getPour_allowed_date()  );
 		}
-		$LOG->debug($this->pour_allowed_date);
 		return $this->pour_allowed_date;
 	}
 
@@ -275,5 +284,43 @@ class CarboyUseCycle extends RadCrud {
 
     public function getComments(){return $this->comments;}
     public function setComments($comments){$this->comments = $comments;}
+
+    public function getHot_isotope_id(){return $this->hot_isotope_id;}
+	public function setHot_isotope_id($hot_isotope_id){	$this->hot_isotope_id = $hot_isotope_id;}
+
+	public function getHot_isotope_name(){
+        if($this->hot_isotope_name == null && $this->hasPrimaryKeyValue() && $this->getHot_isotope_id() != null){
+            $isotopeDao = new GenericDAO(new Isotope());
+            $this->hot_isotope_name = $isotopeDao->getById($this->getHot_isotope_id())->getName();
+        }
+        return $this->hot_isotope_name;
+    }
+	public function setHot_isotope_name($hot_isotope_name){	$this->hot_isotope_name = $hot_isotope_name;}
+
+	public function getRso_date(){return $this->rso_date;}
+	public function setRso_date($rso_date){	$this->rso_date = $rso_date;}
+
+    public function getHot_check_date(){
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->fatal("hot check date");
+
+        if($this->hot_check_date == null && $this->getHotroom_date() != null && $this->getHot_isotope_id() != null && $this->hasPrimaryKeyValue()){
+            $isotopeDao = new GenericDAO(new Isotope());
+            $isotope = $isotopeDao->getById($this->getHot_isotope_id());
+
+            date_default_timezone_set('America/New_York');
+
+            //the date this reading happened
+            $date = new DateTime();
+            $date->setTimestamp(strtotime($this->getHotroom_date()));
+            $wholeDays = round($isotope->getHalf_life() * 3);
+            $LOG->fatal('get date');
+            $LOG->fatal($date);
+            $LOG->fatal($wholeDays);
+            $LOG->fatal(new DateInterval('P'.$wholeDays.'D'));
+            $this->hot_check_date = date("Y-m-d H:i:s" , $date->add(new DateInterval('P'.$wholeDays.'D'))->getTimestamp());;
+        }
+        return $this->hot_check_date;
+    }
 }
 ?>
