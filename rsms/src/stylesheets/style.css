@@ -1216,6 +1216,18 @@ html[xmlns] .clearfix {
   content: ", ";
   visibility: visible;
 }
+.hazInvSubRooms{
+  margin-top:0;
+  margin-bottom:0;
+  height:0;
+  padding:0;
+}
+.hazInvSubRooms li {
+  font-size: 11px;
+  border: none;
+  float: left;
+  margin-right: 5px;
+}
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
   content: "";

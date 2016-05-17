@@ -87,13 +87,13 @@ angular.module('HazardInventory')
             $location.search("pi",pi.Key_id);
         }
 
-        $scope.getShowRooms = function(hazard){
+        $scope.getShowRooms = function(hazard, room, building){
             var atLeastOne = false;
             var notAll = false;
             var i = hazard.InspectionRooms.length;
             while(i--){
                 var room = hazard.InspectionRooms[i];
-                if(room.ContainsHazard){
+                if(room.Building_name == building && room.ContainsHazard){
                     atLeastOne = true;
                 }else{
                     notAll = true;
