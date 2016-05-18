@@ -200,7 +200,14 @@ var Constants = (function () {
                "Class II, Type B2",
                "Horizontal Flow Clean Bench",
                "Vertical Flow Clean Bench"
-              ]
+        ],
+        STATUS: {
+            FAIL: "FAIL",
+            PASS: "PASS",
+            NEW_BSC: "NEW BSC",
+            OVERDUE: "OVERDUE",
+            PENDING: "PENDING"
+        }
     }
 
     constants.ROOM_HAZARDS = {
