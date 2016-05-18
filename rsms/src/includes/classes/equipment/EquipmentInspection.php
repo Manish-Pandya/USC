@@ -21,6 +21,8 @@ class EquipmentInspection extends GenericCrud{
         "equipment_class"               => "text",
         "comment"                       => "text",
         "frequency"                     => "text",
+        "status"                        => "text",
+
 
 		//GenericCrud
 		"key_id"			    => "integer",
