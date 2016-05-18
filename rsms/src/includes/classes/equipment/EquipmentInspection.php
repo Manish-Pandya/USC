@@ -21,7 +21,7 @@ class EquipmentInspection extends GenericCrud{
         "equipment_class"               => "text",
         "comment"                       => "text",
         "frequency"                     => "text",
-				
+
 		//GenericCrud
 		"key_id"			    => "integer",
 		"date_created"		    => "timestamp",
@@ -30,7 +30,7 @@ class EquipmentInspection extends GenericCrud{
 		"last_modified_user_id"	=> "integer",
 		"created_user_id"	    => "integer"
 	);
-    
+
     public function __construct($equipment_class = null, $frequency = null, $equipmentId = null){
         if ($equipment_class) $this->setEquipment_class($equipment_class);
         if ($frequency) $this->setFrequency($frequency);
@@ -42,7 +42,7 @@ class EquipmentInspection extends GenericCrud{
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
 		$this->setEntityMaps($entityMaps);
 	}
-    
+
     private $room_id;
     private $principal_investigator_id;
     private $certification_date;
@@ -53,7 +53,7 @@ class EquipmentInspection extends GenericCrud{
     private $comment;
     private $status;
     private $frequency;
-    
+
     // Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
@@ -82,17 +82,16 @@ class EquipmentInspection extends GenericCrud{
 		return $this->certification_date;
 	}
 	public function setCertification_date($certification_date){
-		$this->certification_date = $certification_date;
+		$this->certification_date = $gcertification_date;
         // new instance will be spawned in the controller
 	}
 
     public function getDue_date(){
-        $LOG = Logger::getLogger(__Class__);
         if ($this->getFrequency() == null) {
             return null;
         }
         if($this->due_date == null){
-		    $dueDate = new DateTime($this->getDate_created());            
+		    $dueDate = new DateTime($this->getDate_created());
 		    if($this->getFrequency() == "Annually"){
 			    $dueDate->modify('+1 year');
 		    }else if($this->getFrequency() == "Semi-annually"){
@@ -100,7 +99,7 @@ class EquipmentInspection extends GenericCrud{
             }
 		    $this->setDue_date($dueDate->format('Y-m-d H:i:s'));
         }
-		
+
 		return $this->due_date;
 	}
 	public function setDue_date($due_date){
@@ -120,33 +119,54 @@ class EquipmentInspection extends GenericCrud{
 	public function setEquipment_id($equipment_id){
 		$this->equipment_id = $equipment_id;
 	}
-    
+
 	public function getEquipment_class(){
 		return $this->equipment_class;
 	}
 	public function setEquipment_class($equipment_class){
 		$this->equipment_class = $equipment_class;
 	}
-    
+
     public function getComment(){
 		return $this->comment;
 	}
 	public function setComment($comment){
 		$this->comment = $comment;
 	}
-    
+
     public function getStatus(){
-		return $this->status;
+        if($this->hasPrimaryKeyValue() &&
+            $this->status == NULL &&
+            $this->getEquipment_class() == "BioSafetyCabinet"){
+            //Cabinets that are certified have non-null status of either "PASS" or "FAIL" persisted in the DB
+            //Therefore we can assume that all cabinets that don't have a status saved are either new, overdue, or pending certification
+
+            //cabinets that haven't yet been certified, ever, or had a due date assigned are new
+            if($this->getDue_date() == NULL && $this->getCertification_date() == null){
+                $this->status = "NEW BSC";
+            }
+            //all other cabinets that don't have a persisted status are either Overdue or pending a certification
+            else {
+                $startOfToday = strtotime('today midnight');
+                if(strtotime($this->getDue_date()) > $startOfToday){
+                    $this->status = "PENDING";
+                }else{
+                    $this->status = "OVERDUE";
+                }
+            }
+        }
+
+        return $this->status;
 	}
 	public function setStatus($status){
 		$this->status = $status;
 	}
-    
+
     public function getFrequency(){
 		return $this->frequency;
 	}
 	public function setFrequency($frequency){
 		$this->frequency = $frequency;
 	}
-    
+
 }
