@@ -55,7 +55,8 @@ angular.module('EquipmentModule')
         getAllRooms = function(){
             return af.getAllRooms().then(
                         function(){
-                                $scope.rooms = dataStoreManager.get("Room");
+                            $scope.rooms = dataStoreManager.get("Room");
+                            console.log($scope.rooms[0]);
                                 return $scope.rooms
                             }
                         );
@@ -65,17 +66,18 @@ angular.module('EquipmentModule')
                         .then(
                             function(){
                                 $scope.buildings = dataStoreManager.get("Building");
-                                return $scope.buildings
+                                return $scope.buildings;
                             }
                         );
         },
         getYears = function () {
+            var currentYearString = $scope.currentYearString = new Date().getFullYear().toString();
             var inspections = dataStoreManager.get("EquipmentInspection");
             $scope.certYears = [];
             $scope.dueYears = [];
             if (!inspections) return;
-            var i = inspections.length;
 
+            var i = inspections.length;
             while (i--) {
                 if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
                     if (inspections[i].Certification_date) {
@@ -91,18 +93,18 @@ angular.module('EquipmentModule')
                         }
                     }
 
-                    var currentYearString = new Date().getFullYear().toString();
-                    if ($scope.dueYears.indexOf(currentYearString) < 0) {
-                        $scope.dueYears.push(currentYearString);
-                    }
-                    if ($scope.certYears.indexOf(currentYearString) < 0) {
-                        $scope.certYears.push(currentYearString);
-                    }
-                    $scope.selectedCertificationDate = currentYearString;
-                    $scope.selectedDueDate = currentYearString;
-                    console.log(currentYearString);
                 }
             }
+
+            if ($scope.dueYears.indexOf(currentYearString) < 0) {
+                $scope.dueYears.push(currentYearString);
+            }
+            if ($scope.certYears.indexOf(currentYearString) < 0) {
+                $scope.certYears.push(currentYearString);
+            }
+            $scope.selectedCertificationDate = currentYearString;
+            $scope.selectedDueDate = currentYearString;
+            console.log(currentYearString);
         }
         
         //init load
