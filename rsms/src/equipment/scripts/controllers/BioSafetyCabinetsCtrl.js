@@ -56,7 +56,6 @@ angular.module('EquipmentModule')
             return af.getAllRooms().then(
                         function(){
                             $scope.rooms = dataStoreManager.get("Room");
-                            console.log($scope.rooms[0]);
                                 return $scope.rooms
                             }
                         );
@@ -104,7 +103,6 @@ angular.module('EquipmentModule')
             }
             $scope.selectedCertificationDate = currentYearString;
             $scope.selectedDueDate = currentYearString;
-            console.log(currentYearString);
         }
         
         //init load

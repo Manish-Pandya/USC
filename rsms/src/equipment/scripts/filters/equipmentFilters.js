@@ -48,12 +48,8 @@ angular
     })
     .filter("matchInspectionDate", function () {
         /*
-        Passing '' for dateString will strip inspections where the dateProp value is not set.
-        For example, stripping equipment inspections where the Certification_date is null.
-        Passing '*' for dateString will strip inspections where the dateProp value exists.
-        For example, stripping equipment inspections where the Certification_date is is set.
-
-        dateProp can optionally be an array to test dateString against multiple props.
+        Match either Certification_date or Due_date to dateString.
+        If dateString is currentYear, also accept matches of null Certification_date and Due_date.
         */
         return function (inspections, dateString, currentYear) {
             if (!inspections) {
@@ -68,33 +64,10 @@ angular
                 var insp = inspections[i];
                 if ((insp.Certification_date && insp.Certification_date.indexOf(dateString) > -1) || (insp.Due_date && insp.Due_date.indexOf(dateString) > -1)) {
                     matches.push(insp);
-                } else if (dateString == currentYear) {
-                    if (!insp.Certification_date && !insp.Due_date) {
-                         matches.push(insp);
-                    }
-                }
-        }
-        /*
-            while (i--) {
-                if (Array.isArray(dateProp)) {
-                    for (var n = 0; n < dateProp.length; n++) {
-                        if (inspections[i].hasOwnProperty(dateProp[n])) {
-                            var inspectionDate = inspections[i][dateProp[n]];
-                            if ((!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1)) {
-                                matches.unshift(inspections[i]);
-                                break;
-                            }
-                        }
-                    }
-                } else if (inspections[i].hasOwnProperty(dateProp)) {
-                    var inspectionDate = inspections[i][dateProp];
-                    if ((!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1)) {
-                        matches.unshift(inspections[i]);
-                        break;
-                    }
+                } else if (dateString == currentYear && !insp.Certification_date && !insp.Due_date) {
+                    matches.push(insp);
                 }
             }
-        */
             return matches;
         }
     })
