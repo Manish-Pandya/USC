@@ -23,6 +23,7 @@
         'Lasers'                : {getById: "getLaserById"                 , getAll: "getAllLasers"                 , save: "saveLaser"                  },
         'XRay'                  : {getById: "getXRayById"                  , getAll: "getAllXRays"                  , save: "saveXRay"                   },
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: ""                           },
+        'Campus'                : {getById: "getCampusById"                , getAll: "getAllCampuses"               , save: ""                           },
         'Building'              : {getById: "getBuildingById"              , getAll: "getAllBuildings"              , save: ""                           },
         'PrincipalInvestigator' : {getById: "getPIById"                    , getAll: "getAllPIs"                    , save: ""                           },
 };

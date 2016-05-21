@@ -97,7 +97,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
 <script type="text/javascript" src="scripts/filters/equipmentFilters.js"></script>
-<script src="../js/lib/angular.filter.js"></script>
+<script type="text/javascript" src="../js/lib/angular.filter.js"></script>
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>

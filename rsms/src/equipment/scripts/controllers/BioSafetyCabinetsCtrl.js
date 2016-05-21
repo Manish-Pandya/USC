@@ -38,36 +38,45 @@ angular.module('EquipmentModule')
             );
         },
         getAllBioSafetyCabinets = function(){
-            return af.getAllBioSafetyCabinets()
-                .then(
-                    function () {
-                        $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
-                        if (!$scope.cabinets) $scope.cabinets = [];
-                        return $scope.cabinets;
-                    }
-                )
+            return af.getAllBioSafetyCabinets().then(
+                        function () {
+                            $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
+                            if (!$scope.cabinets) $scope.cabinets = [];
+                            return $scope.cabinets;
+                        }
+                    );
               
         },
         getAllPis = function(){
-            return af.getAllPrincipalInvestigators()
-                        .then(function(){$scope.pis = dataStoreManager.get("PrincipalInvestigator");return $scope.pis;})
+            return af.getAllPrincipalInvestigators().then(
+                        function () {
+                            $scope.pis = dataStoreManager.get("PrincipalInvestigator"); return $scope.pis;
+                        }
+                    );
+        },
+        getAllCampuses = function () {
+            return af.getAllCampuses().then(
+                        function () {
+                            $scope.campuses = dataStoreManager.get("Campus");
+                            return $scope.campuses;
+                        }
+                    );
         },
         getAllRooms = function(){
             return af.getAllRooms().then(
                         function(){
                             $scope.rooms = dataStoreManager.get("Room");
-                                return $scope.rooms
-                            }
-                        );
+                            return $scope.rooms;
+                        }
+                    );
         },
         getAllBuildings = function(){
-            return af.getAllBuildings()
-                        .then(
-                            function(){
-                                $scope.buildings = dataStoreManager.get("Building");
-                                return $scope.buildings;
-                            }
-                        );
+            return af.getAllBuildings().then(
+                        function(){
+                            $scope.buildings = dataStoreManager.get("Building");
+                            return $scope.buildings;
+                        }
+                    );
         },
         getYears = function () {
             var currentYearString = $scope.currentYearString = new Date().getFullYear().toString();
@@ -109,7 +118,8 @@ angular.module('EquipmentModule')
         $scope.loading = getAllRooms()
                             .then(getAllPis())
                             .then(getAllInspections())
-                            .then(getAllBioSafetyCabinets());
+                            .then(getAllBioSafetyCabinets())
+                            .then(getAllCampuses());
 
         $scope.deactivate = function(cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);

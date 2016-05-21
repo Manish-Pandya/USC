@@ -31,21 +31,6 @@ angular
             return matches;
         }
     })
-    .filter("matchEquipmentCampus", function(){
-        return function(equipments, string){
-            if(!equipments) {
-                return;
-            } else if (!string) {
-                return equipments;
-            }
-            var matches = [];
-            var i = equipments.length;
-            while(i--){
-                if(equipments[i].Room && equipments[i].Room.Building.Campus.Name && equipments[i].Room.Building.Campus.Name.toLowerCase().indexOf(string) > -1) matches.unshift(equipments[i]);
-            }
-            return matches;
-        }
-    })
     .filter("matchInspectionDate", function () {
         /*
         Match either Certification_date or Due_date to dateString.

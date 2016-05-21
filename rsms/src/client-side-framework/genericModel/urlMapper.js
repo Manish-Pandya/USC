@@ -47,6 +47,7 @@
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },
         'Department'            : {getById: "getDepartmentById"            , getAll: "getAllDepartments"            , save: "saveDepartment"             },
+        'Campus'                : {getById: "getCampusById"                , getAll: "getAllCampuses"               , save: "saveCampus"                 },
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },  
         'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           }
 };
