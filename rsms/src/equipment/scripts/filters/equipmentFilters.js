@@ -31,6 +31,24 @@ angular
             return matches;
         }
     })
+    .filter("matchEquipmentCampus", function(){
+        return function (equipments, campus_id) {
+            if(!equipments) {
+                return;
+            } else if (!campus_id) {
+                return equipments;
+            }
+            var matches = [];
+            var i = equipments.length;
+            while (i--) {
+                if (equipments[i].EquipmentInspections[0].Room) {
+                    var building = equipments[i].EquipmentInspections[0].Room.Building;
+                    if (building && building.Campus_id == campus_id) matches.unshift(equipments[i]);
+                }
+            }
+            return matches;
+        }
+    })
     .filter("matchInspectionDate", function () {
         /*
         Match either Certification_date or Due_date to dateString.
