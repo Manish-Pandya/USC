@@ -10,10 +10,9 @@
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
         <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
+    <h2 ng-if="!cabinets.length">No Cabinets</h2>
     <div ng-repeat="campus in campuses" ng-show="cabinets.length && completeCabinets.length">
         <h2 style="padding-top:60px; text-decoration:underline">{{selectedCertificationDate || 'All'}} Certification Records ({{campus.Name}})</h2>
-        <h2 ng-if="!cabinets.length">No Cabinets</h2>
-        <h2 ng-if="!completeCabinets.length">No Cabinets have complete certifications</h2>
         <div class="full bio-safety-cabinets well full" >
             <table class="table table-striped table-bordered">
                 <tr class="table-header">
