@@ -161,7 +161,7 @@ angular.module('HazardInventory')
             var modalData = {};
             modalData.HazardDto = hazardDto;
             modalData.PI = $scope.PI;
-            $scope.pisPromise = af.getPiHazards(hazardDto)
+            $scope.pisPromise = af.getPiHazards(hazardDto, $scope.PI.Key_id)
                 .then(function (pHRS) {
                     modalData.pHRS = pHRS;
                     af.setModalData(modalData);
@@ -251,7 +251,7 @@ angular.module('HazardInventory')
                 }
             }
         }
-
+        
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();

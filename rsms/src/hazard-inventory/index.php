@@ -205,7 +205,7 @@ echo "</script>";
                                        </div>
                                        <div class="roomsForBuidling span6">
                                            <ul>
-                                               <li ng-repeat="(key, room) in building | orderBy: 'Name'"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                             </ul>
                                         </div>
                                     </li>

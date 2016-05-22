@@ -182,8 +182,8 @@ var Constants = (function () {
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
-            OTHER_PI: "Used by another PI's lab",
-            IN_USER: "In Use"
+            OTHER_PI: "Other Lab's Hazard",
+            IN_USE: "In Use"
         }
     }
 

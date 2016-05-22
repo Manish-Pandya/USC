@@ -294,9 +294,9 @@ angular
                     );
         }
 
-        ac.getPiHazards = function (hazardDto, room) {
+        ac.getPiHazards = function (hazardDto, piId, room) {
 
-            var urlSegment = "getPisByHazardAndRoomIDs&hazardId=" + hazardDto.Hazard_id;
+            var urlSegment = "getPisByHazardAndRoomIDs&piId=" + piId + "&hazardId=" + hazardDto.Hazard_id;
             var ids = [];
 
             
