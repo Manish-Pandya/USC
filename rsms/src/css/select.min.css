@@ -87,3 +87,6 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
 .control-group ul{
     display: block;
 }
+.modal-body  .ui-select-match {
+  max-width:250px;
+}
