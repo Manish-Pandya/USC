@@ -19,6 +19,7 @@ class BioSafetyCabinet extends Equipment {
         "serial_number"		        	=> "text",
         "make"          	   			=> "text",
         "model"     		    		=> "text",
+        "comments"                      => "text",
 				
 		//GenericCrud
 		"key_id"			    => "integer",

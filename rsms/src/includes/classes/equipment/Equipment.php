@@ -17,9 +17,10 @@ abstract class Equipment extends GenericCrud{
     protected $equipmentInspections; //array\
     protected $principaInvestigatorId;
     protected $roomId;
+    protected $comments;
     private $equipment_class;
 
-    
+
     /** Relationships */
 	protected static $INSPECTIONS_RELATIONSHIP = array(
 		"className"	=>	"Inspection",
@@ -27,15 +28,15 @@ abstract class Equipment extends GenericCrud{
 		"keyName"	=>	"key_id",
 		"foreignKeyName" =>	"equipment_id"
 	);
-    
-    
+
+
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
 		$this->setEntityMaps($entityMaps);
 	}
-    
+
     public function getType(){
 		return $this->type;
 	}
@@ -70,13 +71,13 @@ abstract class Equipment extends GenericCrud{
 	public function setSerial_number($serial_number){
 		$this->serial_number = $serial_number;
     }
-    
+
     public function getPrincipalInvestigatorId(){return $this->principalInvestigatorId;}
     public function setPrincipalInvestigatorId($id){$this->principalInvestigatorId = $id;}
-    
+
     public function getRoomId(){return $this->roomId;}
     public function setRoomId($id){$this->roomId = $id;}
-    
+
     public function getEquipmentInspections(){
         $l = Logger::getLogger('getEquipmentInspections?');
 
@@ -94,7 +95,7 @@ abstract class Equipment extends GenericCrud{
 		return $this->equipmentInspections;
 	}
 	public function setEquipmentInspections($inspections){ $this->equipmentInspections = $inspections; }
-    
+
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
@@ -121,5 +122,13 @@ abstract class Equipment extends GenericCrud{
 		$this->certification_date = $certification_date;
         // new instance will be spawned in the controller
 	}
-    
+
+
+    public function getComments(){
+		return $this->comments;
+	}
+	public function setComments($comments){
+		$this->comments = $comments;
+	}
+
 }

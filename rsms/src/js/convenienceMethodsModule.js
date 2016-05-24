@@ -476,6 +476,34 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         }
     }
 }])
+.directive('ulTableHeights', ['$window', '$location', '$rootScope', '$timeout', function ($window, $location, $rootScope, $timeout) {
+    return {
+        restrict: 'C',
+        scope: {
+            watch: "="
+        },
+        link: function (scope, elem, attrs) {
+            scope.$watch('watch', function (oldVal, newVal) {
+                console.log(newVal);
+                if (!newVal || newVal == 0) return false;
+                resize(attrs, elem, newVal)
+            });
+            resize(attrs, elem, scope.watch);
+
+            function resize(attrs, elem, len) {
+                if (!len || len == 0) return;
+                if (!attrs.h) {
+                    attrs.$set('h', elem.outerHeight());
+                }
+                console.log(elem.find('ul > li'));
+                console.log(attrs);
+
+                elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len * 2)) - 9 + 'px', 'paddingBottom': (attrs.h / (len * 2)) + 9 + 'px', 'height': 0 });
+                console.log(elem.find('ul > li'));
+            }
+        }
+    }
+}])
 .filter('propsFilter', function() {
   return function(items, props) {
     var out = [];

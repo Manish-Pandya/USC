@@ -95,25 +95,29 @@ angular
             while(i--){
                 if (equipments[i].EquipmentInspections) {
                     var j = equipments[i].EquipmentInspections.length;
+                    var matched = false;
                     while (j--) {
                         if (Array.isArray(dateProp)) {
                             for (var n = 0; n < dateProp.length; n++) {
                                 if (equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp[n])) {
                                     var inspectionDate = equipments[i].EquipmentInspections[j][dateProp[n]];
                                     if ((!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1)) {
-                                        matches.unshift(equipments[i]);
-                                        break;
+                                        matched = true;
+                                        continue;
                                     }
                                 }
                             }
                         } else if ( equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp) ) {
                             var inspectionDate = equipments[i].EquipmentInspections[j][dateProp];
                             if ( (!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1) ) {
-                                matches.unshift(equipments[i]);
-                                break;
+                                matched = true;
+                                continue;
                             }
                         }
                     }
+                }
+                if (matched) {
+                    matches.unshift(equipments[i]);
                 }
             }
             return matches;
