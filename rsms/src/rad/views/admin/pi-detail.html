@@ -23,7 +23,7 @@
                 <div class="table-row">
                     <div>{{pi.Pi_authorization.Authorization_number}}</div>
                     <div>
-                        <ul><li ng-repeat="room in pi.Pi_authorization.Rooms">{{room.Name}}</li></ul>
+                        <ul><li ng-repeat="room in pi.Pi_authorization.Rooms">{{room.Building_name}}: {{room.Name}}</li></ul>
                     </div>
                     <div>
                         <ul><li ng-repeat="dept in pi.Pi_authorization.Departments">{{dept.Name}}</li></ul>
