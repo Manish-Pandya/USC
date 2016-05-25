@@ -22,7 +22,7 @@ class Room extends GenericCrud {
 		"chem_hazards_present"			=> "boolean",
 		"rad_hazards_present"			=> "boolean",
 		"bio_hazards_present"			=> "boolean",
-				
+
 		//GenericCrud
 		"key_id"			=> "integer",
 		"date_created"		=> "timestamp",
@@ -54,7 +54,7 @@ class Room extends GenericCrud {
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"room_id"
 	);
-	
+
 	public static $CONTAINERS_RELATIONSHIP = array(
 			"className" =>  "SolidsContainer",
 			"tableName" =>  "solids_container",
@@ -63,12 +63,13 @@ class Room extends GenericCrud {
 	);
 
 	private $name;
-	
+
 	private $purpose;
 
 	/** Reference to the Building entity that contains this Room */
 	private $building_id;
 	private $building;
+    private $building_name;
 
 	/** Array of PricipalInvestigator entities that manage this Room */
 	private $principalInvestigators;
@@ -95,13 +96,13 @@ class Room extends GenericCrud {
 
 	/** String containing emergency contact information */
 	private $bio_hazards_present;
-	
+
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
-	
+
 	/** Boolean to indicate whether this Room has relationships with more than 1 PrincipalInvestigator */
 	private $hasMultiplePIs;
-	
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -128,7 +129,7 @@ class Room extends GenericCrud {
 	// Accessors / Mutators
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
-	
+
 	public function getPurpose(){ return $this->purpose; }
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
 
@@ -140,8 +141,7 @@ class Room extends GenericCrud {
 
 	public function getBio_hazards_present() { return $this->bio_hazards_present; }
 	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = $bio_hazards_present; }
-	
-	
+
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
 
@@ -154,6 +154,14 @@ class Room extends GenericCrud {
 	}
 	public function setBuilding($building){
 		$this->building = $building;
+	}
+
+    public function getBuilding_name(){
+		if($this->building_name == null && $this->getBuilding_id() != null) {
+			$buildingDAO = new GenericDAO(new Building());
+			$this->building_name = $buildingDAO->getById($this->building_id)->getName();
+		}
+		return $this->building_name;
 	}
 
 	public function getHazards(){
@@ -216,7 +224,7 @@ class Room extends GenericCrud {
 		if($number_of_rows > 0) $this->has_hazards =  true;
 		return $this->has_hazards;
 	}
-	
+
 	public function getSolidsContainers() {
 		if( $this->solidsContainers === NULL && $this->hasPrimaryKeyValue() ) {
 			$thisDao = new GenericDAO($this);
@@ -226,11 +234,11 @@ class Room extends GenericCrud {
 		}
 		return $this->solidsContainers;
 	}
-	
+
 	public function setSolidsContainers($newContainers) {
 		$this->solidsContainers = $newContainers;
 	}
-	
+
 	public function getHasMultiplePIs(){
 		if($this->hasMultiplePIs == NULL){
 			$this->hasMultiplePIs = false;
