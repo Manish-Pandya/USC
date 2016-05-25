@@ -495,10 +495,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 if (!attrs.h) {
                     attrs.$set('h', elem.outerHeight());
                 }
-                console.log(elem.find('ul > li'));
-                console.log(attrs);
-
-                elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len * 2)) - 9 + 'px', 'paddingBottom': (attrs.h / (len * 2)) + 9 + 'px', 'height': 0 });
+                console.log(len)
+                console.log(attrs.h)
+                elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len * 2)) - 17 + 'px', 'paddingBottom': (attrs.h / (len * 2)) -8 + 'px', 'height': 0 });
                 console.log(elem.find('ul > li'));
             }
         }
