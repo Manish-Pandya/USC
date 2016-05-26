@@ -18,6 +18,8 @@ abstract class Equipment extends GenericCrud{
     protected $principaInvestigatorId;
     protected $roomId;
     protected $comments;
+	private $certification_date;
+	private $due_date;
     private $equipment_class;
 
 
@@ -98,6 +100,7 @@ abstract class Equipment extends GenericCrud{
 
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
+		$l->fatal($this);
         if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
@@ -123,6 +126,13 @@ abstract class Equipment extends GenericCrud{
         // new instance will be spawned in the controller
 	}
 
+	public function getDue_date(){
+		return $this->due_date;
+	}
+	public function setDue_date($dueDate){
+		$this->due_date = $dueDate;
+        // new instance will be spawned in the controller
+	}
 
     public function getComments(){
 		return $this->comments;

@@ -329,7 +329,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	Converts a Javascript date object to a MYSQL datetime formatted string
         *	@param (date, Date)  JS Date to convert
         */
-        setMysqlTime: function(date){
+        setMysqlTime: function (date) {
+            if (!date) return null;
             var date;
             //console.log(date);
             date = new Date(Date.parse(date));
@@ -480,24 +481,28 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
     return {
         restrict: 'C',
         scope: {
-            watch: "="
+            watch: "=",
+            otherwatch: "="
         },
         link: function (scope, elem, attrs) {
-            scope.$watch('watch', function (oldVal, newVal) {
+            scope.attrs = attrs;
+            scope.$watch('attrs', function (oldVal, newVal) {
                 console.log(newVal);
                 if (!newVal || newVal == 0) return false;
                 resize(attrs, elem, newVal)
             });
-            resize(attrs, elem, scope.watch);
 
-            function resize(attrs, elem, len) {
-                if (!len || len == 0) return;
+            resize(attrs, elem, scope.watchedThing);
+
+            function resize(attrs, elem) {
+                var len = elem.find('ul').length;
                 if (!attrs.h) {
                     attrs.$set('h', elem.outerHeight());
+                    attrs.$set('len', len);
                 }
                 console.log(len)
                 console.log(attrs.h)
-                elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len * 2)) - 17 + 'px', 'paddingBottom': (attrs.h / (len * 2)) -8 + 'px', 'height': 0 });
+                elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len)) - 17 + 'px', 'paddingBottom': (attrs.h / (len)) -8 + 'px', 'height': 0 });
                 console.log(elem.find('ul > li'));
             }
         }

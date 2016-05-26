@@ -306,11 +306,14 @@ button.btn:not(.btn-large) {
     /* background: pink; */
     float:left;
     padding:20px 5px;
-    height:auto;
+    height: 90px;
     border-right: 1px solid #DDDDDD;
     border-bottom: 1px solid #DDDDDD !important;
     box-sizing:border-box;
     display:table-cell;
+}
+.bio-safety-cabinets-container table tr td ul:last-child li{
+    border-bottom:none !important;
 }
 
 .bio-safety-cabinets-container table tr th ul li{

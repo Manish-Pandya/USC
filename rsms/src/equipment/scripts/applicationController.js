@@ -271,17 +271,18 @@ angular
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
                             } else {
                                 console.log(returnedBioSafetyCabinet);
-                                for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections; x++) {
+                                for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections.length; x++) {
                                     var newInspection = returnedBioSafetyCabinet.EquipmentInspections[x];
                                     console.log(newInspection);
                                     newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
                                     store.store(newInspection);
                                     newInspection.loadRoom();
-                                    //return newInspection;
+                                    newInspection.loadPrincipalInvestigator();
                                 }
                                 returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
                                 store.store(returnedBioSafetyCabinet);
-                                console.log(dataStore);
+                                console.log(returnedBioSafetyCabinet);
+                                return returnedBioSafetyCabinet;
                             }
                         },
                         af.setError('The BioSafetyCabinet could not be saved')

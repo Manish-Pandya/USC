@@ -8,10 +8,10 @@
             <option value="">All</option>
         </select>
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-        <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
+        <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
     <h2 ng-if="!cabinets.length">No Cabinets</h2>
-    <div ng-repeat="campus in campuses | orderBy: 'Name'" ng-show="cabinets.length && completeCabinets.length">
+    <div ng-repeat="campus in campuses | orderBy: 'Name'" ng-show="cabinets.length && completeCabinets.length || selectedBuilding">
         <div class="full bio-safety-cabinets-container" style="padding:5px;">
             <h2>{{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}</h2>
             <table class="table table-striped table-bordered" >
@@ -52,9 +52,9 @@
                     </th>
                 </tr>
                 <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
-                <tr ng-repeat="cabinet in completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:['Certification_date','Due_date'] | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index">
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:['Certification_date','Due_date']:currentYearString | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index">
                     <td>
-                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove"></i></button>
                     </td>
                     <td>
@@ -69,8 +69,8 @@
                     <td>
                         {{cabinet.Model}}
                     </td>
-                    <td watch="inspections.length" class="ul-table-heights">
-                        <ul ng-repeat="inspection in (inspections = (cabinet.EquipmentInspections | matchInspectionDate:selectedCertificationDate:currentYearString))">
+                    <td watch="inspections.length" otherwatch="completeCabinets.length" class="asdful-table-heights">
+                        <ul ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | matchInspectionDate:selectedCertificationDate:currentYearString | orderBy:'Due_date':true)">
                             <li>
                                 {{inspection.Room.Building.Name}}
                             </li>
@@ -91,7 +91,7 @@
                             </li>
                             <li>
                                 <button ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">View Report</button>
-                                <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, $index)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                                <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                             </li>
                         </ul>
                     </td>

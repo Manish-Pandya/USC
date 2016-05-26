@@ -92,6 +92,8 @@ class EquipmentInspection extends GenericCrud{
         if ($this->getFrequency() == null) {
             return null;
         }
+		//Use similar logic in Equipment->conditionallyCreate... to persist due_dates for inspections, rather than having this be a convenience method
+		/*
         if($this->due_date == null){
 		    $dueDate = new DateTime($this->getDate_created());
 		    if($this->getFrequency() == "Annually"){
@@ -101,7 +103,7 @@ class EquipmentInspection extends GenericCrud{
             }
 		    $this->setDue_date($dueDate->format('Y-m-d H:i:s'));
         }
-
+		*/
 		return $this->due_date;
 	}
 	public function setDue_date($due_date){
