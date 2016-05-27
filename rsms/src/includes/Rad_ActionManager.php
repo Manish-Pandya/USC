@@ -965,6 +965,13 @@ class Rad_ActionManager extends ActionManager {
 
                     $amountDao->save($newAmount);
                 }
+                //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
+                else{
+                    if($amount['Key_id'] != NULL){
+                        $amountDao = $this->getDao(new ParcelUseAmount());
+                        $amountDao->deleteById($amount['Key_id']);
+                    }
+                }
             }
 
             $entityMaps = array();

@@ -20,8 +20,8 @@
                         {{parcel.Rs_number}}
                     </div>
 
-                    <div>
-                        {{parcel.Authorization.IsotopeName || parcel.Isotope.Name}}
+                    <div ng-init="parcel.loadAuthorization()"> 
+                        {{parcel.Authorization.IsotopeName}}
                     </div>
 
                     <div>
@@ -121,11 +121,10 @@
                                     <div ng-if="!vials.length">No vial Disposals</div>
                                 </td>
                                 <td class="use-amount others">
-                                    <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                        i dont know
-                                        <span class="bold">Other:</span> {{other.Curie_level}} mCi <span ng-if="other.Comments">({{other.Comments}})</span>
+                                    <span class="bold" style="margin-bottom:10px;display:block">Other:<span class="bold" ng-show="!others.length">N/A</span></span>
+                                    <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                                         {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
                                     </div>
-                                    <div ng-show="!others.length"><span class="bold">Other:</span> N/A</div>
                                 </td>
                             </tr>
                         </table>

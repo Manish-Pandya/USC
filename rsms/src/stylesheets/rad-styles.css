@@ -741,7 +741,7 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
         padding: 0;
     }
     body > div.container-fluid {
-        padding: 0 8px;
+        padding: 0;
     }
     div.fake-table .table-row > div {
         display: table-cell;

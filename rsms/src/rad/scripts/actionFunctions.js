@@ -2051,7 +2051,7 @@ angular
                             }
                             dataStoreManager.store(returnedWipes);
                             test.loadPIWipes();
-                        },
+                        }
                        // af.setError('The Wipe Test could not be saved')
                     )
             }

@@ -89,7 +89,6 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
                 } else {
                     //the collection is present in the parent, but the objects have not been placed in the dataStore
                     if (parent[relationship.parentProperty]) {
-                        console.log(relationship);
                         dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[relationship.parentProperty]), relationship.className);
                     }
                     if (relationship.className == "PIWipeTest") {
