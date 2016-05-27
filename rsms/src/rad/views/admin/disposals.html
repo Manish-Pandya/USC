@@ -72,7 +72,6 @@
 						     <div class="controls input-append">
 								<input style="width: 90px;padding: 0px 3px;" ng-model="CarboyUseCycleCopy.Volume">
 								<span class="add-on">ml</span>
-								
 							</div>
 						</div>
 					</div>
@@ -83,8 +82,16 @@
 						</p>
 					</div>
 
-                    <div>                       
+                    <div ng-if="!cycle.edit">                       
                         {{cycle.Comments}}
+                    </div>
+                    <div ng-if="cycle.edit">
+                        <div class="control-group">
+                            <label>Comments</label>
+                            <div class="controls">
+                                <textarea style="padding: 0px 3px;" ng-model="CarboyUseCycleCopy.Comments"></textarea>
+                            </div>
+                        </div>
                     </div>
 
 					<div>
