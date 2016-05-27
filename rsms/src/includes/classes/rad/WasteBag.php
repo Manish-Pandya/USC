@@ -13,6 +13,8 @@ class WasteBag extends RadCrud {
 		"curie_level"  => "float",
 		"date_added"   => "timestamp",
 		"date_removed" => "timestamp",
+        "comments"     => "text",
+
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -22,7 +24,7 @@ class WasteBag extends RadCrud {
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer"
 	);
-	
+
 	/** Relationships */
 	protected static $USEAMOUNTS_RELATIONSHIP = array(
 			"className" => "ParcelUseAmount",
@@ -30,7 +32,7 @@ class WasteBag extends RadCrud {
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "waste_bag_id"
 	);
-	
+
 
 	/** container this bag went into */
 	private $container;
@@ -52,11 +54,13 @@ class WasteBag extends RadCrud {
 
 	/** date this bag was removed from its SolidsContiner */
 	private $date_removed;
-	
+
 	private $container_name;
-	
+
 	private $parcel_use_amounts;
-	
+
+    private $comments;
+
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
 
@@ -66,7 +70,7 @@ class WasteBag extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
-		
+
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -96,7 +100,7 @@ class WasteBag extends RadCrud {
 	public function setContainer_id($newId) {
 		$this->container_id = $newId;
 	}
-	
+
 	public function getContainer_name(){
 		if($this->getContainer_id() != NULL && $this->container_name == NULL){
 			$container = $this->getContainer();
@@ -159,7 +163,7 @@ class WasteBag extends RadCrud {
 	{
 	    $this->date_removed = $date_removed;
 	}
-	
+
 	public function getParcelUseAmounts() {
 		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
@@ -170,11 +174,14 @@ class WasteBag extends RadCrud {
 	public function setParcelUseAmounts($parcel_use_amounts) {
 		$this->parcel_use_amounts = $parcel_use_amounts;
 	}
-	
+
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for waste bag');
 		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
 		return $this->contents;
 	}
+
+    public function getComments(){return $this->comments;}
+    public function setComments($comments){$this->comments = $comments;}
 }

@@ -95,7 +95,7 @@ class EquipmentInspection extends GenericCrud{
 		    $dueDate = new DateTime($this->getDate_created());            
 		    if($this->getFrequency() == "Annually"){
 			    $dueDate->modify('+1 year');
-		    }else if($this->getFrequency() == "Bi-annually"){
+		    }else if($this->getFrequency() == "Semi-annually"){
 			    $dueDate->modify('+6 months'); // twice a year
             }
 		    $this->setDue_date($dueDate->format('Y-m-d H:i:s'));

@@ -11,10 +11,10 @@
     </div>
     <div class="control-group">
         <label class="control-label bold">Rooms</label>
-        <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name'">
+        <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name' track by $index">
             <label class="checkbox">
                 <input type="checkbox" ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)"/>
-                <span class="metro-checkbox">{{room.Building.Name}} room: {{room.Name}}</span>
+                <span class="metro-checkbox">{{room.Building_name}} room: {{room.Name}}</span>
             </label>
         </div>
     </div>

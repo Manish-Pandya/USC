@@ -22,7 +22,8 @@ angular
     'modalPosition',
     'convenienceMethodWithRoleBasedModule',
     'rootApplicationController',
-    'SideNav'
+    'SideNav',
+    'ngQuickDate'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {

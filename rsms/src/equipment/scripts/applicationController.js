@@ -161,7 +161,7 @@ angular
                 
                 //flatten to avoid circular JSON structure
                 var secondCopy = {
-                            Certification_date: copy.Certification_date,
+                            Certification_date: copy.viewDate,
                             Due_date: copy.Due_date,
                             Class: "EquipmentInspection",
                             Comment: copy.Comment,
@@ -267,15 +267,17 @@ angular
                                 angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
                             } else {
                                 console.log(returnedBioSafetyCabinet);
-
-                                var newInspection = returnedBioSafetyCabinet.EquipmentInspections[0];
-                                console.log(newInspection);
-                                newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
-                                store.store(newInspection);
-                                newInspection.loadRoom();
+                                for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections; x++) {
+                                    var newInspection = returnedBioSafetyCabinet.EquipmentInspections[x];
+                                    console.log(newInspection);
+                                    newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
+                                    store.store(newInspection);
+                                    newInspection.loadRoom();
+                                    //return newInspection;
+                                }
                                 returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
                                 store.store(returnedBioSafetyCabinet);
-                                return newInspection;
+                                console.log(dataStore);
                             }
                         },
                         af.setError('The BioSafetyCabinet could not be saved')

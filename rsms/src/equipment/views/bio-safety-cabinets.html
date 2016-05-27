@@ -10,7 +10,7 @@
         <h2 style="padding-top:60px">Complete Certifications</h2>
         <h2 ng-if="!cabinets.length">No Cabinets</h2>
         <h2 ng-if="!completeCabinets.length">No cabinets have complete certifications.</h2>
-        <div class="full bio-safety-cabinets well full" ng-show="completeCabinets.length">
+        <div class="full bio-safety-cabinets well full" ng-show="cabinets.length">
             <table class="table table-striped table-bordered">
                 <tr class="table-header">
                     <th>EDIT</th>
@@ -79,7 +79,8 @@
                                     {{inspection.PrincipalInvestigator.User.Name}}
                                 </li>
                                 <li>
-                                    <a href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">View Report</a>
+                                    <button ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">View Report</button>
+                                    <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, $index)" class="btn btn-primary left"><i class="icon-checkmark"></i>Certification</a>
                                 </li>
                                 <li>
                                     {{inspection.Comment}}
@@ -93,9 +94,9 @@
 
         <br>
         <h2>Incomplete Certifications</h2>
-        <h2 ng-if="!neededInspections.length">No Cabinets Need Certifications for {{dueYear}}</h2>
+        <h2 ng-if="!neededInspections.length">No Cabinets Need Certifications for {{selectedDueDate}}</h2>
 
-        <div class="full bio-safety-cabinets well full" ng-show="neededInspections.length">
+        <div class="full bio-safety-cabinets well full" ng-show="cabinets.length">
             <table class="table table-striped table-hover bio-safety-cabinets table-bordered ng-scope ng-isolate-scope">
                 <tr class="table-header">
                     <th>EDIT</th>

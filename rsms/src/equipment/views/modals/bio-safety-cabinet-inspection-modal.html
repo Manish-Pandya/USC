@@ -19,7 +19,7 @@
         <label class="control-label">Building: <span ng-show="!modalData.buildingEdit">{{modalData.selectedBuilding}} <i class="primary icon-pencil" ng-click="modalData.buildingEdit = !modalData.buildingEdit"></i></span></label>
         <div class="controls" ng-show="modalData.buildingEdit">
             <select ng-init="getBuilding()" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
-                <option value="">--Select--</option>
+                <option value="">--Select Building--</option>
             </select>
             <i ng-click="modalData.buildingEdit = !modalData.buildingEdit" class="icon-cancel danger"></i>
         </div>
@@ -30,7 +30,7 @@
         <label class="control-label">Room: <span ng-show="!modalData.roomEdit">{{modalData.BioSafetyCabinetCopy.Room.Name}} <i class="primary icon-pencil" ng-click="modalData.roomEdit = !modalData.roomEdit"></i></span></label>
         <div class="controls" ng-show="modalData.roomEdit">
             <select ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as room.Name for room in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms | matchBuilding:modalData.selectedBuilding">
-                <option value="">--Select--</option>
+                <option value="">--Select Room--</option>
             </select>
             <i ng-click="modalData.roomEdit = !modalData.roomEdit" class="icon-cancel danger"></i>
         </div>
@@ -58,6 +58,10 @@
     </div>
     <div class="control-group">
         <label class="control-label">Model: <span>{{modalData.BioSafetyCabinetCopy.Model}}</span></label>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Certification Date</label>
+        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.viewDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
     </div>
     <div class="control-group">
         <label class="control-label">Comments</label>

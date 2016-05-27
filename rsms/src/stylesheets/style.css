@@ -1216,6 +1216,18 @@ html[xmlns] .clearfix {
   content: ", ";
   visibility: visible;
 }
+.hazInvSubRooms{
+  margin-top:0;
+  margin-bottom:0;
+  height:0;
+  padding:0;
+}
+.hazInvSubRooms li {
+  font-size: 11px;
+  border: none;
+  float: left;
+  margin-right: 5px;
+}
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
   content: "";
@@ -2721,7 +2733,7 @@ span.yellow {
 }
 /* line 1800, ../sass/style.scss */
 .hazardList > ul li {
-  margin: 5px 0;
+  margin: 0px 0;
 }
 
 /* line 1804, ../sass/style.scss */
@@ -2943,12 +2955,11 @@ label.smaller {
 .quickdate-popup {
   z-index: 10;
   background-color: #fff;
-  border: solid 1px #000;
+  border: solid 1px #999;
   text-align: center;
   width: 250px;
-  display: none;
   position: absolute;
-  padding: 5px;
+  padding:10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
@@ -2959,10 +2970,7 @@ label.smaller {
 
 /* line 1975, ../sass/style.scss */
 .quickdate-close {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #333;
+  display: none;
 }
 
 /* line 1976, ../sass/style.scss */
@@ -3026,6 +3034,10 @@ table.quickdate-calendar {
 table.quickdate-calendar th, table.quickdate-calendar td {
   padding: 5px;
 }
+table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
+  background: #24A0DA;
+  color:white !important
+}
 
 /* line 1986, ../sass/style.scss */
 table.quickdate-calendar td:hover {
@@ -3050,7 +3062,9 @@ table.quickdate-calendar td:hover {
 
 /* line 1990, ../sass/style.scss */
 table.quickdate-calendar td.is-today {
-  color: #49afcd;
+  color: #000;
+  font-weight:bold;
+  background: rgba(18, 0, 28, 0.29) !important;
 }
 table.quickdate-calendar td.selected{
   background:#5BB75B!important;
@@ -3448,6 +3462,11 @@ table.large tr th{
   margin-right:1.33333%;
   max-width: 1366px;
 }
+.four-fifths{
+  width:78.666666666%;
+  margin-right:1.33333%;
+  max-width: 1366px;
+}
 .two-thirds{
   width:62%;
   margin-right:1.33333%;
@@ -3514,8 +3533,11 @@ div.fake-table .table-row > div{
 }
 div.fake-table.condensed .table-row > div{
   display: table-cell;
-  padding:5px;
-  font-size:16px;
+  padding: 1px 5px;
+  font-size: 16px;
+}
+.condensed{
+  margin-bottom:3px !Important;
 }
 div.fake-table div.button-cell{
   min-width: 112px;
@@ -3657,7 +3679,7 @@ tbody tr:nth-child(even){
   background:#ECF0F1;
 }
 
-tbody tr:hover{/* background:#BDC3C7; */color:#FFFFFF;}
+tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 
 .fixed{
   position:fixed;

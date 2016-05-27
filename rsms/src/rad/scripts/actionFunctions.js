@@ -1349,6 +1349,12 @@ angular
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
                     copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
                 }
+
+                //we've changed the hot isotope, so set the date
+                if (!cycle.Hotroom_date && copy.Hot_isotope_id != cycle.Hot_isotope_id) {
+                    copy.Hotroom_date = convenienceMethods.setMysqlTime(new Date());
+                }
+                console.log(copy);
                 return this.save( copy )
                     .then(
                         function(returnedCycle){
@@ -1358,9 +1364,8 @@ angular
                                 while(i--){
                                     dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
                                 }
-                                cycle.Volume = returnedCycle.Volume;
-                                cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
-
+                                
+                                angular.extend(cycle, returnedCycle);
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
@@ -2084,7 +2089,8 @@ angular
                         function(returnedBag){
                             returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
                             if(bag.Key_id){
-                                angular.extend(bag, copy)
+                                angular.extend(bag, copy);
+                                bag.edit = false;
                             }else{
                                 dataStoreManager.store(returnedBag);
                                 $rootScope.WasteBagCopy = {};
@@ -2102,8 +2108,9 @@ angular
                     .then(
                         function(returnedCollection){
                             returnedCollection = modelInflatorFactory.instateAllObjectsFromJson( returnedCollection );
-                            if(collection.Key_id){
+                            if (collection.Key_id) {
                                 angular.extend(collection, copy)
+                                collection.edit = false;
                             }else{
                                 dataStoreManager.store(returnedCollection);
                                 $rootScope.ScintVialCollectionCopy = {};
@@ -2148,6 +2155,7 @@ angular
                                 }
                             }
                             cycle.Pour_allowed_date = returnedCycle.Pour_allowed_date;
+                            cycle.readingEdit = false;
                             return cycle;
                         },
                         af.setError('The reading could not be saved')

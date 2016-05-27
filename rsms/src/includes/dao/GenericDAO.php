@@ -189,7 +189,7 @@ class GenericDAO {
 	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array $result
 	 */
-	function getAllWhere( $whereClauseGroup, $junction = "AND" ){
+	function getAllWhere( $whereClauseGroup, $junction = "AND", $sortColumn = null ){
 		
 		// Get the db connection
 		global $db;
@@ -251,7 +251,11 @@ class GenericDAO {
 				}
 			}
 		}
-		
+
+        if($sortColumn != null && array_key_exists($sortColumn, $columnWhiteList)){
+            $sql .= " ORDER BY " . $sortColumn;
+        }
+        $this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
 		foreach($whereClauses as $key=>$clause){

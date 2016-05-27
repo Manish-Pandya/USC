@@ -14,7 +14,7 @@
 <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', pi.Pi_authorization)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
             <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a></h3>
         <div class="card-content" ng-if="selectedView == 'authorizations'">
-            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60% "ng-if="pi.Pi_authorization">
+            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="pi.Pi_authorization">
                 <div class="table-header">
                     <h3>Authorization Number</h3>
                     <h3>Rooms</h3>

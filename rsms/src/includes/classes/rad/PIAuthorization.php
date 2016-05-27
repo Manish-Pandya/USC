@@ -61,9 +61,9 @@ class PIAuthorization extends RadCrud{
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getRooms");
-		$entityMaps[] = new EntityMap("lazy", "getAuthorizations");
-		$entityMaps[] = new EntityMap("lazy", "getDepartments");
+		$entityMaps[] = new EntityMap("eager", "getRooms");
+		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
+		$entityMaps[] = new EntityMap("eager", "getDepartments");
 		
 		$this->setEntityMaps($entityMaps);
 	}

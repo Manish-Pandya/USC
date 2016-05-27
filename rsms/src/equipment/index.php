@@ -66,7 +66,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
-
+<script src="../js/lib/ng-quick-date.js"></script>
 
 <!-- Required for the ORM framework -->
 <!-- TODO include everything in certain directories by default -->
