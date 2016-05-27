@@ -85,13 +85,16 @@ angular
                             if(recurse){
                                 dataSwitch.recursivelyInstantiate(instatedObjects);
                             }
-
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
-                            if (instatedObjects && instatedObjects.length) {
-                                deferred.resolve(dataStoreManager.get(instatedObjects[0].Class));
+                            console.log(dataStore.RadModelDto);
+                            if (instatedObjects) {
+                                var type = typeof instatedObjects == "array" ? instatedObjects[0].Class : instatedObjects.Class;
+                                deferred.resolve(dataStoreManager.get(type));
+
                             } else {
-                                deferred.resolve();
+
+                                //deferred.resolve();
                             }
 
                         });

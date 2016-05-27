@@ -14,7 +14,7 @@
                 <a ng-if="cycle.Room.Class" ng-click="addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
                 <a ng-if="!cycle.Room.Class" disabled="disabled" class="btn left"><i class="icon-plus-2"></i>Assign</a>
             </div>
-            <div>{{cycle.Carboy.Commission_date | dateToISO}}   {{cycle}}</div>
+            <div>{{cycle.Carboy.Commission_date | dateToISO}}</div>
             <div>{{cycle.Carboy.Carboy_number}}</div>
             <div>
                 <select ng-model="cycle.Room" ng-options="room.Name for room in modalData.pi.Rooms">

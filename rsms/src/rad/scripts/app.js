@@ -127,12 +127,19 @@ angular
         url: '/my-lab:pi/current-inventories',
         templateUrl: "views/pi/CurrentInventories.html",
         controller: "InventoryViewCtrl"
-       })
+      })
+      .state('lab-wipes', {
+        url: '/my-lab:pi/wipe-tests',
+        templateUrl: "views/pi/wipe-tests.html",
+        controller: "PIWipeTestController"
+      })
       .state('inspection-wipes:inspection', {
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",
         controller: "InspectionWipeCtrl"
       })
+
+
 
        $provide.decorator('$q', function ($delegate) {
         var defer = $delegate.defer;

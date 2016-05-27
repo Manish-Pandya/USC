@@ -34,6 +34,8 @@
         'WasteType'             : {getById: "getWasteTypeById"             , getAll: "getAllWasteTypes"             , save: "saveWasteType"              },
         'ScintVialCollection'   : {getById: "getSVCollectionById"          , getAll: "getAllSVCollections"          , save: "saveSVCollection"           },
         'ParcelWipeTest'        : {getById: "getParcelWipeTestById"        , getAll: "getAllParcelWipeTests"        , save: "saveParcelWipeTest"         },
+        'PIWipeTest'            : { getById:"getPIWipeTestById"            , getAll: "getAllPIWipeTests"            , save: "savePIWipeTest"             },
+        'PIWipe'                : { getById:"getPIWipeById"                , getAll: "getAllPIWipes"                , save: "savePIWipe"                 },
         'ParcelWipe'            : {getById: "getParcelWipeById"            , getAll: "getAllParcelWipes"            , save: "saveParcelWipe"             },
         'InspectionWipeTest'    : {getById: "getInspectionWipeTestById"    , getAll: "getAllInspectionWipeTests"    , save: "saveInspectionWipeTest"     },
         'InspectionWipe'        : {getById: "getInspectionWipeById"        , getAll: "getAllInspectionWipes"        , save: "saveInspectionWipe"         },

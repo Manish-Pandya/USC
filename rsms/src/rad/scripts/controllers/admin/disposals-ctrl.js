@@ -44,8 +44,8 @@ angular.module('00RsmsAngularOrmApp')
             .then(
                 function(cycles){
                     console.log(cycles);
-                    if(!dataStore.CarboyUseCycle)dataStore.CarboyUseCycle=[];
-                    $scope.cycles = dataStore.CarboyUseCycle;
+                    if (!dataStore.CarboyUseCycle) dataStore.CarboyUseCycle = [];
+                    $scope.cycles = dataStoreManager.get("CarboyUseCycle");
                     return cycles;
                 }
             )
@@ -84,6 +84,8 @@ angular.module('00RsmsAngularOrmApp')
         .then(getAllDrums)
         .then(getCycles);
 
+    $scope.date = new Date();
+
     $scope.assignDrum = function(object){
         console.log(object);
         var modalData = {};
@@ -103,6 +105,21 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
           templateUrl: 'views/admin/admin-modals/drum-shipment.html',
           controller: 'DrumShipCtrl'
+        });
+    }
+
+    $scope.editDrum = function (object) {
+        console.log(object);
+        var modalData = {};
+        if (!object) {
+            object = new window.Drum();
+            object.Class = "Drum";
+        }
+        modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/drum-modal.html',
+            controller: 'DrumShipCtrl'
         });
     }
 
@@ -129,6 +146,8 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
+        $rootScope.CarboyReadingAmountCopy.Class = "CarboyReadingAmount";
+        if (!cycle.Carboy_reading_amounts) cycle.Carboy_reading_amounts = [];
         cycle.Carboy_reading_amounts.push($rootScope.CarboyReadingAmountCopy);
     }
     
@@ -145,6 +164,19 @@ angular.module('00RsmsAngularOrmApp')
         }
     }
 
+    $scope.getIsPastHotRoomDate = function (cycle) {
+        var todayAtMidnight = new Date();
+        todayAtMidnight.setHours(0, 0, 0, 0);
+        var date = cycle.Hot_check_date;
+        var hotCheckSeconds = convenienceMethods.getDate(date).getTime();
+        console.log(hotCheckSeconds);
+        return hotCheckSeconds < todayAtMidnight.getTime();
+    }
+    $scope.resetHotRoomDate = function (cycle) {
+        af.createCopy(cycle);
+        $rootScope.CarboyUseCycleCopy.Hot_check_date = convenienceMethods.setMysqlTime(new Date());
+        af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle);
+    }
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
@@ -184,11 +216,15 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log($scope.modalData);
-                    $scope.close();
 
-        $scope.shipDrum = function(drum, copy){
+        $scope.shipDrum = function (drum, copy) {
+            $rootScope.saving = af.saveDrum(drum, copy);
+            $scope.close();
+        }
+
+        $scope.saveDrum = function (drum, copy) {
             $rootScope.saving = af.saveDrum(drum, copy)
+            $scope.close();
         }
 
         $scope.close = function(){

@@ -43,7 +43,8 @@ var Constants = (function () {
             IN_USE:"In Use",
             DECAYING:"Decaying",
             PICKED_UP:"Picked Up",
-            AT_RSO:"AT RSO"
+            AT_RSO: "AT RSO",
+            HOT_ROOM: "In Hot Room"
         }
     };
 
@@ -181,8 +182,8 @@ var Constants = (function () {
     constants.HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
-            OTHER_PI: "Used by another PI's lab",
-            IN_USER: "In Use"
+            OTHER_PI: "Other Lab's Hazard",
+            IN_USE: "In Use"
         }
     }
 

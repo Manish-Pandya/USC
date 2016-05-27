@@ -19,6 +19,7 @@ class ScintVialCollection extends RadCrud{
 			"pickup_id"						=> "integer",
 			"principal_investigator_id"		=> "integer",
 			"drum_id"						=> "integer",
+            "comments"                      => "text",
 	
 			//GenericCrud
 			"key_id"						=> "integer",
@@ -61,6 +62,8 @@ class ScintVialCollection extends RadCrud{
 	
 	private $drum_id;
 	private $drum;
+
+    private $comments;
 	
 	// Required for GenericCrud
 	public function getTableName() {
@@ -143,7 +146,9 @@ class ScintVialCollection extends RadCrud{
 		}
 		return $this->drum;
 	}
-	
+
+    public function getComments(){return $this->comments;}
+    public function setComments($comments){$this->comments = $comments;}
 	
 }
 

@@ -57,12 +57,12 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.checkMaxOrder = function (parcel) {
-            console.log(parcel);
             $scope.quantityExceeded = false;
             var pi = $scope.modalData.pi;
             var i = pi.CurrentIsotopeInventories.length;
             while (i--) {
                 if (pi.CurrentIsotopeInventories[i].Authorization_id == parcel.Authorization_id) {
+                    console.log(pi.CurrentIsotopeInventories[i].Max_order);
                     if (parseFloat(pi.CurrentIsotopeInventories[i].Max_order) < parseFloat(parcel.Quantity)) {
                         $scope.relevantInventory = pi.CurrentIsotopeInventories[i];
                         return false;

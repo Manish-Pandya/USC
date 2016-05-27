@@ -12,11 +12,23 @@ Drum.prototype = {
         paramValue: 'Key_id',
         paramName: ''
     },
+    SVCollectionRelationship: {
+        className: 'ScintVialCollection',
+        keyReference: 'Drum_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: ''
+    },
     loadWasteBags: function() {
         if(!this.WasteBags) {
             dataLoader.loadOneToManyRelationship(this, 'WasteBags', this.WasteBagsRelationship);
         }
+    },
+    loadScintVialCollections: function() {
+        if (!this.ScintVialCollections) {
+            dataLoader.loadOneToManyRelationship(this, 'ScintVialCollections', this.SVCollectionRelationship);
     }
+}
 
 }
 

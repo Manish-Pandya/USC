@@ -222,7 +222,7 @@ a.modalBtn i, .modal-footer a.btn i {
   margin: 4px 16px 0 3px;
 }
 
-a.btn i {
+.btn i {
   margin: 1px 2px;
   color:white !important;
   font-size: 16px !Important;
@@ -1215,6 +1215,18 @@ html[xmlns] .clearfix {
   height: auto;
   content: ", ";
   visibility: visible;
+}
+.hazInvSubRooms{
+  margin-top:0;
+  margin-bottom:0;
+  height:0;
+  padding:0;
+}
+.hazInvSubRooms li {
+  font-size: 11px;
+  border: none;
+  float: left;
+  margin-right: 5px;
 }
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
@@ -2721,7 +2733,7 @@ span.yellow {
 }
 /* line 1800, ../sass/style.scss */
 .hazardList > ul li {
-  margin: 5px 0;
+  margin: 0px 0;
 }
 
 /* line 1804, ../sass/style.scss */
@@ -3450,6 +3462,11 @@ table.large tr th{
   margin-right:1.33333%;
   max-width: 1366px;
 }
+.four-fifths{
+  width:78.666666666%;
+  margin-right:1.33333%;
+  max-width: 1366px;
+}
 .two-thirds{
   width:62%;
   margin-right:1.33333%;
@@ -3516,8 +3533,11 @@ div.fake-table .table-row > div{
 }
 div.fake-table.condensed .table-row > div{
   display: table-cell;
-  padding:5px;
-  font-size:16px;
+  padding: 1px 5px;
+  font-size: 16px;
+}
+.condensed{
+  margin-bottom:3px !Important;
 }
 div.fake-table div.button-cell{
   min-width: 112px;
@@ -3541,10 +3561,10 @@ div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .t
   border-left: none;
 }
 .well >h1 > i {
-  margin-right: 10px;
+  margin-right: 5px;
   font-size: 35px;
   width: auto;
-  line-height: 53px;
+  line-height: 43px;
 }
 .well >h2 > i{
   margin-right: 7px;
