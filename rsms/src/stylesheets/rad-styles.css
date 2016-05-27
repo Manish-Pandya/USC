@@ -469,7 +469,6 @@ table.parcel-uses  tr:last-child td{
 }
 .use-amount {
     padding: 0 .5% 0 !important;
-    float: left;
     border-bottom:none !important;
     border-left:none !important;
 }
@@ -555,17 +554,37 @@ table.parcel-uses tr.edit td table td.use-amount.vials {
     width: 11%;
 }
 table.parcel-uses tr.edit td table td.use-amount.others {
-    border-right: none !Important;
+    border-right: 1px solid #DDDDDD !Important;
     width: 32%;
+    padding:0 !Important
 }
-table.parcel-uses tr.edit td table td.use-amount.others textarea{
-    margin-left: 17px;
-    margin-bottom:13px;
+
+table.parcel-uses tr.edit td table td.use-amount.others > div div:first-child{
+    margin-bottom:5px
+}
+table.parcel-uses tr.edit td table td.use-amount.others > div{
+    border-bottom:1px solid #DDDDDD;
+    padding:3px
+}
+table.parcel-uses tr.edit td table td.use-amount.others > div:after{
+    content:'';
+    clear:both;
+    /* height:1000px; */
+    display: block;
+}
+table.parcel-uses tr.edit td table td.use-amount.others > div:last-child{
+    border-bottom:none !important;
 }
 table.parcel-uses tr.edit td table tr, table.parcel-uses tr.edit td table tr td{
     box-shadow:none !important;
     border-bottom:none;
     border-left:none;
+}
+table.parcel-uses tr.edit td table td .help-inline {
+    font-size: 15px;
+    display: inline-block;
+    padding-top: 2px;
+    vertical-align: middle;
 }
 /**********************************************
 **
@@ -716,17 +735,17 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
         padding: 5px 0;
     }
 }
-@media screen and (max-width: 1242px) {
+@media screen and (max-width: 1366px) {
     /* line 73, ../sass/style.scss */
     body {
         padding: 0;
     }
     body > div.container-fluid {
-        padding: 0;
+        padding: 0 8px;
     }
     div.fake-table .table-row > div {
         display: table-cell;
-        padding: 1px 3px 4px 0;
+        padding: 1px 3px 4px 4px;
         font-size: 12px;
         vertical-align: middle;
         font-weight: 600 !important;
