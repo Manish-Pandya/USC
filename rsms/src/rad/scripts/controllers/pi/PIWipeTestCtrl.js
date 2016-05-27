@@ -56,15 +56,15 @@ angular.module('00RsmsAngularOrmApp')
             if (!test.PIWipes[0] || !test.PIWipes[0].Location || test.PIWipes[0].Location != "Background") {
                 var bgWipe = new window.PIWipe();
                 bgWipe.PI_wipe_test_id = test.Key_id;
-                bgWipe.Class = "PiWipe";
-                bgWipe.edit = false;
+                bgWipe.Class = "PIWipe";
+                bgWipe.edit = true;
                 bgWipe.Location = "Background";
                 test.PIWipes.unshift(bgWipe);
             }
 
             var piWipe = new window.PIWipe();
             piWipe.PI_wipe_test_id = test.Key_id;
-            piWipe.Class = "PiWipe";
+            piWipe.Class = "PIWipe";
             piWipe.edit = true;
             test.PIWipes.push(piWipe);
             test.showWipes = true;
@@ -81,9 +81,10 @@ angular.module('00RsmsAngularOrmApp')
             test.adding = false;
         }
 
-        $scope.openModal = function (object) {
-     
+        $scope.openModal = function (object) {     
             var modalData = {};
+            modalData.PI = $scope.pi;
+
             if (object) modalData[object.Class] = object;
             af.setModalData(modalData);
             var modalInstance = $modal.open({
@@ -103,6 +104,8 @@ angular.module('00RsmsAngularOrmApp')
             $scope.modalData.PIWipeTest = new window.PIWipeTest();
             $scope.modalData.PIWipeTest.Class = "PIWipeTest";
             $scope.modalData.PIWipeTest.Is_active = true;
+            $scope.modalData.PIWipeTest.Principal_investigator_id = $scope.modalData.PI.Key_id;
+
         }
 
         $scope.save = function (test) {

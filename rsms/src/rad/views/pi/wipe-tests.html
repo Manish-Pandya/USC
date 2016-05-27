@@ -8,7 +8,7 @@
         <h1>
             {{pi.User.Name}}'s Wipe Tests <a class="btn btn-success left" ng-click="openModal()"><i class="icon-paper"></i>Add Wipe Test</a>
         </h1>
-        <div class="card full wipe-tests" ng-repeat="test in pi.WipeTests">
+        <div class="card full wipe-tests" ng-repeat="test in pi.WipeTests | orderBy:'Date_created':true">
             <h3 class="card-header padding">
                 <i class="icon-paper"></i>
                 <span>
@@ -44,10 +44,10 @@
                         <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editPIWipe(test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
                     </div>
 
-                    <div ng-if="!smear.edit">
+                    <div ng-if="!smear.edit || smear.Location == 'Background'">
                         {{smear.Location}}
                     </div>
-                    <div ng-if="smear.edit">
+                    <div ng-if="smear.edit && smear.Location != 'Background'"">
                         <input placeholder="Location" ng-model="smear.Location">
                     </div>
 

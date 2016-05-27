@@ -1976,7 +1976,7 @@ angular
             }
 
             /** PI Wipe Tests performed by lab personnel **/
-            af.savePIWipeTest = function(test) {
+            af.savePIWipeTest = function(test, pi) {
                 af.clearError();
                 return this.save( test )
                     .then(
@@ -1987,21 +1987,32 @@ angular
                             }else{
                                 //by default, MiscellaneousWipeTests have a collection of 10 MiscellaneousWipes, hence the magic number
                                 if (!returnedTest.PIWipes) returnedTest.PIWipes = [];
-                                var i = 10
-                                while(i--){
+                                
+                                if (!test.Key_id) {
+
+                                    var bgWipe = new window.PIWipe();
+                                    bgWipe.PI_wipe_test_id = returnedTest.Key_id;
+                                    bgWipe.Class = "PIWipe";
+                                    bgWipe.edit = true;
+                                    bgWipe.Location = "Background";
+                                    returnedTest.PIWipes.push(bgWipe);
+
                                     var wipe = new window.PIWipe();
                                     wipe.PI_wipe_test_id = returnedTest.Key_id;
                                     wipe.Class = "PIWipe";
                                     wipe.edit = true;
-                                    returnedTest.PIWipes.push(miscellaneousWipe);
+                                    returnedTest.PIWipes.push(wipe);
+                                    
+                                    returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
+                                    dataStoreManager.store(returnedTest);
+                                    returnedTest.adding = true;
+                                    returnedTest.showWipes = true;
+                                    var pi = dataStoreManager.getById("PrincipalInvestigator", returnedTest.Principal_investigator_id);
+                                    pi.WipeTests.push(returnedTest);
                                 }
-
-                                returnedTest = modelInflatorFactory.instateAllObjectsFromJson(returnedTest);
-                                dataStoreManager.store(returnedTest);
-                                returnedTest.adding = true;
                             }
-                        },
-                        af.setError('The Wipe Test could not be saved')
+                        }//,
+                        //af.setError('The Wipe Test could not be saved')
                     )
             }
 
@@ -2036,7 +2047,7 @@ angular
                             dataStoreManager.store(returnedWipes);
                             test.loadPIWipes();
                         },
-                        af.setError('The Wipe Test could not be saved')
+                       // af.setError('The Wipe Test could not be saved')
                     )
             }
 

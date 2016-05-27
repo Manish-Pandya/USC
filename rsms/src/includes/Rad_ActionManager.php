@@ -1355,6 +1355,11 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function getAllPIWipeTests(){
+        $dao = $this->getDao(new PIWipeTest());
+        return $dao->getAll();
+    }
+
     function savePIWipeTest() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
