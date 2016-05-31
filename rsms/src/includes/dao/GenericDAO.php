@@ -254,10 +254,10 @@ class GenericDAO {
         if($sortColumn != null && array_key_exists($sortColumn, $columnWhiteList)){
             $sql .= " ORDER BY " . $sortColumn;
         }
-        $this->LOG->fatal($sql);
+        //$this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
-        $this->LOG->fatal($stmt);
+        //$this->LOG->fatal($stmt);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -1090,8 +1090,16 @@ class GenericDAO {
         $queryString = 'select * from equipment_inspection
                         WHERE equipment_class = :class
                         AND equipment_id = :id
-                        AND year(certification_date) = EXTRACT(year FROM (NOW()))
-                        OR year(due_date) = EXTRACT(year FROM (NOW()));';
+                        AND
+                        (
+							(
+								year(certification_date) = EXTRACT(year FROM (NOW()))
+								OR year(due_date) = EXTRACT(year FROM (NOW()))
+							)
+							OR
+							(certification_date IS NULL AND due_date IS NULL)
+
+                        );';
 
         $stmt = $db->prepare($queryString);
         $stmt->bindParam(':class', get_class($equipment), PDO::PARAM_STR);

@@ -103,7 +103,7 @@ abstract class Equipment extends GenericCrud{
 
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
-		$l->fatal($this);
+		//$l->fatal($this);
         if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
             if ($this->frequency != null) {
                 $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
@@ -144,7 +144,7 @@ abstract class Equipment extends GenericCrud{
 		$this->comments = $comments;
 	}
 
-    public function getMostRecentInspection(){
+    public function grabMostRecentInspection(){
         if(!$this->hasPrimaryKeyValue())return null;
         $thisDAO = new GenericDAO( new EquipmentInspection() );
         // TODO: this would be a swell place to sort
@@ -157,8 +157,8 @@ abstract class Equipment extends GenericCrud{
         );
 
         $inspections = $thisDAO->getAllWhere($whereClauseGroup, "AND", "certification_date");
-
-        return end($inspections);
+		$L = Logger::getLogger(__CLASS__);
+        return $inspections[count($inspections)-1];
     }
 
     public function conditionallyCreateInspectionForCurrentYear(){
@@ -169,13 +169,17 @@ abstract class Equipment extends GenericCrud{
         $dao = new GenericDAO($this);
 
         $inspections = $dao->getCurrentInspectionsByEquipment($this);
-
         //we don't have an inspection for the current year
         if($inspections == null){
+
+			$newInspection = new EquipmentInspection();
+
+
             //if we have a completed inspection for the previous year, get it so we can use it's due date
-            $mostRecent = $this->getMostRecentInspection();
-            $L->fatal($mostRecent);
+            $mostRecent = $this->grabMostRecentInspection();
+			$L->fatal($mostRecent);
         }
+
     }
 
 }
