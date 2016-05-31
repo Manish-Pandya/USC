@@ -150,7 +150,7 @@ abstract class Equipment extends GenericCrud{
         // TODO: this would be a swell place to sort
         $whereClauseGroup = new WhereClauseGroup(
             array(
-                //new WhereClause("certification_date", "IS NOT", "NULL"),
+                new WhereClause("certification_date", "IS NOT", NULL),
                 new WhereClause("equipment_class", "=", get_class($this)),
                 new WhereClause("equipment_id", "=" , $this->getKey_id())
             )
@@ -162,6 +162,8 @@ abstract class Equipment extends GenericCrud{
     }
 
     public function conditionallyCreateInspectionForCurrentYear(){
+		if(!$this->hasPrimaryKeyValue())return null;
+
         $L = Logger::getLogger(__CLASS__);
 
         $dao = new GenericDAO($this);
@@ -172,7 +174,7 @@ abstract class Equipment extends GenericCrud{
         if($inspections == null){
             //if we have a completed inspection for the previous year, get it so we can use it's due date
             $mostRecent = $this->getMostRecentInspection();
-            $l->fatal($mostRecent);
+            $L->fatal($mostRecent);
         }
     }
 

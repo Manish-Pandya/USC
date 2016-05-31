@@ -189,8 +189,7 @@ class GenericDAO {
 	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array $result
 	 */
-	function getAllWhere( $whereClauseGroup, $junction = "AND", $sortColumn = null ){
-
+	function getAllWhere( WhereClauseGroup $whereClauseGroup, $junction = "AND", $sortColumn = null ){
 		// Get the db connection
 		global $db;
 		$className = get_class($this);
@@ -260,8 +259,12 @@ class GenericDAO {
 		$stmt = $db->prepare($sql);
         $this->LOG->fatal($stmt);
 
-		foreach($whereClauses as $key=>$clause){
-			if($clause->getVal() != NULL && !strstr($clause->getOperator(), "IS"))$stmt->bindValue($key+1, $clause->getVal());
+		$i = 1;
+		foreach($whereClauses as $clause){
+			if($clause->getVal() != NULL){
+				$stmt->bindValue($i, $clause->getVal());
+				$i++;
+			}
 		}
 
 		// Query the db and return an array of $this type of object
