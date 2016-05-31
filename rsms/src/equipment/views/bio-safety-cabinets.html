@@ -90,7 +90,8 @@
                                 {{inspection.Status}}
                             </li>
                             <li>
-                                <button ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">View Report</button>
+                                <a ng-if="inspection.Report_path" ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">Report</a>
+                                <a ng-if="!inspection.Report_path" disabled="disabled" class="btn btn-success left">Report</a>
                                 <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                             </li>
                         </ul>

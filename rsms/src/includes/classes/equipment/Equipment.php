@@ -33,10 +33,13 @@ abstract class Equipment extends GenericCrud{
 
 
 	public function __construct(){
+        $this->conditionallyCreateInspectionForCurrentYear();
+
 		// Define which subentities to load
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
 		$this->setEntityMaps($entityMaps);
+
 	}
 
     public function getType(){
@@ -140,5 +143,37 @@ abstract class Equipment extends GenericCrud{
 	public function setComments($comments){
 		$this->comments = $comments;
 	}
+
+    public function getMostRecentInspection(){
+        if(!$this->hasPrimaryKeyValue())return null;
+        $thisDAO = new GenericDAO( new EquipmentInspection() );
+        // TODO: this would be a swell place to sort
+        $whereClauseGroup = new WhereClauseGroup(
+            array(
+                //new WhereClause("certification_date", "IS NOT", "NULL"),
+                new WhereClause("equipment_class", "=", get_class($this)),
+                new WhereClause("equipment_id", "=" , $this->getKey_id())
+            )
+        );
+
+        $inspections = $thisDAO->getAllWhere($whereClauseGroup, "AND", "certification_date");
+
+        return end($inspections);
+    }
+
+    public function conditionallyCreateInspectionForCurrentYear(){
+        $L = Logger::getLogger(__CLASS__);
+
+        $dao = new GenericDAO($this);
+
+        $inspections = $dao->getCurrentInspectionsByEquipment($this);
+
+        //we don't have an inspection for the current year
+        if($inspections == null){
+            //if we have a completed inspection for the previous year, get it so we can use it's due date
+            $mostRecent = $this->getMostRecentInspection();
+            $l->fatal($mostRecent);
+        }
+    }
 
 }

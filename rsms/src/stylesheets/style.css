@@ -3636,6 +3636,10 @@ div.fake-table .table-row:hover > div{
   .well, .well .full{
     //width:98% !important;
   }
+   body > div.container-fluid {
+       padding: 0 8px;
+       padding: 0;
+   }
 
 }
 

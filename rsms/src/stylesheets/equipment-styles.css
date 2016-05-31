@@ -305,12 +305,13 @@ button.btn:not(.btn-large) {
     display:block;
     /* background: pink; */
     float:left;
-    padding:20px 5px;
-    height: 90px;
+    padding: 30px 5px 46px;
+    height: 0;
     border-right: 1px solid #DDDDDD;
     border-bottom: 1px solid #DDDDDD !important;
     box-sizing:border-box;
     display:table-cell;
+    vertical-align: middle;
 }
 .bio-safety-cabinets-container table tr td ul:last-child li{
     border-bottom:none !important;
@@ -343,22 +344,22 @@ button.btn:not(.btn-large) {
 }
 
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(1),.bio-safety-cabinets-container table tr td ul li:nth-of-type(1){
-    width: 20%;
+    width: 18%;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(2),.bio-safety-cabinets-container table tr td ul li:nth-of-type(2){
-    width: 10%;
+    width: 8%;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(3),.bio-safety-cabinets-container table tr td ul li:nth-of-type(3){
-    width: 11%;
+    width: 12%;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(3) select{
     width: 117px;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(4),.bio-safety-cabinets-container table tr td ul li:nth-of-type(4){
-    width: 11%;
+    width: 12%;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(5),.bio-safety-cabinets-container table tr td ul li:nth-of-type(5){
-    width: 20.5%;
+    width: 22.5%;
 }
 .bio-safety-cabinets-container table tr th ul li:nth-of-type(6),.bio-safety-cabinets-container table tr td ul li:nth-of-type(6){
     width: 10%;

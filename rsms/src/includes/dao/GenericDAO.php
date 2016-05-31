@@ -181,29 +181,29 @@ class GenericDAO {
 	function getAllActive(){
 		return $this->getAll( null, false, true );
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Retrieves all entities of this $this->modelObject's type matching the WhereClause objects that comprise the WhereClauseGroup
-	 * 
+	 *
 	 * @param WhereClauseGroup $whereClauseGroup
 	 * @return Array $result
 	 */
 	function getAllWhere( $whereClauseGroup, $junction = "AND", $sortColumn = null ){
-		
+
 		// Get the db connection
 		global $db;
 		$className = get_class($this);
-		
+
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
 		$whereClauses = $whereClauseGroup->getClauses();
-		
+
 		//White lists for queries to safeguard against injection
 		$columnWhiteList = $this->modelObject->getColumnData();
 		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
 		$operatorWhiteList = array("=", "IS", "IS NOT", "BETWEEN", "AND", "&&", "<", "<=", ">", ">=", "IN");
 		$junctionWhiteList = array("AND", "&&", "OR", "||");
-		
+
 		foreach($whereClauses as $key=>$clause){
 			//Verify that the speficied column and operator are in the whitelist.  If not, return an error and log the possible attempt at sql injection
 			$column  =  $clause->getCol();
@@ -258,10 +258,12 @@ class GenericDAO {
         $this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
+        $this->LOG->fatal($stmt);
+
 		foreach($whereClauses as $key=>$clause){
-				if($clause->getVal() != NULL)$stmt->bindValue($key+1, $clause->getVal());
+			if($clause->getVal() != NULL && !strstr($clause->getOperator(), "IS"))$stmt->bindValue($key+1, $clause->getVal());
 		}
-			
+
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
@@ -270,33 +272,34 @@ class GenericDAO {
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
+            $this->LOG->fatal($stmt);
 		}
-		
+
 		return $result;
 	}
-	
+
 	/*
-	 * 
+	 *
 	 *  Returns an array of objects that are active, have not null collections of related objects, or both
-	 * 
+	 *
 	 * 	@param DataRelationship $relationship  The relationship, defined in $this->modelObject
 	 *  @return Array $result   A bunch of objects of $this->modelObject's type
 	 */
 	public function getAllWith(DataRelationship $relationship){
 		// Get the db connection
 		global $db;
-		
+
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
 		$tableName		= $relationship->getTableName();
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
 		$modelObject    = $this->modelObject;
-	
+
 		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE is_active = 1 OR key_id IN(SELECT $foreignKeyName FROM $tableName)";
-		
+
 		$stmt = $db->prepare($sql);
-		
+
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
@@ -306,10 +309,10 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
-				
+
 		return $result;
 	}
-	
+
 	/**
 	 * Gets the sum of ParcelUseAmounts for a given authorization for a given date range with a given waste type
 	 *
@@ -319,13 +322,13 @@ class GenericDAO {
 	 * @return int $sum
 	 */
 	public function getUsageAmounts(  $startDate, $endDate, $wasteTypeId ){
-					
-		$sql = "SELECT SUM(`curie_level`) 
+
+		$sql = "SELECT SUM(`curie_level`)
 				FROM `parcel_use_amount`
-				WHERE `parcel_use_id` IN 
-				(select key_id from `parcel_use` WHERE `parcel_id` 
+				WHERE `parcel_use_id` IN
+				(select key_id from `parcel_use` WHERE `parcel_id`
 				IN (select key_id from `parcel` WHERE `authorization_id` = ?))
-				AND `date_last_modified` BETWEEN ? AND ? 
+				AND `date_last_modified` BETWEEN ? AND ?
 				AND `waste_type_id` = ?";
 
 		// Get the db connection
@@ -338,13 +341,13 @@ class GenericDAO {
 
 
 		$stmt->execute();
-		
+
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
 		return $sum;
 	}
-	
+
 	/**
 	 * Gets the sum of Parcels transfered in or ordered durring a given period
 	 *
@@ -354,18 +357,18 @@ class GenericDAO {
 	 * @return int $sum
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
-		
-		$sql = "SELECT SUM(`quantity`) 
+
+		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
 				AND `arrival_date` BETWEEN ? AND ?";
-		
+
 		if($hasRsNumber == true){
 			$sql .= " AND rs_number IS NOT NULL";
 		}else{
-			$sql .= " AND rs_number IS NULL";		
+			$sql .= " AND rs_number IS NULL";
 		}
-		
+
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
@@ -374,7 +377,7 @@ class GenericDAO {
 		$stmt->bindValue(3, $endDate);
 
 		$stmt->execute();
-		
+
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
@@ -390,7 +393,7 @@ class GenericDAO {
 	function save(GenericCrud $object = NULL){
 		//$this->LOG->trace("$this->logprefix Saving entity");
 		//$this->LOG->trace($object);
-		
+
 		//Make sure we have an object to save
 		if( $object == NULL ){
 			$object = $this->modelObject;
@@ -472,10 +475,10 @@ class GenericDAO {
 	 */
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
 		if (empty($id)) { return array();}
-		
+
 		// Get the db connection
 		global $db;
-	
+
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
 		$classInstance  = new $className();
@@ -484,12 +487,12 @@ class GenericDAO {
 		$foreignKeyName	= $relationship->getForeignKeyName();
 		$modelObject    = $this->modelObject;
 		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
-		
+
 		$whereTag = $activeOnly ? " WHERE is_active = 1 AND " : " WHERE ";
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
-		
+
 		if ($sortColumns != null){
 			$sql .= " ORDER BY";
 			$max = count($sortColumns);
@@ -501,7 +504,7 @@ class GenericDAO {
 			}
 		}
 		$stmt = $db->prepare($sql);
-	
+
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $className);
@@ -512,7 +515,7 @@ class GenericDAO {
 			$resultError = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
 		}
-	
+
 		return $result;
 	}
 
@@ -705,7 +708,7 @@ class GenericDAO {
 
 		return $result;
 	}
-	
+
 	/*
 	 * @param RelationshipMapping relationship
 	 */
@@ -733,15 +736,15 @@ class GenericDAO {
 
 		return $result;
 	}
-	
+
 	function getPIsByHazard($rooms = NULL){
 		// Get the db connection
 		global $db;
-		
+
 		// get the relationship parameters needed to build the query
 		$hazard = $this->modelObject;
 		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
-		
+
 		//if we pass a collection of rooms, we are only getting back PIs that have relationships with those rooms, rather than all the rooms this hazard is in
 		//get the key_ids of the rooms
 		if($rooms !=NULL){
@@ -751,18 +754,18 @@ class GenericDAO {
 			}
 			$roomsCSV = implode(",", $roomIds);
 		}
-		
+
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM principal_investigator WHERE key_id";
-		
+
 		if(!isset($roomsCSV)){
-			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";			
+			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
 		}else{
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
 		}
-		
+
 		$stmt = $db->prepare($sql);
-		
+
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
@@ -773,7 +776,7 @@ class GenericDAO {
 			$resultError = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
 		}
-		
+
 		return $result;
 	}
 
@@ -801,37 +804,10 @@ class GenericDAO {
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
 	}
-	
+
 	function getAllDepartmentsAndCounts(){
 		$LOG = Logger::getLogger(__CLASS__);
-	
-		$this->has_hazards = false;
-		// Get the db connection
-		global $db;
-	
-		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
-						count(distinct e.key_id) room_count,
-						count(distinct a.principal_investigator_id) pi_count,
-						count(distinct f.key_id) building_count
-						
-						FROM
-						department d LEFT OUTER JOIN
-						principal_investigator_department b ON (d.key_id = b.department_id) LEFT OUTER JOIN
-						principal_investigator_room a ON (a.principal_investigator_id = b.principal_investigator_id) LEFT OUTER JOIN
-						room e ON (e.key_id = a.room_id) LEFT OUTER JOIN
-						building f ON (f.key_id = e.building_id) LEFT OUTER JOIN
-						campus c ON (c.key_id = f.campus_id)
-						
-						GROUP BY c.name, d.name
-						ORDER BY d.name, c.name";
-		$stmt = $db->prepare($queryString);
-		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
-	}
-	
-	function getDepartmentDtoById( $id ){
-		$LOG = Logger::getLogger(__CLASS__);
-	
+
 		$this->has_hazards = false;
 		// Get the db connection
 		global $db;
@@ -840,7 +816,34 @@ class GenericDAO {
 						count(distinct e.key_id) room_count,
 						count(distinct a.principal_investigator_id) pi_count,
 						count(distinct f.key_id) building_count
-						
+
+						FROM
+						department d LEFT OUTER JOIN
+						principal_investigator_department b ON (d.key_id = b.department_id) LEFT OUTER JOIN
+						principal_investigator_room a ON (a.principal_investigator_id = b.principal_investigator_id) LEFT OUTER JOIN
+						room e ON (e.key_id = a.room_id) LEFT OUTER JOIN
+						building f ON (f.key_id = e.building_id) LEFT OUTER JOIN
+						campus c ON (c.key_id = f.campus_id)
+
+						GROUP BY c.name, d.name
+						ORDER BY d.name, c.name";
+		$stmt = $db->prepare($queryString);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+	}
+
+	function getDepartmentDtoById( $id ){
+		$LOG = Logger::getLogger(__CLASS__);
+
+		$this->has_hazards = false;
+		// Get the db connection
+		global $db;
+
+		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
+						count(distinct e.key_id) room_count,
+						count(distinct a.principal_investigator_id) pi_count,
+						count(distinct f.key_id) building_count
+
 						FROM
 						department d LEFT OUTER JOIN
 						principal_investigator_department b ON (d.key_id = b.department_id) LEFT OUTER JOIN
@@ -856,58 +859,58 @@ class GenericDAO {
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
-	
+
 	public function getDepartmentsByCampusId(){
 		global $db;
-		
+
 		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab,
 						g.name as campus_name, g.key_id as campus_id
 						FROM department a
 						LEFT JOIN principal_investigator_department d ON (a.key_id = d.department_id)
 						LEFT JOIN principal_investigator b ON (d.principal_investigator_id = b.key_id) AND b.is_active = 1
 						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
-						LEFT JOIN building f ON (e.key_id = e.room_id)	
+						LEFT JOIN building f ON (e.key_id = e.room_id)
 						LEFT JOIN campus g ON (g.key_id = f.campus_id);";
 		$stmt = $db->prepare($queryString);
 		//$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
-	
+
 	function getHazardRoomDtosByPIId( $pIId, $roomId = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-		
+
 		// Get the db connection
 		global $db;
-		
+
 		//get this pi's rooms
 		if($roomId == null){
-			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a 
-								 LEFT JOIN building b on a.building_id = b.key_id 
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
+								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 			$stmt = $db->prepare($roomsQueryString);
-			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);				
+			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id = :roomId";
 			$stmt = $db->prepare($roomsQueryString);
-			$stmt->bindParam(':roomId', $roomId, PDO::PARAM_INT);				
+			$stmt->bindParam(':roomId', $roomId, PDO::PARAM_INT);
 		}
 		$stmt->execute();
 		$rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
-		
+
 		$roomIds = array();
-		foreach($rooms as $room){			
+		foreach($rooms as $room){
 			$roomIds[] = $room->getRoom_id();
 		}
-				
+
 		//get a dto for every hazard
 		$queryString = "SELECT key_id as hazard_id, order_index, key_id, name as hazard_name, is_equipment, parent_hazard_id as parent_hazard_id, (SELECT EXISTS(SELECT 1 from hazard where parent_hazard_id = hazard_id) ) as hasChildren from hazard WHERE is_active = 1;";
 		$stmt = $db->prepare($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
-		
+
 		foreach($dtos as $dto){
 			$dto->setRoomIds($roomIds);
 			$dto->setPrincipal_investigator_id($pIId);
@@ -922,16 +925,16 @@ class GenericDAO {
 		}
 		return $dtos;
 	}
-	
+
 	function getPisByHazardAndRoomIDs( $roomIds, $hazardId = null){
 		$LOG = Logger::getLogger(__CLASS__);
-	
+
 		// Get the db connection
 		global $db;
 		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
-	
-		
-	
+
+
+
 		if($hazardId != null){
 			$queryString .= " AND hazard_id = $hazardId";
 			//get this pi's rooms
@@ -943,11 +946,11 @@ class GenericDAO {
 							FROM principal_investigator
 							WHERE key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
 		}
-		
+
 		$queryString .= ')';
-		
+
 		$LOG->fatal($queryString);
-		
+
 		$stmt = $db->prepare($queryString);
 		/*
 		if($hazardId != null){
@@ -1069,6 +1072,31 @@ class GenericDAO {
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
         return $inventories;
 
+    }
+
+    /*
+     * gets the inspections for an Equipment, of child class of Equipment, that have a due_date or certification_date matching the current year
+     *
+     * @param Equipment $equipment   Piece of Equipment, or child class thereof
+     * @return Array $currentInspections   Array of inspections of $equipment either due or certified in the current year
+     *
+     */
+    public function getCurrentInspectionsByEquipment(Equipment $equipment){
+        $this->LOG->fatal('testing');
+        global $db;
+        $queryString = 'select * from equipment_inspection
+                        WHERE equipment_class = :class
+                        AND equipment_id = :id
+                        AND year(certification_date) = EXTRACT(year FROM (NOW()))
+                        OR year(due_date) = EXTRACT(year FROM (NOW()));';
+
+        $stmt = $db->prepare($queryString);
+        $stmt->bindParam(':class', get_class($equipment), PDO::PARAM_STR);
+        $stmt->bindParam(':id', $equipment->getKey_id(), PDO::PARAM_INT);
+
+        $stmt->execute();
+        $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+        return $currentInspections;
     }
 
 }
