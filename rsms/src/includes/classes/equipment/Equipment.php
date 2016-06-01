@@ -104,18 +104,24 @@ abstract class Equipment extends GenericCrud{
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
 		//$l->fatal($this);
-        if ($this->hasPrimaryKeyValue() && $this->getEquipmentInspections() == null) {
+        if ($this->hasPrimaryKeyValue()) {
             if ($this->frequency != null) {
-                $inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
-                if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
-                if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-                if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
+				if ($this->getEquipmentInspections() == null) {
+					$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
+				} else {
+					$inspection = $this->grabMostRecentInspection();
+				}
+				if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
+				if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
+				if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
 
-                $inspectionDao = new GenericDao($inspection);
-                $inspection = $inspectionDao->save($inspection);
-                return $inspection;
-                //$this->equipmentInspections = array( $inspection );
-            }
+				$inspectionDao = new GenericDao($inspection);
+				$inspection = $inspectionDao->save($inspection);
+				return $inspection;
+				//$this->equipmentInspections = array( $inspection );
+            } else {
+				$l->fatal("We should never get here, as frequency should never be null.");
+			}
         }else{
             return null;
         }
@@ -144,13 +150,16 @@ abstract class Equipment extends GenericCrud{
 		$this->comments = $comments;
 	}
 
+	/*
+	 *
+	 * @return EquipmentInspection $inspection
+	 */
     public function grabMostRecentInspection(){
         if(!$this->hasPrimaryKeyValue())return null;
         $thisDAO = new GenericDAO( new EquipmentInspection() );
         // TODO: this would be a swell place to sort
         $whereClauseGroup = new WhereClauseGroup(
             array(
-                new WhereClause("certification_date", "IS NOT", NULL),
                 new WhereClause("equipment_class", "=", get_class($this)),
                 new WhereClause("equipment_id", "=" , $this->getKey_id())
             )
@@ -158,7 +167,8 @@ abstract class Equipment extends GenericCrud{
 
         $inspections = $thisDAO->getAllWhere($whereClauseGroup, "AND", "certification_date");
 		$L = Logger::getLogger(__CLASS__);
-        return $inspections[count($inspections)-1];
+		$inspection = $inspections[count($inspections)-1];;
+        return  $inspection;
     }
 
     public function conditionallyCreateInspectionForCurrentYear(){
@@ -173,11 +183,39 @@ abstract class Equipment extends GenericCrud{
         if($inspections == null){
 
 			$newInspection = new EquipmentInspection();
-
-
             //if we have a completed inspection for the previous year, get it so we can use it's due date
             $mostRecent = $this->grabMostRecentInspection();
-			$L->fatal($mostRecent);
+			if ($mostRecent) {
+				$newInspection = clone $mostRecent;
+				$newInspection->setCertification_date(null);
+				$newInspection->setKey_id(null);
+				if ($mostRecent->getCertification_date()) {
+					$L->fatal('vagenis');
+
+					$certDateArray = explode("-", $mostRecent->getCertification_date());
+					if ((int) $certDateArray[0] == (int) date("Y") - 1) {
+						$certDateArray[0] = date("Y");
+						if ($mostRecent->getFrequency() == "Semi-annually") {
+							if ((int) $certDateArray[1] + 6 > 12) {
+								$newCertDate = new DateTime('America/New_York');
+								$newCertDate->setTimeStamp(strtotime($mostRecent->getCertification_date()));
+								$newCertDate->modify(('+6 months'));
+								$newInspection->setDue_date($newCertDate->format('Y-m-d H:i:s'));
+							} else {
+								$newInspection->setDue_date(null);
+							}
+						}else{
+							$newInspection->setDue_date(implode("-", $certDateArray));
+						}
+					}
+				} else {
+					$newInspection->setDue_date(null);
+				}
+				$inspDao = new GenericDAO(new EquipmentInspection());
+				$newInspection = $inspDao->save($newInspection);
+			} else {
+				$L->fatal("No most recent inspection");
+			}
         }
 
     }

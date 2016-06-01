@@ -82,7 +82,6 @@ angular.module('EquipmentModule')
             var currentYearString = $scope.currentYearString = new Date().getFullYear().toString();
             var inspections = dataStoreManager.get("EquipmentInspection");
             $scope.certYears = [];
-            $scope.dueYears = [];
             if (!inspections) return;
 
             var i = inspections.length;
@@ -94,19 +93,16 @@ angular.module('EquipmentModule')
                             $scope.certYears.push(certYear);
                         }
                     }
-                    if (inspections[i].Due_date && !inspections[i].Certification_date) {
+                    if (inspections[i].Due_date) {
                         var dueYear = inspections[i].Due_date.split('-')[0];
-                        if ($scope.dueYears.indexOf(dueYear) == -1) {
-                            $scope.dueYears.push(dueYear);
+                        if ($scope.certYears.indexOf(dueYear) == -1) {
+                            $scope.certYears.push(dueYear);
                         }
                     }
 
                 }
             }
 
-            if ($scope.dueYears.indexOf(currentYearString) < 0) {
-                $scope.dueYears.push(currentYearString);
-            }
             if ($scope.certYears.indexOf(currentYearString) < 0) {
                 $scope.certYears.push(currentYearString);
             }
@@ -134,14 +130,13 @@ angular.module('EquipmentModule')
                 object.Is_active = true;
                 object.Class = "BioSafetyCabinet";
             }
-            if (isCabinet) {
+            if (isCabinet && !inspection) {
                 var inspection = new EquipmentInspection();
                 inspection.Is_active = true;
                 inspection.Class = "EquipmentInspection";
                 inspection.Equipment_class = "BioSafetyCabinet";
                 inspection.Equipment_id = object.Key_id || null;
             }
-            console.log(inspection);
 
             if(object.PrincipalInvestigator)object.PrincipalInvestigator.loadRooms();
             modalData[object.Class] = object;

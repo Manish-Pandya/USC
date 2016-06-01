@@ -73,9 +73,10 @@
         </select>
     </div>
 
-    <div class="control-group" ng-if="!modalData.BioSafetyCabinet.Key_id">
+    <div class="control-group">
         <label class="control-label">Certification Date</label>
-        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.Certification_date' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
+        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.Certification_date' disable-timepicker='true' ng-if="!modalData.BioSafetyCabinet.Key_id"></datepicker2>
+        <span ng-if="modalData.BioSafetyCabinet.Key_id">{{modalData.BioSafetyCabinetCopy.Certification_date | dateToISO}}</span>
     </div>
 </div>
 

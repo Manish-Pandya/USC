@@ -95,21 +95,6 @@ class Equipment_ActionManager extends ActionManager {
             //for newly created cabinets, we create a certification. 
             //if the client specifies that the new cabinet had already been certified, we create TWO certifications
             $inspection = $decodedObject->conditionallyCreateEquipmentInspection();
-            if($inspection != null && $inspection->getCertification_date() != null){
-                $secondInspection = new EquipmentInspection(get_class($decodedObject), $decodedObject->getFrequency(), $decodedObject->getKey_id());
-                if($decodedObject->getPrincipalInvestigatorId() != null) $secondInspection->setPrincipal_investigator_id($decodedObject->getPrincipalInvestigatorId());
-                if($decodedObject->getRoomId() != null) $secondInspection->setRoom_id($decodedObject->getRoomId());
-                $inspectionDao = new GenericDao($secondInspection);
-
-                $dueDate = new DateTime($inspection->getCertification_date());
-                if($inspection->getFrequency() == "Annually"){
-                    $dueDate->modify('+1 year');
-                }else if($inspection->getFrequency() == "Semi-annually"){
-                    $dueDate->modify('+6 months'); // twice a year
-                }
-                $secondInspection->setDue_date($dueDate->format('Y-m-d H:i:s'));
-                $secondInspection = $inspectionDao->save($secondInspection);
-            }
           
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getEquipmentInspections");

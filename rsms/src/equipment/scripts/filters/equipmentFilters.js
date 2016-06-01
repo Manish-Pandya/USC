@@ -47,7 +47,7 @@ angular
             var matches = [];
             var i = equipments.length;
             while (i--) {
-                if (equipments[i].EquipmentInspections[0].Room) {
+                if (equipments[i].EquipmentInspections && equipments[i].EquipmentInspections.length && equipments[i].EquipmentInspections[0].Room) {
                     var building = equipments[i].EquipmentInspections[0].Room.Building;
                     if (building && building.Campus_id == campus_id) matches.unshift(equipments[i]);
                 }
@@ -76,7 +76,7 @@ angular
                     matches.push(insp);
                 } else if (dateString.split("-")[0] == currentYear && !insp.Certification_date && !insp.Due_date) {
                     matches.push(insp);
-                } else if (!insp.Certification_date && insp.Due_date.split("-")[0] < currentYear) {
+                } else if (!insp.Certification_date && insp.Due_date && insp.Due_date.split("-")[0] == currentYear) {
                     matches.push(insp);
                 }
             }
