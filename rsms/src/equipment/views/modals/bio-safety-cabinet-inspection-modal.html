@@ -64,12 +64,6 @@
         <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.viewDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
     </div>
     <div class="control-group">
-        <label class="control-label">Comments</label>
-        <div class="controls">
-            <textarea style="width:80%" ng-model="modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Comment" maxlength="255"></textarea>
-        </div>
-    </div>   
-    <div class="control-group">
         <label>Report Document</label>
         <a class="btn btn-large btn-success left view-report" ng-if="modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path" href="protocol-documents/{{modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
         <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload/>

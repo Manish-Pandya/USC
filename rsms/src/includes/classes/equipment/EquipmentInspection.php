@@ -84,26 +84,11 @@ class EquipmentInspection extends GenericCrud{
 		return $this->certification_date;
 	}
 	public function setCertification_date($certification_date){
-		$this->certification_date = $gcertification_date;
+		$this->certification_date = $certification_date;
         // new instance will be spawned in the controller
 	}
 
     public function getDue_date(){
-        if ($this->getFrequency() == null) {
-            return null;
-        }
-		//Use similar logic in Equipment->conditionallyCreate... to persist due_dates for inspections, rather than having this be a convenience method
-		/*
-        if($this->due_date == null){
-		    $dueDate = new DateTime($this->getDate_created());
-		    if($this->getFrequency() == "Annually"){
-			    $dueDate->modify('+1 year');
-		    }else if($this->getFrequency() == "Semi-annually"){
-			    $dueDate->modify('+6 months'); // twice a year
-            }
-		    $this->setDue_date($dueDate->format('Y-m-d H:i:s'));
-        }
-		*/
 		return $this->due_date;
 	}
 	public function setDue_date($due_date){

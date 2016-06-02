@@ -76,7 +76,8 @@ angular
                     matches.push(insp);
                 } else if (dateString.split("-")[0] == currentYear && !insp.Certification_date && !insp.Due_date) {
                     matches.push(insp);
-                } else if (!insp.Certification_date && insp.Due_date && insp.Due_date.split("-")[0] == currentYear) {
+                } else if (!insp.Certification_date && insp.Due_date && insp.Due_date.split("-")[0] == dateString) {
+                    console.log(insp)
                     matches.push(insp);
                 }
             }

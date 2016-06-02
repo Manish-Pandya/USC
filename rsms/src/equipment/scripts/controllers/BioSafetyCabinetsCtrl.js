@@ -26,7 +26,9 @@ angular.module('EquipmentModule')
         };
     })
   .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-        var af = $scope.af = applicationControllerFactory;    
+        var af = $scope.af = applicationControllerFactory;
+        $scope.constants = Constants;
+
         var getAllInspections = function(){
             return af.getAllEquipmentInspections().then(
                 function(){
@@ -42,6 +44,7 @@ angular.module('EquipmentModule')
                         function () {
                             $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
                             if (!$scope.cabinets) $scope.cabinets = [];
+                            getYears();
                             return $scope.cabinets;
                         }
                     );
@@ -113,7 +116,6 @@ angular.module('EquipmentModule')
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
-                            .then(getAllInspections())
                             .then(getAllBioSafetyCabinets())
                             .then(getAllCampuses());
 

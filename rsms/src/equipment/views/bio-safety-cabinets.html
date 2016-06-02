@@ -87,12 +87,14 @@
                                 {{inspection.PrincipalInvestigator.User.Name}}
                             </li>
                             <li>
-                                {{inspection.Status}}
+                                <span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
+                                                 'yellow': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PENDING || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.NEW_BSC,
+                                                 'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span>
                             </li>
                             <li>
                                 <a ng-if="inspection.Report_path" ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">Report</a>
                                 <a ng-if="!inspection.Report_path" disabled="disabled" class="btn btn-success left">Report</a>
-                                <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                                <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i ng-class="{'icon-pencil':inspection.Certification_date,'icon-checkmark':!inspection.Certification_date}"></i>Certify</a>
                             </li>
                         </ul>
                     </td>

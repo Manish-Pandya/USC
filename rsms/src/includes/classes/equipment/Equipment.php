@@ -37,7 +37,7 @@ abstract class Equipment extends GenericCrud{
 
 		// Define which subentities to load
 		$entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
+        $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -103,28 +103,28 @@ abstract class Equipment extends GenericCrud{
 
     public function conditionallyCreateEquipmentInspection(){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
-		//$l->fatal($this);
-        if ($this->hasPrimaryKeyValue()) {
-            if ($this->frequency != null) {
-				if ($this->getEquipmentInspections() == null) {
-					$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
-				} else {
-					$inspection = $this->grabMostRecentInspection();
-				}
-				if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
-				if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-				if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
-
-				$inspectionDao = new GenericDao($inspection);
-				$inspection = $inspectionDao->save($inspection);
-				return $inspection;
-				//$this->equipmentInspections = array( $inspection );
-            } else {
-				$l->fatal("We should never get here, as frequency should never be null.");
+        //We only create a new inspection for Cabinets that have not yet been saved
+        if ($this->frequency != null) {
+			if ($this->getEquipmentInspections() == null) {
+				$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
+                if($this->getDue_date == null)$inspection->setStatus("PASS");
+			} else {
+				$inspection = $this->grabMostRecentInspection();
 			}
-        }else{
+			if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
+			if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
+            $l->fatal($this->getCertification_date());
+			if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
+            $l->fatal($inspection);
+			$inspectionDao = new GenericDao($inspection);
+			$inspection = $inspectionDao->save($inspection);
+			return $inspection;
+			//$this->equipmentInspections = array( $inspection );
+        } else {
+			$l->fatal("We should never get here, as frequency should never be null.");
             return null;
-        }
+		}
+
     }
 
     public function getCertification_date(){
@@ -188,6 +188,7 @@ abstract class Equipment extends GenericCrud{
 			if ($mostRecent) {
 				$newInspection = clone $mostRecent;
 				$newInspection->setCertification_date(null);
+                $newInspection->setStatus(null);
 				$newInspection->setKey_id(null);
 				if ($mostRecent->getCertification_date()) {
 					$L->fatal('vagenis');

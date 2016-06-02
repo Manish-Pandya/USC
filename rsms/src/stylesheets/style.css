@@ -2723,7 +2723,10 @@ tr td.new span.green {
 }
 
 span.yellow {
-  color: #A95D0F;
+  color: #CFAA00;
+}
+span.orange {
+  color: #FF8C03;
 }
 
 /* line 734, ../sass/style.scss */
