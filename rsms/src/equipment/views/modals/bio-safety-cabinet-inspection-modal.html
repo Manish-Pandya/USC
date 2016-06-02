@@ -64,11 +64,23 @@
         <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.viewDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
     </div>
     <div class="control-group">
+        <label class="control-label">Pass/Fail</label>
+        <label class="checkbox inline">
+            <input type="checkbox" ng-model="modalData.inspectionCopy.Status" ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.PASS}}"/>
+            <span class="metro-checkbox">{{constants.BIOSAFETY_CABINET.STATUS.PASS}}</span>
+        </label>
+
+        <label class="checkbox inline">
+            <input type="checkbox" ng-model="modalData.inspectionCopy.Status"  ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}"/>
+            <span class="metro-checkbox">{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}</span>
+        </label>
+    </div>
+    <div class="control-group">
         <label>Report Document</label>
         <a class="btn btn-large btn-success left view-report" ng-if="modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path" href="protocol-documents/{{modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path}}" target="_blank"><strong><i class="icon-paper-2"></i>View</strong></a>
         <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload/>
-        <label for="file" ng-class="{'success':!modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path,'danger':modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path}">
-            <strong><i class="icon-upload-4"></i><span ng-if="!modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path">Upload</span><span ng-if="modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex].Report_path">Replace</span></strong>
+        <label for="file" ng-class="{'success':!modalData.inspectionCopy.Report_path,'danger':modalData.inspectionCopy.Report_path}">
+            <strong><i class="icon-upload-4"></i><span ng-if="!modalData.inspectionCopy.Report_path">Upload</span><span ng-if="modalData.inspectionCopy.Report_path">Replace</span></strong>
         </label>
         <i class="success icon-checkmark upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploaded"></i><i class="icon-spinnery-dealie spinner upload-icon" ng-if="modalData.BioSafetyCabinetCopy.reportUploading"></i>
     </div>
@@ -76,7 +88,7 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-large btn-success left" ng-click="certify(modalData.BioSafetyCabinetCopy.EquipmentInspections[modalData.inspectionIndex], modalData.BioSafetyCabinet.EquipmentInspections[modalData.inspectionIndex])"><i class="icon-checkmark"></i>Certify</button>
+    <button class="btn btn-large btn-success left" ng-click="certify(modalData.inspectionCopy,modalData.inspection)"><i class="icon-checkmark"></i>Certify</button>
     <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     <br /><span class="red bold" style="margin: 5px 91px;font-size: 15px;display: inline-block;">{{message}}</span>
 </div>

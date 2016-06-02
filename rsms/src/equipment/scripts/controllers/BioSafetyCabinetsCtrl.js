@@ -169,7 +169,8 @@ angular.module('EquipmentModule')
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
-        
+        $scope.constants = Constants;
+
         $scope.modalData = af.getModalData();
         $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
     
@@ -255,6 +256,7 @@ angular.module('EquipmentModule')
         }
         
         $scope.certify = function (copy, original) {
+            alert('painis')
             $scope.message = null;
             if (!copy.Report_path) {
                 $scope.message = "Please upload a report.";
@@ -293,9 +295,12 @@ angular.module('EquipmentModule')
                     $scope.modalData.BioSafetyCabinetCopy.reportUploaded = true;
                     $scope.modalData.BioSafetyCabinetCopy.reportUploading = false;
                     $scope.modalData.inspection.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                    $scope.modalData.inspectionCopy.Report_path = xhr.responseText.replace(/['"]+/g, '');
                     $scope.$apply();
                 }
             }
         });
+
+        console.log($scope.modalData);
 
     });

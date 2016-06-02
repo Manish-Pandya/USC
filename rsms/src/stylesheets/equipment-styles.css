@@ -379,9 +379,9 @@ button.btn:not(.btn-large) {
 .modal-body.inspections .control-group{
     margin-bottom:25px
 }
-.modal-body label{
+.modal-body label:not(.checkbox){
     font-weight:bold;
-    font-size:16px;
+    font-size: 17px;
 }
 .modal-body label span {
     font-weight:normal;

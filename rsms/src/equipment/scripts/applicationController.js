@@ -260,15 +260,18 @@ angular
                             Equipment_id: copy.Equipment_id,
                             Report_path: copy.Report_path,
                             Serial_number: copy.Serial_number,
-                            Type: copy.Type
+                            Type: copy.Type,
+                            Comments: copy.Comments
                 }
                 
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
                 return this.save(secondCopy)
                     .then(
                         function (returnedBioSafetyCabinet) {
-                            if(bioSafetyCabinet.Key_id){
-                                angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
+                            if (bioSafetyCabinet.Key_id) {
+                                var cab = dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id)
+                                angular.extend(cab, returnedBioSafetyCabinet);
+                                cab.loadEquipmentInspections();
                             } else {
                                 console.log(returnedBioSafetyCabinet);
                                 for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections.length; x++) {

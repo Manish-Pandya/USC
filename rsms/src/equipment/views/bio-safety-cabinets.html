@@ -92,8 +92,8 @@
                                                  'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span>
                             </li>
                             <li>
-                                <a ng-if="inspection.Report_path" ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">Report</a>
-                                <a ng-if="!inspection.Report_path" disabled="disabled" class="btn btn-success left">Report</a>
+                                <a style="margin-top:-24px" ng-if="inspection.Report_path" ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">Report</a>
+                                <a style="margin-top:-24px" ng-if="!inspection.Report_path" disabled="disabled" class="btn btn-success left">Report</a>
                                 <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i ng-class="{'icon-pencil':inspection.Certification_date,'icon-checkmark':!inspection.Certification_date}"></i>Certify</a>
                             </li>
                         </ul>
