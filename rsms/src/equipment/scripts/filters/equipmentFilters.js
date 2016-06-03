@@ -61,6 +61,7 @@ angular
         If dateString is currentYear, also accept matches of null Certification_date and Due_date.
         */
         return function (inspections, dateString, currentYear) {
+            console.log(dateString, currentYear, inspections.length);
             if (!inspections) {
                 return;
             } else if (dateString != '' && (!dateString)) {
@@ -68,16 +69,12 @@ angular
             }
             var year = dateString.split('-')[0];
             var matches = [];
-
             var i = inspections.length;
             while (i--) {
                 var insp = inspections[i];
                 if ((insp.Certification_date && insp.Certification_date.indexOf(dateString) > -1) || (insp.Due_date && insp.Due_date.indexOf(dateString) > -1)) {
                     matches.push(insp);
                 } else if (dateString.split("-")[0] == currentYear && !insp.Certification_date && !insp.Due_date) {
-                    matches.push(insp);
-                } else if (!insp.Certification_date && insp.Due_date && insp.Due_date.split("-")[0] == dateString) {
-                    console.log(insp)
                     matches.push(insp);
                 }
             }
@@ -93,12 +90,13 @@ angular
 
         dateProp can optionally be an array to test dateString against multiple props.
         */
-        return function(equipments, dateString, dateProp, currentYear){
+        return function (equipments, dateString, dateProp, currentYear) {
             if(!equipments) {
                 return;
             } else if (dateString != '' && (!dateString || !dateProp)) {
                 return equipments;
             }
+            
             var year = dateString.split('-')[0];
             var matches = [];
             var i = equipments.length;
@@ -128,9 +126,14 @@ angular
                             if (parseInt(equipments[i].EquipmentInspections[j].Due_date.split("-")[0]) < parseInt(currentYear)) {
                                 matched = true;
                             }
+                        } else if (!equipments[i].EquipmentInspections[j].Certification_date && !equipments[i].EquipmentInspections[j].Due_date) {
+                            if (dateString == currentYear) {
+                                matched = true;
+                            }
                         }
                     }
                 }
+                //console.log(dateString, currentYear, equipments[i].Key_id, equipments[i].EquipmentInspections.length, matched);
                 if (matched) {
                     matches.unshift(equipments[i]);
                 }

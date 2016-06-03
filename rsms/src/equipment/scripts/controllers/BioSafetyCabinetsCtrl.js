@@ -116,6 +116,7 @@ angular.module('EquipmentModule')
         //init load
         $scope.loading = getAllRooms()
                             .then(getAllPis())
+                            .then(getAllInspections())
                             .then(getAllBioSafetyCabinets())
                             .then(getAllCampuses());
 
@@ -256,7 +257,6 @@ angular.module('EquipmentModule')
         }
         
         $scope.certify = function (copy, original) {
-            alert('painis')
             $scope.message = null;
             if (!copy.Report_path) {
                 $scope.message = "Please upload a report.";
