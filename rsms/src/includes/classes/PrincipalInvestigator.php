@@ -119,6 +119,13 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 	
+    public static $WIPE_TESTS_RELATIONSHIP = array(
+			"className" => "PIWipeTest",
+			"tableName" => "pi_wipe_test",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "principal_investigator_id"
+	);
+
 	/** Base User object that this PI represents */
 	private $user_id;
 	private $user;
@@ -176,6 +183,8 @@ class PrincipalInvestigator extends GenericCrud {
 	private $verifications;
 	private $currentVerifications;
     private $currentIsotopeInventories;
+
+    private $wipeTests;
 	
 	public function __construct(){
 
@@ -197,7 +206,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
-		
+		$entityMaps[] = new EntityMap("lazy","getWipeTests");
 		
 		$this->setEntityMaps($entityMaps);
 
@@ -445,6 +454,18 @@ class PrincipalInvestigator extends GenericCrud {
         }
         return $this->currentIsotopeInventories;
     }
+
+    public function getWipeTests(){
+		if($this->wipeTests === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->wipeTests = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$WIPE_TESTS_RELATIONSHIP)
+			);
+		}
+		return $this->wipeTests;
+	}
+	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
 
 }
 

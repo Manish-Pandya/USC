@@ -19,7 +19,8 @@ class BioSafetyCabinet extends Equipment {
         "serial_number"		        	=> "text",
         "make"          	   			=> "text",
         "model"     		    		=> "text",
-				
+        "comments"                      => "text",
+
 		//GenericCrud
 		"key_id"			    => "integer",
 		"date_created"		    => "timestamp",
@@ -28,12 +29,11 @@ class BioSafetyCabinet extends Equipment {
 		"last_modified_user_id"	=> "integer",
 		"created_user_id"	    => "integer"
 	);
-    
+
 	public function __construct(){
-		// Define which subentities to load
-		$entityMaps = array();
+        parent::__construct();
 	}
-    
+
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;

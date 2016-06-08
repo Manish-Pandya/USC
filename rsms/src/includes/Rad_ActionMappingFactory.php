@@ -68,8 +68,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getAllSVCollections"			=> new ActionMapping("getAllSVCollections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllParcelWipeTests"			=> new ActionMapping("getAllParcelWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAllParcelWipes"				=> new ActionMapping("getAllParcelWipes", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				
+                "getAllPIWipeTests"				=> new ActionMapping("getAllPIWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
+                
 				// save functions
 				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveIsotope"				=> new ActionMapping("saveIsotope", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -92,6 +93,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "savePIWipeTest"		=> new ActionMapping("savePIWipeTest", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePIWipe"			=> new ActionMapping("savePIWipe", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePIWipes"			=> new ActionMapping("savePIWipes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"saveParcelWipesAndChildren"=> new ActionMapping("saveParcelWipesAndChildren", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),

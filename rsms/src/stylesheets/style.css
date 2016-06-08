@@ -222,7 +222,7 @@ a.modalBtn i, .modal-footer a.btn i {
   margin: 4px 16px 0 3px;
 }
 
-a.btn i {
+.btn i {
   margin: 1px 2px;
   color:white !important;
   font-size: 16px !Important;
@@ -1216,6 +1216,18 @@ html[xmlns] .clearfix {
   content: ", ";
   visibility: visible;
 }
+.hazInvSubRooms{
+  margin-top:0;
+  margin-bottom:0;
+  height:0;
+  padding:0;
+}
+.hazInvSubRooms li {
+  font-size: 11px;
+  border: none;
+  float: left;
+  margin-right: 5px;
+}
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
   content: "";
@@ -1239,6 +1251,9 @@ html[xmlns] .clearfix {
 /* line 893, ../sass/style.scss */
 #editPiForm {
   margin: 10px 0 40px;
+}
+#editPiForm .selectize-dropdown-content{
+  margin-top:0
 }
 /* line 895, ../sass/style.scss */
 #editPiForm h3 {
@@ -2331,7 +2346,17 @@ detailsReportHeaderTable tr td {
 #piButtons a {
   margin: 20px 10px;
 }
+.create-room li:first-child{
+  /* width:100% */
+}
 
+.create-room li{
+  line-height: 25px;
+  font-size:15px;
+  width: auto;
+  display: inline;
+  margin: 5px 0 0 7px;
+}
 /* line 539, ../sass/style.scss */
 /* line 1554, ../sass/style.scss */
 .list thead a {
@@ -2507,6 +2532,13 @@ li.active a {
   margin-left: 0;
   list-style: none !important;
 }
+.deficiency-rooms-list{
+  position: absolute;
+  font-size: 14px;
+  margin: 4px 0px 0 26px !important;
+  display: inline-block;
+  color: #666;
+}
 .navicon {
   padding: 0 !important;
   margin: 24px 42px -10px 9px;
@@ -2648,15 +2680,17 @@ li.active a {
 /* line 719, ../sass/style.scss */
 /* line 1776, ../sass/style.scss */
 .menuIcon:hover:active {
-  color: green !important t;
+  color: green !important;
 }
+
 .checklist-deficiencies{
   list-style-type: none;
   padding: 10px;
-  margin: 20px 0px 0 26px;
+  margin: 10px 0px 0 26px;
   border-top: 1px solid #ccc;
   background: rgb(239, 195, 195);
 }
+
 .recOrObsList{
   list-style-type: none;
   background: #CCDEDE;
@@ -2672,7 +2706,9 @@ li.active a {
 .recOrObsList li span.metro-checkbox i.small{
   margin: -2px 0 4px 5px;
 }
-
+.checklist-deficiencies form, .recOrObsList form{
+  margin-top:3px
+}
 /* line 722, ../sass/style.scss */
 /* line 1781, ../sass/style.scss */
 .pushLeft {
@@ -2683,7 +2719,7 @@ li.active a {
 
 /* line 727, ../sass/style.scss */
 /* line 1788, ../sass/style.scss */
-span.red {
+.red {
   color: #c00; 
 }
 
@@ -2697,7 +2733,10 @@ tr td.new span.green {
 }
 
 span.yellow {
-  color: #A95D0F;
+  color: #CFAA00;
+}
+span.orange {
+  color: #FF8C03;
 }
 
 /* line 734, ../sass/style.scss */
@@ -2707,7 +2746,7 @@ span.yellow {
 }
 /* line 1800, ../sass/style.scss */
 .hazardList > ul li {
-  margin: 5px 0;
+  margin: 0px 0;
 }
 
 /* line 1804, ../sass/style.scss */
@@ -2929,12 +2968,11 @@ label.smaller {
 .quickdate-popup {
   z-index: 10;
   background-color: #fff;
-  border: solid 1px #000;
+  border: solid 1px #999;
   text-align: center;
   width: 250px;
-  display: none;
   position: absolute;
-  padding: 5px;
+  padding:10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
@@ -2945,10 +2983,7 @@ label.smaller {
 
 /* line 1975, ../sass/style.scss */
 .quickdate-close {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #333;
+  display: none;
 }
 
 /* line 1976, ../sass/style.scss */
@@ -3012,6 +3047,10 @@ table.quickdate-calendar {
 table.quickdate-calendar th, table.quickdate-calendar td {
   padding: 5px;
 }
+table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
+  background: #24A0DA;
+  color:white !important
+}
 
 /* line 1986, ../sass/style.scss */
 table.quickdate-calendar td:hover {
@@ -3036,7 +3075,9 @@ table.quickdate-calendar td:hover {
 
 /* line 1990, ../sass/style.scss */
 table.quickdate-calendar td.is-today {
-  color: #49afcd;
+  color: #000;
+  font-weight:bold;
+  background: rgba(18, 0, 28, 0.29) !important;
 }
 table.quickdate-calendar td.selected{
   background:#5BB75B!important;
@@ -3175,7 +3216,9 @@ table.roomList h2 {
 .labSpecific {
   color: #49afcd !important;
 }
-
+.checklist-deficiencies .labSpecific{
+  color: #DD0000 !Important;
+}
 /* line 2124, ../sass/style.scss */
 .newRecOrObs {
   color: #5bb75b !important;
@@ -3432,6 +3475,11 @@ table.large tr th{
   margin-right:1.33333%;
   max-width: 1366px;
 }
+.four-fifths{
+  width:78.666666666%;
+  margin-right:1.33333%;
+  max-width: 1366px;
+}
 .two-thirds{
   width:62%;
   margin-right:1.33333%;
@@ -3498,8 +3546,11 @@ div.fake-table .table-row > div{
 }
 div.fake-table.condensed .table-row > div{
   display: table-cell;
-  padding:5px;
-  font-size:16px;
+  padding: 1px 5px;
+  font-size: 16px;
+}
+.condensed{
+  margin-bottom:3px !Important;
 }
 div.fake-table div.button-cell{
   min-width: 112px;
@@ -3523,10 +3574,10 @@ div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .t
   border-left: none;
 }
 .well >h1 > i {
-  margin-right: 10px;
+  margin-right: 5px;
   font-size: 35px;
   width: auto;
-  line-height: 53px;
+  line-height: 43px;
 }
 .well >h2 > i{
   margin-right: 7px;
@@ -3598,6 +3649,10 @@ div.fake-table .table-row:hover > div{
   .well, .well .full{
     //width:98% !important;
   }
+   body > div.container-fluid {
+       padding: 0 8px;
+       padding: 0;
+   }
 
 }
 
@@ -3641,7 +3696,7 @@ tbody tr:nth-child(even){
   background:#ECF0F1;
 }
 
-tbody tr:hover{/* background:#BDC3C7; */color:#FFFFFF;}
+tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 
 .fixed{
   position:fixed;

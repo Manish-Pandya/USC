@@ -20,8 +20,8 @@
                         {{parcel.Rs_number}}
                     </div>
 
-                    <div>
-                        {{parcel.Authorization.IsotopeName || parcel.Isotope.Name}}
+                    <div ng-init="parcel.loadAuthorization()"> 
+                        {{parcel.Authorization.IsotopeName}}
                     </div>
 
                     <div>
@@ -77,11 +77,11 @@
                     <td ng-if="!use.edit">
                         {{use.Experiment_use}}
                     </td>
-                    <td ng-if="use.edit" class="push-top">
-                        <div class="control-group" style="max-width:90px">
+                    <td ng-if="use.edit" class="push-top" style="max-width:129px; padding:2px;">
+                        <div class="control-group" style="max-width:100%">
                             <label class="control-label" for="experiment-use">Use:</label>
                             <div class="controls">
-                                <textarea style="max-width:124px" rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
+                                <textarea style="max-width:100%" rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
                             </div>
                         </div>
                     </td>
@@ -111,20 +111,20 @@
                                 <td class="use-amount liquids">
                                     <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
                                         <span class="bold">Liq:</span> {{liquid.Curie_level}} mCi in Carboy {{liquid.Carboy.Carboy.Carboy_number}} <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i>
-</div>
+                                    </div>
                                     <div ng-if="!liquids.length">No Liquid Disposals</div>
                                 </td>
                                 <td class="use-amount vials">
                                     <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
                                         <span class="bold">S/V:</span> {{vial.Curie_level}} mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i>
-</div>
+                                    </div>
                                     <div ng-if="!vials.length">No vial Disposals</div>
                                 </td>
                                 <td class="use-amount others">
-                                    <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                        <span class="bold">Other:</span> {{other.Curie_level}} mCi <span ng-if="other.Comments">({{other.Comments}})</span>
-</div>
-                                    <div ng-if="!others.length"><span class="bold">Other:</span> N/A</div>
+                                    <span class="bold" style="margin-bottom:10px;display:block">Other:<span class="bold" ng-show="!others.length">N/A</span></span>
+                                    <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                                         {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -173,14 +173,13 @@
                                 <td class="use-amount others">
                                     <label class="control-label" for="vial-curies">Other: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
                                     <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                        <div class="control-group">
+                                        <div class="control-group" style="width:100%;">
                                             <div class="controls input-append">
                                                 <input style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
-
-                                                <span class="help-block " style="">mCi</span>
+                                                <span class="help-inline " style="">mCi</span>
                                             </div>
                                         </div>
-                                        <div class="control-group">
+                                        <div class="control-group" >
                                             <div class="controls">
                                                 <textarea maxlength='60' placeholder="Comments" ng-model="other.Comments"></textarea>
                                             </div>
@@ -188,7 +187,7 @@
                                     </div>
                                 </td>
                                 <td ng-class="{'extra-top': use.edit}">
-                                    <button  ng-if="use.edit" ng-click="saveParcelUse(parcel, ParcelUseCopy,use)" class="btn btn-success"><i class="icon-checkmark"></i></button>
+                                    <button ng-if="use.edit" ng-click="saveParcelUse(parcel, ParcelUseCopy,use)" class="btn btn-success"><i class="icon-checkmark"></i></button>
                                     <a ng-if="use.edit" class="btn btn-danger" ng-click="cancel(use, parcel)"><i class="icon-cancel-2"></i></a>
                                 </td>
                             </tr>

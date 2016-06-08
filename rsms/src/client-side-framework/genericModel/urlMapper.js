@@ -34,6 +34,8 @@
         'WasteType'             : {getById: "getWasteTypeById"             , getAll: "getAllWasteTypes"             , save: "saveWasteType"              },
         'ScintVialCollection'   : {getById: "getSVCollectionById"          , getAll: "getAllSVCollections"          , save: "saveSVCollection"           },
         'ParcelWipeTest'        : {getById: "getParcelWipeTestById"        , getAll: "getAllParcelWipeTests"        , save: "saveParcelWipeTest"         },
+        'PIWipeTest'            : { getById:"getPIWipeTestById"            , getAll: "getAllPIWipeTests"            , save: "savePIWipeTest"             },
+        'PIWipe'                : { getById:"getPIWipeById"                , getAll: "getAllPIWipes"                , save: "savePIWipe"                 },
         'ParcelWipe'            : {getById: "getParcelWipeById"            , getAll: "getAllParcelWipes"            , save: "saveParcelWipe"             },
         'InspectionWipeTest'    : {getById: "getInspectionWipeTestById"    , getAll: "getAllInspectionWipeTests"    , save: "saveInspectionWipeTest"     },
         'InspectionWipe'        : {getById: "getInspectionWipeById"        , getAll: "getAllInspectionWipes"        , save: "saveInspectionWipe"         },
@@ -47,6 +49,7 @@
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },
         'Department'            : {getById: "getDepartmentById"            , getAll: "getAllDepartments"            , save: "saveDepartment"             },
+        'Campus'                : {getById: "getCampusById"                , getAll: "getAllCampuses"               , save: "saveCampus"                 },
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },  
         'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           }
 };

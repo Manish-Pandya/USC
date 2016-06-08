@@ -161,7 +161,7 @@ angular
                 
                 //flatten to avoid circular JSON structure
                 var secondCopy = {
-                            Certification_date: copy.Certification_date,
+                            Certification_date: copy.viewDate,
                             Due_date: copy.Due_date,
                             Class: "EquipmentInspection",
                             Comment: copy.Comment,
@@ -173,7 +173,6 @@ angular
                             Room_id: copy.Room_id,
                             RoomId: copy.RoomId,
                             Equipment_id: copy.Equipment_id,
-                            EquipmentId: copy.EquipmentId,
                             Equipment_class: copy.Equipment_class,
                             Report_path: copy.Report_path
                 }
@@ -234,6 +233,10 @@ angular
             af.getAllBuildings = function() {
                 return dataSwitchFactory.getAllObjects('Building');
             }
+
+            af.getAllCampuses = function () {
+                return dataSwitchFactory.getAllObjects('Campus');
+            }
             
             af.getAllPrincipalInvestigators = function() {
                 return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
@@ -255,25 +258,34 @@ angular
                             Room_id: copy.Room_id,
                             RoomId: copy.RoomId,
                             Equipment_id: copy.Equipment_id,
-                            EquipmentId: copy.EquipmentId,
                             Report_path: copy.Report_path,
                             Serial_number: copy.Serial_number,
-                            Type: copy.Type
+                            Type: copy.Type,
+                            Comments: copy.Comments
                 }
                 
                 if(copy.Key_id){secondCopy.Key_id = copy.Key_id;}
-                console.log(secondCopy);
                 return this.save(secondCopy)
                     .then(
-                        function(returnedBioSafetyCabinet){
-                            returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
-                            if(bioSafetyCabinet.Key_id){
+                        function (returnedBioSafetyCabinet) {
+                            if (bioSafetyCabinet.Key_id) {
+                                var cab = dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id)
+                                angular.extend(cab, returnedBioSafetyCabinet);
+                                cab.loadEquipmentInspections();
+                            } else {
                                 console.log(returnedBioSafetyCabinet);
-                                angular.extend(dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id), returnedBioSafetyCabinet);
-                            }else{
+                                for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections.length; x++) {
+                                    var newInspection = returnedBioSafetyCabinet.EquipmentInspections[x];
+                                    console.log(newInspection);
+                                    newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
+                                    store.store(newInspection);
+                                    newInspection.loadRoom();
+                                    newInspection.loadPrincipalInvestigator();
+                                }
+                                returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
+                                store.store(returnedBioSafetyCabinet);
                                 console.log(returnedBioSafetyCabinet);
-                                dataStoreManager.addOnSave(returnedBioSafetyCabinet);
-                                dataStoreManager.store(returnedBioSafetyCabinet);
+                                return returnedBioSafetyCabinet;
                             }
                         },
                         af.setError('The BioSafetyCabinet could not be saved')
@@ -316,8 +328,9 @@ angular
                     var userPromise = $q.defer();
                     var piPromise = $q.defer();
                     var roomsPromise = $q.defer();
+                    var campusesPromise = $q.defer();
                     var relationsPromise = $q.defer();
-                    var all = $q.all([userPromise.promise,relationsPromise.promise,piPromise.promise,roomsPromise.promise])
+                    var all = $q.all([userPromise.promise,relationsPromise.promise,piPromise.promise,roomsPromise.promise,campusesPromise.promise])
 
                     this.getAllUsers()
                         .then(
@@ -347,6 +360,13 @@ angular
                                 roomsPromise.resolve(rooms);
                             }
                         )
+
+                    this.getAllCampuses()
+                            .then(
+                                function (campuses) {
+                                    campusesPromise.resolve(campuses);
+                                }
+                            )
                     
                     // TODO: Make specific to Equipment module, if this is even needed.
                     return all.then(

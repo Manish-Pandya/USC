@@ -293,9 +293,17 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         checkRooms($scope.chosenBuilding, $scope.PI);
     }
 
-    function checkRooms(building, pi){
+    function checkRooms(building, pi) {
+        building.roomsByFloor = {};
+        var lastLabel = '';
         angular.forEach(building.Rooms, function(room, key){
-            if(convenienceMethods.arrayContainsObject(pi.Rooms,room))room.piHasRel = true;
+            if (convenienceMethods.arrayContainsObject(pi.Rooms, room)) room.piHasRel = true;            
+            var floorLabel = room.Name.charAt(0);
+            if (lastLabel != floorLabel && !building.roomsByFloor.hasOwnProperty(floorLabel)) {
+                building.roomsByFloor[floorLabel] = [];
+            }
+            building.roomsByFloor[floorLabel].push(room);            
+            lastLabel = floorLabel;
         });
     }
 
@@ -364,8 +372,19 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
           Name: newRoom.Name,
           Is_active:true
         }
+        $scope.error = "";
 
-        console.log(roomDto);
+        var len = $scope.chosenBuilding.Rooms.length;
+        for (var i = 0; i < len; i++) {
+            var room = $scope.chosenBuilding.Rooms[i];
+            console.log(roomDto.Name.replace(/[^A-Za-z0-9]/g, '').toLowerCase(), room.Name.replace(/[^A-Za-z0-9]/g, '').toLowerCase());
+            if (roomDto.Name.replace(/[^A-Za-z0-9]/g, '').toLowerCase() == room.Name.replace(/[^A-Za-z0-9]/g, '').toLowerCase()) {
+                $scope.error = "Room " + roomDto.Name + " has already been created";
+                newRoom.IsDirty = false;
+                return false;
+            }
+        }
+
         var createDefer = $q.defer();
         piHubFactory.createRoom(roomDto).then(
             function(room){
@@ -373,6 +392,14 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
                 $scope.chosenBuilding.Rooms.push(room);
                 newRoom.IsDirty = false;
                 createDefer.resolve(room);
+                $scope.onSelectBuilding($scope.chosenBuilding);
+
+                for (var i = 0; i < $rootScope.buildings.length; i++) {
+                    if ($scope.chosenBuilding.Key_id == $rootScope.buildings[i].Key_id) {
+                        $rootScope.buildings[i].Rooms.push(room);
+                    }
+                }
+
                 return createDefer.promise;
             },
             function(){

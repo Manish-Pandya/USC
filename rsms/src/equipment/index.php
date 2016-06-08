@@ -66,7 +66,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
-
+<script src="../js/lib/ng-quick-date.js"></script>
 
 <!-- Required for the ORM framework -->
 <!-- TODO include everything in certain directories by default -->
@@ -97,6 +97,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
 <script type="text/javascript" src="scripts/filters/equipmentFilters.js"></script>
+<script type="text/javascript" src="../js/lib/angular.filter.js"></script>
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>
@@ -129,7 +130,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
     <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
     <!-- NAVIGATION -->
       <div class="banner {{bannerClass | splitAtPeriod}} equipment" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-        <h1 style="color:white;">Lab Equipment <a style="float:right;margin: 11px 128px 0 0; color:white" href="<?php echo WEB_ROOT?>equipment/"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+        <h1 style="color:white;">Lab Equipment <a style="float:right;margin: 11px 128px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMScenter.php"><i class="icon-home" style="font-size:40px;"></i></a></h1>
       </div>
     <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>

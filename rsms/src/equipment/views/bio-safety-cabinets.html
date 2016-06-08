@@ -2,15 +2,19 @@
 <div cg-busy="{promise:Saving, message:'BioSafetyCabinetSaving', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
-    <h1 class="card full bio-safety-cabinets"><i class="icon-cabinet"></i>Biological Safety Cabinets
+    <h1 class="card full bio-safety-cabinets">
+        <i class="icon-cabinet"></i>Biological Safety Cabinets
+        <select ng-options="certYear as certYear for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate">
+            <option value="">All</option>
+        </select>
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-        <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
+        <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
-    <div>
-        <h2 style="padding-top:60px" ng-show="completeCabinets.length">Complete Certifications</h2>
-        <h2 ng-show="!completeCabinets.length">No Cabinets have complete certifications.</h2>
-        <div class="full bio-safety-cabinets well full" ng-show="completeCabinets.length">
-            <table class="table table-striped table-bordered">
+    <h2 ng-if="!cabinets.length">No Cabinets</h2>
+    <div ng-repeat="campus in campuses | orderBy: 'Name'" ng-show="cabinets.length && completeCabinets.length || selectedBuilding">
+        <div class="full bio-safety-cabinets-container" style="padding:5px;">
+            <h2>{{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}</h2>
+            <table class="table table-striped table-bordered" >
                 <tr class="table-header">
                     <th>EDIT</th>
                     <th>TYPE</th>
@@ -27,117 +31,31 @@
                                 ROOM
                             </li>
                             <li>
-                                CERT-DATE<br>
-                                <select ng-options="certYear as certYear for certYear in certYears" ng-model="selectedCertificationDate">
-                                    <option value="">All</option>
-                                </select>
+                                CERT-DATE
+                            </li>
+                            <li>
+                                DUE-DATE
                             </li>
                             <li>
                                 INVESTIGATOR
-                            </li>
-                            <li>
-                                REPORT
-                            </li>
-                            <li>
-                                COMMENTS
-                            </li>
-                        </ul>
-                    </th>
-                </tr>
-                <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
-                <tr class="table-row" ng-repeat="cabinet in completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:'Certification_date' | matchEquipmentDate:'':'Certification_date' | filter:{Is_active: !showInactive})">
-                    <td rowspan="{{inspections.legnth}}">
-                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
-                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
-                    </td>
-                    <td rowspan="{{inspections.legnth}}">
-                        {{cabinet.Type}}
-                    </td>
-                    <td rowspan="{{inspections.legnth}}">
-                        {{cabinet.Serial_number}}
-                    </td>
-                    <td rowspan="{{inspections.legnth}}">
-                        {{cabinet.Make}}
-                    </td>
-                    <td rowspan="{{inspections.legnth}}">
-                        {{cabinet.Model}}
-                    </td>
-                    <td>
-                        
-                            <ul ng-repeat="inspection in (inspections = (cabinet.EquipmentInspections | filter:{Certification_date: ''}))">
-                                <li>
-                                    {{inspection.Room.Building.Name}}
-                                </li>
-                                <li>
-                                    {{inspection.Room.Name}}
-                                </li>
-                                <li>
-                                    {{inspection.Certification_date | dateToISO}}
-                                </li>
-                                <li>
-                                    {{inspection.PrincipalInvestigator.User.Name}}
-                                </li>
-                                <li>
-                                    <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
-                                </li>
-                                <li>
-                                    {{inspection.Comment}}
-                                </li>
-                            </ul>
-                        
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br>
-        <h2>Incomplete Certifications</h2>
-        <h2 ng-if="!neededInspections.length">No Cabinets Need Certifications for {{dueYear}}</h2>
-
-        <div class="full bio-safety-cabinets well full" ng-show="neededInspections.length">
-            <table class="table table-striped table-hover bio-safety-cabinets table-bordered ng-scope ng-isolate-scope">
-                <tr class="table-header">
-                    <th>EDIT</th>
-                    <th>TYPE</th>
-                    <th>SERIAL #</th>
-                    <th>MAKE</th>
-                    <th>MODEL</th>
-                    <th>
-                        <ul>
-                            <li>
-                                BUILDING<br>
-                                <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building" />
-                            </li>
-                            <li>
-                                ROOM
-                            </li>
-                            <li>
-                                DUE-DATE<br>
-                                <select ng-options="dueYear as dueYear for dueYear in dueYears" ng-model="selectedDueDate">
-                                    <option value="">All</option>
-                                </select>
-                            </li>
-                            <li>
-                                INVESTIGATOR
-                            </li>
-                            <li>
-                                REPORT
                             </li>
                             <li>
                                 STATUS
                             </li>
                             <li>
-                                CERTIFY
+                                REPORT
                             </li>
                         </ul>
                     </th>
-                 </tr>
-                <!-- the following filter grabs cabinet inspections that have no Certification_date, stripping those with Certification_date set: matchEquipmentDate:'*':'Certification_date' 
-                To bad it don't seem to work. Thoughts? -->
-                <tr class="table-row" ng-repeat="cabinet in neededInspections = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedDueDate:'Due_date' | matchEquipmentDate:'*':'Certification_date' | filter:{Is_active: !showInactive}) track by $index">
+                    <th>
+                        COMMENTS
+                    </th>
+                </tr>
+                <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:['Certification_date','Due_date']:currentYearString | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index">
                     <td>
-                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
-                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger left"><i class="icon-remove"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove"></i></button>
                     </td>
                     <td>
                         {{cabinet.Type}}
@@ -151,8 +69,8 @@
                     <td>
                         {{cabinet.Model}}
                     </td>
-                    <td>                        
-                        <ul ng-repeat="inspection in cabinet.EquipmentInspections | filter:{Certification_date: null}">
+                    <td watch="inspections.length" otherwatch="completeCabinets.length" class="asdful-table-heights">
+                        <ul ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | matchInspectionDate:selectedCertificationDate:currentYearString | orderBy:'Due_date':true)">
                             <li>
                                 {{inspection.Room.Building.Name}}
                             </li>
@@ -160,25 +78,31 @@
                                 {{inspection.Room.Name}}
                             </li>
                             <li>
-                                {{inspection.Due_date | dateToISO}} {{inspection.Key_id}}
+                                {{inspection.Certification_date | dateToISO}}
+                            </li>
+                            <li>
+                                {{inspection.Due_date | dateToISO}}
                             </li>
                             <li>
                                 {{inspection.PrincipalInvestigator.User.Name}}
                             </li>
                             <li>
-                                <a ng-click="report(cabinet)" class="btn btn-success left">Report</a>
+                                <span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
+                                                 'yellow': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PENDING || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.NEW_BSC,
+                                                 'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span>
                             </li>
                             <li>
-                                {{inspection.Status}}
+                                <a style="margin-top:-24px" ng-if="inspection.Report_path" ng-disabled="!inspection.Report_path" href="../protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left">Report</a>
+                                <a style="margin-top:-24px" ng-if="!inspection.Report_path" disabled="disabled" class="btn btn-success left">Report</a>
+                                <a ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, inspection)" class="btn btn-primary left"><i ng-class="{'icon-pencil':inspection.Certification_date,'icon-checkmark':!inspection.Certification_date}"></i>Certify</a>
                             </li>
-                            <li>
-                                <button ng-disabled="inspection.edit" ng-class="{'disabled':inspection.edit}" ng-click="openModal(cabinet, $index)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
-                            </li>
-                        </ul>                        
+                        </ul>
+                    </td>
+                    <td>
+                        {{cabinet.Comments}}
                     </td>
                 </tr>
             </table>
         </div>
-
     </div>
 </div>

@@ -7,7 +7,7 @@ PIAuthorization.prototype = {
     className: "PIAuthorization",
     Class: "PIAuthorization",
     eagerAccessors: [
-        {method:"loadRooms", boolean:true},
+        //{method:"loadRooms", boolean:true},
         {method:"loadAuthorizations", boolean:true},
         {method:"loadDepartments", boolean:true}
     ],

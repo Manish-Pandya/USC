@@ -1,0 +1,21 @@
+﻿<div class="whiteBg" style="padding:0 !important; margin-top:90PX;">
+    <h2 class="alert alert-info" style="margin-bottom:0">
+        Current Inventories for {{pi.User.Name}}
+    </h2>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Isotope</th>
+            <th>Authorized Form</th>
+            <th>Authorized Limit</th>
+            <th>Amount on Hand</th>
+            <th>Usable Amount</th>
+        </tr>
+        <tr ng-repeat="invt in pi.CurrentIsotopeInventories">
+            <td>{{invt.Isotope_name}}</td>
+            <td>{{invt.Authorized_form}}</td>
+            <td>{{invt.Auth_limit | roundFloat}}</td>
+            <td>{{invt.Amount_on_hand | roundFloat}}</td>
+            <td>{{invt.Usable_amount | roundFloat}}</td>
+        </tr>
+    </table>
+</div>

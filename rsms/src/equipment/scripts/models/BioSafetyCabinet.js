@@ -16,7 +16,7 @@ BioSafetyCabinet.prototype = {
     eagerAccessors: [        
         {method:"loadEquipmentInspections", boolean:"Key_id"}
     ],
-    loadEquipmentInspections:  function() {
+    loadEquipmentInspections: function () {
         dataLoader.loadOneToManyRelationship( this, 'EquipmentInspections', this.EquipmentInspectionRelationship, [{Equipment_class:"BioSafetyCabinet"}]);
     }
 

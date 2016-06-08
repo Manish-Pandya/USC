@@ -161,10 +161,13 @@ class Question extends GenericCrud {
 			$this->deficiencies = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$DEFICIENCIES_RELATIONSHIP));
 			
 			//also get the Other Defiency, for all questions
-			$defDao = new GenericDAO(new Deficiency());
+            //DEPRECATED:  Other Deficiencies are now contructed on the client to allow selection of multiple Other Deficiencies per question and on-demand creation of new deficiencies
+			/*
+            $defDao = new GenericDAO(new Deficiency());
 			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("text","=","Other")));
 			$otherDeficiency = $defDao->getAllWhere($whereClauseGroup);
 			$this->deficiencies = array_merge($this->deficiencies, $otherDeficiency);
+            */
 		}
 		return $this->deficiencies;
 	}
