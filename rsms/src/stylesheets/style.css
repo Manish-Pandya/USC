@@ -2346,7 +2346,17 @@ detailsReportHeaderTable tr td {
 #piButtons a {
   margin: 20px 10px;
 }
+.create-room li:first-child{
+  /* width:100% */
+}
 
+.create-room li{
+  line-height: 25px;
+  font-size:15px;
+  width: auto;
+  display: inline;
+  margin: 5px 0 0 7px;
+}
 /* line 539, ../sass/style.scss */
 /* line 1554, ../sass/style.scss */
 .list thead a {
@@ -2709,7 +2719,7 @@ li.active a {
 
 /* line 727, ../sass/style.scss */
 /* line 1788, ../sass/style.scss */
-span.red {
+.red {
   color: #c00; 
 }
 

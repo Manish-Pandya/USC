@@ -82,11 +82,16 @@ i.dropdown-arrow{position:absolute;margin-left:-28px;margin-top:7px;font-size:24
     position: static;
 }
 .modal-body .selectize-input>div{
-    max-width: 284px;
+   max-width: 284px;
 }
 .control-group ul{
-    display: block;
+   display: block;
 }
-.modal-body  .ui-select-match {
+.modal-body .ui-select-match {
   max-width:250px;
+}
+
+.modal-body .building .ui-select-match {
+  max-width:350px !important;
+  width:310px !important;
 }

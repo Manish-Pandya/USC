@@ -39,36 +39,50 @@
          <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls span4">
 
-             <ui-select ng-model="building.selected" theme="selectize" ng-disabled="disabled" style="width:315px;" on-select="onSelectBuilding($item)">
-                    <ui-select-match placeholder="Select or search for a Buidling">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
-                      <div ng-bind-html="building.Name | highlight: $select.search"></div>
-                    </ui-select-choices>
+             <ui-select ng-model="building.selected" class="building" theme="selectize" ng-disabled="disabled" style="width:350px;" on-select="onSelectBuilding($item)">
+                <ui-select-match placeholder="Select or search for a Buidling">{{$select.selected.Name}}</ui-select-match>
+                <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
+                    <div ng-bind-html="building.Name | highlight: $select.search"></div>
+                </ui-select-choices>
             </ui-select>
 
             <span ng-if="!buildings">
-                <input class="span4" style="background:white;border-color:#999; width:315px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
-                   <img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+                <input class="span4" style="background:white;border-color:#999; width:350px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
+                <img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
             </span>
          </div>
         </div>
 
-       <h3 ng-show="chosenBuilding">Rooms in {{chosenBuilding.Name}}:</h3>
-       <ul ng-show="!addRoom">
-               <li ng-repeat="room in chosenBuilding.Rooms | orderBy:'Name' | activeOnly">
-                   <label class="checkbox inline">
-                    <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)"/>
-                    <span class="metro-checkbox">{{room.Name}}<span ng-if="room.Purpose">({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif"/></span>
-                </label>
-               </li>
+       <h3 ng-show="chosenBuilding" style="font-size:19px;">Rooms in {{chosenBuilding.Name}}:</h3>
+       <ul ng-show="!addRoom" style="margin-top:5px">
+            <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
+                <h3>Floor: {{key}}</h3>
+                <ul class="create-room">
+                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                        <label class="checkbox inline">
+                            <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)" />
+                            <span class="metro-checkbox">{{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif" /></span>
+                        </label>
+                    </li>
+                </ul>
+            </li>
        </ul>
 
-       <ul ng-show="addRoom">
-               <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Assign a room."><a ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif"/>
-               <li ng-repeat="room in chosenBuilding.Rooms | orderBy: room.Name | activeOnly">
-                   {{room.Name}}
-               </li>
-       </ul>
+       <ul ng-show="addRoom" style="margin-top:5px">
+           <li>
+               <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Enter new room number" style="width: 172px;">
+               <a style="margin: -2px 0 0 5px;" ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+           </li> 
+           <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
+           <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
+               <h3>Floor: {{key}}</h3>
+               <ul class="create-room">
+                   <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                       {{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
+                   </li>
+               </ul>
+            </li>
+        </ul>
 
 
     </div>
@@ -109,6 +123,7 @@
 <script type="text/ng-template" id="roomHazardsModal.html">
     <div class="modal-header wide-modal" style="padding:0;">
         <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Hazards in room {{room.Name}}</h2>
+    </div>
     <div class="modal-body">
 
        <span ng-if="!hazards && !error" class="loading">

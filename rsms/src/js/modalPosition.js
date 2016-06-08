@@ -43,6 +43,9 @@ angular.module('modalPosition', [])
 
 	        var positionUISelects = function () {
 	            var h = body.height() + 60;
+	            var t = body[0].offsetTop;
+	            console.log(body);
+
 	            if (!relevantSelectMatches) {
 	                relevantSelectMatches = body.find(".ui-select-match");
 	                relevantSelectArrows = body.find(".icon-arrow-down.dropdown-arrow");
@@ -55,6 +58,8 @@ angular.module('modalPosition', [])
 
 	            } else {
 	                $top = body.scrollTop();
+                    console.log("top")
+	                console.log(t);
 	                $(relevantSelectMatches).each(function (x) {
 	                    var $this = $(this);
 	                    var $that = $(relevantSelectArrows[x])
@@ -68,7 +73,7 @@ angular.module('modalPosition', [])
 	                    $this.css({ "top": selectMap[x] - $top + "px" });
 	                    $that.css({ "top": arrowMap[x] - $top + "px" });
 	                    var top = $that[0].offsetTop - 5;
-	                    if (top > h) {
+	                    if (top > h || top < t) {
 	                        $this.css({ "visibility": "hidden" });
 	                        $that.css({ "visibility": "hidden" });
 	                    } else {
