@@ -106,7 +106,7 @@ class HazardDto {
             			$room->setContainsHazard(true);
             			$this->isPresent = true;
             			$room->setStatus($relation->getStatus());
-            			if($room->getStatus() != "Stored Only"){
+            			if($room->getStatus() != "STORED_ONLY"){
             				$storedOnly = false;
             			}
             		}

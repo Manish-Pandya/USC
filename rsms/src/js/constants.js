@@ -218,9 +218,9 @@ var Constants = (function () {
     }
 
     constants.ROOM_HAZARD_STATUS = {
-        IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab in this room", ADMIN_LABEL: "In use in room" },
-        STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored in this room", ADMIN_LABEL: "Stored only in room" },
-        NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab in this room", ADMIN_LABEL: "Not used in room" }
+        IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab", ADMIN_LABEL: "In use in room" },
+        STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored by my lab", ADMIN_LABEL: "Stored only in room" },
+        NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab", ADMIN_LABEL: "Not used in room" }
     }
 
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]

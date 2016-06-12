@@ -87,6 +87,11 @@ class PIHazardRoomDto {
 	}
 	
 	public function getStatus(){
+        if($this->status == "Stored Only"){
+            $this->status = "STORED_ONLY";
+        }elseif($this->status == "In Use" || $this->status == null){
+            $this->status = "IN_USE";
+        }
 		return $this->status;
 	}
 	

@@ -14,7 +14,7 @@ angular
         var id = 1;
     
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then();
+                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then(getAllHazards);
     
 
         function getVerification(id){
@@ -60,6 +60,31 @@ angular
                             return false;
                         }
                     );
+        }
+
+        function getAllHazards() {
+            return ac.getAllHazards(id)
+                     .then(
+                         function (hazards) {
+                             // get leaf hazards
+                             var hazard, leafHazards = [];
+                             var len = hazards.length;
+                             for (var n = 0; n < len; n++) {
+                                 hazard = hazards[n];
+                                 hazard.loadSubHazards();
+
+                                 if (!hazard.ActiveSubHazards.length) {
+                                     leafHazards.push(hazard);
+                                 }
+                             }
+                             $scope.leafHazards = leafHazards;
+                             return $scope.leafHazards;
+                         },
+                         function () {
+                             $scope.error = "Couldn't get the hazards";
+                             return false;
+                         }
+                     );
         }
     
         $scope.onUserSelect = function(item) {

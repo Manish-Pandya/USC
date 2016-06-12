@@ -142,14 +142,15 @@
         }
 
         function getStatus(room) {
-            if(room.ContainsHazard){
-                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE) {
-                    return Constants.ROOM_HAZARD_STATUS.IN_USE;
+            if (room.ContainsHazard) {
+                console.log(room);
+                if (room.Status == Constants.ROOM_HAZARD_STATUS.IN_USE.KEY) {
+                    return Constants.ROOM_HAZARD_STATUS.IN_USE.LAB_LABEL;
                 } else {
-                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY;
+                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY.LAB_LABEL;
                 } 
-            }else{
-                return Constants.ROOM_HAZARD_STATUS.NOT_USED;
+            } else {
+                return Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL;
             }
         }
 

@@ -126,7 +126,7 @@ angular
                var confirm = window.confirm(hazard.Hazard_name + " has SubHazards hazards in " + room.Building_name + ", room" +room.Room_name + ". Are you sure you want to apply your change to all its SubHazards?");
                if(confirm == false){
                 if(hazard.needsStoredOnlyConfimration){
-                    room.Status = "In Use";
+                    room.Status = "IN_USE";
                     room.storedOnly = false;
                 }
                 return;

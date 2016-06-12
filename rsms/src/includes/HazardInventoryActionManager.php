@@ -174,15 +174,15 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$relation = $piHazardRoomDao->save($relation);
 				$LOG->fatal($relation);
 			}
-			//if we have set the status to "Stored Only", we must also set the status to for each child hazard in this room
-			if($decodedObject->getStatus() == "Stored Only"){
+			//if we have set the status to "STORED_ONLY", we must also set the status to for each child hazard in this room
+			if($decodedObject->getStatus() == "STORED_ONLY"){
 				$hazard = $this->getHazardById($decodedObject->getHazard_id());
 				$childHazards = $hazard->getActiveSubHazards();
 				foreach($childHazards as $child){
 					//only do this for hazards the PI already has in this room.
 					if($this->getHasHazardInLab($decodedObject->getPrincipal_investigator_id(), $child->getKey_id(), $decodedObject->getRoom_id())){
 						$childDto = new PIHazardRoomDto();
-						$childDto->setStatus("Stored Only");
+						$childDto->setStatus("STORED_ONLY");
 						$childDto->setContainsHazard(true);
 						$childDto->setHazard_id($child->getKey_id());
 						$childDto->setRoom_id($decodedObject->getRoom_id());
