@@ -6,13 +6,15 @@
  * @author Matt Breeden, GraySail LLC
  */
 class PendingHazardDtoChange extends PendingChange {
-	
+
 	private $hazard;
 	private $room_id;
+    protected $building_name;
 	private $hazard_id;
     private $hazard_name;
     private $room_name;
-	
+    private $room;
+
 	public function __construct(){
 
 		$this->COLUMN_NAMES_AND_TYPES["room_id"] = "integer";
@@ -24,9 +26,10 @@ class PendingHazardDtoChange extends PendingChange {
 		//$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
 		$entityMaps[] = new EntityMap("eager","getParent_id");
 		$entityMaps[] = new EntityMap("lazy","getHazard");
-	
+		$entityMaps[] = new EntityMap("lazy","getRoom");
+
 		$this->setEntityMaps($entityMaps);
-	
+
 	}
 	public function getHazard() {
 		if($this->hazard === NULL && $this->hasPrimaryKeyValue()) {
@@ -60,14 +63,31 @@ class PendingHazardDtoChange extends PendingChange {
     }
     public function setHazard_name($name){$this->hazard_name = $name;}
 
+    public function getRoom(){
+        if($this->room == null && $this->room_id != null && $this->hasPrimaryKeyValue()){
+            $roomDao = new GenericDAO(new Room());
+            $this->room = $roomDao->getById($this->room_id);
+        }
+        return $this->room;
+    }
+
     public function getRoom_name(){
         if($this->room_name == null && $this->room_id != null && $this->hasPrimaryKeyValue()){
-            $roomDao = new GenericDAO(new Room());
-            $room = $roomDao->getById($this->room_id);
+            $room = $this->getRoom();
             $this->room_name = $room->getName();
         }
         return $this->room_name;
     }
     public function setRoom_name($name){$this->room_name = $name;}
+
+    public function getBuilding_name(){
+        if($this->building_name == null && $this->getRoom() != null && $this->hasPrimaryKeyValue()){
+            $room = $this->getRoom();
+            if($room->getBuilding() != null){
+                $this->building_name = $room->getBuilding()->getName();
+            }
+        }
+        return $this->building_name;
+    }
 }
 ?>

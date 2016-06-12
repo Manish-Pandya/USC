@@ -14,7 +14,7 @@ angular
         var id = 1;
     
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(uf.getAllRoles);
+                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then();
     
 
         function getVerification(id){
@@ -44,6 +44,19 @@ angular
                         },
                         function(){
                             $scope.error = "Couldn't get the users";
+                            return false;
+                        }
+                    );
+        }
+
+        function getAllRooms() {
+            return ac.getAllRooms()
+                    .then(
+                        function (rooms) {
+                            $scope.allRooms = rooms;
+                        },
+                        function () {
+                            $scope.error = "Couldn't get the rooms";
                             return false;
                         }
                     );

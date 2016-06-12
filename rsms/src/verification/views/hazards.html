@@ -20,11 +20,11 @@
     </ui-select>
     <div>
         <label class="checkbox inline">
-            <input ng-disabled="!selectedHazard" type="radio" ng-model="roomDto.PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.IN_USE" ng-required="roomDto.PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.IN_USE" ng-change="HazCat.adding = false; ac.savePendingHazardDtoChange(roomDto.PendingHazardDtoChange,roomDto.PendingHazardDtoChangeCopy)" />
+            <input ng-disabled="!selectedHazard" type="radio" ng-model="roomDto.PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.IN_USE.KEY" ng-required="roomDto.PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.IN_USE.KEY" ng-change="HazCat.adding = false; ac.savePendingHazardDtoChange(roomDto.PendingHazardDtoChange,roomDto.PendingHazardDtoChangeCopy)" />
             <span class="metro-radio">In use</span>
         </label>
         <label class="checkbox inline">
-            <input ng-disabled="!selectedHazard" type="radio" ng-model="roomDto.PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-required="roomDto.PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-change="HazCat.adding = false; ac.savePendingHazardDtoChange(roomDto.PendingHazardDtoChange, roomDto.PendingHazardDtoChangeCopy)" />
+            <input ng-disabled="!selectedHazard" type="radio" ng-model="roomDto.PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-required="roomDto.PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-change="HazCat.adding = false; ac.savePendingHazardDtoChange(roomDto.PendingHazardDtoChange, roomDto.PendingHazardDtoChangeCopy)" />
             <span class="metro-radio">Stored only</span>
         </label>
     </div>
@@ -56,16 +56,16 @@
                 </div>
                 <div ng-if="HazCat.editing">
                     <label class="checkbox inline">
-                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.IN_USE" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.IN_USE" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
-                        <span class="metro-radio">In use</span>
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.IN_USE.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.IN_USE" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.IN_USE.LAB_LABEL}}</span>
                     </label>
                     <label class="checkbox inline">
-                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
-                        <span class="metro-radio">Stored only</span>
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.STORED_ONLY.LAB_LABEL}}</span>
                     </label>
                     <label class="checkbox inline">
-                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.NOT_USED" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.NOT_USED" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
-                        <span class="metro-radio">Not used in room {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}} by my lab</span>
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.NOT_USED" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL}} by my lab</span>
                     </label>
                 </div>
             </li>
