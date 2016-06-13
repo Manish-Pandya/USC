@@ -234,5 +234,20 @@ angular
                 )
         }
 
+        ac.confirmHazardChange = function (change, piId) {
+            var copy = ac.createCopy(change);
+
+            var urlFragment = "confirmPendingHazardChange&id="+piId;
+            return ac.save(copy, false, urlFragment)
+                .then(
+                    function (returnedChange) {
+                        returnedChange.edit = false;
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
+                        angular.extend(change, returnedChange);
+                    },
+                    ac.setError('The changed could not be verified.')
+                )
+        }
+
         return ac;
     });

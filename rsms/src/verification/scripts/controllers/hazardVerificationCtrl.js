@@ -143,13 +143,13 @@
 
         function getStatus(room) {
             if(room.ContainsHazard){
-                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE) {
-                    return Constants.ROOM_HAZARD_STATUS.IN_USE;
+                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE.KEY) {
+                    return Constants.ROOM_HAZARD_STATUS.IN_USE.KEY;
                 } else {
-                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY;
+                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY;
                 } 
             }else{
-                return Constants.ROOM_HAZARD_STATUS.NOT_USED;
+                return Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY;
             }
         }
 

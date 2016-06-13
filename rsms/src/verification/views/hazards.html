@@ -38,21 +38,10 @@
         <h3>New Hazards</h3>
         <ul>
             <li ng-if="!child.Hazard_id" ng-repeat="child in verification.PendingHazardDtoChanges" ng-class="{'new':child.Key_id}">
+                <pre>{{child | json}}</pre>
                 <div>{{child.Hazard_name}} {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
                 <div ng-if="!HazCat.editing && child.New_status">
-                    {{child.New_status}} in room {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
-                </div>
-            </li>
-        </ul>
-    </li>
-
-    <li ng-show="hazard.show" ng-repeat="hazard in allHazards[ hazardCategories[categoryIdx] ] | orderBy: 'Hazard_name' track by $index" ng-if="hazard.ActiveSubHazards.length">
-        <h3>{{hazard.Hazard_name}}</h3>
-        <ul>
-            <li id="hazard{{child.Hazard_id}}" ng-repeat="child in hazard.ActiveSubHazards | hazardRoomFilter:PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id" ng-class="{'new':child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id, 'justAdded':child.justAdded}" ng-init="getThatThereRoom(child, PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id)">
-                <div>{{child.Hazard_name}} {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
-                <div ng-if="!HazCat.editing && child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status">
-                    <span ng-if="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.Key_id">Status Updated:  Now</span> {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status}} in room {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
+                   {{Constants.ROOM_HAZARD_STATUS[child.New_status].LAB_LABEL}} in room {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
                 </div>
                 <div ng-if="HazCat.editing">
                     <label class="checkbox inline">
@@ -65,7 +54,33 @@
                     </label>
                     <label class="checkbox inline">
                         <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.NOT_USED" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
-                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL}} by my lab</span>
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL}}</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+    </li>
+
+    <li ng-show="hazard.show" ng-repeat="hazard in allHazards[ hazardCategories[categoryIdx] ] | orderBy: 'Hazard_name' track by $index" ng-if="hazard.ActiveSubHazards.length">
+        <h3>{{hazard.Hazard_name}}</h3>
+        <ul>
+            <li id="hazard{{child.Hazard_id}}" ng-repeat="child in hazard.ActiveSubHazards | hazardRoomFilter:PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id" ng-class="{'new':child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id, 'justAdded':child.justAdded}" ng-init="getThatThereRoom(child, PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id)">
+                <div>{{child.Hazard_name}} {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
+                <div ng-if="!HazCat.editing && child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status">
+                    <span ng-if="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.Key_id">Status Updated:  Now</span> {{Constants.ROOM_HAZARD_STATUS[child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status].LAB_LABEL}}
+                </div>
+                <div ng-if="HazCat.editing">
+                    <label class="checkbox inline">
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.IN_USE.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.IN_USE" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.IN_USE.LAB_LABEL}}</span>
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.STORED_ONLY.LAB_LABEL}}</span>
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="radio" ng-model="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status" ng-value="Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY" ng-required="child.InspectionRooms[chiidRoomIdx].PendingHazardDtoChangeCopy.Status == Constants.ROOM_HAZARD_STATUS.NOT_USED" ng-change="ac.savePendingHazardDtoChange(child.InspectionRooms[childRoomIdx].PendingHazardDtoChange, child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy)" />
+                        <span class="metro-radio">{{Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL}}</span>
                     </label>
                 </div>
             </li>

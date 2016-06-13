@@ -14,7 +14,7 @@ angular
         var id = 1;
     
         $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then();
+                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then(getAllHazards);
     
 
         function getVerification(id){
@@ -61,6 +61,43 @@ angular
                         }
                     );
         }
+
+        function getAllHazards() {
+            return ac.getAllHazards(id)
+                     .then(
+                         function (hazards) {
+                             // get leaf parents
+                             var hazard, leafParentHazards = [];
+                             var len = hazards.length;
+                             $scope.leafHazards = [];
+                             for (var n = 0; n < len; n++) {
+                                 hazard = hazards[n];
+                                 hazard.loadSubHazards();
+
+                                 if (!hazard.ActiveSubHazards.length) {
+                                     $scope.leafHazards.push(hazard)
+                                 }
+                             }
+                             return $scope.leafHazards;
+
+                         },
+                         function () {
+                             $scope.error = "Couldn't get the hazards";
+                             return false;
+                         }
+                     );
+        }
+
+        $scope.editHazardChange = function (change) {
+            if (change.edit) {
+                $rootScope.PendingHazardDtoChangeCopy = null;
+                change.edit = false;
+            } else {
+                ac.createCopy(change);
+                console.log($rootScope);
+                change.edit = true;
+            }
+        }
     
         $scope.onUserSelect = function(item) {
             if (item) {
@@ -97,6 +134,10 @@ angular
                 uf.users.push(returnedUser);
               }
             });
+        }
+
+        $scope.onSelectHazard = function (newHazard, change) {
+            
         }
 
     });
