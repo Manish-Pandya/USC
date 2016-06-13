@@ -89,7 +89,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; width:180px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
+                    <select ng-model="search.status" style="margin-bottom:0; max-width:160px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
@@ -151,8 +151,8 @@ require_once '../top_view.php';
                                 <i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
                             </span>
                             <span ng-if="!inspector.edit && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
-                                <i class="icon-pencil primary" title="Edit" title="Edit" ng-click="mif.editInspector(inspector, dto)"></i>
-                                <i class="icon-remove danger" title="Remove" title="Remove" ng-click="mif.removeInspector(dto, yearHolder.selectedYear, inspector)"></i>
+                                <i class="icon-pencil primary" title="Edit" ng-click="mif.editInspector(inspector, dto)"></i>
+                                <i class="icon-remove danger" title="Remove" ng-click="mif.removeInspector(dto, yearHolder.selectedYear, inspector)"></i>
                                 <i ng-if="$last" title="Add" alt="Add" class="icon-plus-2 success" ng-click="dto.addInspector = true"></i></a>
                             </span>
                         </li>
@@ -183,14 +183,21 @@ require_once '../top_view.php';
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>
                         </span>
+                        <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_CAP">
+                            <p>
+                                (Report Sent: {{dto.Inspections.Notification_date | dateToISO | date:"MM/dd/yy"}})
+                                <br>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
+                            </p>
+                        </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.CLOSED_OUT">
-                            <p ng-if="dto.Inspections.Deficiency_selections[0].length">
-                                (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
+                            <p ng-if="dto.Inspections.HasDeficiencies">
+                                (CAP Approved: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
-                            <p ng-if="!dto.Inspections.Deficiency_selections[0].length">
-                                (No deficiencies.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
+                            <p ng-if="!dto.Inspections.HasDeficiencies">
+                                (No deficiencies.)
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
@@ -208,7 +215,7 @@ require_once '../top_view.php';
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Inventory</a>
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>

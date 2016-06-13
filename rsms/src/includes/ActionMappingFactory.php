@@ -51,7 +51,7 @@ class ActionMappingFactory {
                 "getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
                 "getCurrentUserRoles"=>new ActionMapping("getCurrentUserRoles", "", ""),
         		"getRelationships"=>new ActionMapping("getRelationships", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-        	
+
                 // Users Hub
                 "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),
@@ -127,6 +127,7 @@ class ActionMappingFactory {
                 "initiateInspection"=>new ActionMapping("initiateInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveInspection"=>new ActionMapping("saveInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "submitCAP"=>new ActionMapping("submitCAP", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getSubHazards"=>new ActionMapping("getSubHazards", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -147,7 +148,7 @@ class ActionMappingFactory {
 
 
                 // Inspection, step 2 (Hazard Assessment)
-        		
+
         		"getHazardRoomDtosByPIId"=>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getHazardRoomMappingsAsTree"=>new ActionMapping("getHazardRoomMappingsAsTree", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getHazardsInRoom"=>new ActionMapping("getHazardsInRoom", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -171,7 +172,7 @@ class ActionMappingFactory {
                 "saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "saveSupplementalDeficiency"=>new ActionMapping("saveSupplementalDeficiency", "", "", $this::$ROLE_GROUPS["EHS"]),              
+                "saveSupplementalDeficiency"=>new ActionMapping("saveSupplementalDeficiency", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getInspectionsByPIId"=>new ActionMapping("getInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -220,7 +221,7 @@ class ActionMappingFactory {
                 // GENERIC
                 "getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", ""),
         		"prepareRedirect"=>new ActionMapping("prepareRedirect", "", "")
-        		
+
         );
     }
 }

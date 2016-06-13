@@ -115,6 +115,8 @@ class Inspection extends GenericCrud {
     /** is this a radiation inspection **/
     private  $is_rad;
 
+    private $hasDeficiencies = true;
+
     /**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
     private $text_schedule_month;
 
@@ -176,12 +178,6 @@ class Inspection extends GenericCrud {
     public function getPrincipal_investigator_id(){ return $this->principal_investigator_id; }
     public function setPrincipal_investigator_id($principal_investigator_id){ $this->principal_investigator_id = $principal_investigator_id; }
 
-    public function getResponses(){
-        $thisDAO = new GenericDAO($this);
-        $this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
-        return $this->responses;
-    }
-
     public function getRooms(){
         $thisDAO = new GenericDAO($this);
         $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
@@ -191,6 +187,11 @@ class Inspection extends GenericCrud {
         $this->getRooms = $rooms;
     }
 
+    public function getResponses(){
+        $thisDAO = new GenericDAO($this);
+        $this->responses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$RESPONSES_RELATIONSHIP));
+        return $this->responses;
+    }
     public function setResponses($responses){ $this->responses = $responses; }
 
     public function getDate_started(){ return $this->date_started; }
@@ -227,6 +228,7 @@ class Inspection extends GenericCrud {
         $responses = $this->getResponses();
         foreach ($responses as $response){
             $selections = $response->getDeficiencySelections();
+            $selections = array_merge($selections, $response->getSupplementalDeficiencies());
             foreach($selections as $selection){
                 $id = $selection->getDeficiency_id();
                 $deficiencySelections[] = $id;
@@ -248,104 +250,58 @@ class Inspection extends GenericCrud {
 
     public function getStatus() {
         $LOG = Logger::getLogger(__CLASS__);
-
+        //approved?
         // If there is a close date, it's closed.
-        if ($this->date_closed != null) {
-            return 'CLOSED OUT';
-        }
-
-        // Create some reference dates for status checking
+         // Create some reference dates for status checking
         $now = new DateTime("now");
         $then = new DateTime("now - 30 days");
 
-
-        // If it's been scheduled but not started...
-        if ($this->schedule_month != null && $this->date_started == null) {
-            // ... and it's not 30 days past the first day of the scheduled month
+        if ($this->date_closed != null) {
+            return 'CLOSED OUT';
+        }elseif($this->cap_submitted_date){
+            return 'PENDING EHS APPROVAL';
+        }elseif($this->notification_date){
+            //do we even, like, need a plan?
+            if(isset($this->getDeficiency_selections()['deficiencySelections'])){
+                $this->hasDeficiencies = false;
+                return "CLOSED OUT";
+            }
+            //Is the Corrective Action Plan overdue?
+            $notificationDate = new DateTime($this->getNotification_date());
+            if($now->diff($notificationDate)->d > 14){
+                return "OVERDUE CAP";
+            }else{
+                return "INCOMPLETE CAP";
+            }
+        }elseif($this->date_started){
+            return "INCOMPLETE INSPECTION";
+        }elseif($this->schedule_month){
+             // ... and it's not 30 days past the first day of the scheduled month
             if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {
                 // Then it's pending
-                return 'SCHEDULED';
+
+                //not fully schedule if not inspector(s) assigned
+                if($this->getInspectors() != NULL){
+                    return 'SCHEDULED';
+                }else{
+                    return 'NOT SCHEDULED';
+                }
                 //Begin Inspection
             } else {
                 // If it is 30 days past due, it's overdue for inspection
                 return 'OVERDUE FOR INSPECTION';
                 //Begin Inspection
             }
+        }else{
+            return "NOT SCHEDULED";
         }
-        //It's been started, but we know it hasn't been finished, because we checked above for date_closed
-        if($this->date_started != null){
-            $LOG->debug("date started is not null");
-            //PI has not been notified of the results
-            if($this->notification_date == null){
-                $LOG->debug("there was no notification date for inspection with key_id $this->key_id");
-
-                //Inspection has been started
-                return "INCOMPLETE INSPECTION";
-                //Continue Inspection
-
-            }
-            //PI has been notified of the results
-            else{
-
-                //CAP has been submitted
-                if($this->cap_submitted_date != null && $this->cap_submitted_date != '0000-00-00 00:00:00'){
-                    return 'CLOSED OUT';
-                    //View Report
-                }
-                //CAP not been submitted
-                else{
-                	$notificationDate = new DateTime($this->getNotification_date());
-                	 
-                	$LOG->fatal($now->diff($notificationDate));
-                    //Is the Corrective Action Plan overdue?
-                    if($now->diff($notificationDate)->d > 14){
-                        return "OVERDUE CAP";
-                        //View Report
-                    }else{
-                        return "PENDING CLOSEOUT";
-                        //View Report
-                    }
-                }
-            }
-        }
-
-        // Now we check to see if there are unresolved deficiencies.  Start by assuming all is good.
-        $accepted = true;
-
-        // iterate the responses that have deficiencies
-        foreach($this->getResponses() as $response){
-            foreach($response->getDeficiencySelections() as $def){
-                // Get the corrective actions for this deficiency
-                $cas = $def->getCorrectiveActions();
-                // if there are no corrective actions, no es bueno
-                if ($cas == null) {
-                    $accepted = false;
-                    break 2;
-                }
-                // If there are corrective actions, we need to make sure they're all "Accepted". Otherwise, not good.
-                foreach($cas as $ca){
-                    if($ca != "Accepted") {
-                        $accepted = false;
-                        break 3;
-                    }
-                }
-            }
-        }
-
-        // If there are unresolved deficiences, and the PI was notified > 30 days ago, we're overdue for corrective action
-        if ($accepted == false && $this->notification_date != null && $then > $this->notification_date){
-                return 'OVERDUE FOR CORRECTIVE ACTION';
-        }
-
-        // If no other status applies, it's considered open.
-        return 'N/A';
     }
     public function getCap_complete() {return $this->cap_complete;}
     public function setCap_complete($cap_complete) {$this->cap_complete = $cap_complete;}
     public function getCap_due_date() {
         if($this->getNotification_date() == NULL)return;
         $LOG = Logger::getLogger(__CLASS__);
-        
+
         //14 days after notification date
         $noteficationDate = new DateTime($this->getNotification_date());
         $interval = new DateInterval('P14D');
@@ -371,6 +327,8 @@ class Inspection extends GenericCrud {
     public function setIsArchived($archived){
         $this->isArchived = $archived;
     }
+
+    public function getHasDeficiencies(){return $this->hasDeficiencies;}
 
 }
 ?>

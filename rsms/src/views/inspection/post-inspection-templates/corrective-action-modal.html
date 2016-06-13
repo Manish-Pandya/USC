@@ -11,8 +11,7 @@
     <p ng-if="def.Deficiency.Text != 'Other'">{{def.Deficiency.Text}}</p>
     <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
 
-    <form class="form">
-
+    <form class="form" ng-init="copy.Deficiency_selection_id = def.Key_id">
         <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status:</label>
         <select class="status"
           ng-model="copy.Status"
