@@ -55,10 +55,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         **/
         updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
           //console.log(objDTO);
-          console.log(url);
           return $http.post(  url, objDTO )
           .success( function( returnedObj ) {
-              console.log(returnedObj);
             if(returnedObj.IsError) {
                 onFail(returnedObj);
             } else {
@@ -131,7 +129,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 .error(function(data, status, headers, config){
                     errorCallback();
                 });
-            console.log(promise);
             return promise;
         },
         getDataAsDeferredPromise: function( url ){
@@ -142,8 +139,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     deferred.resolve(data);
                 })
                 .error(function(data, status, headers, config){
-                    console.log(headers());
-                    console.log(status);
                     deferred.reject(data);
                 });
             return deferred.promise;
@@ -162,7 +157,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     }
                     deferred.reject(data);
                 });
-            console.log(deferred.promise);
             return deferred.promise;
         },
         getDataFromPostRequest: function(url, data, onSuccess, onFail ){
@@ -291,7 +285,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         getDate: function(time){
-            console.log(time);
 
             Date.prototype.getMonthFormatted = function() {
                 var month = this.getMonth();
@@ -340,7 +333,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 ('00' + date.getHours()).slice(-2) + ':' +
                 ('00' + date.getMinutes()).slice(-2) + ':' +
                 ('00' + date.getSeconds()).slice(-2);
-            console.log(date);
             return date;
         },
         setIsDirty: function(obj){
@@ -487,7 +479,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         link: function (scope, elem, attrs) {
             scope.attrs = attrs;
             scope.$watch('attrs', function (oldVal, newVal) {
-                console.log(newVal);
                 if (!newVal || newVal == 0) return false;
                 resize(attrs, elem, newVal)
             });
@@ -500,10 +491,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     attrs.$set('h', elem.outerHeight());
                     attrs.$set('len', len);
                 }
-                console.log(len)
-                console.log(attrs.h)
                 elem.find('ul > li').css({ 'paddingTop': (attrs.h / (len)) - 17 + 'px', 'paddingBottom': (attrs.h / (len)) -8 + 'px', 'height': 0 });
-                console.log(elem.find('ul > li'));
             }
         }
     }

@@ -75,7 +75,18 @@
             </span>
         </div>
     </div>
-    <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
+    <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">
+        <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
+        <span ng-if="inspection.Date_closed">This inspection was archived on {{inspection.Date_closed | dateToISO}}</span>
+        <a class="btn" ng-click="handleInspectionOpen(inspection)" ng-if="inspection.Cap_submitted_date 
+           && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
+            <span ng-if="!inspection.Date_closed">Approve CAP</span>
+            <span ng-if="inspection.Date_closed">Reopen CAP</span>
+        </a>
+        <span class="loading" ng-if='handlingInspectionOpen' style="margin-left:5px;">
+            <i class="icon-spinnery-dealie spinner small" style="color:white"></i>
+        </span>
+    </h2>    
     <a ng-if="readyToSubmit" class="btn btn-success btn-large left" style="margin:10px 0;" ng-click="submit()"><i class="icon-checkmark"></i>Submit CAP</a>
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
     <th colspan="2" style="width:24%; padding:0px">

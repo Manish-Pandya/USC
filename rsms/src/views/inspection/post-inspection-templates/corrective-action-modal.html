@@ -2,7 +2,7 @@
     <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">Add a corrective action</h2>
 </div>
 <div class="modal-body">
-<!--<pre>{{def|json}}</pre>-->
+    <!--<pre>{{def|json}}</pre>-->
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
     <h3>Audit Criteria:</h3>
     <p>{{question.Text}}</p>
@@ -12,31 +12,31 @@
     <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
 
     <form class="form" ng-init="copy.Deficiency_selection_id = def.Key_id">
-        <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status:</label>
-        <select class="status"
-          ng-model="copy.Status"
-          ng-options="status for status in options"
-          ng-init="copy.Status = copy.Status || options[0]"
-        >
-        </select>
         <div class="control-group">
-         <label class="control-label" for="inputEmail">Describe Corrective Action:</label>
-         <div class="controls">
-             <textarea ng-model="copy.Text"></textarea>
-         </div>
+            <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status:</label>
+            <label class="checkbox" ng-repeat="status in options" style="padding-top:4px">
+                <input type="checkbox" ng-true-value="{{status.Value}}" ng-model="copy.Status" />
+                <span class="metro-checkbox">{{status.Label}}</span>
+            </label>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Describe Corrective Action:</label>
+            <div class="controls">
+                <textarea ng-model="copy.Text"></textarea>
+            </div>
         </div>
 
         <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
-         <label class="control-label" for="inputEmail">Anticipated Completion Date:</label>
-         <div class="controls">
-            <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
-         </div>
+            <label class="control-label" for="inputEmail">Anticipated Completion Date:</label>
+            <div class="controls">
+                <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
+            </div>
         </div>
         <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
-         <label class="control-label" for="inputEmail">Completion Date:</label>
-         <div class="controls">
-             <datepicker2  ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
-         </div>
+            <label class="control-label" for="inputEmail">Completion Date:</label>
+            <div class="controls">
+                <datepicker2 ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
+            </div>
         </div>
     </form>
 </div>

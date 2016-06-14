@@ -152,6 +152,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         return deferred.promise
     }
 
+    factory.saveInspection = function (inspection, copy) {
+        var url = "../../ajaxaction.php?action=saveInspection";
+        var deferred = $q.defer();
+
+        convenienceMethods.saveDataAndDefer(url, copy).then(
+          function (promise) {
+              angular.extend(inspection, copy);
+              deferred.resolve(promise);
+          },
+          function (promise) {
+              deferred.reject(promise);
+          }
+        );
+        return deferred.promise
+    }
+
     factory.onFailGet = function () {
         return { 'data': error }
     };
@@ -817,6 +833,23 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         });
     }
 
+    $scope.handleInspectionOpen = function (inspection) {
+        $scope.handlingInspectionOpen = true;
+        var inspectionDto = {
+            Date_closed: inspection.Date_closed ? null : convenienceMethods.setMysqlTime(Date()),
+            Key_id: postInspectionFactory.inspection.Key_id,
+            Principal_investigator_id: postInspectionFactory.inspection.Principal_investigator_id,
+            Date_started: postInspectionFactory.inspection.Date_started,
+            Notification_date: convenienceMethods.setMysqlTime(Date()),
+            Schedule_month: postInspectionFactory.inspection.Schedule_month,
+            Schedule_year: postInspectionFactory.inspection.Schedule_year,
+            Cap_submitted_date: postInspectionFactory.inspection.Cap_submitted_date,
+            Cap_complete: postInspectionFactory.inspection.Cap_complete,
+            Class: "Inspection"
+        };
+        postInspectionFactory.saveInspection(inspection, inspectionDto).then(function () { $scope.handlingInspectionOpen = false; });
+    }
+
     function getIsReadyToSubmit() {
         var totals = 0;
         var pendings = 0;
@@ -935,7 +968,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
 
 modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance) {
     var data = postInspectionFactory.getModalData();
-    $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.PENDING, Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
+    $scope.options = [{ Value: Constants.CORRECTIVE_ACTION.STATUS.PENDING, Label: "Corrective action will be completed soon" }, { Value: Constants.CORRECTIVE_ACTION.STATUS.COMPLETE, Label: "Corrective action completed" }];
     $scope.validationError = '';
     $scope.dates = {};
 
@@ -947,8 +980,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
         if ($scope.def && $scope.def.CorrectiveActions && $scope.def.CorrectiveActions[0]) {
             $scope.copy = {};
             for (var prop in $scope.def.CorrectiveActions[0]) {
-                console.log(prop);
-                console.log($scope.def.CorrectiveActions[0][prop]);
                 $scope.copy[prop] = $scope.def.CorrectiveActions[0][prop];
             }
         } else {
@@ -972,7 +1003,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
 
         $scope.validationError = ''
         //call to factory to save, return, then close modal, passing data back
-        console.log(copy);
         postInspectionFactory.saveCorrectiveAction(copy)
           .then(
             function (returnedAction) {
