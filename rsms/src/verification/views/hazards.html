@@ -34,19 +34,13 @@
 </div>
 
 <ul class="verification-hazards">
-    <li ng-show="junk.hasNewHazards">
+    <li ng-show="dataHolder.hasNewHazards">
         <h3>New Hazards</h3>
-        <pre>parent id should match: {{hazardCategories[categoryIdx]}}</pre>
-        <pre>room id should match: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id}}</pre>
         <ul>
             <li ng-if="!child.Hazard_id 
                 && child.Room_id == PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id 
                 && child.Parent_id == hazardCategories[categoryIdx]"  ng-repeat="child in verification.PendingHazardDtoChanges" ng-class="{'new':child.Key_id}">
-                room id: {{child.Room_id}}
-                <br />
-                parent id: {{child.Parent_id}}
-                <br />
-                <span ng-init="junk.hasNewHazards = true;"></span>
+                <span ng-init="dataHolder.hasNewHazards = true;"></span>
                 <div>{{child.Hazard_name}} {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
                 <div ng-if="!HazCat.editing && child.New_status">
                     {{Constants.ROOM_HAZARD_STATUS[child.New_status].LAB_LABEL}} in room {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
