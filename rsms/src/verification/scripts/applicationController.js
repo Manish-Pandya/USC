@@ -215,6 +215,7 @@ angular
                         }
                         angular.extend(copy, returnedChange);
                         angular.extend(change, copy);
+                        change.edit = false;
                     },
                     function () {
                         ac.setError('The change could not be saved');

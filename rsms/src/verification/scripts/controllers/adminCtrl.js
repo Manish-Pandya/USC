@@ -136,8 +136,12 @@ angular
             });
         }
 
-        $scope.onSelectHazard = function (newHazard, change) {
-            
+        $scope.onSelectHazard = function (hazard, change) {
+            var copy = new PendingHazardDtoChange();
+            angular.extend(copy, change);
+            copy.Hazard_id = hazard.Key_id;
+            copy.Hazard_name = hazard.Name;
+            ac.savePendingHazardDtoChange(change, copy);
         }
 
     });

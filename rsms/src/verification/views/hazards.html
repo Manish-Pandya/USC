@@ -67,7 +67,7 @@
         <h3>{{hazard.Hazard_name}}</h3>
         <ul>
             <li id="hazard{{child.Hazard_id}}" ng-repeat="child in hazard.ActiveSubHazards | hazardRoomFilter:PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id" ng-class="{'new':child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id, 'justAdded':child.justAdded}" ng-init="getThatThereRoom(child, PI.Buildings[buildingIdx].Rooms[roomIdx].Key_id)">
-                <div>{{child.Hazard_name}} {{child.InspectionRooms[childRoomIdx].PendingHazardDtoChange.Key_id}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
+                <div>{{child.Hazard_name}}<i ng-if="child.matchedForOtherPi" class="icon-info danger" ng-click="openMultiplePIHazardsModal(child, PI.Buildings[buildingIdx].Rooms[roomIdx])"></i></div>
                 <div ng-if="!HazCat.editing && child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status">
                     <span ng-if="child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.Key_id">Status Updated:  Now</span> {{Constants.ROOM_HAZARD_STATUS[child.InspectionRooms[childRoomIdx].PendingHazardDtoChangeCopy.New_status].LAB_LABEL}}
                 </div>

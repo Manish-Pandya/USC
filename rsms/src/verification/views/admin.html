@@ -68,7 +68,7 @@
                 <!--<pre>{{change | json}}</pre>
                  ng-class="{new: change.New_status == Constants.PENDING_CHANGE.USER_STATUS.ADDED, inactive: change.New_status != Constants.PENDING_CHANGE.USER_STATUS.ADDED}"-->
                 <span ng-if="change.edit">
-                    <ui-select tagging="addNewHazard" ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item)" class="span4" style="margin-left:0">
+                    <ui-select tagging="addNewHazard" ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item, change)" class="span4" style="margin-left:0">
                         <ui-select-match placeholder="Select or search for a Hazard">{{selectedHazard.Hazard_name}} </ui-select-match>
                         <ui-select-choices repeat="hazard in leafHazards | orderBy:'Hazard_name' | propsFilter: {Hazard_name: $select.search}">
                             <div ng-bind-html="hazard.Hazard_name | highlight: $select.search"></div>
