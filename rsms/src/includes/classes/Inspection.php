@@ -262,7 +262,8 @@ class Inspection extends GenericCrud {
             return 'PENDING EHS APPROVAL';
         }elseif($this->notification_date){
             //do we even, like, need a plan?
-            if(isset($this->getDeficiency_selections()['deficiencySelections'])){
+            $ds = $this->getDeficiency_selections();
+            if(isset($ds['deficiencySelections'])){
                 $this->hasDeficiencies = false;
                 return "CLOSED OUT";
             }
