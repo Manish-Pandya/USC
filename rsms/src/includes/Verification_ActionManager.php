@@ -374,30 +374,40 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 
             //get all the parent hazards
             $leafHazard = $this->getHazardById($initialId);
-            //get the ids of the pi's hazards so we can stop recursing up when we need to
-            $piHazRoomDao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation);
-            $whereClauseGroup = new WhereClauseGroup(array(
-                new WhereClause("principal_investigator_id", "=", $id)
-            ));
-            $pisHazards = $piHazRoomDao->getAllWhere($whereClauseGroup);
-            //init array with the ids of the branch level hazards
-            $ids = array(10000);
-            foreach($pisHazards as $piHaz){
-                $ids[] = $piHaz->getHazard_id();
-            }
 
             $roomId = $decodedObject->getRoom_id();
-            $hazards = $this->getParentHazards($leafHazard, $ids);
+            $hazards = $this->getParentHazards($leafHazard);
 
             $piHazRoom = new PrincipalInvestigatorHazardRoomRelation();
             $piHazRoom->setRoom_id($roomId);
             $piHazRoom->setStatus($decodedObject->getNew_status());
             $piHazRoom->setPrincipal_investigator_id($id);
 
+            $piHazRoomDao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation);
+            $decodedObject = new PendingHazardDtoChange();
+            $status = $decodedObject->getNew_status();
+            //if the new_status is NOT_USED, we should remove only that hazard and then stop
+            if($status == "NOT_USED"){
+
+            }
+            //if the new_status is STORED_ONLY, we should save that hazard, then recurse up the tree till we find one that is in use, then stop
+            elseif($status == "STORED_ONLY"){
+
+            }
+            //if the new_status is IN_USE, we must recurse all the way up the tree
+            elseif($status == "IN_USE"){
+
+            }else{
+                return new ActionError("Invalid status");
+            }
+
+
+
             foreach($hazards as $hazard){
                 $piHazRoom->setHazard_id($hazard->getKey_id());
                 $piHazRoom->setKey_id(null);
 
+                //does this PI have this hazard in this room already?  is there a status conflict?
                 if(!$piHazRoomDao->save($piHazRoom)){
                     return new ActionError("Failed to save a relation for $hazard->getName()");
                 }
@@ -411,7 +421,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     	}
     }
 
-    private function getParentHazards(Hazard $hazard, $ids, Hazard $originalHazard = null, $hazards = null){
+    private function getParentHazards(Hazard $hazard,  Hazard $originalHazard = null, $hazards = null){
         $L = Logger::getLogger(__FUNCTION__);
         if($originalHazard == null){
             $originalHazard = $hazard;
@@ -421,9 +431,9 @@ class Verification_ActionManager extends HazardInventoryActionManager {
         }
         $parentDao = $this->getDao($hazard);
         $parent = $parentDao->getById($hazard->getParent_hazard_id());
-        if(!in_array($parent->getKey_id(), $ids)){
+        if($parent->getKey_id() != 10000){
             array_push($hazards, $parent);
-            return $this->getParentHazards($parent, $ids, $originalHazard, $hazards);
+            return $this->getParentHazards($parent, $originalHazard, $hazards);
         }else{
             return $hazards;
         }
