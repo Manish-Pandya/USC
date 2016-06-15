@@ -180,7 +180,13 @@ angular
         }
 
         ac.savePendingHazardDtoChange = function (change, copy) {
-            console.log(copy);
+
+            if (!copy) {
+                if (!change.updatedStatus) return false;
+                copy = angular.extend({}, change);
+                copy.New_status = change.updatedStatus;
+            }
+
             ac.clearError();
             copy.Is_active = false;
             
@@ -212,6 +218,9 @@ angular
                     },
                     function () {
                         ac.setError('The change could not be saved');
+                        if (change.updatedStatus) {
+                            change.updatedStatus = change.New_status;
+                        }
                         copy = null;
                     }
                 )

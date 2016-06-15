@@ -10,8 +10,11 @@
         $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
         $scope.HazCat = {};
+        $scope.junk = { hasNewHazards: false };
+
 
         $scope.incrementRoom = function (int) {
+            $scope.junk.hasNewHazards = false;
             var turn = false;
             $scope.categoryIdx += int;
             if ($scope.categoryIdx > $scope.hazardCategories.length - 1) {
