@@ -1558,6 +1558,12 @@ span.recs span{
 .correctiveAction {
   position: absolute;
 }
+td.corrective-action.corrected-during-inspection{
+  padding: 0 !important;
+  width: auto;
+  /* background:purple; */
+  display: table-cell !important;
+}
 .corrective-action > div{
   padding:15px;
 }

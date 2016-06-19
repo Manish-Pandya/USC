@@ -271,8 +271,6 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function setInspections($inspections){ $this->inspections = $inspections; }
 
-
-
 	public function getActiveParcels() {
 		if($this->activeParcels === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);

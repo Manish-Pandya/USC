@@ -56,15 +56,15 @@ class ActionManager {
             return new ActionError("Unable to decode JSON. Cause: $e");
         }
     }
-    
+
     public function getInputFile(){
     	try{
     		$decodedObject = JsonManager::getFile();
-    
+
     		if( $decodedObject === NULL ){
     			return new ActionError('No data read from input stream');
     		}
-    
+
     		return $decodedObject;
     	}
     	catch(Exception $e){
@@ -86,7 +86,7 @@ class ActionManager {
             return new GenericDAO( $modelObject );
         }
     }
-    
+
     public function getCurrentUserRoles( $user = NULL ){
         $LOG = Logger::getLogger('Action:' . __function__);
 
@@ -124,7 +124,7 @@ class ActionManager {
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
         $destination = $this->getValueFromRequest('destination', $destination);
-        
+
         if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
         if(!isProduction()){
@@ -179,12 +179,12 @@ class ActionManager {
                 else{
                     if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
                 }
-                
+
                 if(isset($_SESSION["REDIRECT"])){
                 	$LOG->fatal("should redirect");
                 	$_SESSION['DESTINATION'] = $this->getDestination();
                 }
-                
+
                 // return true to indicate success
                 return true;
             } else {
@@ -375,20 +375,20 @@ class ActionManager {
       	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
       	$destination = str_replace(LOGIN_PAGE, "", $destination);
       }
-      
+
       return $destination;
     }
 
     public function prepareRedirect(){
     	$LOG = Logger::getLogger("redirect");
     	$redirect = $this->getValueFromRequest('redirect', $redirect);
-    	
+
     	$_SESSION["REDIRECT"] = $redirect;
     	$LOG->fatal($_SESSION["REDIRECT"]);
        	return true;
-    	
+
     }
-    
+
     public function logoutAction(){
         session_destroy();
         return true;
@@ -546,7 +546,7 @@ class ActionManager {
                 $decodedObject->setIs_active(true);
             }
             $user = $dao->save( $decodedObject );
-                        
+
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
                 foreach($decodedObject->getRoles() as $role){
@@ -561,18 +561,18 @@ class ActionManager {
                  //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($decodedObject->getPrincipalInvestigator() != null){
                     $pi = $decodedObject->getPrincipalInvestigator();
-                }else{          	 
+                }else{
                     $pi = new PrincipalInvestigator();
                     $pi->setUser_id($user->getKey_id());
                 }
-                
-                $pi->setUser_id($user->getKey_id());               
+
+                $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
                 $piDao  = $this->getDao(new PrincipalInvestigator());
                 $depts = $pi->getDepartments();
-                
+
                 $newPi = $this->savePI($pi);
-                
+
                 foreach($depts as $department){
                 	$dto = new RelationshipDto();
                 	$dto->setAdd(true);
@@ -580,7 +580,7 @@ class ActionManager {
                 	$dto->setRelation_id($department["Key_id"]);
                 	$this->savePIDepartmentRelation($dto);
                 }
-                
+
                 $newPi->setDepartments($pi->getDepartments());
                 $user->setPrincipalInvestigator($newPi);
             }
@@ -613,17 +613,17 @@ class ActionManager {
         }
         return new ActionError('Could not save');
     }
-    
+
     private function recurseHazardTree( $hazard = null, $weight = null){
     	$LOG = Logger::getLogger(__FUNCTION__);
-    	if($hazard == null){	
+    	if($hazard == null){
     		$hazard = $this->getHazardById(10000);
     	}
-    	
+
     	foreach($hazard->getActiveSubHazards() as $child){
     		$this->recurseHazardTree($child);
     	}
-    	    	
+
     	return $hazard;
     }
 
@@ -726,7 +726,7 @@ class ActionManager {
                         //i.e. Biological Hazards' checklist should have Biological Hazards as its master hazard
                         $master_hazard = $hazard->getName();
                         $masterHazardId = $hazard->getKey_id();
-                        
+
                     }
                 }
 				$decodedObject->setMaster_id($masterHazardId);
@@ -1850,7 +1850,7 @@ class ActionManager {
 	        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
 	        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
 	        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
-	         
+
 	        $piMaps = array();
 	        $piMaps[] = new EntityMap("lazy","getLabPersonnel");
 	        $piMaps[] = new EntityMap("lazy","getRooms");
@@ -1880,15 +1880,15 @@ class ActionManager {
         	$roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
         	$roomMaps[] = new EntityMap("lazy","getHas_hazards");
         	$roomMaps[] = new EntityMap("lazy","getSolidsContainers");
-        	 
+
         }
         foreach($rooms as $room){
 			if($allLazy == NULL){
 	            foreach($room->getPrincipalInvestigators() as $pi){
 	                $pi->setEntityMaps($piMaps);
-	
+
 	                $user = $pi->getUser();
-	
+
 	                $userMaps = array();
 	                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
 	                $userMaps[] = new EntityMap("lazy","getInspector");
@@ -2742,14 +2742,35 @@ class ActionManager {
         }
     }
 
-    // Inspection, step 2 (Hazard Assessment)
+      public function submitCAP(){
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to Inspection');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
 
-    /**
-     * Builds an associative array mapping Hazard IDs to the rooms
-     * that contain them. The listed rooms are limited by the Room IDs
-     * given as a CSV parameter
-     *
-     * @param string $roomIds
+            $dao = $this->getDao(new Inspection());
+
+            // Save the Inspection
+            $inspection = $dao->save($decodedObject);
+
+            return $inspection;
+        }
+      }
+
+
+      // Inspection, step 2 (Hazard Assessment)
+
+      /**
+       * Builds an associative array mapping Hazard IDs to the rooms
+       * that contain them. The listed rooms are limited by the Room IDs
+       * given as a CSV parameter
+       *
+       * @param string $roomIds
      * @param Hazard $hazard
      * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
      */
@@ -3021,7 +3042,7 @@ class ActionManager {
             $piHazRoomDao = $this->getDao(new PrincipalInvestigatorHazardRoomRelation());
             $piHazRooms = $piHazRoomDao->getAllWhere($whereClauseGroup);
 
-            //key_ids of hazards which are at branch level.  we use these to make sure that branch hazards are not excluded when the PI has direct children of them 
+            //key_ids of hazards which are at branch level.  we use these to make sure that branch hazards are not excluded when the PI has direct children of them
             $branchIds = array(1, 10009, 10010, 9999);
             $branchChildIds= array();
             foreach($branchIds as $id){
@@ -3047,7 +3068,7 @@ class ActionManager {
                     $hazard = $piHazardRoom->getHazard();
                     $hazard->setEntityMaps($entityMaps);
                     $hazardIds[] = $piHazardRoom->getHazard_id();
-                    $hazards[] = $hazard;              
+                    $hazards[] = $hazard;
                 }
             }
 
@@ -3544,7 +3565,7 @@ class ActionManager {
                         $masterHazards[] = $hazard->getKey_id();
                         // ... and get its checklist, if there is one
                         $checklist = $hazard->getChecklist();
-                        
+
                         // if this hazard had a checklist, add it to the checklists array
                         if (!empty($checklist)){
                         	$checklist->setParent_hazard_id($hazard->getParent_hazard_id());
@@ -3558,7 +3579,7 @@ class ActionManager {
             foreach($checklists as $checklist){
                 $checklist->setInspectionRooms($orderedRooms);
             }
-            
+
             if (!empty($checklists)){
                 // return the list of checklist objects
                 return $checklists;
@@ -3675,7 +3696,7 @@ class ActionManager {
                     						 DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 }
             }
-            
+
 
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             if($report == null){
@@ -3694,14 +3715,14 @@ class ActionManager {
                 if($report == null){
                     $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                     $checklist->setInspectionId($inspection->getKey_id());
-                    $checklist->setRooms($inspection->getRooms());                    
+                    $checklist->setRooms($inspection->getRooms());
                     //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
                     //9999 is the key_id for General Hazard
                     if($checklist->getMaster_id() != 9999){
                         $checklist->filterRooms($inspection->getPrincipal_investigator_id());
                     }
                 }
-                
+
                 $entityMaps = array();
                 $entityMaps[] = new EntityMap("lazy","getHazard");
                 $entityMaps[] = new EntityMap("lazy","getRooms");
@@ -3711,12 +3732,12 @@ class ActionManager {
                 $hazardIds[] = $checklist->getHazard_id();
 
             }
-            
+
 			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
             $orderedChecklists = array();
             $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
             $inspection->setChecklists( $orderedChecklists );
-            
+
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getInspectors");
             $entityMaps[] = new EntityMap("eager","getRooms");
@@ -3724,14 +3745,14 @@ class ActionManager {
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
             $entityMaps[] = new EntityMap("eager","getChecklists");
             $inspection->setEntityMaps($entityMaps);
-            
+
             //make sure we get the right rooms for our branch level checklists
             //ids of the branch level hazards, excluding general, which is always in every room
             $realBranchIds = array(1,10009,100010);
             $neededRoomIds = array();
             $neededRooms   = array();
             foreach($orderedChecklists as $list){
-                
+
                 if(in_array($list->getHazard_id(), $realBranchIds)){
                     //if(!in_array(,$neededRoomIds))
                     //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
@@ -3755,7 +3776,7 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided");
         }
 
-        
+
     }
 
     private function getChildLists(Checklist $list, array $orderedChecklists){
@@ -3763,14 +3784,14 @@ class ActionManager {
         foreach($orderedChecklists as $child){
             if($child->getKey_id() != $list->getKey_id() && $child->getMaster_id() == $list->getHazard_id()){
                 $lists[] = $child;
-            }        
+            }
         }
         return $lists;
     }
 
     private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
     	$LOG = Logger::getLogger( 'Action:' . __function__ );
-    	 
+
     	if($hazard == null){
     		//get the "Root hazard".  It's key_id is 10000, hence the magic number
     		$hazard = $this->getHazardById(10000);
@@ -3784,13 +3805,13 @@ class ActionManager {
                 array_push($orderedChecklists,$checklists[$idx]);
 	    		unset($checklists[$idx]);
 	    	}
-	    	
+
     		$this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $child);
 	    }
 	    return $orderedChecklists;
-	    
+
 	}
-	
+
 	private function findChecklist($checklist, $lists){
 		if($checklist == NULL)return false;
 		$LOG = Logger::getLogger(__FUNCTION__);
@@ -3801,7 +3822,7 @@ class ActionManager {
 		}
 		return false;
 	}
-    
+
     public function getDeficiencySelectionById( $id = NULL ){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
@@ -4186,7 +4207,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("eager","getStatus");
 
                 $inspection->setEntityMaps($entityMaps);
-                
+
                 $filteredRooms = array();
                 $rooms = $inspection->getRooms();
                 foreach( $rooms as $key=>$room ){
@@ -4195,7 +4216,7 @@ class ActionManager {
                 	}
                 }
                 $is->setInspection_rooms($filteredRooms);
-                
+
                 $is->setInspections($inspection);
             }
 
@@ -4396,17 +4417,17 @@ class ActionManager {
         $dao = $this->getDao(new SupplementalObservation());
         return $dao->getAll();
     }
-    
+
     public function getRelationships( $class1 = NULL, $class2 = NULL ){
     	$LOG = Logger::getLogger( 'Action:' . __function__ );
-    
+
     	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
     	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
-    
+
     	// make sure first letter of class name is capitalized.
     	$class1 = ucfirst($class1);
     	$class2 = ucfirst($class2);
-    
+
     	$relationshipFactory = new RelationshipMappingFactory();
     	// get the relationship mapping for the relevant classes
     	$relationship = $relationshipFactory->getRelationship($class1, $class2);
@@ -4414,9 +4435,9 @@ class ActionManager {
     	if( $relationship instanceof ActionError ) {
     		return $relationship;
     	}
-    
+
     	$dao = new GenericDAO(new RelationDto());
-    
+
     	$relationships = $dao->getRelationships($relationship);
     	//$LOG->fatal($relationships);
     	return $relationships;
