@@ -5,7 +5,7 @@ angular
         $scope.ac = ac;
 
         $scope.contactOptions  = [];
-        var id = 1;
+        var id = $stateParams.id;
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI);

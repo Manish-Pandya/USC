@@ -29,7 +29,7 @@ require_once '../top_view.php';
               </ul>
           </li>
     </ul>
-</div><
+</div>
 
 <div class="row-fluid">
     <div class="alert alert-error" ng-if="error" style="margin-top:10px;">

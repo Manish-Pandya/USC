@@ -1,21 +1,20 @@
 angular
     .module('VerificationApp')
-    .controller('AdminCtrl', function ($scope, $rootScope, $modal, applicationControllerFactory, modelInflatorFactory, userHubFactory, locationHubFactory) {
-        var ac = $scope.ac = applicationControllerFactory;
-        var uf = $scope.uf = userHubFactory;
-        var lf = $scope.lf = locationHubFactory;
-        
-        $scope.dataStoreManager = dataStoreManager;
-        
-        $scope.contactOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NO_LONGER_CONTACT];
-        $scope.personnelOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NOW_A_CONTACT];
-        $scope.newUser;
-        $scope.addedUsers = [];
-        var id = 1;
-    
-        $rootScope.loading = getVerification(id)
-                                .then(getPI).then(getAllUsers).then(uf.getAllRoles).then(getAllHazards);
-    
+     .controller('AdminCtrl', function ($scope, $stateParams, $rootScope, $modal, applicationControllerFactory, modelInflatorFactory, userHubFactory, locationHubFactory) {
+         var ac = $scope.ac = applicationControllerFactory;
+         var uf = $scope.uf = userHubFactory;
+         var lf = $scope.lf = locationHubFactory;
+
+         $scope.dataStoreManager = dataStoreManager;
+
+         $scope.contactOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NO_LONGER_CONTACT];
+         $scope.personnelOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NOW_A_CONTACT];
+         $scope.newUser;
+         $scope.addedUsers = [];
+         var id = $stateParams.id;
+
+         $rootScope.loading = getVerification(id)
+                                 .then(getPI).then(getAllUsers).then(uf.getAllRoles).then(getAllHazards);
 
         function getVerification(id){
             return ac.getVerification(id)
@@ -66,25 +65,37 @@ angular
             return ac.getAllHazards(id)
                      .then(
                          function (hazards) {
-                             // get leaf hazards
-                             var hazard, leafHazards = [];
+                             // get leaf parents
+                             var hazard, leafParentHazards = [];
                              var len = hazards.length;
+                             $scope.leafHazards = [];
                              for (var n = 0; n < len; n++) {
                                  hazard = hazards[n];
                                  hazard.loadSubHazards();
 
                                  if (!hazard.ActiveSubHazards.length) {
-                                     leafHazards.push(hazard);
+                                     $scope.leafHazards.push(hazard)
                                  }
                              }
-                             $scope.leafHazards = leafHazards;
                              return $scope.leafHazards;
+
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
                              return false;
                          }
                      );
+        }
+
+        $scope.editHazardChange = function (change) {
+            if (change.edit) {
+                $rootScope.PendingHazardDtoChangeCopy = null;
+                change.edit = false;
+            } else {
+                ac.createCopy(change);
+                console.log($rootScope);
+                change.edit = true;
+            }
         }
     
         $scope.onUserSelect = function(item) {
@@ -122,6 +133,14 @@ angular
                 uf.users.push(returnedUser);
               }
             });
+        }
+
+        $scope.onSelectHazard = function (hazard, change) {
+            var copy = new PendingHazardDtoChange();
+            angular.extend(copy, change);
+            copy.Hazard_id = hazard.Key_id;
+            copy.Hazard_name = hazard.Name;
+            ac.savePendingHazardDtoChange(change, copy);
         }
 
     });

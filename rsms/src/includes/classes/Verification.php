@@ -20,6 +20,8 @@ class Verification extends GenericCrud{
 			"due_date"					=> "timestamp",
 			"completed_date"			=> "timestamp",
 			"step"						=> "integer",
+			"substep"					=> "integer",
+            "inspection_id"             => "integer",
 			
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -31,6 +33,8 @@ class Verification extends GenericCrud{
 	);
 	
 	private $principal_investigator_id;
+    private $piName;
+
 	private $notification_date;
 	private $due_date;
 	private $completed_date;
@@ -39,6 +43,11 @@ class Verification extends GenericCrud{
 	private $pendingRoomChanges;
 	private $pendingUserChanges;
 	private $pendingHazardDtoChanges;
+    private $status;
+    private $substep;
+
+    //verifications must be done for inspections
+    private $inspection_id;
 	
 	public function __construct(){
 		
@@ -60,14 +69,20 @@ class Verification extends GenericCrud{
 	public function setNotification_datw($date){$this->notification_date = $date;}
 	
 	public function getDue_date(){return $this->due_date;}
-	public function setDue_datw($date){$this->due_date = $date;}
+	public function setDue_date($date){$this->due_date = $date;}
 	
 	public function getCompleted_date(){return $this->completed_date;}
 	public function setCompleted_date($date){$this->completed_date = $date;}
-	
+
 	public function getStep(){return $this->step;}
-	public function setStep($step){$this->step = $step;}
-	
+	public function setStep($step){$this->step = $step;}	
+
+    public function getSubstep(){return $this->substep;}
+	public function setSubstep($step){$this->substep = $step;}
+
+    public function getInspection_id(){return $this->inspection_id;}
+	public function setInspection_id($id){$this->inspection_id = $id;}
+
 	public function getPendingRoomChanges(){
 		if($this->pendingRoomChanges === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new PendingRoomChange());
@@ -109,6 +124,32 @@ class Verification extends GenericCrud{
 		}
 		return $this->pendingHazardDtoChanges;
 	}
+
+    public function getPiName(){
+        if($this->piName == null && $this->principal_investigator_id != null){
+            $piDao = new GenericDAO(new PrincipalInvestigator());
+            $pi = $piDao->getById($this->principal_investigator_id);
+            if($pi->getUser() != null){
+                $this->piName = $pi->getUser()->getName();
+            }
+        }
+        return $this->piName;
+    }
+
+    public function getStatus(){
+        $l = Logger::getLogger(__FUNCTION__);
+        $current = strtotime("midnight today");
+        $l->fatal($current);
+        $l->fatal(strtotime($this->due_date));
+        if($this->completed_date != NULL){
+            $this->status = "COMPLETE";
+        }elseif($this->due_date != NULL && $current > strtotime($this->due_date)){
+            $this->status = "OVERDUE";
+        }else{
+            $this->status = "PENDING";
+        }
+        return $this->status;
+    }
 }
 
 ?>

@@ -49,7 +49,10 @@ class Verification_ActionMappingFactory extends HazardInventoryActionMappingFact
 				"savePendingHazardDtoChange"=>new ActionMapping("savePendingHazardDtoChange", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"confirmPendingUserChange"=>new ActionMapping("confirmPendingUserChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"confirmPendingRoomChange"=>new ActionMapping("confirmPendingRoomChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"confirmPendingHazardChange"=>new ActionMapping("confirmPendingHazardChange", "", "", $this::$ROLE_GROUPS["ADMIN"])
+				"confirmPendingHazardChange"=>new ActionMapping("confirmPendingHazardChange", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getVerificationsByYear"=>new ActionMapping("getVerificationsByYear", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"getVerificationYears"=>new ActionMapping("getVerificationYears", "", "", $this::$ROLE_GROUPS["ADMIN"])
+
 		);
 	}
 }

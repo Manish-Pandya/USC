@@ -126,9 +126,7 @@ angular
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
                         if (!copy.Key_id) {
-                            dataStoreManager.pushIntoCollection(returnedChange);
-                            $scope.changes = dataStore.PendingUserChange;
-                           
+                            dataStoreManager.pushIntoCollection(returnedChange);                           
                             ac.getCachedVerification().PendingUserChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
                             if (contact) contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
@@ -180,7 +178,13 @@ angular
         }
 
         ac.savePendingHazardDtoChange = function (change, copy) {
-            console.log(copy);
+
+            if (!copy) {
+                if (!change.updatedStatus) return false;
+                copy = angular.extend({}, change);
+                copy.New_status = change.updatedStatus;
+            }
+
             ac.clearError();
             copy.Is_active = false;
             
@@ -209,9 +213,13 @@ angular
                         }
                         angular.extend(copy, returnedChange);
                         angular.extend(change, copy);
+                        change.edit = false;
                     },
                     function () {
                         ac.setError('The change could not be saved');
+                        if (change.updatedStatus) {
+                            change.updatedStatus = change.New_status;
+                        }
                         copy = null;
                     }
                 )
@@ -233,6 +241,51 @@ angular
                     ac.setError('The changed could not be verified.')
                 )
         }
+
+        ac.confirmHazardChange = function (change, piId) {
+            var copy = ac.createCopy(change);
+
+            var urlFragment = "confirmPendingHazardChange&id="+piId;
+            return ac.save(copy, false, urlFragment)
+                .then(
+                    function (returnedChange) {
+                        returnedChange.edit = false;
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
+                        angular.extend(change, returnedChange);
+                    },
+                    ac.setError('The changed could not be verified.')
+                )
+        }
+
+
+        ac.getVerificationsByYear = function (year) {
+            dataStore.Verification = null;
+            return ac.getVerificationYears()
+                      .then(function (years) {
+                          var urlSegment = "getVerificationsByYear&year=" + year;
+                          return genericAPIFactory.read(urlSegment)
+                                  .then(
+                                      function (returnedPromise) {
+                                          var verifications = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                                          store.store(verifications);
+                                          return years;
+                                      }
+                                  );
+                      })
+        }
+
+        ac.getVerificationYears = function () {
+            var urlSegment = "getVerificationYears";
+            return genericAPIFactory.read(urlSegment)
+                    .then(
+                        function (returnedPromise) {
+                            console.log(returnedPromise);
+                            var years = returnedPromise.data;
+                            return years;
+                        }
+                    );
+        }
+
 
         return ac;
     });

@@ -1,11 +1,11 @@
 angular
     .module('VerificationApp')
-    .controller('LocationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory) {
+    .controller('LocationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $stateParams) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
-        var id = 1;
-    
+        var id = $stateParams.id;
+
         $scope.rooms = [];
         $scope.room;
 

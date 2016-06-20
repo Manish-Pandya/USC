@@ -2705,6 +2705,29 @@ class ActionManager {
             $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
         }
 
+        //When an Inspection is scheduled, labs should complete a verification before the inspection takes place
+        if($inspection->getSchedule_month() != null){
+            //first, see if this verification has already been created
+            $whereClauseGroup = new WhereClauseGroup(
+                array(new WhereClause("inspection_id","=",$inspection->getKey_id()))
+            );
+            $verificationDao =  new GenericDAO(new Verification());
+
+            $verifications = $verificationDao->getAllWhere($whereClauseGroup);
+            if(!empty($verifications)){
+                $verification = $verifications[0];
+            }else{
+                $verification = new Verification();
+            }
+
+            //the verification is due one month before the first day of the scheduled month of the inspection
+            $inspectionDate = date_create($inspection->getSchedule_year() . "-" . $inspection->getSchedule_month() );
+            $verification->setDue_date($inspectionDate->format("Y-m-d H:i:s"));
+            $verification->setInspection_id($inspection->getKey_id());
+            $verification->setPrincipal_investigator_id($inspection->getPrincipal_investigator_id());
+            $verificationDao->save($verification);
+        }
+        
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getInspectors");
         $entityMaps[] = new EntityMap("eager","getRooms");

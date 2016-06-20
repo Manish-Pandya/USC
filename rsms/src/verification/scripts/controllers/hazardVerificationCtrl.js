@@ -1,6 +1,6 @@
 ﻿angular
     .module('VerificationApp')
-    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $modal) {
+    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $modal, $stateParams) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
@@ -10,8 +10,16 @@
         $scope.hazardCategories = [Constants.MASTER_HAZARD_IDS.BIOLOGICAL, Constants.MASTER_HAZARD_IDS.CHEMICAL, Constants.MASTER_HAZARD_IDS.RADIATION];
 
         $scope.HazCat = {};
+        $scope.dataHolder = { hasNewHazards: false };
+
+        //todo:  flatten array of buildings, rooms, hazardCats into map which we can access by any idx
+        //ie:map = [{BuildingIdx:0, RoomIdx:0, CatIds:0},{BuildingIdx:0, RoomIdx:0, CatIds:1}],
+        //we can then go to Chem in the first room by passing map[1] to a parser
+
 
         $scope.incrementRoom = function (int) {
+            console.log(int);
+            $scope.dataHolder.hasNewHazards = false;
             var turn = false;
             $scope.categoryIdx += int;
             if ($scope.categoryIdx > $scope.hazardCategories.length - 1) {
@@ -36,6 +44,12 @@
                     $scope.roomIdx = bldg.Rooms.length - 1;
                 }
             }
+        }
+
+
+
+        $scope.setCategoryIdx = function (idx) {
+            $scope.categoryIdx = idx;
         }
 
         $scope.getThatThereRoom = function (hazard, id) {
@@ -111,10 +125,11 @@
             return newHazard;
         }
 
-        var id = 1; // TODO: This shouldn't be set here. Just for testing.
+        var id = $stateParams.id;
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllHazards);
+
         $scope.dsm = dataStoreManager;
 
         var setHazardChangeDTO = function (hazard) {
@@ -142,15 +157,14 @@
         }
 
         function getStatus(room) {
-            if (room.ContainsHazard) {
-                console.log(room);
-                if (room.Status == Constants.ROOM_HAZARD_STATUS.IN_USE.KEY) {
-                    return Constants.ROOM_HAZARD_STATUS.IN_USE.LAB_LABEL;
+            if(room.ContainsHazard){
+                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE.KEY) {
+                    return Constants.ROOM_HAZARD_STATUS.IN_USE.KEY;
                 } else {
-                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY.LAB_LABEL;
+                    return Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY;
                 } 
-            } else {
-                return Constants.ROOM_HAZARD_STATUS.NOT_USED.LAB_LABEL;
+            }else{
+                return Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY;
             }
         }
 
@@ -248,7 +262,8 @@
                              
                              $scope.allHazards = categorizedHazards;
                              $scope.allLeafHazards = categorizedLeafHazards;
-
+                             console.log(ac.getCachedVerification())
+                             $scope.incrementRoom(ac.getCachedVerification().Substep || 0)
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";

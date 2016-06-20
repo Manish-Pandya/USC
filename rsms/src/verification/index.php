@@ -115,6 +115,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/controllers/confirmationCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/adminCtrl.js"></script>
 <script type="text/javascript" src="scripts/controllers/hazardVerificationCtrl.js"></script>
+<script type="text/javascript" src="scripts/controllers/AdminListCtrl.js"></script>
 
 
 <!-- models -->

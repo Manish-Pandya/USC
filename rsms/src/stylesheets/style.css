@@ -1460,20 +1460,24 @@ div.question, li.question {
 .deficiencies, .recommendations {
   padding: 15px 0;
 }
-a.checklistNav{
+.checklistNav{
+  height:30px;
   border-radius: 6px !important;
   border:none !important;
 }
-a.checklistNav:not(#chemicalSafetyHeader){
+.checklistNav:not(#chemicalSafetyHeader){
   color:white !Important;
 }
-a.checklistNav img{
+.checklistNav img{
   padding:0;
   width: 30px !important;
 }
-a.checklistNav span{
+.checklistNav span{
   padding: 8px 0;
   display: inline-block;
+}
+button.checklistNav{
+  height:63px !important;
 }
 
 .checklistRoomIcon{
@@ -3506,6 +3510,7 @@ table.large tr th{
 }
 
 div.fake-table{
+  padding: 0;
   display: table;
   width:100%;
 }
@@ -3550,7 +3555,7 @@ div.fake-table .table-row > div{
   vertical-align: middle;
   font-weight: 600 !important;
 }
-div.fake-table.condensed .table-row > div{
+div.fake-table.condensed .table-row > div,div.fake-table.condensed .table-row > h1, div.fake-table.condensed .table-row > h2, div.fake-table.condensed .table-row > h3{
   display: table-cell;
   padding: 1px 5px;
   font-size: 16px;

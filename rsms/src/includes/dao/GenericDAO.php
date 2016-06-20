@@ -1169,5 +1169,46 @@ class GenericDAO {
         return $currentInspections;
     }
 
+    public function getVerificationYears(){
+        global $db;
+        $queryString = "SELECT DISTINCT COALESCE(YEAR(due_date), YEAR(date_created)) as `year` from verification ORDER BY `year`;";
+        $stmt = $db->prepare($queryString);
+        if($stmt->execute()){
+            $years = array();
+            while($year = $stmt->fetchColumn()){
+                $years[] = $year;
+            }
+        }else{
+            return new ActionError("MySQL Error");
+        }
+        return $years;
+    }
+
+    function getVerificationsByYear($year){
+		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
+        $this->LOG->fatal("year is: " . $year);
+		// Get the db connection
+		global $db;
+
+		//Prepare to query all from the table
+        $sql = 'SELECT * FROM verification WHERE COALESCE(YEAR(due_date), YEAR(date_created)) = ?;';
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Verification");
+            $this->LOG->fatal($result);
+
+			// ... otherwise, die and echo the db error
+		} else {
+            return new ActionError("MySQL Error");
+		}
+
+		return $result;
+	}
+
+
 }
 ?>

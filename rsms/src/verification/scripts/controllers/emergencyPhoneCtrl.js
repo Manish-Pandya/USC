@@ -1,11 +1,11 @@
 angular
     .module('VerificationApp')
-    .controller('EmergencyPhoneCtrl', function ($scope, $rootScope, applicationControllerFactory) {
+    .controller('EmergencyPhoneCtrl', function ($scope, $rootScope, applicationControllerFactory, $stateParams) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
 
         $scope.contactOptions  = [];
-        var id = 1;
+        var id = $stateParams.id;
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI);
