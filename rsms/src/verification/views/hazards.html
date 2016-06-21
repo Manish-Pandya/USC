@@ -1,21 +1,28 @@
-<h2 class="hazard-room">{{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}</h2>
-<h2>{{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}}<button class="btn btn-small btn-primary left" ng-if="!HazCat.editing" ng-click="HazCat.editing = true"><i class="icon-pencil"></i>Edit</button> <button class="btn btn-small btn-danger left" ng-if="HazCat.editing" ng-click="HazCat.editing = false"><i class="icon-cancel-2"></i>Cancel</button>
+<h2 class="hazard-room">
+    {{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
+    <button class="btn left" ng-click="navigate(stepMap[currentStep-(categoryIdx+1)])" ng-if="(roomIdx != 0 || buildingIdx != 0)"><i class="icon-arrow-left"></i>Previous Room</button>
+    <button class="btn right" ng-if="stepIsAllowed(getNextRoomMapping(PI.Buildings[buildingIdx]), verification) && buildingIdx < PI.Buildings.length" ng-click="navigate(getNextRoomMapping(PI.Buildings[buildingIdx]))">Next Room<i class="icon-arrow-right"></i></button>
 </h2>
-<button class="btn left" ng-click="incrementRoom(-1)" ng-disabled="HazCat.editing || (categoryIdx == 0 && roomIdx == 0 && buildingIdx == 0)"><i class="icon-arrow-left"></i>Prev</button>
-<button class="btn right" ng-disabled="HazCat.editing || (buildingIdx == PI.Buildings.length - 1 && roomIdx == PI.Buildings[buildingIdx].Rooms.length - 1 && categoryIdx == hazardCategories.length -1)" ng-click="incrementRoom(1)">Next<i class="icon-arrow-right"></i></button>
-<ul class="postInspectionNav row" style="margin-left:11px;">
+<label class="checkbox inline">
+    <input type="checkbox" ng-model="stepMap[currentStep].isComplete" ng-change="setSubStep(verification, { BuildingIdx: buildingIdx, RoomIdx: roomIdx, HazardIdx: categoryIdx })" ng-if="verification" />
+    <span class="metro-checkbox">
+        The inventory below accurately reflects the inventory of {{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}} hazards     in my lab room, {{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
+    </span>
+</label>
+<ul class="postInspectionNav row" style="margin-left:0px;">
     <li ng-repeat="cat in Constants.CHECKLIST_CATEGORIES_BY_MASTER_ID" ng-if="cat.Key_id != 9999">
-        <button ng-click="setCategoryIdx($index)" class="btn btn-large checklistNav" id="{{cat.cssID}}"><img src="../img/{{cat.Image}}"/><span>{{cat.Label}} Hazards</span></button>
+        <button ng-disabled="!stepIsAllowed({ BuildingIdx: buildingIdx, RoomIdx: roomIdx, HazardIdx: $index }, verification)" ng-class="{'selected': isCurrentStep({ BuildingIdx: buildingIdx, RoomIdx: roomIdx, HazardIdx: $index }, stepMap[currentStep])}" ng-click="navigate({ BuildingIdx: buildingIdx, RoomIdx: roomIdx, HazardIdx: $index })" class="btn btn-large checklistNav" id="{{cat.cssID}}"><img src="../img/{{cat.Image}}"/><span>{{cat.Label}} Hazards</span></button>
     </li>
 </ul>
-
+<h2>
+    {{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}}<button style="margin-left:5px;" class="btn btn-small btn-primary left" ng-if="!HazCat.editing" ng-click="HazCat.editing = true"><i class="icon-pencil"></i>Edit Inventory</button>
+</h2>
 <h3 ng-if="!HazCat.adding">
     <button class="btn btn-success" ng-click="HazCat.adding = true"><i class="icon-plus-2"></i> </button>
     Add {{dsm.getById("HazardDto", hazardCategories[categoryIdx]).Hazard_name}} hazard to {{PI.Buildings[buildingIdx].Name}}, Room: {{PI.Buildings[buildingIdx].Rooms[roomIdx].Name}}
 </h3>
-<!--
-<input type="checkbox" ng-model=""/>
-    -->
+
+ 
 <div ng-if="HazCat.adding">
     <ui-select tagging="addNewHazard" ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item)" class="span4" style="margin-left:0">
         <ui-select-match placeholder="Select or search for a Hazard">{{selectedHazard.Hazard_name}}</ui-select-match>

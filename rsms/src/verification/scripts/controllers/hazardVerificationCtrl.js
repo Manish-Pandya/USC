@@ -12,13 +12,7 @@
         $scope.HazCat = {};
         $scope.dataHolder = { hasNewHazards: false };
 
-        //todo:  flatten array of buildings, rooms, hazardCats into map which we can access by any idx
-        //ie:map = [{BuildingIdx:0, RoomIdx:0, CatIds:0},{BuildingIdx:0, RoomIdx:0, CatIds:1}],
-        //we can then go to Chem in the first room by passing map[1] to a parser
-
-
         $scope.incrementRoom = function (int) {
-            console.log(int);
             $scope.dataHolder.hasNewHazards = false;
             var turn = false;
             $scope.categoryIdx += int;
@@ -82,7 +76,6 @@
 
         $scope.onSelectHazard = function (hazard) {
             $scope.selectedHazard = hazard;
-            console.log(hazard);
             var roomId = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
 
             for (var x = 0; x < hazard.InspectionRooms.length; x++) {
@@ -262,14 +255,149 @@
                              
                              $scope.allHazards = categorizedHazards;
                              $scope.allLeafHazards = categorizedLeafHazards;
-                             console.log(ac.getCachedVerification())
-                             $scope.incrementRoom(ac.getCachedVerification().Substep || 0)
+                             setStepMap($scope.PI);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
                              return false;
                          }
                      );
+        }
+
+        $scope.stepMap = [];
+        function setStepMap(pi) {
+            var buildings = pi.Buildings;
+            for (var i = 0;i < buildings.length; i++) {
+                var bldg = buildings[i];
+                var rooms = bldg.Rooms;
+                for (var n = 0; n < rooms.length; n++) {
+                    var room = rooms[n];                   
+                    for (var x = 0; x < $scope.hazardCategories.length; x++) {
+                        var mapping = { BuildingIdx: i, RoomIdx: n, HazardIdx: x, isComplete:false }
+                        if (ac.getCachedVerification().Substep > $scope.stepMap.length) {
+                            mapping.isComplete = true;
+                        }
+                        $scope.stepMap.push(mapping);
+                    }
+                }
+
+            }
+            if (ac.getCachedVerification().Substep > 0) {
+                var idx = ac.getCachedVerification().Substep;
+                $scope.navigate($scope.stepMap[idx]);
+            }
+        }
+
+        $scope.stepIsAllowed = function (step, verification) {
+            if (!verification || !step) return false;
+            var maxStep = parseInt(verification.Substep);
+            for (var i = 0; i < $scope.stepMap.length; i++) {
+                //if (!mapping) return false;
+
+                var mapping = $scope.stepMap[i];
+                
+
+                if (mapping.HazardIdx == step.HazardIdx
+                    && mapping.BuildingIdx == step.BuildingIdx
+                    && mapping.RoomIdx == step.RoomIdx) {
+
+                    if (i != 0) var previousMapping = $scope.stepMap[i - 1];
+                    if (previousMapping && previousMapping.isComplete) {
+                        return i <= maxStep + 1
+                    } else {
+                        return i <= maxStep;
+                    }
+                }
+            }
+            return false;
+        }
+
+        $scope.navigate = function (mapObject) {
+            if (!$scope.currentStep) $scope.currentStep = 0;
+            if ($scope.stepIsAllowed(mapObject, ac.getCachedVerification())) {
+                $scope.categoryIdx = mapObject.HazardIdx;
+                $scope.buildingIdx = mapObject.BuildingIdx;
+                $scope.roomIdx = mapObject.RoomIdx;
+
+                //get the index of the current step
+                for (var i = 0; i < $scope.stepMap.length; i++) {
+                    var mapping = $scope.stepMap[i];
+                    if (mapping.HazardIdx == mapObject.HazardIdx
+                        && mapping.BuildingIdx == mapObject.BuildingIdx
+                        && mapping.RoomIdx == mapObject.RoomIdx) {
+                        $scope.currentStep = i;
+                        break;
+                    }
+                }
+            } else {
+                alert('you gotta finish first')
+            }
+        }
+
+        $scope.setSubStep = function (verification, step) {
+            for (var i = 0; i < $scope.stepMap.length; i++) {
+                var mapping = $scope.stepMap[i];
+                if (mapping.HazardIdx == step.HazardIdx
+                    && mapping.BuildingIdx == step.BuildingIdx
+                    && mapping.RoomIdx == step.RoomIdx) {
+                    var verDto = {};
+                    angular.extend(verDto, verification);
+                    verDto.Substep = i + 1;
+                    ac.saveVerification(verDto, verDto.Step).then(function () {
+                        verification.Substep = verDto.Substep;
+                    })
+
+                }
+            }
+        }
+
+        $scope.getNextRoomMapping = function (building) {
+            if (!$scope.currentStep) return false;
+            var step = $scope.stepMap[$scope.currentStep];
+            var roomIdx = step.RoomIdx + 1;
+            //does another room exist in the building?
+            if (building.Rooms.length > roomIdx) {
+                return $scope.nextRoomStep = $scope.stepMap[$scope.currentStep+1] || false;
+            } else {
+                var buildIdx = $scope.stepMap[$scope.currentStep].BuildingIdx;
+                for (var i = $scope.currentStep; i < $scope.stepMap.length; i++) {                    
+                    if (step.BuildingIdx != $scope.stepMap[i].BuildingIdx) {
+                        return $scope.nextRoomStep = $scope.stepMap[i];
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        $scope.getPreviousRoomMapping = function (building) {
+            if (!$scope.currentStep) return false;
+            var step = $scope.stepMap[$scope.currentStep];
+            var roomIdx = step.RoomIdx + 1;
+            //does another room exist in the building?
+            console.log(roomIdx, building.Rooms.length)
+            if (building.Rooms.length > roomIdx) {
+                console.log($scope.stepIsAllowed($scope.stepMap[$scope.currentStep + 1]), $scope.stepMap[$scope.currentStep + 1])
+                return $scope.stepMap[$scope.currentStep + 1] || false;
+            } else {
+                var buildIdx = $scope.stepMap[$scope.currentStep].BuildingIdx;
+                var i = $scope.currentStep;
+                while ( i--) {
+                    if (step.BuildingIdx != $scope.stepMap[i].BuildingIdx) {
+                        console.log($scope.stepIsAllowed($scope.stepMap[i]), $scope.stepMap[i])
+                        return $scope.stepMap[i];
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        $scope.isCurrentStep = function (step, current) {
+            console.log('hey')
+            return current && current.BuildingIdx == step.BuildingIdx && current.RoomIdx == step.RoomIdx && current.HazardIdx == step.HazardIdx;
         }
 
     })

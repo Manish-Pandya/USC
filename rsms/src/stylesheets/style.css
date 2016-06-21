@@ -961,10 +961,10 @@ li.minimized ol {
 /*****************************************************************
 *   LOCATION HUB
 ******************************************************************/
-a.selected{
+a.selected, button.selected{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
 }
-a.selected:hover{
+a.selected:hover, button.selected:hover{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
 }
 .locationTable td{
