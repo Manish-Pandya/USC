@@ -37,14 +37,14 @@ angular.module('00RsmsAngularOrmApp')
                                 .then(getRadPi);
 
 
-    $scope.onSelectPi = function (pi)
-    {
+    $scope.onSelectPi = function (pi) {
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
-    $scope.openModal = function(templateName, object){
+    $scope.openModal = function(templateName, object, isAmendment){
         var modalData = {};
         modalData.pi = $scope.pi;
+        modalData.isAmendment = isAmendment || false;
         if(object)modalData[object.Class] = object;
         af.setModalData(modalData);
         var modalInstance = $modal.open({
@@ -162,6 +162,7 @@ angular.module('00RsmsAngularOrmApp')
 
         $scope.savePIAuthorization = function( copy, auth ){
             var pi = $scope.modalData.pi;
+            if ($scope.modalData.isAmendment) copy.Key_id = null;
             $modalInstance.dismiss();
             af.deleteModalData();
             af.savePIAuthorization(copy, auth, pi);

@@ -2315,7 +2315,8 @@ angular
                                 auth.Rooms = copy.Rooms.slice();
                             }else{
                                 dataStoreManager.store(returnedAuth);
-                                pi.Pi_authorization = returnedAuth;
+                                if (!pi.Pi_authorization) pi.Pi_authorization = [];
+                                pi.Pi_authorization.push(returnedAuth);
                             }
                             return returnedAuth;
                         },

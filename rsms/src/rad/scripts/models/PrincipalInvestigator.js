@@ -116,6 +116,14 @@ PrincipalInvestigator.prototype = {
         paramName: 'id'
     },
 
+    PIAuthorizationsRelationship: {
+        className: 'PIAuthorization',
+        keyReference: 'Principal_investigator_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+    },
+
 
     Buildings: {},
 
@@ -144,7 +152,7 @@ PrincipalInvestigator.prototype = {
     },
 
     loadPIAuthorizations: function() {
-        dataLoader.loadChildObjectByParentProperty(this, "Pi_authorization", "PIAuthorization", this.Key_id, "Principal_investigator_id");
+        dataLoader.loadOneToManyRelationship(this, 'Pi_authorization', this.PIAuthorizationsRelationship);
     },
 
     loadPIWipeTests: function () {

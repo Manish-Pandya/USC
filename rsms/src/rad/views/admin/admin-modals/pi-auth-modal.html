@@ -4,6 +4,21 @@
 
 <div class="modal-body">
     <div class="control-group">
+        <label class="control-label" for="inputEmail">Date Used:</label>
+        <div class="controls">
+            <input ng-model="modalData.AuthorizationCopy.view_Date_used">
+            <span class="help-block" style="">mm/dd/yy</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Amendment Number</label>
+        <div class="controls input-append">
+            <input ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label">Authorization Number</label>
         <div class="controls">
             <input ng-model="modalData.PIAuthorizationCopy.Authorization_number" placeholder="Authorization Number"/>
