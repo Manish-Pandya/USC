@@ -93,14 +93,11 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     }
                     //question is answered "no"
                     else{
-                        //question has no deficiencies to select
-                        if (!question.Responses.DeficiencySelections && !question.Responses.SupplementalDeficiencies) {
+                        //question has no deficiencies to select, or none selected if it does have ones to select
+                        if ((!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length) && (!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)){
                             question.isComplete = false;
                         }
-                        //question has no deficiencies selected
-                        else if (!question.Responses.DeficiencySelections.length && !question.Responses.SupplementalDeficiencies.length) {
-                            question.isComplete = false;
-                        }
+                        
                         //question has one or more deficiencies selected
                         else{
                             question.isComplete = true;
