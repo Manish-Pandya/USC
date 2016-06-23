@@ -72,7 +72,7 @@ angular
       })
 
   })
-  .controller('NavCtrl', function ($rootScope, $state, applicationControllerFactory, $stateParams) {
+  .controller('NavCtrl', function ($rootScope, $state, applicationControllerFactory, $stateParams, $scope) {
       var ac = applicationControllerFactory;
       function getVerification(id) {
           return ac.getVerification(id)
@@ -81,11 +81,15 @@ angular
                           if (!id) return;
                           $rootScope.greatestAllowedStep = parseInt(ac.getCachedVerification().Step + 1);
                           if ($state.$current.name != "verificiation-admin" && $state.$current.name != "verificiation-admin-list") {
-                              $rootScope.navigate(parseInt(ac.getCachedVerification().Step - 1));
+                              $rootScope.navigate(parseInt(ac.getCachedVerification().Step));
                           }
                           var i = 0
                           for (i; i < ac.getCachedVerification().Step; i++) {
-                              $rootScope.states[i].Done = true;
+                              if (typeof $rootScope.states[i].Done != "function") {
+                                  $rootScope.states[i].Done = true;
+                              } else {
+                                  $rootScope.states[i].Done();
+                              }
                           }
                       }
                   )
@@ -131,7 +135,7 @@ angular
                   Name: 'verification.step4',
                   Label: 'Verify Hazard Inventory',
                   Message: 'Please verify the following hazards are present in your lab(s).',
-                  ConfirmationMessage: 'I verify that all information provided is accurate and complete to the best of my knowledge',
+                  ConfirmationMessage: 'I verify that all information about the inventory of lab hazards provided is accurate and complete to the best of my knowledge.',
                   NavLabel: 'Inventory',
                   Step: 4
               },

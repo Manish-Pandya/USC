@@ -115,6 +115,9 @@ button.btn.wizard-step.done.selected .number-circle {
     width: 1000px;
     margin-top: 25px;
 }
+.step-nav button.btn i {
+    font-size: 25px !Important;
+}
 
 table {
     max-width: 1000px !important;
@@ -259,6 +262,23 @@ span.metro-checkbox {
     width: 650px;
     border-left:1px solid #ccc;
 }
+.hazard-type-header{
+    font-weight:bold;
+    text-decoration:underline;
+    margin-top:-20px
+}
+.add-hazard{
+    margin-bottom:10px;
+}
+.add-hazard .btn{margin-left:5px}
+.inventory-form{
+    margin:11px 0 15px
+}
+.inventory-form label.checkbox input[type=checkbox] ~ span.metro-checkbox {
+    padding-left: 27px;
+    padding-top: 3px;
+    font-size:16px
+}
 
 li.justAdded {
     box-shadow: 0 0 2px rgba(0,0,0,.9);
@@ -298,4 +318,16 @@ li.justAdded {
 @-o-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+
+/* line 451, ../sass/style.scss */
+li.inactive {
+  background: rgba(255, 30, 30, 0.7) !important;
+  color:white;
+}
+/* line 451, ../sass/style.scss */
+li.yellow {
+  background: rgba(255, 255, 30, 0.7) !important;
+  color:black;
 }

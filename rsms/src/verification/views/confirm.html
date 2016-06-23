@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="card full" ng-show="roomChanges.length">
+<div class="card full" ng-show="verification.PendingRoomChanges">
     <h3 class="card-header alert-info alert">Confirm Changes to Lab Locations</h3>
     <ul>
         <li class="inactive" ng-repeat="change in roomChanges = (verification.PendingRoomChanges | hasNewStatus:Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED)">
@@ -40,11 +40,12 @@
     </div>
 </div>
 
-<div class="card full" ng-if="verification.PendingHazardDtoChanges.length">
-    <h3>Verify Changes to Lab Hazard Inventory</h3>
+<div class="card full" ng-show="verification.PendingHazardDtoChanges">
+    <h3 class="card-header alert-info alert">Confirm Changes to Hazard Inventory</h3>
     <ul>
-        <li ng-repeat="change in verification.PendingHazardDtoChanges" ng-class="{'new':change.New_status == Constants.ROOM_HAZARD_STATUS.IN_USE,'inactive':change.New_status == Constants.ROOM_HAZARD_STATUS.NOT_USED,'yellow':change.New_status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY}">
-            {{change.Hazard_name}} {{change.New_status}} is now Room {{change.Room_name}}
+        <li ng-repeat="change in verification.PendingHazardDtoChanges" ng-class="{'new':change.New_status == Constants.ROOM_HAZARD_STATUS.IN_USE.KEY,'inactive':change.New_status == Constants.ROOM_HAZARD_STATUS.NOT_USED.KEY,'yellow':change.New_status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY}">
+            {{change.Hazard_name}} is now {{Constants.ROOM_HAZARD_STATUS[change.New_status].LAB_LABEL.toLowerCase()}} {{change.Room_name}}, {{change.Building_name}}
         </li>
     </ul>
 </div>
+

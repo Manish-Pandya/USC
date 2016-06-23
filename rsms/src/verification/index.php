@@ -10,10 +10,11 @@ session_start();
 
 echo '<script type="text/javascript">
 var isProductionServer;';
-echo "</script>";
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
   echo 'isProductionServer = true;';
 }
+echo "</script>";
+
 ?>
 
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->

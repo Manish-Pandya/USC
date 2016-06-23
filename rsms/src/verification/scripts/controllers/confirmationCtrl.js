@@ -1,6 +1,6 @@
 angular
     .module('VerificationApp')
-    .controller('ConfirmationCtrl', function ($scope, $rootScope, applicationControllerFactory) {
+    .controller('ConfirmationCtrl', function ($scope, $rootScope, applicationControllerFactory, $stateParams) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
 

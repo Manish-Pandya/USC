@@ -12,36 +12,7 @@
         $scope.HazCat = {};
         $scope.dataHolder = { hasNewHazards: false };
 
-        $scope.incrementRoom = function (int) {
-            $scope.dataHolder.hasNewHazards = false;
-            var turn = false;
-            $scope.categoryIdx += int;
-            if ($scope.categoryIdx > $scope.hazardCategories.length - 1) {
-                $scope.categoryIdx = 0;
-                turn = true;
-            } else if ($scope.categoryIdx < 0) {
-                $scope.categoryIdx = $scope.hazardCategories.length - 1;
-                turn = true;
-            }
-            if (turn) {
-                var bldg = $scope.PI.Buildings[$scope.buildingIdx];
-                if ($scope.roomIdx + int > -1) {
-                    if ($scope.roomIdx + int < bldg.Rooms.length) {
-                        $scope.roomIdx += int;
-                    } else {
-                        $scope.roomIdx = 0;
-                        $scope.buildingIdx++;
-                    }
-                } else if ($scope.buildingIdx > 0) {
-                    $scope.buildingIdx--;
-                    bldg = $scope.PI.Buildings[$scope.buildingIdx];
-                    $scope.roomIdx = bldg.Rooms.length - 1;
-                }
-            }
-        }
-
-
-
+     
         $scope.setCategoryIdx = function (idx) {
             $scope.categoryIdx = idx;
         }
@@ -342,7 +313,7 @@
                     && mapping.RoomIdx == step.RoomIdx) {
                     var verDto = {};
                     angular.extend(verDto, verification);
-                    verDto.Substep = i + 1;
+                    verDto.Substep = i;
                     ac.saveVerification(verDto, verDto.Step).then(function () {
                         verification.Substep = verDto.Substep;
                     })
