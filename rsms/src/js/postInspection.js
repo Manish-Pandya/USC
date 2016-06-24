@@ -854,74 +854,55 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         var totals = 0;
         var pendings = 0;
         var completes = 0;
+        var correcteds = 0;
         //console.log('adfasdfasdfasdfasdf')
         //console.log($scope.questionsByChecklist.biologicalHazards)
-        var i = $scope.questionsByChecklist.biologicalHazards.Questions.length;
+        var inspection = postInspectionFactory.getInspection();
+        var i = inspection.Checklists.length;
         while (i--) {
-            var question = $scope.questionsByChecklist.biologicalHazards.Questions[i];
-            if (question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length) {
-                var j = question.Responses.DeficiencySelections.length;
-                while (j--) {
-                    totals++;
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions
-                        && question.Responses.DeficiencySelections[j].CorrectiveActions.length
-                        && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
-                        pendings++;
-                    }
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions
-                        && question.Responses.DeficiencySelections[j].CorrectiveActions.length
-                        && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
-                        completes++;
-                    }
-                }
-            }
-        }
+            var checklist = inspection.Checklists[i];
+            var j = checklist.Questions.length;
+            while (j--) {
 
-        var i = $scope.questionsByChecklist.chemicalHazards.Questions.length;
-        while (i--) {
-            var question = $scope.questionsByChecklist.chemicalHazards.Questions[i];
-            if (question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length) {
-                var j = question.Responses.DeficiencySelections.length;
-                while (j--) {
-                    totals++;
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) pendings++;
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) completes++;
-                }
-            }
-        }
+                var question = checklist.Questions[j];
+                if (question.Responses && question.Responses.Answer.toLowerCase() == "no") {
+                    var k = question.Responses.DeficiencySelections.length;
+                    while (k--) {
+                        question.hasDeficiencies = true;
+                        var selection = question.Responses.DeficiencySelections[k];
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                                pendings++;
+                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                                completes++;
+                            }
 
-        var i = $scope.questionsByChecklist.generalHazards.Questions.length;
-        while (i--) {
-            var question = $scope.questionsByChecklist.generalHazards.Questions[i];
-            if (question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length) {
-                var j = question.Responses.DeficiencySelections.length;
-                while (j--) {
-                    totals++;
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) pendings++;
-                    if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) completes++;
-                }
-            }
-        }
-        if ($scope.questionsByChecklist.radiationHazards.Questions) {
-            var i = $scope.questionsByChecklist.radiationHazards.Questions.length;
-            while (i--) {
-                var question = $scope.questionsByChecklist.radiationHazards.Questions[i];
-                if (question.Responses && question.Responses.Answer == 'no' && question.Responses.DeficiencySelections && question.Responses.DeficiencySelections.length) {
-                    var j = question.Responses.DeficiencySelections.length;
-                    while (j--) {
-                        totals++;
-                        if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) pendings++;
-                        if (question.Responses.DeficiencySelections[j].CorrectiveActions && question.Responses.DeficiencySelections[j].CorrectiveActions.length && question.Responses.DeficiencySelections[j].CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) completes++;
+                        }
                     }
+                    var k = question.Responses.SupplementalDeficiencies.length;
+                    while (k--) {
+                        question.hasDeficiencies = true;
+                        var selection = question.Responses.SupplementalDeficiencies[k];
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                                pendings++;
+                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                                completes++;
+                            }
+
+                        }
+                    }
+                    if (question.hasDeficiencies) totals++;
                 }
+
             }
         }
-
-        $rootScope.pendings = pendings;
         $rootScope.completes = completes;
+        $rootScope.pendings = pendings;
         $rootScope.totals = totals;
-        if (pendings + completes == totals || totals == 0) {
-            if ($rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00') $scope.readyToSubmit = true;
+
+        if (pendings  + completes >= totals || totals == 0) {
+            if ($rootScope.inspection.Cap_submitted_date == null || $rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00') $scope.readyToSubmit = true;
             var modalInstance = $modal.open({
                 templateUrl: 'post-inspection-templates/submit-cap.html',
                 controller: modalCtrl
@@ -987,7 +968,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Class: "CorrectiveAction",
                 Is_active: true,
                 Text: "",
-                Status: Constants.CORRECTIVE_ACTION.STATUS.PENDING,
                 Deficiency_selection_id: $scope.def.Class == "Deficiency" ? $scope.def.Key_id : null,
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
