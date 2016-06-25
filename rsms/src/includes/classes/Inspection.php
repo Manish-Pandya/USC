@@ -263,7 +263,8 @@ class Inspection extends GenericCrud {
         }elseif($this->notification_date){
             //do we even, like, need a plan?
             $ds = $this->getDeficiency_selections();
-            if(isset($ds['deficiencySelections'])){
+            if($this->key_id == 97)$LOG->fatal($ds);
+            if(!isset($ds['deficiencySelections']) ||  empty($ds['deficiencySelections'])){
                 $this->hasDeficiencies = false;
                 return "CLOSED OUT";
             }
@@ -307,7 +308,6 @@ class Inspection extends GenericCrud {
         $noteficationDate = new DateTime($this->getNotification_date());
         $interval = new DateInterval('P14D');
         $this->cap_due_date = $noteficationDate->add($interval)->format('Y-m-d H:i:s');
-        $LOG->fatal($this);
         return $this->cap_due_date;
     }
 
