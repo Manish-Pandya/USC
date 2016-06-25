@@ -10,7 +10,8 @@
 **********************************/
 
 var dataStoreManager = {};
-
+//this should make it into the refactor in a perhaps better form
+dataStore.holderObject = {};
 dataStoreManager.store = function( object, trusted, flavor )
 {
         if(!object || object == null)return;
