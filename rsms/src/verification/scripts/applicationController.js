@@ -2,7 +2,7 @@
 
 angular
     .module('applicationControllerModule', ['rootApplicationController'])
-    .factory('applicationControllerFactory', function applicationControllerFactory(modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods, rootApplicationControllerFactory) {
+    .factory('applicationControllerFactory', function applicationControllerFactory(modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods, rootApplicationControllerFactory, $anchorScroll, $location) {
         var ac = rootApplicationControllerFactory;
         var store = dataStoreManager;
         //give us access to this factory in all views.  Because that's cool.
@@ -34,6 +34,20 @@ angular
 
         ac.getAllUsers = function () {
             return dataSwitchFactory.getAllObjects('User', null, true);
+        }
+
+        ac.getAllHazards = function (id) {
+            dataStore.HazardDto = null;
+            var urlSegment = "getHazardRoomDtosByPIId&id=" + id;
+
+            return genericAPIFactory.read(urlSegment)
+                    .then(
+                        function (returnedPromise) {
+                            var hazards = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            store.store(hazards);
+                            return store.get('HazardDto');
+                        }
+                    );
         }
 
         ac.getAllBuildings = function () {
@@ -86,10 +100,6 @@ angular
                     ac.savePendingUserChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
                 }
 
-                if (thingToBeChanged["Pending" + thingToBeChanged.Class + "Change"].Parent_class == "Hazard") {
-                    ac.savePendingHazardChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
-                }
-
                 if (thingToBeChanged["Pending" + thingToBeChanged.Class + "Change"].Parent_class == "Room") {
                     ac.savePendingRoomChange(thingToBeChanged.PendingUserChange, thingToBeChanged, id);
                 }
@@ -111,12 +121,12 @@ angular
                 copy.Is_active = false;
             }
             copy.Verification_id = ac.getCachedVerification().Key_id;
-            return ac.save(copy)
+            return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
                         if (!copy.Key_id) {
-                            dataStoreManager.pushIntoCollection(returnedChange);
+                            dataStoreManager.pushIntoCollection(returnedChange);                           
                             ac.getCachedVerification().PendingUserChanges.push(dataStoreManager.getById("PendingUserChange", returnedChange.Key_id));
                             if (contact) contact.PendingUserChange = dataStoreManager.getById("PendingUserChange", returnedChange.Key_id);
                         }
@@ -144,7 +154,7 @@ angular
             if (building) copy.Building_name = building.Name;
             if (room.PendingRoomChangeCopy.Answer == "No") room.PendingRoomChangeCopy.New_status = Constants.PENDING_CHANGE.ROOM_STATUS.REMOVED;
 
-            return ac.save(copy)
+            return $rootScope.saving = ac.save(copy)
                 .then(
                     function (returnedChange) {
                         returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
@@ -167,6 +177,55 @@ angular
 
         }
 
+        ac.savePendingHazardDtoChange = function (change, copy) {
+
+            if (!copy) {
+                if (!change.updatedStatus) return false;
+                copy = angular.extend({}, change);
+                copy.New_status = change.updatedStatus;
+            }
+
+            ac.clearError();
+            copy.Is_active = false;
+            
+            var hazard = dataStoreManager.getById("HazardDto", copy.Hazard_id);
+            if (hazard) {
+                //copy.Hazard_name = hazard.Hazard_name;
+            }
+
+            copy.Verification_id = ac.getCachedVerification().Key_id;
+            return $rootScope.saving = ac.save(copy)
+                .then(
+                    function (returnedChange) {
+                        console.log(returnedChange);
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
+                        if (!copy.Key_id) {
+                            dataStoreManager.pushIntoCollection(returnedChange);
+                            ac.getCachedVerification().PendingHazardDtoChanges.push(dataStoreManager.getById("PendingHazardDtoChange", returnedChange.Key_id));
+                            if (hazard) {
+                                hazard.ContainsHazard = true;
+                                hazard.justAdded = true;
+                                $location.hash("hazard" + hazard.Hazard_id);
+                            }
+                        } else {
+                            //set status for hazard
+                            console.log($location);
+                        }
+                        angular.extend(copy, returnedChange);
+                        angular.extend(change, copy);
+                        change.edit = false;
+                    },
+                    function () {
+                        ac.setError('The change could not be saved');
+                        if (change.updatedStatus) {
+                            change.updatedStatus = change.New_status;
+                        }
+                        copy = null;
+                    }
+                )
+
+        }
+
         ac.confirmChange = function (change, phone) {
             var copy = dataStoreManager.createCopy(change);
             console.log(change);
@@ -182,6 +241,51 @@ angular
                     ac.setError('The changed could not be verified.')
                 )
         }
+
+        ac.confirmHazardChange = function (change, piId) {
+            var copy = ac.createCopy(change);
+
+            var urlFragment = "confirmPendingHazardChange&id="+piId;
+            return ac.save(copy, false, urlFragment)
+                .then(
+                    function (returnedChange) {
+                        returnedChange.edit = false;
+                        returnedChange = modelInflatorFactory.instantiateObjectFromJson(returnedChange);
+                        angular.extend(change, returnedChange);
+                    },
+                    ac.setError('The changed could not be verified.')
+                )
+        }
+
+
+        ac.getVerificationsByYear = function (year) {
+            dataStore.Verification = null;
+            return ac.getVerificationYears()
+                      .then(function (years) {
+                          var urlSegment = "getVerificationsByYear&year=" + year;
+                          return genericAPIFactory.read(urlSegment)
+                                  .then(
+                                      function (returnedPromise) {
+                                          var verifications = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                                          store.store(verifications);
+                                          return years;
+                                      }
+                                  );
+                      })
+        }
+
+        ac.getVerificationYears = function () {
+            var urlSegment = "getVerificationYears";
+            return genericAPIFactory.read(urlSegment)
+                    .then(
+                        function (returnedPromise) {
+                            console.log(returnedPromise);
+                            var years = returnedPromise.data;
+                            return years;
+                        }
+                    );
+        }
+
 
         return ac;
     });

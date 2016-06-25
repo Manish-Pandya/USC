@@ -31,15 +31,14 @@
             <form style="width:1000px;" name="fancyForm">
                 <div ui-view></div>
             </form>
-            
             <div class="bottoms" style="width:1060px;">
                 <label class="checkbox inline full">
                     <input type="checkbox" ng-model="selectedView.Done" ng-disabled="fancyForm.$invalid" ng-change="stepDone(selectedView.Step)" />
                     <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
                 </label>
                 <div class="step-nav">
-                    <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left" ng-click="navigate(selectedView.Step-2)"><i class=" icon-arrow-left"></i>Previous</button>
-                    <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right" ng-click="navigate(selectedView.Step)" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
+                    <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left left" ng-click="navigate(selectedView.Step-2)"><i class=" icon-arrow-left"></i>Previous</button>
+                    <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right right" ng-click="navigate(selectedView.Step)" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
                 </div>
             </div>
         </div>

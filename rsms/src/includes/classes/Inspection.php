@@ -228,7 +228,7 @@ class Inspection extends GenericCrud {
         $responses = $this->getResponses();
         foreach ($responses as $response){
             $selections = $response->getDeficiencySelections();
-            $selections = array_merge($selections, $response->getSupplementalDeficiencies());
+            //$selections = array_merge($selections, $response->getSupplementalDeficiencies());
             foreach($selections as $selection){
                 $id = $selection->getDeficiency_id();
                 $deficiencySelections[] = $id;

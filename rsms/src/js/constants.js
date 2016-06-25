@@ -55,8 +55,10 @@ var Constants = (function () {
             SCHEDULED: "SCHEDULED",
             OVERDUE_FOR_INSPECTION: "OVERDUE FOR INSPECTION",
             INCOMPLETE_INSPECTION: "INCOMPLETE INSPECTION",
-            INCOMPLETE_CAP: "INCOMPLETE CAP",
-            CLOSED_OUT: "CLOSED OUT",
+            PENDING_CLOSEOUT:"PENDING CLOSEOUT",
+            CLOSED_OUT:"CLOSED OUT",
+            INCOMPLETE_REPORT:"INCOMPLETE REPORT",
+            COMPLETE:"COMPLETE",
             OVERDUE_CAP:"OVERDUE CAP",
             PENDING_EHS_APPROVAL:"PENDING EHS APPROVAL",
         },
@@ -214,11 +216,20 @@ var Constants = (function () {
         CHEM_HAZARDS_PRESENT: { label: "Chemical Hazards", value: "Chem_hazards_present" },
         RAD_HAZARDS_PRESENT: { label: "Radiation Hazards", value: "Rad_hazards_present" }
     }
-    constants.ROOM_HAZARD_STATUS = [
-        { IN_USE: "Used by my lab in this room" },
-        { STORED_ONLY: "Used by another lab in this room" },
-        { NOT_USED: "Not used by my lab in this room" }
-    ]
+
+    constants.ROOM_HAZARD_STATUS = {
+        IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab in room", ADMIN_LABEL: "In use in room" },
+        STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored in room", ADMIN_LABEL: "Stored only in room" },
+        NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab in room", ADMIN_LABEL: "Not used in room" }
+    }
+
+    constants.VERIFICATION = {
+        STATUS: {
+            COMPLETE:"COMPLETE",
+            OVERDUE: "OVERDUE",
+            PENDING: "PENDING"
+        }
+    }
 
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
 

@@ -1,0 +1,37 @@
+﻿<div cg-busy="{promise:VerificationSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PendingRoomChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PendingUserChangeSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<div class="navbar">
+    <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
+        <li class="span3" style="margin-left:0">
+            <h2 style="padding: 11px 0 5px 15px;">
+                <i style="font-size: 40px;margin-top: 10px;width: 50px;" class="icon-checkbox"></i>Annual Verification
+                <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+            </h2>
+        </li>
+        <div style="clear:both; height:0; font-size:0;">&nbsp;</div>
+    </ul>
+</div>
+<div class="whitebg admin" ng-app="verification" style="padding:70px 70px;">
+    <div class="card half">
+        <h3 class="card-header alert-info alert">Verifications for 
+            <select ng-options="year as year for year in years" ng-change="selectYear(selectedYear)" ng-model="selectedYear"></select>
+        </h3>
+        <div class="fake-table bordered striped">
+            <div class="table-header">
+                <h3>Principal Investigator</h3>
+                <h3>Due Date</h3>
+                <h3>Status</h3>
+                <h3>View Verification</h3>
+            </div>
+            <div ng-repeat="v in verifications" class="table-row" ng-class="{'inactive':v.Status == constants.VERIFICATION.STATUS.OVERDUE}">
+                <div>{{v.PiName}}</div>
+                <div>{{v.Due_date | dateToISO}}</div>
+                <div>{{v.Status}}</div>
+                <div><a class="btn btn-info left" ui-sref="verificiation-admin({id: v.Key_id})">View Verification</a></div>
+            </div>
+        </div>
+    </div>
+
+</div>

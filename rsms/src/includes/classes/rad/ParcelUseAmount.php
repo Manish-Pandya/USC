@@ -181,31 +181,28 @@ include_once 'RadCrud.php';
 	}
 
     public function getIsPickedUp(){
+        $l = Logger::getLogger(__FUNCTION__);
         $this->isPickedUp = false;
         global $db;
-		$queryString = "SELECT EXISTS
-                            (
-	                            SELECT a.key_id as isPickedUp from parcel_use_amount a
+		$queryString = "SELECT * from parcel_use_amount a
 	                            left join waste_bag c
 	                            ON a.waste_bag_id = c.key_id
 	                            left join carboy_use_cycle d
 	                            ON a.carboy_id = d.key_id
 	                            left join scint_vial_collection e
 	                            ON a.scint_vial_collection_id = e.key_id
-	                            join pickup f
+	                            INNER join pickup f
 	                            ON c.pickup_id = f.key_id
 	                            OR d.pickup_id = f.key_id
 	                            OR e.pickup_id = f.key_id
 	                            where a.key_id = ?
-	                            AND f.status != 'REQUESTED'
-                        );";
+	                            AND f.status != 'REQUESTED';";
 
 		$stmt = $db->prepare($queryString);
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
-		while($exists = $stmt->fetchColumn()){
-			$this->isPickedUp = $exists;
-		}
+        $this->isPickedUp = count($stmt->fetchAll(PDO::FETCH_CLASS, "ParcelUseAmount")) != 0;
+        $l->fatal(count($stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName)));
         return (boolean) $this->isPickedUp;
     }
     

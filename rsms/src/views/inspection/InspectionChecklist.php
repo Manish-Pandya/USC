@@ -29,23 +29,26 @@ require_once '../top_view.php';
               </ul>
           </li>
     </ul>
-</div><
+</div>
 
 <div class="row-fluid">
     <div class="alert alert-error" ng-if="error" style="margin-top:10px;">
         <h2>{{error}}</h2>
     </div>
     <ul class="postInspectionNav row" style="margin-left:11px;">
-        <li ng-repeat="cat in cf.categories | showNavItem:inspection"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}}</span></a></li>
-        <li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px"><a title="Inspection Comments" ng-click="openNotes()" class="btn btn-large btn-info checklistNav" ><i class="icon-clipboard-2" style="  font-size: 33px !important;margin: 2px 5px 3px -12px;"></i></a></li>
+        <li ng-repeat="cat in cf.categories | showNavItem:inspection"><a ng-click="cf.selectCategory(cat)" class="btn btn-large checklistNav" id="{{cat.cssID}}" ng-class="{selected: cat.Key_id == cf.selectedCategory.Key_id}"><img src="../../img/{{cat.Image}}"/><span>{{cat.Label}} Safety Checklists</span></a></li>
+        <li ng-if="inspection" class="pull-right" style="float:right; margin-right:30px">
+            <a title="Inspection Comments" ng-click="openNotes()" style="height:25px" class="btn btn-large btn-info checklistNav">
+                <i class="icon-clipboard-2" style="font-size: 33px !important;margin:2px 5px 3px -14px"></i>
+            </a>
+        </li>
     </ul>
     <div class="loading" ng-show='loading && !inspection' style="margin-left:11px;">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Getting Checklist Category...</span>
     </div>
     <!-- todo:  write function to get image path -->
-    <h2 ng-if="cf.selectedCategory && !loading" style="margin-left:11px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{cf.selectedCategory.Label}}</span></h2>
-
+    <h2 ng-if="cf.selectedCategory && !loading" style="margin-left:11px; margin-bottom:25px; font-weight:bold"><img style="margin: -6px 5px 4px 0; max-width:50px;" src="../../img/{{image}}"/><span>{{cf.selectedCategory.Label}} Safety Checklists</span></h2>
         <!-- begin checklist for this inspection -->
         <accordion ng-hide="loading">
             <!--| selectedChecklist:cf.selectedCategory--->

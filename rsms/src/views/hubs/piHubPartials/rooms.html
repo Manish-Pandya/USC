@@ -53,7 +53,7 @@
          </div>
         </div>
 
-       <h3 ng-show="chosenBuilding" style="font-size:19px;">Rooms in {{chosenBuilding.Name}}:</h3>
+       <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
        <ul ng-show="!addRoom" style="margin-top:5px">
             <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
                 <h3>Floor: {{key}}</h3>

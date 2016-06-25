@@ -227,7 +227,11 @@ a.modalBtn i, .modal-footer a.btn i {
   color:white !important;
   font-size: 16px !Important;
 }
-
+button.btn i {
+    margin: 3px 2px 0px 0px;
+    color: white !important;
+    font-size: 16px !Important;
+}
 a.btn.btn-mini i {
   margin: 1px 4px 1px 0px;
 }
@@ -736,7 +740,7 @@ tr.updated {
 
 /* line 199, ../sass/style.scss */
 /* line 447, ../sass/style.scss */
-tr.new td{
+tr.new td, li.new{
   background: rgba(91, 183, 91, .9) !important;
   color:white;
 }
@@ -961,10 +965,10 @@ li.minimized ol {
 /*****************************************************************
 *   LOCATION HUB
 ******************************************************************/
-a.selected{
+a.selected, button.selected{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
 }
-a.selected:hover{
+a.selected:hover, button.selected:hover{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
 }
 .locationTable td{
@@ -1460,20 +1464,24 @@ div.question, li.question {
 .deficiencies, .recommendations {
   padding: 15px 0;
 }
-a.checklistNav{
+.checklistNav{
+  height:40px;
   border-radius: 6px !important;
   border:none !important;
 }
-a.checklistNav:not(#chemicalSafetyHeader){
+.checklistNav:not(#chemicalSafetyHeader){
   color:white !Important;
 }
-a.checklistNav img{
+.checklistNav img{
   padding:0;
   width: 30px !important;
 }
-a.checklistNav span{
+.checklistNav span{
   padding: 8px 0;
   display: inline-block;
+}
+button.checklistNav{
+  height:63px !important;
 }
 
 .checklistRoomIcon{
@@ -3506,6 +3514,7 @@ table.large tr th{
 }
 
 div.fake-table{
+  padding: 0;
   display: table;
   width:100%;
 }
@@ -3550,7 +3559,7 @@ div.fake-table .table-row > div{
   vertical-align: middle;
   font-weight: 600 !important;
 }
-div.fake-table.condensed .table-row > div{
+div.fake-table.condensed .table-row > div,div.fake-table.condensed .table-row > h1, div.fake-table.condensed .table-row > h2, div.fake-table.condensed .table-row > h3{
   display: table-cell;
   padding: 1px 5px;
   font-size: 16px;
@@ -3819,6 +3828,9 @@ btn-mini {
 }
 .modal-body{
     min-height: 112px;
+}
+.modal-body.pi-hazard-rooms ul li table tr.new td, .verification-hazards li.new{
+  background: #9DCE88 !Important;
 }
 
 /*

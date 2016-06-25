@@ -166,6 +166,37 @@ angular
                 dataStore.modalData = [];
             }
 
+            /********************************************************************
+            **
+            **      MODULE-SPECIFIC METHODS USE BY TWO OR MORE MODULES, WHICH IS WHY THEY'RE UP IN THIS PIECE
+            **
+            ********************************************************************/
+
+            rac.getPiHazards = function (hazardDto, room) {
+
+                var urlSegment = "getPisByHazardAndRoomIDs&hazardId=" + hazardDto.Hazard_id;
+                var ids = [];
+
+                if (!room) {
+                    var i = hazardDto.InspectionRooms.length;
+                    while (i--) {
+                        ids.push(hazardDto.InspectionRooms[i].Room_id);
+                    }
+                } else {
+                    ids.push(room.Key_id);
+                }
+
+                urlSegment += "&" + $.param({ roomIds: ids });
+
+
+                return genericAPIFactory.read(urlSegment)
+                        .then(
+                            function (returnedPromise) {
+                                return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            }
+                        );
+            }
+
             /********************************************************************/
 
             return rac;

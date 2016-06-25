@@ -1,6 +1,6 @@
 angular
     .module('VerificationApp')
-    .controller('PersonnelCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory) {
+    .controller('PersonnelCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $stateParams) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
@@ -9,7 +9,7 @@ angular
         $scope.personnelOptions = [Constants.PENDING_CHANGE.USER_STATUS.MOVED_LABS, Constants.PENDING_CHANGE.USER_STATUS.LEFT_UNIVERSITY, Constants.PENDING_CHANGE.USER_STATUS.NOW_A_CONTACT];
         $scope.newUser;
         $scope.addedUsers = [];
-        var id = 1;
+        var id = $stateParams.id;
 
         $rootScope.loading = getVerification(id)
                                 .then(getPI).then(getAllUsers);

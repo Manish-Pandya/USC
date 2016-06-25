@@ -83,3 +83,62 @@ angular.module('filtersApp',[])
             return activeObjects;
         };
     })
+    .filter('hazardRoomFilter', function () {
+        return function (hazards, roomId, flip) {
+            if (!hazards) return;
+            if (!roomId) return hazards;
+            var matchedHazards = [];
+            var len = hazards.length;
+            var parent = dataStoreManager.getById("HazardDto", hazards[0].Parent_hazard_id);
+            parent.show = false;
+            for (var i = 0; i < len; i++){
+                var hazard = hazards[i];
+                hazard.matchedForOtherPi = false;
+                var roomLen = hazard.InspectionRooms.length;
+                for (var x = 0; x < roomLen; x++) {
+                    var room = hazard.InspectionRooms[x];
+                    if (room.Room_id == roomId) {
+                        var push;
+                        if (!flip) {
+                            push = false;
+                            if (room.ContainsHazard || room.HasMultiplePis) {
+                                parent.show = true;
+                                push = true;
+                            }
+                            if (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id) {
+                                parent.show = true;
+                                push = true;
+                            }
+                        } else {
+                            push = true;
+                            if ((room.ContainsHazard || room.HasMultiplePis) || (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id)) {
+                                push = false
+                            }
+                            
+                        }
+                        if (push) matchedHazards.push(hazard);
+
+                        /*
+
+                        if (!flip && (((room.ContainsHazard || room.HasMultiplePis)) && !hazard.ActiveSubHazards.length || (room.PendingHazardDtoChange && room.PendingHazardDtoChange.Key_id))){
+                            if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
+                            //based on model, should only ever push each matched hazard once
+                            matchedHazards.push(hazard);
+                            parent.show = true;
+                        }
+
+                        if (flip && ( (!room.ContainsHazard && !room.HasMultiplePis) || (!room.ContainsHazard && room.PendingHazardDtoChange && !room.PendingHazardDtoChange.Key_id) ) ) {
+                            if (room.HasMultiplePis) hazard.matchedForOtherPi = true;
+                            
+
+                            //based on model, should only ever push each matched hazard once
+                            matchedHazards.push(hazard);
+                        }
+                        */
+                    }
+                }
+            }
+            return matchedHazards;
+        }
+    })
+    .filter('roomIdMatches', function () { return function (things) { return things; }})

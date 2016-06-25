@@ -13,27 +13,27 @@
 
     <form class="form" ng-init="copy.Deficiency_selection_id = def.Key_id">
         <div class="control-group">
-            <label><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status:</label>
+            <label class="bold"><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status (Select One)</label>
             <label class="checkbox" ng-repeat="status in options" style="padding-top:4px">
                 <input type="checkbox" ng-true-value="{{status.Value}}" ng-model="copy.Status" />
                 <span class="metro-checkbox">{{status.Label}}</span>
             </label>
         </div>
         <div class="control-group">
-            <label class="control-label" for="inputEmail">Describe Corrective Action:</label>
+            <label class="control-label bold" for="inputEmail">Describe Corrective Action:</label>
             <div class="controls">
                 <textarea ng-model="copy.Text"></textarea>
             </div>
         </div>
 
         <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
-            <label class="control-label" for="inputEmail">Anticipated Completion Date:</label>
+            <label class="control-label bold">Anticipated Completion Date:</label>
             <div class="controls">
                 <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter'></datepicker2>
             </div>
         </div>
         <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
-            <label class="control-label" for="inputEmail">Completion Date:</label>
+            <label class="control-label bold">Completion Date:</label>
             <div class="controls">
                 <datepicker2 ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection'></datepicker2>
             </div>

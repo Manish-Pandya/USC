@@ -9,10 +9,11 @@
                     <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
                 </h2>
         </li>
-        <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
+        <div style="clear:both; height:0; font-size:0;">&nbsp;</div>
     </ul>
 </div>
 <div class="whitebg admin" ng-app="verification" style="padding:70px 70px;">
+    <!--<pre>{{verification | json}}</pre>-->
     <div class="card two-thirds">
         <h3 class="card-header alert-info alert">Verify Changes to Lab Members for {{PI.User.Name}}'s labs</h3>
         <ul>
@@ -60,16 +61,28 @@
         </ul>
     </div>
 
-    <div class="card two-thirds" ng-if="verification.PendingHazardChanges.length">
-        <h3>Verify Changes to Lab Members</h3>
+    <div class="card three-fourths">
+        <h3 class="card-header alert-info alert">Verify Changes to Lab Hazards Inventory for {{PI.User.Name}}'s labs</h3>
         <ul>
-            <li ng-repeat="change in verification.PendingHazardChanges">
-                {{change}}
+            <li ng-repeat="change in changes = (verification.PendingHazardDtoChanges)">
+                <!--<pre>{{change | json}}</pre>
+                 ng-class="{new: change.New_status == Constants.PENDING_CHANGE.USER_STATUS.ADDED, inactive: change.New_status != Constants.PENDING_CHANGE.USER_STATUS.ADDED}"-->
+                <span ng-if="change.edit">
+                    <ui-select tagging="addNewHazard" ng-model="selectedHazard" theme="selectize" on-select="onSelectHazard($item, change)" class="span4" style="margin-left:0">
+                        <ui-select-match placeholder="Select or search for a Hazard">{{selectedHazard.Hazard_name}} </ui-select-match>
+                        <ui-select-choices repeat="hazard in leafHazards | orderBy:'Hazard_name' | propsFilter: {Hazard_name: $select.search}">
+                            <div ng-bind-html="hazard.Hazard_name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </span>
+                <span ng-if="!change.edit">{{change.Hazard_name}}</span><i ng-class="{'red icon-cancel':change.edit,'primary icon-pencil':!change.edit}" ng-click="editHazardChange(change)"></i> is now {{Constants.ROOM_HAZARD_STATUS[change.New_status].ADMIN_LABEL || change.New_status | lowercase }} {{change.Building_name}}, {{change.Room_name}}
+                <i class="icon-checkbox approved pull-right" ng-if="change.Approval_date"></i>
+                <button class="btn btn-success left pull-right" ng-if="change.Hazard_id && !change.Approval_date" ng-click="ac.confirmHazardChange(change, verification.Principal_investigator_id)"><i class="icon-checkmark"></i>Confirm</button>
+                <!--a class="btn btn-info left pull-right" href="../../views/hubs/UserHub.php" ng-if="!change.Parent_id"><i class="icon-plus-2"></i>Create New User</a-->
+                <a class="btn btn-warning left pull-right" target="_blank" href="../views/hubs/hazardhub.php" ng-click="openCreateUserModal(change.Role)" ng-if="!change.Hazard_id && !change.Approval_date"><img class="" src="../img/hazard-icon.png">Hazard Hub</a> 
             </li>
+            <li ng-if="!changes.length">No changes requested</li>
         </ul>
-        <div>
-            <a ng-click="navigate(0)" class="btn btn-large btn-success">Edit Lab Members</a>
-        </div>
     </div>
 
 </div>
