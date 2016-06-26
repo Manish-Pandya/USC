@@ -105,7 +105,7 @@ class ActionMappingFactory {
                 "setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "reorderHazards"=>new ActionMapping("reorderHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
         		"setMasterHazardIds"=>new ActionMapping("setMasterHazardIds", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-        		
+
 
                 // Question Hub
                 "getQuestionById"=>new ActionMapping("getQuestionById", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -170,6 +170,7 @@ class ActionMappingFactory {
                 "addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveCorrectiveAction"=>new ActionMapping("saveCorrectiveAction", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+                "deleteCorrectiveActionFromDeficiency"=>new ActionMapping("deleteCorrectiveActionFromDeficiency", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),

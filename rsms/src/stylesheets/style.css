@@ -1585,6 +1585,14 @@ td.corrective-action.corrected-during-inspection{
   /* padding: 0 !Important; */
   /* position:absolute; */
 }
+.lower-right-buttons{
+  text-align: right;
+  clear: both;
+  width: 50%;
+  bottom:0;
+  left:0%;
+  margin-top: -20px;
+}
 /*
 .inner-action {
   vertical-align: middle;

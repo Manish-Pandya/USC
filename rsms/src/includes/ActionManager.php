@@ -73,10 +73,10 @@ class ActionManager {
     }
 
     /*
-     * 
+     *
      * @return GenericDAO
      */
-    
+
     public function getDao( $modelObject = NULL ){
         //FIXME: Remove MockDAO
         if( $modelObject === NULL ){
@@ -2727,7 +2727,7 @@ class ActionManager {
             $verification->setPrincipal_investigator_id($inspection->getPrincipal_investigator_id());
             $verificationDao->save($verification);
         }
-        
+
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getInspectors");
         $entityMaps[] = new EntityMap("eager","getRooms");
@@ -3551,6 +3551,28 @@ class ActionManager {
             //$LOG->fatal($this->getPIIDFromObject($decodedObject));
 
             return $decodedObject;
+        }
+    }
+
+    public function deleteCorrectiveActionFromDeficiency(){
+        $LOG = Logger::getLogger('Action:' . __function__);
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ){
+            return new ActionError('Error converting input stream to CorrectiveAction');
+        }
+        else if( $decodedObject instanceof ActionError){
+            return $decodedObject;
+        }
+        else{
+            $action = end($decodedObject->getCorrectiveActions());
+            $dao = new GenericDAO(new CorrectiveAction());
+            if($dao->deleteById($action["Key_id"])){
+                $decodedObject->setCorrectiveActions(null);
+                return $decodedObject;
+            }else{
+                return new ActionError("Something Went Wrong");
+            }
+
         }
     }
 
@@ -4465,12 +4487,12 @@ class ActionManager {
     	//$LOG->fatal($relationships);
     	return $relationships;
     }
-    
+
     public function setMasterHazardIds(){
     	$l = Logger::getLogger("hazardthingus");
     	$dao = new GenericDAO(new Hazard());
     	$hazards = $dao->getLeafLevelHazards();
-    	
+
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("lazy","getSubHazards");
     	$entityMaps[] = new EntityMap("lazy","getActiveSubHazards");
@@ -4485,7 +4507,7 @@ class ActionManager {
     		$this->setMasterHazardId($hazard);
     		$hazard->setEntityMaps($entityMaps);
     	}
-  
+
     	return $hazards;
     }
     /*
@@ -4496,10 +4518,10 @@ class ActionManager {
      */
     private function setMasterHazardId(Hazard &$hazard, Hazard $parentId = null){
     	$l = Logger::getLogger("hazardthingus");
-    	 
+
     	//key_ids of the branch level hazards, which are children of the root hazard, plus root hazard's id
     	$masterIds = array(1,9999,10009,10010,10000);
-    	
+
     	if($parentId != null){
     		$id = $parentId;
     		if($id == null){
@@ -4511,17 +4533,17 @@ class ActionManager {
     			return null;
     		}
     	}
-    	
-    	if(in_array($id, $masterIds)){  
+
+    	if(in_array($id, $masterIds)){
     		$hazard->setMaster_hazard_id($id);
-    		$this->saveHazard($hazard);    		
+    		$this->saveHazard($hazard);
     	}else{
     		$parentId = $this->getHazardById($id)->getParent_hazard_id();
     		$this->setMasterHazardId($hazard, $parentId);
     	}
     	return null;
     	//return $this->saveHazard($hazard);
-    	
+
     }
 }
 ?>

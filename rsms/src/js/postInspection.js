@@ -170,7 +170,22 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
     factory.onFailGet = function () {
         return { 'data': error }
-    };
+    }
+
+    factory.deleteCorrectiveAction = function (def) {
+        var url = "../../ajaxaction.php?action=deleteCorrectiveActionFromDeficiency";
+        var deferred = $q.defer();
+
+        convenienceMethods.saveDataAndDefer(url, def).then(
+          function (promise) {
+              deferred.resolve(promise);
+          },
+          function (promise) {
+              deferred.reject(promise);
+          }
+        );
+        return deferred.promise
+    }
 
     factory.organizeChecklists = function (checklists) {
 
@@ -820,6 +835,21 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         });
     }
 
+    $scope.openDeleteModal = function (def) {
+        var modalData = {
+            deficiency: def
+        }
+        postInspectionFactory.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'post-inspection-templates/confirm-delete-corrective-action.html',
+            controller: modalCtrl
+        });
+
+        modalInstance.result.then(function (returnedDef) {
+            def.CorrectiveActions = [];
+        });
+    }
+
     $scope.submit = function () {
         var modalInstance = $modal.open({
             templateUrl: 'post-inspection-templates/submit-cap.html',
@@ -992,6 +1022,24 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
             function () {
                 $scope.dirty = false;
                 $scope.validationError = "The corrective action could not be saved.  Please check your internet connection and try again."
+            }
+          )
+    }
+
+    $scope.deleteCorrectiveAction = function (def) {
+        $scope.dirty = true;
+        console.log(def);
+        $scope.validationError = ''
+        //call to factory to save, return, then close modal, passing data back
+        postInspectionFactory.deleteCorrectiveAction(def)
+          .then(
+            function (returnedDef) {
+                $scope.dirty = false;
+                $modalInstance.close(returnedDef);
+            },
+            function () {
+                $scope.dirty = false;
+                $scope.validationError = "The corrective action could not be removed.  Please check your internet connection and try again."
             }
           )
     }
