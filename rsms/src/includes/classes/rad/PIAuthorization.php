@@ -66,6 +66,8 @@ class PIAuthorization extends RadCrud{
 		$entityMaps[] = new EntityMap("eager", "getRooms");
 		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getDepartments");
+		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
+
 
 		$this->setEntityMaps($entityMaps);
 	}
