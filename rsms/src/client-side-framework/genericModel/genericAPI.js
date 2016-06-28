@@ -43,23 +43,21 @@ angular
 
         api.read = function( urlFragment, queryParam )
         {
-                var url = api.buildRequestUrl( urlFragment, true, queryParam );
+            var url = api.buildRequestUrl( urlFragment, true, queryParam );
+            console.log(url);
+            return $http.jsonp(url)
+                    .then(function (response) {
+                        if (typeof response.data == "undefined" || (response.data.Class && response.data.Class == "ActionError" && response.data.Message != "No rows returned")) {
+                            api.userLoggedOut(response.data);
+                        } else {
+                            return response;
+                        }
+                    },
+                    function (response) {
+                        console.log(response);
+                        api.userLoggedOut(response.data);
+                    });
 
-                var promise = $http.jsonp( url )
-                        .success( function( data ) {
-                            return data;
-                        })
-                        .error( function( data, status, headers, config ) {
-                            console.log('Error returned while reading data from the server.');
-                            console.log(data);
-                            //todo
-                            //figure out how we will handle errors going forward.
-                            //probably, we will simply need to return an error object
-                            //in theory, rejecting the promise and passing in the response data should handle this
-                            return status;
-                        });
-
-                return promise;
         }
 
         api.getRelatedItemsById = function( object, prop )
@@ -74,6 +72,7 @@ angular
 
         api.save = function( object, urlFragment, saveChildren )
         {
+            console.log(object);
                 //all the client-side classes have className properties.  When we instantiate one to save, we shouldn't need to manually set it's class.
                 if(!object.Class && object.className)object.Class = object.className;
                 if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );
@@ -82,17 +81,29 @@ angular
                 if(saveChildren)url = url + "&saveChildren=true";
 
                 var promise = $http.post(url, object)
-                    .success( function( data ){
+                    .then( function( data ){
                         object = data;
+                        console.log(data);
                         return object;
+                    },
+                    function (response) {
+                        api.userLoggedOut(response.data);
                     })
-                    .error( function(){
-                        return false;
-                        console.log('error while saving object: ' + object);
-                    })
+                    
 
                 return promise;
 
+        }
+
+        api.userLoggedOut = function (data) {
+            console.log(data);
+            console.log(typeof data == "undefined");
+            if (!data || (data.Class && data.Class == "ActionError" && data.Message != "No rows returned")) {
+                console.log(location)
+                window.location = "http://" + location.host + "/rsms";
+                return true;
+            }
+            return false;
         }
 
         return api;

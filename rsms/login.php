@@ -48,6 +48,13 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
              <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>
          </div>
          <?php } ?>
+
+        <?php if(isset($_SESSION) && isset($_SESSION['LOGGED_OUT']) && $_SESSION['LOGGED_OUT'] != NULL) {?>
+        <div class="form-group" style="width: 588px;margin-top: 10px;">
+            <h3 class="alert alert-danger"><?php echo $_SESSION['LOGGED_OUT'];?></h3>
+        </div>
+        <?php } ?>
+
          <div class="form-group" style="margin-top:20px;">
             <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
          </div>

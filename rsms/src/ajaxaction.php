@@ -37,6 +37,16 @@ if( array_key_exists('callback', $_GET) ){
 	$output = $_GET['callback'] . "($json)";
 }
 
+//if the user is not logged in or does not have permissions, the client will redirect to the login page.  prepare a message
+if($actionResult->statusCode == 401){
+    $LOG->fatal('setting');
+    $_SESSION['LOGGED_OUT'] = "You have been logged out of the system.  Please log in again to continue";
+}else{
+    $LOG->fatal('nulling');
+
+    $_SESSION['LOGGED_OUT'] = NULL;
+}
+
 // begin output
 // TODO: Will we ever need to use a different header?
 header('Access-Control-Allow-Origin: *');

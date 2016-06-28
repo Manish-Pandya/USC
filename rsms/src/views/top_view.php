@@ -18,7 +18,7 @@ session_start();
         if(i != 0)attemptedPath += "/";
         attemptedPath += pathArray[i];
     }
-    attemptedPath = window.location.protocol + "//" + window.location.hostname + attemptedPath + window.location.hash;
+    attemptedPath = window.location.protocol + "//" + window.location.host + attemptedPath + window.location.hash;
     //remove the # and replace with %23, the HTTP espace for #, so it makes it to the server
     attemptedPath = attemptedPath.replace("#","%23");
     prepareRedirect(attemptedPath);
@@ -131,4 +131,5 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
             </div>
         </div>
     <?php }?>
+
 <div class="container-fluid " id="wrapper" style="margin-top:25px;">

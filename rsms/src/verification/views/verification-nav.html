@@ -21,7 +21,7 @@
               <div class="bar bar-success" style="width: 10%;" ng-if="greatestAllowedStep == 5"></div>
             </div>
             <div class="btn-group verification-nav">
-                <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate($index)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
+                <button ng-repeat="state in states" ng-disabled="greatestAllowedStep < state.Step" class="btn wizard-step" ng-class="{'selected':selectedView.Name == state.Name, 'done':state.Done}" ng-click="navigate(state.Step)"><span class="number-circle"><span ng-if="!state.Done">{{state.Step}}</span><span ng-if="state.Done">&#xe132;</span></span><span class="wizard-step-child">{{state.NavLabel}}</span></button>
             </div>
             <div class="top-junk">
                 <h1>{{selectedView.Label}}</h1>
@@ -37,7 +37,7 @@
                     <span class="metro-checkbox">{{selectedView.ConfirmationMessage}}</span>
                 </label>
                 <div class="step-nav">
-                    <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left left" ng-click="navigate(selectedView.Step-2)"><i class=" icon-arrow-left"></i>Previous</button>
+                    <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left left" ng-click="navigate(selectedView.Step-1)"><i class=" icon-arrow-left"></i>Previous</button>
                     <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right right" ng-click="navigate(selectedView.Step)" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
                 </div>
             </div>

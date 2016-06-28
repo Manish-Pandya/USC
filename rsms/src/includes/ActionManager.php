@@ -189,7 +189,7 @@ class ActionManager {
                 return true;
             } else {
                 // successful LDAP login, but not an authorized Erasmus user, return false
-                $_SESSION['DESTINATION'] = 'login.php';
+                $_SESSION['DESTINATION'] = LOGIN_PAGE;
                 return false;
             }
         }else{
@@ -371,7 +371,6 @@ class ActionManager {
       }
       $LOG->fatal('getting destination');
       if($_SESSION["REDIRECT"] != null){
-		$LOG->fatal('hadfafdadfadfadfasdf');
       	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
       	$destination = str_replace(LOGIN_PAGE, "", $destination);
       }
@@ -390,7 +389,9 @@ class ActionManager {
     }
 
     public function logoutAction(){
-        session_destroy();
+        //session_destroy();
+        $_SESSION['USER'] = null;
+        $_SESSION['ROLE'] = null;
         return true;
     }
 

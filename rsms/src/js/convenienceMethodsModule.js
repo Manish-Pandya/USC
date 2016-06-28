@@ -3,7 +3,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
     $rootScope.Constants = Constants;
 })
 .factory('convenienceMethods', function($http,$q,$rootScope){
-    return{
+    var methods =  {
+        
         //
         /**
         * 	loop through an object, set its properties to match the DTO
@@ -15,9 +16,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
 
         setPropertiesFromDTO: function(dto,obj){
             for (var key in dto) {
-              if (dto.hasOwnProperty(key)) {
-                obj[key] = dto[key];
-              }
+                if (dto.hasOwnProperty(key)) {
+                    obj[key] = dto[key];
+                }
 
             }
         },
@@ -33,14 +34,15 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         saveNewObject: function( obj, onSave, onFail, url, failParam ){
-          return $http.post(  url, obj )
-          .success( function( returnedObj ) {
+            return $http.post(  url, obj )
+            .success( function( returnedObj ) {
                 onSave(returnedObj, obj );
-          })
-          .error(function(data, status, headers, config, hazard){
-               //console.log(failParam);
-             onFail( obj, failParam );
-         });
+            })
+            .error(function(data, status, headers, config, hazard){
+                //console.log(failParam);
+                methods.userLoggedOut(data);
+                onFail( obj, failParam );
+            });
         },
         /**
         * 	UPDATE an object on server and in AngularJS $scope object
@@ -54,19 +56,20 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         updateObject: function( objDTO, obj, onSave, onFail, url, failParam, extra1, extra2, extra3){
-          //console.log(objDTO);
-          return $http.post(  url, objDTO )
-          .success( function( returnedObj ) {
-            if(returnedObj.IsError) {
-                onFail(returnedObj);
-            } else {
-                onSave(returnedObj, obj, extra1, extra2, extra3);
-            }
-          })
-          .error(function(data, status, headers, config, hazard){
-               //console.log(failParam);
-             onFail( obj, failParam );
-         });
+            //console.log(objDTO);
+            return $http.post(  url, objDTO )
+            .success( function( returnedObj ) {
+                if(returnedObj.IsError) {
+                    onFail(returnedObj);
+                } else {
+                    onSave(returnedObj, obj, extra1, extra2, extra3);
+                    methods.userLoggedOut(data);
+                }
+            })
+            .error(function(data, status, headers, config, hazard){
+                //console.log(failParam);
+                onFail( obj, failParam );
+            });
         },
         /**
         * 	DELETE an object on server and in AngularJS $scope object
@@ -80,14 +83,15 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         deleteObject: function( onSave, onFail, url, object, parent, parent2){
-          return $http.delete(  url )
-          .success( function( returnedObj ) {
-              //console.log(returnedObj);
-            onSave(returnedObj, object, parent, parent2);
-          })
-          .error(function(data, status, headers, config, hazard){
-             onFail(object,parent);
-         });
+            return $http.delete(  url )
+            .success( function( returnedObj ) {
+                //console.log(returnedObj);
+                onSave(returnedObj, object, parent, parent2);
+            })
+            .error(function (data, status, headers, config, hazard) {
+                methods.userLoggedOut(data);
+                onFail(object,parent);
+            });
         },
 
         /**
@@ -101,13 +105,14 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         **/
 
         getData: function( url, onSuccess, onFail, parentObject, adding ){
-        //use jsonp method of the angularjs $http object to request data from service layer
+            //use jsonp method of the angularjs $http object to request data from service layer
             $http.jsonp(url)
                 .success( function(data) {
-                   data.doneLoading = true;
-                   onSuccess(data, parentObject, adding);
+                    data.doneLoading = true;
+                    onSuccess(data, parentObject, adding);
                 })
-                .error(function(data, status, headers, config){
+                .error(function (data, status, headers, config) {
+                    methods.userLoggedOut(data);
                     onFail(data,parentObject);
                 })
         },
@@ -120,25 +125,28 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         getDataAsPromise: function( url, errorCallback ){
-              //use jsonp method of the angularjs $http object to request data from service layer
+            //use jsonp method of the angularjs $http object to request data from service layer
             var promise = $http.jsonp(url)
                 .success( function(data) {
                     data.doneLoading = true;
                     return data;
                 })
                 .error(function(data, status, headers, config){
+                    methods.userLoggedOut(data);
                     errorCallback();
                 });
             return promise;
         },
         getDataAsDeferredPromise: function( url ){
             var deferred = $q.defer();
-              //use jsonp method of the angularjs $http object to request data from service layer
+            //use jsonp method of the angularjs $http object to request data from service layer
             $http.jsonp(url)
-                .success( function(data) {
+                .success(function (data) {
+                    console.log(data);
                     deferred.resolve(data);
                 })
-                .error(function(data, status, headers, config){
+                .error(function (data, status, headers, config) {
+                    methods.userLoggedOut(data);
                     deferred.reject(data);
                 });
             return deferred.promise;
@@ -147,14 +155,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             var deferred = $q.defer();
             var promise = $http.post(url,obj)
             .success( function(data) {
-                    data.doneLoading = true;
-                    deferred.resolve(data);
-                })
+                data.doneLoading = true;
+                deferred.resolve(data);
+            })
                 .error(function(data, status){
-                    if(data.Class && data.Class == "ActionError"){
-                       $rootScope.requestError = data.Message;
-                        alert(data.Message);
-                    }
+                    methods.userLoggedOut(data);
                     deferred.reject(data);
                 });
             return deferred.promise;
@@ -163,10 +168,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             //console.log(data);
             $http.post(url,data)
             .success( function(data) {
-               data.doneLoading = true;
-               onSuccess(data);
+                data.doneLoading = true;
+                onSuccess(data);
             })
-            .error(function(data, status, headers, config){
+            .error(function (data, status, headers, config) {
+                methods.userLoggedOut(data);
                 onFail(data);
             })
         },
@@ -182,9 +188,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         getHasLength: function(obj){
             if(obj){
                 if(obj !== null){
-                  if(obj.length > 0){
-                    return true
-                  }
+                    if(obj.length > 0){
+                        return true
+                    }
                 }
                 return false;
             }
@@ -202,16 +208,16 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *
         **/
         arrayContainsObject: function(array, obj, props, returnIdx) {
-          if(!props) {var props = ["Key_id","Key_id"];}
+            if(!props) {var props = ["Key_id","Key_id"];}
 
-          for (var localI=0;localI<array.length;localI++) {
-              if (array[localI][props[0]] === obj[props[1]]) {
-                if(returnIdx)return localI;
-                return true;
+            for (var localI=0;localI<array.length;localI++) {
+                if (array[localI][props[0]] === obj[props[1]]) {
+                    if(returnIdx)return localI;
+                    return true;
+                }
             }
-          }
-          return false;
-          },
+            return false;
+        },
         /**
         *
         *	Set the relationship between two objects
@@ -219,41 +225,41 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	@param (Object object2)   second object
         *
         **/
-          setObjectRelationship: function( object1, object2, onSuccess, onFail, url, failParam ){
-              objDTO = {};
-              objDTO.object1 = object1;
-              objDTO.object1 = object2;
-              return $http.post(  url, objDTO )
-              .success( function( returnedObj ) {
-                    onSuccess(returnedObj, obj );
-              })
-              .error(function(data, status, headers, config, hazard){
-                   //console.log(failParam);
-                 onFail( obj, failParam );
-             });
-          },
-          /**
-        *
-        *	returns an array of strings, each one the Name of one of the user's role objects
-        *	@param (user, User)  user object
-        *
-        **/
-          getUserTypes: function( user ){
-              if(user.Roles){
-                  rolesArray = [];
-                  for(i=0;user.Roles.length>i;i++){
-                      rolesArray.push(user.Roles[i].Name);
-                  }
-                  return rolesArray;
-              }
-              return false
-          },
-          /**
-        *
-        *	Converts a UNIX timestamp to a Javascript date object
-        *	@param (time, int)  Unix timestamp to convert
-        *
-        **/
+        setObjectRelationship: function( object1, object2, onSuccess, onFail, url, failParam ){
+            objDTO = {};
+            objDTO.object1 = object1;
+            objDTO.object1 = object2;
+            return $http.post(  url, objDTO )
+            .success( function( returnedObj ) {
+                onSuccess(returnedObj, obj );
+            })
+            .error(function(data, status, headers, config, hazard){
+                methods.userLoggedOut(data);
+                onFail( obj, failParam );
+            });
+        },
+        /**
+      *
+      *	returns an array of strings, each one the Name of one of the user's role objects
+      *	@param (user, User)  user object
+      *
+      **/
+        getUserTypes: function( user ){
+            if(user.Roles){
+                rolesArray = [];
+                for(i=0;user.Roles.length>i;i++){
+                    rolesArray.push(user.Roles[i].Name);
+                }
+                return rolesArray;
+            }
+            return false
+        },
+        /**
+      *
+      *	Converts a UNIX timestamp to a Javascript date object
+      *	@param (time, int)  Unix timestamp to convert
+      *
+      **/
         getUnixDate: function(time){
             Date.prototype.getMonthFormatted = function() {
                 var month = this.getMonth();
@@ -347,7 +353,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 onSendEmail(returnedObj, emailDto);
             })
             .error(function(data, status, headers, config, hazard){
-                 onFailSendEmail();
+                onFailSendEmail();
             });
         },
         watchersContainedIn: function(scope) {
@@ -381,8 +387,20 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             var t = new Date(1970,0,1);
             t.setTime(seconds);
             return t;
+        },
+
+        userLoggedOut: function (data) {
+            if (data.Class && data.Class == "ActionError") {
+                $rootScope.requestError = data.Message;
+                console.log(location)
+                alert("Your session has expired. Please login again.");
+                //window.location.replace( location.host + location.port + "/rsms" );
+                window.location = "http://" + location.host + "/rsms";
+            }
         }
-    };
+        
+    }
+    return methods;
 })
 .filter('dateToISO', function() {
     return function(input,object,propertyName, setToSting) {

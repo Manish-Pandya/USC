@@ -151,10 +151,11 @@ angular
 
       $rootScope.navigate = function (int) {
           if (int < 0) {
-              int = 0;
+              int = 1;
           }
-          $rootScope.selectedView = $rootScope.states[int];
-          $state.go($rootScope.states[int].Name);
+          console.log(int);
+          $rootScope.selectedView = $rootScope.states[int-1];
+          $state.go($rootScope.states[int-1].Name);
       }
 
   });

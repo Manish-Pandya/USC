@@ -35,10 +35,17 @@ else{
     
     //failed login (ActionManager->loginAction() returned false)
     if ($actionResult->actionFunctionResult != true){
+        //preserve the logout message so we can notify users they've been logged out
+        if(isset($_SESSION["LOGGED_OUT"])){
+            $loggedOut = $_SESSION["LOGGED_OUT"];
+        }
         session_destroy();
         session_start();
+        if(isset($loggedOut)){
+            $_SESSION["LOGGED_OUT"] = $loggedOut;
+        }
         $_SESSION['error'] = "The username or password you entered was incorrect.";
-        header("location: login.php");
+        header("location:" . LOGIN_PAGE);
     }
     //successful login (ActionManager->loginAction() returned true)
     else{
@@ -47,7 +54,12 @@ else{
 		$LOG->fatal( $_SESSION['DESTINATION'] );
 		$_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
 		$_SESSION['DESTINATION'] = str_replace("//", "", $_SESSION['DESTINATION']);
-        header("location:" . WEB_ROOT . $_SESSION['DESTINATION']);
+        $LOG->fatal(WEB_ROOT . $_SESSION['DESTINATION'] );
+        if(isset($_SESSION['REDIRECT'])){
+            header("location:" . $_SESSION['REDIRECT']);
+        }else{
+            header("location:" . WEB_ROOT);
+        }
     }
     
 }
