@@ -62,7 +62,8 @@ echo "</script>";
             //grab usable properties from the session user object
             var GLOBAL_SESSION_USER = {
                 Name: '<?php echo $_SESSION['USER']->getName(); ?>',
-                Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+                Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>',
+                Inspector_id: '<?php echo $_SESSION['INSPECTOR_ID']->getInspector_id(); ?>',
             }
             var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
         </script>

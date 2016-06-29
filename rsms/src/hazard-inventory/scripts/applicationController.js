@@ -24,6 +24,10 @@ angular
             return dataSwitchFactory.getAllObjects('User');
         }
 
+        ac.getAllInspectors = function () {
+            return dataSwitchFactory.getAllObjects('Inspector');
+        }
+
         ac.getAllHazardDtos = function(id, roomId){
             dataStore.HazardDto = null;
             var urlSegment = "getHazardRoomDtosByPIId&id="+id;
@@ -349,7 +353,7 @@ angular
 
         ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad){
             //if we don't have a pi, get one from the server
-            if(!inspectorIds)inspectorIds=[10];
+            if(!inspectorIds)inspectorIds=[];
             var url = 'initiateInspection&piId='+PI.Key_id+'&'+$.param({inspectorIds:inspectorIds});
             if(rad)url = url+"&rad=true";
 
@@ -358,7 +362,7 @@ angular
              $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
                                               function( returned ){
                                                   var inspection = returned.data;
-                                                  if(rad){
+                                                  if (rad || inspectionId) {
                                                     //navigate to checklist for rad inspection.
                                                     window.location = "../views/inspection/InspectionChecklist.php#?inspection="+inspection.Key_id;
                                                   }else{
@@ -367,6 +371,12 @@ angular
                                                   }
                                               }
                                         );
+        }
+
+        ac.navigateToInspection = function (inspection) {
+            console.log(inspection);
+            console.log(location);
+            location.href = "../views/inspection/InspectionChecklist.php#?inspection=" + inspection.Key_id;
         }
 
         return ac;

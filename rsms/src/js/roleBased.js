@@ -13,6 +13,7 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
     .factory('roleBasedFactory', function( $q, $rootScope ){
         var factory = {};
         factory.roles = {};
+        factory.U;
         //expose this factory to all views
         $rootScope.rbf = factory;
 
@@ -35,6 +36,14 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
         $rootScope.R = factory.getRoles();
         //expose the currently logged in user to the view
         $rootScope.U = GLOBAL_SESSION_USER;
+        console.log(factory.U);
+
+        factory.getUser = function () {
+            if (!factory.U) {
+                factory.U = GLOBAL_SESSION_USER;
+            }
+            return factory.U;
+        }
 
         factory.sumArray = function(array){
             var i = array.length;

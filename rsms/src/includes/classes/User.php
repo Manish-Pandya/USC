@@ -69,6 +69,8 @@ class User extends GenericCrud{
 
 	/** Optional Related Inspector record (if this user is a Inspector) */
 	private $inspector;
+    /** Optional Related Inspector record's key_id (if this user is a Inspector) */
+    private $inspector_id;
 
 	/** Supervisor Principal Investigator (if this user works for a PI */
 	private $supervisor;
@@ -150,6 +152,15 @@ class User extends GenericCrud{
 		return $this->inspector;
 	}
 	public function setInspector($inspector){ $this->inspector = $inspector; }
+
+    public function getInspector_id(){
+        if($this->inspector_id == null && $this->getInspector() != null){
+            $this->inspector_id = $this->inspector->getKey_id();
+        }
+
+        return $this->inspector_id;
+    }
+    public function setInspector_id($id){$this->inspector_id = $id;}
 
 	public function getSupervisor_id(){ return $this->supervisor_id; }
 	public function setSupervisor_id($id){ $this->supervisor_id = $id; }

@@ -62,7 +62,8 @@ echo "</script>";
             //grab usable properties from the session user object
             var GLOBAL_SESSION_USER = {
                 Name: '<?php echo $_SESSION['USER']->getName(); ?>',
-                Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+                Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>',
+                Inspector_id: '<?php echo $_SESSION['USER']->getInspector_id(); ?>'
             }
             var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
         </script>
@@ -157,6 +158,7 @@ echo "</script>";
     <script type="text/javascript" src="scripts/models/PIHazardRoomDto.js"></script>
     <script type="text/javascript" src="scripts/models/PrincipalInvestigator.js"></script>
     <script type="text/javascript" src="scripts/models/User.js"></script>
+    <script type="text/javascript" src="scripts/models/Inspector.js"></script>
 
     <!-- filters -->
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
@@ -171,7 +173,6 @@ echo "</script>";
         </div>
     </div>
     <?php }?>
-
     <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
@@ -325,7 +326,6 @@ echo "</script>";
                                 <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
                             </span>
                         </span>
-                        <!--</h4>-->
                         <div class="icons">
                             <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>

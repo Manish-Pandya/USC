@@ -63,7 +63,7 @@
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.SCHEDULED">
                          ({{inspection.Schedule_month | getMonthName}})
                         <br>
-                        <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                        <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                     </span>
                     <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
                         <p ng-if="inspection.Deficiency_selections[0].length">
@@ -86,7 +86,7 @@
                         <p>
                             (Started: {{inspection.Date_started | dateToISO}})
                             <br>
-                            <a target="_blank" style="margin:5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-zoom-in"></i>Continue Inspection</a>
+                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size: 21px;" class="icon-zoom-in"></i>Continue Inspection</a>
                         </p>
                     </span>
                     <span ng-if="!inspection.Status">
@@ -98,7 +98,7 @@
                         <p>
                             (Scheduled for {{inspection.Text_schedule_month}})
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../views/inspection/InspectionChecklist.php#?inspection={{inspection.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </p>
                     </span>
                 </td>

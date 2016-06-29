@@ -42,7 +42,9 @@
         'MiscellaneousWipeTest' : {getById: "getMiscellaneousWipeTestById" , getAll: "getAllMiscellaneousWipeTests" , save: "saveMiscellaneousWipeTest"  },
         'MiscellaneousWipe'     : {getById: "getMiscellaneousWipeById"     , getAll: "getAllMiscellaneousWipes"     , save: "saveMiscellaneousWipe"      },
         'Inspection'            : {getById: "getRadInspectionById"         , getAll: "getAllInspections"            , save: "saveInspection"             },
-        'CarboyReadingAmount'   : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
+        'CarboyReadingAmount'   : { getById: "getCarboyReadingAmountById"  , getAll: "getAllCarboyReadingAmounts"   , save: "saveCarboyReadingAmount"    },
+        'Inspector'             : { getById: "getInspectorById"            , getAll: "getAllInspectors"             , save: "saveInspector"              },
+
         'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"   },
         'PIAuthorization'       : {getById: "getPIAuthorizationByPIId"     , getAll: "getAllPIAuthorizations"       , save: "savePIAuthorization"        },
 
