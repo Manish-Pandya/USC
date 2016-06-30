@@ -452,6 +452,63 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         }
     }
 
+    factory.getIsReadyToSubmit = function (inspection) {
+
+        var ready = {
+            totals: 0, 
+            pendings: 0, 
+            completes:0, 
+            correcteds: 0,
+            readyToSubmit: false
+        }
+
+        if (!inspection) var inspection = factory.getInspection();
+        var i = inspection.Checklists.length;
+        while (i--) {
+            var checklist = inspection.Checklists[i];
+            var j = checklist.Questions.length;
+            while (j--) {
+
+                var question = checklist.Questions[j];
+                if (question.Responses && question.Responses.Answer.toLowerCase() == "no") {
+                    var k = question.Responses.DeficiencySelections.length;
+                    while (k--) {
+                        question.hasDeficiencies = true;
+                        var selection = question.Responses.DeficiencySelections[k];
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                                ready.pendings++;
+                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                                ready.completes++;
+                            }
+
+                        }
+                    }
+                    var k = question.Responses.SupplementalDeficiencies.length;
+                    while (k--) {
+                        question.hasDeficiencies = true;
+                        var selection = question.Responses.SupplementalDeficiencies[k];
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                                ready.pendings++;
+                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                                ready.completes++;
+                            }
+
+                        }
+                    }
+                    if (question.hasDeficiencies) ready.totals++;
+                }
+
+            }
+        }
+
+        if (ready.pendings + ready.completes >= ready.totals || ready.totals == 0) {
+            ready.readyToSubmit = true;
+        }
+        return ready;
+    }
+
     return factory;
 });
 
@@ -533,7 +590,6 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
         var id = $location.search().inspection;
 
         if (!postInspectionFactory.getInspection()) {
-
             $scope.doneLoading = false;
             convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=' + id + '&callback=JSON_CALLBACK', onFailGetInspeciton)
               .then(function (promise) {
@@ -543,11 +599,13 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                   //set view init values for email
                   $scope.others = [{ email: '' }];
                   $scope.defaultNote = {};
-                  $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on " + $scope.inspection.viewDate_started + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + $scope.inspection.Key_id + " .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+                  var date = new Date($scope.inspection.viewDate_started).toLocaleDateString();
+                  postInspectionFactory.setInspection($rootScope.inspection);
+
+                  setEmailText(postInspectionFactory.getIsReadyToSubmit());
 
                   $scope.doneLoading = true;
                   // call the manager's setter to store the inspection in the local model
-                  postInspectionFactory.setInspection($rootScope.inspection);
                   $scope.doneLoading = true;
               });
         } else {
@@ -555,7 +613,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             $scope.others = [{ email: '' }];
             $scope.defaultNote = {};
             $scope.inspection = postInspectionFactory.getInspection();
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on " + $scope.inspection.viewDate_started + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + $scope.inspection.Key_id + " .\nPlease submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\nThank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\nBest regards,\nEHS Research Safety ";
+            setEmailText(postInspectionFactory.getIsReadyToSubmit());
         }
     } else {
         $scope.error = 'No inspection has been specified';
@@ -564,6 +622,35 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
     function onFailGetInspeciton() {
         $scope.doneLoading = true;
         $scope.error = "The system couldn't find the inspection.  Check your internet connection."
+    }
+
+
+    function setEmailText(inspectionState) {
+        var date = new Date($scope.inspection.viewDate_started).toLocaleDateString();
+        var id = postInspectionFactory.getInspection().Key_id
+        console.log(inspectionState);
+        if (inspectionState.totals == 0) {
+            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+                                      + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
+                                       + "Best regards,\n\n"
+                                        + "EHS Research Safety,\n\n"
+        }
+        else if (inspectionState.totals > inspectionState.correcteds) {
+            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+                                 + "Please submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\n\n"
+                                 + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n\n"
+                                 + "Best regards,\n\n"
+                                 + "EHS Research Safety\n"
+        }
+        //all corrected
+        else {
+            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. During this inspection EHS identified one or more deficiencies, but each deficiency was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
+                                      + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
+                                      + "Best regards,\n\n" 
+                                      + "EHS Research Safety\n\n"
+        }
+
+
     }
 
     $scope.contactList = [];
@@ -707,7 +794,15 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
 
                       //see if the inspection report is ready for the lab to submit to EHS (do all deficiencies have at least pending corrective action)
-                      if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) getIsReadyToSubmit();
+                      if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) {
+                          if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                              var modalInstance = $modal.open({
+                                  templateUrl: 'post-inspection-templates/submit-cap.html',
+                                  controller: modalCtrl
+                              });
+
+                         }
+                      }
                   });
             } else {
                 $scope.inspection = postInspectionFactory.getInspection();
@@ -715,7 +810,14 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                 $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
                 $scope.doneLoading = true;
                 postInspectionFactory.getHotWipes($scope.inspection);
-                if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) getIsReadyToSubmit();
+                if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) {
+                    if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                        var modalInstance = $modal.open({
+                            templateUrl: 'post-inspection-templates/submit-cap.html',
+                            controller: modalCtrl
+                        });
+                    }
+                }
             }
             $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE, Constants.CORRECTIVE_ACTION.STATUS.PENDING, Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
         } else {
@@ -831,7 +933,16 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             } else {
                 def.CorrectiveActions.push(returnedCA);
             }
-            if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) getIsReadyToSubmit();
+            if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT], $rootScope.R[Constants.ROLE.NAME.ADMIN]])) {
+                console.log(postInspectionFactory.getIsReadyToSubmit());
+                if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'post-inspection-templates/submit-cap.html',
+                        controller: modalCtrl
+                    });
+
+                 }
+            }
         });
     }
 
@@ -880,71 +991,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         postInspectionFactory.saveInspection(inspection, inspectionDto).then(function () { $scope.handlingInspectionOpen = false; });
     }
 
-    function getIsReadyToSubmit() {
-        var totals = 0;
-        var pendings = 0;
-        var completes = 0;
-        var correcteds = 0;
-        //console.log('adfasdfasdfasdfasdf')
-        //console.log($scope.questionsByChecklist.biologicalHazards)
-        var inspection = postInspectionFactory.getInspection();
-        var i = inspection.Checklists.length;
-        while (i--) {
-            var checklist = inspection.Checklists[i];
-            var j = checklist.Questions.length;
-            while (j--) {
-
-                var question = checklist.Questions[j];
-                if (question.Responses && question.Responses.Answer.toLowerCase() == "no") {
-                    var k = question.Responses.DeficiencySelections.length;
-                    while (k--) {
-                        question.hasDeficiencies = true;
-                        var selection = question.Responses.DeficiencySelections[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
-                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
-                                pendings++;
-                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
-                                completes++;
-                            }
-
-                        }
-                    }
-                    var k = question.Responses.SupplementalDeficiencies.length;
-                    while (k--) {
-                        question.hasDeficiencies = true;
-                        var selection = question.Responses.SupplementalDeficiencies[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
-                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
-                                pendings++;
-                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
-                                completes++;
-                            }
-
-                        }
-                    }
-                    if (question.hasDeficiencies) totals++;
-                }
-
-            }
-        }
-        $rootScope.completes = completes;
-        $rootScope.pendings = pendings;
-        $rootScope.totals = totals;
-
-        if (pendings  + completes >= totals || totals == 0) {
-            if ($rootScope.inspection.Cap_submitted_date == null || $rootScope.inspection.Cap_submitted_date == '0000-00-00 00:00:00') $scope.readyToSubmit = true;
-            var modalInstance = $modal.open({
-                templateUrl: 'post-inspection-templates/submit-cap.html',
-                controller: modalCtrl
-            });
-
-            modalInstance.result.then(function (returnedInspection) {
-                $scope.readyToSubmit = false;
-                angular.extend($rootScope.inspection, returnedInspection);
-                postInspectionFactory.setInspection($rootScope.inspection);
-            });
-        }
-    }
+    
 
     $scope.complete = function (action) {
         var copy = convenienceMethods.copyObject(action);
@@ -982,6 +1029,8 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     $scope.options = [{ Value: Constants.CORRECTIVE_ACTION.STATUS.PENDING, Label: "Corrective action will be completed soon" }, { Value: Constants.CORRECTIVE_ACTION.STATUS.COMPLETE, Label: "Corrective action completed" }];
     $scope.validationError = '';
     $scope.dates = {};
+
+    $scope.data = postInspectionFactory.getIsReadyToSubmit();
 
     if (data != null) {
         console.log(data);
