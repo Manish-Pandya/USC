@@ -1,7 +1,6 @@
 <div ng-if="pi" class="right-column">
     <h1>
         {{pi.User.Name}} <a class="btn btn-info left" href="{{'#/my-lab' + pi.Key_id}}" target="_blank"><i class="icon-info"></i>Lab View</a>
-
     </h1>
     <span ng-init="window.selectedAmendment"/>
     <div ng-show="piAuth.Amendment_number == window.selectedAmendment" class="card full auths" ng-click="af.setSelectedView('authorizations')" ng-repeat="piAuth in pi.Pi_authorization">
@@ -14,7 +13,7 @@
             </span>
             <div class="control-group">
                 <div class="controls">
-                    <select ng-options="piAuth.Amendment_number as piAuth.Amendment_number for piAuth in pi.Pi_authorization" ng-model="window.selectedAmendment">
+                    <select ng-options="piAuth.Amendment_number as 'Amendment '+ piAuth.Amendment_number for piAuth in pi.Pi_authorization" ng-model="selectedAmendment">
                         <option style="display:none" value="">Original amendment</option>
                     </select>
                 </div>

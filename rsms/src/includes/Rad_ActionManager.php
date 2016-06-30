@@ -590,7 +590,7 @@ class Rad_ActionManager extends ActionManager {
 
     function getAllIsotopes() {
         $isotopeDao = $this->getDao(new Isotope());
-        return $isotopeDao->getAll();
+        return $isotopeDao->getAll('name', true);
     }
 
     public function getAllParcels(){
@@ -2191,7 +2191,7 @@ class Rad_ActionManager extends ActionManager {
 			$authDao = new GenericDAO(new Authorization());
 
 			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
-			if($needsSaveAmendment && $decodedObject->getAmendment_number() != NULL){
+			if($needsSaveAmendment && $decodedObject->Isotopes() != NULL){
 				foreach($decodedObject->getAuthorizations() as $auth){
 					$newAuth = new Authorization();
 					$newAuth->setPi_authorization_id($piAuth->getKey_id());
@@ -2200,6 +2200,7 @@ class Rad_ActionManager extends ActionManager {
 					$newAuth->setApproval_date($auth["Approval_date"]);
 					$newAuth->setIs_active($auth["Is_active"]);
 					$newAuth->setKey_id(null);
+					$LOG->fatal($newAuth);
 					$authDao->save($newAuth);
 				}
 			}

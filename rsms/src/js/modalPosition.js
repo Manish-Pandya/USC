@@ -44,7 +44,7 @@ angular.module('modalPosition', [])
 	        var positionUISelects = function () {
 	            var h = body.height() + 60;
 	            var t = body[0].offsetTop;
-	            console.log(body);
+	            //console.log(body);
 
 	            if (!relevantSelectMatches) {
 	                relevantSelectMatches = body.find(".ui-select-match");
@@ -58,8 +58,8 @@ angular.module('modalPosition', [])
 
 	            } else {
 	                $top = body.scrollTop();
-                    console.log("top")
-	                console.log(t);
+                    //console.log("top")
+	                //console.log(t);
 	                $(relevantSelectMatches).each(function (x) {
 	                    var $this = $(this);
 	                    var $that = $(relevantSelectArrows[x])

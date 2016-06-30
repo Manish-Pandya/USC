@@ -142,9 +142,12 @@ angular.module('00RsmsAngularOrmApp')
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
         console.log(af.getCachedCollection('CarboyUseCycle'));
 
-        $scope.selectIsotope = function(isotope){
-            if($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope)$scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
-            if($scope.modalData.ParcelCopy && $scope.modalData.ParcelCopy.Isotope)$scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
+        $scope.selectIsotope = function (auth) {
+            auth.Isotope = dataStoreManager.getById("Isotope", auth.Isotope_id);
+            if ($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope) {
+                $scope.modalData.AuthorizationCopy.Isotope_id = $scope.modalData.AuthorizationCopy.Isotope.Key_id;
+                if ($scope.modalData.ParcelCopy && $scope.modalData.ParcelCopy.Isotope) $scope.modalData.ParcelCopy.Isotope_id = $scope.modalData.ParcelCopy.Isotope.Key_id;
+            }
         }
 
         $scope.selectPO = function(po){
@@ -155,16 +158,31 @@ angular.module('00RsmsAngularOrmApp')
             if($scope.modalData.ParcelCopy)$scope.modalData.ParcelCopy.Authorization = dataStoreManager.getById("Authorization",$scope.modalData.ParcelCopy.Authorization_id)
         }
 
+        $scope.addIsotope = function (id) {
+            var newAuth = new Authorization();
+            newAuth.Class = "Authorization";
+            newAuth.Pi_authorization_id = id;
+            newAuth.Is_active = newAuth.isIncluded = true;
+            newAuth.Isotope = new Isotope();
+            newAuth.Isotope.Class = "Isotope";
+            $scope.modalData.PIAuthorizationCopy.Authorizations.push(newAuth);
+        }
+
         $scope.close = function(){
             af.deleteModalData();
             $modalInstance.dismiss();
         }
 
-        $scope.savePIAuthorization = function( copy, auth ){
+        $scope.savePIAuthorization = function(copy, auth){
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment) copy.Key_id = null;
             $modalInstance.dismiss();
             af.deleteModalData();
+            for (var n = 0; n < copy.Authorizations; n++) {
+                if (!copy.Authorizations[n].isIncluded) {
+                    copy.Authorizations.splice(n, 1);
+                }
+            }
             af.savePIAuthorization(copy, auth, pi);
         }
 
