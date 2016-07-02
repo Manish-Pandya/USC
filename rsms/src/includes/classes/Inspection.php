@@ -20,6 +20,7 @@ class Inspection extends GenericCrud {
         "date_closed"	=> "timestamp",
         "notification_date"	=> "timestamp",
         "cap_submitted_date"	=> "timestamp",
+        "cap_submitter_id"      => "integer",
         "schedule_month"	=> "text",
         "schedule_year"		=> "text",
         "note"			=> "text",
@@ -121,6 +122,12 @@ class Inspection extends GenericCrud {
     private $text_schedule_month;
 
     private $inspection_wipe_tests;
+
+    /**
+     * the id of the user who submitted the corrective action plan for this inspection
+     */
+    private $cap_submitter_id;
+    private $cap_submitter_name;
 
     public function __construct(){
 
@@ -331,5 +338,18 @@ class Inspection extends GenericCrud {
 
     public function getHasDeficiencies(){return $this->hasDeficiencies;}
 
+	public function getCap_submitter_id(){return $this->cap_submitter_id;}
+	public function setCap_submitter_id($cap_submitter_id){$this->cap_submitter_id = $cap_submitter_id;}
+
+	public function getCap_submitter_name(){
+        if($this->getCap_submitter_id() != null && $this->cap_submitter_name == null){
+            $thisDao = new GenericDAO(new User());
+            $user = $thisDao->getById($this->cap_submitter_id);
+            if($user != null){
+                $this->cap_submitter_name = $user->getName();
+            }
+        }
+		return $this->cap_submitter_name;
+	}
 }
 ?>

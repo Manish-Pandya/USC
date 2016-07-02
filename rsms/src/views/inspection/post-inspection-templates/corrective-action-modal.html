@@ -2,7 +2,6 @@
     <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">Add a corrective action</h2>
 </div>
 <div class="modal-body">
-    <!--<pre>{{def|json}}</pre>-->
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
     <h3>Audit Criteria:</h3>
     <p>{{question.Text}}</p>
@@ -11,7 +10,7 @@
     <p ng-if="def.Deficiency.Text != 'Other'">{{def.Deficiency.Text}}</p>
     <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
 
-    <form class="form" ng-init="copy.Deficiency_selection_id = def.Key_id">
+    <form class="form">
         <div class="control-group">
             <label class="bold"><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status (Select One)</label>
             <label class="checkbox" ng-repeat="status in options" style="padding-top:4px">

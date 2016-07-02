@@ -67,14 +67,9 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         scope: { watched: "@" },
         restrict: 'C',
         link: function (scope, elem, attrs) {
-            /*
-            scope.$watch('watched', function(oldVal, newVal){
-                if(oldVal != newVal)sizeThinguses(scope, elem, attrs);
-            })*/
             window.setTimeout(
                 function () {
                     var td = elem.parents('td');
-                    console.log(td.next());
                     var h = td.next()[0].offsetHeight;
                     elem.css({ 'height': h });
                 }, 10
@@ -423,6 +418,8 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     factory.submitCap = function (inspection) {
         var inspectionDto = angular.copy(inspection);
         inspectionDto.Cap_submitted_date = convenienceMethods.setMysqlTime(Date());
+        inspectionDto.Cap_submitter_id = GLOBAL_SESSION_USER.Key_id;
+
         var url = "../../ajaxaction.php?action=submitCAP";
         var deferred = $q.defer();
 
@@ -473,6 +470,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                 if (question.Responses && question.Responses.Answer.toLowerCase() == "no") {
                     var k = question.Responses.DeficiencySelections.length;
                     while (k--) {
+                        ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
                         if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
@@ -486,6 +484,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                     }
                     var k = question.Responses.SupplementalDeficiencies.length;
                     while (k--) {
+                        ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.SupplementalDeficiencies[k];
                         if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
@@ -494,10 +493,9 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
                             }
-
                         }
                     }
-                    if (question.hasDeficiencies) ready.totals++;
+                    
                 }
 
             }
@@ -506,6 +504,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         if (ready.pendings + ready.completes >= ready.totals || ready.totals == 0) {
             ready.readyToSubmit = true;
         }
+        console.log(ready);
         return ready;
     }
 
@@ -794,7 +793,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
 
                       //see if the inspection report is ready for the lab to submit to EHS (do all deficiencies have at least pending corrective action)
-                      if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) {
+                      if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT], $rootScope.R[Constants.ROLE.NAME.ADMIN]])) {
                           if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
                               var modalInstance = $modal.open({
                                   templateUrl: 'post-inspection-templates/submit-cap.html',
@@ -876,7 +875,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         //parse the dates for MYSQL
         if (def.CorrectiveActionCopy.viewCompletion_date) def.CorrectiveActionCopy = postInspectionFactory.setDatesForServer(def.CorrectiveActionCopy, "viewCompletion_date");
         if (def.CorrectiveActionCopy.viewPromised_date) def.CorrectiveActionCopy = postInspectionFactory.setDatesForServer(def.CorrectiveActionCopy, "viewPromised_date");
-        //console.log(def.CorrectiveActionCopy);
+        console.log(def.CorrectiveActionCopy);
 
         var test = postInspectionFactory.saveCorrectiveAction(def.CorrectiveActionCopy).then(
           function (promise) {
@@ -1033,7 +1032,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
 
     if (data != null) {
-        console.log(data);
         $scope.question = data.question || null;
         $scope.def = data.deficiency || null;
 
@@ -1043,11 +1041,12 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 $scope.copy[prop] = $scope.def.CorrectiveActions[0][prop];
             }
         } else {
+            console.log($scope.def);
             $scope.copy = {
                 Class: "CorrectiveAction",
                 Is_active: true,
                 Text: "",
-                Deficiency_selection_id: $scope.def.Class == "Deficiency" ? $scope.def.Key_id : null,
+                Deficiency_selection_id: $scope.def.Class == "DeficiencySelection" ? $scope.def.Key_id : null,
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
@@ -1056,11 +1055,13 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.saveCorrectiveAction = function (copy, orig) {
+        console.log(copy, orig);
         $scope.dirty = true;
+
         if ($scope.dates.promisedDate) copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
         if ($scope.dates.completionDate) copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
-        $scope.validationError = ''
+        $scope.validationError = '';
         //call to factory to save, return, then close modal, passing data back
         postInspectionFactory.saveCorrectiveAction(copy)
           .then(
@@ -1077,7 +1078,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
 
     $scope.deleteCorrectiveAction = function (def) {
         $scope.dirty = true;
-        console.log(def);
         $scope.validationError = ''
         //call to factory to save, return, then close modal, passing data back
         postInspectionFactory.deleteCorrectiveAction(def)

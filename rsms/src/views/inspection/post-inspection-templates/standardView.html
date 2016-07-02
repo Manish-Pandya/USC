@@ -48,7 +48,7 @@
             </span>
             <span class="span3 pull-right">
                 <h3>Lab Safety Contact:</h3>
-                <p class="pull-right" style="width:154px;">
+                <p class="pull-right" style="width:154px;margin-top:3px;">
                     <span ng-if="inspection.PrincipalInvestigator.LabPersonnel.length" style="margin-top: -17px; display: inline-block;">
                         <span ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel"><br>
                             {{contact.Name}}<span ng-show="!$last">, </span>
@@ -66,7 +66,7 @@
             </span>
             <span class="span3 pull-right">
                 <h3 style="width:177px;">EH&S Auditor(s):</h3>
-                <p class="pull-right" style="width:154px;">
+                <p class="pull-right" style="width:154px;margin-top:3px;">
                 <span style="margin-top: 0px; display: inline-block;">
                     <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
                 </span>
@@ -136,7 +136,7 @@
     <tr ng-repeat="rec in recommendations" ng-if="rec.Is_active"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
 <div style="margin:30px 0;">
-   <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px 10px 5px 5px;">Corrective Action Plan Submitted By:</h3><span style="font-size: 14pt" ng-if="!inspection.Date_closed">{{inspection.PrincipalInvestigator.User.Name}}</span>
+   <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Submitted By:</h3><span style="font-size: 14pt" ng-if="!inspection.Date_closed">{{inspection.Cap_submitter_name}}</span>
 </div>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%;">
