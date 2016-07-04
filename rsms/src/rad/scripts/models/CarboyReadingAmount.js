@@ -14,7 +14,6 @@ CarboyReadingAmount.prototype = {
     loadIsotope:function(){
     	if(this.Isotope_id){
             dataLoader.loadChildObject(this, 'Isotope', 'Isotope', this.Isotope_id);
-            console.log(this);
         }
     }
 }

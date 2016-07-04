@@ -20,5 +20,4 @@ function getDBPassword() {
     return 'eR@m#682d';
 }
 
-
 ?>

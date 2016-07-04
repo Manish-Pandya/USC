@@ -2191,7 +2191,7 @@ class Rad_ActionManager extends ActionManager {
 			$authDao = new GenericDAO(new Authorization());
 
 			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
-			if($needsSaveAmendment && $decodedObject->Isotopes() != NULL){
+			if($needsSaveAmendment && $decodedObject->getAuthorizations() != NULL){
 				foreach($decodedObject->getAuthorizations() as $auth){
 					$newAuth = new Authorization();
 					$newAuth->setPi_authorization_id($piAuth->getKey_id());
@@ -2204,7 +2204,7 @@ class Rad_ActionManager extends ActionManager {
 					$authDao->save($newAuth);
 				}
 			}
-
+            $LOG->fatal($piAuth);
     		return $piAuth;
     	}
 

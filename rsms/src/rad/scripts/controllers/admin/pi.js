@@ -26,6 +26,41 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
                         $rootScope.pi = pi;
+
+                        $scope.auths = $scope.pi.Pi_authorization;
+                        $scope.mappedAmendments = [];
+                        for (var i = 0; i < $scope.pi.Pi_authorization.length; i++) {
+                            var amendment = $scope.auths[i];
+                            console.log(amendment)
+                            amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
+                            amendment.weight = parseInt(amendment.Amendment_number || "0");
+                            $scope.mappedAmendments[parseInt(amendment.weight)] = amendment;
+                        }
+
+                        $scope.getHighestAmendmentNumber = function (amendments) {
+                            if (amendments.length == 1) {
+                                $scope.selectedAmendment = parseInt(0);
+                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(0)];
+                                return "0"
+                            } else {
+                                var highestAuthNumber = 0;
+                                for (var i = 0; i < amendments.length; i++) {
+                                    var auth = amendments[i];
+                                    if (auth.Amendment_number && auth.Amendment_number > highestAuthNumber) {
+                                        highestAuthNumber = auth.Amendment_number;
+                                    }
+                                    console.log(i)
+
+                                }
+                                $scope.selectedAmendment = parseInt(highestAuthNumber);;
+                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(highestAuthNumber)];
+                                return highestAuthNumber;
+
+                            }
+                        }
+                        $scope.getHighestAmendmentNumber($scope.mappedAmendments);
+
+
                         return pi;
                     },
                     function(){
@@ -72,12 +107,13 @@ angular.module('00RsmsAngularOrmApp')
         af.saveParcel( copy, parcel, pi )
     }
 
+    
   })
   .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-
+        console.log($scope.modalData);
         if(!$scope.modalData.AuthorizationCopy){
             $scope.modalData.AuthorizationCopy = {
                 Class: 'Authorization',
@@ -111,10 +147,10 @@ angular.module('00RsmsAngularOrmApp')
             }
         }
 
-        if(!$scope.modalData.PIAuthorizationCopy){
+        if (!$scope.modalData.PIAuthorizationCopy) {
             $scope.modalData.PIAuthorizationCopy = {
                 Class: 'PIAuthorization',
-                Rooms:null,
+                Rooms: null,
                 Authorization_number: null,
                 Is_active: true,
                 Principal_investigator_id: $scope.modalData.pi.Key_id
@@ -173,7 +209,7 @@ angular.module('00RsmsAngularOrmApp')
             $modalInstance.dismiss();
         }
 
-        $scope.savePIAuthorization = function(copy, auth){
+        $scope.savePIAuthorization = function (copy, auth) {
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment) copy.Key_id = null;
             $modalInstance.dismiss();
@@ -273,6 +309,31 @@ angular.module('00RsmsAngularOrmApp')
                 return true;
             }
             return false;
+        }
+
+        $scope.getSuggestedAmendmentNumber = function (pi) {
+            //get a suggetion for amendment number
+            $scope.suggestedAmendmentNumber;
+            var i = $scope.modalData.PIAuthorizationCopy.Authorizations.length;
+            console.log($scope.modalData.PIAuthorizationCopy.Authorizations);
+            var gapFound = false;
+            if (i > 1) {
+                while (i--) {
+                    if (!$scope.modalData.PIAuthorizationCopy.Authorizations[i]) {
+                        gapFound = true;
+                        break;
+                    }
+                }
+                if (gapFound) {
+                    $scope.suggestedAmendmentNumber = i;
+                } else {
+                    $scope.suggestedAmendmentNumber = $scope.modalData.PIAuthorizationCopy.Authorizations.length;
+                }
+            } else {
+                $scope.suggestedAmendmentNumber = $scope.modalData.PIAuthorizationCopy.Authorizations.length;
+            }
+            console.log($scope.suggestedAmendmentNumber);
+            return $scope.suggestedAmendmentNumber
         }
 /*
         $scope.checkboxChange = function(thing, authorization){

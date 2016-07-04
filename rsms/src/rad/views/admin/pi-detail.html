@@ -2,100 +2,97 @@
     <h1>
         {{pi.User.Name}} <a class="btn btn-info left" href="{{'#/my-lab' + pi.Key_id}}" target="_blank"><i class="icon-info"></i>Lab View</a>
     </h1>
-    <span ng-init="window.selectedAmendment"/>
-    <div ng-show="piAuth.Amendment_number == window.selectedAmendment" class="card full auths" ng-click="af.setSelectedView('authorizations')" ng-repeat="piAuth in pi.Pi_authorization">
-        <h3 class="card-header padding">
-            {{window.selectedAmendment}} | {{piAuth.Amendment_number}} | {{piAuth.Amendment_number == window.selectedAmendment}}
-            <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
-            <span class="bold">
-                {{piAuth.Authorizations.length}} authorized rad material<span ng-if="piAuth.Authorizations.length != 1">s</span>
-                under Authorization #{{piAuth.Authorization_number}}
-            </span>
-            <div class="control-group">
-                <div class="controls">
-                    <select ng-options="piAuth.Amendment_number as 'Amendment '+ piAuth.Amendment_number for piAuth in pi.Pi_authorization" ng-model="selectedAmendment">
-                        <option style="display:none" value="">Original amendment</option>
-                    </select>
-                </div>
-            </div>
-            <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', piAuth)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
-            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', piAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
-        </h3>
-        <h3 class="card-header padding auths" ng-if="!piAuth.Authorizations.length">
-            <i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="piAuth">under Authorization #{{piAuth.Authorization_number}}</span>
-            <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', piAuth)"><i class="icon-unlocked-2"></i><span ng-if="!piAuth">Add</span><span ng-if="piAuth">Edit</span> Authorization</a>
-            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', piAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
-        </h3>
-        <div class="card-content" ng-if="selectedView == 'authorizations'">
-            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="pi.Pi_authorization">
-                <div class="table-header">
-                    <h3>Authorization Number</h3>
-                    <h3>Rooms</h3>
-                    <h3>Departments</h3>
-                </div>
-                <div class="table-row">
-                    <div>{{piAuth.Authorization_number}} {{piAuth.Amendment_number ? ' Amendment #' + piAuth.Amendment_number : ''}}</div>
-                    <div>
-                        <ul><li ng-repeat="room in piAuth.Rooms">{{room.Building_name}}: {{room.Name}}</li></ul>
-                    </div>
-                    <div>
-                        <ul><li ng-repeat="dept in piAuth.Departments">{{dept.Name}}</li></ul>
-                    </div>
-                </div>
-            </div>
-            <h3>
-                Authorized Isotopes
-                <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a>
+    <div class="card full auths" ng-click="af.setSelectedView('authorizations')">
+        <span ng-init="selectedAmendment" />
+
+        <div>
+            <h3 class="card-header padding">
+                <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
+                <span class="bold">
+                    {{selectedPiAuth.Authorizations.length}} authorized rad material<span ng-if="selectedPiAuth.Authorizations.length != 1">s</span>
+                    under Authorization #{{selectedPiAuth.Authorization_number}}
+                </span>
+                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorizations)" ng-options="piAuth.weight as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
+                    <option style="display:none" value="">Select Amendment</option>
+                </select>                    
+                <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-unlocked-2"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
+                <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
             </h3>
-            <div class="fake-table striped bordered" ng-if="piAuth.Authorizations.length">
-                <div class="table-header">
-                    <h3>Edit</h3>
-                    <h3>Isotope</h3>
-                    <h3>Half Life</h3>
-                    <h3>Emitter Type</h3>
-                    <h3>Maximum Quantity</h3>
-                    <h3>Approval Date</h3>
-                    <h3>Revocation Date</h3>
-                    <h3>Form</h3>
+            <h3 class="card-header padding auths" ng-if="!mappedAmendments.length">
+                <i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="piAuth">under Authorization #{{piAuth.Authorization_number}}</span>
+                <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-unlocked-2"></i><span ng-if="!piAuth">Add</span><span ng-if="piAuth">Edit</span> Authorization</a>
+                <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
+            </h3>
+            <div class="card-content" ng-repeat="piAuth in mappedAmendments" ng-if="selectedView == 'authorizations' && selectedAmendment == piAuth.weight">
+                <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="mappedAmendments.length">
+                    <div class="table-header">
+                        <h3>Authorization Number</h3>
+                        <h3>Rooms</h3>
+                        <h3>Departments</h3>
+                    </div>
+                    <div class="table-row">
+                        <div>{{piAuth.Authorization_number}} {{piAuth.Amendment_number ? ' Amendment #' + piAuth.Amendment_number : ''}}</div>
+                        <div>
+                            <ul><li ng-repeat="room in piAuth.Rooms | orderBy:'Building_name'">{{room.Building_name}}: {{room.Name}}</li></ul>
+                        </div>
+                        <div>
+                            <ul><li ng-repeat="dept in piAuth.Departments | orderBy:'Name''">{{dept.Name}}</li></ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-row" ng-repeat="auth in piAuth.Authorizations" ng-class="{'inactive':!auth.Is_active}">
-                    <div>
-                        <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
-                        <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
-                        <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                <h3 style="margin-bottom:5px;">
+                    Authorized Isotopes
+                    <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/authorization-modal')"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a>
+                </h3>
+                <div class="fake-table striped bordered" ng-if="piAuth.Authorizations.length">
+                    <div class="table-header">
+                        <h3>Edit</h3>
+                        <h3>Isotope</h3>
+                        <h3>Half Life</h3>
+                        <h3>Emitter Type</h3>
+                        <h3>Maximum Quantity</h3>
+                        <h3>Approval Date</h3>
+                        <h3>Revocation Date</h3>
+                        <h3>Form</h3>
                     </div>
+                    <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'" ng-class="{'inactive':!auth.Is_active}">
+                        <div>
+                            <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/authorization-modal', auth)"><i class="icon-pencil"></i></a>
+                            <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
+                            <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
+                        </div>
 
-                    <div>
-                        {{auth.Isotope.Name}}
-                    </div>
+                        <div>
+                            {{auth.Isotope.Name}}
+                        </div>
 
-                    <div>
-                        {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
-                    </div>
+                        <div>
+                            {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
+                        </div>
 
-                    <div>
-                        {{auth.Isotope.Emitter_type}}
-                    </div>
+                        <div>
+                            {{auth.Isotope.Emitter_type}}
+                        </div>
 
-                    <div>
-                        {{auth.Max_quantity}} mCi
-                    </div>
+                        <div>
+                            {{auth.Max_quantity}} mCi
+                        </div>
 
-                    <div>
-                        {{auth.Approval_date | dateToISO}}
-                    </div>
+                        <div>
+                            {{auth.Approval_date | dateToISO}}
+                        </div>
 
-                    <div>
-                        {{auth.Revocation_date | dateToISO}}
-                    </div>
+                        <div>
+                            {{auth.Revocation_date | dateToISO}}
+                        </div>
 
-                    <div>
-                        {{auth.Form}}
+                        <div>
+                            {{auth.Form}}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div>    </div>
     <div class="card full pos" ng-click="af.setSelectedView('orders')">
         <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
         <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
