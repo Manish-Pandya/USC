@@ -211,10 +211,10 @@ echo "</script>";
             <ui-select ng-if="!PI || af.selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="af.selectPI = false;onSelectPi($item)" class="span8" >
                 <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                 <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' | propsFilter: {User.Name: $select.search}">
-                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                  <div ng-class="{'red':!pi.Is_active}" ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
-            <h3 style="display:inline" ng-if="PI && !af.selectPI">{{PI.User.Name}}</h3>
+            <h3 style="display:inline" ng-class="{'red':!pi.Is_active}" ng-if="PI && !af.selectPI">{{PI.User.Name}} {{!pi.Is_active ? "(Inactive PI)" : ""}}</h3>
             <span ng-click="af.selectPI = !af.selectPI">
                 <i ng-if="PI && !af.selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
                 <i class="icon-cancel danger" ng-if="PI && af.selectPI"  style="margin: 6px 5px;"></i>

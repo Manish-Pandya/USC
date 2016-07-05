@@ -1231,6 +1231,7 @@ html[xmlns] .clearfix {
   border: none;
   float: left;
   margin-right: 5px;
+  color: rgb(0, 152, 255) !important;
 }
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
@@ -2150,12 +2151,14 @@ detailsReportHeaderTable tr td {
 .hazardList i.icon-enter, .hazardList ul i.icon-enter {
   color: rgba(73, 175, 205, 0.62)
 }
-.hazardList ul li span span{
-  font-size:14px;
+.hazardList ul li{
+  font-size: 1.4em;
 }
 .hazardList ul li ul li span span{
-  font-size: 12px !Important;
   margin-top: -4px !important;
+}
+.hazardList ul li ul li{
+  font-size: .9em;
 }
 /* line 1391, ../sass/style.scss */
 .hazardList i.icon-enter, .hazardList ul i.icon-enter:hover {
