@@ -1,0 +1,39 @@
+﻿
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:15px;" class="redBg">
+        Please verifiy that you want to continue.
+    </h2>
+</div>
+<div class="modal-body">
+    <h3>{{modalData.message}}</h3>
+    <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+    <div>
+        <ul ng-if="modalData.InspectionCopy.Inspectors" style="margin-top:10px">
+            
+            <li ng-repeat="inspector in modalData.allInspectors | orderBy: 'Name'" ng-if="inspector.hasBeenIncluded || modalData.inspectorIds.indexOf(inspector.Key_id) > -1">
+                <h4>
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-attr-title="{{inspector.Key_id == modalData.current.Inspector_id ? 'You can\'t remove yourself from the inspection.' : null }}" 
+                               ng-disabled="inspector.Key_id == modalData.current.Inspector_id" ng-model="inspector.include" value="true" 
+                               ng-required="!contact.stillHere"
+                               ng-change="inspector.include ? addInspector(inspector.Key_id) : removeInspector(modalData.inspectorIds[inspector.Key_id])" 
+                               ng-init="inspector.include=true; inspector.hasBeenIncluded = true;"/>
+                        <span class="metro-checkbox" once-text="inspector.User.Name"></span>
+                    </label>
+                </h4>                
+            </li>
+            <li style="margin-top:10px" ng-if="!modalData.add"><h4>Add Inspector <button ng-disabled="modalData.inspectorIds.length == modalData.allInspectors.length" ng-attr-title="{{modalData.inspectorIds.length == modalData.allInspectors.length ? 'All available inspectors are already assigned to this lab.' : null}}" style="margin-left:4px;" class="btn btn-success" ng-click="modalData.add = true"><i class="icon-plus-2"></i></button></h4></li>
+            <li ng-if="modalData.add" style="margin-top:10px">
+                <select ng-model="addedInspectorId" ng-change="addInspector(addedInspectorId); modalData.add = false;">
+                    <option value="" disabled selected>Add an Inspector</option>
+                    <option ng-repeat="innerInspector in modalData.allInspectors" ng-if="modalData.inspectorIds.indexOf(innerInspector.Key_id) < 0" value="{{innerInspector.Key_id}}">{{innerInspector.User.Name}}</option>
+                </select>
+                <i class="icon-cancel-2 danger" style="margin-top:-5px" ng-click="modalData.add = false"></i>
+            </li>
+        </ul>
+    </div>
+   </div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success right" ng-click="af.initialiseInspection(modalData.PI, modalData.inspectorIds, modalData.InspectionCopy.Key_id, modalData.InspectionCopy.Is_rad)">Save and Continue<i class="icon-forward-2"></i></a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

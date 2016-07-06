@@ -249,9 +249,9 @@ angular.module('HazardInventory')
             setTimeout(function () {
                 modalData.inspectorIds = [];
                 for (var i = 0; i < modalData.Inspection.Inspectors.length; i++) {
-                    modalData.inspectorIds.push(modalData.Inspection.Inspectors[i].Key_id)
+                    modalData.inspectorIds[modalData.Inspection.Inspectors[i].Key_id] = modalData.Inspection.Inspectors[i].Key_id;
                 }
-                if (modalData.inspectorIds.indexOf(rbf.getUser().Inspector_id) < 0) modalData.inspectorIds.push(rbf.getUser().Inspector_id);
+                if (modalData.inspectorIds.indexOf(rbf.getUser().Inspector_id) < 0) modalData.inspectorIds[rbf.getUser().Inspector_id] = rbf.getUser().Inspector_id;
 
                 af.setModalData(modalData);
                 var modalInstance = $modal.open({
@@ -327,7 +327,14 @@ angular.module('HazardInventory')
         $scope.af = af;
         $scope.modalData = af.getModalData();
         $scope.dataStoreManager = dataStoreManager;
-
+        $scope.addInspector = function (int) {
+            $scope.modalData.inspectorIds[int] = int;
+            console.log($scope.modalData.inspectorIds);           
+        }
+        $scope.removeInspector = function (int) {
+            $scope.modalData.inspectorIds[int] = null;
+            console.log($scope.modalData.inspectorIds);
+        }
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();
