@@ -473,13 +473,15 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
-                            }
+                            } 
 
+                        } else if (selection.Corrected_in_inspection) {
+                            ready.correcteds++;
                         }
                     }
                     var k = question.Responses.SupplementalDeficiencies.length;
@@ -487,12 +489,14 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.SupplementalDeficiencies[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
                             }
+                        } else if (selection.Corrected_in_inspection) {
+                            ready.correcteds++;
                         }
                     }
                     
@@ -501,7 +505,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
             }
         }
 
-        if (ready.pendings + ready.completes >= ready.totals || ready.totals == 0) {
+        if (ready.pendings + ready.completes + ready.completes >= ready.totals || ready.totals == 0) {
             ready.readyToSubmit = true;
         }
         console.log(ready);
@@ -766,6 +770,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
     function init() {
         if ($location.search().inspection) {
             var id = $location.search().inspection;
+            $scope.pf = postInspectionFactory;
             if (!postInspectionFactory.getInspection()) {
                 $scope.doneLoading = false;
                 convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id=' + id + '&report=true&callback=JSON_CALLBACK', onFailGetInspeciton)
