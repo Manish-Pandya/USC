@@ -1,6 +1,6 @@
 <?php
 if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
-    require_once('../Application.php');
+    require_once('/Application.php');
 }elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
     require_once('Application.php');
 }else{
@@ -63,7 +63,7 @@ echo "</script>";
             var GLOBAL_SESSION_USER = {
                 Name: '<?php echo $_SESSION['USER']->getName(); ?>',
                 Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>',
-                Inspector_id: '<?php echo $_SESSION['INSPECTOR_ID']->getInspector_id(); ?>',
+                Inspector_id: '<?php echo $_SESSION['USER']->getInspector_id(); ?>',
             }
             var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
         </script>

@@ -473,13 +473,15 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
-                            }
+                            } 
 
+                        } else if (selection.Corrected_in_inspection) {
+                            ready.correcteds++;
                         }
                     }
                     var k = question.Responses.SupplementalDeficiencies.length;
@@ -487,12 +489,14 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.SupplementalDeficiencies[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.CorrectiveActions[0].Corrected_in_inspection) {
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
                             }
+                        } else if (selection.Corrected_in_inspection) {
+                            ready.correcteds++;
                         }
                     }
                     
@@ -501,7 +505,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
             }
         }
 
-        if (ready.pendings + ready.completes >= ready.totals || ready.totals == 0) {
+        if (ready.pendings + ready.completes + ready.correcteds >= ready.totals || ready.totals == 0) {
             ready.readyToSubmit = true;
         }
         console.log(ready);
@@ -766,6 +770,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
     function init() {
         if ($location.search().inspection) {
             var id = $location.search().inspection;
+            $scope.pf = postInspectionFactory;
             if (!postInspectionFactory.getInspection()) {
                 $scope.doneLoading = false;
                 convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=resetChecklists&id=' + id + '&report=true&callback=JSON_CALLBACK', onFailGetInspeciton)
@@ -791,17 +796,6 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       //organized by parent hazard
                       //each group of checklists will have a Questions property containing all questions for each checklist in a given category
                       $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
-
-                      //see if the inspection report is ready for the lab to submit to EHS (do all deficiencies have at least pending corrective action)
-                      if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT], $rootScope.R[Constants.ROLE.NAME.ADMIN]])) {
-                          if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
-                              var modalInstance = $modal.open({
-                                  templateUrl: 'post-inspection-templates/submit-cap.html',
-                                  controller: modalCtrl
-                              });
-
-                         }
-                      }
                   });
             } else {
                 $scope.inspection = postInspectionFactory.getInspection();
@@ -809,14 +803,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                 $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($scope.inspection.Checklists);
                 $scope.doneLoading = true;
                 postInspectionFactory.getHotWipes($scope.inspection);
-                if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT]])) {
-                    if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
-                        var modalInstance = $modal.open({
-                            templateUrl: 'post-inspection-templates/submit-cap.html',
-                            controller: modalCtrl
-                        });
-                    }
-                }
+                
             }
             $scope.options = [Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE, Constants.CORRECTIVE_ACTION.STATUS.PENDING, Constants.CORRECTIVE_ACTION.STATUS.COMPLETE];
         } else {
@@ -915,6 +902,21 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         return false;
     }
 
+    $scope.closeOut = function () {
+        $scope.dirty = true;
+        $scope.closing = postInspectionFactory.submitCap($rootScope.inspection)
+          .then(
+            function (inspection) {
+                $rootScope.inspection.Cap_submitted_date = inspection.Cap_submitted_date;
+                $scope.dirty = false;
+            },
+            function () {
+                $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
+                $scope.dirty = false;
+            }
+          );
+    }
+
     $scope.openModal = function (question, def) {
         var modalData = {
             question: question,
@@ -932,16 +934,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             } else {
                 def.CorrectiveActions.push(returnedCA);
             }
-            if ($rootScope.rbf.getHasPermission([$rootScope.R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], $rootScope.R[Constants.ROLE.NAME.LAB_CONTACT], $rootScope.R[Constants.ROLE.NAME.ADMIN]])) {
-                console.log(postInspectionFactory.getIsReadyToSubmit());
-                if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
-                    var modalInstance = $modal.open({
-                        templateUrl: 'post-inspection-templates/submit-cap.html',
-                        controller: modalCtrl
-                    });
-
-                 }
-            }
+            
         });
     }
 
@@ -1125,17 +1118,5 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
             return true;
         }
         return false;
-    }
-
-    $scope.closeOut = function () {
-        postInspectionFactory.submitCap($rootScope.inspection)
-          .then(
-            function (inspection) {
-                $modalInstance.close(inspection);
-            },
-            function () {
-                $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
-            }
-          );
     }
 }

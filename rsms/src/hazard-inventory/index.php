@@ -214,7 +214,7 @@ echo "</script>";
                   <div ng-class="{'red':!pi.Is_active}" ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
-            <h3 style="display:inline" ng-class="{'red':!pi.Is_active}" ng-if="PI && !af.selectPI">{{PI.User.Name}} {{!pi.Is_active ? "(Inactive PI)" : ""}}</h3>
+            <h3 style="display:inline" ng-class="{'red':!PI.Is_active}" ng-if="PI && !af.selectPI">{{PI.User.Name}} {{!PI.Is_active ? "(Inactive PI)" : ""}}</h3>
             <span ng-click="af.selectPI = !af.selectPI">
                 <i ng-if="PI && !af.selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
                 <i class="icon-cancel danger" ng-if="PI && af.selectPI"  style="margin: 6px 5px;"></i>

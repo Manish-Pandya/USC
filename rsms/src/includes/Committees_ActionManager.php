@@ -14,23 +14,23 @@ class Committees_ActionManager extends ActionManager {
     /*****************************************************************************\
      *                            Get Functions                                  *
     \*****************************************************************************/
- 
-	
+
+
 	public function getAllProtocols(){
 		$dao = $this->getDao(new BiosafetyProtocol());
 		return $dao->getAll();
 	}
-	
+
 	/*
 	 * @param int $id
-	 * 
-	 */	
+	 *
+	 */
 	public function getProtocolById( $id = NULL ){
-		
+
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		
+
 		if( $id !== NULL ){
 			$dao = $this->getDao(new BiosafetyProtocol());
 			return $dao->getById($id);
@@ -39,9 +39,9 @@ class Committees_ActionManager extends ActionManager {
 			//error
 			return new ActionError("No request parameter 'id' was provided");
 		}
-		
+
 	}
-	
+
 	public function saveProtocol( BiosafetyProtocol $decodedObject = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);
 		if( $decodedObject === NULL ){
@@ -60,13 +60,13 @@ class Committees_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 	}
-	
-	
+
+
 	//upload the document for a BiosafteyProtocol
 	public function uploadProtocolDocument( $id = NULL){
-		$LOG = Logger::getLogger('Action:' . __function__);		
-		//verify that this file is of a type we consider safe		
-		
+		$LOG = Logger::getLogger('Action:' . __function__);
+		//verify that this file is of a type we consider safe
+
 		// Make sure the file upload didn't throw a PHP error
 		if ($_FILES[0]['error'] != 0) {
 			return new ActionError("File upload error.");
@@ -81,7 +81,7 @@ class Committees_ActionManager extends ActionManager {
 		//check the extension
 		$valid_file_extensions = array("doc","pdf");
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
-		
+
 		if (!in_array($file_extension, $valid_file_extensions)) {
 			return new ActionError("Not a valid file extension");
 		}else{
@@ -98,28 +98,29 @@ class Committees_ActionManager extends ActionManager {
 				return new ActionError("Not a valid file");
 			}
 		}
-		
+
 		// Start by creating a unique filename using timestamp.  If it's
 		// already in use, keep incrementing the timstamp until we find an unused filename.
 		// 99.999% of the time, this should work the first time, but better safe than sorry.
+        $LOG->fatal(str_replace("#","",$_FILES['file']));
 		$now = time();
-		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
+		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.str_replace("#","",$_FILES['file']['name'])))
 		{
 			$now++;
 		}
 
 		// Write the file
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
 			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
 		}
-		
-		
+
+
 		/////////////////////////////////////
 		//
 		// return the name of the file, as it was saved on the server, saving the relevant protocol if one exists already
 		//
 		////////////////////////////////////
-		
+
 		//is this for a protocol that already exists?
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
@@ -136,9 +137,9 @@ class Committees_ActionManager extends ActionManager {
 			$LOG->fatal($protocol);
 			$protocolDao->save($protocol);
 		}
-		
+
 		//either way, return the name of the saved document so that it can be added to the client
-		return $name;				
+		return $name;
 	}
 }
 
