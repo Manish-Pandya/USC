@@ -552,6 +552,34 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return Math.round(number * 100000) / 100000 || "0";
     }
 })
+.filter('getDueDate', function () {
+    return function (input) {
+        var date = new Date(input);
+        var duePoint = date.setDate(date.getDate() + 14);
+        dueDate = new Date(duePoint).toISOString();
+        return dueDate;
+    };
+})
+.filter('getMonthName', function () {
+    var monthNames = [{ val: "01", string: "January" },
+                { val: "02", string: "February" },
+                { val: "03", string: "March" },
+                { val: "04", string: "April" },
+                { val: "05", string: "May" },
+                { val: "06", string: "June" },
+                { val: "07", string: "July" },
+                { val: "08", string: "August" },
+                { val: "09", string: "September" },
+                { val: "10", string: "October" },
+                { val: "11", string: "November" },
+                { val: "12", string: "December" }]
+    return function (input) {
+        var i = monthNames.length;
+        while (i--) {
+            if (input == monthNames[i].val) return monthNames[i].string;
+        }
+    };
+})
 //is a user a lab contact?  run this fancy filter to find out.
 .filter('isContact',[function(){
   return function(users){
