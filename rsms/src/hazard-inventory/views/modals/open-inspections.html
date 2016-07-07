@@ -59,47 +59,55 @@
                     </span>
                 </td>
                 <td>
-                    {{inspection.Status}}
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.SCHEDULED">
-                         ({{inspection.Schedule_month | getMonthName}})
-                        <br>
-                        <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
-                    </span>
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
-                        <p ng-if="inspection.Deficiency_selections[0].length">
-                            (CAP Submitted: {{dto.Inspections.Cap_submitted_date | dateToISO | date:"MM/dd/yy"}})
-                            <br>
-                            <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
-                        </p>
-                        <p ng-if="!inspection.Deficiency_selections[0].length">
-                            (No deficiencies.  Closed: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
-                        </p>
-                    </span>
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP">
-                        <p>
-                            (Due: {{inspection.Cap_due_date | dateToISO}})
-                            <br>
-                            <a target="_blank" style="margin:5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
-                        </p>
-                    </span>
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
-                        <p>
-                            (Started: {{inspection.Date_started | dateToISO}})
-                            <br>
-                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size: 21px;" class="icon-zoom-in"></i>Continue Inspection</a>
-                        </p>
-                    </span>
-                    <span ng-if="!inspection.Status">
-                        <p>
-                            N/A
-                        </p>
-                    </span>
-                    <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
-                        <p>
-                            (Scheduled for {{inspection.Text_schedule_month}})
+                    <span ng-if="inspection.Status">
+                        <span once-text="inspection.Status"></span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.SCHEDULED">
+                            <br>Scheduled ({{inspection.Schedule_month | getMonthName}})
                             <br>
                             <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
-                        </p>
+                        </span>
+
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
+                            <p>
+                                (Report Sent: {{inspection.Notification_date | dateToISO | date:"MM/dd/yy"}})
+                                <br>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
+                            </p>
+                        </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.INCOMPLETE_CAP">
+                            <p>
+                                (Report Sent: {{inspection.Notification_date | dateToISO | date:"MM/dd/yy"}})
+                                <br>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
+                            </p>
+                        </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.CLOSED_OUT">
+                            <p ng-if="inspection.HasDeficiencies">
+                                (CAP Approved: {{inspection.Date_closed | dateToISO | date:"MM/dd/yy"}})
+                                <br>
+                                <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                            </p>
+                            <p ng-if="!inspection.HasDeficiencies">
+                                (No deficiencies.) <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                            </p>
+                        </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
+                            <p>
+                                (Started: {{inspection.Date_started | dateToISO | date:"MM/dd/yy"}})
+                                <br>
+                                <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
+                            </p>
+                        </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || inspection.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
+                            <span><br>(Due Date: {{inspection.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
+                        </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
+                            <span><br>(Scheduled for {{inspection.Schedule_month | getMonthName}})</span>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Inventory</a>
+                        </span>
                     </span>
                 </td>
             </tr>
