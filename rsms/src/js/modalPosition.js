@@ -46,13 +46,13 @@ angular.module('modalPosition', [])
                 //special bonus for those using jQuery
                 if (typeof jQuery === "function" && el instanceof jQuery) {
                     el = el[0];
-                }
-
+                }   
                 var rect = el.getBoundingClientRect();
-                console.log(rect.top);
+                console.log(rect);
+                console.log(el.scrollTop);
                 console.log(body.innerHeight());
                 return (
-                    rect.top >= 0 &&
+                    $(el).position().top >= 40 &&
                     rect.bottom <= (body.outerHeight() + 83)  /*or $(window).height() */
                 );
             }
@@ -60,8 +60,25 @@ angular.module('modalPosition', [])
 
             var drops;
             var positionUISelects = function () {
-
                 scope.things = body.find(".ui-select-container");
+                if (!scope.things || !scope.things.length) return;
+                if (!body.hasClass("scrolled")) {
+                    alert('goodness')
+                    body.addClass("scrolled");
+                    setTimeout(function () {
+                        onResize();
+                        var h = body.height();
+                        body.css({ 'height': 100 + 'px' });
+                        body.animate({
+                            scrollTop: 20
+                        }, .1);
+                        body.animate({
+                            scrollTop: 0
+                        }, .1);
+                        body.css({ 'height': h + 'px' });
+                    }, 301)
+
+                }
                 var setDrops = function (dropDowns) {
                     drops = dropDowns;
                 }
@@ -74,18 +91,17 @@ angular.module('modalPosition', [])
                     var drop = $this.find(".ui-select-dropdown");
 
                     if (!isElementInViewport($this)) {
-                        arrow.css({ "visibility": "hidden", 'top': $this.position().top });
-                        match.css({ "visibility": "hidden", 'top': $this.position().top });
+                        arrow.css({ "visibility": "hidden", 'top': $this.position().top});
+                        match.css({ "visibility": "hidden", 'top': $this.position().top, "width":$this.width()*.9 });
                         drop.css({ "visibility": "hidden", 'top': $this.position().top });
                     } else {
                         arrow.css({ "visibility": "visible", 'top': $this.position().top });
-                        match.css({ "visibility": "visible", 'top': $this.position().top });
+                        match.css({ "visibility": "visible", 'top': $this.position().top, "width":$this.width()*.9 });
                         drop.css({ "visibility": "visible", 'top': $this.position().top + 28 });
                     }
                 });
                 return false;
-
-
+                
             }
 
             body.on('scroll', function () {
