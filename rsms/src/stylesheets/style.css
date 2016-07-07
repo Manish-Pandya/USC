@@ -3100,9 +3100,10 @@ table.quickdate-calendar td:hover {
 
 /* line 1990, ../sass/style.scss */
 table.quickdate-calendar td.is-today {
+  color: white !important;
   color: #000;
   font-weight:bold;
-  background: rgba(18, 0, 28, 0.29) !important;
+  background: rgba(18, 0, 28, 0.58) !important;
 }
 table.quickdate-calendar td.selected{
   background:#5BB75B!important;

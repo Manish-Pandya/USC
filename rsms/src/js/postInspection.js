@@ -1092,31 +1092,15 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
 
     //parse function to ensure that users cannot set the date for a corrective action before the date of the inspection
     $scope.afterInspection = function (d) {
-        var calDate = Date.parse(d);
+        var calDate = moment(d);
         //inspection date pased into seconds minus the number of seconds in a day.  We subtract a day so that the inspection date will return true
-        var inspectionDate = postInspectionFactory.getInspection().viewDate_started.getTime() - 864000;
-        var now = new Date();
-        if (calDate >= inspectionDate && calDate <= now.getTime()) {
-            return true;
-        }
-        return false;
+        var inspectionDate = moment(postInspectionFactory.getInspection().Date_started).startOf('day');
+        var now = moment();
+        return calDate >= inspectionDate && calDate <= now;
     }
 
     $scope.todayOrAfter = function (d) {
-        var calDate = Date.parse(d);
-        //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true
-        var now = new Date(),
-        then = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
-            0, 0, 0),
-        diff = now.getTime() - then.getTime()
-
-        var today = Date.parse(now) - diff;
-        if (calDate >= today) {
-            return true;
-        }
-        return false;
+        console.log(moment(d), moment());
+        return moment(d) >= moment().startOf('day');
     }
 }
