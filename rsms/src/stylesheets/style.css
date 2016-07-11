@@ -2152,10 +2152,17 @@ detailsReportHeaderTable tr td {
   color: rgba(73, 175, 205, 0.62)
 }
 .hazardList ul li{
-  font-size: 1.4em;
+  /* font-weight: bold; */
+  font-size: 14px;
 }
-.hazardList ul li ul li span span{
+.hazardList ul li span{
+  margin-top: -2px;
+  font-weight:bold;
+  font-size: 1em;
+}
+.hazardList ul li ul li span{
   margin-top: -4px !important;
+  font-weight:normal;
 }
 .hazardList ul li ul li{
   font-size: .9em;

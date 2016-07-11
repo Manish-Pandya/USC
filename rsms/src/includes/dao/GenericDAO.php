@@ -943,13 +943,15 @@ class GenericDAO {
 			//get this pi's rooms
 			$queryString = 'SELECT *
 							FROM principal_investigator
-							WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
+							WHERE is_active = 1
+                            AND key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
             $queryString .= " AND hazard_id = $hazardId";
 
 		}else{
 			$queryString = 'SELECT *
 							FROM principal_investigator
-							WHERE key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
+                            WHERE is_active = 1
+							AND key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
 		}
 
 		$queryString .= ')';
