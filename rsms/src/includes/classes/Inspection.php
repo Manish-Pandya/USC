@@ -266,7 +266,7 @@ class Inspection extends GenericCrud {
         if ($this->date_closed != null) {
             return 'CLOSED OUT';
         }elseif($this->cap_submitted_date){
-            return 'PENDING EHS APPROVAL';
+            return 'SUBMITTED CAP';
         }elseif($this->notification_date){
             //do we even, like, need a plan?
             $ds = $this->getDeficiency_selections();

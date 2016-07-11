@@ -242,6 +242,7 @@ angular.module('HazardInventory')
         $scope.af = af;
         $scope.modalData = af.getModalData();
         $scope.dataStoreManager = dataStoreManager;
+        $scope.USER = GLOBAL_SESSION_USER;
 
         function openSecondaryModal(modalData) {
             console.log(modalData);

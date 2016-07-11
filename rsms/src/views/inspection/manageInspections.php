@@ -103,7 +103,7 @@ require_once '../top_view.php';
         </thead>
         <tbody>
 
-            <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
+            <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.SUBMITTED_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
@@ -207,7 +207,7 @@ require_once '../top_view.php';
                                 <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{dto.Inspections.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
-                        <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
+                        <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.SUBMITTED_CAP">
                             <span><br>(Due Date: {{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>

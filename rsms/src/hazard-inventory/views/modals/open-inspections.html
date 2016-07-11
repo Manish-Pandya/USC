@@ -1,7 +1,7 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:15px;" class="redBg">{{modalData.PI.User.Name}}'s scheduled inspections
-        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI)"><i class="icon-plus-2"></i>New Inspection</a>
-           <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="af.initialiseInspection(modalData.PI, false, false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
+        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI,[USER.Inspector_id])"><i class="icon-plus-2"></i>New Inspection</a>
+           <a ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="af.initialiseInspection(modalData.PI ,[USER.Inspector_id], false, true)"><img src="../img/radiation-large-icon.png">New Radiation Inspection</a>
            <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>
 </div>
