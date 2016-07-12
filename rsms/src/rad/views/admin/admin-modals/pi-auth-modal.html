@@ -1,121 +1,121 @@
-<div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="blueBg">Create or edit Authorization</h2>
-</div>
-
-<div class="modal-body wide-modal">
-
-    <div class="control-group">
-        <label class="control-label" for="inputEmail">Date Used:</label>
-        <div class="controls">
-            <input ng-model="modalData.PIAuthorizationCopy.Form_Approval_date">
-            <span class="help-block" style="">mm/dd/yy</span>
-        </div>
+<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization )">
+    <div class="modal-header" style="padding:0;">
+        <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="blueBg">Create or edit Authorization</h2>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="inputEmail">Amendment Number</label>
-        <div class="controls input-append">
-            <input ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
+    <div class="modal-body wide-modal">
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Date Approved:</label>
+            <div class="controls">
+                <input formnovalidate name="date" ng-class="{'error': authForm.date.$error && authForm.$submitted}" ng-model="modalData.PIAuthorizationCopy.Form_Approval_date" required>
+                <span class="help-block" style="">mm/dd/yy</span>
+            </div>
         </div>
-    </div>
 
-    <div class="control-group">
-        <label class="control-label">Authorization Number</label>
-        <div class="controls">
-            <input ng-model="modalData.PIAuthorizationCopy.Authorization_number" placeholder="Authorization Number" />
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Amendment Number</label>
+            <div class="controls input-append">
+                <input ng-init="modalData.PIAuthorizationCopy.Amendment_number = getSuggestedAmendmentNumber()" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
+                <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">You gotta do this part</span>
+            </div>
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label bold">Rooms</label>
-        <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name' track by $index">
-            <label class="checkbox">
-                <input type="checkbox" ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)" />
-                <span class="metro-checkbox">{{room.Building_name}} room: {{room.Name}}</span>
-            </label>
+
+        <div class="control-group">
+            <label class="control-label">Authorization Number</label>
+            <div class="controls">
+                <input ng-model="modalData.PIAuthorizationCopy.Authorization_number" placeholder="Authorization Number" />
+            </div>
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label bold">Departments</label>
-        <div class="controls">
-            <label class="checkbox" ng-repeat="department in modalData.pi.Departments">
-                <input type="checkbox" ng-init="department.isAuthorized = departmentIsAuthorized(department, modalData.PIAuthorizationCopy)" ng-model="department.isAuthorized" ng-change="checkboxChange(department, modalData.PIAuthorizationCopy)" />
-                <span class="metro-checkbox">{{department.Name}}</span>
-            </label>
-        </div>
-    </div>
-    <div>
-        <a class="btn btn-success left" ng-click="addIsotope(modalData.PIAuthorizationCopy.Key_id)"><i class="icon-plus-2"></i>Add Isotope</a>
-    </div>
-    <div class="fake-table striped bordered" ng-if="modalData.PIAuthorizationCopy.Authorizations.length && modalData.isAmendment">
-        <div class="table-header">
-            <h3>Included</h3>
-            <h3>Isotope</h3>
-            <h3>Half Life</h3>
-            <h3>Emitter Type</h3>
-            <h3>Maximum Quantity</h3>
-            <h3>Approval Date</h3>
-            <h3>Revocation Date</h3>
-            <h3>Form</h3>
-        </div>
-        <div class="table-row" ng-repeat="auth in modalData.PIAuthorizationCopy.Authorizations" ng-class="{'inactive':!auth.Is_active}">
-            <div class="control-group">
+        <div class="control-group">
+            <label class="control-label bold">Rooms</label>
+            <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name' track by $index">
                 <label class="checkbox">
-                    <input type="checkbox" ng-init="auth.isIncluded = true" ng-model="auth.isIncluded" />
-                    <span class="metro-checkbox"></span>
+                    <input type="checkbox" ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)" />
+                    <span class="metro-checkbox">{{room.Building_name}} room: {{room.Name}}</span>
                 </label>
             </div>
-
-            <div>
+        </div>
+        <div class="control-group">
+            <label class="control-label bold">Departments</label>
+            <div class="controls">
+                <label class="checkbox" ng-repeat="department in modalData.pi.Departments">
+                    <input type="checkbox" ng-init="department.isAuthorized = departmentIsAuthorized(department, modalData.PIAuthorizationCopy)" ng-model="department.isAuthorized" ng-change="checkboxChange(department, modalData.PIAuthorizationCopy)" />
+                    <span class="metro-checkbox">{{department.Name}}</span>
+                </label>
+            </div>
+        </div>
+        <div>
+            <a class="btn btn-success left" ng-click="addIsotope(modalData.PIAuthorizationCopy.Key_id)"><i class="icon-plus-2"></i>Add Isotope</a>
+        </div>
+        <div class="fake-table striped bordered" ng-if="modalData.PIAuthorizationCopy.Authorizations.length && modalData.isAmendment">
+            <div class="table-header">
+                <h3>Included</h3>
+                <h3>Isotope</h3>
+                <h3>Half Life</h3>
+                <h3>Emitter Type</h3>
+                <h3>Maximum Quantity</h3>
+                <h3>Approval Date</h3>
+                <h3>Revocation Date</h3>
+                <h3>Form</h3>
+            </div>
+            <div class="table-row" ng-repeat="auth in modalData.PIAuthorizationCopy.Authorizations" ng-class="{'inactive':!auth.Is_active}">
                 <div class="control-group">
-                    <label class="control-label">Isotope</label>
-                    <div class="controls">
-                        <select data-ng-change="selectIsotope(auth)" data-ng-options="isotope.Key_id as isotope.Name for isotope in isotopes" data-ng-model="auth.Isotope_id">
-                            <option style="display:none" value="">Select an Isotope</option>
-                        </select>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-init="auth.isIncluded = true" ng-model="auth.isIncluded" />
+                        <span class="metro-checkbox"></span>
+                    </label>
+                </div>
+
+                <div>
+                    <div class="control-group">
+                        <label class="control-label">Isotope</label>
+                        <div class="controls">
+                            <select data-ng-change="selectIsotope(auth)" data-ng-options="isotope.Key_id as isotope.Name for isotope in isotopes" data-ng-model="auth.Isotope_id">
+                                <option style="display:none" value="">Select an Isotope</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div>
-                {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
-            </div>
+                <div>
+                    {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
+                </div>
 
-            <div>
-                {{auth.Isotope.Emitter_type}}
-            </div>
+                <div>
+                    {{auth.Isotope.Emitter_type}}
+                </div>
 
-            <div>
-                <div class="control-group">
-                    <label class="control-label" for="inputEmail">Maximum Quantity</label>
-                    <div class="controls input-append">
-                        <input data-ng-model="auth.Max_quantity" placeholder="Maximum Quantity" /><span class="add-on">mCi</span>
+                <div>
+                    <div class="control-group">
+                        <label class="control-label" for="inputEmail">Maximum Quantity</label>
+                        <div class="controls input-append">
+                            <input data-ng-model="auth.Max_quantity" placeholder="Maximum Quantity" /><span class="add-on">mCi</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div>
-                {{modalData.PIAuthorizationCopy.Form_Approval_date}}
-            </div>
+                <div>
+                    {{modalData.PIAuthorizationCopy.Form_Approval_date}}
+                </div>
 
-            <div>
-                {{auth.Revocation_date | dateToISO}}
-            </div>
+                <div>
+                    {{auth.Revocation_date | dateToISO}}
+                </div>
 
-            <div>
-                <div class="control-group">
-                    <label class="control-label" for="inputEmail">Form</label>
-                    <div class="controls input-append">
-                        <input data-ng-model="auth.Form" maxlength="35" placeholder="Form" />
+                <div>
+                    <div class="control-group">
+                        <label class="control-label" for="inputEmail">Form</label>
+                        <div class="controls input-append">
+                            <input data-ng-model="auth.Form" maxlength="35" placeholder="Form" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-</div>
-
-<div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization )"><i class="icon-checkmark"></i>Save</a>
-    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
-</div>
+    <div class="modal-footer">
+        <button ng-click="authForm.$submitted=true;" type="submit" class="btn btn-large btn-success left" ><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </div>
+</form>

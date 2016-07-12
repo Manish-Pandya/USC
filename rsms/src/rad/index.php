@@ -113,22 +113,14 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
+<script type="text/javascript" src="scripts/directives/piAuths.js"></script>
 
 
 
 <!-- filters -->
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
-<script type="text/javascript" src="./scripts/filters/carboyIsAvailable.js"></script>
-<script type="text/javascript" src="./scripts/filters/carboyHasNoRetireDate.js"></script>
-<script type="text/javascript" src="./scripts/filters/parcelParser.js"></script>
-<script type="text/javascript" src="./scripts/filters/activePickupFilter.js"></script>
-<script type="text/javascript" src="./scripts/filters/needsWipeTest.js"></script>
-<script type="text/javascript" src="./scripts/filters/miscWipeTests.js"></script>
-<script type="text/javascript" src="./scripts/filters/disposalCycles.js"></script>
-<script type="text/javascript" src="./scripts/filters/disposalSolids.js"></script>
-<script type="text/javascript" src="./scripts/filters/inventoryStatus.js"></script>
-<script type="text/javascript" src="./scripts/filters/nonDeliveredOrders.js"></script>
+<script type="text/javascript" src="./scripts/filters/radFilters.js"></script>
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>
