@@ -590,7 +590,7 @@ class Rad_ActionManager extends ActionManager {
 
     function getAllIsotopes() {
         $isotopeDao = $this->getDao(new Isotope());
-        return $isotopeDao->getAll();
+        return $isotopeDao->getAll('name', true);
     }
 
     public function getAllParcels(){
@@ -2174,7 +2174,10 @@ class Rad_ActionManager extends ActionManager {
     		$departments = $decodedObject->getDepartments();
 
     		$dao = $this->getDao(new PIAuthorization());
-    		$decodedObject = $dao->save($decodedObject);
+
+			$needsSaveAmendment =  $decodedObject->getKey_id() != NULL ? false : true;
+
+    		$piAuth = $dao->save($decodedObject);
 
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
@@ -2185,7 +2188,24 @@ class Rad_ActionManager extends ActionManager {
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
 
-    		return $decodedObject;
+			$authDao = new GenericDAO(new Authorization());
+
+			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
+			if($needsSaveAmendment && $decodedObject->getAuthorizations() != NULL){
+				foreach($decodedObject->getAuthorizations() as $auth){
+					$newAuth = new Authorization();
+					$newAuth->setPi_authorization_id($piAuth->getKey_id());
+					$newAuth->setIsotope_id($auth["Isotope_id"]);
+					$newAuth->setMax_quantity($auth["Max_quantity"]);
+					$newAuth->setApproval_date($auth["Approval_date"]);
+					$newAuth->setIs_active($auth["Is_active"]);
+					$newAuth->setKey_id(null);
+					$LOG->fatal($newAuth);
+					$authDao->save($newAuth);
+				}
+			}
+            $LOG->fatal($piAuth);
+    		return $piAuth;
     	}
 
 

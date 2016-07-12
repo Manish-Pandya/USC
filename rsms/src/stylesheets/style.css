@@ -3950,3 +3950,7 @@ btn-mini {
 .filter-holder div select{
   margin-top:0;
 }
+input.error, input.ng-invalid.ng-dirty {
+    border-color:red !important;
+}
+::-webkit-validation-bubble-message { display: none !important; }
