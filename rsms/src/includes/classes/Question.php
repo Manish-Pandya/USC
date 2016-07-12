@@ -196,7 +196,7 @@ class Question extends GenericCrud {
 		if(!empty($this->inspectionId)) {		
 			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
 			$responsesDao = new GenericDAO(new Response);
-			$this->responses = array_shift($responsesDao->getAllWhere($whereClauseGroup));
+			$this->responses = $this->filterResponsesByInspection($responsesDao->getAllWhere($whereClauseGroup));
 
 		}else{
 			$thisDAO = new GenericDAO($this);
@@ -220,23 +220,32 @@ class Question extends GenericCrud {
 	}
 	
 	private function filterResponsesByInspection($responses){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 		//$LOG->fatal("about to filter ".  count($responses) . " responses");
 		if(!empty($this->inspectionId)) {
-			//$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");
-				
-			$whereClauseGroup = new WhereClauseGroup(array(new WhereClause("inspection_id","=",$this->inspectionId), new WhereClause("question_id", "=", $this->key_id)));
-			$responsesDao = new GenericDAO(new Response);
-			$responses = $responsesDao->getAllWhere($whereClauseGroup);
-		
-			if (!empty($responses)){
-				return array_shift($responses);
-			} else {
-				return null;
-			}
-		}
 
-		return $responses;
+			//$LOG->fatal("Inspection Id " . $this->inspectionId . " found.");		
+			if (!empty($responses)){
+                $insp = new Inspection();
+                $dao = new GenericDAO($insp);
+                $inspDate = $dao->getById($this->inspectionId)->getDate_created();
+
+                $validResponses = array();
+                foreach($responses as $response){
+                    if( strtotime($response->getDate_created()) > strtotime($inspDate) ){
+                        $validResponses[] = $response;
+                    }
+                    if($response->getKey_id() == 2867){
+                        $LOG->fatal(strtotime($response->getDate_created()));
+                        $LOG->fatal(strtotime($inspDate));
+                    }
+                }
+				return array_shift($validResponses);
+			} 
+			return null;			
+		}
+        return null;
+       
+
 	}
 
 }
