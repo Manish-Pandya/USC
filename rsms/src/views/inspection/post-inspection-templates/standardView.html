@@ -21,12 +21,12 @@
     </div>
     <div class="inspectionInfo">
         <div class="row">
-        <span class="span6">
-            <h3>Principal Investigator:</h3> <p>{{inspection.PrincipalInvestigator.User.Name}}</p>
-        </span>
-        <span class="span3 pull-right">
-            <h3>Inspection Date:</h3> <p>{{inspection.Date_started | dateToISO:'inspDate'}}</p>
-        </span>
+            <span class="span6">
+                <h3>Principal Investigator:</h3> <p>{{inspection.PrincipalInvestigator.User.Name}}</p>
+            </span>
+            <span class="span3 pull-right">
+                <h3>Inspection Date:</h3> <p>{{inspection.Date_started | dateToISO:'inspDate'}}</p>
+            </span>
         </div>
 
         <div class="row">
@@ -49,8 +49,8 @@
             <span class="span3 pull-right">
                 <h3>Lab Safety Contact:</h3>
                 <p class="pull-right" style="width:154px;margin-top:3px;">
-                    <span ng-if="inspection.PrincipalInvestigator.LabPersonnel.length" style="margin-top: -17px; display: inline-block;">
-                        <span ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel"><br>
+                    <span ng-if="inspection.PrincipalInvestigator.LabPersonnel.length">
+                        <span ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel">
                             {{contact.Name}}<span ng-show="!$last">, </span>
                         </span>
                     </span>
@@ -67,13 +67,14 @@
             <span class="span3 pull-right">
                 <h3 style="width:177px;">EH&S Auditor(s):</h3>
                 <p class="pull-right" style="width:154px;margin-top:3px;">
-                <span style="margin-top: 0px; display: inline-block;">
-                    <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
-                </span>
+                    <span>
+                        <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
+                    </span>
                 </p>
             </span>
         </div>
     </div>
+
     <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">
         <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
         <span ng-if="inspection.Date_closed">This inspection was archived on {{inspection.Date_closed | dateToISO}}</span>
@@ -85,7 +86,8 @@
         <span class="loading" ng-if='handlingInspectionOpen' style="margin-left:5px;">
             <i class="icon-spinnery-dealie spinner small" style="color:white"></i>
         </span>
-    </h2>    
+    </h2>  
+  
     <div class="alert alert-info" ng-if="pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
         <h2 style="padding:5px">
             Submit Corrective Action Plan?
@@ -98,10 +100,12 @@
         <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
         <div ng-if="data.totals">
             <h3 ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h3>
-            <h3>All of your corrective actions have a status of Pending or Complete</h3>
+            <h3>The status of your corrective actions includes:</h3>
             <h3 style="padding:3px 0">
-                You have <span style="padding:3px; margin-right:3px;background: #ffffb9;color: black" ng-if="data.pendings" class="bold">{{data.pendings}} pending corrective action<span ng-if="data.pendings.length>1">s</span> </span><span ng-if="data.pendings && data.completes">and </span><span ng-if="data.completes" class="bold" style="padding:3px;margin-right:3px;background: #9fdca3;color: black;">{{data.completes}} completed corrective action<span ng-if="data.completes.length>1">s</span>.
-            </h3>
+                <span ng-if="data.completes" class="bold" style="padding:3px;margin-right:3px;background: #9fdca3;color: black;">
+                    {{data.completes}} completed corrective action<span ng-if="data.completes.length>1">s</span>
+                    <span style="padding:3px; margin-right:3px;background: #ffffb9;color: black" class="bold">{{data.pendings}} pending corrective action<span ng-if="data.pendings.length>1">s</span> </span><span ng-if="data.pendings && data.completes">and </span>.
+</h3>
         </div>
         <div ng-if="!data.totals">
             <h3>No Deficiencies were found during the inspection.</h3>
