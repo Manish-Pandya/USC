@@ -969,6 +969,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
     $scope.handleInspectionOpen = function (inspection) {
         $scope.handlingInspectionOpen = true;
         var inspectionDto = {
+            Date_created: inspection.Date_created,
             Date_closed: inspection.Date_closed ? null : convenienceMethods.setMysqlTime(Date()),
             Key_id: postInspectionFactory.inspection.Key_id,
             Principal_investigator_id: postInspectionFactory.inspection.Principal_investigator_id,

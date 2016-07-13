@@ -51,7 +51,7 @@
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
                     </div>
                 </div>
-                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_close">
+                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_closed">
                     <a class="btn btn-small btn-primary" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
                     <a class="btn btn-small btn-danger" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
                 </div>
