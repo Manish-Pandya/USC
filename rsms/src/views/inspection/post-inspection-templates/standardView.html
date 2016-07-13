@@ -7,7 +7,7 @@
       <span>Getting Inspection Information...</span>
     </div>
 
-    <span ng-if='doneLoading && !error'>
+    <div ng-if='doneLoading && !error'>
     <div class="inspectionHeader row-fluid">
         <div class="span4">
             <img src='../../img/usclogo.jpg' class="usclogo"/>
@@ -46,32 +46,32 @@
             <span class="span6">
                 <h3>Laboratory Building:</h3><p>{{inspection.Rooms[0].Building.Name}}</p>
             </span>
-            <span class="span3 pull-right">
+            <div class="span3 pull-right">
                 <h3>Lab Safety Contact:</h3>
                 <p class="pull-right" style="width:154px;margin-top:3px;">
-                    <span ng-if="inspection.PrincipalInvestigator.LabPersonnel.length" style="margin-top: -17px; display: inline-block;">
+                    <div ng-if="inspection.PrincipalInvestigator.LabPersonnel.length" style="margin-top: -17px; display: inline-block;">
                         <span ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel"><br>
                             {{contact.Name}}<span ng-show="!$last">, </span>
                         </span>
-                    </span>
-                    <span ng-if="!inspection.PrincipalInvestigator.LabPersonnel.length">
+                    </div>
+                    <div ng-if="!inspection.PrincipalInvestigator.LabPersonnel.length">
                         {{inspection.PrincipalInvestigator.User.Name}}
-                    </span>
+                    </div>
                 </p>
-            </span>
+            </div>
         </div>
         <div class="row">
-            <span class="span6">
+            <div class="span6">
                 <h3>Laboratory Room(s):</h3><p><span ng-repeat="room in inspection.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>
-            </span>
-            <span class="span3 pull-right">
+            </div>
+            <div class="span3 pull-right">
                 <h3 style="width:177px;">EH&S Auditor(s):</h3>
                 <p class="pull-right" style="width:154px;margin-top:3px;">
-                <span style="margin-top: 0px; display: inline-block;">
-                    <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span></p>
-                </span>
+                    <div style="margin-top: 0px; display: inline-block;">
+                        <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span>
+                    </div>
                 </p>
-            </span>
+            </div>
         </div>
     </div>
     <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">
