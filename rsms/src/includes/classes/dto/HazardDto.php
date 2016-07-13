@@ -34,7 +34,7 @@ class HazardDto {
 	public function getIs_equipment(){return (bool) $this->is_equipment;}
 	public function getOrder_index(){return (float) $this->order_index;}
 	public function getBelongsToOtherPI(){return (bool) $this->belongsToOtherPI;}
-    
+
     public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
     public function setHazard_id($newId) { $this->hazard_id = $newId; }
     public function setKey_id($newId) { $this->key_id = $newId; }
@@ -50,15 +50,15 @@ class HazardDto {
 	public function setIs_equipment($is){ $this->is_equipment = $is; }
 	public function setOrder_index($idx){ $this->order_index = $idx;}
 	public function setBelongsToOtherPI($belongs){$this->belongsToOtherPI = $belongs;}
-	
-	
+
+
     public function setAndFilterInspectionRooms($rooms) {
     	$LOG = Logger::getLogger( __CLASS__ );
-    	 
+
         //$LOG->fatal($this->getHazard_name());
         $this->filterRooms($rooms);
         $this->inspectionRooms = $rooms;
-        
+
     }
 
     public function filterRooms($rooms){
@@ -67,14 +67,20 @@ class HazardDto {
         // Get the db connection
         global $db;
         //$LOG->fatal("filtering rooms for ".$this->getHazard_name());
-        
+
         $roomIds = implode (',',$this->roomIds);
 
         //get all the Relationships between this hazard and rooms that this PI has, so we can determine if this PI or ANY PI has the hazard in any of these rooms
-        $queryString = "SELECT * FROM principal_investigator_hazard_room WHERE hazard_id = $this->hazard_id AND room_id IN ($roomIds);";
+        $queryString = "SELECT
+						a.key_id, a.hazard_id, a.room_id, a.principal_investigator_id, a.status
+						FROM principal_investigator_hazard_room a
+						LEFT OUTER JOIN principal_investigator_room b
+						ON a.principal_investigator_id = b.key_id
+						WHERE a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds);";
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
+
 
         $this->stored_only = false;
 
@@ -88,7 +94,7 @@ class HazardDto {
         	}else{
         		$relation->setHasMultiplePis(false);
         	}
-        	
+
         	if(!isset($relationHashMap[$relation->getRoom_id()])){
         		$relationHashMap[$relation->getRoom_id()] = array();
         	}
@@ -114,14 +120,14 @@ class HazardDto {
             			$room->setHasMultiplePis(true);
             		}
             	}
-            }            
+            }
         }
-        
+
         //if Another PI has this hazard in one of these rooms, but the relevant PI does not
         if($this->getHasMultiplePis() == true && $this->getIsPresent() == false){
         	$this->belongsToOtherPI = true;
         }
-        
+
         //if the hazard is stored only in every room, and is present, set its stored_only property to true.
         if($this->isPresent == true && $storedOnly == true){
         	$this->stored_only = true;
