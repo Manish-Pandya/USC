@@ -63,7 +63,6 @@ angular.module('modalPosition', [])
                 scope.things = body.find(".ui-select-container");
                 if (!scope.things || !scope.things.length) return;
                 if (!body.hasClass("scrolled")) {
-                    alert('goodness')
                     body.addClass("scrolled");
                     setTimeout(function () {
                         onResize();

@@ -293,7 +293,7 @@ class Inspection extends GenericCrud {
                 if($this->getInspectors() != NULL){
                     return 'SCHEDULED';
                 }else{
-                    return 'NOT SCHEDULED';
+                    return 'NOT ASSIGNED';
                 }
                 //Begin Inspection
             } else {

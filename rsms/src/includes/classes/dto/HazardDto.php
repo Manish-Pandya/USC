@@ -74,9 +74,9 @@ class HazardDto {
         $queryString = "SELECT
 						a.key_id, a.hazard_id, a.room_id, a.principal_investigator_id, a.status
 						FROM principal_investigator_hazard_room a
-						LEFT OUTER JOIN principal_investigator_room b
-						ON a.principal_investigator_id = b.key_id
-						WHERE a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds);";
+						LEFT JOIN principal_investigator_room b
+						ON a.principal_investigator_id = b.principal_investigator_id
+						WHERE a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
@@ -89,6 +89,9 @@ class HazardDto {
         foreach($piHazardRooms as $relation){
         	//while we're at it, determine if any of these relations belong to other PIs
         	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
+                if($this->hazard_name == "Biological Toxins"){
+                    $LOG->fatal($relation);
+                }
         		$this->hasMultiplePis = true;
         		$relation->setHasMultiplePis(true);
         	}else{

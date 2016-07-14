@@ -59,9 +59,7 @@ class SupplementalDeficiency extends GenericCrud
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getResponse");
 		$this->setEntityMaps($entityMaps);
-        $LOG = Logger::getLogger("sup");
-        $LOG->fatal($this);
-
+        //$LOG = Logger::getLogger("sup");
 	}
 
 	// Required for GenericCrud
