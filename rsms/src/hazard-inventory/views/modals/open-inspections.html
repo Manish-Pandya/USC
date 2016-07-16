@@ -106,7 +106,7 @@
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{inspection.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Inventory</a>
+                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
                     </span>
                 </td>

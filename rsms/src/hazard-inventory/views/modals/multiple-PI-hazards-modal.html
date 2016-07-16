@@ -7,7 +7,7 @@
                 <tr ng-repeat="phr in matches = (modalData.pHRS | roomIdMatches:room.Key_id:modalData.PI.Key_id | orderBy:'current')" ng-class="{'new': phr.current}">
                     <td>{{phr.PiName}} <span ng-if="phr.current">(Current PI)</span></td>
                     <td>
-                        <span ng-class="{'green': phr.Status == constants.HAZARD_PI_ROOM.STATUS.IN_USE, 'yellow': phr.Status == constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY, 'red': phr.Status == constants.HAZARD_PI_ROOM.STATUS.OTHER_PI}">{{phr.Status}}</span>
+                        <span ng-class="{'green': phr.Status == constants.HAZARD_PI_ROOM.STATUS.IN_USE, 'yellow': phr.Status == constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY, 'red': phr.Status == constants.HAZARD_PI_ROOM.STATUS.OTHER_PI}">{{constants.HAZARD_PI_ROOM.STATUS[phr.Status]}}</span>
                         <span ng-if="!phr.Status && phr.Key_id" class="green">In Use</span>
                     </td>
                 </tr>

@@ -381,13 +381,13 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
         $finalPiHazardRooms = $piHazRooms;
         foreach($roomIds as $roomId){
-            $needed = true;
+            $needed = false;
             $neededPiIds[$roomId] = array();
             //does each pi have a PrincipalInvestigatorHazardRoomRelation for this room?
             foreach($piIds as $piId){
                 foreach($piHazRooms as $pihr){
-                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() == $piId){
-                        $needed = false;
+                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() != $piId){
+                        $needed = true;
                     }
                 }
             }

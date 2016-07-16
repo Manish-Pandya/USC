@@ -23,7 +23,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 		"principal_investigator_id"	=> "integer",
 		"status"	=> "text"
 	);
-	
+
 	private $room_id;
 	private $principal_investigator_id;
 	private $hazard_id;
@@ -31,7 +31,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	private $status;
 	private $hasMultiplePis;
     private $piName;
-	
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -60,14 +60,23 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 
 	public function getHazard_id(){return $this->hazard_id;}
 	public function setHazard_id($hazard_id){$this->hazard_id = $hazard_id;}
-	
-	public function getStatus(){return $this->status;}
+
+	public function getStatus(){
+        if($this->status == "Stored Only"){
+            $this->status = "STORED_ONLY";
+        }elseif($this->status == "In Use" || $this->status == null){
+            $this->status = "IN_USE";
+        }elseif($this->status == "Other Lab's Hazard" || $this->status == null){
+            $this->status = "OTHER_PI";
+        }
+        return $this->status;
+    }
 	public function setStatus($status){$this->status = $status;}
-	
+
 	public function getHasMultiplePis(){
 		return $this->hasMultiplePis;
 	}
-	
+
 	public function setHasMultiplePis($hasMultiplePis){
 		$this->hasMultiplePis = $hasMultiplePis;
 	}

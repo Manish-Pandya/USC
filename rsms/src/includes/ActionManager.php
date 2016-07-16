@@ -223,6 +223,8 @@ class ActionManager {
 
                     if($username != "Principal Investigator"){
                         $user->setSupervisor_id(1);
+                        $user->setInspector_id(10);
+                        $user->setInspector($this->getInspector(10));
                     }else{
                         $principalInvestigator = $this->getPIById(1);
                         $user->setPrincipalInvestigator($principalInvestigator);
@@ -497,9 +499,6 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getBuidling");
             $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
             $entityMaps[] = new EntityMap("lazy","getWipeTests");
-
-
-
 
             $supervisor = $user->getSupervisor();
             if($supervisor != null){
