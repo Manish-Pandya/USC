@@ -30,16 +30,16 @@
                             <div once-text="use.Name"></div>
                         </ui-select-choices>
                     </ui-select>
-                    <i class="icon-cancel-2 danger ui-select-canceller" ng-click="selectedUse = ''; $select.search = '';"></i>
+                    <i class="icon-cancel-2 danger ui-select-canceller" ng-if="selectedUse || $select.search" ng-click="selectedUse = ''; $select.search = '';"></i>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Lab PI</label>
                 <span ng-show="!pis" style="margin-left:5px;">
-                        <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
-                        <i class="icon-spinnery-dealie spinner small" style="margin-left:-30px;"></i>
-                   </span>
+                    <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
+                    <i class="icon-spinnery-dealie spinner small" style="margin-left:-30px;"></i>
+                </span>
                 <div class="controls span4" style="margin-left:5px;">
                     <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item, true)">
                         <ui-select-match placeholder="Select A PI">{{$select.selected.User.Name}}</ui-select-match>
@@ -49,9 +49,9 @@
                     </ui-select>
                 </div>
             </div>
-            <ul style="margin-left:130px; margin-top:-28px;">
+            <ul style="margin-left:130px; margin-top:-18px;">
                 <li ng-repeat="pi in modalData.PrincipalInvestigators">
-                    <p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p>
+                    <p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)" style="margin-right:3px"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p>
                 </li>
             </ul>
 

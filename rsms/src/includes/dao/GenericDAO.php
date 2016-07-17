@@ -890,8 +890,7 @@ class GenericDAO {
 		if($roomId == null){
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
-                                 WHERE a.Is_active = 1
-								 AND a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id);";
+								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 			$stmt = $db->prepare($roomsQueryString);
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
@@ -940,18 +939,15 @@ class GenericDAO {
 
 
 		if($hazardId != null){
+			$queryString .= " AND hazard_id = $hazardId";
 			//get this pi's rooms
 			$queryString = 'SELECT *
 							FROM principal_investigator
-							WHERE is_active = 1
-                            AND key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
-            $queryString .= " AND hazard_id = $hazardId";
-
+							WHERE key_id IN(select principal_investigator_id from principal_investigator_hazard_room where room_id IN (' . $inQuery . ')';
 		}else{
 			$queryString = 'SELECT *
 							FROM principal_investigator
-                            WHERE is_active = 1
-							AND key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
+							WHERE key_id IN(select principal_investigator_id from principal_investigator_room where room_id IN (' . $inQuery . ')';
 		}
 
 		$queryString .= ')';
@@ -971,65 +967,6 @@ class GenericDAO {
 		$pis = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
 
 		return $pis;
-	}
-
-	/*
-	 * returns a collection of all leaf level hazards, speficfying which ones belong to a given PI
-	 * @param integer $id  key_id of the relevant principal investigator
-	 * @return array $hazardDtos Array of leaf level hazards
-	 */
-	public function getLeafHazardsByPi($id){
-		$l = Logger::getLogger(__CLASS__);
-
-		// Get the db connection
-		global $db;
-
-		$queryString = "SELECT name as hazard_name, key_id as hazard_id, master_hazard_id
-						:id as principal_investigator_id
-						FROM hazard h
-						WHERE NOT EXISTS (SELECT 1 from hazard hh where hh.parent_hazard_id = h.key_id)";
-
-		$stmt = $db->prepare($queryString);
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-		$stmt->execute();
-
-		$hazardDtos = $stmt->fetchAll(PDO::FETCH_CLASS, "LeafHazardPiDto");
-		return $hazardDtos;
-	}
-
-	public function getLeafLevelHazards(){
-		// Get the db connection
-		global $db;
-
-		$queryString = "SELECT *
-						FROM hazard h
-						WHERE NOT EXISTS (SELECT 1 from hazard hh where hh.parent_hazard_id = h.key_id)";
-
-		$stmt = $db->prepare($queryString);
-		$stmt->execute();
-
-		$hazards = $stmt->fetchAll(PDO::FETCH_CLASS, "Hazard");
-		return $hazards;
-	}
-
-	public function getRoomIdsByPiAndHazarIds($piId, $hazardId){
-		$l = Logger::getLogger(__CLASS__);
-
-		global $db;
-
-		$queryString = "SELECT room_id
-						FROM principal_investigator_hazard_room
-						WHERE principal_investigator_id = :pi_id
-						AND hazard_id = :hazard_id";
-
-		$stmt = $db->prepare($queryString);
-
-		$stmt->bindParam(':pi_id', $piId, PDO::PARAM_INT);
-		$stmt->bindParam(':hazard_id', $hazardId, PDO::PARAM_INT);
-		$stmt->execute();
-
-		$roomIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
-		return $roomIds;
 	}
 
 
@@ -1172,47 +1109,6 @@ class GenericDAO {
         $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
         return $currentInspections;
     }
-
-    public function getVerificationYears(){
-        global $db;
-        $queryString = "SELECT DISTINCT COALESCE(YEAR(due_date), YEAR(date_created)) as `year` from verification ORDER BY `year`;";
-        $stmt = $db->prepare($queryString);
-        if($stmt->execute()){
-            $years = array();
-            while($year = $stmt->fetchColumn()){
-                $years[] = $year;
-            }
-        }else{
-            return new ActionError("MySQL Error");
-        }
-        return $years;
-    }
-
-    function getVerificationsByYear($year){
-		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
-        $this->LOG->fatal("year is: " . $year);
-		// Get the db connection
-		global $db;
-
-		//Prepare to query all from the table
-        $sql = 'SELECT * FROM verification WHERE COALESCE(YEAR(due_date), YEAR(date_created)) = ?;';
-		$stmt = $db->prepare($sql);
-		$stmt->bindParam(1,$year,PDO::PARAM_STR);
-
-		// Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Verification");
-            $this->LOG->fatal($result);
-
-			// ... otherwise, die and echo the db error
-		} else {
-            return new ActionError("MySQL Error");
-		}
-
-		return $result;
-	}
-
 
 }
 ?>

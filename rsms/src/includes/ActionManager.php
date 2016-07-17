@@ -1851,27 +1851,6 @@ class ActionManager {
 	        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
 	        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
 
-	        $piMaps = array();
-	        $piMaps[] = new EntityMap("lazy","getLabPersonnel");
-	        $piMaps[] = new EntityMap("lazy","getRooms");
-	        $piMaps[] = new EntityMap("eager","getDepartments");
-	        $piMaps[] = new EntityMap("eager","getUser");
-	        $piMaps[] = new EntityMap("lazy","getInspections");
-	        $piMaps[] = new EntityMap("lazy","getPi_authorization");
-	        $piMaps[] = new EntityMap("lazy", "getActiveParcels");
-	        $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
-	        $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-	        $piMaps[] = new EntityMap("lazy", "getSolidsContainers");
-	        $piMaps[] = new EntityMap("lazy", "getPickups");
-	        $piMaps[] = new EntityMap("lazy", "getScintVialCollections");
-	        $piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-	        $piMaps[] = new EntityMap("lazy","getOpenInspections");
-	        $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-	        $piMaps[] = new EntityMap("lazy","getVerifications");
-	        $piMaps[] = new EntityMap("lazy","getBuidling");
-	        $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
-            $piMaps[] = new EntityMap("lazy","getWipeTests");
-
         }else{
         	$roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
         	$roomMaps[] = new EntityMap("lazy","getHazards");
@@ -1882,6 +1861,35 @@ class ActionManager {
         	$roomMaps[] = new EntityMap("lazy","getSolidsContainers");
 
         }
+
+        $piMaps = array();
+        $piMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $piMaps[] = new EntityMap("lazy","getRooms");
+        $piMaps[] = new EntityMap("eager","getDepartments");
+        $piMaps[] = new EntityMap("eager","getUser");
+        $piMaps[] = new EntityMap("lazy","getInspections");
+        $piMaps[] = new EntityMap("lazy","getPi_authorization");
+        $piMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $piMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $piMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $piMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $piMaps[] = new EntityMap("lazy", "getPickups");
+        $piMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $piMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $piMaps[] = new EntityMap("lazy","getOpenInspections");
+        $piMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $piMaps[] = new EntityMap("lazy","getVerifications");
+        $piMaps[] = new EntityMap("lazy","getBuidling");
+        $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $piMaps[] = new EntityMap("lazy","getWipeTests");
+
+        $userMaps = array();
+        $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+        $userMaps[] = new EntityMap("lazy","getInspector");
+        $userMaps[] = new EntityMap("lazy","getSupervisor");
+        $userMaps[] = new EntityMap("lazy","getRoles");
+        $userMaps[] = new EntityMap("lazy","getPrimary_department");
+
         foreach($rooms as $room){
 			if($allLazy == NULL){
 	            foreach($room->getPrincipalInvestigators() as $pi){
@@ -1889,12 +1897,7 @@ class ActionManager {
 
 	                $user = $pi->getUser();
 
-	                $userMaps = array();
-	                $userMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-	                $userMaps[] = new EntityMap("lazy","getInspector");
-	                $userMaps[] = new EntityMap("lazy","getSupervisor");
-	                $userMaps[] = new EntityMap("lazy","getRoles");
-	                $userMaps[] = new EntityMap("lazy","getPrimary_department");
+	               
 	                $user->setEntityMaps($userMaps);
 	            }
 			}
@@ -2050,6 +2053,7 @@ class ActionManager {
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $decodedObject = $this->convertInputJson();
+        $LOG->fatal($decodedObject);
 
         if( $decodedObject === NULL ){
             return new ActionError('Error converting input stream to RelationshipDto');
@@ -2066,6 +2070,7 @@ class ActionManager {
             }
 
             //$LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
+            $room = $this->getRoomById($roomId);
 
             if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
 
@@ -2078,6 +2083,8 @@ class ActionManager {
                 // if add is false, remove this room from this PI
                 } else {
                     $dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+                    //set our hazard flags for the room.
+
                 }
 
             } else {
@@ -2086,7 +2093,18 @@ class ActionManager {
             }
 
         }
-        return true;
+        
+
+        $entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+		$entityMaps[] = new EntityMap("lazy","getHazards");
+		$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
+		$entityMaps[] = new EntityMap("eager","getHas_hazards");
+		$entityMaps[] = new EntityMap("eager","getBuilding");
+		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+		$room->setEntityMaps($entityMaps);
+
+        return $room;
     }
 
     public function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){

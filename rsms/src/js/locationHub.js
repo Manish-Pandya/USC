@@ -684,26 +684,18 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
         }
         var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=savePIRoomRelation';
         convenienceMethods.saveDataAndDefer(url, roomDto).then(
-            function(){
-
+            function(room){
                 var rooms = locationHubFactory.rooms;
                 var i = rooms.length;
                 while(i--){
-                    if(room.Key_id === rooms[i].Key_id){
-                        var originalRoom = rooms[i];
+                    if (room.Key_id === rooms[i].Key_id) {
+                        console.log(room);
+                        var originalRoom = $scope.modalData = room;
                         break;
                     }
                 }
-
-                if(!adding){
-                    var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
-                    room.PrincipalInvestigators.splice(idx,1);
-                    //find the room in the factory collection of rooms, remove the pi from it as well
-                    originalRoom.PrincipalInvestigators.splice(idx,1);
-                }else{
-                    room.PrincipalInvestigators.push(pi);
-                }
                 pi.saving = false;
+                $scope.pis.selected = null;
             },
             function(){
                 pi.saving = false;

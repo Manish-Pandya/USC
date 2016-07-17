@@ -27,13 +27,6 @@ angular.module('modalPosition', [])
 
             onResize();
 
-            angular.element($(element[0])).bind('DOMNodeInserted', function () {
-                onResize();
-            })
-
-            angular.element($window).bind('resize', function () {
-                onResize();
-            });
 
             var relevantSelectMatches,
             selectMap = [],
@@ -48,9 +41,6 @@ angular.module('modalPosition', [])
                     el = el[0];
                 }   
                 var rect = el.getBoundingClientRect();
-                console.log(rect);
-                console.log(el.scrollTop);
-                console.log(body.innerHeight());
                 return (
                     $(el).position().top >= 40 &&
                     rect.bottom <= (body.outerHeight() + 83)  /*or $(window).height() */
@@ -67,14 +57,15 @@ angular.module('modalPosition', [])
                     setTimeout(function () {
                         onResize();
                         var h = body.height();
-                        body.css({ 'height': 100 + 'px' });
+                        body.css({ 'height': 10000 + 'px' });
                         body.animate({
-                            scrollTop: 20
+                            scrollTop: 2000
                         }, .1);
                         body.animate({
                             scrollTop: 0
                         }, .1);
                         body.css({ 'height': h + 'px' });
+                        onResize();
                     }, 301)
 
                 }
@@ -111,6 +102,15 @@ angular.module('modalPosition', [])
             $(window).on("orientationchange", function () {
                 window.setTimeout(function () { onResize(); }, 300);
             });
+            angular.element($(element[0])).bind('DOMNodeInserted', function () {
+                onResize();
+                positionUISelects();
+            })
+            angular.element($window).bind('resize', function () {
+                onResize();
+                positionUISelects();
+            });
+
         }
     }
 }]);

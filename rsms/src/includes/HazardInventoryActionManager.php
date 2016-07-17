@@ -99,46 +99,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
             $roomHazards = $room->getHazards();
             $dontRemove = false;
 
-			// Case 1, Biohazards
-			if($decodedObject->getMasterHazardId() == 1){
-                foreach($roomHazards as $hazard){
-                    if( $hazard->getParent_hazard_id() == 1 ){
-                           $dontRemove = true;
-                    }
-                }
-				if($dontRemove == false){
-                     $room->setBio_hazards_present(false);
-				     $roomDao->save($room);
-                }
-			}
-
-			// Case 2, Checm hazards
-			if($decodedObject->getMasterHazardId() == 10009){
-                foreach($roomHazards as $hazard){
-                    if( $hazard->getParent_hazard_id() == 10009 ){
-                        $dontRemove = true;
-                    }
-                }
-				if($dontRemove == false){
-                    $room->setChem_hazards_present(false);
-                    $roomDao->save($room);
-                }
-			}
-
-			// Case 3, Rad hazards
-			if($decodedObject->getMasterHazardId() == 10010){
-                foreach($roomHazards as $hazard){
-                    if( $hazard->getParent_hazard_id() == 10010 ){
-                        $dontRemove = true;
-                    }
-                }
-				if($dontRemove == false){
-                   	$room->setRad_hazards_present(false);
-				    $roomDao->save($room);
-                }
-
-			}
-
 			//since we've removed the hazard from the room for this PI, we should also remove any child hazards
 			$hazard = $this->getHazardById($decodedObject->getHazard_id());
 			$childHazards = $hazard->getActiveSubHazards();
