@@ -28,6 +28,9 @@ ParcelUse.prototype = {
     getIsPickedUp: function () {
         if (!this.IsPickedUp) {
             this.IsPickedUp = true;
+            if (!this.ParcelUseAmounts.length) {
+                this.IsPickedUp = false;
+            }
             for (var i = 0; i < this.ParcelUseAmounts.length; i++){
                 if (!this.ParcelUseAmounts[i].IsPickedUp) {
                     this.IsPickedUp = false;

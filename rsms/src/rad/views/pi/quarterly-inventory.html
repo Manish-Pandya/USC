@@ -28,7 +28,7 @@
 				</div>
 
 				<div class="table-row" ng-repeat="amount in pi_inventory.Quarterly_isotope_amounts">
-					<div>{{amount.Authorization.Isotope.Name}} ({{amount.Authorization.Form}})</div>
+					<div>{{amount.Authorization.IsotopeName}} ({{amount.Authorization.Form}})</div>
 					<div>{{amount.Authorization.Max_quantity}} mCi</div>
 					<div>{{amount.Starting_amount | roundFloat}} mCi</div>
 					<div>{{amount.Total_ordered | roundFloat}} mCi</div>

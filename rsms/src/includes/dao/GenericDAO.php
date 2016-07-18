@@ -326,13 +326,28 @@ class GenericDAO {
 	 */
 	public function getUsageAmounts(  $startDate, $endDate, $wasteTypeId ){
 
-		$sql = "SELECT SUM(`curie_level`)
-				FROM `parcel_use_amount`
-				WHERE `parcel_use_id` IN
-				(select key_id from `parcel_use` WHERE `parcel_id`
-				IN (select key_id from `parcel` WHERE `authorization_id` = ?))
-				AND `date_last_modified` BETWEEN ? AND ?
-				AND `waste_type_id` = ?";
+
+		$sql = "SELECT ROUND(SUM(a.curie_level),7)
+                FROM `parcel_use_amount` a
+                LEFT JOIN parcel_use b
+                ON a.parcel_use_id = b.key_id
+                LEFT JOIN parcel c
+                ON b.parcel_id = c.key_id
+                LEFT JOIN waste_bag f
+                ON a.waste_bag_id = f.key_id
+                LEFT JOIN carboy_use_cycle g
+                ON a.carboy_id = g.key_id
+                LEFT JOIN scint_vial_collection h
+                ON a.scint_vial_collection_id = h.key_id
+                LEFT OUTER JOIN pickup i
+                ON f.pickup_id = i.key_id
+                OR g.pickup_id = i.key_id
+                OR h.pickup_id = i.key_id
+                AND i.status != 'Requested'
+				WHERE c.authorization_id = ?
+				AND b.date_used BETWEEN ? AND ?
+				AND `waste_type_id` = ?
+                AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL )";
 
 		// Get the db connection
 		global $db;
@@ -341,7 +356,41 @@ class GenericDAO {
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 		$stmt->bindValue(4, $wasteTypeId);
+        $this->LOG->fatal($this->modelObject->getAuthorization_id());
 
+        $this->LOG->fatal($startDate . " " . $endDate . " " . $wasteTypeId);
+
+		$stmt->execute();
+
+		$total = $stmt->fetch(PDO::FETCH_NUM);
+		$sum = $total[0]; // 0 is the first array. here array is only one.
+		if($sum == NULL)$sum = 0;
+        $this->LOG->fatal($sum);
+		return $sum;
+	}
+
+    /**
+     * Gets the sum of Parcels ordered in or ordered before a given period
+     *
+     * @param string $startDate mysql timestamp formatted date representing beginning of the period
+     * @param string $enddate mysql timestamp formatted date representing end of the period
+     * @return int $sum
+     */
+	public function getStartingAmount( $startDate = null ){
+        $l = Logger::getLogger("transfer amounts");
+        $l->fatal("called it");
+		$sql = "SELECT SUM(`quantity`)
+				FROM parcel a
+                WHERE `authorization_id` = ?";
+
+		// Get the db connection
+		global $db;
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+        if($startDate != null){
+            $sql .= "AND arrival_date < ?";
+            $stmt->bindValue(2, $startDate);
+        }
 
 		$stmt->execute();
 
@@ -360,7 +409,8 @@ class GenericDAO {
 	 * @return int $sum
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
-
+        $l = Logger::getLogger("transfer amounts");
+        $l->FATAL($startDate . " " . $endDate . " " .  $hasRsNumber );
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
@@ -382,8 +432,11 @@ class GenericDAO {
 		$stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
+        $this->LOG->fatal($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
+        $this->LOG->fatal($sum);
+
 		return $sum;
 	}
 

@@ -19,6 +19,14 @@ include_once 'RadCrud.php';
         "quarterly_inventory_id" 	=> "integer",
     	"starting_amount"			=> "float", 
     	"ending_amount"				=> "float",
+        "total_ordered"				=> "float",
+    	"transfer_in"				=> "float",
+        "solid_waste"				=> "float",
+    	"liquid_waste"				=> "float",
+        "scint_vial_waste"			=> "float",
+    	"other_waste"				=> "float",
+    	"on_hand"				    => "float",
+
     	"authorization_id"			=> "int",   	
     		
         //GenericCrud
