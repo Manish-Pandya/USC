@@ -155,7 +155,9 @@ include_once 'RadCrud.php';
     		$wasteBagDao = new GenericDAO(new WasteBag());
     		$wasteBag = $wasteBagDao->getById($this->getWaste_bag_id());
     		$container = $wasteBag->getContainer();
-    		$this->container_name = $container->getName();
+            if($container != null){
+                $this->container_name = $container->getName();
+            }
     	}
     	return $this->container_name;
     }
@@ -167,7 +169,9 @@ include_once 'RadCrud.php';
 		$use = $useDao->getById($this->getParcel_use_id());
 		$parcel = $use->getParcel();
 		$isotope = $parcel->getIsotope();
-		$this->isotope_name = $isotope->getName();
+        if($isotope != null){
+            $this->isotope_name = $isotope->getName();
+        }
 		return $this->isotope_name;
 	}
 	
@@ -202,7 +206,6 @@ include_once 'RadCrud.php';
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
         $this->isPickedUp = count($stmt->fetchAll(PDO::FETCH_CLASS, "ParcelUseAmount")) != 0;
-        $l->fatal(count($stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName)));
         return (boolean) $this->isPickedUp;
     }
     

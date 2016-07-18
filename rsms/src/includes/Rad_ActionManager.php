@@ -416,8 +416,10 @@ class Rad_ActionManager extends ActionManager {
     	$amountMaps[] = new EntityMap("eager", "getContainer_name");
 
         if($pi->getPi_authorization() != NULL){
-        	$piAuth = $pi->getPi_authorization();
-        	$piAuth->setEntityMaps($authMaps);
+        	$piAuths = $pi->getPi_authorization();
+            foreach($piAuths as $piAuth){
+                $piAuth->setEntityMaps($authMaps);
+            }
         }
 
         foreach($pi->getActiveParcels() as $parcel){
@@ -1813,6 +1815,8 @@ class Rad_ActionManager extends ActionManager {
     	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
         $inventory->setEntityMaps($entityMaps);
 
+        $LOG->fatal($inventory);
+
         return $inventory;
     }
 
@@ -1870,55 +1874,52 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
+        foreach($pi->getPi_authorization() as $piAuth){
 
-            $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+            foreach($piAuth->getAuthorizations() as $authorization){
 
-            //do we already have a QuarterlyIsotopeAmount?
-            $whereClauseGroup = new WhereClauseGroup();
-            $clauses = array(
-                    new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-                    new WhereClause('quarterly_inventory_id','=', $piInventory ->getKey_id() ),
-            );
+                $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
-            $whereClauseGroup->setClauses($clauses);
-            $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+                //do we already have a QuarterlyIsotopeAmount?
+                $whereClauseGroup = new WhereClauseGroup();
+                $clauses = array(
+                        new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+                        new WhereClause('quarterly_inventory_id','=', $piInventory ->getKey_id() ),
+                );
 
-            if($oldAmounts != NULL){
-                $newAmount = $oldAmounts[0];
-            }else{
-                $newAmount = new QuarterlyIsotopeAmount();
-            }
+                $whereClauseGroup->setClauses($clauses);
+                $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
 
-            //boolean to determine if this isotope has been accounted for
-            $isotopeFound = false;
+                if($oldAmounts != NULL){
+                    $newAmount = $oldAmounts[0];
+                }else{
+                    $newAmount = new QuarterlyIsotopeAmount();
+                }
 
-            //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
-            if($mostRecentIntentory != null){
-                foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-                    if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                        $newAmount->setStarting_amount($amount->getEnding_amount());
-                        $isotopeFound = true;
+                //boolean to determine if this isotope has been accounted for
+                $isotopeFound = false;
+
+                //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+                if($mostRecentIntentory != null){
+                    foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+                        if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
+                            $newAmount->setStarting_amount($amount->getEnding_amount());
+                            $isotopeFound = true;
+                        }
                     }
                 }
+
+                $newAmount->setIs_active(true);
+                $newAmount->setAuthorization_id($authorization->getKey_id());
+                $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
+
+                //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+                $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
+                $newAmount = $quarterlyAmountDao->save($newAmount);
+
+                $amounts[] = $newAmount;
+
             }
-
-            //there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
-            if($isotopeFound == false){
-                $newAmount->setStarting_amount(0);
-            }
-
-            $newAmount->setIs_active(true);
-            $newAmount->setAuthorization_id($authorization->getKey_id());
-            $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
-
-            $newAmount = $quarterlyAmountDao->save($newAmount);
-
-            //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
-            $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
-
-            $amounts[] = $newAmount;
-
         }
         $piInventory->setQuarterly_isotope_amounts($amounts);
         return $piInventory;
@@ -1931,12 +1932,15 @@ class Rad_ActionManager extends ActionManager {
      * @param string $endDate
      */
     private function calculateQuarterlyAmount($amount, $startDate, $endDate){
-
+        $LOG = Logger::getLogger("calculon");
         //get the total ordered since the previous inventory
         $ordersDao = $this->getDao($amount);
+        //if there wasn't a previous inventory, the amount's starting_amount will be null, and we need to query for it
+        if($amount->getStarting_amount() == NULL){
+            $amount->setStarting_amount(0);
+        }
         //get parcels for this QuarterlyIsotopsAmount's authorization that have an RS ID for the given dates
         $amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, true));
-
 
         //get the total transfered in since the previous inventory
         $transferInDao = $this->getDao($amount);
@@ -1949,8 +1953,6 @@ class Rad_ActionManager extends ActionManager {
         $amount->setTransfer_out(0);
 
         //subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
-        $solidSumDao = $this->getDao($amount);
-        $amount->setSolid_waste($solidSumDao->getUsageAmounts( $startDate, $endDate, 4));
 
         //get liquid amounts
         $liquidSumDao = $this->getDao($amount);
@@ -1960,16 +1962,20 @@ class Rad_ActionManager extends ActionManager {
         $svSumDao = $this->getDao($amount);
         $amount->setScint_vial_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 3));
 
-        //get other amounts
+        //get solid amounts
         $svSumDao = $this->getDao($amount);
-        $amount->setOther_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 5));
+        $amount->setSolid_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 5));
+
+        //get other amounts
+        $solidSumDao = $this->getDao($amount);
+        $amount->getOther_waste($solidSumDao->getUsageAmounts( $startDate, $endDate, 4));
 
         //calculate the amount currently on hand
         $totalIn = $amount->getStarting_amount() + $amount->getTransfer_in() + $amount->getTotal_ordered();
         $totalOut = $amount->getTransfer_out() + $amount->getSolid_waste() + $amount->getLiquid_waste() + $amount->getOther_waste() + $amount->getScint_vial_waste();
 
         $amount->setOn_hand($totalIn - $totalOut);
-
+        $LOG->fatal($amount);
         return $amount;
 
     }
@@ -1999,25 +2005,28 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getPi_authorization()->getAuthorizations() as $authorization){
-            $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+        foreach($pi->getPi_authorization() as $piAuth){
+            $auths = $piAuth->getAuthorizations();
+            foreach($auths as $authorization){
+                $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
-            //do we already have a QuarterlyIsotopeAmount?
-            $whereClauseGroup = new WhereClauseGroup();
-            $clauses = array(
-                    new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-                    new WhereClause('quarterly_inventory_id','=', $pi_inventory->getKey_id() ),
-            );
+                //do we already have a QuarterlyIsotopeAmount?
+                $whereClauseGroup = new WhereClauseGroup();
+                $clauses = array(
+                        new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+                        new WhereClause('quarterly_inventory_id','=', $pi_inventory->getKey_id() ),
+                );
 
-            $whereClauseGroup->setClauses($clauses);
-            $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+                $whereClauseGroup->setClauses($clauses);
+                $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
 
-            if($oldAmounts != NULL){
-                $newAmount = $oldAmounts[0];
-            }else{
-                $newAmount = new QuarterlyIsotopeAmount();
-                //boolean to determine if this isotope has been accounted for
-                $isotopeFound = false;
+                if($oldAmounts != NULL){
+                    $newAmount = $oldAmounts[0];
+                }else{
+                    $newAmount = new QuarterlyIsotopeAmount();
+                }
+
+                $newAmount->setQuarterly_inventory_id($mostRecentIntentory->getKey_id());
 
                 //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
                 if($mostRecentIntentory != null){
@@ -2034,31 +2043,23 @@ class Rad_ActionManager extends ActionManager {
                     $newAmount->setStarting_amount(0);
                 }
 
+
+                //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+                $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
                 $newAmount = $quarterlyAmountDao->save($newAmount);
+
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("eager", "getIsotope");
+                $newAmount->getAuthorization()->setEntityMaps($entityMaps);
+                $amounts[] = $newAmount;
+                
             }
-
-            $LOG->debug($newAmount);
-
-            //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
-            $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
-
-            $entityMaps = array();
-            $entityMaps[] = new EntityMap("eager", "getIsotope");
-            $newAmount->getAuthorization()->setEntityMaps($entityMaps);
-
-            $amounts[] = $newAmount;
-
         }
 
         $pi_inventory->setQuarterly_isotope_amounts($amounts);
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
-        $entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
-
-        $qIEntityMaps = array();
-        $qIEntityMaps[] = new EntityMap("lazy", "getPi_quarterly_inventories");
-
-        $pi_inventory->getQuarterly_inventory()->setEntityMaps($qIEntityMaps);
+        $entityMaps[] = new EntityMap("lazy", "getQuarterly_inventory");
         $pi_inventory->setEntityMaps($entityMaps);
 
         return $pi_inventory;
