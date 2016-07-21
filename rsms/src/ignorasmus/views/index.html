@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="../../js/lib/angular.js"></script>
+    <script src="../../../../Scripts/lodash.min.js"></script>
+    <script src="../client-side-framework/deepCopy.js"></script>
+    <script src="../client-side-framework/DataStoreManager.js"></script>
+    <script src="../client-side-framework/InstanceFactory.js"></script>
+    <script src="../../client-side-framework/genericModel/inheritance.js"></script>
+    <script src="../../client-side-framework/genericModel/genericModel.js"></script>
+    <script src="../../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
+    <script src="../../rad/scripts/models/PrincipalInvestigator.js"></script>
+    <script src="../../rad/scripts/models/Room.js"></script>
+    <script src="../../rad/scripts/models/PrincipalInvestigator.js"></script>
+    <script src="../../rad/scripts/models/User.js"></script>
+    <script>
+        console.log(DataStoreManager.Howdy);
+        //console.log(InstanceFactory.createInstance("User"));
+        //console.log(InstanceFactory.createInstance("PrincipalInvestigator"));
+        //console.log(InstanceFactory.createInstance("Room"));
+        //InstanceFactory.testCopy();
+        console.log(InstanceFactory.getClassNames("/rad/scripts/models/"));
+        for (var n = 0; n < InstanceFactory._classNames.length; n++) {
+            console.log(InstanceFactory.createInstance(InstanceFactory._classNames[n]));
+        }
+        var user = new User();
+        var data = { name: "I'm a thing", num: 9, nested: { thing: "I'm a thing too", num: 99, pi: user } }
+        data.nested.pi.pi = user;
+        DataStoreManager.ActualModel = data;
+
+    </script>
+</head>
+<body>
+</body>
+</html>
