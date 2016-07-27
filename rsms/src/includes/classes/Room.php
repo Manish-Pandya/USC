@@ -19,6 +19,9 @@ class Room extends GenericCrud {
 		"name"		=> "text",
 		"safety_contact_information" 	=> "text",
 		"building_id"		=> "integer",
+		"chem_hazards_present"			=> "boolean",
+		"rad_hazards_present"			=> "boolean",
+		"bio_hazards_present"			=> "boolean",
 		//"chem_hazards_present"			=> "boolean",
 		//"rad_hazards_present"			=> "boolean",
 		//"bio_hazards_present"			=> "boolean",
@@ -139,7 +142,7 @@ class Room extends GenericCrud {
         }
         return $this->chem_hazards_present;
     }
-	public function setChem_hazards_present($chem_hazards_present){ $this->chem_hazards_present = $chem_hazards_present; }
+	public function setChem_hazards_present($chem_hazards_present){ $this->chem_hazards_present = (boolean) $chem_hazards_present; }
 
 	public function getRad_hazards_present() {
         if($this->rad_hazards_present == null){
@@ -147,7 +150,7 @@ class Room extends GenericCrud {
         }
         return $this->rad_hazards_present;
     }
-	public function setRad_hazards_present($rad_hazards_present){ $this->rad_hazards_present = $rad_hazards_present; }
+	public function setRad_hazards_present($rad_hazards_present){ $this->rad_hazards_present = (boolean) $rad_hazards_present; }
 
 	public function getBio_hazards_present() {
         if($this->bio_hazards_present == null){
@@ -155,7 +158,7 @@ class Room extends GenericCrud {
         }
         return $this->bio_hazards_present;
     }
-	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = $bio_hazards_present; }
+	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = (boolean) $bio_hazards_present; }
 
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
@@ -262,7 +265,7 @@ class Room extends GenericCrud {
 		return $this->hasMultiplePIs;
 	}
 
-    private function getHazardTypesArePresent(){
+    public function getHazardTypesArePresent(){
         $LOG = Logger::getLogger(__CLASS__ );
         //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
         $branchIds = "1, 10009, 10010";
@@ -277,20 +280,32 @@ class Room extends GenericCrud {
                         ON a.key_id = b.hazard_id
                         LEFT JOIN principal_investigator_room c
                         ON b.principal_investigator_id = c.principal_investigator_id
-                        WHERE a.parent_hazard_id IN ($branchIds)
+                        LEFT JOIN principal_investigator d
+                        ON b.principal_investigator_id = d.key_id
+                        WHERE a.is_active = true
+                        AND d.is_active = true
+                        AND a.parent_hazard_id IN ($branchIds)
                         AND b.room_id = $this->key_id
                         AND c.room_id = $this->key_id";
         $stmt = $db->prepare($queryString);
         $stmt->execute();
+
+        $bioPresent = false;
+        $chemPresent = false;
+        $radPresent = false;
+
         while($id = $stmt->fetchColumn()){
 			if($id == 1){
-                $this->bio_hazards_present = true;
+                $bioPresent = true;
             }elseif($id == 10009){
-                $this->chem_hazards_present = true;
+                $chemPresent = true;
             }elseif($id == 10010){
-                $this->rad_hazards_present = true;
+                $radPresent = true;
             }
 		}
+        $this->bio_hazards_present = $bioPresent;
+        $this->chem_hazards_present = $chemPresent;
+        $this->rad_hazards_present = $radPresent;
     }
 
 

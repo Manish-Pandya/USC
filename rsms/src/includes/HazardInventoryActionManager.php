@@ -147,29 +147,19 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 						$childDto->setHazard_id($child->getKey_id());
 						$childDto->setRoom_id($decodedObject->getRoom_id());
 						$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-						$LOG->fatal($childDto);
 						$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
 					}
 				}
 			}
-			$LOG->fatal($decodedObject);
-			// Flag the master category on the room object
-
-				$room = $roomDao->getById($decodedObject->getRoom_id());
-				if ($decodedObject->getMasterHazardId() == 1) {
-					$room->setBio_hazards_present(true);
-				}
-				if ($decodedObject->getMasterHazardId() == 10009) {
-					$room->setChem_hazards_present(true);
-				}
-				if ($decodedObject->getMasterHazardId() == 10010) {
-					$room->setRad_hazards_present(true);
-				}
-
-				$roomDao->save($room);
 
 		}
 
+        $room = $this->getRoomById($decodedObject->getRoom_id());
+        $room->getHazardTypesArePresent();
+        $LOG->fatal($room);
+        if($room != $this->saveRoom($room)){
+            return new ActionError("Failed to update room");
+        }
 
 		return $decodedObject;
 	}
