@@ -36,10 +36,21 @@ var DataStoreManager = (function () {
             return DataStoreManager._actualModel;
         },
         set: function (value) {
+            var _this = this;
+            var drillDown = function (parentNode) {
+                for (var prop in parentNode) {
+                    if (parentNode[prop] && typeof parentNode[prop] === 'object') {
+                        if (parentNode[prop].hasOwnProperty(_this.classPropName)) {
+                            var instance = InstanceFactory.createInstance(parentNode[prop][_this.classPropName]);
+                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                        }
+                        drillDown(parentNode[prop]);
+                    }
+                }
+            };
+            drillDown(value);
             DataStoreManager._actualModel = value;
-            // TODO: Conditionally Deepcopy relevant CurrentViewModel and/or CurrentModalViewModel properties from the ActualModel.
-            this.CurrentViewModel = _.cloneDeep(value);
-            this.CurrentModalViewModel = _.cloneDeep(value);
+            DataStoreManager._currentViewModel = _.cloneDeep(value);
         },
         enumerable: true,
         configurable: true
@@ -56,16 +67,36 @@ var DataStoreManager = (function () {
                 // junk stuff here
                 break;
             default:
-                viewModelParent[type] = viewModelParent[type] || this.getAll(type, viewModelParent);
+                viewModelParent[type] = viewModelParent[type] || this.getAll(type, this.ActualModel);
                 return viewModelParent[type];
         }
+    };
+    DataStoreManager.syncViewModel = function (actualModelParent, viewModelName) {
+        if (viewModelName === void 0) { viewModelName = "CurrentViewModel"; }
+        //set appropriate CurrentViewModel
+        var viewParentNode = this[viewModelName] = _.cloneDeep(actualModelParent);
+        // get all classes from script tags
+        var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
+        // loop thru to set references
+        var drillDown = function (parentNode, viewParentNode) {
+            var className = parentNode.constructor.name;
+            if (classNames.indexOf(className) > -1) {
+                parentNode.viewModelReference = viewParentNode; // Put actual reference by finding where it lives in viewModel
+            }
+            for (var prop in parentNode) {
+                if (parentNode.hasOwnProperty(prop) && prop != "viewModelReference" && parentNode[prop] && typeof parentNode[prop] === 'object') {
+                    drillDown(parentNode[prop], viewParentNode[prop]);
+                }
+            }
+        };
+        drillDown(actualModelParent, viewParentNode);
     };
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         if (viewModelParent === void 0) { viewModelParent = this.CurrentViewModel; }
         var success;
         if (success) {
             // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
-            this.ActualModel = viewModelParent;
+            this.ActualModel = _.cloneDeep(viewModelParent);
         }
         else {
             console.log("wtf");
@@ -94,6 +125,27 @@ var DataStoreManager = (function () {
         }
         return result;
     };
-    DataStoreManager.Howdy = "Hello World";
+    DataStoreManager.findByPropValue = function (obj, propName, value) {
+        //Early return
+        if (obj[propName] === value) {
+            return obj;
+        }
+        var result;
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'object') {
+                result = this.findByPropValue(obj[prop], propName, value);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return result;
+    };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+    DataStoreManager.classPropName = "Class";
     return DataStoreManager;
 }());

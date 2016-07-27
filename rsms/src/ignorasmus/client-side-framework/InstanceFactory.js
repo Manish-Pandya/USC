@@ -41,8 +41,12 @@ var InstanceFactory = (function () {
                 return new PrincipalInvestigator();
             case "Room":
                 return new Room();
+            case "Hazard":
+                return new Hazard();
             default:
-                throw new Error("No such class as " + className);
+                //throw new Error("No such class as " + className);
+                //console.log("wtf:", className);
+                return {};
         }
     };
     InstanceFactory.compose = function (type) {
