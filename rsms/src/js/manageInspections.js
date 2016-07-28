@@ -70,12 +70,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         return dueDate;
     };
 })
-.filter('dateToISO', function () {
-    return function (input) {
-        input = new Date(input).toISOString();
-        return input;
-    };
-})
 .filter('getMonthName', function () {
     return function (input) {
         var i = monthNames2.length;

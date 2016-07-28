@@ -4281,15 +4281,24 @@ class ActionManager {
 
                 $inspection->setEntityMaps($entityMaps);
 
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+                $entityMaps[] = new EntityMap("lazy","getHazards");
+                $entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
+                $entityMaps[] = new EntityMap("lazy","getHas_hazards");
+                $entityMaps[] = new EntityMap("lazy","getBuilding");
+                $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+                $entityMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+                
                 $filteredRooms = array();
                 $rooms = $inspection->getRooms();
                 foreach( $rooms as $key=>$room ){
                 	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                        $room->setEntityMaps($entityMaps);
                 		array_push($filteredRooms, $room);
                 	}
                 }
                 $is->setInspection_rooms($filteredRooms);
-
                 $is->setInspections($inspection);
             }
 
@@ -4298,15 +4307,12 @@ class ActionManager {
             $rooms = $pi->getRooms();
             $pi_bldg_rooms = array();
             foreach ($rooms as $room){
-                //$LOG->debug($room);
-                $bldg = $room->getBuilding();
-                if ($bldg->getKey_id() == $is->getBuilding_key_id()){
+                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
                     $pi_bldg_rooms[] = $room;
                 }
             }
             $is->setBuilding_rooms($pi_bldg_rooms);
         }
-
         return $inspectionSchedules;
     }
 
