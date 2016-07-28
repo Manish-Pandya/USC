@@ -306,6 +306,9 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
                         FROM principal_investigator_hazard_room a
                         JOIN principal_investigator b
                         ON b.key_id = a.principal_investigator_id
+                        JOIN principal_investigator_room d 
+                        ON d.principal_investigator_id = a.principal_investigator_id
+                        AND d.room_id = a.room_id
                         JOIN erasmus_user c
                         ON c.key_id = b.user_id
                         WHERE a.room_id IN ( $newRoomIds )
@@ -327,17 +330,17 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         $stmt->bindValue(($k+$skips+1), $hazardId);
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
-
+        $LOG->fatal($piHazRooms);
         //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
         $finalPiHazardRooms = $piHazRooms;
         foreach($roomIds as $roomId){
-            $needed = false;
+            $needed = true;
             $neededPiIds[$roomId] = array();
             //does each pi have a PrincipalInvestigatorHazardRoomRelation for this room?
             foreach($piIds as $piId){
                 foreach($piHazRooms as $pihr){
-                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() != $piId){
-                        $needed = true;
+                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() == $piId){
+                        $needed = false;
                     }
                 }
             }
