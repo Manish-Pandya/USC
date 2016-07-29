@@ -9,31 +9,9 @@
 var DataStoreManager = (function () {
     function DataStoreManager() {
     }
-    Object.defineProperty(DataStoreManager, "CurrentViewModel", {
-        get: function () {
-            return DataStoreManager._currentViewModel;
-        },
-        set: function (value) {
-            // TODO: compose clientside classes as needed via InstanceFactory. Compisition ONLY happend on viewModals.
-            DataStoreManager._currentViewModel = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DataStoreManager, "CurrentModalViewModel", {
-        get: function () {
-            return DataStoreManager._currentModalViewModel;
-        },
-        set: function (value) {
-            // TODO: compose clientside classes as needed via InstanceFactory. Compisition ONLY happend on viewModals.
-            DataStoreManager._currentModalViewModel = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(DataStoreManager, "ActualModel", {
         get: function () {
-            return DataStoreManager._actualModel;
+            return this._actualModel;
         },
         set: function (value) {
             var _this = this;
@@ -50,7 +28,6 @@ var DataStoreManager = (function () {
             };
             drillDown(value);
             DataStoreManager._actualModel = value;
-            DataStoreManager._currentViewModel = _.cloneDeep(value);
         },
         enumerable: true,
         configurable: true
@@ -61,30 +38,44 @@ var DataStoreManager = (function () {
     //
     //----------------------------------------------------------------------
     DataStoreManager.getAll = function (type, viewModelParent) {
-        if (viewModelParent === void 0) { viewModelParent = this.CurrentViewModel; }
         switch (type) {
             case "realSpecific":
                 // junk stuff here
                 break;
             default:
-                viewModelParent[type] = viewModelParent[type] || this.getAll(type, this.ActualModel);
+                viewModelParent[type] = viewModelParent[type] || this.getAll(type, this._actualModel);
                 return viewModelParent[type];
         }
     };
+    DataStoreManager.getById = function (type, id, viewModelName) {
+        var obj = this.findByPropValue(this._actualModel[type], this.uidString, id);
+        if (obj && obj.viewModels && obj.viewModels.hasOwnProperty(viewModelName)) {
+            return obj.viewModels[viewModelName];
+        }
+        else {
+            throw new Error("No such id as " + id);
+        }
+    };
     DataStoreManager.syncViewModel = function (actualModelParent, viewModelName) {
-        if (viewModelName === void 0) { viewModelName = "CurrentViewModel"; }
+        var _this = this;
         //set appropriate CurrentViewModel
-        var viewParentNode = this[viewModelName] = _.cloneDeep(actualModelParent);
+        var viewParentNode = this.viewModels[viewModelName] = _.cloneDeep(actualModelParent);
         // get all classes from script tags
         var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
         // loop thru to set references
         var drillDown = function (parentNode, viewParentNode) {
             var className = parentNode.constructor.name;
             if (classNames.indexOf(className) > -1) {
-                parentNode.viewModelReference = viewParentNode; // Put actual reference by finding where it lives in viewModel
+                if (!parentNode.viewModels)
+                    parentNode.viewModels = {};
+                parentNode.viewModels[viewModelName] = viewParentNode; // Put actual reference by finding where it lives in viewModel
+                if (!_this._actualModel[className]) {
+                    _this._actualModel[className] = [];
+                }
+                _this._actualModel[className].push(parentNode);
             }
             for (var prop in parentNode) {
-                if (parentNode.hasOwnProperty(prop) && prop != "viewModelReference" && parentNode[prop] && typeof parentNode[prop] === 'object') {
+                if (parentNode.hasOwnProperty(prop) && prop != "viewModels" && parentNode[prop] && typeof parentNode[prop] === 'object') {
                     drillDown(parentNode[prop], viewParentNode[prop]);
                 }
             }
@@ -92,39 +83,24 @@ var DataStoreManager = (function () {
         drillDown(actualModelParent, viewParentNode);
     };
     DataStoreManager.commitToActualModel = function (viewModelParent) {
-        if (viewModelParent === void 0) { viewModelParent = this.CurrentViewModel; }
         var success;
         if (success) {
             // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
-            this.ActualModel = _.cloneDeep(viewModelParent);
+            this._actualModel = _.cloneDeep(viewModelParent);
         }
         else {
             console.log("wtf");
         }
         return success;
     };
-    DataStoreManager.setModelProp = function (propParent, propName, value, optionalCallBack) {
+    // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
+    DataStoreManager.setViewModelProp = function (propParent, propName, value, optionalCallBack) {
         propParent[propName] = value;
         if (optionalCallBack) {
             optionalCallBack();
         }
     };
-    DataStoreManager.findById = function (obj, id) {
-        //Early return
-        if (obj.id === id) {
-            return obj;
-        }
-        var result;
-        for (var prop in obj) {
-            if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'object') {
-                result = this.findById(obj[prop], id);
-                if (result) {
-                    return result;
-                }
-            }
-        }
-        return result;
-    };
+    // also works for simply finding object by id: findByPropValue(obj, "id", "someId");
     DataStoreManager.findByPropValue = function (obj, propName, value) {
         //Early return
         if (obj[propName] === value) {
@@ -132,7 +108,7 @@ var DataStoreManager = (function () {
         }
         var result;
         for (var prop in obj) {
-            if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'object') {
+            if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
                 result = this.findByPropValue(obj[prop], propName, value);
                 if (result) {
                     return result;
@@ -147,5 +123,7 @@ var DataStoreManager = (function () {
     //
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
+    DataStoreManager.uidString = "Key_id";
+    DataStoreManager.viewModels = {};
     return DataStoreManager;
 }());

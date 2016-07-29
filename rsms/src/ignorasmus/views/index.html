@@ -15,23 +15,27 @@
     <script src="../../rad/scripts/models/Hazard.js"></script>
     <script>
         //InstanceFactory.testCopy();
-        var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
+        /*var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
         for (var n = 0; n < classNames.length; n++) {
             console.log(InstanceFactory.createInstance(classNames[n]));
-        }
+        }*/
         /*var data = { name: "I'm a thing", num: 9, user: new User(), room: new Room(), nested: { thing: "I'm a thing too", num: 99, user: new User(), pi: new PrincipalInvestigator() } };
         DataStoreManager.ActualModel = data;
         DataStoreManager.syncViewModel(DataStoreManager.ActualModel);
 
-        DataStoreManager.setModelProp(DataStoreManager.ActualModel.room.viewModelReference, "className", "POOP!!!");
+        DataStoreManager.setViewModelProp(DataStoreManager.ActualModel.room.viewModelReference, "className", "POOP!!!");
         console.log(DataStoreManager.ActualModel);
         console.log(DataStoreManager.CurrentViewModel);*/
 
         $.getJSON('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards', function (d) {
             DataStoreManager.ActualModel = d;
-            DataStoreManager.syncViewModel(DataStoreManager.ActualModel);
+            DataStoreManager.syncViewModel(DataStoreManager.ActualModel, "CurrentViewModel");
+            console.log("view:", DataStoreManager.viewModels.CurrentViewModel);
             console.log("actual:", DataStoreManager.ActualModel);
-            console.log("view:", DataStoreManager.CurrentViewModel);
+            DataStoreManager.ActualModel["Hazard"][0].Name = "Poop";
+            console.log("flat", DataStoreManager.ActualModel["Hazard"]);
+            console.log("actual:", DataStoreManager.ActualModel);
+            console.log("getById:", DataStoreManager.getById("Hazard", "9", "CurrentViewModel"));
         });
     </script>
 </head>
