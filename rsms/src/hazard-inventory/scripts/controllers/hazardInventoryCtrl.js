@@ -244,6 +244,11 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.USER = GLOBAL_SESSION_USER;
 
+        $scope.modalData.inspectionsPendings = true;
+        $scope.modalData.PI.rootScope.PrincipalInvestigatorsBusy.then(function () {
+            setTimeout(function () { $scope.modalData.inspectionsPendings = false; console.log('deflagged', $scope.modalData.inspectionsPendings); $scope.$apply() }, 1100);
+        })
+
         function openSecondaryModal(modalData) {
             console.log(modalData);
             $modalInstance.dismiss();
