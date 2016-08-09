@@ -1492,8 +1492,10 @@ button.checklistNav{
   margin: 2px 0 0 3px;
 }
 .checklistRoomIcon.fa-door-open{
-  font-size: 19px;
-  color: #323232;
+  position: absolute;
+  margin: 8px 5px;
+  font-size: 23px;
+  color: #6d6d6d;
   /* text-shadow: 1px 1px 1px rgba(0,0,0,0.3); */
 }
 

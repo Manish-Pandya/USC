@@ -91,7 +91,7 @@
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                             <p ng-if="!inspection.HasDeficiencies">
-                                (No deficiencies.) <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                                (No deficiencies.)<br /> <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                         </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
@@ -101,8 +101,13 @@
                                 <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.NOT_ASSIGNED">
+                            <p>
+                                <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                            </p>
+                        </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || inspection.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
-                            <span><br>(Due Date: {{inspection.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
+                            <span><br>(Due Date: {{inspection.Cap_submitted_date | getDueDate | date:"MM/dd/yy"}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
@@ -110,6 +115,11 @@
                             <span><br>(Scheduled for {{inspection.Schedule_month | getMonthName}})</span>
                             <br>
                             <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                        </span>
+                        <span ng-if="inspection.Status ==  constants.INSPECTION.STATUS.SUBMITTED_CAP">
+                            <span><br>(CAP Sent: {{inspection.Cap_submitted_date | dateToISO}})</span>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}""><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
                     </span>
                 </td>
