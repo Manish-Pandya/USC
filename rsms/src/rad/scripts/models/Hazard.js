@@ -3,7 +3,10 @@
 //generic model to be "extended" by "POJOs"
 
 //constructor
-var Hazard = function(){};
+var Hazard = function () {
+    Hazard.url = "";
+    Hazard.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards";
+};
 Hazard.prototype = {
 
     ID_prop: "Hazard_id",
@@ -26,3 +29,5 @@ Hazard.prototype = {
 
 //inherit from and extend GenericModel
 extend(Hazard, GenericModel);
+
+Hazard();

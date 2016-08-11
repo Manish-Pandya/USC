@@ -1,10 +1,16 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <!--<script src="../../../../Scripts/promise.min.js"></script>-->
+    <script src="../../../../Scripts/local.jquery.js"></script>
     <script src="../../js/lib/angular.js"></script>
+
+    <script src="../../../../Scripts/promise.js"></script>
+   <!--<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>--> 
+
     <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
+    <script src="../client-side-framework/DataStorePromise.js"></script>
     <script src="../client-side-framework/InstanceFactory.js"></script>
     <script src="../../client-side-framework/genericModel/inheritance.js"></script>
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
@@ -27,16 +33,60 @@
         console.log(DataStoreManager.ActualModel);
         console.log(DataStoreManager.CurrentViewModel);*/
 
-        $.getJSON('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards', function (d) {
-            DataStoreManager.ActualModel = d;
-            DataStoreManager.syncViewModel(DataStoreManager.ActualModel, "CurrentViewModel");
-            console.log("view:", DataStoreManager.viewModels.CurrentViewModel);
-            console.log("actual:", DataStoreManager.ActualModel);
-            DataStoreManager.ActualModel["Hazard"][0].Name = "Poop";
-            console.log("flat", DataStoreManager.ActualModel["Hazard"]);
-            console.log("actual:", DataStoreManager.ActualModel);
-            console.log("getById:", DataStoreManager.getById("Hazard", "9", "CurrentViewModel"));
-        });
+        var getStuff = function (url) {
+            /*
+            var f = function (stuff) {
+                return !(Array.isArray(stuff) && stuff.Class == "ActionError");
+            }
+
+            var promises = [
+                DataStorePromise.returnPromise('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards', f),
+                DataStorePromise.returnPromise('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers', f)
+            ]
+
+
+           
+
+            Promise.all(promises)
+                    .then(
+                        function (whateverGotReturned) {
+                            console.log("good",whateverGotReturned);
+                        }
+                    )
+                    .catch(
+                        function (reason) {
+                            console.log("bad", reason);
+                        }
+                    )
+
+        }
+        */
+
+            $.getJSON(url)
+                   .done(function (d) {
+                       DataStoreManager.ActualModel = d;
+                   })
+                   .fail(function (d) {
+                       console.log("uh oh");
+                       reject(d.statusText);
+                       //return DataStorePromise.Reject(d.statusText);
+                   });
+
+        }
+        //getStuff('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers');
+
+        var ps = [DataStoreManager.getAll("User"), DataStoreManager.getAll("Hazard")];
+        Promise.all(ps)
+            .then(
+                function (whateverGotReturned) {
+                    console.log("good", whateverGotReturned);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad", reason);
+                }
+            )
     </script>
 </head>
 <body>

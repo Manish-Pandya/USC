@@ -3,10 +3,13 @@
 //generic model to be "extended" by "POJOs"
 
 //constructor
-var User = function( api ){};
+var User = function (api) {
+    User.url = "";
+    User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
+};
 
 User.prototype = {
-	className: "User",
+    className: "User",
 	loadSupervisor: function()
 	{
         // not all users have a supervisor, don't try to load something that doesn't exist.

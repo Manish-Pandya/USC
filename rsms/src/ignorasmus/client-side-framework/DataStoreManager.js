@@ -32,19 +32,43 @@ var DataStoreManager = (function () {
         enumerable: true,
         configurable: true
     });
+    DataStoreManager.storeThings = function (things) {
+        if (!DataStoreManager.ActualModel[things[0].Class])
+            DataStoreManager.ActualModel[things[0].Class] = {};
+        for (var i = 0; i < things.length; i++) {
+            DataStoreManager.ActualModel[things[0].Class][things[i].Key_id].Model = things[i];
+        }
+        if (this.isPromisified) {
+        }
+    };
     //----------------------------------------------------------------------
     //
     //  Methods
     //
     //----------------------------------------------------------------------
     DataStoreManager.getAll = function (type, viewModelParent) {
+        if (viewModelParent === void 0) { viewModelParent = null; }
+        viewModelParent = viewModelParent || this._actualModel;
         switch (type) {
             case "realSpecific":
                 // junk stuff here
                 break;
             default:
-                viewModelParent[type] = viewModelParent[type] || this.getAll(type, this._actualModel);
-                return viewModelParent[type];
+                if (!viewModelParent[type]) {
+                    $.getJSON(window[type].urlAll)
+                        .done(function (d) {
+                        viewModelParent[type] = d;
+                    })
+                        .fail(function (d) {
+                        console.log("shit... getJSON failed:", d.statusText);
+                    })
+                        .then(function (d) {
+                        return DataStoreManager.promisifyData(viewModelParent[type]);
+                    });
+                }
+                else {
+                    return this.promisifyData(viewModelParent[type]);
+                }
         }
     };
     DataStoreManager.getById = function (type, id, viewModelName) {
@@ -117,6 +141,23 @@ var DataStoreManager = (function () {
         }
         return result;
     };
+    DataStoreManager.promisifyData = function (data) {
+        if (!this.isPromisified) {
+            return data;
+        }
+        else {
+            var p = new Promise(function (resolve, reject) {
+                if (data) {
+                    resolve(data);
+                }
+                else {
+                    reject("bad in dsm");
+                }
+            });
+            console.log(p);
+            return p;
+        }
+    };
     //----------------------------------------------------------------------
     //
     //  Properties
@@ -124,6 +165,9 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
+    DataStoreManager.isPromisified = true;
     DataStoreManager.viewModels = {};
+    // NOTE: there's intentionally no getter
+    DataStoreManager._actualModel = {};
     return DataStoreManager;
 }());
