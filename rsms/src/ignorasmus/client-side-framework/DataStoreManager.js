@@ -55,20 +55,16 @@ var DataStoreManager = (function () {
                 break;
             default:
                 if (!viewModelParent[type]) {
-                    $.getJSON(window[type].urlAll)
+                    var json = $.getJSON(window[type].urlAll)
                         .done(function (d) {
                         viewModelParent[type] = d;
+                        return viewModelParent[type];
                     })
                         .fail(function (d) {
                         console.log("shit... getJSON failed:", d.statusText);
-                    })
-                        .then(function (d) {
-                        return DataStoreManager.promisifyData(viewModelParent[type]);
                     });
                 }
-                else {
-                    return this.promisifyData(viewModelParent[type]);
-                }
+                return this.promisifyData(json);
         }
     };
     DataStoreManager.getById = function (type, id, viewModelName) {
@@ -154,7 +150,6 @@ var DataStoreManager = (function () {
                     reject("bad in dsm");
                 }
             });
-            console.log(p);
             return p;
         }
     };

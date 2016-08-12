@@ -75,18 +75,21 @@
         }
         //getStuff('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers');
 
+        console.log("Look:", DataStoreManager.getAll("User"));
+
         var ps = [DataStoreManager.getAll("User"), DataStoreManager.getAll("Hazard")];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
-                    console.log("good", whateverGotReturned);
+                    console.log("good:", whateverGotReturned);
                 }
             )
             .catch(
                 function (reason) {
-                    console.log("bad", reason);
+                    console.log("bad:", reason);
                 }
             )
+
     </script>
 </head>
 <body>
