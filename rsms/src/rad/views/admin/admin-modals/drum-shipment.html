@@ -3,11 +3,73 @@
 </div>
 
 <div class="modal-body">
-	<label>Shipment Information</label>
-	<textarea ng-model="modalData.DrumCopy.Shipping_info" rows="5" style="width:90%"></textarea>
+    <form class="form form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Weight</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Shipment_weight" placeholder="Weight" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Shipment Number</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Shipment_number" placeholder="Shipment Number" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Manifest Number</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Manifest_number" placeholder="Manifest Number" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Epa ID</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Epa_id" placeholder="Epa ID" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Destruction Method</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Destruction_method" placeholder="Destruction Method" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Date Destroyed</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.view_Date_destroyed" placeholder="Date Destroyed" />
+                <span class="help-block under" style="">mm/dd/yy</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Waste Volume</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Waste_volume" placeholder="Waste Volume" />
+                <div class="input-append">
+                    <span class="help-block" style="">ml</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Total Volume of Drum</label>
+            <div class="controls">
+                <input data-ng-model="modalData.DrumCopy.Total_volume" placeholder="Total Volume" />
+                <div class="input-append">
+                    <span class="help-block" style="">ml</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Notes</label>
+            <div class="controls">
+                <textarea ng-model="modalData.DrumCopy.Shipping_info" rows="5" style="width:90%"></textarea>
+            </div>
+        </div>
+    </form>
 </div>
 
 <div class="modal-footer">
-  <a class="btn btn-success btn-large left" ng-click="shipDrum(modalData.Drum, modalData.DrumCopy)"><i class="icon-checkmark"></i></a>
-  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    <a class="btn btn-success btn-large left" ng-click="shipDrum(modalData.Drum, modalData.DrumCopy)"><i class="icon-checkmark"></i>Ship Drum</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>
