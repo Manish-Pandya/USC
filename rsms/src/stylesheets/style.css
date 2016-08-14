@@ -1569,6 +1569,11 @@ span.recs span{
   margin: 2px;
   display:inline-block;
   background: #355f91;
+  color: white;
+}
+.submit-cap-info div h3.totals-message > span{
+  background: #da4f49;
+  color: white;
 }
 .submit-cap-info div h3.complete-message > span{
   background: #9fdca3;

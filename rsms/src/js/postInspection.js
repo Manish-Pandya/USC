@@ -456,6 +456,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
             pendings: 0, 
             completes:0, 
             correcteds: 0,
+            uncorrecteds:0,
             readyToSubmit: false
         }
 
@@ -508,7 +509,9 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         if (ready.pendings + ready.completes + ready.correcteds >= ready.totals || ready.totals == 0) {
             ready.readyToSubmit = true;
         }
-        console.log(ready);
+
+        ready.uncorrecteds = ready.totals - (ready.pendings + ready.completes + ready.correcteds);
+
         return ready;
     }
 
@@ -902,21 +905,6 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         return false;
     }
 
-    $scope.closeOut = function () {
-        $scope.dirty = true;
-        $scope.closing = postInspectionFactory.submitCap($rootScope.inspection)
-          .then(
-            function (inspection) {
-                $rootScope.inspection.Cap_submitted_date = inspection.Cap_submitted_date;
-                $scope.dirty = false;
-            },
-            function () {
-                $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
-                $scope.dirty = false;
-            }
-          );
-    }
-
     $scope.openModal = function (question, def) {
         var modalData = {
             question: question,
@@ -930,12 +918,30 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
 
         modalInstance.result.then(function (returnedCA) {
             if (def.CorrectiveActions.length && def.CorrectiveActions[0].Key_id) {
-                angular.extend(def.CorrectiveActions[0], returnedCA)
+                angular.extend(def.CorrectiveActions[0], returnedCA);
             } else {
                 def.CorrectiveActions.push(returnedCA);
             }
+            if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'post-inspection-templates/submit-cap.html',
+                    controller: modalCtrl
+                });
+                modalInstance.result.then(function (closed) {
+                    $scope.capSubmitted(closed);
+                })
+            }
             
         });
+    }
+
+    $scope.capSubmitted = function (closed) {
+        if (closed) {
+            var modalInstance = $modal.open({
+                templateUrl: 'post-inspection-templates/cap-submitted.html',
+                controller: modalCtrl
+            });
+        }
     }
 
     $scope.openDeleteModal = function (def) {
@@ -1015,19 +1021,38 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         return false;
     }
 
+    $scope.closeOut = function () {
+        $scope.dirty = true;
+        $scope.closing = postInspectionFactory.submitCap($rootScope.inspection)
+          .then(
+            function (inspection) {
+                $rootScope.inspection.Cap_submitted_date = inspection.Cap_submitted_date;
+                $scope.dirty = false;
+                $scope.capSubmitted(true);
+
+            },
+            function () {
+                $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
+                $scope.dirty = false;
+            }
+          );
+    }
+
 }
 
 modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance) {
     var data = postInspectionFactory.getModalData();
     $scope.options = [{ Value: Constants.CORRECTIVE_ACTION.STATUS.PENDING, Label: "Corrective action will be completed soon" }, { Value: Constants.CORRECTIVE_ACTION.STATUS.COMPLETE, Label: "Corrective action completed" }];
     $scope.validationError = '';
-    $scope.dates = {};
+
+    
 
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
-
+   
     if (data != null) {
         $scope.question = data.question || null;
         $scope.def = data.deficiency || null;
+        $scope.dates = {};
 
         if ($scope.def && $scope.def.CorrectiveActions && $scope.def.CorrectiveActions[0]) {
             $scope.copy = {};
@@ -1044,8 +1069,24 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
-        if ($scope.copy.Promised_date) $scope.dates.promisedDate = $scope.copy.Promised_date;
-        if ($scope.dates.completionDate) $scope.dates.completionDate = $scope.copy.Completion_date;
+        if ($scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
+        if ($scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
+
+        $scope.closeOut = function () {
+            $scope.dirty = true;
+            $scope.closing = postInspectionFactory.submitCap($rootScope.inspection)
+              .then(
+                function (inspection) {
+                    $rootScope.inspection.Cap_submitted_date = inspection.Cap_submitted_date;
+                    $scope.dirty = false;
+                    $modalInstance.close(true);
+                },
+                function () {
+                    $scope.validationError = "The CAP could not be submitted.  Please check your internet connection and try again."
+                    $scope.dirty = false;
+                }
+              );
+        }
     }
 
     $scope.saveCorrectiveAction = function (copy, orig) {
@@ -1105,3 +1146,4 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
         return moment(d) >= moment().startOf('day');
     }
 }
+

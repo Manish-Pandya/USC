@@ -1900,7 +1900,7 @@ class ActionManager {
 			if($allLazy == NULL){
 	            foreach($room->getPrincipalInvestigators() as $pi){
 	                $pi->setEntityMaps($piMaps);
-	                $user = $pi->getUser();	               
+	                $user = $pi->getUser();
 	                $user->setEntityMaps($userMaps);
 	            }
 			}
@@ -2103,7 +2103,7 @@ class ActionManager {
             }
 
         }
-        
+
 
         $entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
@@ -2742,6 +2742,7 @@ class ActionManager {
             $verificationDao =  new GenericDAO(new Verification());
 
             $verifications = $verificationDao->getAllWhere($whereClauseGroup);
+            $LOG->fatal($verifications);
             if(!empty($verifications)){
                 $verification = $verifications[0];
             }else{
@@ -4289,7 +4290,7 @@ class ActionManager {
                 $entityMaps[] = new EntityMap("lazy","getBuilding");
                 $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
                 $entityMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
-                
+
                 $filteredRooms = array();
                 $rooms = $inspection->getRooms();
                 foreach( $rooms as $key=>$room ){
@@ -4300,6 +4301,8 @@ class ActionManager {
                 }
                 $is->setInspection_rooms($filteredRooms);
                 $is->setInspections($inspection);
+               // $LOG->fatal($is);
+                //return $is;
             }
 
             $piDao = $this->getDao(new PrincipalInvestigator());
@@ -4307,6 +4310,8 @@ class ActionManager {
             $rooms = $pi->getRooms();
             $pi_bldg_rooms = array();
             foreach ($rooms as $room){
+                $room->setEntityMaps($entityMaps);
+
                 if ($room->getBuilding_id() == $is->getBuilding_key_id()){
                     $pi_bldg_rooms[] = $room;
                 }

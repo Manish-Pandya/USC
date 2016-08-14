@@ -138,16 +138,16 @@ require_once '../top_view.php';
                     </div>
                     <select ng-model="dto.selectedInspector" ng-if="rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]]) && (!dto.Inspections || !dto.Inspections.Inspectors.length || dto.replaceInspector)" ng-change="mif.scheduleInspection( dto, yearHolder.selectedYear, dto.selectedInspector )">
                         <option value="">-- Select inspector --</option>
-                        <option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}</option>
+                        <option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.Name}}</option>
                     </select>
 
                     <ul ng-if="dto.Inspections.Inspectors">
                         <li ng-repeat="inspector in dto.Inspections.Inspectors">
-                            <span ng-if="!inspector.edit" once-text="inspector.User.Name"></span>
+                            <span ng-if="!inspector.edit" once-text="inspector.Name"></span>
                             <span ng-if="inspector.edit && dtoCopy && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
                                 <select ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, yearHolder.selectedYear, $index, dtoCopy.replacementInspector, inspector)">
                                     <option value="" disabled selected>Select an Inspector</option>
-                                    <option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+                                    <option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerinspector.Name}}</option>
                                 </select>
                                 <i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
                             </span>
@@ -160,7 +160,7 @@ require_once '../top_view.php';
                         <li ng-if="dto.addInspector && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
                             <select ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, yearHolder.selectedYear, dto.addedInspector )">
                                 <option value="" disabled selected>Add an Inspector</option>
-                                <option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+                                <option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerinspector.Name}}</option>
                             </select>
                             <i class="icon-cancel-2 danger" ng-click="dto.addInspector = false"></i>
                         </li>
