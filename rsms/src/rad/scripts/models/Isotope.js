@@ -10,7 +10,3 @@ Isotope.prototype = {
 
 // inherit from GenericModel
 extend(Isotope, GenericModel);
-
-angular
-    .module("isotope", [])
-    .value("Isotope", Isotope);

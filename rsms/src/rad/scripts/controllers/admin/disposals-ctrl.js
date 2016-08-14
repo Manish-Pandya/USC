@@ -218,6 +218,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.modalData = af.getModalData();
 
         $scope.shipDrum = function (drum, copy) {
+            copy.Date_destroyed = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Date_destroyed));
             $rootScope.saving = af.saveDrum(drum, copy);
             $scope.close();
         }
@@ -233,3 +234,64 @@ angular.module('00RsmsAngularOrmApp')
         }
 
   }])
+  .controller('drumDetailCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $modal) {
+      var af = $scope.af = actionFunctionsFactory;
+
+      var getDrum = function (id) {
+          return af.getAllDrums()
+               .then(
+                   function (drums) {
+                       if (!dataStore.Drum) dataStore.Drum = [];                       
+                       $scope.drum = dataStoreManager.getById("Drum", id);
+                       $scope.drum.loadDrumWipeTest();
+                       return $scope.drum;
+                   }
+               );
+      }
+
+      $rootScope.loading = getDrum($stateParams.drumId);
+
+      $scope.editDrumWipeTest = function (drum, test) {
+          $rootScope.DrumWipeTestCopy = {}
+
+          if (!test) {
+              $rootScope.DrumWipeTestCopy = new window.DrumWipeTest();
+              $rootScope.DrumWipeTestCopy.Drum_id = drum.Key_id
+              $rootScope.DrumWipeTestCopy.Class = "DrumWipeTest";
+              $rootScope.DrumWipeTestCopy.Is_active = true;
+          } else {
+              af.createCopy(test);
+              console.log($rootScope.DrumWipeTestCopy);
+          }
+          drum.Creating_wipe = true;
+      }
+
+      $scope.cancelDrumWipeTestEdit = function (drum) {
+          drum.Creating_wipe = false;
+          $rootScope.DrumWipeTestCopy = {}
+      }
+
+      $scope.editDrumWipe = function (wipeTest, wipe) {
+          if (!wipeTest.Drum_wipes) wipeTest.Drum_wipes = [];
+
+          $rootScope.DrumWipeCopy = {}
+          var i = wipeTest.Drum_wipes.length;
+          while (i--) {
+              wipeTest.Drum_wipes[i].edit = false;
+          }
+
+          if (!wipe) {
+              $rootScope.DrumWipeCopy = new window.DrumWipe();
+              $rootScope.DrumWipeCopy.Drum_wipe_test_id = wipeTest.Key_id
+              $rootScope.DrumWipeCopy.Class = "DrumWipe";
+              $rootScope.DrumWipeCopy.edit = true;
+              $rootScope.DrumWipeCopy.Is_active = true;
+              wipeTest.Drum_wipes.unshift($rootScope.DrumWipeCopy);
+          } else {
+              wipe.edit = true;
+              af.createCopy(wipe);
+          }
+
+      }
+
+  })

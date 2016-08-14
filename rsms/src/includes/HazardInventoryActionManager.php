@@ -108,7 +108,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$childDto->setHazard_id($child->getKey_id());
 				$childDto->setRoom_id($decodedObject->getRoom_id());
 				$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-				$LOG->fatal($childDto);
 				$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
 			}
 		}
@@ -132,7 +131,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$relation->setRoom_id($decodedObject->getRoom_id());
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
-				$LOG->fatal($relation);
 			}
 			//if we have set the status to "STORED_ONLY", we must also set the status to for each child hazard in this room
 			if($decodedObject->getStatus() == "STORED_ONLY"){
@@ -156,7 +154,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 
         $room = $this->getRoomById($decodedObject->getRoom_id());
         $room->getHazardTypesArePresent();
-        $LOG->fatal($room);
         if($room != $this->saveRoom($room)){
             return new ActionError("Failed to update room");
         }
@@ -225,8 +222,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 			$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
 		}
 
-		$LOG->fatal($roomIds);
-		$LOG->fatal($hazardId);
 
 		if($roomIds == NULL && $hazardId == NULL){
 			return new ActionError("roomId and hazardId params both required");
@@ -330,7 +325,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         $stmt->bindValue(($k+$skips+1), $hazardId);
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
-        $LOG->fatal($piHazRooms);
         //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
         $finalPiHazardRooms = $piHazRooms;
         foreach($roomIds as $roomId){

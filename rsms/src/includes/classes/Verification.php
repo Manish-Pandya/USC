@@ -137,10 +137,7 @@ class Verification extends GenericCrud{
     }
 
     public function getStatus(){
-        $l = Logger::getLogger(__FUNCTION__);
         $current = strtotime("midnight today");
-        $l->fatal($current);
-        $l->fatal(strtotime($this->due_date));
         if($this->completed_date != NULL){
             $this->status = "COMPLETE";
         }elseif($this->due_date != NULL && $current > strtotime($this->due_date)){

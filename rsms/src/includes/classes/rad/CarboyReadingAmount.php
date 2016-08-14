@@ -229,7 +229,6 @@ include_once 'RadCrud.php';
             $decayDays = $endDateObj->diff($beginDateObj)->days;
 
 
-            $LOG->fatal($decayDays);
             //calculate the current uci in the carboy
             $this->decayed_carboy_uci = $origUci * exp(-0.693147*$decayDays/$this->getIsotope()->getHalf_life());
 

@@ -39,9 +39,3 @@ Authorization.prototype = {
 
 // inherit from GenericModel
 extend(Authorization, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("authorization", [])
-    .value("Authorization", Authorization);
-

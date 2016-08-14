@@ -113,9 +113,7 @@ abstract class Equipment extends GenericCrud{
 			}
 			if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
 			if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-            $l->fatal($this->getCertification_date());
 			if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
-            $l->fatal($inspection);
 			$inspectionDao = new GenericDao($inspection);
 			$inspection = $inspectionDao->save($inspection);
 			return $inspection;
@@ -191,8 +189,6 @@ abstract class Equipment extends GenericCrud{
                 $newInspection->setStatus(null);
 				$newInspection->setKey_id(null);
 				if ($mostRecent->getCertification_date()) {
-					$L->fatal('vagenis');
-
 					$certDateArray = explode("-", $mostRecent->getCertification_date());
 					if ((int) $certDateArray[0] == (int) date("Y") - 1) {
 						$certDateArray[0] = date("Y");
@@ -215,7 +211,6 @@ abstract class Equipment extends GenericCrud{
 				$inspDao = new GenericDAO(new EquipmentInspection());
 				$newInspection = $inspDao->save($newInspection);
 			} else {
-				$L->fatal("No most recent inspection");
 			}
         }
 

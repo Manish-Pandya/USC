@@ -90,7 +90,3 @@ Parcel.prototype = {
 
 // inherit from GenericModel
 extend(Parcel, GenericModel);
-
-angular
-    .module("parcel", [])
-    .value("Parcel", Parcel);

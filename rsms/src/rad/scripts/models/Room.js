@@ -35,7 +35,3 @@ Room.prototype = {
 }
 
 extend(Room, GenericModel);
-
-angular
-    .module("room", [])
-    .value("Room", Room);

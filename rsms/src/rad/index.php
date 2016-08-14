@@ -208,7 +208,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/PIAuthorization.js"></script>
 <script src="./scripts/models/PIWipeTest.js"></script>
 <script src="./scripts/models/PIWipe.js"></script>
-
+<script src="scripts/models/DrumWipe.js"></script>
+<script src="scripts/models/DrumWipeTest.js"></script>
 </head>
 <body>
 

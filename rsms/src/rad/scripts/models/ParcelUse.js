@@ -45,9 +45,3 @@ ParcelUse.prototype = {
 
 // inherit from GenericModel
 extend(ParcelUse, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("parceluse", [])
-    .value("ParcelUse", ParcelUse);
-

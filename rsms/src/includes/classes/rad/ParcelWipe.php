@@ -87,7 +87,4 @@ class ParcelWipe extends RadCrud {
 	
 	public function getLocation() {return $this->location;}
 	public function setLocation($location) {$this->location = $location;}
-	
-	
-	
 }

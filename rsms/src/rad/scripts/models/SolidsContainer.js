@@ -42,9 +42,3 @@ SolidsContainer.prototype = {
 
 // inherit from GenericModel
 extend(SolidsContainer, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("solidscontainer", [])
-    .value("SolidsContainer", SolidsContainer);
-

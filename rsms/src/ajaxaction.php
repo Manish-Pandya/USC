@@ -42,8 +42,6 @@ if($actionResult->statusCode == 401){
     $LOG->fatal('setting');
     $_SESSION['LOGGED_OUT'] = "You have been logged out of the system.  Please log in again to continue";
 }else{
-    $LOG->fatal('nulling');
-
     $_SESSION['LOGGED_OUT'] = NULL;
 }
 

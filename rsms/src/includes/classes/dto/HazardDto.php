@@ -89,9 +89,6 @@ class HazardDto {
         foreach($piHazardRooms as $relation){
         	//while we're at it, determine if any of these relations belong to other PIs
         	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
-                if($this->hazard_name == "Biological Toxins"){
-                    $LOG->fatal($relation);
-                }
         		$this->hasMultiplePis = true;
         		$relation->setHasMultiplePis(true);
         	}else{

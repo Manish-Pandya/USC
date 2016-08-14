@@ -356,16 +356,11 @@ class GenericDAO {
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 		$stmt->bindValue(4, $wasteTypeId);
-        $this->LOG->fatal($this->modelObject->getAuthorization_id());
-
-        $this->LOG->fatal($startDate . " " . $endDate . " " . $wasteTypeId);
-
-		$stmt->execute();
+        $stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
-        $this->LOG->fatal($sum);
 		return $sum;
 	}
 
@@ -378,7 +373,6 @@ class GenericDAO {
      */
 	public function getStartingAmount( $startDate = null ){
         $l = Logger::getLogger("transfer amounts");
-        $l->fatal("called it");
 		$sql = "SELECT SUM(`quantity`)
 				FROM parcel a
                 WHERE `authorization_id` = ?";
@@ -410,7 +404,6 @@ class GenericDAO {
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
         $l = Logger::getLogger("transfer amounts");
-        $l->FATAL($startDate . " " . $endDate . " " .  $hasRsNumber );
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
@@ -432,10 +425,8 @@ class GenericDAO {
 		$stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
-        $this->LOG->fatal($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
-        $this->LOG->fatal($sum);
 
 		return $sum;
 	}
@@ -1007,7 +998,6 @@ class GenericDAO {
 
 		$queryString .= ')';
 
-		$LOG->fatal($queryString);
 
 		$stmt = $db->prepare($queryString);
 		/*
@@ -1140,7 +1130,6 @@ class GenericDAO {
      *
      */
     public function getCurrentInspectionsByEquipment(Equipment $equipment){
-        $this->LOG->fatal('testing');
         global $db;
         $queryString = 'select * from equipment_inspection
                         WHERE equipment_class = :class

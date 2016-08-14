@@ -21,9 +21,3 @@ MiscellaneousWipeTest.prototype = {
 
 // inherit from GenericModel
 extend(MiscellaneousWipeTest, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("miscellaneousWipeTest", [])
-    .value("MiscellaneousWipeTest", InspectionWipe);
-
