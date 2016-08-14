@@ -142,6 +142,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.drum-detail',
+                        Label: 'Radiation Administration -- Drum Detail',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -1303,6 +1308,83 @@ angular
                    )
             }
 
+            af.saveDrumWipe = function (wipeTest, copy, wipe) {
+                console.log(copy)
+                af.clearError();
+                return this.save(copy)
+                    .then(
+                        function (returnedWipe) {
+                            returnedWipe = modelInflatorFactory.instateAllObjectsFromJson(returnedWipe);
+                            if (wipe) {
+                                angular.extend(wipe, copy)
+                            } else {
+                                dataStoreManager.store(returnedWipe);
+                                wipeTest.Drum_wipes.push(returnedWipe);
+                                copy = {};
+                            }
+                            wipe.edit = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveDrumWipeTest = function (drum) {
+                af.clearError();
+                var copy = $rootScope.DrumWipeTestCopy;
+                return this.save(copy)
+                    .then(
+                        function (returnedDWT) {
+                            if (drum.Wipe_test) {
+                                returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
+                                angular.extend(drum.Wipe_test, copy)
+                            } else {
+                                returnedDWT.Drum_wipes = [];
+                                returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
+                                drum.Wipe_test = returnedDWT;
+                                dataStoreManager.store(returnedDWT);
+
+                                //by default, DrumWipeTests have a collection of 6 ParcelWipes, hence the magic number
+                                var i = 3
+                                while (i--) {
+                                    var drumWipe = new DrumWipe();
+                                    drumWipe.Drum_wipe_test_id = returnedDWT.Key_id;
+                                    drumWipe.Class = "DrumWipe";
+                                    drumWipe.edit = true;
+                                    console.log(i, drumWipe);
+                                    returnedDWT.Drum_wipes.push(drumWipe);
+                                }
+
+                                returnedDWT.adding = true;
+                                console.log(returnedDWT.Drum_wipes);
+                            }
+                            drum.Creating_wipe = false;
+                        },
+                        af.setError('The Wipe Test could not be saved')
+                    )
+            }
+
+            af.saveDrumWipesAndChildren = function (copy) {
+                console.log(copy);
+                var drum = dataStoreManager.getById("Drum", copy.Drum_id);
+                af.clearError();
+                return $rootScope.SavingParcelWipe = genericAPIFactory.save(copy, 'saveDrumWipesAndChildren')
+                   .then(
+                       function (returnedDrum) {
+                           returnedDrum = modelInflatorFactory.instateAllObjectsFromJson(returnedDrum);
+                           if (drum) {
+                               angular.extend(drum, copy, true);
+                               drum.edit = false;
+                               drum.Wipe_test.edit = false;
+                               var i = drum.Wipe_test.Drum_wipes.length;
+                               while (i--) {
+                                   drum.Wipe_test.Drum_wipes[i].edit = false;
+                                   angular.extend(drum.Wipe_test.Drum_wipes[i], copy.Wipe_test.Drum_wipes);
+                               }
+                           }
+                       },
+                       af.setError('The drum wipes could not be saved')
+                   )
+            }
 
             af.saveSolidsContainer = function( pi, copy, container )
             {
@@ -2351,6 +2433,11 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Drum));
+
+
                             console.log(dataStore);
                             return dataStore;
                         });

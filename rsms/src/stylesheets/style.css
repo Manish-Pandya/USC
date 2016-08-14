@@ -3647,7 +3647,7 @@ div.fake-table .table-row.inactive{
   background: pink !important;
 }
 div.fake-table .table-row:hover > div{
-    box-shadow: 5px 3px 8px rgba(0,0,0,.4);
+    box-shadow: 1px 3px 2px rgba(0,0,0,.4);
 }
 .well{
   margin-top: 10px;

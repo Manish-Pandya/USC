@@ -51,7 +51,12 @@ angular
         templateUrl: "views/admin/disposals.html",
         controller: "disposalCtrl"
       })
-       .state('radmin.orders', {
+      .state('radmin.drum-detail', {
+        url: "/drum-detail:drumId",
+        templateUrl: "views/admin/drum-detail.html",
+        controller: "drumDetailCtrl"
+      })
+      .state('radmin.orders', {
         url: "/packages",
         templateUrl: "views/admin/parcels.html",
         controller: "AllOrdersCtrl"

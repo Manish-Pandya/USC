@@ -1,0 +1,125 @@
+﻿<div cg-busy="{promise: DrumWipeSaving, message: 'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise: DrumWipeTestSaving, message: 'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div class="right-column">
+    <div class="well two-thirds">
+        <h3>Drum {{drum.Label}}</h3>
+        <h4 class="padding">Wipe Test <a ng-if="!drum.Wipe_test && !drum.Creating_wipe" class="btn-success btn left" ng-click="editDrumWipeTest(drum)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
+        <div class="fake-table" ng-if="drum.Wipe_test || drum.Creating_wipe">
+            <div class="table-header">
+                <h3>Edit</h3>
+                <h3>Instrument</h3>
+                <h3>Surface</h3>
+                <h3>Background</h3>
+                <h3><span ng-if="drum.Creating_wipe">Save</span></h3>
+            </div>
+            <div class="table-row">
+                <div ng-class="{'small-extra-top': drum.Creating_wipe}">
+                    <a class="btn btn-primary left" ng-disabled="drum.Creating_wipe" ng-click="editDrumWipeTest(drum, drum.Wipe_test)"><i class="icon-pencil"></i>Edit</a>
+                </div>
+
+                <div ng-if="!drum.Creating_wipe && !smear.edit">
+                    {{drum.Wipe_test.Reading_type}}
+                </div>
+                <div ng-if="drum.Creating_wipe" class="small-extra-top">
+                    <select ng-init="DrumWipeTestCopy.Reading_type = Constants.WIPE_TEST.READING_TYPE.LSC" ng-model="DrumWipeTestCopy.Reading_type" style="width:100px">
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.LSC}}">{{Constants.WIPE_TEST.READING_TYPE.LSC}}</option>
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}">{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}</option>
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.MCA}}">{{Constants.WIPE_TEST.READING_TYPE.MCA}}</option>
+                    </select>
+                </div>
+             
+
+                <div ng-if="!drum.Creating_wipe">{{drum.Wipe_test.Surface_reading}} mR/hr</div>
+                <div ng-if="drum.Creating_wipe">
+                    <label class="control-label" for="quantity">Surface:</label>
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input class="span3" ng-model="DrumWipeTestCopy.Surface_reading">
+                            <span class="add-on">mR/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="!drum.Creating_wipe">{{drum.Wipe_test.Background_reading}} mR/hr</div>
+                <div ng-if="drum.Creating_wipe">
+                    <label class="control-label" for="quantity">Background:</label>
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input class="span3" ng-model="DrumWipeTestCopy.Background_reading">
+                            <span class="add-on">mR/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-class="{'small-extra-top':drum.Creating_wipe}">
+                    <span ng-if="drum.Creating_wipe">
+                        <a class="btn btn-success left" ng-click="af.saveDrumWipeTest(drum,drum.Wipe_test)"><i class="icon-checkmark"></i>Save</a>
+                        <a class="btn btn-danger left" ng-click="cancelDrumWipeTestEdit(drum)"><i class="icon-cancel-2"></i>Cancel</a>
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <h4 ng-if="drum.Wipe_test" class="padding">Smears <a class="btn btn-success left" ng-click="editDrumWipe(drum.Wipe_test)"><i class="icon-plus-2"></i>Add Smear</a></h4>
+        <div class="fake-table" ng-if="drum.Wipe_test.Drum_wipes.length && drum.Wipe_test">
+            <div class="table-header">
+                <h3>Edit</h3>
+                <h3>Instrument</h3>
+                <h3>Radioactivity</h3>
+                <h3>Comments</h3>
+                <h3></h3>
+            </div>
+
+            <div class="table-row" ng-repeat="smear in drum.Wipe_test.Drum_wipes | orderBy:'Key_id'">
+                <div>
+                    <a ng-disabled="smear.edit" ng-class="{'disabled':smear.edit}" ng-click="editDrumWipe(drum.Wipe_test, smear)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                </div>
+
+                <div>
+                    {{drum.Wipe_test.Reading_type}}
+                </div>
+
+                <div ng-if="!smear.edit">
+                    {{smear.Curie_level}} <span ng-if="smear.Curie_level != null">DPM</span><span ng-if="smear.Curie_level == null">N/A</span>
+                </div>
+                <div ng-if="smear.edit">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input class="span3" ng-if="!DrumWipeCopy" ng-model="smear.Curie_level">
+                            <input class="span3" ng-if="DrumWipeCopy" ng-model="DrumWipeCopy.Curie_level">
+                            <span class="add-on">DPM</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div ng-if="!smear.edit">
+                    {{smear.Notes}}
+                    <span ng-if="!smear.Notes">N/A</span>
+                </div>
+                <div ng-if="smear.edit">
+                    <textarea ng-if="DrumWipeCopy" placeholder="Notes" ng-model="DrumWipeCopy.Notes"></textarea>
+                    <textarea ng-if="!DrumWipeCopy" placeholder="Notes" ng-model="smear.Notes"></textarea>
+                </div>
+
+                <div>
+                    <span ng-if="smear.edit">
+                        <a class="btn btn-success left" ng-click="af.saveDrumWipe(drum.Wipe_test, DrumWipeCopy, smear)"><i class="icon-checkmark"></i>Save</a>
+                        <a class="btn btn-danger left" placeholder="Notes" ng-click="cancelDrumWipeEdit(drum.Wipe_test, smear)"><i class="icon-cancel-2"></i>Cancel</a>
+                    </span>
+                </div>
+
+            </div>
+            <div class="table-row hover-white" ng-if="drum.Wipe_test.adding">
+                <div class="hover-white">
+                    <a class="btn btn-large left btn-success" ng-click="af.saveDrumWipesAndChildren(drum,drum.Wipe_test)"><i class="icon-checkmark"></i>Save Smears</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

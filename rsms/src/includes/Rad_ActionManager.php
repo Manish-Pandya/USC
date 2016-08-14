@@ -1263,12 +1263,6 @@ class Rad_ActionManager extends ActionManager {
             }
             $wipes = array ();
             foreach ( $decodedObject->getWipe_test () as $wipe ) {
-                //$LOG->fatal($wipe);
-
-                //$wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
-                ////$LOG->fatal($wipe);
-
-
                 // there will be a collection of at least 6 ParcelWipes. User intends only to save those with Location provided
                 if ($wipe->getLocation () != null) {
                     $dao = $this->getDao ( new ParcelWipe () );
@@ -1415,6 +1409,109 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new PIWipe());
             $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
+    function getAllDrumWipeTests(){
+        $dao = $this->getDao(new DrumWipeTest);
+        return $dao->getAll();
+    }
+
+    function getDrumWipeTestById(){
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+        $id = $this->getValueFromRequest('id', $id);
+        if($id !== NULL) {
+            $dao = new GenericDAO(new DrumWipeTest());
+            $test = $dao->getById($id);
+            return $test;
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided.");
+        }
+    }
+
+    function getAllDrumWipes(){
+        $dao = $this->getDao(new DrumWipe);
+        return $dao->getAll();
+    }
+
+    function saveDrumWipeTest(){
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new DrumWipeTest());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
+    function saveDrumWipe(){
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to WasteType', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+            $dao = $this->getDao(new DrumWipe());
+            $decodedObject = $dao->save($decodedObject);
+            return $decodedObject;
+        }
+    }
+
+    function saveDrumWipesAndChildren() {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to Parcel', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        else {
+
+            $test = $decodedObject->getWipe_test ();
+            $test = JsonManager::assembleObjectFromDecodedArray ( $test );
+            $LOG->fatal( $test );
+
+            if ( $test != null ) {
+
+                $wipes = $test->getDrum_wipes();
+
+                $wipeTestDao = $this->getDao ( $test );
+                $savedTest = $wipeTestDao->save($test);
+
+                $wipeMaps = array();
+                $wipeMaps[] = new EntityMap("lazy","getDrum");
+                $wipeMaps[] = new EntityMap("eager","getDrum_wipes");
+
+                foreach ( $wipes as $key=>$wipe ) {
+                    $LOG->fatal( $wipe );
+                    $wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
+                    // there will be a collection of at least 3 DrumWipes. User intends only to save those with Curie_level provided
+                    if ($wipe->getCurie_level () != null) {
+                        $dao = $this->getDao ( new DrumWipe () );
+                        $wipe->setDrum_wipe_test_id($savedTest->getKey_id());
+                        $wipes[$key] = $dao->save ( $wipe );
+                        $wipes[$key]->setEntityMaps($wipeMaps);
+                    }
+                }
+            }
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getDrum");
+            $entityMaps[] = new EntityMap("eager", "getWipe_test");
+            $decodedObject->setEntityMaps($entityMaps);
             return $decodedObject;
         }
     }
@@ -1975,7 +2072,6 @@ class Rad_ActionManager extends ActionManager {
         $totalOut = $amount->getTransfer_out() + $amount->getSolid_waste() + $amount->getLiquid_waste() + $amount->getOther_waste() + $amount->getScint_vial_waste();
 
         $amount->setOn_hand($totalIn - $totalOut);
-        $LOG->fatal($amount);
         return $amount;
 
     }
@@ -2052,7 +2148,7 @@ class Rad_ActionManager extends ActionManager {
                 $entityMaps[] = new EntityMap("eager", "getIsotope");
                 $newAmount->getAuthorization()->setEntityMaps($entityMaps);
                 $amounts[] = $newAmount;
-                
+
             }
         }
 
@@ -2201,11 +2297,9 @@ class Rad_ActionManager extends ActionManager {
 					$newAuth->setApproval_date($auth["Approval_date"]);
 					$newAuth->setIs_active($auth["Is_active"]);
 					$newAuth->setKey_id(null);
-					$LOG->fatal($newAuth);
 					$authDao->save($newAuth);
 				}
 			}
-            $LOG->fatal($piAuth);
     		return $piAuth;
     	}
 
@@ -2377,6 +2471,8 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setWasteType($this->getAllWasteTypes());
     	$dto->setRoom($this->getAllRooms(true));
     	$dto->setPrincipalInvestigator($this->getAllRadPis());
+        $dto->setDrumWipe($this->getAllDrumWipes());
+        $dto->setDrumWipeTest($this->getAllDrumWipeTests());
 
     	return $dto;
 

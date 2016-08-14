@@ -3,16 +3,16 @@
 include_once 'RadCrud.php';
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Perry Cate, GraySail LLC
  */
 class Drum extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "drum";
-	
+
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"commission_date"				=> "timestamp",
@@ -22,8 +22,17 @@ class Drum extends RadCrud {
 		"pickup_date"					=> "timestamp",
 		"shipping_info"					=> "text",
 		"label"							=> "text",
-		
-		
+        "is_scint_vial"                 => "boolean",
+        "total_volume"                  => "float",
+        "waste_volume"                  => "float",
+        "date_destroyed"                => "timestamp",
+        "destruction_method"            => "text",
+        "epa_id"                        => "float",
+        "manifest_number"               => "float",
+        "shipment_number"               => "float",
+        "shipment_weight"               => "float",
+
+
 		//GenericCrud
 		"key_id"						=> "integer",
 		"is_active"						=> "boolean",
@@ -32,7 +41,7 @@ class Drum extends RadCrud {
 		"date_created"					=> "timestamp",
 		"created_user_id"				=> "integer"
 	);
-	
+
 	/** Relationships */
 	protected static $WASTEBAGS_RELATIONSHIP = array(
 			"className" => "WasteBag",
@@ -40,86 +49,111 @@ class Drum extends RadCrud {
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "drum_id"
 	);
-	
+
 	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
 			"className" => "ScintVialCollection",
 			"tableName" => "scint_vial_collection",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "drum_id"
 	);
-	
+
+    protected static $WIPE_TEST_RELATIONSHIP = array(
+        "className" => "DrumWipeTest",
+        "tableName" => "drum_wipe_test",
+        "keyName"	=> "key_id",
+        "foreignKeyName" => "drum_id"
+    );
+
+
 	//access information
 
 	/** timestamp containing the date this drum was made. */
 	private $commission_date;
-	
+
 	/** timestamp containing the date this drum will be disposed of. */
 	private $retirement_date;
-	
+
 	/** String containing the current status of this drum. */
 	private $status;
-	
+
 	/** timestamp containing the date this drum was filled and closed. */
 	private $date_closed;
-	
+
 	/** timestamp containing the date this drum was picked up for shipping. */
 	private $pickup_date;
-	
+
 	/** String of details about this drum's shipping. */
 	private $shipping_info;
-	
+
 	/** Array of Waste Bags that filled this drum*/
 	private $wasteBags;
-	
+
 	/** Array of Scint Vial collections in this drum */
-	private $scintVialCollections; 
-	
-	
+	private $scintVialCollections;
+
+    /** Is this a drum for scint_vials?  if not it is one for solids */
+    private $is_scint_vial;
+
 	/** IsotopeAmountDTOs in this drum **/
 	private $contents;
-	
+
 	private $label;
-	
+
+    private $hasTests;
+    /** wipe test done on this parcel **/
+	private $wipe_test;
+
+    private $total_volume;
+    private $waste_volume;
+    private $date_destroyed;
+    private $destruction_method;
+    private $epa_id;
+    private $manifest_number;
+    private $shipment_number;
+    private $shipment_weight;
+
 	public function __construct() {
-		
+
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getDisposalLots");
+        $entityMaps[] = new EntityMap("lazy","getWipe_test");
+
 		$this->setEntityMaps($entityMaps);
 	}
-	
-	
+
+
 	// Required for GenericCrud
 	public function getTableName() {
 		return self::$TABLE_NAME;
 	}
-	
+
 	public function getColumnData() {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
-	
+
 	// Accessors / Mutators
 	public function getCommission_date() { return $this->commission_date; }
 	public function setCommission_date($newDate) { $this->commission_date = $newDate; }
-	
+
 	public function getRetirement_date() { return $this->retirement_date; }
 	public function setRetirement_date($newDate) { $this->retirement_date = $newDate; }
-	
+
 	public function getStatus() { return $this->status; }
 	public function setStatus($newStatus) { $this->status = $newStatus; }
-	
+
 	public function getLabel() { return $this->label; }
 	public function setLabel($label) { $this->label = $label;}
-	
+
 	public function getDate_closed() { return $this->date_closed; }
 	public function setDate_closed($newDate) { $this->date_closed = $newDate; }
-	
+
 	public function getPickup_date() { return $this->pickup_date; }
 	public function setPickup_date($newDate) { $this->pickup_date = $newDate; }
-	
+
 	public function getShipping_info() { return $this->shipping_info; }
 	public function setShipping_info($newInfo) { $this->shipping_info = $newInfo; }
-	
+
 	public function getWasteBags() {
 		if($this->wasteBags === NULL) {
 			$thisDao = new GenericDAO($this);
@@ -130,7 +164,7 @@ class Drum extends RadCrud {
 	public function setWasteBags($newBags) {
 		$this->wasteBags = $newBags;
 	}
-	
+
 	public function getScintVialCollections(){
 		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
@@ -147,14 +181,14 @@ class Drum extends RadCrud {
 	public function setScintVialCollections($collections) {
 		$this->scintVialCollections = $collections;
 	}
-	
+
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for drum');
 		$amounts = array();
 		foreach($this->getWasteBags() as $bag){
 			$LOG->debug($bag);
-			if($bag->getParcelUseAmounts() != NULL){		
+			if($bag->getParcelUseAmounts() != NULL){
 				$amounts = array_merge($amounts, $bag->getParcelUseAmounts());
 			}
 		}
@@ -168,7 +202,54 @@ class Drum extends RadCrud {
 		$this->contents = $this->sumUsages($amounts);
 		return $this->contents;
 	}
-	
-	
+
+    public function getHasTests(){
+		if($this->hasTests == null){
+			$this->hasTests = false;
+			if($this->getWipe_test() != null){
+				$this->hasTests = true;
+			}
+		}
+		return $this->hasTests;
+	}
+
+    public function getWipe_test() {
+		if($this->wipe_test == null && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->wipe_test = end($thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WIPE_TEST_RELATIONSHIP)));
+		}
+		return $this->wipe_test;
+	}
+
+	public function setWipe_test($test){
+		$this->wipe_test = array($test);
+	}
+
+    public function getIs_scint_vial(){return $this->is_scint_vial;}
+    public function setIs_scint_vial($is){$this->is_scint_vial = $is;}
+
+    public function getTotal_volume(){return $this->total_volume;}
+	public function setTotal_volume($total_volume){$this->total_volume = $total_volume;}
+
+	public function getWaste_volume(){return $this->waste_volume;}
+	public function setWaste_volume($waste_volume){$this->waste_volume = $waste_volume;}
+
+	public function getDate_destroyed(){return $this->date_destroyed;}
+	public function setDate_destroyed($date_destroyed){$this->date_destroyed = $date_destroyed;}
+
+	public function getDestruction_method(){return $this->destruction_method;}
+	public function setDestruction_method($destruction_method){$this->destruction_method = $destruction_method;}
+
+	public function getEpa_id(){return $this->epa_id;}
+	public function setEpa_id($epa_id){$this->epa_id = $epa_id;}
+
+	public function getManifest_number(){return $this->manifest_number;}
+	public function setManifest_number($manifest_number){$this->manifest_number = $manifest_number;}
+
+	public function getShipment_number(){return $this->shipment_number;}
+	public function setShipment_number($shipment_number){$this->shipment_number = $shipment_number;}
+
+    public function getShipment_weight(){return $this->shipment_weight;}
+	public function setShipment_weight($shipment_number){$this->shipment_weight = $shipment_number;}
 }
 ?>
