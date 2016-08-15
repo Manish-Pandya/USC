@@ -60,11 +60,3 @@ Note: above define how Relationships are used to describe many to many relations
 6. Inherit from and extend GenericModel
 
 extend(className, GenericModel);
-
-
-7. Create an angular module for the model, so it can be injected downstream
-
-angular
-    .module("className",[])
-	.value("ClassName", Class);
-

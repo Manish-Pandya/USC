@@ -138,6 +138,11 @@ angular
         templateUrl: "views/pi/wipe-tests.html",
         controller: "PIWipeTestController"
       })
+      .state('pi-auths', {
+        url: '/my-lab:pi/authorizations',
+        templateUrl: "views/pi/auths.html",
+        controller: "AuthCtrl"
+       })
       .state('inspection-wipes:inspection', {
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",

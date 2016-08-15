@@ -201,6 +201,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'pi-auths',
+                        Label: 'Authorizations',
+                        Dashboard: true
+                    },
+                    {
                         Name:'radmin.isotopes',
                         Label: 'Radiation Administration -- Isotopes',
                         Dashboard: true
@@ -1192,18 +1197,20 @@ angular
             **
             ********************************************************************/
 
-            af.saveAuthorization = function( pi, copy, auth )
+            af.saveAuthorization = function( piAuth, copy, auth )
             {
                 af.clearError();
                 return this.save( copy )
                     .then(
                         function(returnedAuth){
-                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
+                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson(returnedAuth);
+                            returnedAuth.loadIsotope();
                             if(auth){
                                 angular.extend(auth, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedAuth);
-                                pi.Pi_authorization.Authorizations.push(returnedAuth);
+                                if (!piAuth.Authorizations) piAuth.Authorizations = [];
+                                piAuth.Authorizations.push(returnedAuth);
                             }
                         },
                         af.setError('The authorization could not be saved')
@@ -2393,8 +2400,13 @@ angular
                         function(returnedAuth){
                             returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
                             if(copy.Key_id){
-                                angular.extend(auth, copy);
+                                angular.extend(auth, returnedAuth, true);
                                 auth.Rooms = copy.Rooms.slice();
+                                for (var i = 0; i < returnedAuth.Authorizations; i++) {
+                                    store.store(modelInflatorFactory.instateAllObjectsFromJson(returnedAuth.Authorizations[i]));
+                                    auth.Authorizations[i] = returnedAuth.Authorizations[i];
+                                    angular.extend(auth.Authorizations[i], returnedAuth.Authorizations[i]);
+                                }
                             }else{
                                 dataStoreManager.store(returnedAuth);
                                 if (!pi.Pi_authorization) pi.Pi_authorization = [];

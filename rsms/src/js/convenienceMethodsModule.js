@@ -290,7 +290,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	@param (time, string)  MYSQL datetime to convert
         *
         **/
-        getDate: function(time){
+        getDateString: function(time){
 
             Date.prototype.getMonthFormatted = function() {
                 var month = this.getMonth();

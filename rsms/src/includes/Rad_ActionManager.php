@@ -2243,6 +2243,24 @@ class Rad_ActionManager extends ActionManager {
     	return $auth;
     }
 
+    public function getPIAuthorizationById($id = null){
+        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+
+        if( $id == NULL ){
+            $id = $this->getValueFromRequest('id', $id);
+        }
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new PIAuthorization());
+            $piAuth =  $dao->getById($id);
+            return $piAuth;
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+
+    }
+
     public function savePIAuthorization(){
     	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
     	$decodedObject = $this->convertInputJson();
@@ -2274,6 +2292,11 @@ class Rad_ActionManager extends ActionManager {
 
 			$needsSaveAmendment =  $decodedObject->getKey_id() != NULL ? false : true;
 
+            $previouslyDeactivated = false;
+            if($decodedObject->getKey_id() != null){
+                $piAuth = $this->getPIAuthorizationById($decodedObject->getKey_id());
+                $previouslyDeactivated = $piAuth->getTermination_date() != NULL;
+            }
     		$piAuth = $dao->save($decodedObject);
 
     		// add the relevant rooms and departments to the db
@@ -2299,7 +2322,32 @@ class Rad_ActionManager extends ActionManager {
 					$newAuth->setKey_id(null);
 					$authDao->save($newAuth);
 				}
-			}
+			}else if($piAuth->getTermination_date() != null){
+                foreach($decodedObject->getAuthorizations() as $auth){
+                    $newAuth = new Authorization();
+					$newAuth->setKey_id($auth["Key_id"]);
+                    $newAuth->setPi_authorization_id($piAuth->getKey_id());
+					$newAuth->setIsotope_id($auth["Isotope_id"]);
+					$newAuth->setMax_quantity($auth["Max_quantity"]);
+					$newAuth->setApproval_date($auth["Approval_date"]);
+					$newAuth->setIs_active(false);
+					$authDao->save($newAuth);;
+				}
+            }else if($previouslyDeactivated){
+                foreach($decodedObject->getAuthorizations() as $auth){
+                    $LOG->fatal("HELLO???!!?!?!?!?!?");
+                    $newAuth = new Authorization();
+					$newAuth->setKey_id($auth["Key_id"]);
+                    $newAuth->setPi_authorization_id($piAuth->getKey_id());
+					$newAuth->setIsotope_id($auth["Isotope_id"]);
+					$newAuth->setMax_quantity($auth["Max_quantity"]);
+					$newAuth->setApproval_date($auth["Approval_date"]);
+					$newAuth->setIs_active(true);
+					$authDao->save($newAuth);;
+				}
+            }
+            //force reload of authorizations from db
+            $piAuth->setAuthorizations(null);
     		return $piAuth;
     	}
 
