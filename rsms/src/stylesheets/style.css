@@ -3654,6 +3654,10 @@ div.inactive{
 div.fake-table .table-row:hover > div{
     box-shadow: 1px 3px 2px rgba(0,0,0,.4);
 }
+div.fake-table .table-row.Complete div{
+  background: rgb(86, 201, 86);
+  background: rgba(86, 201, 86, 0.5) !important;
+}
 .well{
   margin-top: 10px;
   background: rgba(255,255,255,.7);

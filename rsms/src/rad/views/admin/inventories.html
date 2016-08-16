@@ -47,7 +47,7 @@
 					<h3>Sign Off Date</h3>
 					<h3>View Inventory</h3>
 				</div>
-				<div class="table-row" ng-repeat="piInventory in inventory.Pi_quarterly_inventories | inventoryStatus:inventory">
+				<div class="table-row" ng-repeat="piInventory in inventory.Pi_quarterly_inventories" ng-class="{'complete':piInventory.Status == 'COMPLETE','inactive':piInventory.Status == 'OVERDUE'}">
 					<div>{{piInventory.Principal_investigator.User.Name}}</div>
 					<div>
 						{{piInventory.Status}}
@@ -78,7 +78,7 @@
 					<h3>Status</h3>
 					<h3>Details</h3>
 				</div>
-				<div class="table-row" ng-repeat="inventory in piInventories">
+				<div class="table-row" ng-repeat="inventory in piInventories" ng-class="{'complete':inventory.Status == 'COMPLETE', 'inactive':inventory.Status == 'OVERDUE'}">
 					<div>{{inventory.Quarterly_inventory.Start_date | dateToISO   }}</div>
 					<div>{{inventory.Quarterly_inventory.End_date | dateToISO   }}</div>
 					<div>{{inventory.Sign_off_date | dateToISO   }}</div>
