@@ -14,20 +14,7 @@ var DataStoreManager = (function () {
             return this._actualModel;
         },
         set: function (value) {
-            var _this = this;
-            var drillDown = function (parentNode) {
-                for (var prop in parentNode) {
-                    if (parentNode[prop] && typeof parentNode[prop] === 'object') {
-                        if (parentNode[prop].hasOwnProperty(_this.classPropName)) {
-                            var instance = InstanceFactory.createInstance(parentNode[prop][_this.classPropName]);
-                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
-                        }
-                        drillDown(parentNode[prop]);
-                    }
-                }
-            };
-            drillDown(value);
-            DataStoreManager._actualModel = value;
+            DataStoreManager._actualModel = this.convertToClasses(value);
         },
         enumerable: true,
         configurable: true
@@ -57,7 +44,7 @@ var DataStoreManager = (function () {
                 if (!viewModelParent[type]) {
                     var json = $.getJSON(window[type].urlAll)
                         .done(function (d) {
-                        viewModelParent[type] = d;
+                        viewModelParent[type] = DataStoreManager.convertToClasses(d);
                         return viewModelParent[type];
                     })
                         .fail(function (d) {
@@ -119,6 +106,25 @@ var DataStoreManager = (function () {
         if (optionalCallBack) {
             optionalCallBack();
         }
+    };
+    // Crawls through data and its children, creating class instances as needed.
+    DataStoreManager.convertToClasses = function (data) {
+        var _this = this;
+        var drillDown = function (parentNode) {
+            for (var prop in parentNode) {
+                if (parentNode[prop] && typeof parentNode[prop] === 'object') {
+                    if (parentNode[prop].hasOwnProperty(_this.classPropName)) {
+                        var instance = InstanceFactory.createInstance(parentNode[prop][_this.classPropName]);
+                        if (instance) {
+                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                        }
+                    }
+                    drillDown(parentNode[prop]);
+                }
+            }
+        };
+        drillDown(data);
+        return data;
     };
     // also works for simply finding object by id: findByPropValue(obj, "id", "someId");
     DataStoreManager.findByPropValue = function (obj, propName, value) {

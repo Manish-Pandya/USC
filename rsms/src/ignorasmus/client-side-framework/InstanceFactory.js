@@ -14,6 +14,7 @@ var InstanceFactory = (function () {
     //  Methods
     //
     //----------------------------------------------------------------------
+    // Gets array of class names from script tags with src containing the provided basePath.
     InstanceFactory.getClassNames = function (basePath) {
         if (basePath === void 0) { basePath = ""; }
         if (!this._classNames) {
@@ -33,20 +34,18 @@ var InstanceFactory = (function () {
         }
         return this._classNames;
     };
+    // Creates class instance if possible
     InstanceFactory.createInstance = function (className) {
-        switch (className) {
-            case "User":
-                return new User();
-            case "PrincipalInvestigator":
-                return new PrincipalInvestigator();
-            case "Room":
-                return new Room();
-            case "Hazard":
-                return new Hazard();
-            default:
-                //throw new Error("No such class as " + className);
-                //console.log("wtf:", className);
-                return {};
+        if (this._classNames && this._classNames.indexOf(className) > -1) {
+            return new window[className]();
+        }
+        else if (window[className]) {
+            console.log("Class not in approved ClassNames, but exists. Trying to create...");
+            return new window[className]();
+        }
+        else {
+            console.log("No such class as " + className);
+            return null;
         }
     };
     InstanceFactory.compose = function (type) {
@@ -60,6 +59,8 @@ var InstanceFactory = (function () {
                 return instance;
         }
     };
+    // Copies properties/values from sources to target.
+    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy test pending."
     InstanceFactory.copyProperties = function (target) {
         var sources = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -121,7 +122,6 @@ var InstanceFactory = (function () {
         masterPi.testProperty = "updated";
         console.log(childPis[100].testProperty);
     };
-    InstanceFactory.Howdy = "Hello World";
     InstanceFactory.A = { thing: "I'm A" };
     InstanceFactory.B = { thing: "I'm B", butt: "I'm an ass" };
     InstanceFactory.C = { thing: "I'm C" };

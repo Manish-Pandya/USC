@@ -19,6 +19,7 @@
     <script src="../../rad/scripts/models/Room.js"></script>
     <script src="../../rad/scripts/models/User.js"></script>
     <script src="../../rad/scripts/models/Hazard.js"></script>
+    <script src="../../rad/scripts/models/Department.js"></script>
     <script>
         //InstanceFactory.testCopy();
         /*var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
@@ -33,51 +34,11 @@
         console.log(DataStoreManager.ActualModel);
         console.log(DataStoreManager.CurrentViewModel);*/
 
-        var getStuff = function (url) {
-            /*
-            var f = function (stuff) {
-                return !(Array.isArray(stuff) && stuff.Class == "ActionError");
-            }
+        var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
+        console.log("approved classNames:", classNames);
+        //console.log("Look:", DataStoreManager.getAll("User"));
 
-            var promises = [
-                DataStorePromise.returnPromise('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards', f),
-                DataStorePromise.returnPromise('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers', f)
-            ]
-
-
-           
-
-            Promise.all(promises)
-                    .then(
-                        function (whateverGotReturned) {
-                            console.log("good",whateverGotReturned);
-                        }
-                    )
-                    .catch(
-                        function (reason) {
-                            console.log("bad", reason);
-                        }
-                    )
-
-        }
-        */
-
-            $.getJSON(url)
-                   .done(function (d) {
-                       DataStoreManager.ActualModel = d;
-                   })
-                   .fail(function (d) {
-                       console.log("uh oh");
-                       reject(d.statusText);
-                       //return DataStorePromise.Reject(d.statusText);
-                   });
-
-        }
-        //getStuff('http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers');
-
-        console.log("Look:", DataStoreManager.getAll("User"));
-
-        var ps = [DataStoreManager.getAll("User"), DataStoreManager.getAll("Hazard")];
+        var ps = [DataStoreManager.getAll("User"), DataStoreManager.getAll("Hazard"), DataStoreManager.getAll("PrincipalInvestigator")];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
