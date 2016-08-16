@@ -453,6 +453,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return ("(" + city + ") " + number).trim();
     }
 })
+.filter("sanitize", ['$sce', function($sce) {
+    return function(htmlCode){
+        return $sce.trustAsHtml(htmlCode);
+    }
+}])
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',

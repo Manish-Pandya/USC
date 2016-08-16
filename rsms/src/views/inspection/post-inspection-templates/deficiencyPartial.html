@@ -37,7 +37,7 @@
                         <i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
 
                         <h4 class="bold">Pending Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Anticipated Completion Date:</h4>
                         <p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
@@ -45,7 +45,7 @@
 
                     <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
                         <h4 class="bold">Completed Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Completion Date:</h4>
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>

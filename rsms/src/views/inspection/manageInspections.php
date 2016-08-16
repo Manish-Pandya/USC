@@ -95,7 +95,7 @@ require_once '../top_view.php';
                     </select>
                 </th>
                 <th>
-                    Laboratory Hazards
+                    Lab Hazards
                     <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
@@ -186,7 +186,7 @@ require_once '../top_view.php';
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP">
                             <p>
-                                (CAP due: {{dto.Inspections.Notification_date | getDueDate | date:"MM/dd/yy"}})
+                                (CAP Due: {{dto.Inspections.Notification_date | getDueDate | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>

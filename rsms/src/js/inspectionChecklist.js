@@ -3,7 +3,7 @@ $(".collapse").bind("transition webkitTransition oTransition MSTransition", func
 });
 
 
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy'])
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy', 'ui.tinymce'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
             if( !category ) return false;
@@ -1312,14 +1312,7 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
         templateUrl: 'hazard-inventory-modals/inspection-notes-modal.html',
         controller: commentsController
       });
-
-      modalInstance.result.then(function () {
-
-      });
   }
-
-
-
 }
 
 function commentsController ($scope, checklistFactory, $modalInstance, convenienceMethods, $q){
@@ -1334,6 +1327,12 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
     Class:"PrincipalInvestigator"
   };
 
+  $scope.tinymceOptions = {
+      plugins: 'link',
+      toolbar: 'bold | alignleft aligncenter alignright | link',
+      menubar: false,
+      elementpath: false
+  };
 
   $scope.close = function () {
     $modalInstance.dismiss();
@@ -1346,13 +1345,13 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
   $scope.saveNote = function(){
     $scope.savingNote = true;
     $scope.error = null;
+    $scope.close();
 
     checklistFactory.savePi($scope.piCopy)
       .then(
         function(returnedPi){
           angular.extend(checklistFactory.inspection.PrincipalInvestigator, returnedPi);
           $scope.savingNote = false;
-          $scope.close();
           $scope.pi.editNote = false;
           $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
         },

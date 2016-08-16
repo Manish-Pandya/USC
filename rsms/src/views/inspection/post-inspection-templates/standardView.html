@@ -91,7 +91,7 @@
     <h2 style="padding:5px" ng-if="pf.getIsReadyToSubmit().readyToSubmit && data.totals && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
         Submit Corrective Action Plan?
         <span>
-            <a class="btn btn-success left" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit CAP</a>
+            <a class="btn btn-success left" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit</a>
             <i ng-if="dirty" class="icon-spinnery-dealie spinner small" style="margin-top: 12px;color: rgba(255, 255, 255, 0.61) !important;"></i>
         </span>
     </h2>
@@ -110,7 +110,7 @@
             <h3 class="bold pending-message">
                 <span>{{data.pendings}} Pending Corrective Action<span ng-if="data.pendings != 1">s</span></span>
             </h3>
-            <h3 ng-if="data.totals">
+            <h3 ng-if="data.totals && data.correcteds.length">
                 <span>{{data.correcteds}} Deficienc<span ng-if="data.correcteds == 1">y</span><span ng-if="data.correcteds != 1">ies</span> Corrected During Inspection</span>
             </h3>
         </div>

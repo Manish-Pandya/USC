@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter'])
+angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter', 'ui.tinymce'])
 .filter('joinBy', function () {
     return function (input, delimiter) {
         return (input || []).join(delimiter || ',');
@@ -1045,7 +1045,12 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     $scope.options = [{ Value: Constants.CORRECTIVE_ACTION.STATUS.PENDING, Label: "Corrective action will be completed soon" }, { Value: Constants.CORRECTIVE_ACTION.STATUS.COMPLETE, Label: "Corrective action completed" }];
     $scope.validationError = '';
 
-    
+    $scope.tinymceOptions = {
+        plugins: '',
+        toolbar: 'bold | alignleft aligncenter alignright',
+        menubar: false,
+        elementpath: false
+    };
 
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
    
@@ -1142,7 +1147,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.todayOrAfter = function (d) {
-        console.log(moment(d), moment());
         return moment(d) >= moment().startOf('day');
     }
 }

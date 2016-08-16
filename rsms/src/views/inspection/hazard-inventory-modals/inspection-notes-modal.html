@@ -3,8 +3,8 @@
 </div>
 <div class="modal-body">
     <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
-   <h3 ng-if="!pi.editNote && pi.Inspection_notes">{{piCopy.Inspection_notes}}<a style="margin-left:10px;" ng-click="edit(true)" class="btn btn-primary"><i class="icon-pencil"></i></a></h3>
-   <textarea ng-if="pi.editNote || !pi.Inspection_notes" ng-model="piCopy.Inspection_notes" style="width:100%;" rows="5" placeholder="Enter inspection comments"></textarea>
+   <h3 ng-if="!pi.editNote && pi.Inspection_notes"><a style="margin-right:5px;" ng-click="edit(true)" class="btn btn-primary"><i class="icon-pencil"></i></a><span ng-bind-html="piCopy.Inspection_notes | sanitize"></span></h3>
+   <textarea ui-tinymce="tinymceOptions" ng-if="pi.editNote || !pi.Inspection_notes" ng-model="piCopy.Inspection_notes" style="width:100%;" rows="5" placeholder="Enter inspection comments"></textarea>
    <br><br>
 </div>
 <div class="modal-footer">
