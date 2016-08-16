@@ -1064,8 +1064,9 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
             for (var prop in $scope.def.CorrectiveActions[0]) {
                 $scope.copy[prop] = $scope.def.CorrectiveActions[0][prop];
             }
+            console.log($scope.def, $scope.copy);
+
         } else {
-            console.log($scope.def);
             $scope.copy = {
                 Class: "CorrectiveAction",
                 Is_active: true,

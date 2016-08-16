@@ -104,8 +104,10 @@ angular.module('ui.tinymce', [])
             });
 
             ed.on('blur', function() {
-              element[0].blur();
-              ngModel.$setTouched();
+               element[0].blur();
+               if (ngModel.hasOwnProperty("$setTouched")) {
+                   ngModel.$setTouched();
+               }
               if (!$rootScope.$$phase) {
                 scope.$digest();
               }
