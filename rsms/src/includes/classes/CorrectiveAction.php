@@ -120,7 +120,7 @@ class CorrectiveAction extends GenericCrud {
 	public function getInsuficient_funds(){return (bool) $this->insuficient_funds;}
 	public function setInsuficient_funds($insuficient_funds){$this->insuficient_funds = $insuficient_funds;}
 
-	public function getOther_reason(){return (bool) $this->other_reason;}
+	public function getOther_reason(){return $this->other_reason;}
 	public function setOther_reason($other_reason){$this->other_reason = $other_reason;}
 
 }

@@ -1096,13 +1096,20 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.saveCorrectiveAction = function (copy, orig) {
-        console.log(copy, orig);
-        $scope.dirty = true;
 
         if ($scope.dates.promisedDate) copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
         if ($scope.dates.completionDate) copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
-        $scope.validationError = '';
+        //custom validation, because the validation is complex
+        $scope.validationError = validateCorrectiveAction(copy);
+        for (var prop in $scope.validationError) {
+            if ($scope.validationError[prop]) return false;
+        }
+
+        if (!copy.Other) copy.Other_reason = null;
+
+        $scope.dirty = true;
+
         //call to factory to save, return, then close modal, passing data back
         postInspectionFactory.saveCorrectiveAction(copy)
           .then(
@@ -1115,6 +1122,22 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 $scope.validationError = "The corrective action could not be saved.  Please check your internet connection and try again."
             }
           )
+    }
+
+    function validateCorrectiveAction(action) {
+        console.log(action)
+        errorObject = null;
+        if (!action) {
+            errorObj = {formBlank:true}
+        } else {
+            errorObj = {
+                statusError: action.Status == null,
+                textError: action.Text == null || action.Text == "",
+                dateError: (action.Status && action.Text && action.Text != "") && (action.Promised_date == null && action.Completion_date == null && (!action.Needs_ehs && !action.Needs_facilities && !action.Insuficient_funds && !action.Other)),
+                otherTextError: action.Other && !action.Other_reason
+            }
+        }
+        return errorObj;
     }
 
     $scope.deleteCorrectiveAction = function (def) {

@@ -2746,6 +2746,10 @@ li.active a {
 .red {
   color: #c00; 
 }
+.control-group span.red.error{
+    margin-top: -8px;
+    display: inline-block;
+}
 
 /* line 730, ../sass/style.scss */
 /* line 1793, ../sass/style.scss */
