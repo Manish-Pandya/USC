@@ -14,7 +14,7 @@ var DataStoreManager = (function () {
             return this._actualModel;
         },
         set: function (value) {
-            DataStoreManager._actualModel = this.convertToClasses(value);
+            DataStoreManager._actualModel = InstanceFactory.convertToClasses(value);
         },
         enumerable: true,
         configurable: true
@@ -34,26 +34,37 @@ var DataStoreManager = (function () {
     //
     //----------------------------------------------------------------------
     DataStoreManager.getAll = function (type, viewModelParent) {
-        if (viewModelParent === void 0) { viewModelParent = null; }
-        viewModelParent = viewModelParent || this._actualModel;
-        switch (type) {
-            case "realSpecific":
-                // junk stuff here
-                break;
-            default:
-                if (!viewModelParent[type]) {
-                    var json = $.getJSON(window[type].urlAll)
-                        .done(function (d) {
-                        viewModelParent[type] = DataStoreManager.convertToClasses(d);
-                        return viewModelParent[type];
-                    })
-                        .fail(function (d) {
-                        console.log("shit... getJSON failed:", d.statusText);
-                    });
-                }
-                return this.promisifyData(json);
+        if (!DataStoreManager._actualModel[type]) {
+            var json = $.getJSON(window[type].urlAll)
+                .done(function (d) {
+                DataStoreManager._actualModel[type] = InstanceFactory.convertToClasses(d);
+                viewModelParent.splice(0, viewModelParent.length);
+                // Dig this neat way to use viewModelParent as a reference instead of a value!
+                Array.prototype.push.apply(viewModelParent, InstanceFactory.convertToClasses(d));
+                return viewModelParent;
+            })
+                .fail(function (d) {
+                console.log("shit... getJSON failed:", d.statusText);
+            });
         }
+        else {
+            Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
+            viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
+        }
+        return this.promisifyData(json);
+        /*this._actualModel.User = {
+            "14": {
+                Data: { Key_id: 14, Name: "John Doe", Class: "User" },
+                Promise:someThing
+            },
+            getAllCalled: Boolean = false,
+            getAllPromise: promiseObjectResolutingFromCallToGetAllUsers
+        }
+        this._actualModel.PromiseCache*/
     };
+    /*this._actualModel.User.getAll("User", $scope.allTheUsers).then(function () {
+        $scope.allTheUsers = [];
+    })*/
     DataStoreManager.getById = function (type, id, viewModelName) {
         var obj = this.findByPropValue(this._actualModel[type], this.uidString, id);
         if (obj && obj.viewModels && obj.viewModels.hasOwnProperty(viewModelName)) {
@@ -63,19 +74,17 @@ var DataStoreManager = (function () {
             throw new Error("No such id as " + id);
         }
     };
-    DataStoreManager.syncViewModel = function (actualModelParent, viewModelName) {
+    DataStoreManager.syncViewModel = function (actualModelParent, viewModelParent) {
         var _this = this;
-        //set appropriate CurrentViewModel
-        var viewParentNode = this.viewModels[viewModelName] = _.cloneDeep(actualModelParent);
+        //set appropriate viewModel
+        viewModelParent = _.cloneDeep(actualModelParent);
         // get all classes from script tags
         var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
         // loop thru to set references
         var drillDown = function (parentNode, viewParentNode) {
             var className = parentNode.constructor.name;
             if (classNames.indexOf(className) > -1) {
-                if (!parentNode.viewModels)
-                    parentNode.viewModels = {};
-                parentNode.viewModels[viewModelName] = viewParentNode; // Put actual reference by finding where it lives in viewModel
+                viewModelParent = viewParentNode; // Put actual reference by finding where it lives in viewModel
                 if (!_this._actualModel[className]) {
                     _this._actualModel[className] = [];
                 }
@@ -87,7 +96,7 @@ var DataStoreManager = (function () {
                 }
             }
         };
-        drillDown(actualModelParent, viewParentNode);
+        drillDown(actualModelParent, viewModelParent);
     };
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var success;
@@ -106,25 +115,6 @@ var DataStoreManager = (function () {
         if (optionalCallBack) {
             optionalCallBack();
         }
-    };
-    // Crawls through data and its children, creating class instances as needed.
-    DataStoreManager.convertToClasses = function (data) {
-        var _this = this;
-        var drillDown = function (parentNode) {
-            for (var prop in parentNode) {
-                if (parentNode[prop] && typeof parentNode[prop] === 'object') {
-                    if (parentNode[prop].hasOwnProperty(_this.classPropName)) {
-                        var instance = InstanceFactory.createInstance(parentNode[prop][_this.classPropName]);
-                        if (instance) {
-                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
-                        }
-                    }
-                    drillDown(parentNode[prop]);
-                }
-            }
-        };
-        drillDown(data);
-        return data;
     };
     // also works for simply finding object by id: findByPropValue(obj, "id", "someId");
     DataStoreManager.findByPropValue = function (obj, propName, value) {
@@ -167,7 +157,6 @@ var DataStoreManager = (function () {
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
     DataStoreManager.isPromisified = true;
-    DataStoreManager.viewModels = {};
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};
     return DataStoreManager;

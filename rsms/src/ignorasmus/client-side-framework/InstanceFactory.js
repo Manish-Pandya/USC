@@ -48,6 +48,24 @@ var InstanceFactory = (function () {
             return null;
         }
     };
+    // Crawls through data and its children, creating class instances as needed.
+    InstanceFactory.convertToClasses = function (data) {
+        var drillDown = function (parentNode) {
+            for (var prop in parentNode) {
+                if (parentNode[prop] && typeof parentNode[prop] === 'object') {
+                    if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
+                        var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
+                        if (instance) {
+                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                        }
+                    }
+                    drillDown(parentNode[prop]);
+                }
+            }
+        };
+        drillDown(data);
+        return data;
+    };
     InstanceFactory.compose = function (type) {
         var instance;
         switch (type) {
@@ -101,26 +119,6 @@ var InstanceFactory = (function () {
         console.log("B", this.B);
         console.log("C", this.C);
         console.log("Suck it, fools! It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy test pending.");
-    };
-    InstanceFactory.affixWatchers = function () {
-        var masterPi = new PrincipalInvestigator();
-        masterPi.testProperty = "test";
-        masterPi.observers = [];
-        masterPi.testProperty = "updated";
-        var i = 0;
-        var childPis = [];
-        for (i; i < 10000; i++) {
-            childPis[i] = new PrincipalInvestigator();
-            masterPi.observers[i] = childPis[i];
-        }
-        masterPi.watch("testProperty", function (it, oldValue, newValue) {
-            console.log(it, oldValue, newValue);
-            for (var i = 0; i < masterPi.observers.length; i++) {
-                masterPi.observers[i]["testProperty"] = masterPi["testProperty"];
-            }
-        });
-        masterPi.testProperty = "updated";
-        console.log(childPis[100].testProperty);
     };
     InstanceFactory.A = { thing: "I'm A" };
     InstanceFactory.B = { thing: "I'm B", butt: "I'm an ass" };

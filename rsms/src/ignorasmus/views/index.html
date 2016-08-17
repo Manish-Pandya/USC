@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--<script src="../../../../Scripts/promise.min.js"></script>-->
-    <script src="../../../../Scripts/local.jquery.js"></script>
+    <script src="../../../../Scripts/jquery-3.1.0.min.js"></script>
+   <!--<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>-->
     <script src="../../js/lib/angular.js"></script>
 
     <script src="../../../../Scripts/promise.js"></script>
-   <!--<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>--> 
 
     <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
@@ -38,11 +38,16 @@
         console.log("approved classNames:", classNames);
         //console.log("Look:", DataStoreManager.getAll("User"));
 
-        var ps = [DataStoreManager.getAll("User"), DataStoreManager.getAll("Hazard"), DataStoreManager.getAll("PrincipalInvestigator")];
+        users = [];
+        hazards = [];
+        pis = [];
+        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("Hazard", hazards), DataStoreManager.getAll("PrincipalInvestigator", pis)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
                     console.log("good:", whateverGotReturned);
+                    console.log(users);
+                    console.log(DataStoreManager.ActualModel["User"]);
                 }
             )
             .catch(
@@ -50,7 +55,6 @@
                     console.log("bad:", reason);
                 }
             )
-
     </script>
 </head>
 <body>
