@@ -41,20 +41,29 @@
         users = [];
         hazards = [];
         pis = [];
+
+        var testEditingUser = function () {
+            hazards[0].Email = "suck@toe.cunt";
+            console.log(hazards[0]);
+            hazards[0] = DataStoreManager.getActualModelEquivalent(hazards[0]);
+            console.log(hazards[0]);
+        }
+
         var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("Hazard", hazards), DataStoreManager.getAll("PrincipalInvestigator", pis)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
                     console.log("good:", whateverGotReturned);
-                    console.log(users);
-                    console.log(DataStoreManager.ActualModel["User"]);
+                    //console.log(users[0]);
+                    //console.log(DataStoreManager.ActualModel["User"]);
                 }
-            )
+            ).then(testEditingUser)
             .catch(
                 function (reason) {
                     console.log("bad:", reason);
                 }
             )
+
     </script>
 </head>
 <body>

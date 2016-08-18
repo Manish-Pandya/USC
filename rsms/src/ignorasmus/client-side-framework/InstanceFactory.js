@@ -44,7 +44,7 @@ var InstanceFactory = (function () {
             return new window[className]();
         }
         else {
-            console.log("No such class as " + className);
+            //console.log("No such class as " + className);
             return null;
         }
     };

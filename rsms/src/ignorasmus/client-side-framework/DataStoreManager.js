@@ -14,7 +14,7 @@ var DataStoreManager = (function () {
             return this._actualModel;
         },
         set: function (value) {
-            DataStoreManager._actualModel = InstanceFactory.convertToClasses(value);
+            this._actualModel = InstanceFactory.convertToClasses(value);
         },
         enumerable: true,
         configurable: true
@@ -37,10 +37,11 @@ var DataStoreManager = (function () {
         if (!DataStoreManager._actualModel[type]) {
             var json = $.getJSON(window[type].urlAll)
                 .done(function (d) {
-                DataStoreManager._actualModel[type] = InstanceFactory.convertToClasses(d);
+                d = InstanceFactory.convertToClasses(d);
+                DataStoreManager._actualModel[type] = d;
                 viewModelParent.splice(0, viewModelParent.length);
                 // Dig this neat way to use viewModelParent as a reference instead of a value!
-                Array.prototype.push.apply(viewModelParent, InstanceFactory.convertToClasses(d));
+                Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                 return viewModelParent;
             })
                 .fail(function (d) {
@@ -74,30 +75,44 @@ var DataStoreManager = (function () {
             throw new Error("No such id as " + id);
         }
     };
-    DataStoreManager.syncViewModel = function (actualModelParent, viewModelParent) {
-        var _this = this;
+    DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
+        if (Array.isArray(viewModelObj)) {
+            console.log("hey man... i expected this to be a single instance of an approved class");
+        }
+        else {
+            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName])) {
+                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]], this.uidString, viewModelObj[this.uidString]);
+                return viewModelObj;
+            }
+            else {
+                console.log("shit dude... I'm not familiar with this class or object type");
+            }
+        }
+    };
+    /*static syncViewModel(actualModelParent: any, viewModelParent: any): void {
         //set appropriate viewModel
         viewModelParent = _.cloneDeep(actualModelParent);
-        // get all classes from script tags
-        var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
         // loop thru to set references
-        var drillDown = function (parentNode, viewParentNode) {
-            var className = parentNode.constructor.name;
-            if (classNames.indexOf(className) > -1) {
+        var drillDown = (parentNode: any, viewParentNode: any): void => {
+            var className: string = parentNode.constructor.name;
+            if (InstanceFactory._classNames.indexOf(className) > -1) {
                 viewModelParent = viewParentNode; // Put actual reference by finding where it lives in viewModel
-                if (!_this._actualModel[className]) {
-                    _this._actualModel[className] = [];
+                if (!this._actualModel[className]) {
+                    this._actualModel[className] = [];
+                    //this._actualModel[className + "Map"] = {};
                 }
-                _this._actualModel[className].push(parentNode);
+                this._actualModel[className].push(parentNode);
+                //this._actualModel[className + "Map"][parentNode[this.uidString]] = this._actualModel[className + "Map"].length - 1;
             }
             for (var prop in parentNode) {
                 if (parentNode.hasOwnProperty(prop) && prop != "viewModels" && parentNode[prop] && typeof parentNode[prop] === 'object') {
                     drillDown(parentNode[prop], viewParentNode[prop]);
                 }
             }
-        };
+        }
+
         drillDown(actualModelParent, viewModelParent);
-    };
+    }*/
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var success;
         if (success) {
