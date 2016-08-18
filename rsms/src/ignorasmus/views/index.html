@@ -10,12 +10,15 @@
 
     <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
-    <script src="../client-side-framework/DataStorePromise.js"></script>
     <script src="../client-side-framework/InstanceFactory.js"></script>
+    <script src="../client-side-framework/BaseModel.js"></script>
+    <script src="../client-side-framework/CompositionMapping.js"></script>
+    <script src="../client-side-framework/UrlMapping.js"></script>
     <script src="../../client-side-framework/genericModel/inheritance.js"></script>
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
     <script src="../../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
     <script src="../../rad/scripts/models/PrincipalInvestigator.js"></script>
+    <script src="../client-side-framework/PrincipalInvestigator.js"></script>
     <script src="../../rad/scripts/models/Room.js"></script>
     <script src="../../rad/scripts/models/User.js"></script>
     <script src="../../rad/scripts/models/Hazard.js"></script>
@@ -43,13 +46,13 @@
         pis = [];
 
         var testEditingUser = function () {
-            hazards[0].Email = "suck@toe.cunt";
-            console.log(hazards[0]);
-            hazards[0] = DataStoreManager.getActualModelEquivalent(hazards[0]);
-            console.log(hazards[0]);
+            users[0].Email = "suck@toe.cunt";
+            console.log(users[0]);
+            users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
+            console.log(users[0]);
         }
 
-        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("Hazard", hazards), DataStoreManager.getAll("PrincipalInvestigator", pis)];
+        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis), DataStoreManager.getAll("Hazard", hazards)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {

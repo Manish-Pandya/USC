@@ -7,7 +7,7 @@ var PrincipalInvestigator = (function (_super) {
     __extends(PrincipalInvestigator, _super);
     function PrincipalInvestigator() {
         _super.apply(this, arguments);
-        this.UserMap = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.Key_id, "User");
+        this.UserMap = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User");
     }
     PrincipalInvestigator.prototype.loadUser = function () {
         return this.User;
@@ -19,5 +19,6 @@ var PrincipalInvestigator = (function (_super) {
         var mappings = new UrlMapping("getAllPis", "getPiById&id=", "savePI");
         _super.prototype.setUrlMappings.call(this, mappings);
     };
+    PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     return PrincipalInvestigator;
 }(BaseModel));

@@ -1,7 +1,8 @@
 ﻿class PrincipalInvestigator extends BaseModel {
 
-    private User: User;
-    private UserMap: CompositionMapping = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id="+this.Key_id, "User");
+    static urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
+    User: User;
+    UserMap: CompositionMapping = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User");
     public loadUser(): User {
         
         return this.User;

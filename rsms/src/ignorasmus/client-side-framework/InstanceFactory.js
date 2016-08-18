@@ -50,13 +50,23 @@ var InstanceFactory = (function () {
     };
     // Crawls through data and its children, creating class instances as needed.
     InstanceFactory.convertToClasses = function (data) {
+        var _this = this;
         var drillDown = function (parentNode) {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
                     if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
                         var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
-                            parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                            instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                            // Run composition routine here based on instance's CompositionMapping //
+                            for (var instanceProp in instance) {
+                                if (instance[instanceProp] instanceof CompositionMapping) {
+                                    var compMap = instance[instanceProp];
+                                    instance[compMap.PropertyName] = _this.getChildInstances(compMap);
+                                }
+                            }
+                            // set instance
+                            parentNode[prop] = instance;
                         }
                     }
                     drillDown(parentNode[prop]);
@@ -66,15 +76,17 @@ var InstanceFactory = (function () {
         drillDown(data);
         return data;
     };
-    InstanceFactory.compose = function (type) {
-        var instance;
-        switch (type) {
-            case "realSpecific":
-                // junk stuff here
-                break;
-            default:
-                // do stuff to make composit class
-                return instance;
+    InstanceFactory.getChildInstances = function (compMap) {
+        if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
+            return [this.createInstance(compMap.ChildType)];
+        }
+        else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+            return [];
+        }
+        else {
+            var childInstance = this.createInstance(compMap.ChildType);
+            childInstance.Email = "foo@yoo.poo";
+            return childInstance;
         }
     };
     // Copies properties/values from sources to target.
