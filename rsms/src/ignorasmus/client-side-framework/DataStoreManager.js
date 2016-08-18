@@ -89,30 +89,6 @@ var DataStoreManager = (function () {
             }
         }
     };
-    /*static syncViewModel(actualModelParent: any, viewModelParent: any): void {
-        //set appropriate viewModel
-        viewModelParent = _.cloneDeep(actualModelParent);
-        // loop thru to set references
-        var drillDown = (parentNode: any, viewParentNode: any): void => {
-            var className: string = parentNode.constructor.name;
-            if (InstanceFactory._classNames.indexOf(className) > -1) {
-                viewModelParent = viewParentNode; // Put actual reference by finding where it lives in viewModel
-                if (!this._actualModel[className]) {
-                    this._actualModel[className] = [];
-                    //this._actualModel[className + "Map"] = {};
-                }
-                this._actualModel[className].push(parentNode);
-                //this._actualModel[className + "Map"][parentNode[this.uidString]] = this._actualModel[className + "Map"].length - 1;
-            }
-            for (var prop in parentNode) {
-                if (parentNode.hasOwnProperty(prop) && prop != "viewModels" && parentNode[prop] && typeof parentNode[prop] === 'object') {
-                    drillDown(parentNode[prop], viewParentNode[prop]);
-                }
-            }
-        }
-
-        drillDown(actualModelParent, viewModelParent);
-    }*/
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var success;
         if (success) {

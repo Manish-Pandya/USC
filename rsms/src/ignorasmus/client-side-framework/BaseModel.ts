@@ -8,7 +8,7 @@
 
     contruct() {
         if (!this.urlMappings) {
-            throw new Error("You forgot to set URL mappings for this class.  The framework can't get instances of it from the server");
+            console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
         }
 
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {

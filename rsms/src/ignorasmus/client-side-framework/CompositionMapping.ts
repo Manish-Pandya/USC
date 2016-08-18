@@ -17,7 +17,7 @@
             this.ChildUrl = childUrl;
             this.PropertyName = propertyName;
             if (this.COMPOSITION_TYPE == "ONE_TO_MANY") {
-                if (gerundName == "NULL" || gerundUrl == "null") {
+                if (!gerundName || !gerundUrl) {
                     throw new Error("You must provide a gerundName and gerundUrl to fullfill this ONE TO MANY compositional relationship");
                 } else {
                     this.GerundName = gerundName;
