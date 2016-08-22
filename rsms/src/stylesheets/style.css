@@ -676,7 +676,7 @@ div.rsmsCenterIconContainer a p {
 /* line 400, ../sass/style.scss */
 .userList tr td li i {
   width: auto;
-  margin: 4px 0 0 5px;
+  margin: 1px 0 10px 4px;
   cursor: pointer;
 }
 
@@ -1612,7 +1612,7 @@ td.corrective-action.corrected-during-inspection{
   width: 50%;
   bottom:0;
   left:0%;
-  margin-top: -20px;
+  margin-top: -5px;
 }
 
 

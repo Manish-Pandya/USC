@@ -80,7 +80,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 })
 .filter('onlyUnselected', function () {
     return function (inspectors, selectedInspectors) {
-        console.log(selectedInspectors);
         if (!selectedInspectors) return inspectors;
         var unselectedInspectors = [];
         var selectedInsepctorIds = [];
@@ -327,14 +326,13 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
         while (i--) {
             if (inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id) {
-                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].User.Name);
+                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].Name);
                 $rootScope.dtoCopy.Inspections.Inspectors.splice(i, 1);
             }
         }
 
         //push the replacement inspector into the list
-        console.log(JSON.parse(newInspector));
-        $rootScope.dtoCopy.Inspections.Inspectors.push(JSON.parse(newInspector));
+        $rootScope.dtoCopy.Inspections.Inspectors.push(newInspector);
         console.log($rootScope.dtoCopy);
         //save the inspection, then set the dto's inspection object to the returned inspection
         var url = '../../ajaxaction.php?action=scheduleInspection';
@@ -365,7 +363,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
         while (i--) {
             if (inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id) {
-                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].User.Name);
+                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].Name);
                 $rootScope.dtoCopy.Inspections.Inspectors.splice(i, 1);
             }
         }
@@ -395,7 +393,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         $rootScope.dtoCopy = convenienceMethods.copyObject(dto);
         $rootScope.saving = true;
         $rootScope.error = null;
-        $rootScope.dtoCopy.Inspections.Inspectors.push(JSON.parse(newInspector));
+        $rootScope.dtoCopy.Inspections.Inspectors.push(newInspector);
 
         var url = '../../ajaxaction.php?action=scheduleInspection';
         return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
@@ -577,7 +575,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                                 var z = item.Inspections.Inspectors.length;
                                 var longString = "";
                                 while (z--) {
-                                    longString += item.Inspections.Inspectors[z].User.Name;
+                                    longString += item.Inspections.Inspectors[z].Name;
                                 }
                                 if (longString.toLowerCase().indexOf(search.inspector.toLowerCase()) < 0) matched = false;
                             } else {
