@@ -35,24 +35,30 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.getAll = function (type, viewModelParent) {
         if (!DataStoreManager._actualModel[type]) {
-            var json = $.getJSON(window[type].urlAll)
-                .done(function (d) {
-                d = InstanceFactory.convertToClasses(d);
-                DataStoreManager._actualModel[type] = d;
-                viewModelParent.splice(0, viewModelParent.length);
-                // Dig this neat way to use viewModelParent as a reference instead of a value!
-                Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                return viewModelParent;
-            })
-                .fail(function (d) {
-                console.log("shit... getJSON failed:", d.statusText);
-            });
+            DataStoreManager._actualModel[type] = {};
+            DataStoreManager._actualModel[type].getAll = true;
+            if (!DataStoreManager._actualModel[type].getAllPromise) {
+                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(window[type].urlAll)
+                    .done(function (d) {
+                    d = InstanceFactory.convertToClasses(d);
+                    //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
+                    //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                    DataStoreManager._actualModel[type].Data = d;
+                    viewModelParent.splice(0, viewModelParent.length);
+                    // Dig this neat way to use viewModelParent as a reference instead of a value!
+                    Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                    return viewModelParent;
+                })
+                    .fail(function (d) {
+                    console.log("shit... getJSON failed:", d.statusText);
+                });
+            }
         }
         else {
             Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
             viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
         }
-        return this.promisifyData(json);
+        return this.promisifyData(DataStoreManager._actualModel[type].getAllPromise);
         /*this._actualModel.User = {
             "14": {
                 Data: { Key_id: 14, Name: "John Doe", Class: "User" },

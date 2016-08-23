@@ -87,16 +87,21 @@ abstract class InstanceFactory {
         return data;
     }
 
-    static getChildInstances(compMap: CompositionMapping, parent:any): any {
+    static getChildInstances(compMap: CompositionMapping, parent: any): any {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             //TODO:  wrap in promise if IsPromisified
             var children = [];
-            for (let i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].length; i++) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (DataStoreManager.ActualModel[compMap.ChildType][i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    //perhaps use a DataStore manager method that leverages findByPropValue here
-                    children.push(DataStoreManager.ActualModel[compMap.ChildType][i]);
-                }
+            if (DataStoreManager.ActualModel[compMap.ChildType].getAllPromise) {
+                DataStoreManager.ActualModel[compMap.ChildType].getAllPromise.then(function () {
+                    for (let i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].Data.length; i++) {
+                        //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
+                        if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                            //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
+                            //perhaps use a DataStore manager method that leverages findByPropValue here
+                            children.push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
+                        }
+                    }
+                })
             }
             return children;
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {

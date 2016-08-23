@@ -62,7 +62,23 @@ var InstanceFactory = (function () {
                             for (var instanceProp in instance) {
                                 if (instance[instanceProp] instanceof CompositionMapping) {
                                     var compMap = instance[instanceProp];
-                                    instance[compMap.PropertyName] = _this.getChildInstances(compMap, instance);
+                                    if (DataStoreManager.isPromisified) {
+                                        if (DataStoreManager.ActualModel[compMap.ChildType].getAllPromise) {
+                                            DataStoreManager.ActualModel[compMap.ChildType].getAllPromise.then(function () {
+                                                instance[compMap.PropertyName] = _this.getChildInstances(compMap, instance);
+                                            })
+                                        }else{
+                                            //TODO: add promise of smaller scope, ie parent.ChildTypePromise
+                                            //IE: (assuming parent is of type PrincipalInvestigator, and we are getting LabPersonnel)
+                                            /*
+                                            if(parent.LabPersonnelPromise){
+                                                parent.LabPersonnelPromise.then(...)
+                                            }
+                                            */
+                                        }
+                                    } else {
+                                            
+                                    }
                                 }
                             }
                             // set instance
@@ -80,14 +96,16 @@ var InstanceFactory = (function () {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             //TODO:  wrap in promise if IsPromisified
             var children = [];
-            for (var i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].length; i++) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (DataStoreManager.ActualModel[compMap.ChildType][i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    //perhaps use a DataStore manager method that leverages findByPropValue here
-                    children.push(DataStoreManager.ActualModel[compMap.ChildType][i]);
-                }
+            if (DataStoreManager.ActualModel[compMap.ChildType].getAllPromise) {
+                DataStoreManager.ActualModel[compMap.ChildType].getAllPromise.then(function () {
+                    for (var i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].Data.length; i++) {
+                        //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
+                            //perhaps use a DataStore manager method that leverages findByPropValue here
+                            children.push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
+                    }
+                    return children;
+                });
             }
-            return children;
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             return [];
