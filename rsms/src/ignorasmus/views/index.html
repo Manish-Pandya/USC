@@ -48,8 +48,8 @@
         var testEditingUser = function () {
             users[0].Email = "suck@toe.cunt";
             console.log(users[0]);
-            users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
-            console.log(users[0]);
+            //users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
+            console.log(pis[0]);
         }
 
         var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis), DataStoreManager.getAll("Hazard", hazards)];

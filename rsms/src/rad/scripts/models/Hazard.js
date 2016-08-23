@@ -5,7 +5,7 @@
 //constructor
 var Hazard = function () {
     Hazard.url = "";
-    Hazard.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards";
+    Hazard.urlAll = "http://erasmus.graysail.com:9080/rsms/src/ajaxaction.php?action=getAllHazards";
 };
 Hazard.prototype = {
 

@@ -62,7 +62,7 @@ var InstanceFactory = (function () {
                             for (var instanceProp in instance) {
                                 if (instance[instanceProp] instanceof CompositionMapping) {
                                     var compMap = instance[instanceProp];
-                                    instance[compMap.PropertyName] = _this.getChildInstances(compMap);
+                                    instance[compMap.PropertyName] = _this.getChildInstances(compMap, instance);
                                 }
                             }
                             // set instance
@@ -76,9 +76,18 @@ var InstanceFactory = (function () {
         drillDown(data);
         return data;
     };
-    InstanceFactory.getChildInstances = function (compMap) {
+    InstanceFactory.getChildInstances = function (compMap, parent) {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            return [this.createInstance(compMap.ChildType)];
+            //TODO:  wrap in promise if IsPromisified
+            var children = [];
+            for (var i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].length; i++) {
+                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
+                if (DataStoreManager.ActualModel[compMap.ChildType][i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                    //perhaps use a DataStore manager method that leverages findByPropValue here
+                    children.push(DataStoreManager.ActualModel[compMap.ChildType][i]);
+                }
+            }
+            return children;
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             return [];
