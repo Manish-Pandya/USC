@@ -1,7 +1,7 @@
 ﻿class CompositionMapping {
-    static ONE_TO_ONE: string = "ONE_TO_ONE";
-    static ONE_TO_MANY: string = "ONE_TO_MANY";
-    static MANY_TO_MANY: string = "MANY_TO_MANY";
+    static ONE_TO_ONE: "ONE_TO_ONE" = "ONE_TO_ONE";
+    static ONE_TO_MANY: "ONE_TO_MANY" = "ONE_TO_MANY";
+    static MANY_TO_MANY: "MANY_TO_MANY" = "MANY_TO_MANY";
 
     CompositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY";
     ChildType: string;
@@ -11,6 +11,8 @@
     GerundUrl: string;
     ChildIdProp: string;
     ParentIdProp: string;
+    LinkingMap: any;
+    callGetAll: boolean;
 
     constructor(compositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY",
         childType: string,
@@ -21,8 +23,12 @@
         gerundName: string = null,
         gerundUrl: string = null
         ) {
-        this.CompositionType = compositionType;
+            this.CompositionType = compositionType;
             this.ChildType = childType;
+            if (childUrl == window[childType].urlMapping.urlGetAll) {
+                // flag that getAll will be called
+                this.callGetAll = true;
+            }
             this.ChildUrl = childUrl;
             this.PropertyName = propertyName;
             this.ChildIdProp = childIdProp;

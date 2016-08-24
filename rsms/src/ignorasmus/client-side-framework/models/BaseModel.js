@@ -1,10 +1,8 @@
 var BaseModel = (function () {
     function BaseModel() {
     }
-    BaseModel.prototype.getUrlMappings = function () { return this.urlMappings; };
-    BaseModel.prototype.setUrlMappings = function (mappings) { this.urlMappings = mappings; };
     BaseModel.prototype.contruct = function () {
-        if (!this.urlMappings) {
+        if (!BaseModel.urlMapping) {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
         }
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
@@ -14,5 +12,6 @@ var BaseModel = (function () {
             this.ClassPropName = this[DataStoreManager.classPropName];
         }
     };
+    BaseModel.urlMapping = new UrlMapping("foot", "", "");
     return BaseModel;
 }());

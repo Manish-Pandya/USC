@@ -11,18 +11,15 @@
     <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
     <script src="../client-side-framework/InstanceFactory.js"></script>
-    <script src="../client-side-framework/BaseModel.js"></script>
     <script src="../client-side-framework/CompositionMapping.js"></script>
     <script src="../client-side-framework/UrlMapping.js"></script>
+    <script src="../client-side-framework/models/BaseModel.js"></script>
     <script src="../../client-side-framework/genericModel/inheritance.js"></script>
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
     <script src="../../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
-    <script src="../../rad/scripts/models/PrincipalInvestigator.js"></script>
-    <script src="../client-side-framework/PrincipalInvestigator.js"></script>
-    <script src="../../rad/scripts/models/Room.js"></script>
-    <script src="../../rad/scripts/models/User.js"></script>
-    <script src="../../rad/scripts/models/Hazard.js"></script>
-    <script src="../../rad/scripts/models/Department.js"></script>
+    <script src="../client-side-framework/models/User.js"></script>
+    <script src="../client-side-framework/models/Room.js"></script>
+    <script src="../client-side-framework/models/PrincipalInvestigator.js"></script>
     <script>
         //InstanceFactory.testCopy();
         /*var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
@@ -37,7 +34,7 @@
         console.log(DataStoreManager.ActualModel);
         console.log(DataStoreManager.CurrentViewModel);*/
 
-        var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
+        var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         console.log("approved classNames:", classNames);
         //console.log("Look:", DataStoreManager.getAll("User"));
 
@@ -53,7 +50,7 @@
             console.log(pis[0]);
         }
 
-        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis), DataStoreManager.getAll("Hazard", hazards), DataStoreManager.getAll("Room", rooms)];
+        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {

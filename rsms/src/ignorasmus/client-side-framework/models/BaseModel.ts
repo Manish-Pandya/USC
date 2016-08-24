@@ -1,13 +1,11 @@
-﻿abstract class BaseModel{
-    private urlMappings: UrlMapping;
-    protected getUrlMappings(): UrlMapping { return this.urlMappings;}
-    protected setUrlMappings(mappings: UrlMapping): void { this.urlMappings = mappings; }
+﻿abstract class BaseModel {
+    static urlMapping: UrlMapping = new UrlMapping("foot", "", "");
 
     protected UID: number;
     protected ClassPropName: string;
 
     contruct() {
-        if (!this.urlMappings) {
+        if (!BaseModel.urlMapping) {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
         }
 

@@ -5,6 +5,10 @@ var CompositionMapping = (function () {
         if (gerundUrl === void 0) { gerundUrl = null; }
         this.CompositionType = compositionType;
         this.ChildType = childType;
+        if (childUrl == window[childType].urlMapping.urlGetAll) {
+            // flag that getAll will be called
+            this.callGetAll = true;
+        }
         this.ChildUrl = childUrl;
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;

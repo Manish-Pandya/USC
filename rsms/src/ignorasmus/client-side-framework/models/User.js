@@ -6,12 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 var User = (function (_super) {
     __extends(User, _super);
     function User() {
-        _super.apply(this, arguments);
+        _super.call(this);
     }
-    User.prototype.setUrlMappings = function () {
-        var mappings = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
-        _super.prototype.setUrlMappings.call(this, mappings);
-    };
     User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
+    User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
     return User;
 }(BaseModel));
