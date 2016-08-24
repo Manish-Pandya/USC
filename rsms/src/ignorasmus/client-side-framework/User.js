@@ -12,5 +12,6 @@ var User = (function (_super) {
         var mappings = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
         _super.prototype.setUrlMappings.call(this, mappings);
     };
+    User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
     return User;
 }(BaseModel));

@@ -5,7 +5,7 @@
 //constructor
 var User = function (api) {
     User.url = "";
-    User.urlAll = "http://erasmus.graysail.com:9080/rsms/src/ajaxaction.php?action=getAllUsers";
+    User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
 };
 
 User.prototype = {

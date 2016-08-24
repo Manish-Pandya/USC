@@ -93,7 +93,8 @@ abstract class InstanceFactory {
             var children = [];
             if (DataStoreManager.ActualModel[compMap.ChildType].getAllPromise) {
                 DataStoreManager.ActualModel[compMap.ChildType].getAllPromise.then(function () {
-                    for (let i = 0; i < DataStoreManager.ActualModel[compMap.ChildType].Data.length; i++) {
+                    var len: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
+                    for (let i: number = 0; i < len; i++) {
                         //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                         if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                             //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);

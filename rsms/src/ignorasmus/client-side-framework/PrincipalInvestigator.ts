@@ -1,6 +1,6 @@
 ﻿class PrincipalInvestigator extends BaseModel {
 
-    static urlAll = "http://erasmus.graysail.com:9080/rsms/src/ajaxaction.php?action=getAllPIs";
+    static urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     User: User;
     UserMap: CompositionMapping = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User", "User_id");
     public loadUser(): User {

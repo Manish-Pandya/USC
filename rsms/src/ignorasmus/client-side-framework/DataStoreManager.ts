@@ -44,10 +44,11 @@ abstract class DataStoreManager {
     //
     //----------------------------------------------------------------------
 
+    // TODO: Consider method overload to allow multiple types and viewModelParents
     static getAll(type: string, viewModelParent: any[]): any[] {
         if (!DataStoreManager._actualModel[type]) {
-            DataStoreManager._actualModel[type] = {}
-            DataStoreManager._actualModel[type].getAll = true;
+            DataStoreManager._actualModel[type] = {};
+            DataStoreManager._actualModel[type].getAllCalled = true;
             if (!DataStoreManager._actualModel[type].getAllPromise) {
                 DataStoreManager._actualModel[type].getAllPromise = $.getJSON(window[type].urlAll)
                     .done(function (d) {

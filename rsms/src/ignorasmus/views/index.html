@@ -44,6 +44,7 @@
         users = [];
         hazards = [];
         pis = [];
+        rooms = [];
 
         var testEditingUser = function () {
             users[0].Email = "suck@toe.cunt";
@@ -52,7 +53,7 @@
             console.log(pis[0]);
         }
 
-        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis), DataStoreManager.getAll("Hazard", hazards)];
+        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis), DataStoreManager.getAll("Hazard", hazards), DataStoreManager.getAll("Room", rooms)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {

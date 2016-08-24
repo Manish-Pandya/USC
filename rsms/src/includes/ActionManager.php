@@ -1832,7 +1832,7 @@ class ActionManager {
         }
     }
 
-    public function getAllRooms($allLazy = NULL){
+    public function getAllRooms($allLazy = true){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $dao = $this->getDao(new Room());

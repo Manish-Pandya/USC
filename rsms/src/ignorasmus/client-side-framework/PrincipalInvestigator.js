@@ -20,6 +20,6 @@ var PrincipalInvestigator = (function (_super) {
         var mappings = new UrlMapping("getAllPis", "getPiById&id=", "savePI");
         _super.prototype.setUrlMappings.call(this, mappings);
     };
-    PrincipalInvestigator.urlAll = "http://erasmus.graysail.com:9080/rsms/src/ajaxaction.php?action=getAllPIs";
+    PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     return PrincipalInvestigator;
 }(BaseModel));

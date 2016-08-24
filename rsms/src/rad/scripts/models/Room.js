@@ -1,7 +1,10 @@
 'use strict';
 
 //constructor
-var Room = function() {};
+var Room = function () {
+    Room.url = "";
+    Room.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllRooms";
+};
 Room.prototype = {
 
     // many-to-many relationship for rooms-pi
@@ -35,6 +38,8 @@ Room.prototype = {
 }
 
 extend(Room, GenericModel);
+
+Room();
 
 angular
     .module("room", [])
