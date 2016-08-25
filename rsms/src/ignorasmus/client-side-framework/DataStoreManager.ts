@@ -16,6 +16,7 @@ abstract class DataStoreManager {
 
     static classPropName: string = "Class";
     static uidString: string = "Key_id";
+    static baseUrl: string = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
     // NOTE: there's intentionally no getter
@@ -50,7 +51,7 @@ abstract class DataStoreManager {
             DataStoreManager._actualModel[type] = {};
             DataStoreManager._actualModel[type].getAllCalled = true;
             if (!DataStoreManager._actualModel[type].getAllPromise) {
-                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(window[type].urlAll)
+                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(DataStoreManager.baseUrl + window[type].urlMapping.urlGetAll)
                     .done(function (d) {
                         d = InstanceFactory.convertToClasses(d);
                         //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.

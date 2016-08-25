@@ -39,7 +39,7 @@ var DataStoreManager = (function () {
             DataStoreManager._actualModel[type] = {};
             DataStoreManager._actualModel[type].getAllCalled = true;
             if (!DataStoreManager._actualModel[type].getAllPromise) {
-                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(window[type].urlAll)
+                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(DataStoreManager.baseUrl + window[type].urlMapping.urlGetAll)
                     .done(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
@@ -154,6 +154,7 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
+    DataStoreManager.baseUrl = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};

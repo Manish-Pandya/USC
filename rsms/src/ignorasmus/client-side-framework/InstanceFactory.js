@@ -96,20 +96,28 @@ var InstanceFactory = (function () {
             }
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+            if (!parent[compMap.PropertyName])
+                parent[compMap.PropertyName] = [];
             //Get the gerunds.then
-            $.getJSON(window[compMap.ChildType].urlAll)
+            $.getJSON(DataStoreManager.baseUrl + compMap.GerundUrl)
                 .done(function (d) {
+                console.log(d);
+            });
+            /*
+        $.getJSON(DataStoreManager.baseUrl + window[compMap.ChildType].urlMapping.urlGetAll)
+            .done(function (d) {
                 d = InstanceFactory.convertToClasses(d);
                 //DIG:  DataStoreManager._actualModel[compMap.ChildType].Data is the holder for the actual data of this type.
                 //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
                 DataStoreManager.ActualModel[compMap.ChildType].Data = d;
-                _.assign(parent, {});
-                // Dig this neat way to use viewModelParent as a reference instead of a value!
-                var o = _.assign(parent, _.cloneDeep(d));
+                parent[compMap.PropertyName].splice(0, parent[compMap.PropertyName].length);
+                // Dig this neat way to use parent[compMap.PropertyName] as a reference instead of a value!
+                Array.prototype.push.apply(parent[compMap.PropertyName], _.cloneDeep(d));
             })
-                .fail(function (d) {
+            .fail(function (d) {
                 console.log("shit... getJSON failed:", d.statusText);
-            });
+            })
+            */
             if (compMap.callGetAll) {
                 if (!parent[compMap.PropertyName])
                     parent[compMap.PropertyName] = [];

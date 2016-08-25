@@ -107,7 +107,13 @@ abstract class InstanceFactory {
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
 			if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
             //Get the gerunds.then
-            $.getJSON(window[compMap.ChildType].urlAll)
+            $.getJSON(DataStoreManager.baseUrl + compMap.GerundUrl)
+                .done(function (d) {
+                    console.log(d);
+                })
+
+                /*
+            $.getJSON(DataStoreManager.baseUrl + window[compMap.ChildType].urlMapping.urlGetAll)
                 .done(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     //DIG:  DataStoreManager._actualModel[compMap.ChildType].Data is the holder for the actual data of this type.
@@ -120,7 +126,7 @@ abstract class InstanceFactory {
                 .fail(function (d) {
                     console.log("shit... getJSON failed:", d.statusText);
                 })
-
+                */
             if (compMap.callGetAll) {
                 if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
                 DataStoreManager.getAll(compMap.ChildType, parent[compMap.PropertyName]).then(function () {
