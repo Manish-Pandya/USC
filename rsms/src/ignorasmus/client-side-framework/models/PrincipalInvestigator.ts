@@ -1,7 +1,7 @@
 ﻿class PrincipalInvestigator extends BaseModel {
 
     static urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
-    static urlMapping = new UrlMapping("getAllPis", "getPiById&id=", "savePI");
+    static urlMapping = new UrlMapping("getAllPIs", "getPiById&id=", "savePI");
 
     User: User;
     UserMap: CompositionMapping = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User", "User_id");
@@ -22,6 +22,11 @@
 
     private Rooms: Room[];
     //RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id",  "Key_id")
-    RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.ClassPropName + "&class2=Room");
+    RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
+
+    onFulfill(): void {
+        super.onFulfill();
+        this.RoomMap = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
+    }
 
 }

@@ -21,18 +21,6 @@
     <script src="../client-side-framework/models/Room.js"></script>
     <script src="../client-side-framework/models/PrincipalInvestigator.js"></script>
     <script>
-        //InstanceFactory.testCopy();
-        /*var classNames = InstanceFactory.getClassNames("/rad/scripts/models/");
-        for (var n = 0; n < classNames.length; n++) {
-            console.log(InstanceFactory.createInstance(classNames[n]));
-        }*/
-        /*var data = { name: "I'm a thing", num: 9, user: new User(), room: new Room(), nested: { thing: "I'm a thing too", num: 99, user: new User(), pi: new PrincipalInvestigator() } };
-        DataStoreManager.ActualModel = data;
-        DataStoreManager.syncViewModel(DataStoreManager.ActualModel);
-
-        DataStoreManager.setViewModelProp(DataStoreManager.ActualModel.room.viewModelReference, "className", "POOP!!!");
-        console.log(DataStoreManager.ActualModel);
-        console.log(DataStoreManager.CurrentViewModel);*/
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         console.log("approved classNames:", classNames);

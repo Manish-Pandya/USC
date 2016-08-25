@@ -154,7 +154,7 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
+    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};

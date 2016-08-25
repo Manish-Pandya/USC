@@ -16,10 +16,6 @@ abstract class InstanceFactory {
 
     static _classNames: string[];
 
-    static A: any = { thing: "I'm A" };
-    static B: any = { thing: "I'm B", butt: "I'm an ass" };
-    static C: any = { thing: "I'm C" };
-
     //----------------------------------------------------------------------
     //
     //  Methods
@@ -68,6 +64,7 @@ abstract class InstanceFactory {
                         var instance: any = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
                             instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                            instance.onFulfill();
                             // Run composition routine here based on instance's CompositionMapping //
                             for (var instanceProp in instance) {
                                 if (instance[instanceProp] instanceof CompositionMapping) {
@@ -105,13 +102,22 @@ abstract class InstanceFactory {
                 })
             }
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+            //console.log(parent.TypeName,DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType]);
 			if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
             //Get the gerunds.then
-            $.getJSON(DataStoreManager.baseUrl + compMap.GerundUrl)
-                .done(function (d) {
-                    console.log(d);
-                })
+            if (typeof DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType] == "undefined" || !DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise) {
+                DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType] = {};
+                DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise = $.getJSON(DataStoreManager.baseUrl + compMap.GerundUrl)
+                    .done(function (dookie) {
+                        DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff = dookie;
+                        //find relevant gerunds for this parent instance
+                    })
 
+            } else {
+                DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise.then(function (d) {
+                    //find relevant gerunds for this parent instance
+                })
+            }
                 /*
             $.getJSON(DataStoreManager.baseUrl + window[compMap.ChildType].urlMapping.urlGetAll)
                 .done(function (d) {
@@ -124,7 +130,7 @@ abstract class InstanceFactory {
 					Array.prototype.push.apply(parent[compMap.PropertyName], _.cloneDeep(d));
                 })
                 .fail(function (d) {
-                    console.log("shit... getJSON failed:", d.statusText);
+                    console.log("dang... getJSON failed:", d.statusText);
                 })
                 */
             if (compMap.callGetAll) {
@@ -175,28 +181,6 @@ abstract class InstanceFactory {
             );
         });
         return target;
-    }
-
-    static testCopy(): void {
-        console.log("A", this.A);
-        console.log("B", this.B);
-        console.log("C", this.C);
-        this.copyProperties(this.A, this.B, this.C);
-        console.log("after copy");
-        console.log("A", this.A);
-        console.log("B", this.B);
-        console.log("C", this.C);
-        this.C.thing = "C Poot";
-        console.log("after setting C to 'C Poot'");
-        console.log("A", this.A);
-        console.log("B", this.B);
-        console.log("C", this.C);
-        console.log("after setting A to 'A Poot'");
-        this.A.thing = "A Poot";
-        console.log("A", this.A);
-        console.log("B", this.B);
-        console.log("C", this.C);
-        console.log("Suck it, fools! It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy test pending.");
     }
 
     /*static affixWatchers(): void {
