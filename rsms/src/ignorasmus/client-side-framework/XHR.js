@@ -13,12 +13,10 @@ var XHR = (function () {
         if (body === void 0) { body = null; }
         return new Promise(function (resolve, reject) {
             var fullUrl = DataStoreManager.baseUrl + url;
-            var xhr = new _this.Request();
-            console.log(method, fullUrl);
+            var xhr = new _this.REQUEST();
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function () {
-                console.log("hello");
                 if (_this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     return resolve(JSON.parse(xhr.responseText));
                 }
@@ -33,12 +31,12 @@ var XHR = (function () {
                     statusText: xhr.statusText
                 });
             };
-            if (!body)
-                body = null;
-            xhr.send(body);
+            //handle posted data if needed
+            var postBody = body ? JSON.stringify(body) : null;
+            xhr.send(postBody);
         });
     };
-    XHR.Request = XMLHttpRequest || ActiveXObject;
+    XHR.REQUEST = XMLHttpRequest || ActiveXObject;
     XHR.SUCCESS_CODES = [200, 201];
     return XHR;
 }());

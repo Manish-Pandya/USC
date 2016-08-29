@@ -1,6 +1,6 @@
 ﻿class XHR {
 
-    static Request: any = XMLHttpRequest || ActiveXObject;
+    static REQUEST: any = XMLHttpRequest || ActiveXObject;
 
     static SUCCESS_CODES = [200,201]; 
 
@@ -12,23 +12,16 @@
         return this._sendRequest('POST', url, body);
     }
 
-    constructor() { }
-
     //-----------  Send Request  -----------//
 
     private static _sendRequest(method: string, url: string, body: any = null) {
         return new Promise((resolve, reject) => {
             var fullUrl = DataStoreManager.baseUrl + url;
-            var xhr = new this.Request();
-            console.log(method, fullUrl);
+            var xhr = new this.REQUEST();
             
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
-
-            console.log(xhr.open(method, fullUrl));
-
             xhr.onload = () => {
-                console.log("hello");
                 if (this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     return resolve(JSON.parse(xhr.responseText));
                 }
@@ -45,8 +38,9 @@
                 });
             };
 
-            if (!body) body = null;
-            xhr.send(body);           
+            //handle posted data if needed
+            var postBody = body ? JSON.stringify(body) : null;
+            xhr.send(postBody);           
             
         })
     }
