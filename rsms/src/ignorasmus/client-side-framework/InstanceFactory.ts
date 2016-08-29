@@ -34,6 +34,10 @@ abstract class InstanceFactory {
                         var className: string = pathArray.pop().split(".")[0];
                         if (this._classNames.indexOf(className) == -1) {
                             this._classNames.push(className);
+                            //init DataStoreManager holders
+                            DataStoreManager.ActualModel[className] = {};
+                            DataStoreManager.ActualModel[className].getAllPromise = new Promise(function(){}, function(){});
+                            console.log(DataStoreManager.ActualModel[className]);
                         }
                     }
                 }
@@ -83,7 +87,6 @@ abstract class InstanceFactory {
         drillDown(data);
         return data;
     }
-
     static getChildInstances(compMap: CompositionMapping, parent: any): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             //TODO:  wrap in promise if IsPromisified
@@ -108,9 +111,10 @@ abstract class InstanceFactory {
             if (typeof DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType] == "undefined" || !DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise) {
                 DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType] = {};
                 DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise = $.getJSON(DataStoreManager.baseUrl + compMap.GerundUrl)
-                    .done(function (dookie) {
-                        DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff = dookie;
+                    .done(function (d) {
+                        DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff = d;
                         //find relevant gerunds for this parent instance
+                       
                     })
 
             } else {
@@ -118,6 +122,29 @@ abstract class InstanceFactory {
                     //find relevant gerunds for this parent instance
                 })
             }
+            //, DataStoreManager.ActualModel[compMap.ChildType].getAllPromise NEVER GETS FULFILLED!?!?!?!?!?
+            Promise.all([DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].promise, DataStoreManager.getAll(compMap.ChildType, parent[compMap.PropertyName])])
+                .then(function(data){                        
+                        for (let i = 0; i < DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff.length; i++){
+                            if (DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff[i][compMap.DEFAULT_MANY_TO_MANY_PARENT_ID] == parent.UID){
+                                   compMap.LinkingMaps.push(DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff[i]);
+                                   parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
+                                   console.log('dig');
+                            }
+                            if(parent.Key_id == 1){
+                                console.log(parent, 
+                                            DataStoreManager.ActualModel[parent.TypeName + "To" + compMap.ChildType].stuff[i][compMap.DEFAULT_MANY_TO_MANY_PARENT_ID],
+                                            parent.UID
+                                            );
+                            }
+                        }
+                        
+                })
+
+            /*
+             
+            */
+
                 /*
             $.getJSON(DataStoreManager.baseUrl + window[compMap.ChildType].urlMapping.urlGetAll)
                 .done(function (d) {
@@ -132,7 +159,8 @@ abstract class InstanceFactory {
                 .fail(function (d) {
                     console.log("dang... getJSON failed:", d.statusText);
                 })
-                */
+               
+
             if (compMap.callGetAll) {
                 if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
                 DataStoreManager.getAll(compMap.ChildType, parent[compMap.PropertyName]).then(function () {
@@ -149,7 +177,7 @@ abstract class InstanceFactory {
             } else {
                 //get the matching subset
             }
-
+             */
             //local method for finding relevant children
 
         } else {
