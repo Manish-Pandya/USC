@@ -13,6 +13,7 @@
     <script src="../client-side-framework/InstanceFactory.js"></script>
     <script src="../client-side-framework/CompositionMapping.js"></script>
     <script src="../client-side-framework/UrlMapping.js"></script>
+    <script src="../client-side-framework/XHR.js"></script>
     <script src="../client-side-framework/models/BaseModel.js"></script>
     <script src="../../client-side-framework/genericModel/inheritance.js"></script>
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
@@ -38,7 +39,7 @@
             console.log(pis[0]);
         }
 
-        var ps = [DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis)];
+        var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
