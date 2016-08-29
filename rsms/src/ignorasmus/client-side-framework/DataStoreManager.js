@@ -35,12 +35,12 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     // TODO: Consider method overload to allow multiple types and viewModelParents
     DataStoreManager.getAll = function (type, viewModelParent) {
-        if (!DataStoreManager._actualModel[type]) {
-            DataStoreManager._actualModel[type] = {};
-            DataStoreManager._actualModel[type].getAllCalled = true;
-            if (!DataStoreManager._actualModel[type].getAllPromise) {
-                DataStoreManager._actualModel[type].getAllPromise = $.getJSON(DataStoreManager.baseUrl + window[type].urlMapping.urlGetAll)
-                    .done(function (d) {
+        if (!DataStoreManager._actualModel[type].Data) {
+            //DataStoreManager._actualModel[type] = {};
+            if (!DataStoreManager._actualModel[type].getAllCalled) {
+                DataStoreManager._actualModel[type].getAllCalled = true;
+                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
+                    .then(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
                     //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
@@ -50,7 +50,7 @@ var DataStoreManager = (function () {
                     Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                     return viewModelParent;
                 })
-                    .fail(function (d) {
+                    .catch(function (d) {
                     console.log("shit... getJSON failed:", d.statusText);
                 });
             }
@@ -154,7 +154,7 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
+    DataStoreManager.baseUrl = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};
