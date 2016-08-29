@@ -3,6 +3,10 @@
     static ONE_TO_MANY: "ONE_TO_MANY" = "ONE_TO_MANY";
     static MANY_TO_MANY: "MANY_TO_MANY" = "MANY_TO_MANY";
 
+    //temp values for erasmus.  add to global config as optional param
+    DEFAULT_MANY_TO_MANY_PARENT_ID: string = "ParentId";
+    DEFAULT_MANY_TO_MANY_CHILD_ID: string = "ChildId";
+
     CompositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY";
     ChildType: string;
     ChildUrl: string;
@@ -11,7 +15,7 @@
     GerundUrl: string;
     ChildIdProp: string;
     ParentIdProp: string;
-    LinkingMap: any;
+    LinkingMaps: any[];
     callGetAll: boolean;
 
     constructor(compositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY",
@@ -45,6 +49,7 @@
                     this.GerundUrl = gerundUrl;
                 }
             }
+            this.LinkingMaps = [];
     }
 
 }
