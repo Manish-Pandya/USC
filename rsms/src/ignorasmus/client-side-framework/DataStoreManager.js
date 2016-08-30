@@ -51,7 +51,8 @@ var DataStoreManager = (function () {
                     return viewModelParent;
                 })
                     .catch(function (d) {
-                    console.log("shit... getJSON failed:", d.statusText);
+                    return d;
+                    console.log("shit... getJSON failed:", JSON.parse(d));
                 });
             }
         }
@@ -73,13 +74,13 @@ var DataStoreManager = (function () {
     /*this._actualModel.User.getAll("User", $scope.allTheUsers).then(function () {
         $scope.allTheUsers = [];
     })*/
-    DataStoreManager.getById = function (type, id, viewModelName) {
+    DataStoreManager.getById = function (type, id, viewModelParent) {
         var obj = this.findByPropValue(this._actualModel[type], this.uidString, id);
-        if (obj && obj.viewModels && obj.viewModels.hasOwnProperty(viewModelName)) {
-            return obj.viewModels[viewModelName];
+        if (obj) {
+            _.assign(viewModelParent, obj);
         }
         else {
-            throw new Error("No such id as " + id);
+            throw new Error("No such id as " + id + " already in actual model.");
         }
     };
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
@@ -154,7 +155,7 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
+    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};

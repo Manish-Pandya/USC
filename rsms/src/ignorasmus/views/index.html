@@ -33,24 +33,24 @@
         rooms = [];
 
         var testEditingUser = function () {
-            users[0].Email = "suck@toe.cunt";
-            console.log(users[0]);
+           // users[0].Email = "suck@toe.cunt";
+            //console.log(users[0]);
             //users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
-            console.log(pis[0]);
+            //console.log(pis[0]);
         }
 
         var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
-                    console.log("good:", whateverGotReturned);
+                    //console.log("good:", whateverGotReturned);
                     //console.log(users[0]);
                     //console.log(DataStoreManager.ActualModel["User"]);
                 }
             ).then(testEditingUser)
             .catch(
                 function (reason) {
-                    console.log("bad:", reason);
+                    //console.log("bad:", reason);
                 }
             )
 

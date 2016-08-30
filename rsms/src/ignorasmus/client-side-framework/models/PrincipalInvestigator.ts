@@ -4,7 +4,7 @@
     static urlMapping = new UrlMapping("getAllPIs", "getPiById&id=", "savePI");
 
     User: User;
-    UserMap: CompositionMapping = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User", "User_id");
+    UserMap: CompositionMapping;
 
     constructor() {
         super();
@@ -15,18 +15,19 @@
     }
 
     private LabPersonnel: User[];
-    LabPersonnelMap: CompositionMapping = new CompositionMapping("ONE_TO_MANY", "User", "getUserById&id=" + this.UID, "LabPersonnel", "Supervisor_id");
+    LabPersonnelMap: CompositionMapping;
     public loadLabPersonnel() {
         return (<any>this).labPersonnel;
     }
 
     private Rooms: Room[];
-    //RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id",  "Key_id")
-    RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
+    RoomMap: CompositionMapping;
 
     onFulfill(): void {
         super.onFulfill();
-        this.RoomMap = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
+        this.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=" + this.UID, "User", "User_id");
+        this.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
+        this.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
     }
 
 }

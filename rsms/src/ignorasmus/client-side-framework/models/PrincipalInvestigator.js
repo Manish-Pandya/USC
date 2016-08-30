@@ -7,10 +7,6 @@ var PrincipalInvestigator = (function (_super) {
     __extends(PrincipalInvestigator, _super);
     function PrincipalInvestigator() {
         _super.call(this);
-        this.UserMap = new CompositionMapping("ONE_TO_ONE", "User", "getUserById&id=" + this.UID, "User", "User_id");
-        this.LabPersonnelMap = new CompositionMapping("ONE_TO_MANY", "User", "getUserById&id=" + this.UID, "LabPersonnel", "Supervisor_id");
-        //RoomMap: CompositionMapping = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id",  "Key_id")
-        this.RoomMap = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
     }
     PrincipalInvestigator.prototype.loadUser = function () {
         return this.User;
@@ -20,7 +16,9 @@ var PrincipalInvestigator = (function (_super) {
     };
     PrincipalInvestigator.prototype.onFulfill = function () {
         _super.prototype.onFulfill.call(this);
-        this.RoomMap = new CompositionMapping("MANY_TO_MANY", "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
+        this.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=" + this.UID, "User", "User_id");
+        this.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
+        this.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
     };
     PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPiById&id=", "savePI");

@@ -16,7 +16,7 @@ abstract class DataStoreManager {
 
     static classPropName: string = "Class";
     static uidString: string = "Key_id";
-    static baseUrl: string = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
+    static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
     // NOTE: there's intentionally no getter
@@ -62,8 +62,9 @@ abstract class DataStoreManager {
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                         return viewModelParent;
                     })
-                    .catch( (d) => {
-                        console.log("shit... getJSON failed:", d.statusText);
+                    .catch((d) => {
+                        return d;
+                        console.log("shit... getJSON failed:", JSON.parse(d));
                     })
             }
         } else {
@@ -87,12 +88,12 @@ abstract class DataStoreManager {
         $scope.allTheUsers = [];
     })*/
 
-    static getById(type: string, id: string | number, viewModelName: string): any {
+    static getById(type: string, id: string | number, viewModelParent: any): any {
         var obj: any = this.findByPropValue(this._actualModel[type], this.uidString, id);
-        if (obj && obj.viewModels && obj.viewModels.hasOwnProperty(viewModelName)) {
-            return obj.viewModels[viewModelName];
+        if (obj) {
+            _.assign(viewModelParent, obj);
         } else {
-            throw new Error("No such id as " + id);
+            throw new Error("No such id as " + id + " already in actual model.");
         }
     }
 

@@ -30,7 +30,7 @@
                 }
             }
 
-            xhr.onerror = function () {
+            xhr.onerror = () => {
                 console.log("error", xhr.statusText);
                 return reject({
                     status: xhr.status,
