@@ -11,4 +11,4 @@ var User = (function (_super) {
     User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
     User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
     return User;
-}(BaseModel));
+}(FluxCompositerBase));

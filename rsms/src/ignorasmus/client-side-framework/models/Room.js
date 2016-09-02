@@ -11,4 +11,4 @@ var Room = (function (_super) {
     Room.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllRooms";
     Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
     return Room;
-}(BaseModel));
+}(FluxCompositerBase));

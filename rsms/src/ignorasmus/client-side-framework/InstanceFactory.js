@@ -81,7 +81,7 @@ var InstanceFactory = (function () {
                             var getGerunds = XHR.GET(compMap.ChildUrl);
                             Promise.all([getGerunds, DataStoreManager.getAll(compMap.ChildType, []), compMap]).then(function (d) {
                                 //console.log(DataStoreManager.ActualModel)
-                                console.log("the scoped comp map in many to many is", d[2]);
+                                //console.log("the scoped comp map in many to many is", d[2]);
                                 _this.getChildInstances(d[2], instance);
                             });
                         }
@@ -124,7 +124,18 @@ var InstanceFactory = (function () {
             }
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            console.log(parent.Key_id);
+            var stamp = new Date().getMilliseconds();
+            var len = DataStoreManager.ActualModel[parent.Class].Data.length;
+            var otherLen = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
+            for (var i = 0; i < len; i++) {
+                for (var j = 0; j < otherLen; j++) {
+                    var test = true;
+                    console.log(test);
+                }
+            }
+            var stamp2 = new Date().getMilliseconds();
+            console.log(stamp2 - stamp);
+            return;
             if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
                 if (!parent[compMap.PropertyName])
                     parent[compMap.PropertyName] = [];

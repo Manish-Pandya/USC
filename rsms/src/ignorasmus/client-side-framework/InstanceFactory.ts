@@ -89,7 +89,7 @@ abstract class InstanceFactory {
                             var getGerunds = XHR.GET(compMap.ChildUrl);
                             Promise.all([getGerunds, DataStoreManager.getAll(compMap.ChildType, []), compMap]).then((d) => {
                                 //console.log(DataStoreManager.ActualModel)
-                                console.log("the scoped comp map in many to many is", d[2]);
+                                //console.log("the scoped comp map in many to many is", d[2]);
 
                                 this.getChildInstances(d[2], instance);
                             })
@@ -138,8 +138,28 @@ abstract class InstanceFactory {
                 
             
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            console.log(parent.Key_id);
-            if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
+            var stamp = new Date().getMilliseconds();
+            var len: number = DataStoreManager.ActualModel[parent.Class].Data.length;
+            var otherLen: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
+            for (let i: number = 0; i < len; i++) {
+                for (let j: number = 0; j < otherLen; j++) {
+                    var test = true;
+                    console.log(test);
+                }
+                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
+                /*
+                if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                    //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
+                    //perhaps use a DataStore manager method that leverages findByPropValue here
+                    parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
+                }*/
+            }
+            var stamp2 = new Date().getMilliseconds();
+            console.log(stamp2 - stamp);
+            return;
+
+
+           if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
                 if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
                 //Get the gerunds.then
                 var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
