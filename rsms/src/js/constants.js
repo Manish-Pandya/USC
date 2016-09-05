@@ -95,7 +95,7 @@ var Constants = (function () {
         NO_COMPLETION_DATE_REASON: {
             NEEDS_EHS: { LABEL: "Completion date depends on EHS.", VALUE: "needs_ehs" },
             NEEDS_FACILITIES: { LABEL: "Completion date depends on facilities.", VALUE: "needs_facilities" },
-            INSUFFICIENT_FUNDS: { LABEL: "Insufficient funds for corrective action", VALUE: "insuficient_funds" }
+            INSUFFICIENT_FUNDS: { LABEL: "Insufficient funds for corrective action.", VALUE: "insuficient_funds" }
         }
     };
 

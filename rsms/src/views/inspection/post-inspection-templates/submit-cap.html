@@ -24,7 +24,7 @@
             <h3 class="bold pending-message">
                 <span>{{data.pendings}} Pending Corrective Action<span ng-if="data.pendings != 1">s</span></span>
             </h3>
-            <h3 ng-if="data.totals && data.correcteds.length">
+            <h3 ng-if="data.totals && data.correcteds">
                 <span>{{data.correcteds}} Deficienc<span ng-if="data.correcteds == 1">y</span><span ng-if="data.correcteds != 1">ies</span> Corrected During Inspection</span>
             </h3>
         </div>

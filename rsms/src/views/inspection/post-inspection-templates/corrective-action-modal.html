@@ -36,25 +36,25 @@
                     <datepicker2 ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection' on-change="copy.Needs_facilities = false; copy.Needs_ehs = false; copy.Insuficient_funds = false; copy.Other = false; copy.Other_reason = null;"></datepicker2>
                 </div>
             </div>
-            <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE || copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
+            <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
                 <label class="bold"><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>If no date can be provided, indicate why.</label>
                 <label class="checkbox" style="padding-top:4px">
-                    <input ng-disabled="dates.completionDate || dates.promisedDate" type="checkbox" ng-model="copy.Needs_facilities" />
+                    <input ng-disabled="dates.promisedDate" type="checkbox" ng-model="copy.Needs_facilities" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_FACILITIES.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Needs_ehs" ng-disabled="dates.completionDate || dates.promisedDate" />
+                    <input type="checkbox" ng-model="copy.Needs_ehs" ng-disabled="dates.promisedDate" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_EHS.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Insuficient_funds" ng-disabled="dates.completionDate || dates.promisedDate" />
+                    <input type="checkbox" ng-model="copy.Insuficient_funds" ng-disabled="dates.promisedDate" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.INSUFFICIENT_FUNDS.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Other" ng-disabled="dates.completionDate || dates.promisedDate" ng-init="copy.Other = !!copy.Other_reason" />
+                    <input type="checkbox" ng-model="copy.Other" ng-disabled="dates.promisedDate" ng-init="copy.Other = !!copy.Other_reason" />
                     <span class="metro-checkbox" ng-class="{'red': validationError.otherTextError}">Other</span><br />
                     <span class="red" ng-if="validationError.otherTextError">Please describe the reason that no date can be provided.</span>
                     <textarea style="margin: 5px 0 0 26px;width: 440px;" ng-model="copy.Other_reason" ng-show="copy.Other"></textarea>
@@ -64,6 +64,6 @@
     <div class="modal-footer">
         <i class="icon-spinnery-dealie spinner small" ng-if="dirty"></i>
         <button class="btn btn-success left btn-large" type="submit"><i class="icon-checkmark"></i>Save</button>
-        <a class="btn hazardBtn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+        <a class="btn hazardBtn btn-large left btn-danger" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
 </form>

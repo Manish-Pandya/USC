@@ -1328,10 +1328,11 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
   };
 
   $scope.tinymceOptions = {
-      plugins: 'link',
-      toolbar: 'bold | alignleft aligncenter alignright | link',
+      plugins: 'link lists',
+      toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
       menubar: false,
-      elementpath: false
+      elementpath: false,
+      content_style: "p,ul li {font-size:14px}"
   };
 
   $scope.close = function () {

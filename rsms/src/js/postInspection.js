@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter', 'ui.tinymce'])
+angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter', 'ui.tinymce'])
 .filter('joinBy', function () {
     return function (input, delimiter) {
         return (input || []).join(delimiter || ',');
@@ -882,6 +882,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
               def.CorrectiveActionCopy = angular.copy(promise);
               def.CorrectiveActions[0] = angular.copy(promise);
               postInspectionFactory.setInspection($scope.inspection);
+              $scope.data = postInspectionFactory.getIsReadyToSubmit()
           },
           function (promise) {
               def.error = 'There was a promblem saving the Corrective Action';
@@ -923,6 +924,8 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                 def.CorrectiveActions.push(returnedCA);
             }
             if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                $scope.data = postInspectionFactory.getIsReadyToSubmit();
+                console.log($scope.data)
                 var modalInstance = $modal.open({
                     templateUrl: 'post-inspection-templates/submit-cap.html',
                     controller: modalCtrl
@@ -1047,9 +1050,10 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
 
     $scope.tinymceOptions = {
         plugins: '',
-        toolbar: 'bold | alignleft aligncenter alignright',
+        toolbar: 'bold | italic | underline',
         menubar: false,
-        elementpath: false
+        elementpath: false,
+        content_style: "p {font-size:14px}"
     };
 
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
