@@ -54,40 +54,10 @@ var InstanceFactory = (function () {
     };
     // Crawls through data and its children, creating class instances as needed.
     InstanceFactory.convertToClasses = function (data) {
-        var _this = this;
         if (data && data[0] && data[0][DataStoreManager.classPropName]) {
             var instance = InstanceFactory.createInstance(data[0].Class);
             InstanceFactory.copyProperties(instance, data[0]);
             instance.onFulfill();
-            for (var instanceProp in instance) {
-                if (instance[instanceProp] instanceof CompositionMapping) {
-                    //console.log("dig:", instanceProp);
-                    console.log("the scoped CompositionMapping should be", compMap);
-                    var compMap = instance[instanceProp];
-                    // Do it here
-                    if (compMap.callGetAll) {
-                        //console.log("oh shit, boi wattup");
-                        if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-                            //TODO:  store this promise somewhere way up in scope
-                            /*Promise.all([DataStoreManager.getAll(compMap.ChildType, []), compMap]).then((d) => {
-                                this.getChildInstances(d[1], instance);
-                            })*/
-                            //TODO:  SECOND INDEX is a reference to compMap in the parent scope on the correct index of this loop, but we are insane for passing it this way
-                            Promise.all([DataStoreManager.getAll(compMap.ChildType, []), compMap]).then(function (d) {
-                                _this.getChildInstances(d[1], instance);
-                            });
-                        }
-                        else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                            var getGerunds = XHR.GET(compMap.ChildUrl);
-                            Promise.all([getGerunds, DataStoreManager.getAll(compMap.ChildType, []), compMap]).then(function (d) {
-                                //console.log(DataStoreManager.ActualModel)
-                                //console.log("the scoped comp map in many to many is", d[2]);
-                                _this.getChildInstances(d[2], instance);
-                            });
-                        }
-                    }
-                }
-            }
         }
         var drillDown = function (parentNode) {
             for (var prop in parentNode) {
@@ -124,20 +94,8 @@ var InstanceFactory = (function () {
             }
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            var stamp = new Date().getMilliseconds();
-            var len = DataStoreManager.ActualModel[parent.Class].Data.length;
-            var otherLen = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
-            for (var i = 0; i < len; i++) {
-                for (var j = 0; j < otherLen; j++) {
-                    var test = true;
-                    console.log(test);
-                }
-            }
-            var stamp2 = new Date().getMilliseconds();
-            console.log(stamp2 - stamp);
-            return;
             if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-                if (!parent[compMap.PropertyName])
+                if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null)
                     parent[compMap.PropertyName] = [];
                 //Get the gerunds.then
                 var manyTypeToManyChildType = parent.TypeName + "To" + compMap.ChildType;
@@ -145,7 +103,20 @@ var InstanceFactory = (function () {
                     DataStoreManager.ActualModel[manyTypeToManyChildType] = {};
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                         .then(function (d) {
-                        DataStoreManager.ActualModel[manyTypeToManyChildType].stuff = d;
+                        DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
+                        var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                        var gerundLen = d.length;
+                        //loop through all the gerunds
+                        for (var i = 0; i < gerundLen; i++) {
+                            var g = d[i];
+                            var childLen = childStore.length;
+                            for (var x = 0; x < childLen; x++) {
+                                var child = childStore[x];
+                                if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                    parent[compMap.PropertyName].push(child);
+                                }
+                            }
+                        }
                         //find relevant gerunds for this parent instance
                     })
                         .catch(function (f) {
@@ -154,9 +125,23 @@ var InstanceFactory = (function () {
                 }
                 else {
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then(function (d) {
-                        //find relevant gerunds for this parent instance
+                        var d = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
+                        var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                        var gerundLen = d.length;
+                        //loop through all the gerunds
+                        for (var i = 0; i < gerundLen; i++) {
+                            var g = d[i];
+                            var childLen = childStore.length;
+                            for (var x = 0; x < childLen; x++) {
+                                var child = childStore[x];
+                                if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                    parent[compMap.PropertyName].push(child);
+                                }
+                            }
+                        }
                     });
                 }
+                return;
                 parent["test"] = "l;aksjfl;akjsdlf";
                 if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff) {
                     var len = DataStoreManager.ActualModel[manyTypeToManyChildType].stuff.length;

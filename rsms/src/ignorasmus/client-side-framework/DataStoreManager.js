@@ -28,52 +28,70 @@ var DataStoreManager = (function () {
         if (this.isPromisified) {
         }
     };
-    //----------------------------------------------------------------------
-    //
-    //  Methods
-    //
-    //----------------------------------------------------------------------
     // TODO: Consider method overload to allow multiple types and viewModelParents
-    DataStoreManager.getAll = function (type, viewModelParent) {
+    DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
+        if (compMaps === void 0) { compMaps = null; }
         if (!DataStoreManager._actualModel[type].Data) {
             //DataStoreManager._actualModel[type] = {};
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
-                    d = InstanceFactory.convertToClasses(d);
-                    //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                    //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
-                    DataStoreManager._actualModel[type].Data = d;
-                    viewModelParent.splice(0, viewModelParent.length);
-                    // Dig this neat way to use viewModelParent as a reference instead of a value!
-                    Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                    return viewModelParent;
+                    if (compMaps) {
+                        var allComps = [];
+                        var thisClass = window[type];
+                        for (var instanceProp in thisClass) {
+                            console.log(instanceProp);
+                            if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                            }
+                        }
+                        return Promise.all(allComps)
+                            .then(function (whateverGotReturned) {
+                            console.log(whateverGotReturned);
+                            d = InstanceFactory.convertToClasses(d);
+                            //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
+                            //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                            DataStoreManager._actualModel[type].Data = d;
+                            viewModelParent.splice(0, viewModelParent.length);
+                            // Dig this neat way to use viewModelParent as a reference instead of a value!
+                            Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                            if (compMaps) {
+                                viewModelParent.forEach(function (value, index, array) {
+                                    value.doCompose(compMaps);
+                                });
+                            }
+                            console.log(viewModelParent.length);
+                            return viewModelParent;
+                        })
+                            .catch(function (reason) {
+                            console.log("really bad:", reason);
+                        });
+                    }
+                    else {
+                        d = InstanceFactory.convertToClasses(d);
+                        //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
+                        //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                        DataStoreManager._actualModel[type].Data = d;
+                        viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
+                        // Dig this neat way to use viewModelParent as a reference instead of a value!
+                        Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                        return viewModelParent;
+                    }
                 })
                     .catch(function (d) {
+                    console.log("dang... getJSON failed:", d);
                     return d;
-                    console.log("shit... getJSON failed:", JSON.parse(d));
                 });
             }
         }
         else {
+            viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
             Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
             viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
         }
         return this.promisifyData(DataStoreManager._actualModel[type].getAllPromise);
-        /*this._actualModel.User = {
-            "14": {
-                Data: { Key_id: 14, Name: "John Doe", Class: "User" },
-                Promise:someThing
-            },
-            getAllCalled: Boolean = false,
-            getAllPromise: promiseObjectResolutingFromCallToGetAllUsers
-        }
-        this._actualModel.PromiseCache*/
     };
-    /*this._actualModel.User.getAll("User", $scope.allTheUsers).then(function () {
-        $scope.allTheUsers = [];
-    })*/
     DataStoreManager.getById = function (type, id, viewModelParent) {
         var obj = this.findByPropValue(this._actualModel[type], this.uidString, id);
         if (obj) {

@@ -8,20 +8,19 @@ var PrincipalInvestigator = (function (_super) {
     function PrincipalInvestigator() {
         _super.call(this);
     }
-    PrincipalInvestigator.prototype.loadUser = function () {
-        return this.User;
-    };
-    PrincipalInvestigator.prototype.loadLabPersonnel = function () {
-        return this.labPersonnel;
-    };
+    ;
     PrincipalInvestigator.prototype.onFulfill = function (callback) {
         if (callback === void 0) { callback = null; }
-        this.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=" + this.UID, "User", "User_id");
-        this.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
-        this.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=" + this.TypeName + "&class2=Room");
-        return _super.prototype.onFulfill.call(this, callback);
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
     };
     PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPiById&id=", "savePI");
+    PrincipalInvestigator.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
+    PrincipalInvestigator.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
+    PrincipalInvestigator.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getAllRooms", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
     return PrincipalInvestigator;
 }(FluxCompositerBase));

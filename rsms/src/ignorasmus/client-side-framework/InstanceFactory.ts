@@ -65,41 +65,8 @@ abstract class InstanceFactory {
             var instance: any = InstanceFactory.createInstance(data[0].Class);
             InstanceFactory.copyProperties(instance, data[0]);
             instance.onFulfill();
-            for (var instanceProp in instance) {
-                if (instance[instanceProp] instanceof CompositionMapping) {
-                    //console.log("dig:", instanceProp);
-                    console.log("the scoped CompositionMapping should be", compMap);
-
-                    var compMap: CompositionMapping = instance[instanceProp];
-                    // Do it here
-                    if (compMap.callGetAll) {
-                        //console.log("oh shit, boi wattup");
-
-                        if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-                            //TODO:  store this promise somewhere way up in scope
-                            /*Promise.all([DataStoreManager.getAll(compMap.ChildType, []), compMap]).then((d) => {
-                                this.getChildInstances(d[1], instance);
-                            })*/
-                            //TODO:  SECOND INDEX is a reference to compMap in the parent scope on the correct index of this loop, but we are insane for passing it this way
-                            Promise.all([DataStoreManager.getAll(compMap.ChildType, []), compMap]).then((d) => {
-                                this.getChildInstances(d[1], instance);
-                            })
-
-                        } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                            var getGerunds = XHR.GET(compMap.ChildUrl);
-                            Promise.all([getGerunds, DataStoreManager.getAll(compMap.ChildType, []), compMap]).then((d) => {
-                                //console.log(DataStoreManager.ActualModel)
-                                //console.log("the scoped comp map in many to many is", d[2]);
-
-                                this.getChildInstances(d[2], instance);
-                            })
-                        }
-                    }
-
-                }
-            }
         }
-
+        
         var drillDown = (parentNode: any): void => {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
@@ -109,7 +76,7 @@ abstract class InstanceFactory {
                             instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
                             instance.onFulfill();
                             // Run composition routine here based on instance's CompositionMapping //
-                           
+
                             // set instance
                             parentNode[prop] = instance;
                         }
@@ -119,6 +86,7 @@ abstract class InstanceFactory {
             }
         }
         drillDown(data);
+
         return data;
     }
 
@@ -138,37 +106,32 @@ abstract class InstanceFactory {
                 
             
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            var stamp = new Date().getMilliseconds();
-            var len: number = DataStoreManager.ActualModel[parent.Class].Data.length;
-            var otherLen: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
-            for (let i: number = 0; i < len; i++) {
-                for (let j: number = 0; j < otherLen; j++) {
-                    var test = true;
-                    console.log(test);
-                }
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                /*
-                if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
-                    //perhaps use a DataStore manager method that leverages findByPropValue here
-                    parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
-                }*/
-            }
-            var stamp2 = new Date().getMilliseconds();
-            console.log(stamp2 - stamp);
-            return;
+            if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
 
 
-           if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-                if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
+                if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null) parent[compMap.PropertyName] = [];
                 //Get the gerunds.then
                 var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
                 if (typeof DataStoreManager.ActualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager.ActualModel[manyTypeToManyChildType].promise) {
                     DataStoreManager.ActualModel[manyTypeToManyChildType] = {};
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                         .then(function (d) {
-                            DataStoreManager.ActualModel[manyTypeToManyChildType].stuff = d;
+                            DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
+                            var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                            var gerundLen = d.length;
+                            //loop through all the gerunds
+                            for (let i: number = 0; i < gerundLen; i++){
+                                var g = d[i];
+                                let childLen: number = childStore.length;
+                                for (let x = 0; x < childLen; x++) {
+                                    let child: FluxCompositerBase = childStore[x];
+                                    if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                        parent[compMap.PropertyName].push(child);
+                                    }
+                                }                                
+                            }
                             //find relevant gerunds for this parent instance
+
 
                         })
                         .catch((f) => {
@@ -176,16 +139,31 @@ abstract class InstanceFactory {
                         })
 
                 } else {
-                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then(function (d) {
-                        //find relevant gerunds for this parent instance
-                    })
+                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d) => {
+                        var d = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
+                        var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                        var gerundLen = d.length;
+                        //loop through all the gerunds
+                        for (let i: number = 0; i < gerundLen; i++) {
+                            var g = d[i];
+                            let childLen: number = childStore.length;
+                            for (let x = 0; x < childLen; x++) {
+                                let child: FluxCompositerBase = childStore[x];
+                                if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                    parent[compMap.PropertyName].push(child);
+                                }
+                            }
+                        }
+                    })                    
+                    
                 }
+                return;
                 parent["test"] = "l;aksjfl;akjsdlf";
                 if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff) {
                     var len: number = DataStoreManager.ActualModel[manyTypeToManyChildType].stuff.length;
                     console.log(parent.Key_id);
                     return;
-                    for (let i = 0; i < len; i++) {
+                    for (let i: number = 0; i < len; i++) {
                         if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i][compMap.DEFAULT_MANY_TO_MANY_PARENT_ID] == parent.UID) {
                             compMap.LinkingMaps.push(DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i]);
                         }
