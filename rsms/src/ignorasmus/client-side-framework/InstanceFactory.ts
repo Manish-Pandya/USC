@@ -92,7 +92,6 @@ abstract class InstanceFactory {
 
     static getChildInstances(compMap: CompositionMapping, parent: any): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-
             if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
             var len: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
             for (let i: number = 0; i < len; i++) {
@@ -103,11 +102,8 @@ abstract class InstanceFactory {
                     parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
                 }
             }
-                
-            
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-
 
                 if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null) parent[compMap.PropertyName] = [];
                 //Get the gerunds.then
@@ -125,27 +121,28 @@ abstract class InstanceFactory {
                                 let childLen: number = childStore.length;
                                 for (let x = 0; x < childLen; x++) {
                                     let child: FluxCompositerBase = childStore[x];
-                                    if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                    if (parent.UID == g.ParentId && child.UID == g.ChildId) {
                                         parent[compMap.PropertyName].push(child);
                                     }
                                 }                                
                             }
-                            //find relevant gerunds for this parent instance
-
-
+                            // init collection in viewModel to be replaced with referenceless actualModel data
+                            parent.viewModelWatcher[compMap.PropertyName] = [];
+                            // clone collection from actualModel to viewModel
+                            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                         })
                         .catch((f) => {
-                            console.log(f);
+                            console.log("getChildInstances:", f);
                         })
 
                 } else {
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d) => {
-                        var d = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
-                        var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
-                        var gerundLen = d.length;
+                        var childStore: FluxCompositerBase[] = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                        var d: any[] = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
+                        var gerundLen: number = d.length;
                         //loop through all the gerunds
                         for (let i: number = 0; i < gerundLen; i++) {
-                            var g = d[i];
+                            var g: any = d[i];
                             let childLen: number = childStore.length;
                             for (let x = 0; x < childLen; x++) {
                                 let child: FluxCompositerBase = childStore[x];
@@ -154,78 +151,22 @@ abstract class InstanceFactory {
                                 }
                             }
                         }
+                        // init collection in viewModel to be replaced with referenceless actualModel data
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+                        // clone collection from actualModel to viewModel
+                        parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                     })                    
                     
                 }
                 return;
-                parent["test"] = "l;aksjfl;akjsdlf";
-                if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff) {
-                    var len: number = DataStoreManager.ActualModel[manyTypeToManyChildType].stuff.length;
-                    console.log(parent.Key_id);
-                    return;
-                    for (let i: number = 0; i < len; i++) {
-                        if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i][compMap.DEFAULT_MANY_TO_MANY_PARENT_ID] == parent.UID) {
-                            compMap.LinkingMaps.push(DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i]);
-                        }
-                        console.log(parent.Class, parent.UID, compMap.LinkingMaps)
-                        /*
-                        for (let n = 0; n < compMap.LinkingMaps.length; n++) {
-                            var mapping = compMap.LinkingMaps[n];
-                            if (mapping[compMap.DEFAULT_MANY_TO_MANY_PARENT_ID] == parent.UID) {
-                                if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
-                                console.log("matched");
-                                //parent[compMap.PropertyName].push(DataStoreManager.getById(compMap.ChildType, 1));
-                                //DataStoreManager.getById(parent.TypeName, mapping[compMap.DEFAULT_MANY_TO_MANY_CHILD_ID], parent[compMap.PropertyName]);
-                            }
-                        }
-                        */
-                    }
-                }
             }
-
-            /*
-            $.getJSON(DataStoreManager.baseUrl + window[compMap.ChildType].urlMapping.urlGetAll)
-                .done(function (d) {
-                    d = InstanceFactory.convertToClasses(d);
-                    //DIG:  DataStoreManager._actualModel[compMap.ChildType].Data is the holder for the actual data of this type.
-                    //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
-                    DataStoreManager.ActualModel[compMap.ChildType].Data = d;
-					parent[compMap.PropertyName].splice(0, parent[compMap.PropertyName].length);
-					// Dig this neat way to use parent[compMap.PropertyName] as a reference instead of a value!
-					Array.prototype.push.apply(parent[compMap.PropertyName], _.cloneDeep(d));
-                })
-                .fail(function (d) {
-                    console.log("dang... getJSON failed:", d.statusText);
-                })
-               
-
-            if (compMap.callGetAll) {
-                if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
-                DataStoreManager.getAll(compMap.ChildType, parent[compMap.PropertyName]).then(function () {
-                    var len: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
-                    for (let i: number = 0; i < len; i++) {
-                        //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                        if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                            //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
-                            //perhaps use a DataStore manager method that leverages findByPropValue here
-                            parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
-                        }
-                    }
-                })
-            } else {
-                //get the matching subset
-            }
-             */
-            //local method for finding relevant children
-
         } else {
-            var childInstance = this.createInstance(compMap.ChildType);
-            childInstance.Email = "foo@yoo.poo";
+            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
     }
 
     // Copies properties/values from sources to target.
-    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy test pending."
+    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
     static copyProperties(target: any, ...sources: any[]): any {
         sources.forEach(source => {
             Object.defineProperties(
@@ -233,13 +174,6 @@ abstract class InstanceFactory {
                 Object.getOwnPropertyNames(source).reduce(
                     (descriptors: { [index: string]: any }, key: string) => {
                         descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-                        /*
-                        PUMP IN OBSERVERS AT GRANULAR LEVEL HERE BECAUSE IT WILL BE PERFORMANT EVEN IF DAVID DOESN'T THINK WE NEED IT TO BE
-                        if (!actualModelThing.flatWatcherMap.indexOf(viewModelThing.uid)) {
-                                actualModelThing.
-                                actualModelThing.Watchers.push();
-                        }
-                        */
                         return descriptors;
                     },
                     {}

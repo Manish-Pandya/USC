@@ -38,7 +38,7 @@
             //users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
             //console.log(pis[0]);
         }
-        var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+        var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, [PrincipalInvestigator.RoomMap])];
         //var ps = [DataStoreManager.getAll("Room", rooms)];
         Promise.all(ps)
             .then(

@@ -19,15 +19,6 @@ var DataStoreManager = (function () {
         enumerable: true,
         configurable: true
     });
-    DataStoreManager.storeThings = function (things) {
-        if (!DataStoreManager.ActualModel[things[0].Class])
-            DataStoreManager.ActualModel[things[0].Class] = {};
-        for (var i = 0; i < things.length; i++) {
-            DataStoreManager.ActualModel[things[0].Class][things[i].Key_id].Model = things[i];
-        }
-        if (this.isPromisified) {
-        }
-    };
     // TODO: Consider method overload to allow multiple types and viewModelParents
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
@@ -48,24 +39,22 @@ var DataStoreManager = (function () {
                         }
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            console.log(whateverGotReturned);
+                            viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
                             d = InstanceFactory.convertToClasses(d);
-                            //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                            //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
-                            DataStoreManager._actualModel[type].Data = d;
-                            viewModelParent.splice(0, viewModelParent.length);
-                            // Dig this neat way to use viewModelParent as a reference instead of a value!
-                            Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                            if (compMaps) {
-                                viewModelParent.forEach(function (value, index, array) {
+                            d.forEach(function (value, index, array) {
+                                if (!value.viewModelWatcher) {
+                                    value.viewModelWatcher = _.cloneDeep(value);
+                                }
+                                viewModelParent[index] = value.viewModelWatcher;
+                                if (compMaps) {
                                     value.doCompose(compMaps);
-                                });
-                            }
-                            console.log(viewModelParent.length);
+                                }
+                            });
+                            DataStoreManager._actualModel[type].Data = d;
                             return viewModelParent;
                         })
                             .catch(function (reason) {
-                            console.log("really bad:", reason);
+                            console.log("getAll (inner promise):", reason);
                         });
                     }
                     else {
@@ -80,7 +69,7 @@ var DataStoreManager = (function () {
                     }
                 })
                     .catch(function (d) {
-                    console.log("dang... getJSON failed:", d);
+                    console.log("getAll:", d);
                     return d;
                 });
             }
@@ -175,6 +164,7 @@ var DataStoreManager = (function () {
     DataStoreManager.uidString = "Key_id";
     DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
+    DataStoreManager.imBusy = false;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};
     return DataStoreManager;

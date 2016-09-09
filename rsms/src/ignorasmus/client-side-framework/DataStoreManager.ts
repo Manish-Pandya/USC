@@ -19,6 +19,8 @@ abstract class DataStoreManager {
     static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
+    static imBusy: boolean = false;
+
     // NOTE: there's intentionally no getter
     private static _actualModel: any = {};
     static get ActualModel(): any {
@@ -26,17 +28,6 @@ abstract class DataStoreManager {
     }
     static set ActualModel(value: any) {
         this._actualModel = InstanceFactory.convertToClasses(value);
-    }
-
-    static storeThings(things: any[]): void {
-        if (!DataStoreManager.ActualModel[things[0].Class]) DataStoreManager.ActualModel[things[0].Class] = {};
-        for (let i = 0; i < things.length; i++) {
-            DataStoreManager.ActualModel[things[0].Class][things[i].Key_id].Model = things[i];
-        }
-        if (this.isPromisified) {
-            //TODO: store relevant promise
-            //DataStoreManager[thing[0].Class][thing[0].Key_id].Promise = ...
-        }
     }
 
     //----------------------------------------------------------------------
@@ -67,26 +58,25 @@ abstract class DataStoreManager {
                             return Promise.all(allComps)
                                 .then(
                                 function (whateverGotReturned) {
-                                    console.log(whateverGotReturned);
-                                        
-                                    d = InstanceFactory.convertToClasses(d);                                        
-                                    //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                                    //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
-                                    DataStoreManager._actualModel[type].Data = d;
-                                    viewModelParent.splice(0, viewModelParent.length);
-                                    // Dig this neat way to use viewModelParent as a reference instead of a value!
-                                    Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                                    if (compMaps) {
-                                        viewModelParent.forEach((value: any, index: number, array: any[]) => {
+                                    viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
+                                    d = InstanceFactory.convertToClasses(d);                                
+                                    
+                                    d.forEach((value: any, index: number, array: any[]) => {
+                                        if (!value.viewModelWatcher) {
+                                            value.viewModelWatcher = _.cloneDeep(value);    
+                                        }
+                                        viewModelParent[index] = value.viewModelWatcher;
+                                        if (compMaps) {
                                             value.doCompose(compMaps);
-                                        });
-                                    }
-                                    console.log(viewModelParent.length);
+                                        }
+                                    });
+                                    DataStoreManager._actualModel[type].Data = d;
+
                                     return viewModelParent;
                                 })
                                 .catch(
                                     function (reason) {
-                                        console.log("really bad:", reason);
+                                        console.log("getAll (inner promise):", reason);
                                     }
                                 )
                     } else {
@@ -101,7 +91,7 @@ abstract class DataStoreManager {
                     }
                     })
                     .catch((d) => {
-                        console.log("dang... getJSON failed:", d);
+                        console.log("getAll:", d);
                         return d;
                     })
             }

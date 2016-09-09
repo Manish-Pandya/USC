@@ -112,21 +112,24 @@ var InstanceFactory = (function () {
                             var childLen = childStore.length;
                             for (var x = 0; x < childLen; x++) {
                                 var child = childStore[x];
-                                if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                if (parent.UID == g.ParentId && child.UID == g.ChildId) {
                                     parent[compMap.PropertyName].push(child);
                                 }
                             }
                         }
-                        //find relevant gerunds for this parent instance
+                        // init collection in viewModel to be replaced with referenceless actualModel data
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+                        // clone collection from actualModel to viewModel
+                        parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                     })
                         .catch(function (f) {
-                        console.log(f);
+                        console.log("getChildInstances:", f);
                     });
                 }
                 else {
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then(function (d) {
-                        var d = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
                         var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                        var d = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
                         var gerundLen = d.length;
                         //loop through all the gerunds
                         for (var i = 0; i < gerundLen; i++) {
@@ -139,30 +142,21 @@ var InstanceFactory = (function () {
                                 }
                             }
                         }
+                        // init collection in viewModel to be replaced with referenceless actualModel data
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+                        // clone collection from actualModel to viewModel
+                        parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                     });
                 }
                 return;
-                parent["test"] = "l;aksjfl;akjsdlf";
-                if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff) {
-                    var len = DataStoreManager.ActualModel[manyTypeToManyChildType].stuff.length;
-                    console.log(parent.Key_id);
-                    return;
-                    for (var i = 0; i < len; i++) {
-                        if (DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i][compMap.DEFAULT_MANY_TO_MANY_PARENT_ID] == parent.UID) {
-                            compMap.LinkingMaps.push(DataStoreManager.ActualModel[manyTypeToManyChildType].stuff[i]);
-                        }
-                        console.log(parent.Class, parent.UID, compMap.LinkingMaps);
-                    }
-                }
             }
         }
         else {
-            var childInstance = this.createInstance(compMap.ChildType);
-            childInstance.Email = "foo@yoo.poo";
+            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
     };
     // Copies properties/values from sources to target.
-    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy test pending."
+    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
     InstanceFactory.copyProperties = function (target) {
         var sources = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -171,13 +165,6 @@ var InstanceFactory = (function () {
         sources.forEach(function (source) {
             Object.defineProperties(target, Object.getOwnPropertyNames(source).reduce(function (descriptors, key) {
                 descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-                /*
-                PUMP IN OBSERVERS AT GRANULAR LEVEL HERE BECAUSE IT WILL BE PERFORMANT EVEN IF DAVID DOESN'T THINK WE NEED IT TO BE
-                if (!actualModelThing.flatWatcherMap.indexOf(viewModelThing.uid)) {
-                        actualModelThing.
-                        actualModelThing.Watchers.push();
-                }
-                */
                 return descriptors;
             }, {}));
         });
