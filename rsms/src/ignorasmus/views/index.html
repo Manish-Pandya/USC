@@ -25,7 +25,6 @@
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         console.log("approved classNames:", classNames);
-        //console.log("Look:", DataStoreManager.getAll("User"));
 
         users = [];
         hazards = [];
@@ -33,12 +32,12 @@
         rooms = [];
 
         var testEditingUser = function () {
-           // users[0].Email = "suck@toe.foot";
-            //console.log(users[0]);
-            //users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
-            //console.log(pis[0]);
+            users[0].Email = "some@email.foo";
+            console.log(users[0]);
+            users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
+            console.log(users[0]);
         }
-        var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, [PrincipalInvestigator.RoomMap])];
+        var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
         //var ps = [DataStoreManager.getAll("Room", rooms)];
         Promise.all(ps)
             .then(

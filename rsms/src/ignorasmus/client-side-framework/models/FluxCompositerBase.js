@@ -22,7 +22,7 @@ var FluxCompositerBase = (function () {
     };
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
         var allCompMaps = [];
-        var thisClass = this["constructor"];
+        var thisClass = this.constructor;
         for (var instanceProp in thisClass) {
             if (thisClass[instanceProp] instanceof CompositionMapping) {
                 allCompMaps.push(thisClass[instanceProp]);

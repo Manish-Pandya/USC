@@ -14,7 +14,6 @@
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];
         }
-
         if (DataStoreManager.classPropName && this[DataStoreManager.classPropName]) {
             this.TypeName = this[DataStoreManager.classPropName];
         }
@@ -24,7 +23,7 @@
 
     doCompose(compMaps: CompositionMapping[] | boolean): void {
         var allCompMaps: CompositionMapping[] = [];
-        var thisClass: Function = this["constructor"];
+        var thisClass: Function = (<any>this).constructor;
         for (var instanceProp in thisClass) {
             if (thisClass[instanceProp] instanceof CompositionMapping) {
                 allCompMaps.push(thisClass[instanceProp]);

@@ -19,11 +19,16 @@ var DataStoreManager = (function () {
         enumerable: true,
         configurable: true
     });
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
     // TODO: Consider method overload to allow multiple types and viewModelParents
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
+        viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data) {
-            //DataStoreManager._actualModel[type] = {};
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
@@ -32,14 +37,13 @@ var DataStoreManager = (function () {
                         var allComps = [];
                         var thisClass = window[type];
                         for (var instanceProp in thisClass) {
-                            console.log(instanceProp);
                             if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                console.log(instanceProp);
                                 allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                             }
                         }
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
                             d = InstanceFactory.convertToClasses(d);
                             d.forEach(function (value, index, array) {
                                 if (!value.viewModelWatcher) {
@@ -62,7 +66,6 @@ var DataStoreManager = (function () {
                         //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
                         //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
                         DataStoreManager._actualModel[type].Data = d;
-                        viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
                         // Dig this neat way to use viewModelParent as a reference instead of a value!
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                         return viewModelParent;
@@ -75,7 +78,6 @@ var DataStoreManager = (function () {
             }
         }
         else {
-            viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
             Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
             viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
         }
@@ -100,20 +102,14 @@ var DataStoreManager = (function () {
                 return viewModelObj;
             }
             else {
-                console.log("shit dude... I'm not familiar with this class or object type");
+                console.log("dang dude... I'm not familiar with this class or object type");
             }
         }
     };
     DataStoreManager.commitToActualModel = function (viewModelParent) {
-        var success;
-        if (success) {
-            // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
-            this._actualModel = _.cloneDeep(viewModelParent);
-        }
-        else {
-            console.log("wtf");
-        }
-        return success;
+        // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
+        this._actualModel = _.cloneDeep(viewModelParent);
+        return true;
     };
     // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
     DataStoreManager.setViewModelProp = function (propParent, propName, value, optionalCallBack) {
@@ -164,7 +160,6 @@ var DataStoreManager = (function () {
     DataStoreManager.uidString = "Key_id";
     DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
-    DataStoreManager.imBusy = false;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};
     return DataStoreManager;

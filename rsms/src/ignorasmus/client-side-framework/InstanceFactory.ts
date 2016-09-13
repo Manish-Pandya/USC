@@ -37,7 +37,6 @@ abstract class InstanceFactory {
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
                             DataStoreManager.ActualModel[className].getAllPromise = new Promise(function(){}, function(){});
-                            console.log(DataStoreManager.ActualModel[className]);
                         }
                     }
                 }
@@ -74,11 +73,8 @@ abstract class InstanceFactory {
                         var instance: any = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
                             instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
+                            parentNode[prop] = instance; // set instance
                             instance.onFulfill();
-                            // Run composition routine here based on instance's CompositionMapping //
-
-                            // set instance
-                            parentNode[prop] = instance;
                         }
                     }
                     drillDown(parentNode[prop]);
@@ -92,19 +88,21 @@ abstract class InstanceFactory {
 
     static getChildInstances(compMap: CompositionMapping, parent: any): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            if (!parent[compMap.PropertyName]) parent[compMap.PropertyName] = [];
+            if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null) parent[compMap.PropertyName] = [];
             var len: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
             for (let i: number = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class,DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
-                    //perhaps use a DataStore manager method that leverages findByPropValue here
+                    //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class, DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
                     parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
                 }
             }
+            // init collection in viewModel to be replaced with referenceless actualModel data
+            parent.viewModelWatcher[compMap.PropertyName] = [];
+            // clone collection from actualModel to viewModel
+            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-
                 if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null) parent[compMap.PropertyName] = [];
                 //Get the gerunds.then
                 var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
@@ -120,9 +118,8 @@ abstract class InstanceFactory {
                                 var g = d[i];
                                 let childLen: number = childStore.length;
                                 for (let x = 0; x < childLen; x++) {
-                                    let child: FluxCompositerBase = childStore[x];
-                                    if (parent.UID == g.ParentId && child.UID == g.ChildId) {
-                                        parent[compMap.PropertyName].push(child);
+                                    if (parent.UID == g.ParentId && childStore[x].UID == g.ChildId) {
+                                        parent[compMap.PropertyName].push(childStore[x]);
                                     }
                                 }                                
                             }
@@ -161,6 +158,7 @@ abstract class InstanceFactory {
                 return;
             }
         } else {
+            // clone collection from actualModel to viewModel
             parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
     }

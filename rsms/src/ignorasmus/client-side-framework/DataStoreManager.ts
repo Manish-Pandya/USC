@@ -19,8 +19,6 @@ abstract class DataStoreManager {
     static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
-    static imBusy: boolean = false;
-
     // NOTE: there's intentionally no getter
     private static _actualModel: any = {};
     static get ActualModel(): any {
@@ -36,12 +34,10 @@ abstract class DataStoreManager {
     //
     //----------------------------------------------------------------------
 
-    waiters: any[];
-
     // TODO: Consider method overload to allow multiple types and viewModelParents
     static getAll(type: string, viewModelParent: any[], compMaps: CompositionMapping[] | boolean = null): any[] {
+        viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data) {
-            //DataStoreManager._actualModel[type] = {};
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
@@ -50,30 +46,28 @@ abstract class DataStoreManager {
                             var allComps: any[] = [];
                             var thisClass: Function = window[type];
                             for (var instanceProp in thisClass) {
-                                console.log(instanceProp);
                                 if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                    console.log(instanceProp);
                                     allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                 }
                             }
                             return Promise.all(allComps)
                                 .then(
-                                function (whateverGotReturned) {
-                                    viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
-                                    d = InstanceFactory.convertToClasses(d);                                
-                                    
-                                    d.forEach((value: any, index: number, array: any[]) => {
-                                        if (!value.viewModelWatcher) {
-                                            value.viewModelWatcher = _.cloneDeep(value);    
-                                        }
-                                        viewModelParent[index] = value.viewModelWatcher;
-                                        if (compMaps) {
-                                            value.doCompose(compMaps);
-                                        }
-                                    });
-                                    DataStoreManager._actualModel[type].Data = d;
+                                    function (whateverGotReturned) {
+                                        d = InstanceFactory.convertToClasses(d);                                
+                                        d.forEach((value: any, index: number, array: any[]) => {
+                                            if (!value.viewModelWatcher) {
+                                                value.viewModelWatcher = _.cloneDeep(value);    
+                                            }
+                                            viewModelParent[index] = value.viewModelWatcher;
+                                            if (compMaps) {
+                                                value.doCompose(compMaps);
+                                            }
+                                        });
+                                        DataStoreManager._actualModel[type].Data = d;
 
-                                    return viewModelParent;
-                                })
+                                        return viewModelParent;
+                                    })
                                 .catch(
                                     function (reason) {
                                         console.log("getAll (inner promise):", reason);
@@ -84,7 +78,6 @@ abstract class DataStoreManager {
                         //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
                         //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
                         DataStoreManager._actualModel[type].Data = d;
-                        viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
                         // Dig this neat way to use viewModelParent as a reference instead of a value!
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                         return viewModelParent;
@@ -96,7 +89,6 @@ abstract class DataStoreManager {
                     })
             }
         } else {
-            viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
             Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
             viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
         }
@@ -121,20 +113,16 @@ abstract class DataStoreManager {
                 viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]], this.uidString, viewModelObj[this.uidString]);
                 return viewModelObj;
             } else {
-                console.log("shit dude... I'm not familiar with this class or object type");
+                console.log("dang dude... I'm not familiar with this class or object type");
             }
         }
     }
 
     private static commitToActualModel(viewModelParent: any): boolean {
-        var success: boolean;
-        if (success) {
-            // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
-            this._actualModel = _.cloneDeep(viewModelParent);
-        } else {
-            console.log("wtf");
-        }
-        return success;
+        // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
+        this._actualModel = _.cloneDeep(viewModelParent);
+
+        return true;
     }
 
     // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
@@ -169,7 +157,7 @@ abstract class DataStoreManager {
         } else {
             var p = new Promise((resolve, reject) => {
                 if (data) {
-                    resolve(data)
+                    resolve(data);
                 } else {
                     reject("bad in dsm");
                 }
