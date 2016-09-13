@@ -102,10 +102,10 @@ echo "</script>";
 
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 
-    <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
-    <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
+   
+
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-1.10.0.min.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui-1.10.3.custom.min.js"></script>
@@ -153,6 +153,7 @@ echo "</script>";
     <script type="text/javascript" src="./scripts/controllers/hazardInventoryCtrl.js"></script>
 
 
+
     <!-- models -->
     <script type="text/javascript" src="scripts/models/HazardDto.js"></script>
     <script type="text/javascript" src="scripts/models/PIHazardRoomDto.js"></script>
@@ -162,6 +163,8 @@ echo "</script>";
 
     <!-- filters -->
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 </head>
 
 <body>

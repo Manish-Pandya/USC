@@ -319,11 +319,12 @@ angular
         }
 
         ac.savePI = function(pi, copy){
-            this.save(copy)
+            return this.save(copy)
                 .then(
                     function(returned){
                         pi.Inspection_notes = returned.Inspection_notes;
                         pi.editNote = false;
+                        return returned;
                     },
                     function(){
                         ac.setError("Something went wrong.");
