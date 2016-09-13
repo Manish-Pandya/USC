@@ -507,6 +507,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                     if(!question.Responses.Observations)question.Responses.Observations = [];
                                     question.Responses.Key_id = returnedResponse.Key_id;
                                     question.Responses.Answer = responseDto.Answer;
+                                    if (returnedResponse.Answer.toLowerCase() != "no") {
+                                        question.Responses.DeficiencySelections = [];
+                                        question.Deficiencies.every(function (def) {
+                                            def.selected = false;
+                                        })
+
+                                    }
                                     return returnedResponse;
                                 }
                             )
@@ -1323,7 +1330,7 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
     Key_id: $scope.pi.Key_id,
     Is_active: $scope.pi.Is_active,
     User_id: $scope.pi.User_id,
-    Inspection_notes: $scope.pi.Inspection_notes,
+    //Inspection_notes: $scope.pi.Inspection_notes,
     Class:"PrincipalInvestigator"
   };
 
@@ -1340,7 +1347,10 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
   };
 
   $scope.edit = function(state){
-    $scope.pi.editNote = state;
+      $scope.pi.editNote = state;
+      if (state != false) {
+          $scope.piCopy.Inspection_notes = $scope.pi.Inspection_notes
+      }
   }
 
   $scope.saveNote = function(){
