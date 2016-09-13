@@ -26,6 +26,18 @@
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         console.log("approved classNames:", classNames);
 
+        var firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
+            .then(
+                function (whateverGotReturned) {
+                    console.log(firstPI);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad getById:", reason);
+                }
+            );
+
         users = [];
         hazards = [];
         pis = [];
@@ -37,22 +49,24 @@
             users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
             console.log(users[0]);
         }
+
         var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
         //var ps = [DataStoreManager.getAll("Room", rooms)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
-                    //console.log("good:", whateverGotReturned);
-                    //pis[0].doCompose(true);
                     console.log(pis[0], pis[1], pis[2]);
                     //console.log(DataStoreManager.ActualModel["User"]);
+
+                    firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true);
+                    console.log(firstPI);
                 }
             ).then(testEditingUser)
             .catch(
                 function (reason) {
-                    console.log("bad:", reason);
+                    console.log("bad Promise.all:", reason);
                 }
-            )
+            );
 
     </script>
 </head>

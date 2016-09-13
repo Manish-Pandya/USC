@@ -1,7 +1,7 @@
 ﻿class PrincipalInvestigator extends FluxCompositerBase {
 
     static urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
-    static urlMapping = new UrlMapping("getAllPIs", "getPiById&id=", "savePI");
+    static urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
 
     User: User;
     static UserMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");

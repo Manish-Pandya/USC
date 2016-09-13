@@ -36,7 +36,8 @@ abstract class InstanceFactory {
                             this._classNames.push(className);
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
-                            DataStoreManager.ActualModel[className].getAllPromise = new Promise(function(){}, function(){});
+                            DataStoreManager.ActualModel[className].getAllPromise = new Promise(function () { }, function () { });
+                            DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
                 }
@@ -60,10 +61,12 @@ abstract class InstanceFactory {
 
     // Crawls through data and its children, creating class instances as needed.
     static convertToClasses(data: any): any {
-        if (data && data[0] && data[0][DataStoreManager.classPropName]) {
-            var instance: any = InstanceFactory.createInstance(data[0].Class);
-            InstanceFactory.copyProperties(instance, data[0]);
+        if (data && data[DataStoreManager.classPropName]) {
+            var instance: any = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
+            InstanceFactory.copyProperties(instance, data);
             instance.onFulfill();
+
+            return instance;
         }
         
         var drillDown = (parentNode: any): void => {
@@ -82,7 +85,7 @@ abstract class InstanceFactory {
             }
         }
         drillDown(data);
-
+        
         return data;
     }
 
@@ -180,29 +183,5 @@ abstract class InstanceFactory {
         });
         return target;
     }
-
-    /*static affixWatchers(): void {
-        var masterPi = new PrincipalInvestigator();
-        masterPi.testProperty = "test";
-
-        masterPi.observers = [];
-
-        masterPi.testProperty = "updated";
-        var i = 0;
-        var childPis = [];
-        for (i; i < 10000; i++) {
-            childPis[i] = new PrincipalInvestigator();
-            masterPi.observers[i] = childPis[i];
-           // childPis[i].watcher = masterPi.watch();
-        }
-        masterPi.watch("testProperty", function (it, oldValue, newValue) {
-            console.log(it, oldValue, newValue);
-            for (var i = 0; i < masterPi.observers.length; i++) {
-                masterPi.observers[i]["testProperty"] = masterPi["testProperty"];
-            }
-        })
-        masterPi.testProperty = "updated";
-        console.log(childPis[100].testProperty);
-    }*/
 
 }

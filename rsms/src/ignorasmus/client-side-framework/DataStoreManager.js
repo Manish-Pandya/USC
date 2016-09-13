@@ -34,6 +34,7 @@ var DataStoreManager = (function () {
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
                     if (compMaps) {
+                        // TODO: Remove unneeded code so we only care about listed compMaps (if compMaps is array)
                         var allComps = [];
                         var thisClass = window[type];
                         for (var instanceProp in thisClass) {
@@ -50,9 +51,7 @@ var DataStoreManager = (function () {
                                     value.viewModelWatcher = _.cloneDeep(value);
                                 }
                                 viewModelParent[index] = value.viewModelWatcher;
-                                if (compMaps) {
-                                    value.doCompose(compMaps);
-                                }
+                                value.doCompose(compMaps);
                             });
                             DataStoreManager._actualModel[type].Data = d;
                             return viewModelParent;
@@ -83,14 +82,35 @@ var DataStoreManager = (function () {
         }
         return this.promisifyData(DataStoreManager._actualModel[type].getAllPromise);
     };
-    DataStoreManager.getById = function (type, id, viewModelParent) {
-        var obj = this.findByPropValue(this._actualModel[type], this.uidString, id);
-        if (obj) {
-            _.assign(viewModelParent, obj);
+    DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
+        if (compMaps === void 0) { compMaps = null; }
+        id = id.toString();
+        if (!this._actualModel[type].Data) {
+            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
+                .then(function (d) {
+                if (compMaps) {
+                }
+                else {
+                    viewModelParent = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
+                    console.log(viewModelParent);
+                    return viewModelParent;
+                }
+            })
+                .catch(function (d) {
+                console.log("getById:", d);
+                return d;
+            });
         }
         else {
-            throw new Error("No such id as " + id + " already in actual model.");
+            var d = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
+            return InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
         }
+        /*var obj: any = this.findByPropValue(this._actualModel[type], this.uidString, id);
+        if (obj) {
+            _.assign(viewModelParent, obj);
+        } else {
+            throw new Error("No such id as " + id + " already in actual model.");
+        }*/
     };
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
         if (Array.isArray(viewModelObj)) {

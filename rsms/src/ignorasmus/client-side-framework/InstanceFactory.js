@@ -30,6 +30,7 @@ var InstanceFactory = (function () {
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
                             DataStoreManager.ActualModel[className].getAllPromise = new Promise(function () { }, function () { });
+                            DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
                 }
@@ -53,10 +54,11 @@ var InstanceFactory = (function () {
     };
     // Crawls through data and its children, creating class instances as needed.
     InstanceFactory.convertToClasses = function (data) {
-        if (data && data[0] && data[0][DataStoreManager.classPropName]) {
-            var instance = InstanceFactory.createInstance(data[0].Class);
-            InstanceFactory.copyProperties(instance, data[0]);
+        if (data && data[DataStoreManager.classPropName]) {
+            var instance = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
+            InstanceFactory.copyProperties(instance, data);
             instance.onFulfill();
+            return instance;
         }
         var drillDown = function (parentNode) {
             for (var prop in parentNode) {
