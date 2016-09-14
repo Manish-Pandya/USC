@@ -68,7 +68,7 @@
                 <h3 style="width:167px;">EH&S Auditor(s):</h3>
                 <p style="width:154px;margin-top:3px;">
                     <span>
-                        <span ng-repeat="inspector in inspection.Inspectors">{{inspector.User.Name}}<span ng-show="!$last">, </span></span>
+                        <span ng-repeat="inspector in inspection.Inspectors">{{inspector.Name}}<span ng-show="!$last">, </span></span>
                 </p>
             </span>
             </p>
@@ -87,34 +87,36 @@
         <i class="icon-spinnery-dealie spinner small" style="color:white;margin-top:5px"></i>
     </span>
 </h2>
-<div style="background: #989898 !important;border-color: #989898;" class="alert submit-cap-info" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.LAB_CONTACT], R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
+
+<div ng-if="(pf.getIsReadyToSubmit().totals && !pf.getIsReadyToSubmit().readyToSubmit) || (pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds)" style="background: #989898 !important;border-color: #989898;" class="alert submit-cap-info" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.LAB_CONTACT], R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     
-    <span ng-init="data = pf.getIsReadyToSubmit()"></span>
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
-    <div>
+    <div ng-if="(pf.getIsReadyToSubmit().totals && !pf.getIsReadyToSubmit().readyToSubmit) || (pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds)">
         <h2 ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
         <h3>The status of your corrective actions includes:</h3>
         <div style="padding:3px 0">
             <h3 class="bold totals-message">
-                <span>{{data.uncorrecteds}} Deficienc<span ng-if="data.uncorrecteds == 1">y</span><span ng-if="data.uncorrecteds != 1">ies</span> Needing Corrective Actions</span>
+                <span>{{pf.getIsReadyToSubmit().uncorrecteds}} Deficienc<span ng-if="pf.getIsReadyToSubmit().uncorrecteds == 1">y</span><span ng-if="pf.getIsReadyToSubmit().uncorrecteds != 1">ies</span> Needing Corrective Actions</span>
             </h3>
             <h3 class="bold complete-message">
-                <span>{{data.completes}} Completed Corrective Action<span ng-if="data.completes != 1">s</span></span>
+                <span>{{pf.getIsReadyToSubmit().completes}} Completed Corrective Action<span ng-if="pf.getIsReadyToSubmit().completes != 1">s</span></span>
             </h3>
             <h3 class="bold pending-message">
-                <span>{{data.pendings}} Pending Corrective Action<span ng-if="data.pendings != 1">s</span></span>
+                <span>{{pf.getIsReadyToSubmit().pendings}} Pending Corrective Action<span ng-if="pf.getIsReadyToSubmit().pendings != 1">s</span></span>
             </h3>
-            <h3 ng-if="data.totals && data.correcteds">
-                <span>{{data.correcteds}} Deficienc<span ng-if="data.correcteds == 1">y</span><span ng-if="data.correcteds != 1">ies</span> Corrected During Inspection</span>
+            <h3 ng-if="pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().correcteds">
+                <span>{{pf.getIsReadyToSubmit().correcteds}} Deficienc<span ng-if="pf.getIsReadyToSubmit().correcteds == 1">y</span><span ng-if="pf.getIsReadyToSubmit().correcteds != 1">ies</span> Corrected During Inspection</span>
             </h3>
         </div>
     </div>
-    <div ng-if="!data.totals">
-        <h3>No Deficiencies were found during the inspection.</h3>
+    <div ng-if="!pf.getIsReadyToSubmit().totals">
+        <h3>No Deficiencies were found during this inspection.</h3>
+    </div>
+    <div ng-if="pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds">
+        <h3>All deficiencies found were corrected during the inspection.  No further action is recquired.</h3>
     </div>
 </div>
-<!--ng-if="pf.getIsReadyToSubmit().readyToSubmit && data.totals && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')"-->
-<div class="alert alert-info" style="box-shadow: 0 0 17px rgba(0,0,0,0.4);" sticky offset="25" ng-if="pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
+<div class="alert alert-info" style="box-shadow: 0 0 17px rgba(0,0,0,0.4); left:0; right:0; width:auto !important; position:absolute; margin-top:-80px;text-align:center" sticky offset="45" ng-if="pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds && pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
     <h2 style="padding:5px">
     Submit Corrective Action Plan?
         <span>
@@ -124,8 +126,7 @@
     </h2>
 </div>
 
-<a ng-if="readyToSubmit" class="btn btn-success btn-large left" style="margin:10px 0;" ng-click="submit()"><i class="icon-checkmark"></i>Submit CAP</a>
-<table class="table table-bordered table-striped table-responsive inspectionReportTable" style="border:3px solid black;">
+<table class="table table-bordered table-striped table-responsive inspectionReportTable" ng-class="{'submit-table':pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds && pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')}" style="border:3px solid black;">
     <th colspan="2" style="width:24%; padding:0px">
         <div class="row-fluid">
             <span class="span7" style="height: 56px;

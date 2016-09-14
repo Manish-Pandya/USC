@@ -18,7 +18,7 @@
                                ng-required="!contact.stillHere"
                                ng-change="inspector.include ? addInspector(inspector.Key_id) : removeInspector(modalData.inspectorIds[inspector.Key_id])" 
                                ng-init="inspector.include=true; inspector.hasBeenIncluded = true;"/>
-                        <span class="metro-checkbox" once-text="inspector.User.Name"></span>
+                        <span class="metro-checkbox" once-text="inspector.Name"></span>
                     </label>
                 </h4>                
             </li>
@@ -26,7 +26,7 @@
             <li ng-if="modalData.add" style="margin-top:10px">
                 <select ng-model="addedInspectorId" ng-change="addInspector(addedInspectorId); modalData.add = false;">
                     <option value="" disabled selected>Add an Inspector</option>
-                    <option ng-repeat="innerInspector in modalData.allInspectors" ng-if="modalData.inspectorIds.indexOf(innerInspector.Key_id) < 0" value="{{innerInspector.Key_id}}">{{innerInspector.User.Name}}</option>
+                    <option ng-repeat="innerInspector in modalData.allInspectors" ng-if="modalData.inspectorIds.indexOf(innerInspector.Key_id) < 0" value="{{innerInspector.Key_id}}">{{innerInspector.Name}}</option>
                 </select>
                 <i class="icon-cancel-2 danger" style="margin-top:-5px" ng-click="modalData.add = false"></i>
             </li>

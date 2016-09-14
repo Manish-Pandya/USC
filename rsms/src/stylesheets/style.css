@@ -1632,7 +1632,9 @@ td.corrective-action.corrected-during-inspection{
 .inspectionInfo .pull-right {
   width: 360px;
 }
-
+.submit-table.inspectionReportTable{
+  margin-top:100px
+}
 /* line 1111, ../sass/style.scss */
 .inspectionReportTable th {
   text-align: center;

@@ -76,7 +76,9 @@ class HazardDto {
 						FROM principal_investigator_hazard_room a
 						LEFT JOIN principal_investigator_room b
 						ON a.principal_investigator_id = b.principal_investigator_id
-						WHERE a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
+                        LEFT JOIN principal_investigator c
+                        ON c.key_id = a.principal_investigator_id
+						WHERE c.is_active = 1 AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");

@@ -632,28 +632,30 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
 
     function setEmailText(inspectionState) {
-        var date = new Date($scope.inspection.viewDate_started).toLocaleDateString();
+        var dateStarted = moment($scope.inspection.Date_started)
+        var date = dateStarted.format("MMMM Do, YYYY");
         var id = postInspectionFactory.getInspection().Key_id
-        console.log(inspectionState);
+        console.log(date);
         if (inspectionState.totals == 0) {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
                                       + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
-                                       + "Best regards,\n\n"
-                                        + "EHS Research Safety,\n\n"
+                                       + "Best regards,\n"
+                                        + "EHS Research Safety\n"
         }
         else if (inspectionState.totals > inspectionState.correcteds) {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
-                                 + "Please submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\n\n"
+            var dueDate = dateStarted.add(14, "days").format("MMMM Do, YYYY");
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+                                 + "Please submit your lab's corrective action plan for each deficiency included in the report on or before "+ dueDate +".\n\n"
                                  + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n\n"
-                                 + "Best regards,\n\n"
+                                 + "Best regards,\n"
                                  + "EHS Research Safety\n"
         }
         //all corrected
         else {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. During this inspection EHS identified one or more deficiencies, but each deficiency was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". During this inspection EHS identified one or more deficiencies, but each deficiency was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
                                       + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
-                                      + "Best regards,\n\n" 
-                                      + "EHS Research Safety\n\n"
+                                      + "Best regards,\n" 
+                                      + "EHS Research Safety\n"
         }
 
 
@@ -923,6 +925,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             } else {
                 def.CorrectiveActions.push(returnedCA);
             }
+            $scope.data = postInspectionFactory.getIsReadyToSubmit();
             if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
                 $scope.data = postInspectionFactory.getIsReadyToSubmit();
                 console.log($scope.data)
@@ -932,6 +935,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                 });
                 modalInstance.result.then(function (closed) {
                     $scope.capSubmitted(closed);
+                    $scope.data = postInspectionFactory.getIsReadyToSubmit();
                 })
             }
             
