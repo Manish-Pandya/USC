@@ -43,13 +43,13 @@ abstract class DataStoreManager {
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then((d: any[]) => {
                         if (compMaps) {
-                        // TODO: Remove unneeded code so we only care about listed compMaps (if compMaps is array)
                             var allComps: any[] = [];
                             var thisClass: Function = window[type];
                             for (var instanceProp in thisClass) {
                                 if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                    console.log(instanceProp);
-                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
+                                        allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                    }
                                 }
                             }
                             return Promise.all(allComps)
@@ -99,11 +99,40 @@ abstract class DataStoreManager {
         id = id.toString();
         if (!this._actualModel[type].Data) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
-                .then((d: FluxCompositerBase) => {
+                .then((d: any) => {
                     if (compMaps) {
-                        // TODO: Do composition of all or list of provided compMaps
+                        var allComps: any[] = [];
+                        var thisClass: Function = window[type];
+                        for (var instanceProp in thisClass) {
+                            if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
+                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                }
+                            }
+                        }
+                        return Promise.all(allComps)
+                            .then(
+                                function (whateverGotReturned) {
+                                    d = InstanceFactory.convertToClasses(d);
+                                    if (!d.viewModelWatcher) {
+                                        d.viewModelWatcher = _.cloneDeep(d);
+                                    }
+                                    viewModelParent = d.viewModelWatcher;
+                                    d.doCompose(compMaps);
+                                    DataStoreManager._actualModel[type].Data = d;
+
+                                    return viewModelParent;
+                                }
+                            )
+                            .catch(
+                                function (reason) {
+                                    console.log("getById (inner promise):", reason);
+                                }
+                            )
                     } else {
-                        viewModelParent = InstanceFactory.convertToClasses(_.assign(viewModelParent, d) );
+                        d = InstanceFactory.convertToClasses(d);
+                        DataStoreManager._actualModel[type].Data.push(d);
+                        viewModelParent = _.assign(viewModelParent, d);
                         console.log(viewModelParent);
                         return viewModelParent;
                     }

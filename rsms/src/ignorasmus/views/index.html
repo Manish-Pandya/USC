@@ -51,13 +51,10 @@
         }
 
         var ps = [DataStoreManager.getAll("Room", rooms), DataStoreManager.getAll("User", users), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
-        //var ps = [DataStoreManager.getAll("Room", rooms)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
                     console.log(pis[0], pis[1], pis[2]);
-                    //console.log(DataStoreManager.ActualModel["User"]);
-
                     firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true);
                     console.log(firstPI);
                 }
