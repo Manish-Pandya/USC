@@ -8,7 +8,6 @@ var User = (function (_super) {
     function User() {
         _super.call(this);
     }
-    User.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllUsers";
     User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
     return User;
 }(FluxCompositerBase));

@@ -8,10 +8,6 @@ var CompositionMapping = (function () {
         this.DEFAULT_MANY_TO_MANY_CHILD_ID = "ChildId";
         this.CompositionType = compositionType;
         this.ChildType = childType;
-        if (childUrl == window[childType].urlMapping.urlGetAll) {
-            // flag that getAll will be called
-            this.callGetAll = true;
-        }
         this.ChildUrl = childUrl;
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;
@@ -32,6 +28,12 @@ var CompositionMapping = (function () {
         }
         this.LinkingMaps = [];
     }
+    CompositionMapping.prototype.flagGetAll = function () {
+        if (this.ChildUrl == window[this.ChildType].urlMapping.urlGetAll) {
+            // flag that getAll will be called
+            this.callGetAll = true;
+        }
+    };
     CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
     CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
     CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";

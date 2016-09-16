@@ -36,7 +36,7 @@ abstract class InstanceFactory {
                             this._classNames.push(className);
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
-                            DataStoreManager.ActualModel[className].getAllPromise = new Promise(function () { }, function () { });
+                            DataStoreManager.ActualModel[className].getAllPromise = function () { }//new Promise(function () { }, function () { });
                             DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
@@ -114,6 +114,7 @@ abstract class InstanceFactory {
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                         .then(function (d) {
                             DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
+                            console.log(parent.Class, compMap.ChildType);
                             var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
                             var gerundLen = d.length;
                             //loop through all the gerunds
@@ -121,6 +122,7 @@ abstract class InstanceFactory {
                                 var g = d[i];
                                 let childLen: number = childStore.length;
                                 for (let x = 0; x < childLen; x++) {
+                                    
                                     if (parent.UID == g.ParentId && childStore[x].UID == g.ChildId) {
                                         parent[compMap.PropertyName].push(childStore[x]);
                                     }

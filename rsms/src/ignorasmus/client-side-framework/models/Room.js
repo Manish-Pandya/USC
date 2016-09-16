@@ -6,9 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Room = (function (_super) {
     __extends(Room, _super);
     function Room() {
-        _super.apply(this, arguments);
+        _super.call(this);
     }
-    Room.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllRooms";
     Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
+    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     return Room;
 }(FluxCompositerBase));

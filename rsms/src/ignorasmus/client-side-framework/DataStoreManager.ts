@@ -48,51 +48,68 @@ abstract class DataStoreManager {
                             for (var instanceProp in thisClass) {
                                 if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
                                     if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
+                                        console.log(thisClass[instanceProp].ChildType);
                                         allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                     }
                                 }
                             }
+                            console.log(allComps);
+
                             return Promise.all(allComps)
                                 .then(
-                                    function (whateverGotReturned) {
-                                        d = InstanceFactory.convertToClasses(d);                                
-                                        d.forEach((value: any, index: number, array: any[]) => {
-                                            if (!value.viewModelWatcher) {
-                                                value.viewModelWatcher = _.cloneDeep(value);    
-                                            }
-                                            viewModelParent[index] = value.viewModelWatcher;
-                                            value.doCompose(compMaps);
-                                        });
-                                        DataStoreManager._actualModel[type].Data = d;
+                                function (whateverGotReturned) {
+                                    console.log(whateverGotReturned)
+                                    if (type)
+                                        d = InstanceFactory.convertToClasses(d);
+                                    d.forEach((value: any, index: number, array: any[]) => {
+                                        if (!value.viewModelWatcher) {
+                                            value.viewModelWatcher = _.cloneDeep(value);
+                                        }
+                                        viewModelParent[index] = value.viewModelWatcher;
+                                        value.doCompose(compMaps);
+                                    });
+                                    DataStoreManager._actualModel[type].Data = d;
 
-                                        return viewModelParent;
-                                    })
+                                    return viewModelParent;
+                                })
                                 .catch(
-                                    function (reason) {
-                                        console.log("getAll (inner promise):", reason);
-                                    }
+                                function (reason) {
+                                    console.log("getAll (inner promise):", reason);
+                                }
                                 )
-                    } else {
-                        d = InstanceFactory.convertToClasses(d);
-                        //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                        //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
-                        DataStoreManager._actualModel[type].Data = d;
-                        // Dig this neat way to use viewModelParent as a reference instead of a value!
-                        Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                        return viewModelParent;
-                    }
+                        } else {
+                            d = InstanceFactory.convertToClasses(d);
+                            //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
+                            //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                            DataStoreManager._actualModel[type].Data = d;
+                            // Dig this neat way to use viewModelParent as a reference instead of a value!
+                            Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                            return viewModelParent;
+                        }
                     })
                     .catch((d) => {
                         console.log("getAll:", d);
                         return d;
                     })
+            } else {
+                console.log("Matt says if we got here, it's broke.", type, DataStoreManager._actualModel[type].getAllPromise)
+                
             }
-        } else {
-            Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
-            viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
+        } else {       
+            //console.log("hmm:", DataStoreManager._actualModel[type].Data);
+            var d = DataStoreManager._actualModel[type].Data
+            d.forEach((value: any, index: number, array: any[]) => {
+                if (!value.viewModelWatcher) {
+                    value.viewModelWatcher = _.cloneDeep(value);
+                }
+                viewModelParent[index] = value.viewModelWatcher;
+                value.doCompose(compMaps);
+            });
+            //DataStoreManager._actualModel[type].Data = d;
+            return this.promisifyData(DataStoreManager._actualModel[type].Data);
+
         }
 
-        return this.promisifyData(DataStoreManager._actualModel[type].getAllPromise);
     }
 
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase {
@@ -200,6 +217,8 @@ abstract class DataStoreManager {
     }
 
     private static promisifyData(data: any): any {
+        console.log("got here");
+
         if (!this.isPromisified) {
             return data;
         } else {
@@ -210,6 +229,7 @@ abstract class DataStoreManager {
                     reject("bad in dsm");
                 }
             });
+            console.log("this is ok", data[0].Class);
             return p;
         }
     }

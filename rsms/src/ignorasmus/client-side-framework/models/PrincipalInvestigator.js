@@ -8,7 +8,6 @@ var PrincipalInvestigator = (function (_super) {
     function PrincipalInvestigator() {
         _super.call(this);
     }
-    ;
     PrincipalInvestigator.prototype.onFulfill = function (callback) {
         if (callback === void 0) { callback = null; }
         var args = [];
@@ -17,7 +16,6 @@ var PrincipalInvestigator = (function (_super) {
         }
         return _super.prototype.onFulfill.apply(this, [callback].concat(args));
     };
-    PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
     PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
     PrincipalInvestigator.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
     PrincipalInvestigator.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");

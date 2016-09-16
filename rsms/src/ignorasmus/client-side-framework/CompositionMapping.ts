@@ -29,10 +29,6 @@
         ) {
             this.CompositionType = compositionType;
             this.ChildType = childType;
-            if (childUrl == window[childType].urlMapping.urlGetAll) {
-                // flag that getAll will be called
-                this.callGetAll = true;
-            }
             this.ChildUrl = childUrl;
             this.PropertyName = propertyName;
             this.ChildIdProp = childIdProp;
@@ -50,6 +46,13 @@
                 }
             }
             this.LinkingMaps = [];
+    }
+
+    flagGetAll() {
+        if (this.ChildUrl == window[this.ChildType].urlMapping.urlGetAll) {
+            // flag that getAll will be called
+            this.callGetAll = true;
+        }
     }
 
 }

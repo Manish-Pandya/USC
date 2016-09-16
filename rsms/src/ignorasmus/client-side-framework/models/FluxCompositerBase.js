@@ -1,11 +1,15 @@
 var FluxCompositerBase = (function () {
     function FluxCompositerBase() {
-    }
-    FluxCompositerBase.prototype.contruct = function () {
         if (!FluxCompositerBase.urlMapping) {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
         }
-    };
+        var thisClass = this.constructor;
+        for (var instanceProp in thisClass) {
+            if (thisClass[instanceProp] instanceof CompositionMapping) {
+                thisClass[instanceProp].flagGetAll();
+            }
+        }
+    }
     FluxCompositerBase.prototype.onFulfill = function (callback) {
         if (callback === void 0) { callback = null; }
         var args = [];

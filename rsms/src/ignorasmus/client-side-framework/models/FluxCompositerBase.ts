@@ -4,9 +4,15 @@
     UID: number;
     TypeName: string;
 
-    contruct() {
+    constructor() {
         if (!FluxCompositerBase.urlMapping) {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
+        }
+        var thisClass: Function = (<any>this).constructor;
+        for (var instanceProp in thisClass) {
+            if (thisClass[instanceProp] instanceof CompositionMapping) {
+                thisClass[instanceProp].flagGetAll();
+            }
         }
     }
 

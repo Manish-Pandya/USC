@@ -29,7 +29,7 @@ var InstanceFactory = (function () {
                             this._classNames.push(className);
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
-                            DataStoreManager.ActualModel[className].getAllPromise = new Promise(function () { }, function () { });
+                            DataStoreManager.ActualModel[className].getAllPromise = function () { }; //new Promise(function () { }, function () { });
                             DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
@@ -106,6 +106,7 @@ var InstanceFactory = (function () {
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                         .then(function (d) {
                         DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
+                        console.log(parent.Class, compMap.ChildType);
                         var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
                         var gerundLen = d.length;
                         //loop through all the gerunds

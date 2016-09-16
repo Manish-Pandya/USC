@@ -39,13 +39,17 @@ var DataStoreManager = (function () {
                         for (var instanceProp in thisClass) {
                             if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
                                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
+                                    console.log(thisClass[instanceProp].ChildType);
                                     allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                 }
                             }
                         }
+                        console.log(allComps);
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            d = InstanceFactory.convertToClasses(d);
+                            console.log(whateverGotReturned);
+                            if (type)
+                                d = InstanceFactory.convertToClasses(d);
                             d.forEach(function (value, index, array) {
                                 if (!value.viewModelWatcher) {
                                     value.viewModelWatcher = _.cloneDeep(value);
@@ -75,12 +79,23 @@ var DataStoreManager = (function () {
                     return d;
                 });
             }
+            else {
+                console.log("Matt says if we got here, it's broke.", type, DataStoreManager._actualModel[type].getAllPromise);
+            }
         }
         else {
-            Array.prototype.push.apply(viewModelParent, _.cloneDeep(DataStoreManager._actualModel[type]));
-            viewModelParent = _.cloneDeep(DataStoreManager._actualModel[type]);
+            //console.log("hmm:", DataStoreManager._actualModel[type].Data);
+            var d = DataStoreManager._actualModel[type].Data;
+            d.forEach(function (value, index, array) {
+                if (!value.viewModelWatcher) {
+                    value.viewModelWatcher = _.cloneDeep(value);
+                }
+                viewModelParent[index] = value.viewModelWatcher;
+                value.doCompose(compMaps);
+            });
+            //DataStoreManager._actualModel[type].Data = d;
+            return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
-        return this.promisifyData(DataStoreManager._actualModel[type].getAllPromise);
     };
     DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
@@ -181,6 +196,7 @@ var DataStoreManager = (function () {
         return result;
     };
     DataStoreManager.promisifyData = function (data) {
+        console.log("got here");
         if (!this.isPromisified) {
             return data;
         }
@@ -193,6 +209,7 @@ var DataStoreManager = (function () {
                     reject("bad in dsm");
                 }
             });
+            console.log("this is ok", data[0].Class);
             return p;
         }
     };
