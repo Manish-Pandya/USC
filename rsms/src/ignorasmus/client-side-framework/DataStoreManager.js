@@ -29,27 +29,39 @@ var DataStoreManager = (function () {
         if (compMaps === void 0) { compMaps = null; }
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data) {
+            //console.log(type + " before request");
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
+                    //console.log(type + " after request");
+                    DataStoreManager._actualModel[type].Data = d;
                     if (compMaps) {
                         var allComps = [];
                         var thisClass = window[type];
                         for (var instanceProp in thisClass) {
                             if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
                                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                    console.log(thisClass[instanceProp].ChildType);
-                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                    if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
+                                        console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
+                                        //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                        if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
+                                            allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
+                                        }
+                                        else {
+                                            allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                        }
+                                    }
+                                    else {
+                                        console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
+                                        allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
+                                    }
                                 }
                             }
                         }
-                        console.log(allComps);
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            console.log(whateverGotReturned);
-                            if (type)
-                                d = InstanceFactory.convertToClasses(d);
+                            d = InstanceFactory.convertToClasses(d);
                             d.forEach(function (value, index, array) {
                                 if (!value.viewModelWatcher) {
                                     value.viewModelWatcher = _.cloneDeep(value);
@@ -78,9 +90,6 @@ var DataStoreManager = (function () {
                     console.log("getAll:", d);
                     return d;
                 });
-            }
-            else {
-                console.log("Matt says if we got here, it's broke.", type, DataStoreManager._actualModel[type].getAllPromise);
             }
         }
         else {

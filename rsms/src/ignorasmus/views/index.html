@@ -25,7 +25,7 @@
     <script>
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
-        console.log("approved classNames:", classNames);
+        //console.log("approved classNames:", classNames);
         /*
         var firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
             .then(
@@ -46,19 +46,16 @@
 
         var testEditingUser = function () {
             users[0].Email = "some@email.foo";
-            console.log(users[0]);
+            //console.log(users[0]);
             users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
-            console.log(users[0]);
+           // console.log(users[0]);
         }
 
         var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
-                    console.log(pis[0], pis[1], pis[2]);
-                    //firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true);
-                    //console.log(firstPI);
-                    console.log(rooms[0]);
+                    console.log(pis[0], rooms[0]);                    
                 }
             ).then(testEditingUser)
             .catch(

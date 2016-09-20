@@ -29,8 +29,6 @@ var InstanceFactory = (function () {
                             this._classNames.push(className);
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
-                            DataStoreManager.ActualModel[className].getAllPromise = function () { }; //new Promise(function () { }, function () { });
-                            DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
                 }

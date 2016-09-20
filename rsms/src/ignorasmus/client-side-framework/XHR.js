@@ -18,15 +18,15 @@ var XHR = (function () {
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function () {
                 if (_this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
-                    return resolve(JSON.parse(xhr.responseText));
+                    resolve(JSON.parse(xhr.responseText));
                 }
                 else {
-                    return reject(xhr.statusText);
+                    reject(xhr.statusText);
                 }
             };
             xhr.onerror = function () {
                 console.log("error", xhr.statusText);
-                return reject({
+                reject({
                     status: xhr.status,
                     statusText: xhr.statusText
                 });
