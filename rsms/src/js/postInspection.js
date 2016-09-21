@@ -646,13 +646,17 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             var dueDate = dateStarted.add(14, "days").format("MMMM Do, YYYY");
             $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
                                  + "Please submit your lab's corrective action plan for each deficiency included in the report on or before "+ dueDate +".\n\n"
-                                 + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n\n"
+                                 + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
                                  + "Best regards,\n"
                                  + "EHS Research Safety\n"
         }
         //all corrected
         else {
-            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". During this inspection EHS identified one or more deficiencies, but each deficiency was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
+            var deficiencyCount = postInspectionFactory.getIsReadyToSubmit();
+            var ending = deficiencyCount.correcteds === 1 ? "y" : "ies";
+            var lingIter = ending == "y" ? "it" : "each deficiency";
+
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". During this inspection EHS identified " + deficiencyCount.correcteds +  " deficienc" + ending +", but "+ lingIter +" was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
                                       + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
                                       + "Best regards,\n" 
                                       + "EHS Research Safety\n"

@@ -236,7 +236,7 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
+    .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
         var af = applicationControllerFactory;
         var rbf = roleBasedFactory;
@@ -245,11 +245,13 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.USER = GLOBAL_SESSION_USER;
 
-        $scope.modalData.inspectionsPendings = true;
-        $scope.modalData.PI.rootScope.PrincipalInvestigatorsBusy.then(function () {
-            setTimeout(function () { $scope.modalData.inspectionsPendings = false; $scope.$apply() }, 100);
-            $scope.pi = $scope.modalData.PI;
-        })
+        if ($rootScope.PrincipalInvestigatorsBusy) {
+            $scope.modalData.inspectionsPendings = true;
+            $rootScope.PrincipalInvestigatorsBusy.then(function () {
+                setTimeout(function () { $scope.modalData.inspectionsPendings = false; $scope.$apply() }, 1);
+                $scope.pi = $scope.modalData.PI;
+            })
+        }
 
         function openSecondaryModal(modalData) {
             console.log(modalData);
