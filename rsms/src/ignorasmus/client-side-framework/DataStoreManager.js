@@ -166,8 +166,8 @@ var DataStoreManager = (function () {
             console.log("hey man... i expected this to be a single instance of an approved class");
         }
         else {
-            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName])) {
-                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]], this.uidString, viewModelObj[this.uidString]);
+            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
+                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
                 return viewModelObj;
             }
             else {
@@ -196,6 +196,9 @@ var DataStoreManager = (function () {
         var result;
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
+                /*if (obj[prop] instanceof User) {
+                    console.log(propName, value, obj[prop][propName]);
+                }*/
                 result = this.findByPropValue(obj[prop], propName, value);
                 if (result) {
                     return result;

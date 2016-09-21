@@ -37,7 +37,7 @@ abstract class InstanceFactory {
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
                             //DataStoreManager.ActualModel[className].Data = [];
-                            //DataStoreManager.ActualModel[className].getAllPromise = function () { }//new Promise(function () { }, function () { });
+                            DataStoreManager.ActualModel[className].getAllPromise = new Promise<any>(() => {});
                             //DataStoreManager.ActualModel[className].getByIdPromise = new Promise(function () { }, function () { });
                         }
                     }
@@ -48,7 +48,7 @@ abstract class InstanceFactory {
     }
 
     // Creates class instance if possible
-    static createInstance(className: string): any {
+    static createInstance(className: string): FluxCompositerBase {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
             return new window[className]();
         } else if (window[className]) {
@@ -63,7 +63,7 @@ abstract class InstanceFactory {
     // Crawls through data and its children, creating class instances as needed.
     static convertToClasses(data: any): any {
         if (data && data[DataStoreManager.classPropName]) {
-            var instance: any = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
+            var instance: FluxCompositerBase = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
             InstanceFactory.copyProperties(instance, data);
             instance.onFulfill();
 
@@ -74,7 +74,7 @@ abstract class InstanceFactory {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
                     if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
-                        var instance: any = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
+                        var instance: FluxCompositerBase = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
                             instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
                             parentNode[prop] = instance; // set instance
@@ -92,13 +92,14 @@ abstract class InstanceFactory {
 
     static getChildInstances(compMap: CompositionMapping, parent: any): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
+            var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
             if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null) parent[compMap.PropertyName] = [];
-            var len: number = DataStoreManager.ActualModel[compMap.ChildType].Data.length;
+            var len: number = childStore.length;
             for (let i: number = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                     //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class, DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
-                    parent[compMap.PropertyName].push(DataStoreManager.ActualModel[compMap.ChildType].Data[i]);
+                    parent[compMap.PropertyName].push(childStore[i]);
                 }
             }
             // init collection in viewModel to be replaced with referenceless actualModel data
@@ -113,7 +114,7 @@ abstract class InstanceFactory {
                 if (typeof DataStoreManager.ActualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager.ActualModel[manyTypeToManyChildType].promise) {
                     DataStoreManager.ActualModel[manyTypeToManyChildType] = {};
                     DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
-                        .then(function (d) {
+                        .then(function (d: any[]) {
                             DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
                             console.log(parent.Class, compMap.ChildType);
                             var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
@@ -139,7 +140,7 @@ abstract class InstanceFactory {
                         })
 
                 } else {
-                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d) => {
+                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d: any[]) => {
                         var childStore: FluxCompositerBase[] = DataStoreManager.ActualModel[compMap.ChildType].Data;
                         var d: any[] = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
                         var gerundLen: number = d.length;

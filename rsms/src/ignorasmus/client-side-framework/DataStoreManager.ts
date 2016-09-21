@@ -35,7 +35,7 @@ abstract class DataStoreManager {
     //----------------------------------------------------------------------
 
     // TODO: Consider method overload to allow multiple types and viewModelParents
-    static getAll(type: string, viewModelParent: any[], compMaps: CompositionMapping[] | boolean = null): any[] {
+    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<FluxCompositerBase[]> {
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data) {
             //console.log(type + " before request");
@@ -96,15 +96,15 @@ abstract class DataStoreManager {
                             return viewModelParent;
                         }
                     })
-                    .catch((d) => {
+                    .catch((d: any[]) => {
                         console.log("getAll:", d);
                         return d;
                     })
             }
         } else {       
             //console.log("hmm:", DataStoreManager._actualModel[type].Data);
-            var d = DataStoreManager._actualModel[type].Data
-            d.forEach((value: any, index: number, array: any[]) => {
+            var d: FluxCompositerBase[] = DataStoreManager._actualModel[type].Data;
+            d.forEach((value: any, index: number, array: FluxCompositerBase[]) => {
                 if (!value.viewModelWatcher) {
                     value.viewModelWatcher = _.cloneDeep(value);
                 }
@@ -118,11 +118,11 @@ abstract class DataStoreManager {
 
     }
 
-    static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase {
+    static getById(type: string, id: string | number, viewModelParent: FluxCompositerBase, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<FluxCompositerBase> {
         id = id.toString();
         if (!this._actualModel[type].Data) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
-                .then((d: any) => {
+                .then((d: FluxCompositerBase) => {
                     if (compMaps) {
                         var allComps: any[] = [];
                         var thisClass: Function = window[type];
@@ -160,7 +160,7 @@ abstract class DataStoreManager {
                         return viewModelParent;
                     }
                 })
-                .catch((d) => {
+                .catch((d: FluxCompositerBase) => {
                     console.log("getById:", d);
                     return d;
                 })
@@ -176,12 +176,12 @@ abstract class DataStoreManager {
         }*/
     }
 
-    static getActualModelEquivalent(viewModelObj: any): any {
+    static getActualModelEquivalent(viewModelObj: FluxCompositerBase): FluxCompositerBase {
         if (Array.isArray(viewModelObj)) {
             console.log("hey man... i expected this to be a single instance of an approved class");
         } else {
-            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName])) {
-                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]], this.uidString, viewModelObj[this.uidString]);
+            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
+                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
                 return viewModelObj;
             } else {
                 console.log("dang dude... I'm not familiar with this class or object type");
@@ -189,7 +189,7 @@ abstract class DataStoreManager {
         }
     }
 
-    private static commitToActualModel(viewModelParent: any): boolean {
+    private static commitToActualModel(viewModelParent: FluxCompositerBase): boolean {
         // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
         this._actualModel = _.cloneDeep(viewModelParent);
 
@@ -197,7 +197,7 @@ abstract class DataStoreManager {
     }
 
     // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
-    static setViewModelProp(propParent: any, propName: string, value: any, optionalCallBack?: Function): void {
+    static setViewModelProp(propParent: FluxCompositerBase, propName: string, value: any, optionalCallBack?: Function): void {
         propParent[propName] = value;
         if (optionalCallBack) {
             optionalCallBack();
@@ -213,6 +213,9 @@ abstract class DataStoreManager {
         var result: any;
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
+                /*if (obj[prop] instanceof User) {
+                    console.log(propName, value, obj[prop][propName]);
+                }*/
                 result = this.findByPropValue(obj[prop], propName, value);
                 if (result) {
                     return result;

@@ -3,6 +3,7 @@
 
     UID: number;
     TypeName: string;
+    viewModelWatcher: FluxCompositerBase; // With typescript 2.x, you can also use "| null";
 
     constructor() {
         if (!FluxCompositerBase.urlMapping) {

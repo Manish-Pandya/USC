@@ -7,7 +7,7 @@
     DEFAULT_MANY_TO_MANY_PARENT_ID: string = "ParentId";
     DEFAULT_MANY_TO_MANY_CHILD_ID: string = "ChildId";
 
-    CompositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY";
+    CompositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY";  
     ChildType: string;
     ChildUrl: string;
     PropertyName: string;

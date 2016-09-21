@@ -4,18 +4,18 @@
 
     static SUCCESS_CODES = [200,201]; 
 
-    static GET(url){
+    static GET(url): Promise<any> {
         return this._sendRequest('GET', url);
     }
 
-    static POST(url, body){
+    static POST(url, body): Promise<any> {
         return this._sendRequest('POST', url, body);
     }
 
     //-----------  Send Request  -----------//
 
-    private static _sendRequest(method: string, url: string, body: any = null) {
-        return new Promise((resolve, reject) => {
+    private static _sendRequest(method: string, url: string, body: any = null): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             var fullUrl = DataStoreManager.baseUrl + url;
             var xhr = new this.REQUEST();
             

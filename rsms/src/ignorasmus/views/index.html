@@ -45,17 +45,19 @@
         rooms = [];
 
         var testEditingUser = function () {
-            users[0].Email = "some@email.foo";
-            //console.log(users[0]);
-            users[0] = DataStoreManager.getActualModelEquivalent(users[0]);
-           // console.log(users[0]);
+            pis[0].User.Email = "some@email.foo";
+            console.log(pis[0].User);
+            var user = DataStoreManager.getActualModelEquivalent(pis[0].User);
+            console.log(user);
+            console.log(pis[0].User);
+
         }
 
         var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
         Promise.all(ps)
             .then(
                 function (whateverGotReturned) {
-                    console.log(pis[0], rooms[0]);                    
+                    console.log(pis[0], rooms[9]);
                 }
             ).then(testEditingUser)
             .catch(
