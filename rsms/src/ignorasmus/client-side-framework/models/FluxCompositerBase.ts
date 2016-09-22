@@ -3,7 +3,7 @@
 
     UID: number;
     TypeName: string;
-    viewModelWatcher: FluxCompositerBase; // With typescript 2.x, you can also use "| null";
+    viewModelWatcher: FluxCompositerBase | null;
 
     constructor() {
         if (!FluxCompositerBase.urlMapping) {
@@ -41,7 +41,7 @@
         if (compMaps) {
             if (Array.isArray(compMaps)) {
                 // compose just properties in array...
-                var len: number = compMaps.length;
+                var len: number = (<CompositionMapping[]>compMaps).length;
                 for (let i: number = 0; i < len; i++) {
                     if (allCompMaps.indexOf(compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);

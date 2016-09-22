@@ -28,7 +28,7 @@ var DataStoreManager = (function () {
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
-        if (!DataStoreManager._actualModel[type].Data) {
+        if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             //console.log(type + " before request");
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
@@ -102,14 +102,16 @@ var DataStoreManager = (function () {
                 viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
             });
+            console.log(type, DataStoreManager._actualModel[type].Data);
             //DataStoreManager._actualModel[type].Data = d;
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
     };
     DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
+        var _this = this;
         if (compMaps === void 0) { compMaps = null; }
         id = id.toString();
-        if (!this._actualModel[type].Data) {
+        if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
                 .then(function (d) {
                 if (compMaps) {
@@ -130,7 +132,13 @@ var DataStoreManager = (function () {
                         }
                         viewModelParent = d.viewModelWatcher;
                         d.doCompose(compMaps);
-                        DataStoreManager._actualModel[type].Data = d;
+                        var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                        if (existingIndex > -1) {
+                            DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                        }
+                        else {
+                            DataStoreManager._actualModel[type].Data.push(d);
+                        }
                         return viewModelParent;
                     })
                         .catch(function (reason) {
@@ -138,11 +146,26 @@ var DataStoreManager = (function () {
                     });
                 }
                 else {
-                    d = InstanceFactory.convertToClasses(d);
-                    DataStoreManager._actualModel[type].Data.push(d);
-                    viewModelParent = _.assign(viewModelParent, d);
-                    console.log(viewModelParent);
-                    return viewModelParent;
+                    console.log(d);
+                    //viewModelParent = _.assign(viewModelParent, d);
+                    // console.log(viewModelParent);
+                    //return viewModelParent;
+                    var d = InstanceFactory.convertToClasses(d);
+                    var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                    if (existingIndex > -1) {
+                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                    }
+                    else {
+                        DataStoreManager._actualModel[type].Data.push(d);
+                    }
+                    if (!d.viewModelWatcher) {
+                        d.viewModelWatcher = _.cloneDeep(d);
+                    }
+                    //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
+                    viewModelParent = d.viewModelWatcher;
+                    d.doCompose(compMaps);
+                    //DataStoreManager._actualModel[type].Data = d;
+                    return _this.promisifyData(d);
                 }
             })
                 .catch(function (d) {
@@ -161,13 +184,19 @@ var DataStoreManager = (function () {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
     };
+    // TODO: Doesn't always work, as drills into object nest before moving to next object.
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
         if (Array.isArray(viewModelObj)) {
             console.log("hey man... i expected this to be a single instance of an approved class");
         }
         else {
             if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
-                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
+                /*for (var n: number = 0; n < this._actualModel[viewModelObj[this.classPropName]].Data.length; n++) {
+                    if (this._actualModel[viewModelObj[this.classPropName]].Data[n].Key_id == "3") {
+                        console.log(n, this._actualModel[viewModelObj[this.classPropName]].Data[n]);
+                    }
+                }*/
+                viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
                 return viewModelObj;
             }
             else {
@@ -196,9 +225,6 @@ var DataStoreManager = (function () {
         var result;
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
-                /*if (obj[prop] instanceof User) {
-                    console.log(propName, value, obj[prop][propName]);
-                }*/
                 result = this.findByPropValue(obj[prop], propName, value);
                 if (result) {
                     return result;
@@ -208,7 +234,7 @@ var DataStoreManager = (function () {
         return result;
     };
     DataStoreManager.promisifyData = function (data) {
-        console.log("got here");
+        console.log("got here", data);
         if (!this.isPromisified) {
             return data;
         }
@@ -221,7 +247,7 @@ var DataStoreManager = (function () {
                     reject("bad in dsm");
                 }
             });
-            console.log("this is ok", data[0].Class);
+            console.log("this is ok", data.Class);
             return p;
         }
     };

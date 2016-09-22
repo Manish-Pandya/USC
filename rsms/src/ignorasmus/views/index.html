@@ -19,6 +19,7 @@
     <script src="../../client-side-framework/genericModel/genericModel.js"></script>
     <script src="../../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
     <script src="../client-side-framework/models/User.js"></script>
+    <script src="../client-side-framework/models/Role.js"></script>
     <script src="../client-side-framework/models/PrincipalInvestigator.js"></script>
 
     <script src="../client-side-framework/models/Room.js"></script>
@@ -47,7 +48,7 @@
         var testEditingUser = function () {
             pis[0].User.Email = "some@email.foo";
             console.log(pis[0].User);
-            var user = DataStoreManager.getActualModelEquivalent(pis[0].User);
+            //var user = DataStoreManager.getActualModelEquivalent(pis[0].User);
             console.log(user);
             console.log(pis[0].User);
 
@@ -58,8 +59,19 @@
             .then(
                 function (whateverGotReturned) {
                     console.log(pis[0], rooms[9]);
+                    /*
+                    DataStoreManager.getById("User", 1, {}, true).then((d)=>{
+                        console.log(d);
+                    });
+                    DataStoreManager.getById("User", 3, {}, true).then((d) => {
+                        console.log(d);
+                    });
+                    */
                 }
-            ).then(testEditingUser)
+
+                
+
+            )//.then(testEditingUser)
             .catch(
                 function (reason) {
                     console.log("bad Promise.all:", reason);

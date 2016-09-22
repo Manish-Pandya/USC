@@ -35,9 +35,9 @@ abstract class DataStoreManager {
     //----------------------------------------------------------------------
 
     // TODO: Consider method overload to allow multiple types and viewModelParents
-    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<FluxCompositerBase[]> {
+    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
-        if (!DataStoreManager._actualModel[type].Data) {
+        if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             //console.log(type + " before request");
 
             if (!DataStoreManager._actualModel[type].getAllCalled) {
@@ -111,6 +111,7 @@ abstract class DataStoreManager {
                 viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
             });
+            console.log(type, DataStoreManager._actualModel[type].Data);
             //DataStoreManager._actualModel[type].Data = d;
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
 
@@ -118,9 +119,9 @@ abstract class DataStoreManager {
 
     }
 
-    static getById(type: string, id: string | number, viewModelParent: FluxCompositerBase, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<FluxCompositerBase> {
+    static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<any> {
         id = id.toString();
-        if (!this._actualModel[type].Data) {
+        if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
                 .then((d: FluxCompositerBase) => {
                     if (compMaps) {
@@ -142,7 +143,13 @@ abstract class DataStoreManager {
                                     }
                                     viewModelParent = d.viewModelWatcher;
                                     d.doCompose(compMaps);
-                                    DataStoreManager._actualModel[type].Data = d;
+
+                                    var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                                    if (existingIndex > -1) {
+                                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                                    } else {
+                                        DataStoreManager._actualModel[type].Data.push(d);
+                                    }
 
                                     return viewModelParent;
                                 }
@@ -153,11 +160,32 @@ abstract class DataStoreManager {
                                 }
                             )
                     } else {
-                        d = InstanceFactory.convertToClasses(d);
-                        DataStoreManager._actualModel[type].Data.push(d);
-                        viewModelParent = _.assign(viewModelParent, d);
-                        console.log(viewModelParent);
-                        return viewModelParent;
+                        console.log(d);
+
+                        //viewModelParent = _.assign(viewModelParent, d);
+                       // console.log(viewModelParent);
+                        //return viewModelParent;
+
+                        var d: FluxCompositerBase = InstanceFactory.convertToClasses(d);
+
+                        var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                        if (existingIndex > -1) {
+                            DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                        } else {
+                            DataStoreManager._actualModel[type].Data.push(d);
+                        }
+
+                        if (!d.viewModelWatcher) {
+                            d.viewModelWatcher = _.cloneDeep(d);
+                        }
+
+                        //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
+                        viewModelParent = d.viewModelWatcher;
+                        d.doCompose(compMaps);
+                        //DataStoreManager._actualModel[type].Data = d;
+                        return this.promisifyData(d);
+
+
                     }
                 })
                 .catch((d: FluxCompositerBase) => {
@@ -176,12 +204,18 @@ abstract class DataStoreManager {
         }*/
     }
 
+    // TODO: Doesn't always work, as drills into object nest before moving to next object.
     static getActualModelEquivalent(viewModelObj: FluxCompositerBase): FluxCompositerBase {
         if (Array.isArray(viewModelObj)) {
             console.log("hey man... i expected this to be a single instance of an approved class");
         } else {
             if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
-                viewModelObj = this.findByPropValue(this.ActualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
+                /*for (var n: number = 0; n < this._actualModel[viewModelObj[this.classPropName]].Data.length; n++) {
+                    if (this._actualModel[viewModelObj[this.classPropName]].Data[n].Key_id == "3") {
+                        console.log(n, this._actualModel[viewModelObj[this.classPropName]].Data[n]);
+                    }
+                }*/
+                viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
                 return viewModelObj;
             } else {
                 console.log("dang dude... I'm not familiar with this class or object type");
@@ -213,9 +247,6 @@ abstract class DataStoreManager {
         var result: any;
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
-                /*if (obj[prop] instanceof User) {
-                    console.log(propName, value, obj[prop][propName]);
-                }*/
                 result = this.findByPropValue(obj[prop], propName, value);
                 if (result) {
                     return result;
@@ -226,7 +257,7 @@ abstract class DataStoreManager {
     }
 
     private static promisifyData(data: any): any {
-        console.log("got here");
+        console.log("got here", data);
 
         if (!this.isPromisified) {
             return data;
@@ -238,7 +269,7 @@ abstract class DataStoreManager {
                     reject("bad in dsm");
                 }
             });
-            console.log("this is ok", data[0].Class);
+            console.log("this is ok", data.Class);
             return p;
         }
     }

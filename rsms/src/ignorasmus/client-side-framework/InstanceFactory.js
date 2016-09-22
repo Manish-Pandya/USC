@@ -29,7 +29,7 @@ var InstanceFactory = (function () {
                             this._classNames.push(className);
                             //init DataStoreManager holders
                             DataStoreManager.ActualModel[className] = {};
-                            //DataStoreManager.ActualModel[className].Data = [];
+                            DataStoreManager.ActualModel[className].Data = [];
                             DataStoreManager.ActualModel[className].getAllPromise = new Promise(function () { });
                         }
                     }
@@ -81,25 +81,23 @@ var InstanceFactory = (function () {
     InstanceFactory.getChildInstances = function (compMap, parent) {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
-            if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null)
-                parent[compMap.PropertyName] = [];
+            parent[compMap.PropertyName] = []; // clear property
+            parent.viewModelWatcher[compMap.PropertyName] = [];
             var len = childStore.length;
             for (var i = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (DataStoreManager.ActualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                     //console.log(parent.Class, parent.Key_id, parent[compMap.ParentIdProp], DataStoreManager.ActualModel[compMap.ChildType].Data[i].Class, DataStoreManager.ActualModel[compMap.ChildType].Data[i].Supervisor_id);
+                    //TODO: ADD view modelWatcher of childstore[i]
                     parent[compMap.PropertyName].push(childStore[i]);
+                    parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
                 }
             }
-            // init collection in viewModel to be replaced with referenceless actualModel data
-            parent.viewModelWatcher[compMap.PropertyName] = [];
-            // clone collection from actualModel to viewModel
-            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-                if (!parent[compMap.PropertyName] || parent[compMap.PropertyName] == null)
-                    parent[compMap.PropertyName] = [];
+                parent[compMap.PropertyName] = []; // clear property
+                parent.viewModelWatcher[compMap.PropertyName] = [];
                 //Get the gerunds.then
                 var manyTypeToManyChildType = parent.TypeName + "To" + compMap.ChildType;
                 if (typeof DataStoreManager.ActualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager.ActualModel[manyTypeToManyChildType].promise) {
@@ -117,13 +115,10 @@ var InstanceFactory = (function () {
                             for (var x = 0; x < childLen; x++) {
                                 if (parent.UID == g.ParentId && childStore[x].UID == g.ChildId) {
                                     parent[compMap.PropertyName].push(childStore[x]);
+                                    parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
                                 }
                             }
                         }
-                        // init collection in viewModel to be replaced with referenceless actualModel data
-                        parent.viewModelWatcher[compMap.PropertyName] = [];
-                        // clone collection from actualModel to viewModel
-                        parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                     })
                         .catch(function (f) {
                         console.log("getChildInstances:", f);
@@ -156,7 +151,7 @@ var InstanceFactory = (function () {
         }
         else {
             // clone collection from actualModel to viewModel
-            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
+            parent[compMap.PropertyName] = parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
     };
     // Copies properties/values from sources to target.
