@@ -450,7 +450,6 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
     }
 
     factory.getIsReadyToSubmit = function (inspection) {
-
         var ready = {
             totals: 0, 
             pendings: 0, 
@@ -474,7 +473,8 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
+                        console.log(selection.CorrectiveActions.length, selection.Corrected_in_inspection, !selection.Corrected_in_inspection);
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection ) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {

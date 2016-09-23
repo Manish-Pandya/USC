@@ -87,7 +87,6 @@
         <i class="icon-spinnery-dealie spinner small" style="color:white;margin-top:5px"></i>
     </span>
 </h2>
-
 <div ng-if="(pf.getIsReadyToSubmit().totals && !pf.getIsReadyToSubmit().readyToSubmit) || (pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds)" style="background: #989898 !important;border-color: #989898;" class="alert submit-cap-info" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.LAB_CONTACT], R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
@@ -98,10 +97,10 @@
             <h3 class="bold totals-message">
                 <span>{{pf.getIsReadyToSubmit().uncorrecteds}} Deficienc<span ng-if="pf.getIsReadyToSubmit().uncorrecteds == 1">y</span><span ng-if="pf.getIsReadyToSubmit().uncorrecteds != 1">ies</span> Needing Corrective Actions</span>
             </h3>
-            <h3 class="bold complete-message">
+            <h3 class="bold complete-message" ng-if="(pf.getIsReadyToSubmit().completes || pf.getIsReadyToSubmit().pendings) || pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds">
                 <span>{{pf.getIsReadyToSubmit().completes}} Completed Corrective Action<span ng-if="pf.getIsReadyToSubmit().completes != 1">s</span></span>
             </h3>
-            <h3 class="bold pending-message">
+            <h3 class="bold pending-message" ng-if="(pf.getIsReadyToSubmit().completes || pf.getIsReadyToSubmit().pendings) || pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds">
                 <span>{{pf.getIsReadyToSubmit().pendings}} Pending Corrective Action<span ng-if="pf.getIsReadyToSubmit().pendings != 1">s</span></span>
             </h3>
             <h3 ng-if="pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().correcteds">
