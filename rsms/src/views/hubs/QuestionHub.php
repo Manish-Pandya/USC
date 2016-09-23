@@ -51,8 +51,8 @@ require_once '../top_view.php';
             <div class="control-group">
                 <label ng-if="question" class="control-label" for="email">EDIT COMPLIANCE REFERENCE:</label>
                 <label ng-if="!question" class="control-label" for="email">ENTER COMPLIANCE REFERENCE:</label>
-                <div class="controls">
-                     <input type="text" class="span9" placeholder="Compliance Reference" ng-model="questionCopy.Reference"/>
+                <div class="controls comp-reference">
+                     <input type="text" class="span9" placeholder="Compliance Reference" ng-model="questionCopy.Reference"  ui-tinymce="tinymceOptionsComplianceReference"/>
                 </div>
             </div>
 

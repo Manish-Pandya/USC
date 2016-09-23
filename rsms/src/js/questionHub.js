@@ -60,6 +60,15 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
         content_style: "p,ul li {font-size:14px}"
     };
 
+    $scope.tinymceOptionsComplianceReference = {
+        plugins: 'link',
+        toolbar: 'link',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li {font-size:14px}; html{max-height:100px}",
+        max_height: 100
+    };
+
     $scope.editDef = function(def){
         def.edit = !def.edit;
         $scope.question.newDeficiency = angular.copy(def);
