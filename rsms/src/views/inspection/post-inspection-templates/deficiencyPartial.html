@@ -129,6 +129,6 @@
         </tr>
     </table>
 </td>
-<td once-text="question.Description" style="padding:10px !important;"></td>
-<td once-text="question.Reference" style="padding:10px !important;"></td>
+<td ng-bind-html="question.Description | sanitize" style="padding:10px !important;"></td>
+<td ng-bind-html="question.Reference | sanitize" style="padding:10px !important;"></td>
 </tr>

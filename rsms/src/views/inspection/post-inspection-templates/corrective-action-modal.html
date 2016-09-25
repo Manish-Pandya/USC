@@ -6,13 +6,14 @@
         <h3>Audit Criteria:</h3>
         <p>{{question.Text}}</p>
         <h3>Deficiency:</h3>
+        {{validationError}}
         <p ng-if="def.Deficiency.Text != 'Other'">{{def.Deficiency.Text}}</p>
         <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
             <div class="control-group">
                 <label class="bold" ng-class="{'red': validationError.statusError}"><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>Corrective Action Status (Select One)</label>
                 <span class="red bold error" ng-if="validationError.statusError">Please select a status</span>
                 <label class="checkbox" ng-repeat="status in options" style="padding-top:4px">
-                    <input type="checkbox" ng-true-value="{{status.Value}}" ng-model="copy.Status" />
+                    <input type="checkbox" ng-true-value="{{status.Value}}" ng-model="copy.Status" ng-change="validationError = clearValidationError(copy)" />
                     <span class="metro-checkbox">{{status.Label}}</span>
                 </label>
             </div>
@@ -23,38 +24,40 @@
                     <textarea ng-model="copy.Text" ui-tinymce="tinymceOptions"></textarea>
                 </div>
             </div>
-            <h3 class="alert-danger bold alert" ng-if="validationError.dateError">You must select a date or a reason that one cannot be provided.</h3>
+            <h3 class="alert-danger bold alert" ng-if="validationError.dateError && copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">You must select a date or a reason that one cannot be provided.</h3>
+            <h3 class="alert-danger bold alert" ng-if="validationError.dateError && copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">You must select the date this corrective action was completed.</h3>
+
             <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
                 <label class="control-label bold">Anticipated Completion Date:</label>
                 <div class="controls">
-                    <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter' on-change="copy.Needs_facilities = false; copy.Needs_ehs = false; copy.Insuficient_funds = false; copy.Other = false; copy.Other_reason = null;"></datepicker2>
+                    <datepicker2 ng-model='dates.promisedDate' disable-timepicker='true' date-filter='todayOrAfter' on-clear="dates.promisedDate = null; def.CorrectiveActionCopy.Promise_date = null; validationError = validateCorrectiveAction(copy)" on-change="copy.Needs_facilities = false; copy.Needs_ehs = false; copy.Insuficient_funds = false; copy.Other = false; copy.Other_reason = null; validationError = validateCorrectiveAction(copy)"></datepicker2>
                 </div>
             </div>
             <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
                 <label class="control-label bold">Completion Date:</label>
                 <div class="controls">
-                    <datepicker2 ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection' on-change="copy.Needs_facilities = false; copy.Needs_ehs = false; copy.Insuficient_funds = false; copy.Other = false; copy.Other_reason = null;"></datepicker2>
+                    <datepicker2 ng-model='dates.completionDate' disable-timepicker='true' date-filter='afterInspection' on-clear="dates.completionDate = null; def.CorrectiveActionCopy.Completion_date = null; validationError = validateCorrectiveAction(copy)"  on-change="copy.Needs_facilities = false; copy.Needs_ehs = false; copy.Insuficient_funds = false; copy.Other = false; copy.Other_reason = null; validationError = validateCorrectiveAction(copy)"></datepicker2>
                 </div>
             </div>
             <div class="control-group" ng-if="copy.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
                 <label class="bold"><i class="icon-checkmark-2" ng-show="def.CorrectiveActionCopy.Status == Constants.CORRECTIVE_ACTION.STATUS.ACCEPTED" style="color:#090"></i>If no date can be provided, indicate why.</label>
                 <label class="checkbox" style="padding-top:4px">
-                    <input ng-disabled="dates.promisedDate" type="checkbox" ng-model="copy.Needs_facilities" />
+                    <input ng-disabled="dates.promisedDate" type="checkbox" ng-model="copy.Needs_facilities" ng-change="validationError = validateCorrectiveAction(copy)" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_FACILITIES.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Needs_ehs" ng-disabled="dates.promisedDate" />
+                    <input type="checkbox" ng-model="copy.Needs_ehs" ng-disabled="dates.promisedDate" ng-change="validationError = validateCorrectiveAction(copy)" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_EHS.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Insuficient_funds" ng-disabled="dates.promisedDate" />
+                    <input type="checkbox" ng-model="copy.Insuficient_funds" ng-disabled="dates.promisedDate" ng-change="validationError = validateCorrectiveAction(copy)" />
                     <span class="metro-checkbox">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.INSUFFICIENT_FUNDS.LABEL}}</span>
                 </label>
 
                 <label class="checkbox" style="padding-top:4px">
-                    <input type="checkbox" ng-model="copy.Other" ng-disabled="dates.promisedDate" ng-init="copy.Other = !!copy.Other_reason" />
+                    <input type="checkbox" ng-model="copy.Other" ng-disabled="dates.promisedDate" ng-init="copy.Other = !!copy.Other_reason" ng-change="validationError = validateCorrectiveAction(copy)"/>
                     <span class="metro-checkbox" ng-class="{'red': validationError.otherTextError}">Other</span><br />
                     <span class="red" ng-if="validationError.otherTextError">Please describe the reason that no date can be provided.</span>
                     <textarea style="margin: 5px 0 0 26px;width: 440px;" ng-model="copy.Other_reason" ng-show="copy.Other"></textarea>

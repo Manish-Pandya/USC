@@ -473,14 +473,12 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
-                        console.log(selection.CorrectiveActions.length, selection.Corrected_in_inspection, !selection.Corrected_in_inspection);
                         if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection ) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
                                 ready.completes++;
-                            } 
-
+                            }
                         } else if (selection.Corrected_in_inspection) {
                             ready.correcteds++;
                         }
@@ -1107,13 +1105,40 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
         }
     }
 
+    $scope.validateCorrectiveAction = function (action) {
+        errorObject = null;
+        if (!action) {
+            errorObj = { formBlank: true }
+        } else {
+            errorObj = {
+                statusError: action.Status == null,
+                textError: action.Text == null || action.Text == "",
+                dateError: function () {
+                    if (!action.Status || !action.Text || action.Text == "") return false;
+                    if (action.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                        console.log($scope.dates, action);
+                        return !action.Completion_date && !$scope.dates.completionDate;
+                    } else if (action.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                        return (!action.Promised_date && !$scope.dates.promisedDate) && (!action.Needs_ehs && !action.Needs_facilities && !action.Insuficient_funds && !action.Other);
+                    }
+                }(),
+                otherTextError: action.Other && !action.Other_reason
+            }
+        }
+        return $scope.validationError = errorObj;
+    }
+
+    $scope.clearValidationError = function () {
+        $scope.validationError = {};
+    }
+
     $scope.saveCorrectiveAction = function (copy, orig) {
 
         if ($scope.dates.promisedDate) copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
         if ($scope.dates.completionDate) copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
         //custom validation, because the validation is complex
-        $scope.validationError = validateCorrectiveAction(copy);
+        $scope.validationError = $scope.validateCorrectiveAction(copy);
         for (var prop in $scope.validationError) {
             if ($scope.validationError[prop]) return false;
         }
@@ -1134,22 +1159,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 $scope.validationError = "The corrective action could not be saved.  Please check your internet connection and try again."
             }
           )
-    }
-
-    function validateCorrectiveAction(action) {
-        console.log(action)
-        errorObject = null;
-        if (!action) {
-            errorObj = {formBlank:true}
-        } else {
-            errorObj = {
-                statusError: action.Status == null,
-                textError: action.Text == null || action.Text == "",
-                dateError: (action.Status && action.Text && action.Text != "") && (action.Promised_date == null && action.Completion_date == null && (!action.Needs_ehs && !action.Needs_facilities && !action.Insuficient_funds && !action.Other)),
-                otherTextError: action.Other && !action.Other_reason
-            }
-        }
-        return errorObj;
     }
 
     $scope.deleteCorrectiveAction = function (def) {
