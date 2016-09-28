@@ -15,6 +15,18 @@ var PrincipalInvestigator = (function (_super) {
             args[_i - 1] = arguments[_i];
         }
         return _super.prototype.onFulfill.apply(this, [callback].concat(args));
+        this.hasGetAllPermission();
+    };
+    PrincipalInvestigator.prototype.hasGetAllPermission = function () {
+        if (this._hasGetAllPermission == null) {
+            var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR];
+            var len = currentRoles[1].length;
+            for (var i = 0; i < len; i++) {
+                var role = currentRoles[1][i];
+            }
+            _super.prototype.hasGetAllPermission.call(this);
+        }
+        return this._hasGetAllPermission;
     };
     PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
     PrincipalInvestigator.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");

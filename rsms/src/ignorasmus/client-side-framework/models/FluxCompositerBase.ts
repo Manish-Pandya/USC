@@ -59,4 +59,16 @@
         }
     }
 
+    protected _hasGetAllPermission: boolean | null = null;
+    hasGetAllPermission(evaluator: any = false): boolean {
+        if (this._hasGetAllPermission == null) {
+            if (typeof evaluator == "function") {
+                this._hasGetAllPermission = evaluator();
+            } else {
+                this._hasGetAllPermission = evaluator;
+            }
+        }
+        return this._hasGetAllPermission;
+    }
+
 }

@@ -17,6 +17,22 @@
 
     onFulfill(callback: Function = null, ...args): Function | void {
         return super.onFulfill(callback, ...args);
+        this.hasGetAllPermission();
+    }
+
+    hasGetAllPermission(): boolean {
+        if (this._hasGetAllPermission == null) {
+
+            var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR];
+
+            var len = currentRoles[1].length;
+            for (let i = 0; i < len; i++) {
+                let role = currentRoles[1][i];
+            }
+
+            super.hasGetAllPermission();
+        }
+        return this._hasGetAllPermission;
     }
 
 }

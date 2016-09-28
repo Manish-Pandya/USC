@@ -1,5 +1,6 @@
 var FluxCompositerBase = (function () {
     function FluxCompositerBase() {
+        this._hasGetAllPermission = null;
         if (!FluxCompositerBase.urlMapping) {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
         }
@@ -54,6 +55,18 @@ var FluxCompositerBase = (function () {
                 }
             }
         }
+    };
+    FluxCompositerBase.prototype.hasGetAllPermission = function (evaluator) {
+        if (evaluator === void 0) { evaluator = false; }
+        if (this._hasGetAllPermission == null) {
+            if (typeof evaluator == "function") {
+                this._hasGetAllPermission = evaluator();
+            }
+            else {
+                this._hasGetAllPermission = evaluator;
+            }
+        }
+        return this._hasGetAllPermission;
     };
     FluxCompositerBase.urlMapping = new UrlMapping("foot", "", "");
     return FluxCompositerBase;

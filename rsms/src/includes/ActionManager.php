@@ -409,6 +409,13 @@ class ActionManager {
         return $_SESSION['USER'];
     }
 
+	public function getCurrentRoles(){
+		if($_SESSION && $_SESSION['ROLE']){
+			return array($_SESSION['ROLE']["userPermissions"], $this->getAllRoles());
+		}
+		return [];
+	}
+
     public function activate(){
         //Get the user
         $LOG = Logger::getLogger('Action:' . __function__);
