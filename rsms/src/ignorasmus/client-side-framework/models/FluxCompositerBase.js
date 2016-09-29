@@ -4,10 +4,10 @@ var FluxCompositerBase = (function () {
         if (!FluxCompositerBase.urlMapping) {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
         }
-        var thisClass = this.constructor;
-        for (var instanceProp in thisClass) {
-            if (thisClass[instanceProp] instanceof CompositionMapping) {
-                thisClass[instanceProp].flagGetAll();
+        this.thisClass = this.constructor;
+        for (var instanceProp in this.thisClass) {
+            if (this.thisClass[instanceProp] instanceof CompositionMapping) {
+                this.thisClass[instanceProp].flagGetAll();
             }
         }
     }
@@ -27,10 +27,9 @@ var FluxCompositerBase = (function () {
     };
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
         var allCompMaps = [];
-        var thisClass = this.constructor;
-        for (var instanceProp in thisClass) {
-            if (thisClass[instanceProp] instanceof CompositionMapping) {
-                allCompMaps.push(thisClass[instanceProp]);
+        for (var instanceProp in this.thisClass) {
+            if (this.thisClass[instanceProp] instanceof CompositionMapping) {
+                allCompMaps.push(this.thisClass[instanceProp]);
             }
         }
         //console.log(allCompMaps);
@@ -66,6 +65,7 @@ var FluxCompositerBase = (function () {
                 this._hasGetAllPermission = evaluator;
             }
         }
+        console.log(this.thisClass.name + " has getAll permission:", this._hasGetAllPermission);
         return this._hasGetAllPermission;
     };
     FluxCompositerBase.urlMapping = new UrlMapping("foot", "", "");

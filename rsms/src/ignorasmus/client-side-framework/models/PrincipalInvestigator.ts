@@ -22,16 +22,8 @@
 
     hasGetAllPermission(): boolean {
         if (this._hasGetAllPermission == null) {
-
-            var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR];
-
-            var len = currentRoles[1].length;
-            for (let i = 0; i < len; i++) {
-                let role = currentRoles[1][i];
-            }
-            console.log(_.intersection(currentRoles, allowedRoles));
-
-            super.hasGetAllPermission();
+            var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+            super.hasGetAllPermission(_.intersection(currentRoles, allowedRoles).length);
         }
         return this._hasGetAllPermission;
     }

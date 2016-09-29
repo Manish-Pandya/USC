@@ -19,13 +19,8 @@ var PrincipalInvestigator = (function (_super) {
     };
     PrincipalInvestigator.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
-            var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR];
-            var len = currentRoles[1].length;
-            for (var i = 0; i < len; i++) {
-                var role = currentRoles[1][i];
-            }
-            console.log(_.intersection(currentRoles, allowedRoles));
-            _super.prototype.hasGetAllPermission.call(this);
+            var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+            _super.prototype.hasGetAllPermission.call(this, _.intersection(currentRoles, allowedRoles).length);
         }
         return this._hasGetAllPermission;
     };
