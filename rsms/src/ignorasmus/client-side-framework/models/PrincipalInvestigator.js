@@ -14,8 +14,8 @@ var PrincipalInvestigator = (function (_super) {
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
         this.hasGetAllPermission();
+        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
     };
     PrincipalInvestigator.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -24,6 +24,7 @@ var PrincipalInvestigator = (function (_super) {
             for (var i = 0; i < len; i++) {
                 var role = currentRoles[1][i];
             }
+            console.log(_.intersection(currentRoles, allowedRoles));
             _super.prototype.hasGetAllPermission.call(this);
         }
         return this._hasGetAllPermission;

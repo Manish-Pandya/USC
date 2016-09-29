@@ -16,8 +16,8 @@
     }
 
     onFulfill(callback: Function = null, ...args): Function | void {
-        return super.onFulfill(callback, ...args);
         this.hasGetAllPermission();
+        return super.onFulfill(callback, ...args);        
     }
 
     hasGetAllPermission(): boolean {
@@ -29,6 +29,7 @@
             for (let i = 0; i < len; i++) {
                 let role = currentRoles[1][i];
             }
+            console.log(_.intersection(currentRoles, allowedRoles));
 
             super.hasGetAllPermission();
         }
