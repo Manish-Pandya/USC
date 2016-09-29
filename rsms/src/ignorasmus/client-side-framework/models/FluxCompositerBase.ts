@@ -1,4 +1,79 @@
-﻿abstract class FluxCompositerBase {
+﻿class CompositionMapping {
+    static ONE_TO_ONE: "ONE_TO_ONE" = "ONE_TO_ONE";
+    static ONE_TO_MANY: "ONE_TO_MANY" = "ONE_TO_MANY";
+    static MANY_TO_MANY: "MANY_TO_MANY" = "MANY_TO_MANY";
+
+    //temp values for erasmus.  add to global config as optional param
+    DEFAULT_MANY_TO_MANY_PARENT_ID: string = "ParentId";
+    DEFAULT_MANY_TO_MANY_CHILD_ID: string = "ChildId";
+
+    CompositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY";
+    ChildType: string;
+    ChildUrl: string;
+    PropertyName: string;
+    GerundName: string;
+    GerundUrl: string;
+    ChildIdProp: string;
+    ParentIdProp: string;
+    callGetAll: boolean;
+
+    /**
+     *
+     * Models the relationship between classes, providing URIs to fetch child objects
+     *
+     * Instances of this utility class should be contructed by your classes in onFullfill or later
+     *
+     * @param compositionType
+     * @param childType
+     * @param childUrl
+     * @ex "getPropertyByName&type=" + this[DataStoreManager.classPropName] + "&property=rooms&id=" + this.UID
+     * @param propertyName
+     * @param childIdProp
+     * @param parentIdProp
+     * @param gerundName
+     * @param gerundUrl
+     */
+    constructor(compositionType: "ONE_TO_ONE" | "ONE_TO_MANY" | "MANY_TO_MANY",
+        childType: string,
+        childUrl: string,
+        propertyName: string,
+        childIdProp: string,
+        parentIdProp: string = null,
+        gerundName: string = null,
+        gerundUrl: string = null
+    ) {
+        if (!window[childType]) {
+            throw new Error("what the fuck brogrammer?  you contructed this shit too soon.");
+        }
+
+        this.CompositionType = compositionType;
+        this.ChildType = childType;
+        this.ChildUrl = childUrl;
+        this.PropertyName = propertyName;
+        this.ChildIdProp = childIdProp;
+        if (parentIdProp) {
+            this.ParentIdProp = parentIdProp
+        } else {
+            this.ParentIdProp = DataStoreManager.uidString;
+        }
+        if (this.CompositionType == CompositionMapping.MANY_TO_MANY) {
+            if (!gerundName || !gerundUrl) {
+                throw new Error("You must provide a gerundName and gerundUrl to fullfill this MANY TO MANY compositional relationship");
+            } else {
+                this.GerundName = gerundName;
+                this.GerundUrl = gerundUrl;
+            }
+        }
+
+        if (this.ChildUrl == window[this.ChildType].urlMapping.urlGetAll) {
+            // flag that getAll will be called
+            this.callGetAll = true;
+        }
+    }
+}
+
+
+abstract class FluxCompositerBase {
     static urlMapping: UrlMapping = new UrlMapping("foot", "", "");
 
     UID: number;
@@ -12,11 +87,6 @@
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
         }
         this.thisClass = (<any>this).constructor;
-        for (var instanceProp in this.thisClass) {
-            if (this.thisClass[instanceProp] instanceof CompositionMapping) {
-                this.thisClass[instanceProp].flagGetAll();
-            }
-        }
     }
 
     onFulfill(callback: Function = null, ...args): Function | void {
@@ -32,9 +102,9 @@
 
     doCompose(compMaps: CompositionMapping[] | boolean): void {
         var allCompMaps: CompositionMapping[] = [];
-        for (var instanceProp in this.thisClass) {
-            if (this.thisClass[instanceProp] instanceof CompositionMapping) {
-                allCompMaps.push(this.thisClass[instanceProp]);
+        for (var instanceProp in this) {
+            if (this[instanceProp] instanceof CompositionMapping) {
+                allCompMaps.push(this[instanceProp]);
             }
         }
         //console.log(allCompMaps);

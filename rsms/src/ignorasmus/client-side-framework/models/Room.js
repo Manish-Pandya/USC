@@ -8,7 +8,24 @@ var Room = (function (_super) {
     function Room() {
         _super.call(this);
     }
+    Room.prototype.onFulfill = function (callback) {
+        if (callback === void 0) { callback = null; }
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        this.hasGetAllPermission();
+        // build compositionMapping
+        this.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
+        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
+    };
+    Room.prototype.hasGetAllPermission = function () {
+        if (this._hasGetAllPermission == null) {
+            var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+            _super.prototype.hasGetAllPermission.call(this, _.intersection(currentRoles, allowedRoles).length);
+        }
+        return this._hasGetAllPermission;
+    };
     Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
-    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     return Room;
 }(FluxCompositerBase));

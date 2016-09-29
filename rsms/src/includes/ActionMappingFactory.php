@@ -45,6 +45,8 @@ class ActionMappingFactory {
                 "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, array(), false),
                 "logoutAction"=>new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, array(), false),
 				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
 
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),

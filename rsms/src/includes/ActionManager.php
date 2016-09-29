@@ -416,6 +416,9 @@ class ActionManager {
             foreach($user->getRoles() as $role){
                 $currentRoles[] = $role->getName();
             }
+
+			$this->getPropertyByName("PrincipalInvestigator", 1, "rooms" );
+
 			return $currentRoles;
 		}
 		return [];
@@ -4595,5 +4598,40 @@ class ActionManager {
     	//return $this->saveHazard($hazard);
 
     }
+
+	public function getPropertyByName( $type = null, $id = null, $property = null){
+		$l = Logger::getLogger(__FUNCTION__);
+
+		if($id == null)$id = $this->getValueFromRequest('id', $id);
+		if($type == null)$type = $this->getValueFromRequest('type', $type);
+        if($property==null)$property = $this->getValueFromRequest('property', $property);
+        if($property==null || $id == null || $type == null)return new ActionError('You forgot a param, yo.');
+		$methodName = 'get'.ucfirst ($property);
+		//prevent injection hacks by instantiating a new object of the type provided, clearing any gunk
+
+		if(!$type){
+			$l->fatal("somebody tried calling $methodName something that doesn't exist ");
+			return "no such method";
+		}
+		$objOfType = new $type();
+		if(!$objOfType){
+			$l->fatal("somebody tried calling $methodName on $type");
+			return "no such thing";
+		}
+		$dao = new GenericDAO($objOfType);
+		$objOfType = $dao->getById($id);
+		if(!$objOfType){
+			$l->fatal("somebody tried calling $methodName on $type, which is a valid type, but the id, $obj->getKey_id(),  wasn't valid");
+			return "no such $type";
+		}
+
+		//only call the method if it exists in our defined class matching the passed object's type
+		if(method_exists ( $objOfType , $methodName )){
+			$l->fatal($objOfType->$methodName());
+			return $objOfType->$methodName();
+		}
+		$l->fatal("somebody tried calling $methodName on $type");
+		return "no such method";
+	}
 }
 ?>

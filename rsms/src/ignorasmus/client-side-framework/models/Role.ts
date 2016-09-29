@@ -5,4 +5,20 @@
     constructor() {
         super();
     }
+
+    onFulfill(callback: Function = null, ...args): Function | void {
+        this.hasGetAllPermission();
+
+        // build compositionMapping
+
+        return super.onFulfill(callback, ...args);
+    }
+
+    hasGetAllPermission(): boolean {
+        if (this._hasGetAllPermission == null) {
+            var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+            super.hasGetAllPermission(_.intersection(currentRoles, allowedRoles).length);
+        }
+        return this._hasGetAllPermission;
+    }
 }

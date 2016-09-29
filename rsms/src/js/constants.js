@@ -1,5 +1,4 @@
-var Constants = (function () {
-
+var Constants = (function (thing) {
     var constants = {};
 
     constants.PENDING_CHANGE = {
