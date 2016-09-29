@@ -410,8 +410,13 @@ class ActionManager {
     }
 
 	public function getCurrentRoles(){
-		if($_SESSION && $_SESSION['ROLE']){
-			return array($_SESSION['ROLE']["userPermissions"], $this->getAllRoles());
+		if($_SESSION && $_SESSION['USER']){
+            $user = $_SESSION['USER'];
+            $currentRoles = array();
+            foreach($user->getRoles() as $role){
+                $currentRoles[] = $role->getName();
+            }
+			return $currentRoles;
 		}
 		return [];
 	}
