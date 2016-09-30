@@ -8,7 +8,7 @@ var CompositionMapping = (function () {
      * @param compositionType
      * @param childType
      * @param childUrl
-     *@ex "getPropertyByName&type=" + this[DataStoreManager.classPropName] + "&property=rooms&id=" + this.UID
+     * @ex "getPropertyByName&type=" + this[DataStoreManager.classPropName] + "&property=rooms&id=" + this.UID
      * @param propertyName
      * @param childIdProp
      * @param parentIdProp
@@ -84,7 +84,6 @@ var FluxCompositerBase = (function () {
                 allCompMaps.push(this[instanceProp]);
             }
         }
-        //console.log(allCompMaps);
         if (compMaps) {
             if (Array.isArray(compMaps)) {
                 // compose just properties in array...
@@ -92,9 +91,6 @@ var FluxCompositerBase = (function () {
                 for (var i = 0; i < len; i++) {
                     if (allCompMaps.indexOf(compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
-                    }
-                    else {
-                        console.log(new Error("compMap not found for property " + this.TypeName + "." + compMaps[i].PropertyName));
                     }
                 }
             }
@@ -117,7 +113,6 @@ var FluxCompositerBase = (function () {
                 this._hasGetAllPermission = evaluator;
             }
         }
-        console.log(this.thisClass.name + " has getAll permission:", this._hasGetAllPermission);
         return this._hasGetAllPermission;
     };
     FluxCompositerBase.urlMapping = new UrlMapping("foot", "", "");

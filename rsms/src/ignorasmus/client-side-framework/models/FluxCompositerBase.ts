@@ -51,6 +51,7 @@
         this.ChildUrl = childUrl;
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;
+
         if (parentIdProp) {
             this.ParentIdProp = parentIdProp
         } else {
@@ -107,7 +108,6 @@ abstract class FluxCompositerBase {
                 allCompMaps.push(this[instanceProp]);
             }
         }
-        //console.log(allCompMaps);
 
         if (compMaps) {
             if (Array.isArray(compMaps)) {
@@ -116,8 +116,6 @@ abstract class FluxCompositerBase {
                 for (let i: number = 0; i < len; i++) {
                     if (allCompMaps.indexOf(compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
-                    } else {
-                        console.log(new Error("compMap not found for property " + this.TypeName + "." + compMaps[i].PropertyName));
                     }
                 }
             } else {
@@ -139,7 +137,6 @@ abstract class FluxCompositerBase {
                 this._hasGetAllPermission = evaluator;
             }
         }
-        console.log(this.thisClass.name + " has getAll permission:", this._hasGetAllPermission);
         return this._hasGetAllPermission;
     }
 

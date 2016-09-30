@@ -6,6 +6,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
+class PermissionMap {
+    static Permissions: any[] = [];
+    static getPermission(className: string): any {
+        if (!_.has(this.Permissions, className)) {
+            this.Permissions[className] = {};
+            this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
+            //TODO:  this.Permissions[className].save = new window[className].getHasSavePermissions();
+        }
+        console.log(this.Permissions);
+        return this.Permissions[className];
+    }
+}
+
+
 //abstract specifies singleton in ts 1.x (ish)
 abstract class DataStoreManager {
     //----------------------------------------------------------------------
@@ -45,34 +59,45 @@ abstract class DataStoreManager {
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then((d: any[]) => {
                         //console.log(type + " after request");
-                        DataStoreManager._actualModel[type].Data = d;
+                        DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
                         if (compMaps) {
                             var allComps: any[] = [];
-                            var thisClass: Function = window[type];
+                            var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
+                            if (thisClass["Class"] == "PrincipalInvestigator" && thisClass["Key_id"] == 1) {
+                                thisClass.onFulfill();
+                                this.fullfillProperty(thisClass, thisClass["RoomMap"]);
+                            }
+
                             for (var instanceProp in thisClass) {
                                 if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                        if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
-                                            console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
-                                            //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
-                                            if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
-                                                allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
-                                            } else {
-                                                allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
-                                            }
+                                    if (PermissionMap.getPermission(thisClass[instanceProp].ChildType).getAll) {
+                                        if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
+                                            if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
+                                                console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
+                                                //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                                if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
+                                                    allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
+                                                } else {
+                                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                                }
 
-                                        } else {
-                                            console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
-                                            allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
+                                            } else {
+                                                console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
+                                                allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
+                                            }
                                         }
+                                    } else {
+                                        //get a subset bc we don't have permission to get all
+                                        //loop through dsm collection of type
+                                        //foreach, compose for lower permission level
+                                        //TODO: optimize ie by building a list of relevant comp maps and doing a more efficient loop
                                     }
                                 }
                             }
                             
                             return Promise.all(allComps)
                                 .then((whateverGotReturned) => {
-                                    d = InstanceFactory.convertToClasses(d);
-                                    d.forEach((value: any, index: number, array: any[]) => {
+                                    DataStoreManager._actualModel[type].Data.forEach((value: any, index: number, array: any[]) => {
                                         if (!value.viewModelWatcher) {
                                             value.viewModelWatcher = _.cloneDeep(value);
                                         }
@@ -202,6 +227,13 @@ abstract class DataStoreManager {
         } else {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
+    }
+
+    static fullfillProperty(parent: FluxCompositerBase, compMap: CompositionMapping): Promise<FluxCompositerBase> {
+        return parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then((d) => {
+            console.log(d);
+            return d;
+        })
     }
 
     // TODO: Doesn't always work, as drills into object nest before moving to next object.

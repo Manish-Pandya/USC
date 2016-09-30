@@ -22,7 +22,7 @@ var Room = (function (_super) {
     Room.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
             var allowedRoles = [Constants.ROLE.NAME.ADMIN];
-            _super.prototype.hasGetAllPermission.call(this, _.intersection(currentRoles, allowedRoles).length);
+            _super.prototype.hasGetAllPermission.call(this, _.intersection(currentRoles, allowedRoles).length > 0);
         }
         return this._hasGetAllPermission;
     };
