@@ -64,11 +64,13 @@
                 console.log(pis[0].User);
 
             }
-            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+            //DataStoreManager.getAll("Room", rooms, true),
+            var ps = [DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
-                        console.log(pis[9], rooms[9]);
+                        console.log(pis[0], rooms[0]);
+                        
                         /*
                         DataStoreManager.getById("User", 1, {}, true).then((d)=>{
                             console.log(d);

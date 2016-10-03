@@ -6,12 +6,12 @@
         super();
     }
 
-    onFulfill(callback: Function = null, ...args): Function | void {
+    onFulfill(): void {
         this.hasGetAllPermission();
+        super.onFulfill();
 
         // build compositionMapping
 
-        return super.onFulfill(callback, ...args);
     }
 
     hasGetAllPermission(): boolean {

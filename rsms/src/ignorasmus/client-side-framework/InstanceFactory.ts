@@ -7,7 +7,7 @@
 'use strict';
 
 //abstract specifies singleton in ts 1.x (ish)
-abstract class InstanceFactory {
+abstract class InstanceFactory extends DataStoreManager {
     //----------------------------------------------------------------------
     //
     //  Properties
@@ -112,61 +112,116 @@ abstract class InstanceFactory {
             //parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
             
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-                parent[compMap.PropertyName] = []; // clear property
-                parent.viewModelWatcher[compMap.PropertyName] = [];
+            if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
+                    parent[compMap.PropertyName] = []; // clear property
+                    parent.viewModelWatcher[compMap.PropertyName] = [];
 
 
-                //Get the gerunds.then
-                var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
-                if (typeof DataStoreManager.ActualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager.ActualModel[manyTypeToManyChildType].promise) {
-                    DataStoreManager.ActualModel[manyTypeToManyChildType] = {};
-                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
-                        .then(function (d: any[]) {
-                            DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
-                            console.log(parent.Class, compMap.ChildType);
-                            var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
-                            var gerundLen = d.length;
-                            //loop through all the gerunds
-                            for (let i: number = 0; i < gerundLen; i++){
-                                var g = d[i];
-                                let childLen: number = childStore.length;
-                                for (let x = 0; x < childLen; x++) {                                    
-                                    if (parent.UID == g.ParentId && childStore[x].UID == g.ChildId) {
-                                        parent[compMap.PropertyName].push(childStore[x]);
-                                        parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
+                    //Get the gerunds.then
+                    var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
+                    if (typeof DataStoreManager.ActualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager.ActualModel[manyTypeToManyChildType].promise) {
+                        DataStoreManager.ActualModel[manyTypeToManyChildType] = {};
+                        DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
+                            .then(function (d: any[]) {
+                                DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
+                                console.log(parent.Class, compMap.ChildType);
+                                var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                                var gerundLen = d.length;
+                                //loop through all the gerunds
+                                for (let i: number = 0; i < gerundLen; i++) {
+                                    var g = d[i];
+                                    let childLen: number = childStore.length;
+                                    for (let x = 0; x < childLen; x++) {
+                                        if (parent.UID == g.ParentId && childStore[x].UID == g.ChildId) {
+                                            parent[compMap.PropertyName].push(childStore[x]);
+                                            parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
+                                        }
                                     }
-                                }                                
-                            }
-                        })
-                        .catch((f) => {
-                            console.log("getChildInstances:", f);
-                        })
+                                }
+                            })
+                            .catch((f) => {
+                                console.log("getChildInstances:", f);
+                            })
 
-                } else {
-                    DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d: any[]) => {
-                        var childStore: FluxCompositerBase[] = DataStoreManager.ActualModel[compMap.ChildType].Data;
-                        var d: any[] = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
-                        var gerundLen: number = d.length;
-                        //loop through all the gerunds
-                        for (let i: number = 0; i < gerundLen; i++) {
-                            var g: any = d[i];
-                            let childLen: number = childStore.length;
-                            for (let x = 0; x < childLen; x++) {
-                                let child: FluxCompositerBase = childStore[x];
-                                if (child.UID == g.ChildId && parent.UID == g.ParentId) {
-                                    parent[compMap.PropertyName].push(child);
+                    } else {
+                        parent[compMap.PropertyName] = []; // clear property
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+
+                        DataStoreManager.ActualModel[manyTypeToManyChildType].promise.then((d: any[]) => {
+                            var childStore: FluxCompositerBase[] = DataStoreManager.ActualModel[compMap.ChildType].Data;
+                            var d: any[] = DataStoreManager.ActualModel[manyTypeToManyChildType].Data;
+                            var gerundLen: number = d.length;
+                            //loop through all the gerunds
+                            for (let i: number = 0; i < gerundLen; i++) {
+                                var g: any = d[i];
+                                let childLen: number = childStore.length;
+                                for (let x = 0; x < childLen; x++) {
+                                    let child: FluxCompositerBase = childStore[x];
+                                    if (child.UID == g.ChildId && parent.UID == g.ParentId) {
+                                        parent[compMap.PropertyName].push(child);
+                                    }
                                 }
                             }
-                        }
-                        // init collection in viewModel to be replaced with referenceless actualModel data
-                        parent.viewModelWatcher[compMap.PropertyName] = [];
-                        // clone collection from actualModel to viewModel
-                        parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
-                    })                    
-                    
+                            // init collection in viewModel to be replaced with referenceless actualModel data
+                            parent.viewModelWatcher[compMap.PropertyName] = [];
+                            // clone collection from actualModel to viewModel
+                            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
+                        })
+
+                    }
+                    return;
                 }
-                return;
+            } else {
+                if (typeof parent[compMap.PropertyName + "Promise"] == "undefined") {                    
+                    parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then((d) => {
+                        parent[compMap.PropertyName] = []
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+
+                        d = InstanceFactory.convertToClasses(d);
+                        var len = d.length;
+                        for (let i = 0; i < len; i++) {
+                            var current = d[i];
+                            var existingIndex: number = _.findIndex(DataStoreManager._actualModel[compMap.ChildType].Data, function (o) { return o.UID == current.UID; });
+                            if (existingIndex > -1) {
+                                DataStoreManager._actualModel[compMap.ChildType].Data[existingIndex] = current;
+                            } else {
+                                DataStoreManager._actualModel[compMap.ChildType].Data.push(current);
+                            }
+                            if (!current.viewModelWatcher) {
+                                current.viewModelWatcher = _.cloneDeep(current);
+                            }
+                            parent[compMap.PropertyName].push(current);
+                            parent.viewModelWatcher[compMap.PropertyName].push(current.viewModelWatcher);
+
+                        }
+                        
+                        return d;
+                    })
+                } else {
+                    parent[compMap.PropertyName + "Promise"].then((d) => {
+                        parent[compMap.PropertyName] = []
+                        parent.viewModelWatcher[compMap.PropertyName] = [];
+                        d = InstanceFactory.convertToClasses(d);
+                        var len = d.length;
+                        for (let i = 0; i < len; i++) {
+                            var current = d[i];
+                            var existingIndex: number = _.findIndex(DataStoreManager._actualModel[compMap.ChildType].Data, function (o) { return o.UID == current.UID; });
+                            if (existingIndex > -1) {
+                                DataStoreManager._actualModel[compMap.ChildType].Data[existingIndex] = current;
+                            } else {
+                                DataStoreManager._actualModel[compMap.ChildType].Data.push(current);
+                            }
+                            if (!current.viewModelWatcher) {
+                                current.viewModelWatcher = _.cloneDeep(current);
+                            }
+                            parent[compMap.PropertyName].push(current);
+                            parent.viewModelWatcher[compMap.PropertyName].push(current.viewModelWatcher);
+                        }
+
+                        return d;
+                    })
+                }
             }
         } else {
             // clone collection from actualModel to viewModel

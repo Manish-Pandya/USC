@@ -8,13 +8,12 @@
         super();
     }
 
-    onFulfill(callback: Function = null, ...args): Function | void {
+    onFulfill(): void {
         this.hasGetAllPermission();
+        super.onFulfill();
 
         // build compositionMapping
         this.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
-
-        return super.onFulfill(callback, ...args);
     }
 
     hasGetAllPermission(): boolean {

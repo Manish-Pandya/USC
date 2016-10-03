@@ -71,6 +71,7 @@
             this.callGetAll = true;
         }
     }
+
 }
 
 
@@ -83,6 +84,20 @@ abstract class FluxCompositerBase {
 
     private thisClass: Function;
 
+    private _allCompMaps: CompositionMapping[];
+    get allCompMaps(): CompositionMapping[] {
+        if (!this._allCompMaps) {
+            this._allCompMaps = [];
+            for (var instanceProp in this) {
+                if (this[instanceProp] instanceof CompositionMapping) {
+                    var cm: CompositionMapping = this[instanceProp];
+                    this._allCompMaps.push(cm);
+                }
+            }
+        }
+        return this._allCompMaps;
+    }
+
     constructor() {
         if (!FluxCompositerBase.urlMapping) {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
@@ -90,23 +105,18 @@ abstract class FluxCompositerBase {
         this.thisClass = (<any>this).constructor;
     }
 
-    onFulfill(callback: Function = null, ...args): Function | void {
+    onFulfill(): void {
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];
         }
         if (DataStoreManager.classPropName && this[DataStoreManager.classPropName]) {
             this.TypeName = this[DataStoreManager.classPropName];
         }
-        
-        return callback ? callback(args) : null;
     }
 
     doCompose(compMaps: CompositionMapping[] | boolean): void {
-        var allCompMaps: CompositionMapping[] = [];
-        for (var instanceProp in this) {
-            if (this[instanceProp] instanceof CompositionMapping) {
-                allCompMaps.push(this[instanceProp]);
-            }
+        if (this[DataStoreManager.classPropName] == "PrincipalInvestigator" && this.UID == 1) {
+            console.log(this["Rooms"] && this["Rooms"].length, "do comp called for lydia");
         }
 
         if (compMaps) {
@@ -114,15 +124,15 @@ abstract class FluxCompositerBase {
                 // compose just properties in array...
                 var len: number = (<CompositionMapping[]>compMaps).length;
                 for (let i: number = 0; i < len; i++) {
-                    if (allCompMaps.indexOf(compMaps[i]) > -1) {
+                    if (this.allCompMaps.indexOf(compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
                     }
                 }
             } else {
                 // compose all compmaps...
-                var len: number = allCompMaps.length;
+                var len: number = this.allCompMaps.length;
                 for (let i: number = 0; i < len; i++) {
-                    InstanceFactory.getChildInstances(allCompMaps[i], this);
+                    InstanceFactory.getChildInstances(this.allCompMaps[i], this);
                 }
             }
         }

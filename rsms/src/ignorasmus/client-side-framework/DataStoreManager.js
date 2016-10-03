@@ -13,7 +13,6 @@ var PermissionMap = (function () {
             this.Permissions[className] = {};
             this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
         }
-        console.log(this.Permissions);
         return this.Permissions[className];
     };
     PermissionMap.Permissions = [];
@@ -40,7 +39,6 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     // TODO: Consider method overload to allow multiple types and viewModelParents
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
-        var _this = this;
         if (compMaps === void 0) { compMaps = null; }
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
@@ -54,27 +52,24 @@ var DataStoreManager = (function () {
                     if (compMaps) {
                         var allComps = [];
                         var thisClass = DataStoreManager._actualModel[type].Data[0];
-                        if (thisClass["Class"] == "PrincipalInvestigator" && thisClass["Key_id"] == 1) {
-                            thisClass.onFulfill();
-                            _this.fullfillProperty(thisClass, thisClass["RoomMap"]);
-                        }
-                        for (var instanceProp in thisClass) {
-                            if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                if (PermissionMap.getPermission(thisClass[instanceProp].ChildType).getAll) {
-                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                        if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
-                                            console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
+                        for (var n = 0; n < thisClass.allCompMaps.length; n++) {
+                            var compMap = thisClass.allCompMaps[n];
+                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                        if (!DataStoreManager._actualModel[compMap.ChildType].Data) {
+                                            console.log(type + " in if looking for " + compMap.ChildType);
                                             //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
-                                            if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
-                                                allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
+                                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                             }
                                             else {
-                                                allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                             }
                                         }
                                         else {
-                                            console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
-                                            allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
+                                            console.log(type + " in else looking for " + compMap.ChildType);
+                                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                                         }
                                     }
                                 }
@@ -138,11 +133,12 @@ var DataStoreManager = (function () {
                 .then(function (d) {
                 if (compMaps) {
                     var allComps = [];
-                    var thisClass = window[type];
-                    for (var instanceProp in thisClass) {
-                        if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                            if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                    var thisClass = DataStoreManager._actualModel[type].Data[0];
+                    for (var n = 0; n < thisClass.allCompMaps.length; n++) {
+                        var compMap = thisClass.allCompMaps[n];
+                        if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                            if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                             }
                         }
                     }
@@ -205,12 +201,6 @@ var DataStoreManager = (function () {
         } else {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
-    };
-    DataStoreManager.fullfillProperty = function (parent, compMap) {
-        return parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then(function (d) {
-            console.log(d);
-            return d;
-        });
     };
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {

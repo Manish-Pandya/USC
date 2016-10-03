@@ -14,7 +14,6 @@ class PermissionMap {
             this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
             //TODO:  this.Permissions[className].save = new window[className].getHasSavePermissions();
         }
-        console.log(this.Permissions);
         return this.Permissions[className];
     }
 }
@@ -34,7 +33,7 @@ abstract class DataStoreManager {
     static isPromisified: boolean = true;
 
     // NOTE: there's intentionally no getter
-    private static _actualModel: any = {};
+    protected static _actualModel: any = {};
     static get ActualModel(): any {
         return this._actualModel;
     }
@@ -63,27 +62,24 @@ abstract class DataStoreManager {
                         if (compMaps) {
                             var allComps: any[] = [];
                             var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
-                            if (thisClass["Class"] == "PrincipalInvestigator" && thisClass["Key_id"] == 1) {
-                                thisClass.onFulfill();
-                                this.fullfillProperty(thisClass, thisClass["RoomMap"]);
-                            }
 
-                            for (var instanceProp in thisClass) {
-                                if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                    if (PermissionMap.getPermission(thisClass[instanceProp].ChildType).getAll) {
-                                        if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                            if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
-                                                console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
+                            for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
+                                var compMap: CompositionMapping = thisClass.allCompMaps[n];
+                                if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                    if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                        if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                            if (!DataStoreManager._actualModel[compMap.ChildType].Data) {
+                                                console.log(type + " in if looking for " + compMap.ChildType);
                                                 //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
-                                                if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
-                                                    allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
+                                                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                                                    allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                                 } else {
-                                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                                    allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                                 }
 
                                             } else {
-                                                console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
-                                                allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
+                                                console.log(type + " in else looking for " + compMap.ChildType);
+                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                                             }
                                         }
                                     } else {
@@ -151,11 +147,12 @@ abstract class DataStoreManager {
                 .then((d: FluxCompositerBase) => {
                     if (compMaps) {
                         var allComps: any[] = [];
-                        var thisClass: Function = window[type];
-                        for (var instanceProp in thisClass) {
-                            if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                    allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                        var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
+                        for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
+                            var compMap: CompositionMapping = thisClass.allCompMaps[n];
+                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                    allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                 }
                             }
                         }
@@ -227,13 +224,6 @@ abstract class DataStoreManager {
         } else {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
-    }
-
-    static fullfillProperty(parent: FluxCompositerBase, compMap: CompositionMapping): Promise<FluxCompositerBase> {
-        return parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then((d) => {
-            console.log(d);
-            return d;
-        })
     }
 
     // TODO: Doesn't always work, as drills into object nest before moving to next object.

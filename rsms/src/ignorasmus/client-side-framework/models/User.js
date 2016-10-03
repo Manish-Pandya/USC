@@ -8,16 +8,11 @@ var User = (function (_super) {
     function User() {
         _super.call(this);
     }
-    User.prototype.onFulfill = function (callback) {
-        if (callback === void 0) { callback = null; }
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
+    User.prototype.onFulfill = function () {
         this.hasGetAllPermission();
+        _super.prototype.onFulfill.call(this);
         // build compositionMapping
         this.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
-        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
     };
     User.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {

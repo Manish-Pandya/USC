@@ -15,16 +15,15 @@
         super();
     }
 
-    onFulfill(callback: Function = null, ...args): Function | void {
+    onFulfill(): void {
         this.hasGetAllPermission();
+        super.onFulfill();
 
         // build compositionMapping
         this.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
         this.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
         let rumStringa: string = "getPropertyByName&type=" + this[DataStoreManager.classPropName] + "&property=rooms&id=" + this.UID;
         this.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", rumStringa, "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
-
-        return super.onFulfill(callback, ...args);        
     }
 
     hasGetAllPermission(): boolean {

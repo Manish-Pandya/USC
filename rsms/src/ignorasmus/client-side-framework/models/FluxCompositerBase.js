@@ -63,42 +63,49 @@ var FluxCompositerBase = (function () {
         }
         this.thisClass = this.constructor;
     }
-    FluxCompositerBase.prototype.onFulfill = function (callback) {
-        if (callback === void 0) { callback = null; }
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
+    Object.defineProperty(FluxCompositerBase.prototype, "allCompMaps", {
+        get: function () {
+            if (!this._allCompMaps) {
+                this._allCompMaps = [];
+                for (var instanceProp in this) {
+                    if (this[instanceProp] instanceof CompositionMapping) {
+                        var cm = this[instanceProp];
+                        this._allCompMaps.push(cm);
+                    }
+                }
+            }
+            return this._allCompMaps;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    FluxCompositerBase.prototype.onFulfill = function () {
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];
         }
         if (DataStoreManager.classPropName && this[DataStoreManager.classPropName]) {
             this.TypeName = this[DataStoreManager.classPropName];
         }
-        return callback ? callback(args) : null;
     };
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
-        var allCompMaps = [];
-        for (var instanceProp in this) {
-            if (this[instanceProp] instanceof CompositionMapping) {
-                allCompMaps.push(this[instanceProp]);
-            }
+        if (this[DataStoreManager.classPropName] == "PrincipalInvestigator" && this.UID == 1) {
+            console.log(this["Rooms"] && this["Rooms"].length, "do comp called for lydia");
         }
         if (compMaps) {
             if (Array.isArray(compMaps)) {
                 // compose just properties in array...
                 var len = compMaps.length;
                 for (var i = 0; i < len; i++) {
-                    if (allCompMaps.indexOf(compMaps[i]) > -1) {
+                    if (this.allCompMaps.indexOf(compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
                     }
                 }
             }
             else {
                 // compose all compmaps...
-                var len = allCompMaps.length;
+                var len = this.allCompMaps.length;
                 for (var i = 0; i < len; i++) {
-                    InstanceFactory.getChildInstances(allCompMaps[i], this);
+                    InstanceFactory.getChildInstances(this.allCompMaps[i], this);
                 }
             }
         }

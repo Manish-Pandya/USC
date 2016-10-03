@@ -8,15 +8,10 @@ var Role = (function (_super) {
     function Role() {
         _super.call(this);
     }
-    Role.prototype.onFulfill = function (callback) {
-        if (callback === void 0) { callback = null; }
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
+    Role.prototype.onFulfill = function () {
         this.hasGetAllPermission();
+        _super.prototype.onFulfill.call(this);
         // build compositionMapping
-        return _super.prototype.onFulfill.apply(this, [callback].concat(args));
     };
     Role.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
