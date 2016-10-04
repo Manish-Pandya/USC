@@ -51,7 +51,12 @@ angular
         templateUrl: "views/admin/disposals.html",
         controller: "disposalCtrl"
       })
-       .state('radmin.orders', {
+      .state('radmin.drum-detail', {
+        url: "/drum-detail:drumId",
+        templateUrl: "views/admin/drum-detail.html",
+        controller: "drumDetailCtrl"
+      })
+      .state('radmin.orders', {
         url: "/packages",
         templateUrl: "views/admin/parcels.html",
         controller: "AllOrdersCtrl"
@@ -133,6 +138,11 @@ angular
         templateUrl: "views/pi/wipe-tests.html",
         controller: "PIWipeTestController"
       })
+      .state('pi-auths', {
+        url: '/my-lab:pi/authorizations',
+        templateUrl: "views/pi/auths.html",
+        controller: "AuthCtrl"
+       })
       .state('inspection-wipes:inspection', {
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",

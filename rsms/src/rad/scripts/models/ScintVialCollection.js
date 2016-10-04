@@ -18,10 +18,3 @@ ScintVialCollection.prototype = {
 
 //inherit from and extend GenericModel
 extend(ScintVialCollection, GenericModel);
-
-
-//create an angular module for the model, so it can be injected downstream
-angular
-	.module("ScintVialCollection",[])
-	.value("ScintVialCollection",ScintVialCollection);
-

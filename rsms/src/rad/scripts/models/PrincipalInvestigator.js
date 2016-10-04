@@ -3,10 +3,7 @@
 //generic model to be "extended" by "POJOs"
 
 //constructor
-var PrincipalInvestigator = function () {
-    PrincipalInvestigator.url = "";
-    PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
-};
+var PrincipalInvestigator = function(){};
 
 PrincipalInvestigator.prototype = {
     eagerAccessors: [
@@ -192,10 +189,3 @@ PrincipalInvestigator.prototype = {
 
 //inherit from and extend GenericPrincipalInvestigator
 extend(PrincipalInvestigator, GenericPrincipalInvestigator);
-
-PrincipalInvestigator();
-
-//create an angular module for the model, so it can be injected downstream
-angular
-    .module("principalInvestigator",[])
-    .value("PrincipalInvestigator",PrincipalInvestigator);

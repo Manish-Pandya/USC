@@ -92,6 +92,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
@@ -113,14 +114,11 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
-
-<script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
-
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/phone-format.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/datetimepicker.js"></script>
-
+<script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 </head>
 <body>
     <?php if($_SESSION['USER'] != NULL){ ?>

@@ -44,9 +44,3 @@ CarboyUseCycle.prototype = {
 
 // inherit from GenericModel
 extend(CarboyUseCycle, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("carboyUseCycle", [])
-    .value("CarboyUseCycle", Carboy);
-

@@ -19,6 +19,17 @@ Drum.prototype = {
         paramValue: 'Key_id',
         paramName: ''
     },
+
+    DrumWipeTestRelationship: {
+
+        className: 'DrumWipeTest',
+        keyReference: 'Drum_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: 'id'
+
+    },
+
     loadWasteBags: function() {
         if(!this.WasteBags) {
             dataLoader.loadOneToManyRelationship(this, 'WasteBags', this.WasteBagsRelationship);
@@ -27,16 +38,13 @@ Drum.prototype = {
     loadScintVialCollections: function() {
         if (!this.ScintVialCollections) {
             dataLoader.loadOneToManyRelationship(this, 'ScintVialCollections', this.SVCollectionRelationship);
+        }
+    },
+    loadDrumWipeTest: function () {
+        dataLoader.loadChildObject(this, "Wipe_test", "DrumWipeTest", this.Key_id);
     }
-}
-
 }
 
 // inherit from GenericModel
 extend(Drum, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("drum", [])
-    .value("Drum", Drum);
 

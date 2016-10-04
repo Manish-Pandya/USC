@@ -37,15 +37,21 @@
                         <i class="icon-spinnery-dealie spinner small" ng-if="def.CorrectiveActions[0].dirty"></i>
 
                         <h4 class="bold">Pending Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Anticipated Completion Date:</h4>
-                        <p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Promised_date">{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
+
+                        <p ng-if="def.CorrectiveActions[0].Needs_facilities">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_FACILITIES.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Needs_ehs">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_EHS.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Insuficient_funds">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.INSUFFICIENT_FUNDS.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Other_reason">{{def.CorrectiveActions[0].Other_reason}}</p>
+
                     </div>
 
                     <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
                         <h4 class="bold">Completed Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Completion Date:</h4>
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
@@ -85,23 +91,28 @@
                     </div>
 
                     <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING">
-                        <h4 class="bold">Pending Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <h4 class="bold">Planned Corrective Action:</h4>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Anticipated Completion Date:</h4>
-                        <p>{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Promised_date">{{def.CorrectiveActions[0].Promised_date | dateToISO:def.CorrectiveActions[0]:'Promised_date'}}</p>
+
+                        <p ng-if="def.CorrectiveActions[0].Needs_facilities">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_FACILITIES.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Needs_ehs">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.NEEDS_EHS.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Insuficient_funds">{{Constants.CORRECTIVE_ACTION.NO_COMPLETION_DATE_REASON.INSUFFICIENT_FUNDS.LABEL}}</p>
+                        <p ng-if="def.CorrectiveActions[0].Other_reason">{{def.CorrectiveActions[0].Other_reason}}</p>
                     </div>
 
                     <div class="inner-action" ng-if="def.CorrectiveActions.length && def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE">
              
                         <h4 class="bold">Completed Corrective Action:</h4>
-                        <p>{{def.CorrectiveActions[0].Text}}</p>
+                        <p ng-bind-html="def.CorrectiveActions[0].Text | sanitize"></p>
 
                         <h4 class="bold">Completion Date:</h4>
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
                     </div>
                 </div>
-                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_close">
+                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_closed">
                     <a class="btn btn-small btn-primary" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
                     <a class="btn btn-small btn-danger" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
                 </div>
@@ -118,6 +129,6 @@
         </tr>
     </table>
 </td>
-<td once-text="question.Description" style="padding:10px !important;"></td>
-<td once-text="question.Reference" style="padding:10px !important;"></td>
+<td ng-bind-html="question.Description | sanitize" style="padding:10px !important;"></td>
+<td ng-bind-html="question.Reference | sanitize" style="padding:10px !important;"></td>
 </tr>

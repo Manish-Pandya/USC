@@ -19,12 +19,3 @@ User.prototype = {
 //inherit from and extend GenericModel
 extend(User, GenericModel);
 
-User();
-
-
-//create an angular module for the model, so it can be injected downstream
-
-var usermodule = angular
-    .module("User",[])
-    .value("User",User)
-

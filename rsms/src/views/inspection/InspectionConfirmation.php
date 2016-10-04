@@ -2,6 +2,7 @@
 require_once '../top_view.php';
 ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+<script src="../../js/lib/sticky.js"></script>
 <script src="../../js/postInspection.js"></script>
 <div ng-app="postInspections" ng-controller="mainController">
 <div class="navbar">

@@ -177,10 +177,11 @@ angular.module('HazardInventory')
         $scope.openNotes = function () {
             var modalData = {};
             modalData.PI = $scope.PI;
-            af.setModalData(modalData);
+            modalData.isComments = true;
+            af.setModalData(modalData);            
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/inspection-notes-modal.html',
-                controller: 'HazardInventoryModalCtrl'
+                controller: 'CommentsCtrl'
             });
 
             modalInstance.result.then(function () {
@@ -235,7 +236,7 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
+    .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
         var af = applicationControllerFactory;
         var rbf = roleBasedFactory;
@@ -243,6 +244,25 @@ angular.module('HazardInventory')
         $scope.modalData = af.getModalData();
         $scope.dataStoreManager = dataStoreManager;
         $scope.USER = GLOBAL_SESSION_USER;
+
+        if ($rootScope.PrincipalInvestigatorsBusy) {
+            $scope.modalData.inspectionsPendings = true;
+            $rootScope.PrincipalInvestigatorsBusy.then(function () {
+                $scope.modalData.hasNoOpenInspections = true;
+                setTimeout(function () {
+                    $scope.modalData.inspectionsPendings = false;
+                    $scope.$apply();                    
+                }, 10);
+                $scope.pi = $scope.modalData.PI;
+                for (var i = 0; i < $scope.modalData.PI.Inspections.length; i++) {
+                    var insp = $scope.modalData.PI.Inspections[i];
+                    if (!insp.Date_closed) {
+                        $scope.modalData.hasNoOpenInspections = true;
+                        break;
+                    }
+                }
+            })
+        }
 
         function openSecondaryModal(modalData) {
             console.log(modalData);
@@ -319,6 +339,8 @@ angular.module('HazardInventory')
             $modalInstance.dismiss();
         }
 
+   
+
 
     })
     .controller('SecondaryModalController', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods, roleBasedFactory) {
@@ -343,3 +365,58 @@ angular.module('HazardInventory')
 
 
     });
+function CommentsCtrl($scope, $modalInstance, convenienceMethods, $q, applicationControllerFactory, roleBasedFactory) {
+
+    $scope.tinymceOptions = {
+        plugins: 'link lists',
+        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li {font-size:14px}"
+    };
+
+    $scope.constants = Constants;
+    var af = applicationControllerFactory;
+    var rbf = roleBasedFactory;
+    $scope.af = af;
+    $scope.modalData = af.getModalData();
+    $scope.dataStoreManager = dataStoreManager;
+    $scope.USER = GLOBAL_SESSION_USER;
+
+    $scope.pi = $scope.modalData.PI;
+    $scope.piCopy = {
+        Key_id: $scope.pi.Key_id,
+        Is_active: $scope.pi.Is_active,
+        User_id: $scope.pi.User_id,
+        Inspection_notes: $scope.pi.Inspection_notes,
+        Class: "PrincipalInvestigator"
+    };
+
+    $scope.close = function () {
+        $modalInstance.dismiss();
+    };
+
+    $scope.edit = function (state) {
+        $scope.pi.editNote = state;
+    }
+
+    $scope.saveNote = function () {
+        $scope.savingNote = true;
+        $scope.error = null;
+        $scope.close();
+
+        af.savePI($scope.pi, $scope.piCopy)
+          .then(
+            function (returnedPi) {
+                $scope.savingNote = false;
+                $scope.pi.editNote = false;
+                $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
+            },
+            function () {
+                $scope.savingNote = false;
+                $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
+            }
+          )
+    }
+
+}

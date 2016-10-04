@@ -9,8 +9,3 @@ Laser.prototype = {
 
 // inherit from GenericModel
 extend(Laser, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("laser", [])
-    .value("Laser", Laser);

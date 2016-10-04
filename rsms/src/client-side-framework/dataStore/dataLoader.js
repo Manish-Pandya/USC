@@ -23,7 +23,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
 
-        parent.api.read(relationship.methodString, paramValue)
+        return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(relationship.methodString, paramValue)
             .then(function (returnedPromise) {
                 parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data, null, recurse);
             });

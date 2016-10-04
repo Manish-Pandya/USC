@@ -290,7 +290,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	@param (time, string)  MYSQL datetime to convert
         *
         **/
-        getDate: function(time){
+        getDateString: function(time){
 
             Date.prototype.getMonthFormatted = function() {
                 var month = this.getMonth();
@@ -453,6 +453,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return ("(" + city + ") " + number).trim();
     }
 })
+.filter("sanitize", ['$sce', function($sce) {
+    return function(htmlCode){
+        return $sce.trustAsHtml(htmlCode);
+    }
+}])
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',

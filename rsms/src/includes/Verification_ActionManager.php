@@ -211,7 +211,6 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     	else{
     		$dao = $this->getDao(new PendingHazardDtoChange());
     		$decodedObject = $dao->save($decodedObject);
-			$LOG->fatal($decodedObject);
     		return $decodedObject;
     	}
     }
