@@ -356,16 +356,11 @@ class GenericDAO {
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 		$stmt->bindValue(4, $wasteTypeId);
-        $this->LOG->fatal($this->modelObject->getAuthorization_id());
-
-        $this->LOG->fatal($startDate . " " . $endDate . " " . $wasteTypeId);
-
-		$stmt->execute();
+        $stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
-        $this->LOG->fatal($sum);
 		return $sum;
 	}
 
@@ -378,7 +373,6 @@ class GenericDAO {
      */
 	public function getStartingAmount( $startDate = null ){
         $l = Logger::getLogger("transfer amounts");
-        $l->fatal("called it");
 		$sql = "SELECT SUM(`quantity`)
 				FROM parcel a
                 WHERE `authorization_id` = ?";
@@ -410,7 +404,6 @@ class GenericDAO {
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
         $l = Logger::getLogger("transfer amounts");
-        $l->FATAL($startDate . " " . $endDate . " " .  $hasRsNumber );
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
@@ -432,10 +425,8 @@ class GenericDAO {
 		$stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
-        $this->LOG->fatal($total);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
-        $this->LOG->fatal($sum);
 
 		return $sum;
 	}
@@ -750,7 +741,9 @@ class GenericDAO {
 		global $db;
 
 		//Prepare to query all from the table
-		$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name,pi_name');
+		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+        $sql = "select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,year(curdate()) AS `year`,NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`) where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id` from `inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),NULL union select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id` AS `inspection_id` from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`) where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`)) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
+        $stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
 
 		// Query the db and return an array of $this type of object
@@ -1005,7 +998,6 @@ class GenericDAO {
 
 		$queryString .= ')';
 
-		$LOG->fatal($queryString);
 
 		$stmt = $db->prepare($queryString);
 		/*
@@ -1138,7 +1130,6 @@ class GenericDAO {
      *
      */
     public function getCurrentInspectionsByEquipment(Equipment $equipment){
-        $this->LOG->fatal('testing');
         global $db;
         $queryString = 'select * from equipment_inspection
                         WHERE equipment_class = :class

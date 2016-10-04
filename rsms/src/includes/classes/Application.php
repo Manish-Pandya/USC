@@ -75,10 +75,8 @@ function isAdminUser(){
 
 function securityCheck(){
 	$LOG = Logger::getLogger('security');
-	$LOG->fatal("test");
 	
 	if (!isset($_SESSION["USER"])){
-		$LOG->fatal( $_SERVER['HTTP_COOKIE']);
 		//Forward to login page
 		header("location:" . LOGIN_PAGE);
 	}
@@ -145,7 +143,6 @@ function isEquipmentEnabled(){
 
 function isCommitteesEnabled(){
 	$LOG = Logger::getLogger("committees");
-	$LOG->fatal('committees enabled');
 	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
 	return false;
 }

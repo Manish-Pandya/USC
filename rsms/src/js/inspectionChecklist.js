@@ -3,7 +3,7 @@ $(".collapse").bind("transition webkitTransition oTransition MSTransition", func
 });
 
 
-var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy'])
+var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap', 'shoppinpal.mobile-menu', 'convenienceMethodWithRoleBasedModule', 'once', 'angular.filter', 'cgBusy', 'ui.tinymce'])
 .filter('categoryFilter', function () {
     return function (items, category ) {
             if( !category ) return false;
@@ -507,6 +507,13 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                                     if(!question.Responses.Observations)question.Responses.Observations = [];
                                     question.Responses.Key_id = returnedResponse.Key_id;
                                     question.Responses.Answer = responseDto.Answer;
+                                    if (returnedResponse.Answer.toLowerCase() != "no") {
+                                        question.Responses.DeficiencySelections = [];
+                                        question.Deficiencies.every(function (def) {
+                                            def.selected = false;
+                                        })
+
+                                    }
                                     return returnedResponse;
                                 }
                             )
@@ -1312,14 +1319,7 @@ function checklistController($scope,  $location, $anchorScroll, convenienceMetho
         templateUrl: 'hazard-inventory-modals/inspection-notes-modal.html',
         controller: commentsController
       });
-
-      modalInstance.result.then(function () {
-
-      });
   }
-
-
-
 }
 
 function commentsController ($scope, checklistFactory, $modalInstance, convenienceMethods, $q){
@@ -1330,29 +1330,39 @@ function commentsController ($scope, checklistFactory, $modalInstance, convenien
     Key_id: $scope.pi.Key_id,
     Is_active: $scope.pi.Is_active,
     User_id: $scope.pi.User_id,
-    Inspection_notes: $scope.pi.Inspection_notes,
+    //Inspection_notes: $scope.pi.Inspection_notes,
     Class:"PrincipalInvestigator"
   };
 
+  $scope.tinymceOptions = {
+      plugins: 'link lists',
+      toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+      menubar: false,
+      elementpath: false,
+      content_style: "p,ul li {font-size:14px}"
+  };
 
   $scope.close = function () {
     $modalInstance.dismiss();
   };
 
   $scope.edit = function(state){
-    $scope.pi.editNote = state;
+      $scope.pi.editNote = state;
+      if (state != false) {
+          $scope.piCopy.Inspection_notes = $scope.pi.Inspection_notes
+      }
   }
 
   $scope.saveNote = function(){
     $scope.savingNote = true;
     $scope.error = null;
+    $scope.close();
 
     checklistFactory.savePi($scope.piCopy)
       .then(
         function(returnedPi){
           angular.extend(checklistFactory.inspection.PrincipalInvestigator, returnedPi);
           $scope.savingNote = false;
-          $scope.close();
           $scope.pi.editNote = false;
           $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
         },

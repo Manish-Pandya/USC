@@ -6,13 +6,11 @@
     </h2>
 </div>
 <div class="modal-body">
+    <span ng-init="openInspections = {}"></span>
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-    <div ng-if="!openInspections.length">
-        <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
-        <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
-    </div>
+   
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->
-    <table ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
+    <table ng-if="!modalData.inspectionsPendings" ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>Rooms</th>
@@ -44,7 +42,7 @@
                 <td once-text="inspection.Text_schedule_month"></td>
                 <td>
                     <ul>
-                        <li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.User.Name'></li>
+                        <li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.Name'></li>
                     </ul>
                 </td>
                 <td>
@@ -88,7 +86,7 @@
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                             <p ng-if="!inspection.HasDeficiencies">
-                                (No deficiencies.) <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
+                                (No deficiencies.)<br /> <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
                         </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
@@ -98,8 +96,13 @@
                                 <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
+                        <span ng-if="inspection.Status == constants.INSPECTION.STATUS.NOT_ASSIGNED">
+                            <p>
+                                <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                            </p>
+                        </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_CAP || inspection.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
-                            <span><br>(Due Date: {{inspection.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
+                            <span><br>(Due Date: {{inspection.Cap_submitted_date | getDueDate | date:"MM/dd/yy"}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
@@ -108,11 +111,23 @@
                             <br>
                             <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
+                        <span ng-if="inspection.Status ==  constants.INSPECTION.STATUS.SUBMITTED_CAP">
+                            <span><br>(CAP Sent: {{inspection.Cap_submitted_date | dateToISO}})</span>
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}""><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
+                        </span>
                     </span>
                 </td>
             </tr>
         </tbody>
    </table>
+    <div ng-if="hasNoOpenInspections && !modalData.inspectionsPendings">
+        <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
+        <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+    </div>
+    <div ng-if="modalData.inspectionsPendings">
+        <h3 style="font-size:30px">Loading Inspections<i style="margin: -7px 0 9px 4px;" class="icon icon-spinnery-dealie spinner large"></i></h3>
+    </div>
    <h3 ng-show="noHazards">{{noHazards}}</h3>
 </div>
 <div class="modal-footer">

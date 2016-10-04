@@ -18,6 +18,8 @@ class PIAuthorization extends RadCrud{
 			"principal_investigator_id" => "integer",
 			"authorization_number" 		=> "text",
 			"amendment_number"			=> "integer",
+            "termination_date"          => "timestamp",
+            "termination_notes"         => "text",
 
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -57,6 +59,12 @@ class PIAuthorization extends RadCrud{
 	private $authorization_number;
 	private $amendment_number;
 
+    /**date this authorization was revoked entirely**/
+    private $termination_date;
+
+    private $termination_notes;
+
+
 	/** Array of Authorizations entities */
 	private $authorizations;
 
@@ -67,8 +75,6 @@ class PIAuthorization extends RadCrud{
 		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getDepartments");
 		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
-
-
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -122,6 +128,13 @@ class PIAuthorization extends RadCrud{
 	public function setAuthorizations($authorizations) {
 		$this->authorizations = $authorizations;
 	}
+
+    public function getTermination_date(){return $this->termination_date;}
+	public function setTermination_date($date){$this->termination_date = $date;}
+
+    public function getTermination_notes(){return $this->termination_notes;}
+	public function setTermination_notes($notes){$this->termination_notes = $notes;}
+
 }
 
 ?>

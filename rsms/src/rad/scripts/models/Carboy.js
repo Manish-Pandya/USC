@@ -32,9 +32,3 @@ Carboy.prototype = {
 
 // inherit from GenericModel
 extend(Carboy, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("carboy", [])
-    .value("Carboy", Carboy);
-

@@ -3,15 +3,35 @@
 </div>
 <div class="modal-body">
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
-    <span ng-if="data.totals">
-        <h3 ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h3>
-        <h3>All of your corrective actions have a status of Pending or Complete</h3>
-        <p>You have <span ng-if="data.pendings" style="color:orange" class="bold">{{data.pendings}} pending corrective action<span ng-if="data.pendings.length>1">s</span> </span><span ng-if="data.pendings && data.completes">and </span><span ng-if="data.completes" style="color:green" class="bold">{{data.completes}} completed corrective action<span ng-if="data.completes.length>1">s</span>.
-        </p>
-    </span>
-    <span ng-if="!data.totals">
+    <h2 style="padding:5px" ng-if="pf.getIsReadyToSubmit().readyToSubmit && data.totals && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
+        Submit Corrective Action Plan?
+        <span>
+            <a class="btn btn-success left" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit CAP</a>
+            <i ng-if="dirty" class="icon-spinnery-dealie spinner small" style="margin-top: 12px;color: rgba(255, 255, 255, 0.61) !important;"></i>
+        </span>
+    </h2>
+    <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
+    <div class="submit-cap-info">
+        <h2 ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Your corrective action plan was submitted on {{inspection.Cap_submitted_date | dateToISO}}</h2>
+        <h3>The status of your corrective actions includes:</h3>
+        <div style="padding:3px 0">
+            <h3 class="bold totals-message">
+                <span>{{data.uncorrecteds}} Deficienc<span ng-if="data.uncorrecteds == 1">y</span><span ng-if="data.uncorrecteds != 1">ies</span> Needing Corrective Actions</span>
+            </h3>
+            <h3 class="bold complete-message">
+                <span>{{data.completes}} Completed Corrective Action<span ng-if="data.completes != 1">s</span></span>
+            </h3>
+            <h3 class="bold pending-message">
+                <span>{{data.pendings}} Pending Corrective Action<span ng-if="data.pendings != 1">s</span></span>
+            </h3>
+            <h3 ng-if="data.totals && data.correcteds">
+                <span>{{data.correcteds}} Deficienc<span ng-if="data.correcteds == 1">y</span><span ng-if="data.correcteds != 1">ies</span> Corrected During Inspection</span>
+            </h3>
+        </div>
+    </div>
+    <div ng-if="!data.totals">
         <h3>No Deficiencies were found during the inspection.</h3>
-    </span>
+    </div>
 
 </div>
 <div class="modal-footer" ng-if="data.totals">
@@ -19,7 +39,7 @@
     <span ng-if="data.totals">
         <span ng-if="!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00'">
             <i class="icon-spinnery-dealie spinner small" ng-if="dirty"></i>
-            <a class="btn btn-success left btn-large" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit CAP</a>
+            <a class="btn btn-success left btn-large" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit</a>
         </span>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i><span ng-if="!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00'">Not Yet</span><span ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Close</span></a>
     </span>

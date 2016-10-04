@@ -38,10 +38,12 @@ angular.module('00RsmsAngularOrmApp')
                         }
 
                         $scope.getHighestAmendmentNumber = function (amendments) {
+                            if (!amendments) var highestAuthNumber = "0";
+
                             if (amendments.length == 1) {
                                 $scope.selectedAmendment = parseInt(0);
                                 $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(0)];
-                                return "0"
+                                var highestAuthNumber = "0";
                             } else {
                                 var highestAuthNumber = 0;
                                 for (var i = 0; i < amendments.length; i++) {
@@ -49,11 +51,12 @@ angular.module('00RsmsAngularOrmApp')
                                     if (auth.Amendment_number && auth.Amendment_number > highestAuthNumber) {
                                         highestAuthNumber = auth.Amendment_number;
                                     }
-                                    console.log(i)
+                                    console.log(i);
 
                                 }
                                 $scope.selectedAmendment = parseInt(highestAuthNumber);;
                                 $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(highestAuthNumber)];
+                                console.log(highestAuthNumber);
                                 return highestAuthNumber;
 
                             }
@@ -88,6 +91,19 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+
+    $scope.openAuthModal = function (templateName, piAuth, auth) {
+        var modalData = {};
+        modalData.pi = $scope.pi;
+        if (piAuth) modalData[piAuth.Class] = piAuth;
+        if (auth) modalData[auth.Class] = auth;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: templateName + '.html',
+            controller: 'PiDetailModalCtrl'
+        });
+    }
+
     $scope.openWipeTestModal = function(parcel){
         var modalData = {};
         modalData.pi = $scope.pi;
@@ -100,11 +116,23 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.markAsArrived = function(pi, parcel){
-        var copy = new window.Parcel;
+        var copy = new window.Parcel();
         angular.extend(copy, parcel);
         copy.Status = Constants.PARCEL.STATUS.DELIVERED;
         copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
         af.saveParcel( copy, parcel, pi )
+    }
+
+    $scope.reopenAuth = function (piAuth) {
+        var copy = new window.PIAuthorization();
+        angular.extend(copy, piAuth);
+ 
+        copy.Termination_date = null;
+        for (var n = 0; n < copy.Authorizations; n++) {
+            copy.Authorizations[n].Is_active = true;
+        }
+        af.savePIAuthorization(copy, piAuth, $scope.pi);
+        
     }
 
     
@@ -114,15 +142,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.af = af;
         $scope.modalData = af.getModalData();
         console.log($scope.modalData);
-        if(!$scope.modalData.AuthorizationCopy){
-            $scope.modalData.AuthorizationCopy = {
-                Class: 'Authorization',
-                Principal_investigator_id: $scope.modalData.pi.Key_id,
-                Isotope:{},
-                Isotope_id: null,
-                Is_active: true
-            }
-        }
+
 
         if(!$scope.modalData.PurchaseOrderCopy){
             $scope.modalData.PurchaseOrderCopy = {
@@ -157,6 +177,17 @@ angular.module('00RsmsAngularOrmApp')
             }
         }
 
+        if(!$scope.modalData.AuthorizationCopy){
+            $scope.modalData.AuthorizationCopy = {
+                Class: 'Authorization',
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Isotope:{},
+                Isotope_id: null,
+                Is_active: true,
+                Pi_authorization_id: $scope.modalData.PIAuthorizationCopy ? $scope.modalData.PIAuthorizationCopy.Key_id : null
+            }
+        }
+
         if(!$scope.modalData.SolidsContainerCopy){
             $scope.modalData.SolidsContainerCopy = {
                 Class: 'SolidsContainer',
@@ -175,6 +206,10 @@ angular.module('00RsmsAngularOrmApp')
                     $rootScope.error = "There was a problem retrieving the list of all isotopes.  Please check your internet connection and try again."
                 }
             )
+
+        $scope.getTerminationDate = function (piAuth) {
+            if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.getDateString(piAuth.Termination_date).formattedDate;
+        }
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
         console.log(af.getCachedCollection('CarboyUseCycle'));
 
@@ -209,24 +244,34 @@ angular.module('00RsmsAngularOrmApp')
             $modalInstance.dismiss();
         }
 
-        $scope.savePIAuthorization = function (copy, auth) {
+        $scope.savePIAuthorization = function (copy, auth, terminated) {
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment) copy.Key_id = null;
-            $modalInstance.dismiss();
-            af.deleteModalData();
-            for (var n = 0; n < copy.Authorizations; n++) {
-                if (!copy.Authorizations[n].isIncluded) {
-                    copy.Authorizations.splice(n, 1);
+            if (!terminated){
+                for (var n = 0; n < copy.Authorizations; n++) {
+                    if (!terminated && !copy.Authorizations[n].isIncluded) {
+                        copy.Authorizations.splice(n, 1);
+                    }
+                }
+            }else{
+                console.log(terminated);
+                copy.Is_active = false;
+                copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
+                for (var n = 0; n < copy.Authorizations; n++) {                    
+                    copy.Authorizations[n].Is_active = false;                    
                 }
             }
+            console.log(copy);
             af.savePIAuthorization(copy, auth, pi);
+            $modalInstance.dismiss();
+            af.deleteModalData();
         }
 
-        $scope.saveAuthorization = function (pi, copy, auth) {
+        $scope.saveAuthorization = function (piAuth, copy, auth) {
             copy.Pi_authorization_id = copy.Pi_authorization_id || pi.Pi_authorization.Key_id;
             $modalInstance.dismiss();
             af.deleteModalData();
-            af.saveAuthorization(pi, copy, auth)
+            af.saveAuthorization(piAuth, copy, auth)
         }
 
         $scope.saveParcel = function(pi, copy, parcel){

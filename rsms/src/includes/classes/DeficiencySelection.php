@@ -55,7 +55,7 @@ class DeficiencySelection extends GenericCrud {
 	/** Reference to the Deficiency entity that was selected */
 	private $deficiency;
 	private $deficiency_id;
-	
+
 	private $other_text;
 
 	/** Array of Room entities in which the associated Deficiency applies */
@@ -141,12 +141,12 @@ class DeficiencySelection extends GenericCrud {
 	public function getRoomIds() {return $this->roomIds;}
 	public function setRoomIds($roomIds){ $this->roomIds = $roomIds;}
 
-	public function getCorrected_in_inspection() {return $this->corrected_in_inspection;}
-	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = $corrected; }
+	public function getCorrected_in_inspection() {return (bool) $this->corrected_in_inspection;}
+	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = (bool) $corrected; }
 
 	public function getShow_rooms(){return $this->show_rooms;}
 	public function setShow_rooms($show_rooms){$this->show_rooms = $show_rooms;}
-	
+
 	public function getOther_text(){return $this->other_text;}
 	public function setOther_text($other_text){$this->other_text = $other_text;}
 }

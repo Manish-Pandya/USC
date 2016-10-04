@@ -53,7 +53,7 @@ PrincipalInvestigator.prototype = {
         }
     },
     loadInspections: function() {
-        dataLoader.loadOneToManyRelationship( this, 'Inspections', this.InspectionsRelationship );
+        return dataLoader.loadOneToManyRelationship( this, 'Inspections', this.InspectionsRelationship );
     }
 
 }

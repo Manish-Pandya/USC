@@ -298,7 +298,7 @@ class Inspection extends GenericCrud {
                 //Begin Inspection
             } else {
                 // If it is 30 days past due, it's overdue for inspection
-                return 'OVERDUE FOR INSPECTION';
+                return 'OVERDUE INSPECTION';
                 //Begin Inspection
             }
         }else{

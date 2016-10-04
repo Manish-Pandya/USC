@@ -49,7 +49,9 @@ angular
                     .then(function (response) {
                         if (typeof response.data == "undefined" || (response.data.Class && response.data.Class == "ActionError" && response.data.Message != "No rows returned")) {
                             api.userLoggedOut(response.data);
-                        } else {
+                        } else if (response.data.Class == "ActionError" && response.data.Message == "No rows returned") {
+                            return null;
+                        }else{
                             return response;
                         }
                     },
@@ -99,7 +101,8 @@ angular
             console.log(data);
             console.log(typeof data == "undefined");
             if (!data || (data.Class && data.Class == "ActionError" && data.Message != "No rows returned")) {
-                console.log(location)
+                console.log(location);
+                return;
                 window.location = "http://" + location.host + "/rsms";
                 return true;
             }

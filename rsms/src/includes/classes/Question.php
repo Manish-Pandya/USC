@@ -227,16 +227,12 @@ class Question extends GenericCrud {
 			if (!empty($responses)){
                 $insp = new Inspection();
                 $dao = new GenericDAO($insp);
-                $inspDate = $dao->getById($this->inspectionId)->getDate_created();
+                $inspDate = $dao->getById($this->inspectionId)->getDate_started();
 
                 $validResponses = array();
                 foreach($responses as $response){
                     if( strtotime($response->getDate_created()) > strtotime($inspDate) ){
                         $validResponses[] = $response;
-                    }
-                    if($response->getKey_id() == 2867){
-                        $LOG->fatal(strtotime($response->getDate_created()));
-                        $LOG->fatal(strtotime($inspDate));
                     }
                 }
 				return array_shift($validResponses);

@@ -302,7 +302,6 @@ class CarboyUseCycle extends RadCrud {
 
     public function getHot_check_date(){
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal("hot check date");
 
         if($this->hot_check_date == null && $this->getHotroom_date() != null && $this->getHot_isotope_id() != null && $this->hasPrimaryKeyValue()){
             $isotopeDao = new GenericDAO(new Isotope());
@@ -314,10 +313,6 @@ class CarboyUseCycle extends RadCrud {
             $date = new DateTime();
             $date->setTimestamp(strtotime($this->getHotroom_date()));
             $wholeDays = round($isotope->getHalf_life() * 3);
-            $LOG->fatal('get date');
-            $LOG->fatal($date);
-            $LOG->fatal($wholeDays);
-            $LOG->fatal(new DateInterval('P'.$wholeDays.'D'));
             $this->hot_check_date = date("Y-m-d H:i:s" , $date->add(new DateInterval('P'.$wholeDays.'D'))->getTimestamp());;
         }
         return $this->hot_check_date;

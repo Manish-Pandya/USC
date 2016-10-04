@@ -150,7 +150,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 <script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
-
+<script src="scripts/controllers/pi/AuthCtrl.js"></script>
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
@@ -208,7 +208,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/PIAuthorization.js"></script>
 <script src="./scripts/models/PIWipeTest.js"></script>
 <script src="./scripts/models/PIWipe.js"></script>
-
+<script src="scripts/models/DrumWipe.js"></script>
+<script src="scripts/models/DrumWipeTest.js"></script>
 </head>
 <body>
 

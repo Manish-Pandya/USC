@@ -110,7 +110,6 @@ class SupplementalDeficiency extends GenericCrud
 			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
 		}
         $LOG=Logger::getLogger('adf');
-        $LOG->fatal($this);
 		return $this->rooms;
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }

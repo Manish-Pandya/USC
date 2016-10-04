@@ -10,9 +10,3 @@ WasteType.prototype = {
 
 // inherit from GenericModel
 extend(WasteType, GenericModel);
-
-// create an angular module for the model, so it can be injected downstream
-angular
-    .module("wastetype", [])
-    .value("WasteType", WasteType);
-

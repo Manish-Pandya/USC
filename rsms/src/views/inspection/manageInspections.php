@@ -90,12 +90,12 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; max-width:160px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
+                    <select ng-model="search.status" style="margin-bottom:0; max-width:185px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
                 <th>
-                    Laboratory Hazards
+                    Lab Hazards
                     <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
@@ -106,9 +106,9 @@ require_once '../top_view.php';
 
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
-                <td style="width:8.5%"><span once-text="dto.Campus_name"></span></td>
+                <td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
-                <td style="width:8.5%">
+                <td style="width:6.5%">
                     <ul ng-if="!dto.Inspection_rooms">
                         <li ng-repeat="room in dto.Building_rooms"><span once-text="room.Name"></span></li>
                     </ul>
@@ -116,7 +116,7 @@ require_once '../top_view.php';
                         <li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
                     </ul>
                 </td>
-                <td style="width:7.5%">
+                <td style="width:6.5%">
                     <span ng-if="dto.Inspection_id">
                         <span ng-if="dto.Inspections.Date_started">
                             <span ng-repeat="month in months" ng-if="month.val==dto.Inspections.Schedule_month">{{month.string}}</span>
@@ -138,16 +138,15 @@ require_once '../top_view.php';
                     </div>
                     <select ng-model="dto.selectedInspector" ng-if="rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]]) && (!dto.Inspections || !dto.Inspections.Inspectors.length || dto.replaceInspector)" ng-change="mif.scheduleInspection( dto, yearHolder.selectedYear, dto.selectedInspector )">
                         <option value="">-- Select inspector --</option>
-                        <option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.User.Name}}</option>
+                        <option ng-repeat="inspector in inspectors" value="{{$index}}">{{inspector.Name}}</option>
                     </select>
 
                     <ul ng-if="dto.Inspections.Inspectors">
                         <li ng-repeat="inspector in dto.Inspections.Inspectors">
-                            <span ng-if="!inspector.edit" once-text="inspector.User.Name"></span>
+                            <span ng-if="!inspector.edit" once-text="inspector.Name"></span>
                             <span ng-if="inspector.edit && dtoCopy && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
-                                <select ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, yearHolder.selectedYear, $index, dtoCopy.replacementInspector, inspector)">
-                                    <option value="" disabled selected>Select an Inspector</option>
-                                    <option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+                                <select ng-options="innerInspector as innerInspector.Name for innerInspector in inspectors| onlyUnselected:dto.Inspections.Inspectors" ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, yearHolder.selectedYear, $index, dtoCopy.replacementInspector, inspector)">
+                                    <option value="" style="display:none" selected>Select an Inspector</option>
                                 </select>
                                 <i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
                             </span>
@@ -158,16 +157,15 @@ require_once '../top_view.php';
                             </span>
                         </li>
                         <li ng-if="dto.addInspector && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
-                            <select ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, yearHolder.selectedYear, dto.addedInspector )">
-                                <option value="" disabled selected>Add an Inspector</option>
-                                <option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerInspector.User.Name}}</option>
+                            <select ng-options="innerInspector as innerInspector.Name for innerInspector in inspectors| onlyUnselected:dto.Inspections.Inspectors" ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, yearHolder.selectedYear, dto.addedInspector )">
+                                <option value="" style="display:none" selected>Add an Inspector</option>
                             </select>
                             <i class="icon-cancel-2 danger" ng-click="dto.addInspector = false"></i>
                         </li>
                     </ul>
 
                 </td>
-                <td style="width:8.5%">
+                <td style="width:10.5%">
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
@@ -186,14 +184,14 @@ require_once '../top_view.php';
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP">
                             <p>
-                                (Report Sent: {{dto.Inspections.Notification_date | dateToISO | date:"MM/dd/yy"}})
+                                (CAP Due: {{dto.Inspections.Notification_date | getDueDate | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p ng-if="dto.Inspections.HasDeficiencies">
-                                (CAP Approved: {{dto.Inspections.Date_closed | dateToISO | date:"MM/dd/yy"}})
+                                (CAP Approved: {{dto.Inspections.Date_closed | dateToISO}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Archived Report</a>
                             </p>
@@ -203,13 +201,13 @@ require_once '../top_view.php';
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION">
                             <p>
-                                (Started: {{dto.Inspections.Date_started | dateToISO | date:"MM/dd/yy"}})
+                                (Started: {{dto.Inspections.Date_started | dateToISO}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="InspectionChecklist.php#?inspection={{dto.Inspections.Key_id}}"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Continue Inspection</a>
                             </p>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SUBMITTED_CAP">
-                            <span><br>(Due Date: {{dto.Inspections.Date_started | getDueDate | date:"MM/dd/yy"}})</span>
+                            <span><br>(CAP Sent: {{dto.Inspections.Cap_submitted_date | dateToISO}})</span>
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>

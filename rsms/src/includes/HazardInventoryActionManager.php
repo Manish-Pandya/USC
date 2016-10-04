@@ -108,7 +108,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$childDto->setHazard_id($child->getKey_id());
 				$childDto->setRoom_id($decodedObject->getRoom_id());
 				$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-				$LOG->fatal($childDto);
 				$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
 			}
 		}
@@ -132,7 +131,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 				$relation->setRoom_id($decodedObject->getRoom_id());
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
-				$LOG->fatal($relation);
 			}
 			//if we have set the status to "STORED_ONLY", we must also set the status to for each child hazard in this room
 			if($decodedObject->getStatus() == "STORED_ONLY"){
@@ -147,29 +145,18 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 						$childDto->setHazard_id($child->getKey_id());
 						$childDto->setRoom_id($decodedObject->getRoom_id());
 						$childDto->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-						$LOG->fatal($childDto);
 						$this->savePrincipalInvestigatorHazardRoomRelation($childDto);
 					}
 				}
 			}
-			$LOG->fatal($decodedObject);
-			// Flag the master category on the room object
-
-				$room = $roomDao->getById($decodedObject->getRoom_id());
-				if ($decodedObject->getMasterHazardId() == 1) {
-					$room->setBio_hazards_present(true);
-				}
-				if ($decodedObject->getMasterHazardId() == 10009) {
-					$room->setChem_hazards_present(true);
-				}
-				if ($decodedObject->getMasterHazardId() == 10010) {
-					$room->setRad_hazards_present(true);
-				}
-
-				$roomDao->save($room);
 
 		}
 
+        $room = $this->getRoomById($decodedObject->getRoom_id());
+        $room->getHazardTypesArePresent();
+        if($room != $this->saveRoom($room)){
+            return new ActionError("Failed to update room");
+        }
 
 		return $decodedObject;
 	}
@@ -235,8 +222,6 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 			$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
 		}
 
-		$LOG->fatal($roomIds);
-		$LOG->fatal($hazardId);
 
 		if($roomIds == NULL && $hazardId == NULL){
 			return new ActionError("roomId and hazardId params both required");
@@ -299,7 +284,11 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         global $db;
         $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
 
-		$queryString = "SELECT principal_investigator_id FROM principal_investigator_room WHERE room_id IN ( $newRoomIds ) group by principal_investigator_id";
+		$queryString = "SELECT principal_investigator_id
+                        FROM principal_investigator_room a
+                        LEFT JOIN principal_investigator b
+                        ON a.principal_investigator_id = b.key_id
+                        WHERE b.is_active = 1 AND a.room_id IN ( $newRoomIds ) group by a.principal_investigator_id";
 		$stmt = $db->prepare($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
@@ -316,6 +305,9 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
                         FROM principal_investigator_hazard_room a
                         JOIN principal_investigator b
                         ON b.key_id = a.principal_investigator_id
+                        JOIN principal_investigator_room d
+                        ON d.principal_investigator_id = a.principal_investigator_id
+                        AND d.room_id = a.room_id
                         JOIN erasmus_user c
                         ON c.key_id = b.user_id
                         WHERE a.room_id IN ( $newRoomIds )
@@ -338,40 +330,15 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
-        //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
-        $finalPiHazardRooms = $piHazRooms;
-        foreach($roomIds as $roomId){
-            $needed = false;
-            $neededPiIds[$roomId] = array();
-            //does each pi have a PrincipalInvestigatorHazardRoomRelation for this room?
-            foreach($piIds as $piId){
-                foreach($piHazRooms as $pihr){
-                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() != $piId){
-                        $needed = true;
-                    }
-                }
-            }
-            if($needed == true && $piId == $principalInvestigatorId ){
-                //create one
-                $createdPiHazRoom = new PrincipalInvestigatorHazardRoomRelation();
-                $createdPiHazRoom->setPrincipal_investigator_id($principalInvestigatorId);
-                $createdPiHazRoom->setHazard_id($hazardId);
-                $createdPiHazRoom->setRoom_id($roomId);
-                $createdPiHazRoom->setStatus("Other Lab's Hazard");
-                $createdPiHazRoom->setPiName($this->getPIById($principalInvestigatorId)->getUser()->getName());
-                array_push($finalPiHazardRooms, $createdPiHazRoom);
-            }
-        }
-
 
         // Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getHazard");
-        foreach($finalPiHazardRooms as $pi){
+        foreach($piHazRooms as $pi){
             $pi->setEntityMaps($entityMaps);
         }
 
-		return $finalPiHazardRooms;
+		return $piHazRooms;
 
 	}
 
