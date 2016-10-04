@@ -5,6 +5,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
+var PermissionMap = (function () {
+    function PermissionMap() {
+    }
+    PermissionMap.getPermission = function (className) {
+        if (!_.has(this.Permissions, className)) {
+            this.Permissions[className] = {};
+            this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
+        }
+        return this.Permissions[className];
+    };
+    PermissionMap.Permissions = [];
+    return PermissionMap;
+}());
 //abstract specifies singleton in ts 1.x (ish)
 var DataStoreManager = (function () {
     function DataStoreManager() {
@@ -35,34 +48,38 @@ var DataStoreManager = (function () {
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
                     //console.log(type + " after request");
-                    DataStoreManager._actualModel[type].Data = d;
+                    DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
                     if (compMaps) {
                         var allComps = [];
-                        var thisClass = window[type];
-                        for (var instanceProp in thisClass) {
-                            if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                    if (!DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data) {
-                                        console.log(type + " in if looking for " + thisClass[instanceProp].ChildType);
-                                        //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
-                                        if (DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllCalled) {
-                                            allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].getAllPromise);
+                        var thisClass = DataStoreManager._actualModel[type].Data[0];
+                        for (var n = 0; n < thisClass.allCompMaps.length; n++) {
+                            var compMap = thisClass.allCompMaps[n];
+                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                        if (!DataStoreManager._actualModel[compMap.ChildType].Data) {
+                                            console.log(type + " in if looking for " + compMap.ChildType);
+                                            //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+                                            }
+                                            else {
+                                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
+                                            }
                                         }
                                         else {
-                                            allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                                            console.log(type + " in else looking for " + compMap.ChildType);
+                                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                                         }
                                     }
-                                    else {
-                                        console.log(type + " in else looking for " + thisClass[instanceProp].ChildType);
-                                        allComps.push(DataStoreManager._actualModel[thisClass[instanceProp].ChildType].Data);
-                                    }
+                                }
+                                else {
                                 }
                             }
                         }
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            d = InstanceFactory.convertToClasses(d);
-                            d.forEach(function (value, index, array) {
+                            DataStoreManager._actualModel[type].Data.forEach(function (value, index, array) {
                                 if (!value.viewModelWatcher) {
                                     value.viewModelWatcher = _.cloneDeep(value);
                                 }
@@ -116,11 +133,12 @@ var DataStoreManager = (function () {
                 .then(function (d) {
                 if (compMaps) {
                     var allComps = [];
-                    var thisClass = window[type];
-                    for (var instanceProp in thisClass) {
-                        if (thisClass[instanceProp] instanceof CompositionMapping && thisClass[instanceProp].CompositionType != CompositionMapping.ONE_TO_ONE) {
-                            if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(thisClass[instanceProp]) > -1)) {
-                                allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
+                    var thisClass = DataStoreManager._actualModel[type].Data[0];
+                    for (var n = 0; n < thisClass.allCompMaps.length; n++) {
+                        var compMap = thisClass.allCompMaps[n];
+                        if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                            if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                             }
                         }
                     }
@@ -258,7 +276,7 @@ var DataStoreManager = (function () {
     //----------------------------------------------------------------------
     DataStoreManager.classPropName = "Class";
     DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
+    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
     // NOTE: there's intentionally no getter
     DataStoreManager._actualModel = {};

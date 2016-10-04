@@ -11,7 +11,6 @@
     <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
     <script src="../client-side-framework/InstanceFactory.js"></script>
-    <script src="../client-side-framework/CompositionMapping.js"></script>
     <script src="../client-side-framework/UrlMapping.js"></script>
     <script src="../client-side-framework/XHR.js"></script>
     <script src="../client-side-framework/models/FluxCompositerBase.js"></script>
@@ -65,11 +64,13 @@
                 console.log(pis[0].User);
 
             }
-            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+            //DataStoreManager.getAll("Room", rooms, true),
+            var ps = [DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
-                        console.log(pis[0], rooms[9]);
+                        console.log(pis[0], rooms[0]);
+                        
                         /*
                         DataStoreManager.getById("User", 1, {}, true).then((d)=>{
                             console.log(d);
@@ -92,6 +93,7 @@
 
         getCurrentRoles().then(init);
         
+
     </script>
 </head>
 <body>
