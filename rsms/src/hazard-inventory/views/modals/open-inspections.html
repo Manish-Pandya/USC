@@ -6,14 +6,9 @@
     </h2>
 </div>
 <div class="modal-body">
+    <span ng-init="openInspections = {}"></span>
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-    <div ng-if="!openInspections.length && !modalData.inspectionsPendings">
-        <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
-        <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
-    </div>
-    <div ng-if="modalData.inspectionsPendings">
-        <h3 style="font-size:30px">Loading Inspections<i style="margin: -7px 0 9px 4px;" class="icon icon-spinnery-dealie spinner large"></i></h3>
-    </div>
+   
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->
     <table ng-if="!modalData.inspectionsPendings" ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
         <thead>
@@ -126,6 +121,13 @@
             </tr>
         </tbody>
    </table>
+    <div ng-if="hasNoOpenInspections && !modalData.inspectionsPendings">
+        <h3>{{modalData.PI.User.Name}} has no pending inspections.</h3>
+        <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+    </div>
+    <div ng-if="modalData.inspectionsPendings">
+        <h3 style="font-size:30px">Loading Inspections<i style="margin: -7px 0 9px 4px;" class="icon icon-spinnery-dealie spinner large"></i></h3>
+    </div>
    <h3 ng-show="noHazards">{{noHazards}}</h3>
 </div>
 <div class="modal-footer">

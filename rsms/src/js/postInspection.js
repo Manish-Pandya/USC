@@ -455,7 +455,8 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
             pendings: 0, 
             completes:0, 
             correcteds: 0,
-            uncorrecteds:0,
+            uncorrecteds: 0,
+            unSelectedSumplementals: [],
             readyToSubmit: false
         }
 
@@ -485,10 +486,14 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                     }
                     var k = question.Responses.SupplementalDeficiencies.length;
                     while (k--) {
-                        ready.totals++;
+                        if (selection.Is_active) {
+                            ready.totals++;
+                        } else {
+                            ready.unSelectedSumplementals.push({checklist:checklist.Name, question:question.Text});
+                        }
                         question.hasDeficiencies = true;
                         var selection = question.Responses.SupplementalDeficiencies[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
+                        if (selection.Is_active && selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
@@ -641,7 +646,9 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                                         + "EHS Research Safety\n"
         }
         else if (inspectionState.totals > inspectionState.correcteds) {
-            var dueDate = dateStarted.add(14, "days").format("MMMM Do, YYYY");
+            var dateSent;
+            $scope.inspection.Notification_date ? dateSent = moment($scope.inspection.Notification_date) : dateSent = moment();
+            var dueDate = dateSent.add(14, "days").format("MMMM Do, YYYY");
             $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
                                  + "Please submit your lab's corrective action plan for each deficiency included in the report on or before "+ dueDate +".\n\n"
                                  + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
@@ -793,8 +800,19 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       postInspectionFactory.setInspection($scope.inspection);
                       postInspectionFactory.setRecommendationsAndObservations()
                           .then(
-                            function () {
+                            function () {                                
                                 $scope.recommendations = postInspectionFactory.getRecommendations();
+                                if(postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals.length){                                   
+                                    var modalData = {
+                                        inspection:$scope.inspection,
+                                        uncheckeds: postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals
+                                    }
+                                    postInspectionFactory.setModalData(modalData);
+                                    var modalInstance = $modal.open({
+                                        templateUrl: 'post-inspection-templates/unselected-supplemental-deficiencies.html',
+                                        controller: modalCtrl
+                                    });
+                                }
                             });
 
                       //turn off the loading spinner
@@ -803,6 +821,9 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       //organized by parent hazard
                       //each group of checklists will have a Questions property containing all questions for each checklist in a given category
                       $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
+
+
+
                   });
             } else {
                 $scope.inspection = postInspectionFactory.getInspection();
@@ -1063,8 +1084,9 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     };
 
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
-   
+    console.log($scope.data);
     if (data != null) {
+        if (data.inspection) $scope.inspection = data.inspection;
         $scope.question = data.question || null;
         $scope.def = data.deficiency || null;
         $scope.dates = {};
@@ -1076,7 +1098,7 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
             }
             console.log($scope.def, $scope.copy);
 
-        } else {
+        } else if ($scope.def) {
             $scope.copy = {
                 Class: "CorrectiveAction",
                 Is_active: true,
@@ -1085,8 +1107,8 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
-        if ($scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
-        if ($scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
+        if ($scope.copy && $scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
+        if ($scope.copy && $scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
 
         $scope.closeOut = function () {
             $scope.dirty = true;
@@ -1179,6 +1201,7 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.cancel = function () {
+        console.log($scope.modalData, "asdf")
         $modalInstance.dismiss();
     }
 

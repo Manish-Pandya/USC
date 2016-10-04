@@ -248,8 +248,19 @@ angular.module('HazardInventory')
         if ($rootScope.PrincipalInvestigatorsBusy) {
             $scope.modalData.inspectionsPendings = true;
             $rootScope.PrincipalInvestigatorsBusy.then(function () {
-                setTimeout(function () { $scope.modalData.inspectionsPendings = false; $scope.$apply() }, 1);
+                $scope.modalData.hasNoOpenInspections = true;
+                setTimeout(function () {
+                    $scope.modalData.inspectionsPendings = false;
+                    $scope.$apply();                    
+                }, 10);
                 $scope.pi = $scope.modalData.PI;
+                for (var i = 0; i < $scope.modalData.PI.Inspections.length; i++) {
+                    var insp = $scope.modalData.PI.Inspections[i];
+                    if (!insp.Date_closed) {
+                        $scope.modalData.hasNoOpenInspections = true;
+                        break;
+                    }
+                }
             })
         }
 
