@@ -65,7 +65,7 @@
 
             }
             //DataStoreManager.getAll("Room", rooms, true),
-            var ps = [DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+            var ps = [DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, false)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
@@ -89,6 +89,9 @@
                         console.log("bad Promise.all:", reason);
                     }
                 );
+
+            var relevantMaps = InstanceFactory.createInstance("PrincipalInvestigator").getCompMapFromProperty("Rooms");
+            console.log(relevantMaps);
         }
 
         getCurrentRoles().then(init);

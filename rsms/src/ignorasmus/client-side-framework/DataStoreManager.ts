@@ -62,7 +62,8 @@ abstract class DataStoreManager {
                         if (compMaps) {
                             var allComps: any[] = [];
                             var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
-
+                            console.log(thisClass);
+                            //thisClass.getCompMapFromProperty("Rooms");
                             for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
                                 var compMap: CompositionMapping = thisClass.allCompMaps[n];
                                 if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
@@ -148,6 +149,7 @@ abstract class DataStoreManager {
                     if (compMaps) {
                         var allComps: any[] = [];
                         var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
+                        
                         for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
                             var compMap: CompositionMapping = thisClass.allCompMaps[n];
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {

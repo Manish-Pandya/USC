@@ -52,7 +52,7 @@ abstract class InstanceFactory extends DataStoreManager {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
             return new window[className]();
         } else if (window[className]) {
-            console.log("Class not in approved ClassNames, but exists. Trying to create...");
+            console.log(className + " not in approved ClassNames, but exists. Trying to create...");
             return new window[className]();
         } else {
             //console.log("No such class as " + className);

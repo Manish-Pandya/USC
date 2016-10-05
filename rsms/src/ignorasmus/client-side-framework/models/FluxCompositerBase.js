@@ -22,9 +22,6 @@ var CompositionMapping = (function () {
         //temp values for erasmus.  add to global config as optional param
         this.DEFAULT_MANY_TO_MANY_PARENT_ID = "ParentId";
         this.DEFAULT_MANY_TO_MANY_CHILD_ID = "ChildId";
-        if (!window[childType]) {
-            throw new Error("what the fuck brogrammer?  you contructed this shit too soon.");
-        }
         this.CompositionType = compositionType;
         this.ChildType = childType;
         this.ChildUrl = childUrl;
@@ -45,10 +42,6 @@ var CompositionMapping = (function () {
                 this.GerundUrl = gerundUrl;
             }
         }
-        if (this.ChildUrl == window[this.ChildType].urlMapping.urlGetAll) {
-            // flag that getAll will be called
-            this.callGetAll = true;
-        }
     }
     CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
     CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
@@ -67,9 +60,13 @@ var FluxCompositerBase = (function () {
         get: function () {
             if (!this._allCompMaps) {
                 this._allCompMaps = [];
-                for (var instanceProp in this) {
-                    if (this[instanceProp] instanceof CompositionMapping) {
-                        var cm = this[instanceProp];
+                for (var instanceProp in this.thisClass) {
+                    if (this.thisClass[instanceProp] instanceof CompositionMapping) {
+                        var cm = this.thisClass[instanceProp];
+                        if (cm.ChildUrl == window[cm.ChildType].urlMapping.urlGetAll) {
+                            // flag that getAll will be called
+                            cm.callGetAll = true;
+                        }
                         this._allCompMaps.push(cm);
                     }
                 }
@@ -79,6 +76,35 @@ var FluxCompositerBase = (function () {
         enumerable: true,
         configurable: true
     });
+    FluxCompositerBase.prototype.fixUrl = function (str) {
+        var _this = this;
+        var pattern = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
+        str = str.replace(pattern, function (sub) {
+            sub = sub.match(/\{\{(.*)\}\}/)[1];
+            var thing = sub.split(".");
+            sub = thing[0];
+            for (var n = 1; n < thing.length; n++) {
+                sub += "['" + thing[n] + "']";
+            }
+            if (thing.length > 1) {
+                sub = eval(sub);
+            }
+            return _this[sub];
+        });
+        console.log(str);
+        return str;
+    };
+    FluxCompositerBase.prototype.getCompMapFromProperty = function (property) {
+        var cms = this.allCompMaps;
+        var l = cms.length;
+        for (var i = 0; i < l; i++) {
+            var cm = cms[i];
+            console.log(cm.PropertyName, property);
+            if (cm.PropertyName == property)
+                return cm;
+        }
+        return;
+    };
     FluxCompositerBase.prototype.onFulfill = function () {
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];

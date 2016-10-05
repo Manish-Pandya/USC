@@ -51,7 +51,7 @@ var InstanceFactory = (function (_super) {
             return new window[className]();
         }
         else if (window[className]) {
-            console.log("Class not in approved ClassNames, but exists. Trying to create...");
+            console.log(className + " not in approved ClassNames, but exists. Trying to create...");
             return new window[className]();
         }
         else {

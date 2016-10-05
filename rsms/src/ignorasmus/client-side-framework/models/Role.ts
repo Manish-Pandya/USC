@@ -9,9 +9,6 @@
     onFulfill(): void {
         this.hasGetAllPermission();
         super.onFulfill();
-
-        // build compositionMapping
-
     }
 
     hasGetAllPermission(): boolean {

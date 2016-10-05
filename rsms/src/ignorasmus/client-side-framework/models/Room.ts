@@ -3,7 +3,7 @@
     static urlMapping: UrlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
 
     PrincipalInvestigators: PrincipalInvestigator[];
-    PIMap: CompositionMapping;
+    static PIMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
 
     constructor() {
         super();
@@ -12,9 +12,6 @@
     onFulfill(): void {
         this.hasGetAllPermission();
         super.onFulfill();
-
-        // build compositionMapping
-        this.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     }
 
     hasGetAllPermission(): boolean {

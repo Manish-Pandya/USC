@@ -11,7 +11,6 @@ var Role = (function (_super) {
     Role.prototype.onFulfill = function () {
         this.hasGetAllPermission();
         _super.prototype.onFulfill.call(this);
-        // build compositionMapping
     };
     Role.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {

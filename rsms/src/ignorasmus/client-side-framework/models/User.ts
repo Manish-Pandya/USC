@@ -2,7 +2,7 @@
 
     static urlMapping: UrlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
 
-    RoleMap: CompositionMapping;
+    static RoleMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
 
     constructor() {
         super();
@@ -11,9 +11,6 @@
     onFulfill(): void {
         this.hasGetAllPermission();
         super.onFulfill();
-
-        // build compositionMapping
-        this.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
     }
 
     hasGetAllPermission(): boolean {

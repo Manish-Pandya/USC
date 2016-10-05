@@ -42,10 +42,6 @@
         gerundName: string = null,
         gerundUrl: string = null
     ) {
-        if (!window[childType]) {
-            throw new Error("what the fuck brogrammer?  you contructed this shit too soon.");
-        }
-
         this.CompositionType = compositionType;
         this.ChildType = childType;
         this.ChildUrl = childUrl;
@@ -65,11 +61,7 @@
                 this.GerundUrl = gerundUrl;
             }
         }
-
-        if (this.ChildUrl == window[this.ChildType].urlMapping.urlGetAll) {
-            // flag that getAll will be called
-            this.callGetAll = true;
-        }
+        
     }
 
 }
@@ -84,18 +76,53 @@ abstract class FluxCompositerBase {
 
     private thisClass: Function;
 
-    private _allCompMaps: CompositionMapping[];
+    protected _allCompMaps: CompositionMapping[];
     get allCompMaps(): CompositionMapping[] {
         if (!this._allCompMaps) {
             this._allCompMaps = [];
-            for (var instanceProp in this) {
-                if (this[instanceProp] instanceof CompositionMapping) {
-                    var cm: CompositionMapping = this[instanceProp];
+            for (var instanceProp in this.thisClass) {
+                if (this.thisClass[instanceProp] instanceof CompositionMapping) {
+                    var cm: CompositionMapping = this.thisClass[instanceProp];
+                    if (cm.ChildUrl == window[cm.ChildType].urlMapping.urlGetAll) {
+                        // flag that getAll will be called
+                        cm.callGetAll = true;
+                    }
                     this._allCompMaps.push(cm);
                 }
             }
         }
         return this._allCompMaps;
+    }
+
+    private fixUrl(str: string): string {
+        var pattern: RegExp = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
+
+        str = str.replace(pattern, (sub: string): string => {
+            sub = sub.match(/\{\{(.*)\}\}/)[1];
+            var thing = sub.split(".");
+            sub = thing[0];
+            for (var n: number = 1; n < thing.length; n++) {
+                sub += "['" + thing[n] + "']";
+            }
+            if (thing.length > 1) {
+                sub = eval(sub);
+            }
+
+            return this[sub];
+        });
+        console.log(str);
+        return str;
+    }
+
+    getCompMapFromProperty(property: string): CompositionMapping | null {
+        var cms = this.allCompMaps;
+        var l = cms.length;
+        for (let i = 0; i < l; i++) {
+            let cm: CompositionMapping = cms[i];
+            console.log(cm.PropertyName, property);
+            if (cm.PropertyName == property) return cm;
+        }
+        return;
     }
 
     constructor() {

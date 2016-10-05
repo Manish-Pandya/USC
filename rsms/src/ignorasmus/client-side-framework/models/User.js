@@ -11,8 +11,6 @@ var User = (function (_super) {
     User.prototype.onFulfill = function () {
         this.hasGetAllPermission();
         _super.prototype.onFulfill.call(this);
-        // build compositionMapping
-        this.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
     };
     User.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -22,5 +20,6 @@ var User = (function (_super) {
         return this._hasGetAllPermission;
     };
     User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
+    User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
     return User;
 }(FluxCompositerBase));

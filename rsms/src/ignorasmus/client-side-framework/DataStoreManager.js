@@ -52,6 +52,8 @@ var DataStoreManager = (function () {
                     if (compMaps) {
                         var allComps = [];
                         var thisClass = DataStoreManager._actualModel[type].Data[0];
+                        console.log(thisClass);
+                        //thisClass.getCompMapFromProperty("Rooms");
                         for (var n = 0; n < thisClass.allCompMaps.length; n++) {
                             var compMap = thisClass.allCompMaps[n];
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {

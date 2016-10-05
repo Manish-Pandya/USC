@@ -11,8 +11,6 @@ var Room = (function (_super) {
     Room.prototype.onFulfill = function () {
         this.hasGetAllPermission();
         _super.prototype.onFulfill.call(this);
-        // build compositionMapping
-        this.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     };
     Room.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -22,5 +20,6 @@ var Room = (function (_super) {
         return this._hasGetAllPermission;
     };
     Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
+    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     return Room;
 }(FluxCompositerBase));
