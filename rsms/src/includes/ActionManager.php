@@ -4606,7 +4606,14 @@ class ActionManager {
 		if($type == null)$type = $this->getValueFromRequest('type', $type);
         if($property==null)$property = $this->getValueFromRequest('property', $property);
         if($property==null || $id == null || $type == null)return new ActionError('You forgot a param, yo.');
-		$methodName = 'get'.ucfirst ($property);
+
+		$pr = strtolower($property);
+		foreach(get_class_methods($type) as $method ){
+			if( preg_match_all('(get|'.$pr.')', strtolower($method)) > 1 ) {
+				$methodName = $method;
+			}
+		}
+
 		//prevent injection hacks by instantiating a new object of the type provided, clearing any gunk
 
 		if(!$type){
@@ -4627,7 +4634,6 @@ class ActionManager {
 
 		//only call the method if it exists in our defined class matching the passed object's type
 		if(method_exists ( $objOfType , $methodName )){
-			$l->fatal($objOfType->$methodName());
 			return $objOfType->$methodName();
 		}
 		$l->fatal("somebody tried calling $methodName on $type");

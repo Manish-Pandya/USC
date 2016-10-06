@@ -40,6 +40,9 @@ var DataStoreManager = (function () {
     // TODO: Consider method overload to allow multiple types and viewModelParents
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
+        if (!PermissionMap.getPermission(type).getAll) {
+            throw new Error("You don't have permission to call getAll for " + type);
+        }
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             //console.log(type + " before request");
@@ -52,14 +55,12 @@ var DataStoreManager = (function () {
                     if (compMaps) {
                         var allComps = [];
                         var thisClass = DataStoreManager._actualModel[type].Data[0];
-                        console.log(thisClass);
-                        //thisClass.getCompMapFromProperty("Rooms");
                         for (var n = 0; n < thisClass.allCompMaps.length; n++) {
                             var compMap = thisClass.allCompMaps[n];
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                     if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                        if (!DataStoreManager._actualModel[compMap.ChildType].Data) {
+                                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                                             console.log(type + " in if looking for " + compMap.ChildType);
                                             //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
@@ -74,8 +75,6 @@ var DataStoreManager = (function () {
                                             allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                                         }
                                     }
-                                }
-                                else {
                                 }
                             }
                         }
@@ -135,10 +134,18 @@ var DataStoreManager = (function () {
                 .then(function (d) {
                 if (compMaps) {
                     var allComps = [];
+                    d = InstanceFactory.convertToClasses(d);
+                    var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                    if (existingIndex > -1) {
+                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                    }
+                    else {
+                        DataStoreManager._actualModel[type].Data.push(d);
+                    }
                     var thisClass = DataStoreManager._actualModel[type].Data[0];
                     for (var n = 0; n < thisClass.allCompMaps.length; n++) {
                         var compMap = thisClass.allCompMaps[n];
-                        if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                        if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                             if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                 allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                             }
@@ -146,19 +153,13 @@ var DataStoreManager = (function () {
                     }
                     return Promise.all(allComps)
                         .then(function (whateverGotReturned) {
-                        d = InstanceFactory.convertToClasses(d);
                         if (!d.viewModelWatcher) {
                             d.viewModelWatcher = _.cloneDeep(d);
                         }
-                        viewModelParent = d.viewModelWatcher;
                         d.doCompose(compMaps);
-                        var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
-                        if (existingIndex > -1) {
-                            DataStoreManager._actualModel[type].Data[existingIndex] = d;
-                        }
-                        else {
-                            DataStoreManager._actualModel[type].Data.push(d);
-                        }
+                        viewModelParent.push(d.viewModelWatcher);
+                        d.viewModelWatcher["referenceTest"] = "worked";
+                        console.log(d.viewModelWatcher);
                         return viewModelParent;
                     })
                         .catch(function (reason) {
@@ -182,7 +183,7 @@ var DataStoreManager = (function () {
                         d.viewModelWatcher = _.cloneDeep(d);
                     }
                     //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
-                    viewModelParent = d.viewModelWatcher;
+                    viewModelParent.test = d.viewModelWatcher;
                     d.doCompose(compMaps);
                     //DataStoreManager._actualModel[type].Data = d;
                     return _this.promisifyData(d);
@@ -203,6 +204,14 @@ var DataStoreManager = (function () {
         } else {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
+    };
+    DataStoreManager.save = function (viewModel) {
+        var url = viewModel.thisClass["urlMapping"].urlSave;
+        console.log(url);
+        return XHR.POST(url, viewModel)
+            .then(function (d) {
+            return viewModel;
+        });
     };
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {

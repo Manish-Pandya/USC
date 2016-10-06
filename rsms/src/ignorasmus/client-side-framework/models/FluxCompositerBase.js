@@ -76,24 +76,6 @@ var FluxCompositerBase = (function () {
         enumerable: true,
         configurable: true
     });
-    FluxCompositerBase.prototype.fixUrl = function (str) {
-        var _this = this;
-        var pattern = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
-        str = str.replace(pattern, function (sub) {
-            sub = sub.match(/\{\{(.*)\}\}/)[1];
-            var thing = sub.split(".");
-            sub = thing[0];
-            for (var n = 1; n < thing.length; n++) {
-                sub += "['" + thing[n] + "']";
-            }
-            if (thing.length > 1) {
-                sub = eval(sub);
-            }
-            return _this[sub];
-        });
-        console.log(str);
-        return str;
-    };
     FluxCompositerBase.prototype.getCompMapFromProperty = function (property) {
         var cms = this.allCompMaps;
         var l = cms.length;
@@ -147,6 +129,23 @@ var FluxCompositerBase = (function () {
             }
         }
         return this._hasGetAllPermission;
+    };
+    FluxCompositerBase.prototype.getChildUrl = function (cm) {
+        var _this = this;
+        var pattern = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
+        var str = cm.ChildUrl.replace(pattern, function (sub) {
+            sub = sub.match(/\{\{(.*)\}\}/)[1];
+            var thing = sub.split(".");
+            sub = thing[0];
+            for (var n = 1; n < thing.length; n++) {
+                sub += "['" + thing[n] + "']";
+            }
+            if (thing.length > 1) {
+                sub = eval(sub);
+            }
+            return _this[sub];
+        });
+        return str;
     };
     FluxCompositerBase.urlMapping = new UrlMapping("foot", "", "");
     return FluxCompositerBase;

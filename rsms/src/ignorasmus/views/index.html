@@ -51,10 +51,12 @@
         
         var init = function () {
             console.log(currentRoles);
-            users = [];
-            hazards = [];
-            pis = [];
-            rooms = [];
+            var users = [],
+            hazards = [],
+            pis = [],
+            rooms = [],
+            piSingle = {};
+
 
             var testEditingUser = function () {
                 pis[0].User.Email = "some@email.foo";
@@ -64,13 +66,19 @@
                 console.log(pis[0].User);
 
             }
-            //DataStoreManager.getAll("Room", rooms, true),
-            var ps = [DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, false)];
+
+            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
-                        console.log(pis[0], rooms[0]);
-                        
+                        //console.log(whateverGotReturned);
+                        pis = whateverGotReturned[1];
+                        pis[0].Inspection_notes = "";
+                        console.log(DataStoreManager.ActualModel.PrincipalInvestigator.Data[0]);
+                        DataStoreManager.save(pis[0]);
+                        //console.log(pis);
+
+
                         /*
                         DataStoreManager.getById("User", 1, {}, true).then((d)=>{
                             console.log(d);

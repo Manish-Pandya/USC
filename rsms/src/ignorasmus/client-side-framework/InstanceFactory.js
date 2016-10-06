@@ -161,7 +161,8 @@ var InstanceFactory = (function (_super) {
             }
             else {
                 if (typeof parent[compMap.PropertyName + "Promise"] == "undefined") {
-                    parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then(function (d) {
+                    var url = parent.getChildUrl(compMap);
+                    parent[compMap.PropertyName + "Promise"] = XHR.GET(url).then(function (d) {
                         parent[compMap.PropertyName] = [];
                         parent.viewModelWatcher[compMap.PropertyName] = [];
                         d = InstanceFactory.convertToClasses(d);

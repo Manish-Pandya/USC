@@ -48,7 +48,11 @@ abstract class DataStoreManager {
     //----------------------------------------------------------------------
 
     // TODO: Consider method overload to allow multiple types and viewModelParents
-    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
+    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any>{
+        if (!PermissionMap.getPermission(type).getAll) {
+            throw new Error("You don't have permission to call getAll for " + type);
+        }
+
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             //console.log(type + " before request");
@@ -62,14 +66,13 @@ abstract class DataStoreManager {
                         if (compMaps) {
                             var allComps: any[] = [];
                             var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
-                            console.log(thisClass);
-                            //thisClass.getCompMapFromProperty("Rooms");
+                                
                             for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
                                 var compMap: CompositionMapping = thisClass.allCompMaps[n];
                                 if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
-                                    if (PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                    if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                         if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                            if (!DataStoreManager._actualModel[compMap.ChildType].Data) {
+                                            if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                                                 console.log(type + " in if looking for " + compMap.ChildType);
                                                 //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                                 if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
@@ -83,15 +86,9 @@ abstract class DataStoreManager {
                                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                                             }
                                         }
-                                    } else {
-                                        //get a subset bc we don't have permission to get all
-                                        //loop through dsm collection of type
-                                        //foreach, compose for lower permission level
-                                        //TODO: optimize ie by building a list of relevant comp maps and doing a more efficient loop
                                     }
                                 }
                             }
-                            
                             return Promise.all(allComps)
                                 .then((whateverGotReturned) => {
                                     DataStoreManager._actualModel[type].Data.forEach((value: any, index: number, array: any[]) => {
@@ -148,11 +145,19 @@ abstract class DataStoreManager {
                 .then((d: FluxCompositerBase) => {
                     if (compMaps) {
                         var allComps: any[] = [];
+                        d = InstanceFactory.convertToClasses(d);
+                        var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                        if (existingIndex > -1) {
+                            DataStoreManager._actualModel[type].Data[existingIndex] = d;
+                        } else {
+                            DataStoreManager._actualModel[type].Data.push(d);
+                        }
+
                         var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
                         
                         for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
                             var compMap: CompositionMapping = thisClass.allCompMaps[n];
-                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                     allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                 }
@@ -161,20 +166,15 @@ abstract class DataStoreManager {
                         return Promise.all(allComps)
                             .then(
                                 function (whateverGotReturned) {
-                                    d = InstanceFactory.convertToClasses(d);
+                                   
                                     if (!d.viewModelWatcher) {
                                         d.viewModelWatcher = _.cloneDeep(d);
                                     }
-                                    viewModelParent = d.viewModelWatcher;
+                                    
                                     d.doCompose(compMaps);
-
-                                    var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
-                                    if (existingIndex > -1) {
-                                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
-                                    } else {
-                                        DataStoreManager._actualModel[type].Data.push(d);
-                                    }
-
+                                    viewModelParent.push(d.viewModelWatcher);
+                                    d.viewModelWatcher["referenceTest"] = "worked";
+                                    console.log(d.viewModelWatcher);
                                     return viewModelParent;
                                 }
                             )
@@ -204,7 +204,7 @@ abstract class DataStoreManager {
                         }
 
                         //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
-                        viewModelParent = d.viewModelWatcher;
+                        viewModelParent.test = d.viewModelWatcher;
                         d.doCompose(compMaps);
                         //DataStoreManager._actualModel[type].Data = d;
                         return this.promisifyData(d);
@@ -226,6 +226,16 @@ abstract class DataStoreManager {
         } else {
             throw new Error("No such id as " + id + " already in actual model.");
         }*/
+    }
+
+    static save(viewModel: FluxCompositerBase): void | Promise<FluxCompositerBase>{
+        var url = viewModel.thisClass["urlMapping"].urlSave;
+        console.log(url);
+        return XHR.POST(url, viewModel)
+            .then((d) => {
+                
+                return viewModel;
+            });
     }
 
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
@@ -250,7 +260,6 @@ abstract class DataStoreManager {
     private static commitToActualModel(viewModelParent: FluxCompositerBase): boolean {
         // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
         this._actualModel = _.cloneDeep(viewModelParent);
-
         return true;
     }
 

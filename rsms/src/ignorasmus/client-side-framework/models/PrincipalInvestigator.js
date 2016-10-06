@@ -11,6 +11,7 @@ var PrincipalInvestigator = (function (_super) {
     PrincipalInvestigator.prototype.onFulfill = function () {
         this.hasGetAllPermission();
         _super.prototype.onFulfill.call(this);
+        this.getChildUrl(PrincipalInvestigator.RoomMap);
     };
     PrincipalInvestigator.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -21,7 +22,7 @@ var PrincipalInvestigator = (function (_super) {
     };
     PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
     PrincipalInvestigator.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
-    PrincipalInvestigator.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getAllUsers", "LabPersonnel", "Supervisor_id");
+    PrincipalInvestigator.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=LabPersonnel&id={{UID}}", "LabPersonnel", "Supervisor_id");
     PrincipalInvestigator.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
     return PrincipalInvestigator;
 }(FluxCompositerBase));

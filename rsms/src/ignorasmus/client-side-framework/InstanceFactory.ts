@@ -90,7 +90,7 @@ abstract class InstanceFactory extends DataStoreManager {
         return data;
     }
 
-    static getChildInstances(compMap: CompositionMapping, parent: any): void {
+    static getChildInstances(compMap: CompositionMapping, parent: FluxCompositerBase): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
             parent[compMap.PropertyName] = []; // clear property
@@ -173,8 +173,9 @@ abstract class InstanceFactory extends DataStoreManager {
                     return;
                 }
             } else {
-                if (typeof parent[compMap.PropertyName + "Promise"] == "undefined") {                    
-                    parent[compMap.PropertyName + "Promise"] = XHR.GET(compMap.ChildUrl).then((d) => {
+                if (typeof parent[compMap.PropertyName + "Promise"] == "undefined") {
+                    let url = parent.getChildUrl(compMap);             
+                    parent[compMap.PropertyName + "Promise"] = XHR.GET(url).then((d) => {
                         parent[compMap.PropertyName] = []
                         parent.viewModelWatcher[compMap.PropertyName] = [];
 

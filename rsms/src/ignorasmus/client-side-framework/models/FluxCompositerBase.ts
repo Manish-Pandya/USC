@@ -74,7 +74,7 @@ abstract class FluxCompositerBase {
     TypeName: string;
     viewModelWatcher: FluxCompositerBase | null;
 
-    private thisClass: Function;
+    thisClass: Function;
 
     protected _allCompMaps: CompositionMapping[];
     get allCompMaps(): CompositionMapping[] {
@@ -92,26 +92,6 @@ abstract class FluxCompositerBase {
             }
         }
         return this._allCompMaps;
-    }
-
-    private fixUrl(str: string): string {
-        var pattern: RegExp = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
-
-        str = str.replace(pattern, (sub: string): string => {
-            sub = sub.match(/\{\{(.*)\}\}/)[1];
-            var thing = sub.split(".");
-            sub = thing[0];
-            for (var n: number = 1; n < thing.length; n++) {
-                sub += "['" + thing[n] + "']";
-            }
-            if (thing.length > 1) {
-                sub = eval(sub);
-            }
-
-            return this[sub];
-        });
-        console.log(str);
-        return str;
     }
 
     getCompMapFromProperty(property: string): CompositionMapping | null {
@@ -175,6 +155,26 @@ abstract class FluxCompositerBase {
             }
         }
         return this._hasGetAllPermission;
+    }
+
+    getChildUrl(cm: CompositionMapping): string {
+        var pattern: RegExp = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
+
+        let str = cm.ChildUrl.replace(pattern, (sub: string): string => {
+            sub = sub.match(/\{\{(.*)\}\}/)[1];
+            var thing = sub.split(".");
+            sub = thing[0];
+            for (var n: number = 1; n < thing.length; n++) {
+                sub += "['" + thing[n] + "']";
+            }
+            if (thing.length > 1) {
+                sub = eval(sub);
+            }
+
+            return this[sub];
+        });
+        
+        return str;
     }
 
 }
