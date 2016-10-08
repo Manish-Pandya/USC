@@ -277,7 +277,8 @@ class Inspection extends GenericCrud {
             }
             //Is the Corrective Action Plan overdue?
             $notificationDate = new DateTime($this->getNotification_date());
-            if($now->diff($notificationDate)->d > 14){
+
+            if($now->diff($notificationDate)->days > 14){
                 return "OVERDUE CAP";
             }else{
                 return "INCOMPLETE CAP";

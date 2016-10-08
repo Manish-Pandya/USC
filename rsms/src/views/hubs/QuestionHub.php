@@ -13,7 +13,7 @@ require_once '../top_view.php';
         </li>
     </ul>
 </div>
-<div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController"><br>
+<div class="container-fluid whitebg question-hub" ng-app="questionHub" ng-controller="QuestionHubController"><br>
     <div class="loading" ng-if="!question && !noQuestion || !checklist" >
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
