@@ -6,7 +6,6 @@
         <h3>Audit Criteria:</h3>
         <p>{{question.Text}}</p>
         <h3>Deficiency:</h3>
-        {{validationError}}
         <p ng-if="def.Deficiency.Text != 'Other'">{{def.Deficiency.Text}}</p>
         <p ng-if="def.Deficiency.Text == 'Other'">{{def.Other_text}}</p>
             <div class="control-group">
