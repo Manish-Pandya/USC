@@ -271,7 +271,6 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
     //set a matching view property for a mysql datetime property of an object
     factory.setDateForView = function (obj, dateProperty) {
         var dateHolder = convenienceMethods.getDate(obj[dateProperty]);
-        console.log(dateHolder);
         obj['view' + dateProperty] = dateHolder;
         return obj;
     }
@@ -280,7 +279,6 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
         //console.log(obj);
         if (obj[dateProperty]) {
             obj['view' + dateProperty] = new Date(obj[dateProperty]);
-            console.log(obj['view' + dateProperty]);
             return obj;
         }
     }
@@ -298,7 +296,6 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
 
     //calculate the inspection's scores
     factory.calculateScore = function (inspection) {
-        console.log('calculation score');
         if (!inspection.score) inspection.score = {};
         inspection.score.itemsInspected = 0;
         inspection.score.deficiencyItems = 0;
@@ -457,6 +454,7 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
             correcteds: 0,
             uncorrecteds: 0,
             unSelectedSumplementals: [],
+            unselectedIDS:[],
             readyToSubmit: false
         }
 
@@ -484,15 +482,19 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                             ready.correcteds++;
                         }
                     }
-                    var k = question.Responses.SupplementalDeficiencies.length;
-                    while (k--) {
+
+                    var l = question.Responses.SupplementalDeficiencies.length;
+                    while (l--) {
+                        var selection = question.Responses.SupplementalDeficiencies[l];
                         if (selection.Is_active) {
                             ready.totals++;
                         } else {
-                            ready.unSelectedSumplementals.push({checklist:checklist.Name, question:question.Text});
+                            if (ready.unselectedIDS.indexOf(question.Key_id) < 0) {
+                                ready.unselectedIDS.push(question.Key_id);
+                                ready.unSelectedSumplementals.push({ checklist: checklist.Name, question: question.Text });
+                            }
                         }
                         question.hasDeficiencies = true;
-                        var selection = question.Responses.SupplementalDeficiencies[k];
                         if (selection.Is_active && selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
@@ -502,6 +504,14 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                         } else if (selection.Corrected_in_inspection) {
                             ready.correcteds++;
                         }
+                    }
+
+                    //question is answered "No" with no Defiency or SupplementalDeficiency selectd
+                    if (ready.unselectedIDS.indexOf(question.Key_id) < 0 &&
+                        (!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length)
+                        && (!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)) {
+                        ready.unselectedIDS.push(question.Key_id);
+                        ready.unSelectedSumplementals.push({ question_id: question.Key_id,checklist: checklist.Name, question: question.Text });
                     }
                     
                 }
