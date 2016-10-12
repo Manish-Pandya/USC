@@ -1480,10 +1480,14 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
 
-            $test = $decodedObject->getWipe_test ();
-            $test = JsonManager::assembleObjectFromDecodedArray ( $test );
-            $LOG->fatal( $test );
+            $tests = $decodedObject->getWipe_test ();
+            $newTests = array();
+            foreach($tests as $test){
+                $newTests[] = JsonManager::assembleObjectFromDecodedArray ( $test );
+            }
 
+            $decodedObject->setWipe_test($newTests);
+            $test = $newTests[0];
             if ( $test != null ) {
 
                 $wipes = $test->getDrum_wipes();
@@ -1496,7 +1500,6 @@ class Rad_ActionManager extends ActionManager {
                 $wipeMaps[] = new EntityMap("eager","getDrum_wipes");
 
                 foreach ( $wipes as $key=>$wipe ) {
-                    $LOG->fatal( $wipe );
                     $wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
                     // there will be a collection of at least 3 DrumWipes. User intends only to save those with Curie_level provided
                     if ($wipe->getCurie_level () != null) {

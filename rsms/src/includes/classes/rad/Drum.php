@@ -193,8 +193,6 @@ class Drum extends RadCrud {
 			}
 		}
 		foreach($this->getScintVialCollections() as $collection){
-			$LOG->debug($collection);
-
 			if($collection->getParcel_use_amounts() != NULL){
 				$amounts = array_merge($amounts, $collection->getParcel_use_amounts());
 			}
@@ -222,7 +220,7 @@ class Drum extends RadCrud {
 	}
 
 	public function setWipe_test($test){
-		$this->wipe_test = array($test);
+		$this->wipe_test = $test;
 	}
 
     public function getIs_scint_vial(){return $this->is_scint_vial;}

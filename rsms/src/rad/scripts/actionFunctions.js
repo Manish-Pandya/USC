@@ -1341,13 +1341,12 @@ angular
                 return this.save(copy)
                     .then(
                         function (returnedDWT) {
-                            if (drum.Wipe_test) {
+                            if (drum.Wipe_test && drum.Wipe_test.length) {
                                 returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
-                                angular.extend(drum.Wipe_test, copy)
+                                angular.extend(drum.Wipe_test[0], copy)
                             } else {
                                 returnedDWT.Drum_wipes = [];
                                 returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
-                                drum.Wipe_test = returnedDWT;
                                 dataStoreManager.store(returnedDWT);
 
                                 //by default, DrumWipeTests have a collection of 6 ParcelWipes, hence the magic number
@@ -1362,7 +1361,7 @@ angular
                                 }
 
                                 returnedDWT.adding = true;
-                                console.log(returnedDWT.Drum_wipes);
+                                drum.Wipe_test = [returnedDWT];
                             }
                             drum.Creating_wipe = false;
                         },
@@ -1372,7 +1371,7 @@ angular
 
             af.saveDrumWipesAndChildren = function (copy) {
                 console.log(copy);
-                var drum = dataStoreManager.getById("Drum", copy.Drum_id);
+                var drum = dataStoreManager.getById("Drum", copy.Key_id);
                 af.clearError();
                 return $rootScope.SavingParcelWipe = genericAPIFactory.save(copy, 'saveDrumWipesAndChildren')
                    .then(
@@ -1381,12 +1380,14 @@ angular
                            if (drum) {
                                angular.extend(drum, copy, true);
                                drum.edit = false;
-                               drum.Wipe_test.edit = false;
-                               var i = drum.Wipe_test.Drum_wipes.length;
+                               drum.Wipe_test[0].edit = false;
+                               drum.Creating_wipe = false;
+                               var i = drum.Wipe_test[0].Drum_wipes.length;
                                while (i--) {
-                                   drum.Wipe_test.Drum_wipes[i].edit = false;
-                                   angular.extend(drum.Wipe_test.Drum_wipes[i], copy.Wipe_test.Drum_wipes);
+                                   angular.extend(drum.Wipe_test[0].Drum_wipes[i], copy.Wipe_test[0].Drum_wipes);
+                                   drum.Wipe_test[0].Drum_wipes[i].edit = false;
                                }
+                               console.log(drum);
                            }
                        },
                        af.setError('The drum wipes could not be saved')
