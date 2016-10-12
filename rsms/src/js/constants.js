@@ -91,6 +91,11 @@ var Constants = (function () {
             PENDING:"Pending",
             COMPLETE:"Complete",
             ACCEPTED:"Accepted"
+        },
+        NO_COMPLETION_DATE_REASON: {
+            NEEDS_EHS: { LABEL: "Completion date depends on EHS.", VALUE: "needs_ehs" },
+            NEEDS_FACILITIES: { LABEL: "Completion date depends on Facilities.", VALUE: "needs_facilities" },
+            INSUFFICIENT_FUNDS: { LABEL: "Insufficient funds for corrective action.", VALUE: "insuficient_funds" }
         }
     };
 
@@ -230,6 +235,7 @@ var Constants = (function () {
     }
 
     constants.PROTOCOL_HAZARDS = [{Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard"}, {Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard"}, {Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" }, {Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard"}]
+
 
     return constants;
 })();

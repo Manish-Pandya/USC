@@ -20,6 +20,7 @@ class PIAuthorization extends RadCrud{
 			"amendment_number"			=> "integer",
             "termination_date"          => "timestamp",
             "termination_notes"         => "text",
+            "approval_date"             => "timestamp",
 
 			//GenericCrud
 			"key_id"			=> "integer",
@@ -61,8 +62,9 @@ class PIAuthorization extends RadCrud{
 
     /**date this authorization was revoked entirely**/
     private $termination_date;
-
     private $termination_notes;
+
+    private $approval_date;
 
 
 	/** Array of Authorizations entities */
@@ -134,6 +136,9 @@ class PIAuthorization extends RadCrud{
 
     public function getTermination_notes(){return $this->termination_notes;}
 	public function setTermination_notes($notes){$this->termination_notes = $notes;}
+
+    public function getApproval_date(){return $this->approval_date;}
+	public function setApproval_date($date){$this->approval_date = $date;}
 
 }
 

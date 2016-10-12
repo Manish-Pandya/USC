@@ -6,15 +6,20 @@
  * @author Hoke Currie, GraySail LLC
  */
 class CorrectiveAction extends GenericCrud {
-	
+
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "corrective_action";
-	
+
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		//deficiency selection is a relationship
 		"deficiency_selection_id" => "integer",
         "supplemental_deficiency_id" => "integer",
+        "needs_ehs"         => "boolean",
+        "needs_facilities"          => "boolean",
+        "insuficient_funds"         => "boolean",
+        "other_reason"              => "text",
+
 
 		"text"		=> "text",
 		//GenericCrud
@@ -28,18 +33,23 @@ class CorrectiveAction extends GenericCrud {
 		"promised_date"   =>     "timestamp",
 		"created_user_id"	=> "integer"
 	);
-	
-	
+
+
 	/** DeficiencySelection entity describing the Deficiency to which this CorrectiveAction applies */
 	private $deficiencySelection;
 	private $deficiency_selection_id;
 
     private $supplementalDeficiency;
     private $supplemental_deficiency_id;
-	
+
 	/** String describing this CorrectiveAction plan */
 	private $text;
-	
+
+    private $needs_ehs;
+    private $needs_facilities;
+    private $insuficient_funds;
+    private $other_reason;
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -48,15 +58,15 @@ class CorrectiveAction extends GenericCrud {
         $entityMaps[] = new EntityMap("lazy","getSupplementalDeficiency");
 
 		$this->setEntityMaps($entityMaps);
-		
+
 	}
-		
-		
+
+
 	// Required for GenericCrud
 	public function getTableName(){
 		return self::$TABLE_NAME;
 	}
-	
+
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
@@ -88,18 +98,30 @@ class CorrectiveAction extends GenericCrud {
 
 	public function getSupplemental_deficiency_id(){ return $this->supplemental_deficiency_id; }
 	public function setSupplemental_deficiency_id($id){ $this->supplemental_deficiency_id = $id; }
-	
+
 	public function getText(){ return $this->text; }
 	public function setText($text){ $this->text = $text; }
-	
+
 	public function getStatus(){ return $this->status; }
 	public function setStatus($status){ $this->status = $status; }
-	
+
 	public function getCompletion_date(){ return $this->completion_date; }
 	public function setCompletion_date($completion_date){ $this->completion_date = $completion_date; }
 
 	public function getPromised_date(){ return $this->promised_date; }
 	public function setPromised_date($promised_date){ $this->promised_date = $promised_date; }
+
+    public function getNeeds_ehs(){return (bool) $this->needs_ehs;}
+	public function setNeeds_ehs($needs_ehs){$this->needs_ehs = $needs_ehs;}
+
+	public function getNeeds_facilities(){return (bool) $this->needs_facilities;}
+	public function setNeeds_facilities($needs_facilities){$this->needs_facilities = $needs_facilities;}
+
+	public function getInsuficient_funds(){return (bool) $this->insuficient_funds;}
+	public function setInsuficient_funds($insuficient_funds){$this->insuficient_funds = $insuficient_funds;}
+
+	public function getOther_reason(){return $this->other_reason;}
+	public function setOther_reason($other_reason){$this->other_reason = $other_reason;}
 
 }
 ?>

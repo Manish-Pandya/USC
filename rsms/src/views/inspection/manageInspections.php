@@ -95,7 +95,7 @@ require_once '../top_view.php';
                     </select>
                 </th>
                 <th>
-                    Laboratory Hazards
+                    Lab Hazards
                     <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
@@ -145,9 +145,8 @@ require_once '../top_view.php';
                         <li ng-repeat="inspector in dto.Inspections.Inspectors">
                             <span ng-if="!inspector.edit" once-text="inspector.Name"></span>
                             <span ng-if="inspector.edit && dtoCopy && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
-                                <select ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, yearHolder.selectedYear, $index, dtoCopy.replacementInspector, inspector)">
-                                    <option value="" disabled selected>Select an Inspector</option>
-                                    <option ng-selected="innerInspector.Key_id == inspector.Key_id" ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerinspector.Name}}</option>
+                                <select ng-options="innerInspector as innerInspector.Name for innerInspector in inspectors| onlyUnselected:dto.Inspections.Inspectors" ng-model="dtoCopy.replacementInspector" ng-change="mif.replaceInspector( dto, yearHolder.selectedYear, $index, dtoCopy.replacementInspector, inspector)">
+                                    <option value="" style="display:none" selected>Select an Inspector</option>
                                 </select>
                                 <i class="icon-cancel-2 danger" style="margin-top:-1px;" ng-click="mif.cancelEditInspector(inspector)"></i>
                             </span>
@@ -158,9 +157,8 @@ require_once '../top_view.php';
                             </span>
                         </li>
                         <li ng-if="dto.addInspector && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])">
-                            <select ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, yearHolder.selectedYear, dto.addedInspector )">
-                                <option value="" disabled selected>Add an Inspector</option>
-                                <option ng-repeat="innerInspector in inspectors | onlyUnselected:dto.Inspections.Inspectors" value="{{innerInspector}}">{{innerinspector.Name}}</option>
+                            <select ng-options="innerInspector as innerInspector.Name for innerInspector in inspectors| onlyUnselected:dto.Inspections.Inspectors" ng-model="dto.addedInspector" ng-change="mif.addInspector( dto, yearHolder.selectedYear, dto.addedInspector )">
+                                <option value="" style="display:none" selected>Add an Inspector</option>
                             </select>
                             <i class="icon-cancel-2 danger" ng-click="dto.addInspector = false"></i>
                         </li>
@@ -186,7 +184,7 @@ require_once '../top_view.php';
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.INCOMPLETE_CAP || dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_CAP">
                             <p>
-                                (CAP due: {{dto.Inspections.Notification_date | getDueDate | date:"MM/dd/yy"}})
+                                (CAP Due: {{dto.Inspections.Notification_date | getDueDate | date:"MM/dd/yy"}})
                                 <br>
                                 <a target="_blank" style="margin:  5px 0; " class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>View Report</a>
                             </p>

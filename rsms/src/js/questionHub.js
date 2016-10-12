@@ -1,4 +1,4 @@
-var questionHub = angular.module('questionHub', ['convenienceMethodWithRoleBasedModule', 'once']);
+var questionHub = angular.module('questionHub', ['convenienceMethodWithRoleBasedModule', 'once', 'ui.tinymce']);
 
 function QuestionHubController($scope, $q, $rootElement, $location, convenienceMethods) {
 
@@ -51,6 +51,23 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
     function onFailGetChecklist(){
         alert("There was a problem gettting this question's checklist.");
     }
+
+    $scope.tinymceOptions = {
+        plugins: 'link lists',
+        toolbar: 'bold | italic | underline | link | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li {font-size:14px}"
+    };
+
+    $scope.tinymceOptionsComplianceReference = {
+        plugins: 'link',
+        toolbar: 'link',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li {font-size:14px}; html{max-height:100px}",
+        max_height: 100
+    };
 
     $scope.editDef = function(def){
         def.edit = !def.edit;

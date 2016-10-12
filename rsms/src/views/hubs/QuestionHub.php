@@ -13,7 +13,7 @@ require_once '../top_view.php';
         </li>
     </ul>
 </div>
-<div class="container-fluid whitebg" ng-app="questionHub" ng-controller="QuestionHubController"><br>
+<div class="container-fluid whitebg question-hub" ng-app="questionHub" ng-controller="QuestionHubController"><br>
     <div class="loading" ng-if="!question && !noQuestion || !checklist" >
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
@@ -33,7 +33,8 @@ require_once '../top_view.php';
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>
         <h2 class="row" ><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h2>
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
-        <h2 class="row"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h2>
+        <h2 class="row"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Description | sanitize">{{}}</span></h2>
+
 
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>
 
@@ -50,8 +51,8 @@ require_once '../top_view.php';
             <div class="control-group">
                 <label ng-if="question" class="control-label" for="email">EDIT COMPLIANCE REFERENCE:</label>
                 <label ng-if="!question" class="control-label" for="email">ENTER COMPLIANCE REFERENCE:</label>
-                <div class="controls">
-                     <input type="text" class="span9" placeholder="Compliance Reference" ng-model="questionCopy.Reference"/>
+                <div class="controls comp-reference">
+                     <input type="text" class="span9" placeholder="Compliance Reference" ng-model="questionCopy.Reference"  ui-tinymce="tinymceOptionsComplianceReference"/>
                 </div>
             </div>
 
@@ -59,7 +60,7 @@ require_once '../top_view.php';
                  <label ng-if="question" class="control-label" for="email">EDIT COMPLIANCE DESCRIPTION:</label>
                  <label ng-if="!question" class="control-label" for="email">ENTER COMPLIANCE DESCRIPTION:</label>
                  <div class="controls">
-                     <textarea rows="3" placeholder="Compliance Description"  ng-model="questionCopy.Description" cols="500" style="width:50%"></textarea><br>
+                     <textarea rows="3" placeholder="Compliance Description" ui-tinymce="tinymceOptions"  ng-model="questionCopy.Description" cols="500" style="width:50%"></textarea><br>
                  </div>
              </div>
 

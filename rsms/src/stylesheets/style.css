@@ -676,7 +676,7 @@ div.rsmsCenterIconContainer a p {
 /* line 400, ../sass/style.scss */
 .userList tr td li i {
   width: auto;
-  margin: 4px 0 0 5px;
+  margin: 1px 0 10px 4px;
   cursor: pointer;
 }
 
@@ -1612,7 +1612,7 @@ td.corrective-action.corrected-during-inspection{
   width: 50%;
   bottom:0;
   left:0%;
-  margin-top: -20px;
+  margin-top: -5px;
 }
 
 
@@ -1632,7 +1632,9 @@ td.corrective-action.corrected-during-inspection{
 .inspectionInfo .pull-right {
   width: 360px;
 }
-
+.submit-table.inspectionReportTable{
+  margin-top: 120px;
+}
 /* line 1111, ../sass/style.scss */
 .inspectionReportTable th {
   text-align: center;
@@ -1644,11 +1646,11 @@ td.corrective-action.corrected-during-inspection{
   padding-top: 0px !important;
   padding-top: 10px !important;
 }
-.inspectionReportTable td span:first-child{
+.inspectionReportTable td:first-child span:first-child{
   padding: 10px 0 0;
   display: inherit;
 }
-.inspectionReportTable td span:last-child{
+.inspectionReportTable td:first-child span:last-child{
   padding: 0 0 10px;
   display: inherit;
 }
@@ -1727,14 +1729,7 @@ table tr td table.nested-table td > div > div{
 .corrective-action .inner-action *{
   text-align:left
 }
-.modal .quickdate-popup {
-  display: block !important;
-  position: relative !important;
-  box-shadow: none;
-}
-.modal .quickdate-button {
-  visibility: hidden !important;
-}
+
 .modal-body p {
   font-size: 16px;
 }
@@ -2753,6 +2748,10 @@ li.active a {
 .red {
   color: #c00; 
 }
+.control-group span.red.error{
+    margin-top: -8px;
+    display: inline-block;
+}
 
 /* line 730, ../sass/style.scss */
 /* line 1793, ../sass/style.scss */
@@ -2983,138 +2982,6 @@ label.smaller {
   border-radius: 4px !important;
 }
 
-/* line 1971, ../sass/style.scss */
-.quickdate {
-  display: inline-block;
-  position: relative;
-  font-size: 12px !Important;
-}
-
-/* line 1972, ../sass/style.scss */
-.quickdate-button div, .quickdate-action-link div {
-  display: inline;
-}
-
-/* line 1973, ../sass/style.scss */
-.quickdate-popup {
-  z-index: 10;
-  background-color: #fff;
-  border: solid 1px #999;
-  text-align: center;
-  width: 250px;
-  position: absolute;
-  padding:10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-}
-
-/* line 1974, ../sass/style.scss */
-.quickdate-popup.open {
-  display: block;
-}
-
-/* line 1975, ../sass/style.scss */
-.quickdate-close {
-  display: none;
-}
-
-/* line 1976, ../sass/style.scss */
-.quickdate-close:hover, .quickdate-close:visited {
-  color: #333;
-}
-
-/* line 1977, ../sass/style.scss */
-.quickdate-calendar-header {
-  display: block;
-  padding: 2px 0;
-  margin-bottom: 5px;
-  text-align: center;
-}
-
-/* line 1978, ../sass/style.scss */
-.quickdate-month {
-  display: inline-block;
-}
-
-/* line 1979, ../sass/style.scss */
-a.quickdate-prev-month {
-  float: left;
-}
-
-/* line 1980, ../sass/style.scss */
-a.quickdate-next-month {
-  float: right;
-}
-
-/* line 1981, ../sass/style.scss */
-.quickdate-text-inputs {
-  text-align: left;
-  margin-bottom: 5px;
-}
-
-/* line 1982, ../sass/style.scss */
-.quickdate-input-wrapper {
-  width: 48%;
-  display: inline-block;
-}
-
-/* line 1983, ../sass/style.scss */
-input.quickdate-date-input, input.quickdate-time-input {
-  width: 200px;
-  margin: 0;
-  height: auto;
-  padding: 2px 3px;
-}
-
-/* line 1984, ../sass/style.scss */
-table.quickdate-calendar {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-  margin-top: 5px;
-  margin-left: -4px;
-}
-
-/* line 1985, ../sass/style.scss */
-table.quickdate-calendar th, table.quickdate-calendar td {
-  padding: 5px;
-}
-table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
-  background: #24A0DA;
-  color:white !important
-}
-
-/* line 1986, ../sass/style.scss */
-table.quickdate-calendar td:hover {
-  cursor: pointer;
-}
-
-/* line 1987, ../sass/style.scss */
-.quickdate-popup-footer {
-  text-align: right;
-  display: block;
-}
-
-/* line 1988, ../sass/style.scss */
-.quickdate-error {
-  border: 1px solid #dd3b30 !important;
-}
-
-/* line 1989, ../sass/style.scss */
-.quickdate-error:focus {
-  outline-color: #dd3b30 !important;
-}
-
-/* line 1990, ../sass/style.scss */
-table.quickdate-calendar td.is-today {
-  color: white !important;
-  color: #000;
-  font-weight:bold;
-  background: rgba(18, 0, 28, 0.58) !important;
-}
-table.quickdate-calendar td.selected{
-  background:#5BB75B!important;
-  color:white;
-}
 
 /* line 1994, ../sass/style.scss */
 .disabled-date {
@@ -3654,6 +3521,10 @@ div.inactive{
 div.fake-table .table-row:hover > div{
     box-shadow: 1px 3px 2px rgba(0,0,0,.4);
 }
+div.fake-table .table-row.Complete div{
+  background: rgb(86, 201, 86);
+  background: rgba(86, 201, 86, 0.5) !important;
+}
 .well{
   margin-top: 10px;
   background: rgba(255,255,255,.7);
@@ -3953,3 +3824,244 @@ input.error, input.ng-invalid.ng-dirty {
     border-color:red !important;
 }
 ::-webkit-validation-bubble-message { display: none !important; }
+
+
+.quickdate {
+  display: inline-block;
+  position: relative;
+}
+.quickdate-button div,
+.quickdate-action-link div {
+  display: inline;
+}
+.quickdate-popup {
+  z-index: 10;
+  background-color: #fff;
+  border: solid 1px #000;
+  text-align: center;
+  width: 250px;
+  display: none;
+  position: absolute;
+  padding: 5px;
+}
+.quickdate-popup.open {
+  display: block;
+}
+.quickdate-close {
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  color: #666;
+  font-size: 110%;
+  margin-top: -6px;
+  text-decoration: none;
+}
+.quickdate-close i {
+    color: #ccc;
+
+}
+.quickdate-close:hover {
+  text-decoration: underline;
+}
+.quickdate-close:hover {
+  text-decoration: underline;
+}
+.quickdate-close:hover,
+.quickdate-close:visited,
+.quickdate-close:hover i {
+  color: #333;
+}
+.quickdate-calendar-header {
+  display: block;
+  padding: 11px 0 0px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.quickdate-month {
+  display: inline-block;
+}
+a.quickdate-prev-month {
+  float: left;
+}
+a.quickdate-next-month {
+  float: right;
+}
+.quickdate-text-inputs {
+  text-align: left;
+  margin-bottom: 5px;
+}
+.quickdate-input-wrapper {
+  width: 48%;
+  display: none;
+}
+input.quickdate-date-input,
+input.quickdate-time-input {
+  width: 100px;
+  margin: 0;
+  height: auto;
+  padding: 2px 3px;
+}
+table.quickdate-calendar {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin-top: 5px;
+}
+table.quickdate-calendar th,
+table.quickdate-calendar td {
+  padding: 5px;
+}
+table.quickdate-calendar td:hover {
+  cursor: pointer;
+}
+.quickdate-popup-footer {
+  text-align: right;
+  display: block;
+}
+.quickdate input.ng-invalid {
+  border: 1px solid #dd3b30;
+}
+.quickdate input.ng-invalid:focus {
+  outline-color: #dd3b30;
+}
+
+.quickdate {
+  display: inline-block;
+  vertical-align: bottom;
+  font-size: 15px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.quickdate input,
+.quickdate select {
+  font-size: 13px;
+}
+.quickdate-button {
+  background: #ffffff;
+  color: #333333;
+  border: solid 1px #cccccc;
+  box-shadow: outset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  text-decoration: none;
+}
+.quickdate-button:hover {
+  text-decoration: underline;
+}
+.quickdate-button:hover i {
+  text-decoration: none;
+}
+.quickdate-button i {
+  padding-right: 4px;
+}
+.quickdate-popup {
+  margin-top: -272px;
+  color: #333333;
+  font-size: 15px;
+  background-color: #fafafa;
+  border: solid 1px #dddddd;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 10px 30px rgba(25, 25, 25, 0.92);
+  -moz-box-shadow: 0px 10px 30px rgba(25, 25, 25, 0.92);
+  box-shadow: 0px 10px 30px rgba(25, 25, 25, 0.92);
+  z-index:9999;
+}
+.quickdate-action-link:visited,
+.quickdate-action-link:hover {
+  color: #333333;
+}
+.quickdate-next-month i {
+  padding-left: 10px;
+}
+.quickdate-prev-month i {
+  padding-right: 10px;
+}
+table.quickdate-calendar {
+  border: solid 1px #ccc;
+  background-color: #ffffff;
+}
+table.quickdate-calendar th,
+table.quickdate-calendar td {
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+table.quickdate-calendar td:hover {
+  background-color: #e6e6e6;
+}
+table.quickdate-calendar td.other-month {
+  background-color: #dbdbdb;
+  color: #808080;
+}
+table.quickdate-calendar td.other-month:hover {
+  background-color: #c7c7c7;
+}
+table.quickdate-calendar td.disabled-date {
+  background-color: inherit;
+  color: #ffffff;
+}
+table.quickdate-calendar td.disabled-date:hover {
+  background-color: inherit;
+  cursor: default;
+}
+
+table.quickdate-calendar td.is-today {
+  color: #b58922;
+  font-weight: bold;
+}
+table.quickdate-calendar td.is-today.disabled-date {
+  color: #929292;
+  font-weight: normal;
+}
+.quickdate-popup-footer {
+  margin: 3px 1px 0;
+}
+.quickdate-clear {
+  display: inline-block;
+  padding: 2px 4px;
+  background-color: #ffffff;
+  color: #333333;
+  border: solid 1px #cccccc;
+  box-shadow: outset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border-radius: 4px;
+  text-decoration: none;
+}
+.quickdate-clear:hover {
+  background-color: #f2f2f2;
+}
+
+
+/* line 1988, ../sass/style.scss */
+.quickdate-error {
+  border: 1px solid #dd3b30 !important;
+}
+
+/* line 1989, ../sass/style.scss */
+.quickdate-error:focus {
+  outline-color: #dd3b30 !important;
+}
+
+/* line 1990, ../sass/style.scss */
+table.quickdate-calendar td.is-today {
+  color: white !important;
+  color: #000;
+  font-weight:bold;
+  background: rgba(18, 0, 28, 0.58) !important;
+}
+table.quickdate-calendar td.selected{
+  background:#5BB75B!important;
+  color:white;
+}
+
+table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
+  background: #24A0DA;
+  color:white !important
+}
+
+/* line 1986, ../sass/style.scss */
+table.quickdate-calendar td:hover {
+  cursor: pointer;
+}
+
+.question-hub h2.row ul li{
+  margin-bottom:8px;
+}

@@ -10,6 +10,7 @@
  */
 angular
     .module('HazardInventory', [
+        
         'modelInflator',
         'genericAPI',
         'applicationControllerModule',
@@ -19,6 +20,7 @@ angular
         'once',
         'modalPosition',
         'convenienceMethodWithRoleBasedModule',
-        'angular.filter'
+        'angular.filter',
+        'ui.tinymce'
     ])
     .controller('NavCtrl', function ($rootScope, applicationControllerFactory) {});

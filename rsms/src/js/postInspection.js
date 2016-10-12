@@ -1,4 +1,4 @@
-angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter'])
+angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'ngQuickDate', 'ngRoute', 'once', 'angular.filter', 'ui.tinymce'])
 .filter('joinBy', function () {
     return function (input, delimiter) {
         return (input || []).join(delimiter || ',');
@@ -271,7 +271,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     //set a matching view property for a mysql datetime property of an object
     factory.setDateForView = function (obj, dateProperty) {
         var dateHolder = convenienceMethods.getDate(obj[dateProperty]);
-        console.log(dateHolder);
         obj['view' + dateProperty] = dateHolder;
         return obj;
     }
@@ -280,7 +279,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
         //console.log(obj);
         if (obj[dateProperty]) {
             obj['view' + dateProperty] = new Date(obj[dateProperty]);
-            console.log(obj['view' + dateProperty]);
             return obj;
         }
     }
@@ -298,7 +296,6 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
 
     //calculate the inspection's scores
     factory.calculateScore = function (inspection) {
-        console.log('calculation score');
         if (!inspection.score) inspection.score = {};
         inspection.score.itemsInspected = 0;
         inspection.score.deficiencyItems = 0;
@@ -450,13 +447,14 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
     }
 
     factory.getIsReadyToSubmit = function (inspection) {
-
         var ready = {
             totals: 0, 
             pendings: 0, 
             completes:0, 
             correcteds: 0,
-            uncorrecteds:0,
+            uncorrecteds: 0,
+            unSelectedSumplementals: [],
+            unselectedIDS:[],
             readyToSubmit: false
         }
 
@@ -474,23 +472,7 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         ready.totals++;
                         question.hasDeficiencies = true;
                         var selection = question.Responses.DeficiencySelections[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
-                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
-                                ready.pendings++;
-                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
-                                ready.completes++;
-                            } 
-
-                        } else if (selection.Corrected_in_inspection) {
-                            ready.correcteds++;
-                        }
-                    }
-                    var k = question.Responses.SupplementalDeficiencies.length;
-                    while (k--) {
-                        ready.totals++;
-                        question.hasDeficiencies = true;
-                        var selection = question.Responses.SupplementalDeficiencies[k];
-                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
+                        if (selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection ) {
                             if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
                                 ready.pendings++;
                             } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
@@ -499,6 +481,37 @@ angular.module('postInspections', ['ui.bootstrap', 'convenienceMethodWithRoleBas
                         } else if (selection.Corrected_in_inspection) {
                             ready.correcteds++;
                         }
+                    }
+
+                    var l = question.Responses.SupplementalDeficiencies.length;
+                    while (l--) {
+                        var selection = question.Responses.SupplementalDeficiencies[l];
+                        if (selection.Is_active) {
+                            ready.totals++;
+                        } else {
+                            if (ready.unselectedIDS.indexOf(question.Key_id) < 0) {
+                                ready.unselectedIDS.push(question.Key_id);
+                                ready.unSelectedSumplementals.push({ checklist: checklist.Name, question: question.Text });
+                            }
+                        }
+                        question.hasDeficiencies = true;
+                        if (selection.Is_active && selection.CorrectiveActions && selection.CorrectiveActions.length && !selection.Corrected_in_inspection) {
+                            if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                                ready.pendings++;
+                            } else if (selection.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                                ready.completes++;
+                            }
+                        } else if (selection.Corrected_in_inspection) {
+                            ready.correcteds++;
+                        }
+                    }
+
+                    //question is answered "No" with no Defiency or SupplementalDeficiency selectd
+                    if (ready.unselectedIDS.indexOf(question.Key_id) < 0 &&
+                        (!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length)
+                        && (!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)) {
+                        ready.unselectedIDS.push(question.Key_id);
+                        ready.unSelectedSumplementals.push({ question_id: question.Key_id,checklist: checklist.Name, question: question.Text });
                     }
                     
                 }
@@ -632,28 +645,36 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
 
     function setEmailText(inspectionState) {
-        var date = new Date($scope.inspection.viewDate_started).toLocaleDateString();
+        var dateStarted = moment($scope.inspection.Date_started)
+        var date = dateStarted.format("MMMM Do, YYYY");
         var id = postInspectionFactory.getInspection().Key_id
-        console.log(inspectionState);
+        console.log(date);
         if (inspectionState.totals == 0) {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
                                       + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
-                                       + "Best regards,\n\n"
-                                        + "EHS Research Safety,\n\n"
+                                       + "Best regards,\n"
+                                        + "EHS Research Safety\n"
         }
         else if (inspectionState.totals > inspectionState.correcteds) {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
-                                 + "Please submit your lab's corrective action plan for each deficiency included in the report within the next two weeks.\n\n"
-                                 + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n\n"
-                                 + "Best regards,\n\n"
+            var dateSent;
+            $scope.inspection.Notification_date ? dateSent = moment($scope.inspection.Notification_date) : dateSent = moment();
+            var dueDate = dateSent.add(14, "days").format("MMMM Do, YYYY");
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + ". \n\n"
+                                 + "Please submit your lab's corrective action plan for each deficiency included in the report on or before "+ dueDate +".\n\n"
+                                 + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
+                                 + "Best regards,\n"
                                  + "EHS Research Safety\n"
         }
         //all corrected
         else {
-            $scope.defaultNote.Text = "We appreciate you for taking the time to meet with EHS for your annual laboratory safety inspection on Wednesday, January 13, 2016. During this inspection EHS identified one or more deficiencies, but each deficiency was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
+            var deficiencyCount = postInspectionFactory.getIsReadyToSubmit();
+            var ending = deficiencyCount.correcteds === 1 ? "y" : "ies";
+            var lingIter = ending == "y" ? "it" : "each deficiency";
+
+            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". During this inspection EHS identified " + deficiencyCount.correcteds +  " deficienc" + ending +", but "+ lingIter +" was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: http://radon.qa.sc.edu/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id + " .\n\n"
                                       + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all USC's faculty, staff, and students.\n\n"
-                                      + "Best regards,\n\n" 
-                                      + "EHS Research Safety\n\n"
+                                      + "Best regards,\n" 
+                                      + "EHS Research Safety\n"
         }
 
 
@@ -789,8 +810,19 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       postInspectionFactory.setInspection($scope.inspection);
                       postInspectionFactory.setRecommendationsAndObservations()
                           .then(
-                            function () {
+                            function () {                                
                                 $scope.recommendations = postInspectionFactory.getRecommendations();
+                                if(postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals.length){                                   
+                                    var modalData = {
+                                        inspection:$scope.inspection,
+                                        uncheckeds: postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals
+                                    }
+                                    postInspectionFactory.setModalData(modalData);
+                                    var modalInstance = $modal.open({
+                                        templateUrl: 'post-inspection-templates/unselected-supplemental-deficiencies.html',
+                                        controller: modalCtrl
+                                    });
+                                }
                             });
 
                       //turn off the loading spinner
@@ -799,6 +831,9 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                       //organized by parent hazard
                       //each group of checklists will have a Questions property containing all questions for each checklist in a given category
                       $scope.questionsByChecklist = postInspectionFactory.organizeChecklists($rootScope.inspection.Checklists);
+
+
+
                   });
             } else {
                 $scope.inspection = postInspectionFactory.getInspection();
@@ -882,6 +917,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
               def.CorrectiveActionCopy = angular.copy(promise);
               def.CorrectiveActions[0] = angular.copy(promise);
               postInspectionFactory.setInspection($scope.inspection);
+              $scope.data = postInspectionFactory.getIsReadyToSubmit()
           },
           function (promise) {
               def.error = 'There was a promblem saving the Corrective Action';
@@ -922,13 +958,17 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             } else {
                 def.CorrectiveActions.push(returnedCA);
             }
+            $scope.data = postInspectionFactory.getIsReadyToSubmit();
             if (postInspectionFactory.getIsReadyToSubmit().readyToSubmit) {
+                $scope.data = postInspectionFactory.getIsReadyToSubmit();
+                console.log($scope.data)
                 var modalInstance = $modal.open({
                     templateUrl: 'post-inspection-templates/submit-cap.html',
                     controller: modalCtrl
                 });
                 modalInstance.result.then(function (closed) {
                     $scope.capSubmitted(closed);
+                    $scope.data = postInspectionFactory.getIsReadyToSubmit();
                 })
             }
             
@@ -1045,11 +1085,18 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     $scope.options = [{ Value: Constants.CORRECTIVE_ACTION.STATUS.PENDING, Label: "Corrective action will be completed soon" }, { Value: Constants.CORRECTIVE_ACTION.STATUS.COMPLETE, Label: "Corrective action completed" }];
     $scope.validationError = '';
 
-    
+    $scope.tinymceOptions = {
+        plugins: '',
+        toolbar: 'bold | italic | underline',
+        menubar: false,
+        elementpath: false,
+        content_style: "p {font-size:14px}"
+    };
 
     $scope.data = postInspectionFactory.getIsReadyToSubmit();
-   
+    console.log($scope.data);
     if (data != null) {
+        if (data.inspection) $scope.inspection = data.inspection;
         $scope.question = data.question || null;
         $scope.def = data.deficiency || null;
         $scope.dates = {};
@@ -1059,8 +1106,9 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
             for (var prop in $scope.def.CorrectiveActions[0]) {
                 $scope.copy[prop] = $scope.def.CorrectiveActions[0][prop];
             }
-        } else {
-            console.log($scope.def);
+            console.log($scope.def, $scope.copy);
+
+        } else if ($scope.def) {
             $scope.copy = {
                 Class: "CorrectiveAction",
                 Is_active: true,
@@ -1069,8 +1117,8 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
-        if ($scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
-        if ($scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
+        if ($scope.copy && $scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
+        if ($scope.copy && $scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
 
         $scope.closeOut = function () {
             $scope.dirty = true;
@@ -1089,14 +1137,48 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
         }
     }
 
+    $scope.validateCorrectiveAction = function (action) {
+        errorObject = null;
+        if (!action) {
+            errorObj = { formBlank: true }
+        } else {
+            errorObj = {
+                statusError: action.Status == null,
+                textError: action.Text == null || action.Text == "",
+                dateError: function () {
+                    if (!action.Status || !action.Text || action.Text == "") return false;
+                    if (action.Status == Constants.CORRECTIVE_ACTION.STATUS.COMPLETE) {
+                        console.log($scope.dates, action);
+                        return !action.Completion_date && !$scope.dates.completionDate;
+                    } else if (action.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING) {
+                        return (!action.Promised_date && !$scope.dates.promisedDate) && (!action.Needs_ehs && !action.Needs_facilities && !action.Insuficient_funds && !action.Other);
+                    }
+                }(),
+                otherTextError: action.Other && !action.Other_reason
+            }
+        }
+        return $scope.validationError = errorObj;
+    }
+
+    $scope.clearValidationError = function () {
+        $scope.validationError = {};
+    }
+
     $scope.saveCorrectiveAction = function (copy, orig) {
-        console.log(copy, orig);
-        $scope.dirty = true;
 
         if ($scope.dates.promisedDate) copy.Promised_date = convenienceMethods.setMysqlTime($scope.dates.promisedDate);
         if ($scope.dates.completionDate) copy.Completion_date = convenienceMethods.setMysqlTime($scope.dates.completionDate);
 
-        $scope.validationError = '';
+        //custom validation, because the validation is complex
+        $scope.validationError = $scope.validateCorrectiveAction(copy);
+        for (var prop in $scope.validationError) {
+            if ($scope.validationError[prop]) return false;
+        }
+
+        if (!copy.Other) copy.Other_reason = null;
+
+        $scope.dirty = true;
+
         //call to factory to save, return, then close modal, passing data back
         postInspectionFactory.saveCorrectiveAction(copy)
           .then(
@@ -1129,6 +1211,7 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.cancel = function () {
+        console.log($scope.modalData, "asdf")
         $modalInstance.dismiss();
     }
 
@@ -1142,7 +1225,6 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
     }
 
     $scope.todayOrAfter = function (d) {
-        console.log(moment(d), moment());
         return moment(d) >= moment().startOf('day');
     }
 }

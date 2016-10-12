@@ -3468,7 +3468,7 @@ class ActionManager {
             if($decodedObject->getKey_id() != null){
                 $oldResponse = $dao->getById( $decodedObject->getKey_id() );
                 //if the response's answer is not no, we should break any deficiency relationships
-                if( !stristr( $decodedObject->getAnswer,'no' ) ){
+                if( !stristr( $decodedObject->getAnswer(),'no' ) ){
                     foreach( $oldResponse->getDeficiencySelections() as $selection ){
                         $LOG->debug($selection);
                         $dao->removeRelatedItems($selection->getKey_id(),$oldResponse->getKey_id(),DataRelationship::fromArray(Response::$DEFICIENCIES_RELATIONSHIP));

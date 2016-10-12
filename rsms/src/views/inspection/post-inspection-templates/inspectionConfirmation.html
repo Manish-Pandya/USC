@@ -1,11 +1,11 @@
-<h2>Please select personnel to receive the lab safety inspection report:</h2>
 <div class="loading" ng-show='!inspection' >
   <img class="" src="../../img/loading.gif"/>
  Building List
 </div>
 <div ng-if='inspection'>
+ <h3 style="margin:20px 0 15px;">Please select personnel to receive the lab safety inspection report:</h3>
 
-<form class="form" style="margin-top:35px;">
+<form class="form" style="margin-top:15px;">
   <div class="control-group">
       <div class="controls">
         <label class="checkbox">
@@ -31,7 +31,7 @@
          </div>
       </div>
   </div>
-
+  <h3 style="margin:20px 0 15px;">Email message sent with inpection report:</h3>
   <textarea ng-model="defaultNote.Text" style="width:800px;" rows="10" html-text></textarea><br>
 
   <a ng-click="sendEmail()" class="btn btn-large btn-success left" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>

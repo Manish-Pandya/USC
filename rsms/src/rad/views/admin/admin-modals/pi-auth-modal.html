@@ -7,7 +7,7 @@
         <div class="control-group">
             <label class="control-label" for="inputEmail">Date Approved:</label>
             <div class="controls">
-                <input formnovalidate name="date" ng-class="{'error': authForm.date.$error && authForm.$submitted}" ng-model="modalData.PIAuthorizationCopy.Form_Approval_date" required>
+                <input formnovalidate name="date" ng-class="{'error': authForm.date.$error && authForm.$submitted}" ng-model="modalData.PIAuthorizationCopy.view_Approval_date" ng-init="modalData.PIAuthorizationCopy.view_Approval_date = getApprovalDate(modalData.PIAuthorizationCopy, modalData.isAmendment)" required>
                 <span class="help-block" style="">mm/dd/yy</span>
             </div>
         </div>
@@ -16,7 +16,7 @@
             <label class="control-label" for="inputEmail">Amendment Number</label>
             <div class="controls input-append">
                 <input ng-init="modalData.PIAuthorizationCopy.Amendment_number = getSuggestedAmendmentNumber()" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
-                <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">You gotta do this part</span>
+                <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">Please provide Amendment Number</span>
             </div>
         </div>
 

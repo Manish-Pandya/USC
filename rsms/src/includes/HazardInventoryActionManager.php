@@ -284,7 +284,11 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         global $db;
         $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
 
-		$queryString = "SELECT principal_investigator_id FROM principal_investigator_room WHERE room_id IN ( $newRoomIds ) group by principal_investigator_id";
+		$queryString = "SELECT principal_investigator_id
+                        FROM principal_investigator_room a
+                        LEFT JOIN principal_investigator b
+                        ON a.principal_investigator_id = b.key_id
+                        WHERE b.is_active = 1 AND a.room_id IN ( $newRoomIds ) group by a.principal_investigator_id";
 		$stmt = $db->prepare($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
@@ -301,7 +305,7 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
                         FROM principal_investigator_hazard_room a
                         JOIN principal_investigator b
                         ON b.key_id = a.principal_investigator_id
-                        JOIN principal_investigator_room d 
+                        JOIN principal_investigator_room d
                         ON d.principal_investigator_id = a.principal_investigator_id
                         AND d.room_id = a.room_id
                         JOIN erasmus_user c
@@ -325,40 +329,16 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         $stmt->bindValue(($k+$skips+1), $hazardId);
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
-        //make sure that we get a PrincipalInvestigatorHazardRoomRelation for each room for the relevant hazard, even if the PI doesn't have the hazard in the room
-        $finalPiHazardRooms = $piHazRooms;
-        foreach($roomIds as $roomId){
-            $needed = true;
-            $neededPiIds[$roomId] = array();
-            //does each pi have a PrincipalInvestigatorHazardRoomRelation for this room?
-            foreach($piIds as $piId){
-                foreach($piHazRooms as $pihr){
-                    if($pihr->getRoom_id() == $roomId && $pihr->getPrincipal_investigator_id() == $piId){
-                        $needed = false;
-                    }
-                }
-            }
-            if($needed == true && $piId == $principalInvestigatorId ){
-                //create one
-                $createdPiHazRoom = new PrincipalInvestigatorHazardRoomRelation();
-                $createdPiHazRoom->setPrincipal_investigator_id($principalInvestigatorId);
-                $createdPiHazRoom->setHazard_id($hazardId);
-                $createdPiHazRoom->setRoom_id($roomId);
-                $createdPiHazRoom->setStatus("Other Lab's Hazard");
-                $createdPiHazRoom->setPiName($this->getPIById($principalInvestigatorId)->getUser()->getName());
-                array_push($finalPiHazardRooms, $createdPiHazRoom);
-            }
-        }
 
 
         // Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getHazard");
-        foreach($finalPiHazardRooms as $pi){
+        foreach($piHazRooms as $pi){
             $pi->setEntityMaps($entityMaps);
         }
 
-		return $finalPiHazardRooms;
+		return $piHazRooms;
 
 	}
 
