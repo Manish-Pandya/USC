@@ -31,39 +31,14 @@ angular.module('00RsmsAngularOrmApp')
                         $scope.mappedAmendments = [];
                         for (var i = 0; i < $scope.pi.Pi_authorization.length; i++) {
                             var amendment = $scope.auths[i];
-                            console.log(amendment)
+                            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date");
                             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
+                            amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
                             amendment.weight = parseInt(amendment.Amendment_number || "0");
                             $scope.mappedAmendments[parseInt(amendment.weight)] = amendment;
                         }
-
-                        $scope.getHighestAmendmentNumber = function (amendments) {
-                            if (!amendments) var highestAuthNumber = "0";
-
-                            if (amendments.length == 1) {
-                                $scope.selectedAmendment = parseInt(0);
-                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(0)];
-                                var highestAuthNumber = "0";
-                            } else {
-                                var highestAuthNumber = 0;
-                                for (var i = 0; i < amendments.length; i++) {
-                                    var auth = amendments[i];
-                                    if (auth.Amendment_number && auth.Amendment_number > highestAuthNumber) {
-                                        highestAuthNumber = auth.Amendment_number;
-                                    }
-                                    console.log(i);
-
-                                }
-                                $scope.selectedAmendment = parseInt(highestAuthNumber);;
-                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(highestAuthNumber)];
-                                console.log(highestAuthNumber);
-                                return highestAuthNumber;
-
-                            }
-                        }
-                        $scope.getHighestAmendmentNumber($scope.mappedAmendments);
-
-
+                        
+                        //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;
                     },
                     function(){
@@ -83,7 +58,7 @@ angular.module('00RsmsAngularOrmApp')
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
-        if(object)modalData[object.Class] = object;
+        if (object) modalData[object.Class] = object;
         af.setModalData(modalData);
         var modalInstance = $modal.open({
           templateUrl: templateName+'.html',
@@ -91,6 +66,25 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.getHighestAmendmentNumber = function (amendments) {
+        var highestAuthNumber;
+        if (!amendments) {
+            $scope.selectedPiAuth = $scope.mappedAmendments[0];
+            return $scope.selectedAmendment = 0;
+        }
+
+        var highestAuthNumber = 0;
+        _.sortBy(amendments, [function (o) {
+            return moment(o.Approval_date).valueOf();
+        }]);
+
+        console.log(amendments)
+
+        $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
+        console.log()
+        return $scope.selectedAmendment = amendments.length - 1;
+        
+    }
 
     $scope.openAuthModal = function (templateName, piAuth, auth) {
         var modalData = {};
@@ -170,11 +164,18 @@ angular.module('00RsmsAngularOrmApp')
         if (!$scope.modalData.PIAuthorizationCopy) {
             $scope.modalData.PIAuthorizationCopy = {
                 Class: 'PIAuthorization',
-                Rooms: null,
+                Rooms: [],
                 Authorization_number: null,
                 Is_active: true,
-                Principal_investigator_id: $scope.modalData.pi.Key_id
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Authorizations:[]
             }
+        }
+        $scope.getApprovalDate = function (a, isAmendment) {
+            if (isAmendment) {
+                return "";
+            }
+            return a.Approval_date;
         }
 
         if(!$scope.modalData.AuthorizationCopy){
@@ -210,6 +211,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.getTerminationDate = function (piAuth) {
             if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.getDateString(piAuth.Termination_date).formattedDate;
         }
+
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
         console.log(af.getCachedCollection('CarboyUseCycle'));
 
@@ -256,6 +258,7 @@ angular.module('00RsmsAngularOrmApp')
             }else{
                 console.log(terminated);
                 copy.Is_active = false;
+                copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
                 for (var n = 0; n < copy.Authorizations; n++) {                    
                     copy.Authorizations[n].Is_active = false;                    

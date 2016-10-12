@@ -44,7 +44,6 @@ angular
         api.read = function( urlFragment, queryParam )
         {
             var url = api.buildRequestUrl( urlFragment, true, queryParam );
-            console.log(url);
             return $http.jsonp(url)
                     .then(function (response) {
                         if (typeof response.data == "undefined" || (response.data.Class && response.data.Class == "ActionError" && response.data.Message != "No rows returned")) {
@@ -56,7 +55,6 @@ angular
                         }
                     },
                     function (response) {
-                        console.log(response);
                         api.userLoggedOut(response.data);
                     });
 
