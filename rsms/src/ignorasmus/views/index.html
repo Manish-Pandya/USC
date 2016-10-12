@@ -73,24 +73,23 @@
                     function (whateverGotReturned) {
                         //console.log(whateverGotReturned);
                         pis = whateverGotReturned[1];
-                        pis[0].Inspection_notes = "";
-                        console.log(DataStoreManager.ActualModel.PrincipalInvestigator.Data[0]);
-                        DataStoreManager.save(pis[0]);
-                        //console.log(pis);
+                        pis[0].Inspection_notes = "dude looks like a lady, but even more fool";
 
+                        var lp = new window.User();
+                        lp.Name = "Tronald Dump";
+                        pis[0].LabPersonnel.push(lp);
+                        console.log(pis[0].LabPersonnel);
 
+                        DataStoreManager.undo(pis[0]);
+                        
+
+                        console.log(DataStoreManager.ActualModel.PrincipalInvestigator.Data[0], pis[0]);
                         /*
-                        DataStoreManager.getById("User", 1, {}, true).then((d)=>{
-                            console.log(d);
-                        });
-                        DataStoreManager.getById("User", 3, {}, true).then((d) => {
-                            console.log(d);
+                        DataStoreManager.save(pis[0]).then((savedJunk) => {
+                            console.log(pis[0], pis);
                         });
                         */
                     }
-
-
-
                 )//.then(testEditingUser)
                 .catch(
                     function (reason) {

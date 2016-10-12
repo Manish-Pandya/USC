@@ -158,8 +158,6 @@ var DataStoreManager = (function () {
                         }
                         d.doCompose(compMaps);
                         viewModelParent.push(d.viewModelWatcher);
-                        d.viewModelWatcher["referenceTest"] = "worked";
-                        console.log(d.viewModelWatcher);
                         return viewModelParent;
                     })
                         .catch(function (reason) {
@@ -207,10 +205,10 @@ var DataStoreManager = (function () {
     };
     DataStoreManager.save = function (viewModel) {
         var url = viewModel.thisClass["urlMapping"].urlSave;
-        console.log(url);
+        //TODO: create copy without circular JSON, then post it.
         return XHR.POST(url, viewModel)
             .then(function (d) {
-            return viewModel;
+            return DataStoreManager.commitToActualModel(d);
         });
     };
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
@@ -233,10 +231,38 @@ var DataStoreManager = (function () {
             }
         }
     };
+    /**
+     * Copies the properties of viewModelParent to same instance in actualModel, if found.
+     * Otherwise, pushes viewModelParent to actualModel, if no already there.
+     *
+     * @param viewModelParent
+     */
+    // TODO... consider allowing array of instances rather than just 1 instance.
     DataStoreManager.commitToActualModel = function (viewModelParent) {
-        // TODO: Drill into ActualModel, setting the appropriate props from viewModelParent.
-        this._actualModel = _.cloneDeep(viewModelParent);
-        return true;
+        var vmParent = InstanceFactory.convertToClasses(viewModelParent);
+        var existingIndex = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
+        if (existingIndex > -1) {
+            vmParent = InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex], vmParent);
+            InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex].viewModelWatcher, DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex]);
+        }
+        else {
+            existingIndex = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
+            DataStoreManager._actualModel[vmParent.TypeName].Data.push(vmParent);
+            vmParent = InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex], vmParent);
+            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
+        }
+        //update vm watcher
+        console.log(vmParent);
+        return vmParent.viewModelWatcher;
+    };
+    DataStoreManager.undo = function (viewModelParent) {
+        var existingIndex = _.findIndex(DataStoreManager._actualModel[viewModelParent.TypeName].Data, function (o) { return o.UID == viewModelParent.UID; });
+        if (existingIndex > -1) {
+            var actualModelInstance = DataStoreManager._actualModel[viewModelParent.TypeName].Data[existingIndex];
+            InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, actualModelInstance, ["viewModelWatcher"]);
+            //delete actualModelInstance.viewModelWatcher.viewModelWatcher;
+            console.log(actualModelInstance);
+        }
     };
     // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
     DataStoreManager.setViewModelProp = function (propParent, propName, value, optionalCallBack) {

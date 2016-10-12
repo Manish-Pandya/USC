@@ -66,7 +66,6 @@ abstract class InstanceFactory extends DataStoreManager {
             var instance: FluxCompositerBase = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
             InstanceFactory.copyProperties(instance, data);
             instance.onFulfill();
-
             return instance;
         }
         
@@ -125,7 +124,6 @@ abstract class InstanceFactory extends DataStoreManager {
                         DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                             .then(function (d: any[]) {
                                 DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
-                                console.log(parent.Class, compMap.ChildType);
                                 var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
                                 var gerundLen = d.length;
                                 //loop through all the gerunds
@@ -232,19 +230,29 @@ abstract class InstanceFactory extends DataStoreManager {
 
     // Copies properties/values from sources to target.
     // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
-    static copyProperties(target: any, ...sources: any[]): any {
-        sources.forEach(source => {
-            Object.defineProperties(
-                target,
-                Object.getOwnPropertyNames(source).reduce(
-                    (descriptors: { [index: string]: any }, key: string) => {
-                        descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-                        return descriptors;
-                    },
-                    {}
-                )
-            );
-        });
+    static copyProperties(target: any, source: any, exclusions: string[] = []): any {
+        var sourceCopy: any = {};
+        for (var prop in source) {
+            if (exclusions.indexOf(prop) == -1) {
+                // remove exclusions properties from sourceCopy
+                sourceCopy[prop] = source[prop];
+            }
+        }
+
+        if (exclusions.length) {
+            console.log(sourceCopy);
+        }
+
+        Object.defineProperties(
+            target,
+            Object.getOwnPropertyNames(sourceCopy).reduce(
+                (descriptors: { [index: string]: any }, key: string) => {
+                    descriptors[key] = Object.getOwnPropertyDescriptor(sourceCopy, key);
+                    return descriptors;
+                },
+                {}
+            )
+        );
         return target;
     }
 

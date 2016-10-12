@@ -113,7 +113,6 @@ var InstanceFactory = (function (_super) {
                         DataStoreManager.ActualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                             .then(function (d) {
                             DataStoreManager.ActualModel[manyTypeToManyChildType].Data = d;
-                            console.log(parent.Class, compMap.ChildType);
                             var childStore = DataStoreManager.ActualModel[compMap.ChildType].Data;
                             var gerundLen = d.length;
                             //loop through all the gerunds
@@ -218,17 +217,22 @@ var InstanceFactory = (function (_super) {
     };
     // Copies properties/values from sources to target.
     // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
-    InstanceFactory.copyProperties = function (target) {
-        var sources = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            sources[_i - 1] = arguments[_i];
+    InstanceFactory.copyProperties = function (target, source, exclusions) {
+        if (exclusions === void 0) { exclusions = []; }
+        var sourceCopy = {};
+        for (var prop in source) {
+            if (exclusions.indexOf(prop) == -1) {
+                // remove exclusions properties from sourceCopy
+                sourceCopy[prop] = source[prop];
+            }
         }
-        sources.forEach(function (source) {
-            Object.defineProperties(target, Object.getOwnPropertyNames(source).reduce(function (descriptors, key) {
-                descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-                return descriptors;
-            }, {}));
-        });
+        if (exclusions.length) {
+            console.log(sourceCopy);
+        }
+        Object.defineProperties(target, Object.getOwnPropertyNames(sourceCopy).reduce(function (descriptors, key) {
+            descriptors[key] = Object.getOwnPropertyDescriptor(sourceCopy, key);
+            return descriptors;
+        }, {}));
         return target;
     };
     return InstanceFactory;
