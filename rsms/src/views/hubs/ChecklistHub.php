@@ -56,8 +56,8 @@ require_once '../top_view.php';
             <i ng-click="question.show = !question.show;" ng-class="{'icon-plus success':!question.show,'icon-minus danger':question.show}"></i>
             </h2>
             <div ng-if="question.show || showAll" style="clear:both">
-              <h2 class="row" style="margin-top:40px; margin-left:36px; font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h2>
-              <h2 class="row"style="margin-left:36px;font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Description}}</span></h2>
+              <h2 class="row" style="margin-top:40px; margin-left:36px; font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Reference | sanitize"></span></h2>
+              <h2 class="row"style="margin-left:36px;font-size:20px;line-height:normal"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Description | sanitize"></span></h2>
 
               <ul class="checklist-deficiencies" style=" margin-left:66px">
                 <h3 class="underline">Deficiencies</h3>

@@ -1646,11 +1646,11 @@ td.corrective-action.corrected-during-inspection{
   padding-top: 0px !important;
   padding-top: 10px !important;
 }
-.inspectionReportTable td span:first-child{
+.inspectionReportTable td:first-child span:first-child{
   padding: 10px 0 0;
   display: inherit;
 }
-.inspectionReportTable td span:last-child{
+.inspectionReportTable td:first-child span:last-child{
   padding: 0 0 10px;
   display: inherit;
 }
@@ -4060,4 +4060,8 @@ table.quickdate-calendar tr:hover, table.quickdate-calendar tr:hover td {
 /* line 1986, ../sass/style.scss */
 table.quickdate-calendar td:hover {
   cursor: pointer;
+}
+
+.question-hub h2.row ul li{
+  margin-bottom:8px;
 }
