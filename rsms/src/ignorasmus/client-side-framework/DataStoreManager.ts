@@ -6,8 +6,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
-class PermissionMap {
+abstract class PermissionMap {
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+
     static Permissions: any[] = [];
+
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
+
     static getPermission(className: string): any {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
@@ -32,11 +45,8 @@ abstract class DataStoreManager {
     static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
-    // NOTE: there's intentionally no getter
+    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
     protected static _actualModel: any = {};
-    static get ActualModel(): any {
-        return this._actualModel;
-    }
     static set ActualModel(value: any) {
         this._actualModel = InstanceFactory.convertToClasses(value);
     }
@@ -48,33 +58,30 @@ abstract class DataStoreManager {
     //----------------------------------------------------------------------
 
     // TODO: Consider method overload to allow multiple types and viewModelParents
-    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any>{
+    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }
 
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
-            //console.log(type + " before request");
-
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
-                    .then((d: any[]) => {
-                        //console.log(type + " after request");
+                    .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
                         DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
                         if (compMaps) {
                             var allComps: any[] = [];
-                            var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
-                                
-                            for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
-                                var compMap: CompositionMapping = thisClass.allCompMaps[n];
+                            var allCompMaps: CompositionMapping[] = (<FluxCompositerBase>DataStoreManager._actualModel[type].Data[0]).allCompMaps;
+                            var l: number = allCompMaps.length;
+                            for (let n: number = 0; n < l; n++) {
+                                var compMap: CompositionMapping = allCompMaps[n];
                                 if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
                                     if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                        // if compMaps == true or if it's an array with an approved compMap...
                                         if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                             if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                                                 console.log(type + " in if looking for " + compMap.ChildType);
-                                                //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                                 if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
                                                     allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                                 } else {
@@ -91,7 +98,7 @@ abstract class DataStoreManager {
                             }
                             return Promise.all(allComps)
                                 .then((whateverGotReturned) => {
-                                    DataStoreManager._actualModel[type].Data.forEach((value: any, index: number, array: any[]) => {
+                                    DataStoreManager._actualModel[type].Data.forEach((value: any, index: number, array: FluxCompositerBase[]) => {
                                         if (!value.viewModelWatcher) {
                                             value.viewModelWatcher = _.cloneDeep(value);
                                         }
@@ -107,21 +114,19 @@ abstract class DataStoreManager {
                                 })
                         } else {
                             d = InstanceFactory.convertToClasses(d);
-                            //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                            //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                            //DIG: DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
                             DataStoreManager._actualModel[type].Data = d;
                             // Dig this neat way to use viewModelParent as a reference instead of a value!
                             Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
                             return viewModelParent;
                         }
                     })
-                    .catch((d: any[]) => {
+                    .catch((d: FluxCompositerBase[]) => {
                         console.log("getAll:", d);
                         return d;
                     })
             }
         } else {       
-            //console.log("hmm:", DataStoreManager._actualModel[type].Data);
             var d: FluxCompositerBase[] = DataStoreManager._actualModel[type].Data;
             d.forEach((value: any, index: number, array: FluxCompositerBase[]) => {
                 if (!value.viewModelWatcher) {
@@ -130,10 +135,8 @@ abstract class DataStoreManager {
                 viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
             });
-            console.log(type, DataStoreManager._actualModel[type].Data);
-            //DataStoreManager._actualModel[type].Data = d;
-            return this.promisifyData(DataStoreManager._actualModel[type].Data);
 
+            return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
 
     }
@@ -144,7 +147,6 @@ abstract class DataStoreManager {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
                 .then((d: FluxCompositerBase) => {
                     if (compMaps) {
-                        var allComps: any[] = [];
                         d = InstanceFactory.convertToClasses(d);
                         var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
                         if (existingIndex > -1) {
@@ -153,11 +155,13 @@ abstract class DataStoreManager {
                             DataStoreManager._actualModel[type].Data.push(d);
                         }
 
-                        var thisClass: FluxCompositerBase = DataStoreManager._actualModel[type].Data[0];
-                        
-                        for (let n: number = 0; n < thisClass.allCompMaps.length; n++) {
-                            var compMap: CompositionMapping = thisClass.allCompMaps[n];
+                        var allComps: any[] = [];
+                        var allCompMaps: CompositionMapping[] = (<FluxCompositerBase>DataStoreManager._actualModel[type].Data[0]).allCompMaps;
+                        var l: number = allCompMaps.length;
+                        for (let n: number = 0; n < l; n++) {
+                            var compMap: CompositionMapping = allCompMaps[n];
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                // if compMaps == true or if it's an array with an approved compMap...
                                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                     allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                 }
@@ -166,11 +170,9 @@ abstract class DataStoreManager {
                         return Promise.all(allComps)
                             .then(
                                 function (whateverGotReturned) {
-                                   
                                     if (!d.viewModelWatcher) {
                                         d.viewModelWatcher = _.cloneDeep(d);
                                     }
-                                    
                                     d.doCompose(compMaps);
                                     viewModelParent.push(d.viewModelWatcher);
                                     return viewModelParent;
@@ -182,13 +184,7 @@ abstract class DataStoreManager {
                                 }
                             )
                     } else {
-                        console.log(d);
-
-                        //viewModelParent = _.assign(viewModelParent, d);
-                       // console.log(viewModelParent);
-                        //return viewModelParent;
-
-                        var d: FluxCompositerBase = InstanceFactory.convertToClasses(d);
+                        d = InstanceFactory.convertToClasses(d);
 
                         var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
                         if (existingIndex > -1) {
@@ -205,9 +201,8 @@ abstract class DataStoreManager {
                         viewModelParent.test = d.viewModelWatcher;
                         d.doCompose(compMaps);
                         //DataStoreManager._actualModel[type].Data = d;
+
                         return this.promisifyData(d);
-
-
                     }
                 })
                 .catch((d: FluxCompositerBase) => {
@@ -218,19 +213,12 @@ abstract class DataStoreManager {
             var d: FluxCompositerBase = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
             return InstanceFactory.convertToClasses( _.assign(viewModelParent, d) );
         }
-        /*var obj: any = this.findByPropValue(this._actualModel[type], this.uidString, id);
-        if (obj) {
-            _.assign(viewModelParent, obj);
-        } else {
-            throw new Error("No such id as " + id + " already in actual model.");
-        }*/
     }
 
     static save(viewModel: FluxCompositerBase): void | Promise<FluxCompositerBase>{
-        var url = viewModel.thisClass["urlMapping"].urlSave;
         //TODO: create copy without circular JSON, then post it.
 
-        return XHR.POST(url, viewModel)
+        return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
                 return DataStoreManager.commitToActualModel(d);
             });
@@ -238,20 +226,11 @@ abstract class DataStoreManager {
 
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
     static getActualModelEquivalent(viewModelObj: FluxCompositerBase): FluxCompositerBase {
-        if (Array.isArray(viewModelObj)) {
-            console.log("hey man... i expected this to be a single instance of an approved class");
+        if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
+            viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
+            return viewModelObj;
         } else {
-            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
-                /*for (var n: number = 0; n < this._actualModel[viewModelObj[this.classPropName]].Data.length; n++) {
-                    if (this._actualModel[viewModelObj[this.classPropName]].Data[n].Key_id == "3") {
-                        console.log(n, this._actualModel[viewModelObj[this.classPropName]].Data[n]);
-                    }
-                }*/
-                viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
-                return viewModelObj;
-            } else {
-                console.log("dang dude... I'm not familiar with this class or object type");
-            }
+            console.log("dang dude... I'm not familiar with this class or object type");
         }
     }
 
@@ -286,8 +265,6 @@ abstract class DataStoreManager {
         if (existingIndex > -1) {
             var actualModelInstance: FluxCompositerBase = DataStoreManager._actualModel[viewModelParent.TypeName].Data[existingIndex];
             InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, actualModelInstance, ["viewModelWatcher"]);
-            //delete actualModelInstance.viewModelWatcher.viewModelWatcher;
-            console.log(actualModelInstance);
         }
     }
 
@@ -318,8 +295,6 @@ abstract class DataStoreManager {
     }
 
     private static promisifyData(data: any): any {
-        console.log("got here", data);
-
         if (!this.isPromisified) {
             return data;
         } else {
@@ -330,7 +305,7 @@ abstract class DataStoreManager {
                     reject("bad in dsm");
                 }
             });
-            console.log("this is ok", data.Class);
+            
             return p;
         }
     }

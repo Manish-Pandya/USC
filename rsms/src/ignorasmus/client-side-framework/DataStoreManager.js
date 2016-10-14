@@ -8,6 +8,11 @@
 var PermissionMap = (function () {
     function PermissionMap() {
     }
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
     PermissionMap.getPermission = function (className) {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
@@ -15,6 +20,11 @@ var PermissionMap = (function () {
         }
         return this.Permissions[className];
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
     PermissionMap.Permissions = [];
     return PermissionMap;
 }());
@@ -23,9 +33,6 @@ var DataStoreManager = (function () {
     function DataStoreManager() {
     }
     Object.defineProperty(DataStoreManager, "ActualModel", {
-        get: function () {
-            return this._actualModel;
-        },
         set: function (value) {
             this._actualModel = InstanceFactory.convertToClasses(value);
         },
@@ -45,24 +52,23 @@ var DataStoreManager = (function () {
         }
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
-            //console.log(type + " before request");
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
-                    //console.log(type + " after request");
                     DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
                     if (compMaps) {
                         var allComps = [];
-                        var thisClass = DataStoreManager._actualModel[type].Data[0];
-                        for (var n = 0; n < thisClass.allCompMaps.length; n++) {
-                            var compMap = thisClass.allCompMaps[n];
+                        var allCompMaps = DataStoreManager._actualModel[type].Data[0].allCompMaps;
+                        var l = allCompMaps.length;
+                        for (var n = 0; n < l; n++) {
+                            var compMap = allCompMaps[n];
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
                                 if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                    // if compMaps == true or if it's an array with an approved compMap...
                                     if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                         if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                                             console.log(type + " in if looking for " + compMap.ChildType);
-                                            //allComps.push(DataStoreManager.getAll(thisClass[instanceProp].ChildType, []));
                                             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
                                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                             }
@@ -96,8 +102,7 @@ var DataStoreManager = (function () {
                     }
                     else {
                         d = InstanceFactory.convertToClasses(d);
-                        //DIG:  DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                        //Time to decide for sure.  Do we have a seperate hashmap object, is Data a mapped object, or do we not need the performance boost of mapping at all?
+                        //DIG: DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
                         DataStoreManager._actualModel[type].Data = d;
                         // Dig this neat way to use viewModelParent as a reference instead of a value!
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
@@ -111,7 +116,6 @@ var DataStoreManager = (function () {
             }
         }
         else {
-            //console.log("hmm:", DataStoreManager._actualModel[type].Data);
             var d = DataStoreManager._actualModel[type].Data;
             d.forEach(function (value, index, array) {
                 if (!value.viewModelWatcher) {
@@ -120,8 +124,6 @@ var DataStoreManager = (function () {
                 viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
             });
-            console.log(type, DataStoreManager._actualModel[type].Data);
-            //DataStoreManager._actualModel[type].Data = d;
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
     };
@@ -133,7 +135,6 @@ var DataStoreManager = (function () {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
                 .then(function (d) {
                 if (compMaps) {
-                    var allComps = [];
                     d = InstanceFactory.convertToClasses(d);
                     var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
                     if (existingIndex > -1) {
@@ -142,10 +143,13 @@ var DataStoreManager = (function () {
                     else {
                         DataStoreManager._actualModel[type].Data.push(d);
                     }
-                    var thisClass = DataStoreManager._actualModel[type].Data[0];
-                    for (var n = 0; n < thisClass.allCompMaps.length; n++) {
-                        var compMap = thisClass.allCompMaps[n];
+                    var allComps = [];
+                    var allCompMaps = DataStoreManager._actualModel[type].Data[0].allCompMaps;
+                    var l = allCompMaps.length;
+                    for (var n = 0; n < l; n++) {
+                        var compMap = allCompMaps[n];
                         if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                            // if compMaps == true or if it's an array with an approved compMap...
                             if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
                                 allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                             }
@@ -165,11 +169,7 @@ var DataStoreManager = (function () {
                     });
                 }
                 else {
-                    console.log(d);
-                    //viewModelParent = _.assign(viewModelParent, d);
-                    // console.log(viewModelParent);
-                    //return viewModelParent;
-                    var d = InstanceFactory.convertToClasses(d);
+                    d = InstanceFactory.convertToClasses(d);
                     var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
                     if (existingIndex > -1) {
                         DataStoreManager._actualModel[type].Data[existingIndex] = d;
@@ -196,39 +196,22 @@ var DataStoreManager = (function () {
             var d = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
             return InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
         }
-        /*var obj: any = this.findByPropValue(this._actualModel[type], this.uidString, id);
-        if (obj) {
-            _.assign(viewModelParent, obj);
-        } else {
-            throw new Error("No such id as " + id + " already in actual model.");
-        }*/
     };
     DataStoreManager.save = function (viewModel) {
-        var url = viewModel.thisClass["urlMapping"].urlSave;
         //TODO: create copy without circular JSON, then post it.
-        return XHR.POST(url, viewModel)
+        return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then(function (d) {
             return DataStoreManager.commitToActualModel(d);
         });
     };
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
-        if (Array.isArray(viewModelObj)) {
-            console.log("hey man... i expected this to be a single instance of an approved class");
+        if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
+            viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
+            return viewModelObj;
         }
         else {
-            if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
-                /*for (var n: number = 0; n < this._actualModel[viewModelObj[this.classPropName]].Data.length; n++) {
-                    if (this._actualModel[viewModelObj[this.classPropName]].Data[n].Key_id == "3") {
-                        console.log(n, this._actualModel[viewModelObj[this.classPropName]].Data[n]);
-                    }
-                }*/
-                viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
-                return viewModelObj;
-            }
-            else {
-                console.log("dang dude... I'm not familiar with this class or object type");
-            }
+            console.log("dang dude... I'm not familiar with this class or object type");
         }
     };
     /**
@@ -260,8 +243,6 @@ var DataStoreManager = (function () {
         if (existingIndex > -1) {
             var actualModelInstance = DataStoreManager._actualModel[viewModelParent.TypeName].Data[existingIndex];
             InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, actualModelInstance, ["viewModelWatcher"]);
-            //delete actualModelInstance.viewModelWatcher.viewModelWatcher;
-            console.log(actualModelInstance);
         }
     };
     // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
@@ -289,7 +270,6 @@ var DataStoreManager = (function () {
         return result;
     };
     DataStoreManager.promisifyData = function (data) {
-        console.log("got here", data);
         if (!this.isPromisified) {
             return data;
         }
@@ -302,7 +282,6 @@ var DataStoreManager = (function () {
                     reject("bad in dsm");
                 }
             });
-            console.log("this is ok", data.Class);
             return p;
         }
     };
@@ -315,7 +294,7 @@ var DataStoreManager = (function () {
     DataStoreManager.uidString = "Key_id";
     DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     DataStoreManager.isPromisified = true;
-    // NOTE: there's intentionally no getter
+    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
     DataStoreManager._actualModel = {};
     return DataStoreManager;
 }());
