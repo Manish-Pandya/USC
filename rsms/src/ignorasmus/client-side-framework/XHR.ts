@@ -2,7 +2,7 @@
 
     static REQUEST: any = XMLHttpRequest || ActiveXObject;
 
-    static SUCCESS_CODES = [200,201]; 
+    static SUCCESS_CODES: number[] = [200,201]; 
 
     static GET(url): Promise<any> {
         return this._sendRequest('GET', url);
@@ -16,7 +16,7 @@
 
     private static _sendRequest(method: string, url: string, body: any = null): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            var fullUrl = DataStoreManager.baseUrl + url;
+            var fullUrl: string = DataStoreManager.baseUrl + url;
             var xhr = new this.REQUEST();
             
             xhr.open(method, fullUrl);
@@ -24,8 +24,7 @@
             xhr.onload = () => {
                 if (this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     resolve(JSON.parse(xhr.responseText));
-                }
-                else {
+                } else {
                     reject(xhr.statusText);
                 }
             }
@@ -41,7 +40,6 @@
             //handle posted data if needed
             var postBody = body ? JSON.stringify(body) : null;
             xhr.send(postBody);           
-            
         })
     }
 }

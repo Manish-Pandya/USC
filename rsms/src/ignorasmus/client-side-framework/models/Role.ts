@@ -6,11 +6,6 @@
         super();
     }
 
-    onFulfill(): void {
-        this.hasGetAllPermission();
-        super.onFulfill();
-    }
-
     hasGetAllPermission(): boolean {
         if (this._hasGetAllPermission == null) {
             var allowedRoles = [Constants.ROLE.NAME.ADMIN];

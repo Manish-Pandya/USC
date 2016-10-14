@@ -16,7 +16,6 @@
     }
 
     onFulfill(): void {
-        this.hasGetAllPermission();
         super.onFulfill();
         this.getChildUrl(PrincipalInvestigator.RoomMap);
     }

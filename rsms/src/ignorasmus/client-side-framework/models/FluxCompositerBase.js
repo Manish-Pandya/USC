@@ -81,13 +81,13 @@ var FluxCompositerBase = (function () {
         var l = cms.length;
         for (var i = 0; i < l; i++) {
             var cm = cms[i];
-            console.log(cm.PropertyName, property);
             if (cm.PropertyName == property)
                 return cm;
         }
         return;
     };
     FluxCompositerBase.prototype.onFulfill = function () {
+        this.hasGetAllPermission();
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];
         }
@@ -96,9 +96,6 @@ var FluxCompositerBase = (function () {
         }
     };
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
-        if (this[DataStoreManager.classPropName] == "PrincipalInvestigator" && this.UID == 1) {
-            console.log(this["Rooms"] && this["Rooms"].length, "do comp called for lydia");
-        }
         if (compMaps) {
             if (Array.isArray(compMaps)) {
                 // compose just properties in array...
@@ -135,18 +132,18 @@ var FluxCompositerBase = (function () {
         var pattern = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
         var str = cm.ChildUrl.replace(pattern, function (sub) {
             sub = sub.match(/\{\{(.*)\}\}/)[1];
-            var thing = sub.split(".");
-            sub = thing[0];
-            for (var n = 1; n < thing.length; n++) {
-                sub += "['" + thing[n] + "']";
+            var parts = sub.split(".");
+            sub = parts[0];
+            for (var n = 1; n < parts.length; n++) {
+                sub += "['" + parts[n] + "']";
             }
-            if (thing.length > 1) {
+            if (parts.length > 1) {
                 sub = eval(sub);
             }
             return _this[sub];
         });
         return str;
     };
-    FluxCompositerBase.urlMapping = new UrlMapping("foot", "", "");
+    FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");
     return FluxCompositerBase;
 }());

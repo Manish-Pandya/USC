@@ -8,10 +8,6 @@ var User = (function (_super) {
     function User() {
         _super.call(this);
     }
-    User.prototype.onFulfill = function () {
-        this.hasGetAllPermission();
-        _super.prototype.onFulfill.call(this);
-    };
     User.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
             var allowedRoles = [Constants.ROLE.NAME.ADMIN];

@@ -11,10 +11,10 @@
     ChildType: string;
     ChildUrl: string;
     PropertyName: string;
-    GerundName: string;
-    GerundUrl: string;
     ChildIdProp: string;
     ParentIdProp: string;
+    GerundName: string;
+    GerundUrl: string;
     callGetAll: boolean;
 
     /**
@@ -66,14 +66,15 @@
 
 }
 
+
 abstract class FluxCompositerBase {
-    static urlMapping: UrlMapping = new UrlMapping("foot", "", "");
+    static urlMapping: UrlMapping = new UrlMapping("test", "", "");
 
     UID: number;
     TypeName: string;
     viewModelWatcher: FluxCompositerBase | null;
 
-    thisClass: Function;
+    thisClass: Function; // reference to instance's class for calling static props and methods
 
     protected _allCompMaps: CompositionMapping[];
     get allCompMaps(): CompositionMapping[] {
@@ -94,11 +95,10 @@ abstract class FluxCompositerBase {
     }
 
     getCompMapFromProperty(property: string): CompositionMapping | null {
-        var cms = this.allCompMaps;
-        var l = cms.length;
-        for (let i = 0; i < l; i++) {
+        var cms: CompositionMapping[] = this.allCompMaps;
+        var l: number = cms.length;
+        for (let i: number = 0; i < l; i++) {
             let cm: CompositionMapping = cms[i];
-            console.log(cm.PropertyName, property);
             if (cm.PropertyName == property) return cm;
         }
         return;
@@ -112,6 +112,8 @@ abstract class FluxCompositerBase {
     }
 
     onFulfill(): void {
+        this.hasGetAllPermission();
+
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
             this.UID = this[DataStoreManager.uidString];
         }
@@ -121,10 +123,6 @@ abstract class FluxCompositerBase {
     }
 
     doCompose(compMaps: CompositionMapping[] | boolean): void {
-        if (this[DataStoreManager.classPropName] == "PrincipalInvestigator" && this.UID == 1) {
-            console.log(this["Rooms"] && this["Rooms"].length, "do comp called for lydia");
-        }
-
         if (compMaps) {
             if (Array.isArray(compMaps)) {
                 // compose just properties in array...
@@ -145,7 +143,7 @@ abstract class FluxCompositerBase {
     }
 
     protected _hasGetAllPermission: boolean | null = null;
-    hasGetAllPermission(evaluator: any = false): boolean {
+    hasGetAllPermission(evaluator: Function | boolean = false): boolean {
         if (this._hasGetAllPermission == null) {
             if (typeof evaluator == "function") {
                 this._hasGetAllPermission = evaluator();
@@ -161,12 +159,12 @@ abstract class FluxCompositerBase {
 
         let str = cm.ChildUrl.replace(pattern, (sub: string): string => {
             sub = sub.match(/\{\{(.*)\}\}/)[1];
-            var thing = sub.split(".");
-            sub = thing[0];
-            for (var n: number = 1; n < thing.length; n++) {
-                sub += "['" + thing[n] + "']";
+            var parts: string[] = sub.split(".");
+            sub = parts[0];
+            for (var n: number = 1; n < parts.length; n++) {
+                sub += "['" + parts[n] + "']";
             }
-            if (thing.length > 1) {
+            if (parts.length > 1) {
                 sub = eval(sub);
             }
 

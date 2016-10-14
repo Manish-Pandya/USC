@@ -8,10 +8,6 @@ var Room = (function (_super) {
     function Room() {
         _super.call(this);
     }
-    Room.prototype.onFulfill = function () {
-        this.hasGetAllPermission();
-        _super.prototype.onFulfill.call(this);
-    };
     Room.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
             var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR, Constants.ROLE.NAME.ADMIN];

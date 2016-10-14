@@ -9,7 +9,6 @@ var PrincipalInvestigator = (function (_super) {
         _super.call(this);
     }
     PrincipalInvestigator.prototype.onFulfill = function () {
-        this.hasGetAllPermission();
         _super.prototype.onFulfill.call(this);
         this.getChildUrl(PrincipalInvestigator.RoomMap);
     };
