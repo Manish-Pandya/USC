@@ -30,7 +30,13 @@ abstract class XHR {
     //
     //----------------------------------------------------------------------
 
-    //-----------  Send Request  -----------//
+    /**
+     * Sends the given HTTP request.
+     *
+     * @param method
+     * @param url
+     * @param body
+     */
     private static _sendRequest(method: string, url: string, body: any = null): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             var fullUrl: string = DataStoreManager.baseUrl + url;

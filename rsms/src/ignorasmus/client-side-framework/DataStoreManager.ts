@@ -21,6 +21,11 @@ abstract class PermissionMap {
     //
     //----------------------------------------------------------------------
 
+    /**
+     * Returns the permissions of the given class type.
+     *
+     * @param className
+     */
     static getPermission(className: string): any {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
@@ -58,6 +63,14 @@ abstract class DataStoreManager {
     //----------------------------------------------------------------------
 
     // TODO: Consider method overload to allow multiple types and viewModelParents
+    /**
+     * Gets all instances of a given type and passes them to the given viewModelParent.
+     * Optionally composes child classes based on passed CompositionMapping.
+     * 
+     * @param type
+     * @param viewModelParent
+     * @param compMaps
+     */
     static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
@@ -141,6 +154,15 @@ abstract class DataStoreManager {
 
     }
 
+    /**
+     * Gets instance of a given type by id and passes it to the given viewModelParent.
+     * Optionally composes child classes based on passed CompositionMapping.
+     * 
+     * @param type
+     * @param id
+     * @param viewModelParent
+     * @param compMaps
+     */
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<any> {
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
@@ -215,6 +237,11 @@ abstract class DataStoreManager {
         }
     }
 
+    /**
+     * Saves the passed viewModel instance and sets the actualModel after success.
+     *
+     * @param viewModel
+     */
     static save(viewModel: FluxCompositerBase): void | Promise<FluxCompositerBase>{
         //TODO: create copy without circular JSON, then post it.
 
@@ -225,6 +252,11 @@ abstract class DataStoreManager {
     }
 
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
+    /**
+     * Returns the actualModel instance equivalent of a given viewModel.
+     *
+     * @param viewModelObj
+     */
     static getActualModelEquivalent(viewModelObj: FluxCompositerBase): FluxCompositerBase {
         if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
             viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
@@ -234,13 +266,13 @@ abstract class DataStoreManager {
         }
     }
 
+    // TODO... consider allowing array of instances rather than just 1 instance.
     /**
-     * Copies the properties of viewModelParent to same instance in actualModel, if found.
-     * Otherwise, pushes viewModelParent to actualModel, if no already there.
+     * Copies the properties of viewModelParent to equivalent instance in actualModel, if found.
+     * Otherwise, pushes viewModelParent to actualModel, if not already there.
      *
      * @param viewModelParent
      */
-    // TODO... consider allowing array of instances rather than just 1 instance.
     static commitToActualModel(viewModelParent: any): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         var existingIndex: number = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
@@ -260,7 +292,12 @@ abstract class DataStoreManager {
         
     }
 
-    static undo(viewModelParent: any): void {
+    /**
+     * Resets a given viewModel instance with the actualModel equivalent instance's properties.
+     *
+     * @param viewModelParent
+     */
+    static undo(viewModelParent: FluxCompositerBase): void {
         var existingIndex: number = _.findIndex(DataStoreManager._actualModel[viewModelParent.TypeName].Data, function (o) { return o.UID == viewModelParent.UID; });
         if (existingIndex > -1) {
             var actualModelInstance: FluxCompositerBase = DataStoreManager._actualModel[viewModelParent.TypeName].Data[existingIndex];
@@ -268,15 +305,14 @@ abstract class DataStoreManager {
         }
     }
 
-    // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
-    static setViewModelProp(propParent: FluxCompositerBase, propName: string, value: any, optionalCallBack?: Function): void {
-        propParent[propName] = value;
-        if (optionalCallBack) {
-            optionalCallBack();
-        }
-    }
-
-    // also works for simply finding object by id: findByPropValue(obj, "id", "someId");
+    /**
+     * Returns an object in a given complex object or collection by a property/value pair.
+     * Also works for simply finding object by id: findByPropValue(obj, "id", "someId");
+     *
+     * @param obj
+     * @param propName
+     * @param value
+     */
     private static findByPropValue(obj: any, propName: string, value: any): any {
         //Early return
         if (obj[propName] === value) {
@@ -294,6 +330,12 @@ abstract class DataStoreManager {
         return result;
     }
 
+    /**
+     * Returns a Promise for data passed.
+     * Also works fine if data passed is already a Promise.
+     *
+     * @param data
+     */
     private static promisifyData(data: any): any {
         if (!this.isPromisified) {
             return data;

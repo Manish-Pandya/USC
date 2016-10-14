@@ -13,6 +13,11 @@ var PermissionMap = (function () {
     //  Methods
     //
     //----------------------------------------------------------------------
+    /**
+     * Returns the permissions of the given class type.
+     *
+     * @param className
+     */
     PermissionMap.getPermission = function (className) {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
@@ -45,6 +50,14 @@ var DataStoreManager = (function () {
     //
     //----------------------------------------------------------------------
     // TODO: Consider method overload to allow multiple types and viewModelParents
+    /**
+     * Gets all instances of a given type and passes them to the given viewModelParent.
+     * Optionally composes child classes based on passed CompositionMapping.
+     *
+     * @param type
+     * @param viewModelParent
+     * @param compMaps
+     */
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
         if (!PermissionMap.getPermission(type).getAll) {
@@ -127,6 +140,15 @@ var DataStoreManager = (function () {
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
     };
+    /**
+     * Gets instance of a given type by id and passes it to the given viewModelParent.
+     * Optionally composes child classes based on passed CompositionMapping.
+     *
+     * @param type
+     * @param id
+     * @param viewModelParent
+     * @param compMaps
+     */
     DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
         var _this = this;
         if (compMaps === void 0) { compMaps = null; }
@@ -197,6 +219,11 @@ var DataStoreManager = (function () {
             return InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
         }
     };
+    /**
+     * Saves the passed viewModel instance and sets the actualModel after success.
+     *
+     * @param viewModel
+     */
     DataStoreManager.save = function (viewModel) {
         //TODO: create copy without circular JSON, then post it.
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
@@ -205,6 +232,11 @@ var DataStoreManager = (function () {
         });
     };
     // TODO: Doesn't always work, as drills into object nest before moving to next object.
+    /**
+     * Returns the actualModel instance equivalent of a given viewModel.
+     *
+     * @param viewModelObj
+     */
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
         if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
             viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
@@ -214,13 +246,13 @@ var DataStoreManager = (function () {
             console.log("dang dude... I'm not familiar with this class or object type");
         }
     };
+    // TODO... consider allowing array of instances rather than just 1 instance.
     /**
-     * Copies the properties of viewModelParent to same instance in actualModel, if found.
-     * Otherwise, pushes viewModelParent to actualModel, if no already there.
+     * Copies the properties of viewModelParent to equivalent instance in actualModel, if found.
+     * Otherwise, pushes viewModelParent to actualModel, if not already there.
      *
      * @param viewModelParent
      */
-    // TODO... consider allowing array of instances rather than just 1 instance.
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
         var existingIndex = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
@@ -238,6 +270,11 @@ var DataStoreManager = (function () {
         console.log(vmParent);
         return vmParent.viewModelWatcher;
     };
+    /**
+     * Resets a given viewModel instance with the actualModel equivalent instance's properties.
+     *
+     * @param viewModelParent
+     */
     DataStoreManager.undo = function (viewModelParent) {
         var existingIndex = _.findIndex(DataStoreManager._actualModel[viewModelParent.TypeName].Data, function (o) { return o.UID == viewModelParent.UID; });
         if (existingIndex > -1) {
@@ -245,14 +282,14 @@ var DataStoreManager = (function () {
             InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, actualModelInstance, ["viewModelWatcher"]);
         }
     };
-    // TODO: Return a USEFULL error if anything on ActualModel is passed for propParent
-    DataStoreManager.setViewModelProp = function (propParent, propName, value, optionalCallBack) {
-        propParent[propName] = value;
-        if (optionalCallBack) {
-            optionalCallBack();
-        }
-    };
-    // also works for simply finding object by id: findByPropValue(obj, "id", "someId");
+    /**
+     * Returns an object in a given complex object or collection by a property/value pair.
+     * Also works for simply finding object by id: findByPropValue(obj, "id", "someId");
+     *
+     * @param obj
+     * @param propName
+     * @param value
+     */
     DataStoreManager.findByPropValue = function (obj, propName, value) {
         //Early return
         if (obj[propName] === value) {
@@ -269,6 +306,12 @@ var DataStoreManager = (function () {
         }
         return result;
     };
+    /**
+     * Returns a Promise for data passed.
+     * Also works fine if data passed is already a Promise.
+     *
+     * @param data
+     */
     DataStoreManager.promisifyData = function (data) {
         if (!this.isPromisified) {
             return data;

@@ -125,6 +125,9 @@ abstract class FluxCompositerBase {
     //
     //----------------------------------------------------------------------
 
+    /**
+     * 
+     */
     constructor() {
         if (!FluxCompositerBase.urlMapping) {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
@@ -138,6 +141,11 @@ abstract class FluxCompositerBase {
     //
     //----------------------------------------------------------------------
 
+    /**
+     * Returns the relevant CompositionMapping for a given property.
+     *
+     * @param property
+     */
     getCompMapFromProperty(property: string): CompositionMapping | null {
         var cms: CompositionMapping[] = this.allCompMaps;
         var l: number = cms.length;
@@ -148,6 +156,11 @@ abstract class FluxCompositerBase {
         return;
     }
 
+    /**
+     * Fires once instance retrieves data and fullfills dependencies.
+     * Handy for overriding in child classes.
+     *
+     */
     onFulfill(): void {
         this.hasGetAllPermission();
 
@@ -159,6 +172,11 @@ abstract class FluxCompositerBase {
         }
     }
 
+    /**
+     * Builds shild instances for all or a given array of CompositionMappings.
+     *
+     * @param compMaps
+     */
     doCompose(compMaps: CompositionMapping[] | boolean): void {
         if (compMaps) {
             if (Array.isArray(compMaps)) {
@@ -180,6 +198,11 @@ abstract class FluxCompositerBase {
     }
 
     protected _hasGetAllPermission: boolean | null = null;
+    /**
+     * Determines if class has required permissions. Intended for overriding.
+     *
+     * @param evaluator
+     */
     hasGetAllPermission(evaluator: Function | boolean = false): boolean {
         if (this._hasGetAllPermission == null) {
             if (typeof evaluator == "function") {
@@ -191,6 +214,11 @@ abstract class FluxCompositerBase {
         return this._hasGetAllPermission;
     }
 
+    /**
+     * Dynamically constructs a class' CompositionMapping instance's childUrl based on this instance's properties.
+     *
+     * @param cm
+     */
     getChildUrl(cm: CompositionMapping): string {
         var pattern: RegExp = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;
 

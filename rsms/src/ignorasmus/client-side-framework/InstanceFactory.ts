@@ -22,7 +22,11 @@ abstract class InstanceFactory extends DataStoreManager {
     //
     //----------------------------------------------------------------------
 
-    // Gets array of class names from script tags with src containing the provided basePath.
+    /**
+     * Gets array of class names from script tags with src containing the provided basePath.
+     *
+     * @param basePath
+     */
     static getClassNames(basePath: string = ""): string[] {
         if (!this._classNames) {
             this._classNames = [];
@@ -37,8 +41,9 @@ abstract class InstanceFactory extends DataStoreManager {
                             //init DataStoreManager holders
                             DataStoreManager._actualModel[className] = {};
                             DataStoreManager._actualModel[className].Data = [];
+                            // initting promises below shouldn't actually be necessary, but is here for completion
                             DataStoreManager._actualModel[className].getAllPromise = new Promise<any>(() => {});
-                            //DataStoreManager._actualModel[className].getByIdPromise = new Promise(function () { }, function () { });
+                            DataStoreManager._actualModel[className].getByIdPromise = new Promise<any>(() => {});
                         }
                     }
                 }
@@ -47,7 +52,11 @@ abstract class InstanceFactory extends DataStoreManager {
         return this._classNames;
     }
 
-    // Creates class instance if possible
+    /**
+     * Creates and returns class instance of given className, if possible.
+     *
+     * @param className
+     */
     static createInstance(className: string): FluxCompositerBase {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
             return new window[className]();
@@ -60,7 +69,11 @@ abstract class InstanceFactory extends DataStoreManager {
         }
     }
 
-    // Crawls through data and its children, creating class instances as needed.
+    /**
+     * Crawls through passed data and its children, creating class instances as needed.
+     *
+     * @param data
+     */
     static convertToClasses(data: any): any {
         if (data && data[DataStoreManager.classPropName]) {
             var instance: FluxCompositerBase = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
@@ -89,6 +102,12 @@ abstract class InstanceFactory extends DataStoreManager {
         return data;
     }
 
+    /**
+     * Creates child instances based on passed CompositionMapping and adds them to the appropriate property of parent class.
+     *
+     * @param compMap
+     * @param parent
+     */
     static getChildInstances(compMap: CompositionMapping, parent: FluxCompositerBase): void {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             var childStore: FluxCompositerBase[] = DataStoreManager._actualModel[compMap.ChildType].Data;
@@ -216,8 +235,14 @@ abstract class InstanceFactory extends DataStoreManager {
         }
     }
 
-    // Copies properties/values from sources to target.
-    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
+    /**
+     * Copies properties/values from source to target.
+     * It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working.
+     *
+     * @param target
+     * @param source
+     * @param exclusions
+     */
     static copyProperties(target: any, source: any, exclusions: string[] = []): any {
         var sourceCopy: any = {};
         for (var prop in source) {

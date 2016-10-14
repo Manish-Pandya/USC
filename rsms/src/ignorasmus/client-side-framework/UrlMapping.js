@@ -11,6 +11,12 @@ var UrlMapping = (function () {
     //  Constructor
     //
     //----------------------------------------------------------------------
+    /**
+     *
+     * @param urlGetAll
+     * @param urlGetById
+     * @param urlSave
+     */
     function UrlMapping(urlGetAll, urlGetById, urlSave) {
         this.urlGetAll = urlGetAll;
         this.urlGetById = urlGetById;

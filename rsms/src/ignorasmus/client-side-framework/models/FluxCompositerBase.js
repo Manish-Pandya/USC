@@ -70,6 +70,9 @@ var FluxCompositerBase = (function () {
     //  Constructor
     //
     //----------------------------------------------------------------------
+    /**
+     *
+     */
     function FluxCompositerBase() {
         this._hasGetAllPermission = null;
         if (!FluxCompositerBase.urlMapping) {
@@ -102,6 +105,11 @@ var FluxCompositerBase = (function () {
     //  Methods
     //
     //----------------------------------------------------------------------
+    /**
+     * Returns the relevant CompositionMapping for a given property.
+     *
+     * @param property
+     */
     FluxCompositerBase.prototype.getCompMapFromProperty = function (property) {
         var cms = this.allCompMaps;
         var l = cms.length;
@@ -112,6 +120,11 @@ var FluxCompositerBase = (function () {
         }
         return;
     };
+    /**
+     * Fires once instance retrieves data and fullfills dependencies.
+     * Handy for overriding in child classes.
+     *
+     */
     FluxCompositerBase.prototype.onFulfill = function () {
         this.hasGetAllPermission();
         if (DataStoreManager.uidString && this[DataStoreManager.uidString]) {
@@ -121,6 +134,11 @@ var FluxCompositerBase = (function () {
             this.TypeName = this[DataStoreManager.classPropName];
         }
     };
+    /**
+     * Builds shild instances for all or a given array of CompositionMappings.
+     *
+     * @param compMaps
+     */
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
         if (compMaps) {
             if (Array.isArray(compMaps)) {
@@ -141,6 +159,11 @@ var FluxCompositerBase = (function () {
             }
         }
     };
+    /**
+     * Determines if class has required permissions. Intended for overriding.
+     *
+     * @param evaluator
+     */
     FluxCompositerBase.prototype.hasGetAllPermission = function (evaluator) {
         if (evaluator === void 0) { evaluator = false; }
         if (this._hasGetAllPermission == null) {
@@ -153,6 +176,11 @@ var FluxCompositerBase = (function () {
         }
         return this._hasGetAllPermission;
     };
+    /**
+     * Dynamically constructs a class' CompositionMapping instance's childUrl based on this instance's properties.
+     *
+     * @param cm
+     */
     FluxCompositerBase.prototype.getChildUrl = function (cm) {
         var _this = this;
         var pattern = /\{\{\s*([a-zA-Z_\-&\$\[\]][a-zA-Z0-9_\-&\$\[\]\.]*)\s*\}\}/g;

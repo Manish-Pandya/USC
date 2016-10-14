@@ -23,6 +23,12 @@ class UrlMapping {
     //
     //----------------------------------------------------------------------
 
+    /**
+     * 
+     * @param urlGetAll
+     * @param urlGetById
+     * @param urlSave
+     */
     constructor(urlGetAll: string, urlGetById: string, urlSave: string) {
         this.urlGetAll = urlGetAll;
         this.urlGetById = urlGetById;

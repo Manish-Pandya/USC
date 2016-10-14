@@ -19,7 +19,13 @@ var XHR = (function () {
     //  Methods
     //
     //----------------------------------------------------------------------
-    //-----------  Send Request  -----------//
+    /**
+     * Sends the given HTTP request.
+     *
+     * @param method
+     * @param url
+     * @param body
+     */
     XHR._sendRequest = function (method, url, body) {
         var _this = this;
         if (body === void 0) { body = null; }

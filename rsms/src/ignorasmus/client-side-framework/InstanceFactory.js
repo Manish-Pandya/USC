@@ -21,7 +21,11 @@ var InstanceFactory = (function (_super) {
     //  Methods
     //
     //----------------------------------------------------------------------
-    // Gets array of class names from script tags with src containing the provided basePath.
+    /**
+     * Gets array of class names from script tags with src containing the provided basePath.
+     *
+     * @param basePath
+     */
     InstanceFactory.getClassNames = function (basePath) {
         if (basePath === void 0) { basePath = ""; }
         if (!this._classNames) {
@@ -37,7 +41,9 @@ var InstanceFactory = (function (_super) {
                             //init DataStoreManager holders
                             DataStoreManager._actualModel[className] = {};
                             DataStoreManager._actualModel[className].Data = [];
+                            // initting promises below shouldn't actually be necessary, but is here for completion
                             DataStoreManager._actualModel[className].getAllPromise = new Promise(function () { });
+                            DataStoreManager._actualModel[className].getByIdPromise = new Promise(function () { });
                         }
                     }
                 }
@@ -45,7 +51,11 @@ var InstanceFactory = (function (_super) {
         }
         return this._classNames;
     };
-    // Creates class instance if possible
+    /**
+     * Creates and returns class instance of given className, if possible.
+     *
+     * @param className
+     */
     InstanceFactory.createInstance = function (className) {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
             return new window[className]();
@@ -59,7 +69,11 @@ var InstanceFactory = (function (_super) {
             return null;
         }
     };
-    // Crawls through data and its children, creating class instances as needed.
+    /**
+     * Crawls through passed data and its children, creating class instances as needed.
+     *
+     * @param data
+     */
     InstanceFactory.convertToClasses = function (data) {
         if (data && data[DataStoreManager.classPropName]) {
             var instance = InstanceFactory.createInstance(data[DataStoreManager.classPropName]);
@@ -85,6 +99,12 @@ var InstanceFactory = (function (_super) {
         drillDown(data);
         return data;
     };
+    /**
+     * Creates child instances based on passed CompositionMapping and adds them to the appropriate property of parent class.
+     *
+     * @param compMap
+     * @param parent
+     */
     InstanceFactory.getChildInstances = function (compMap, parent) {
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
@@ -210,8 +230,14 @@ var InstanceFactory = (function (_super) {
             parent[compMap.PropertyName] = parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
         }
     };
-    // Copies properties/values from sources to target.
-    // It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working."
+    /**
+     * Copies properties/values from source to target.
+     * It ain't a reference! array.reduce does a shallow copy, at the least. Deep copy NOT working.
+     *
+     * @param target
+     * @param source
+     * @param exclusions
+     */
     InstanceFactory.copyProperties = function (target, source, exclusions) {
         if (exclusions === void 0) { exclusions = []; }
         var sourceCopy = {};
