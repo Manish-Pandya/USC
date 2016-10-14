@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  All Rights Reserved.
+//
+////////////////////////////////////////////////////////////////////////////////
+'use strict';
 var XHR = (function () {
     function XHR() {
     }
@@ -7,6 +14,11 @@ var XHR = (function () {
     XHR.POST = function (url, body) {
         return this._sendRequest('POST', url, body);
     };
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
     //-----------  Send Request  -----------//
     XHR._sendRequest = function (method, url, body) {
         var _this = this;
@@ -36,6 +48,11 @@ var XHR = (function () {
             xhr.send(postBody);
         });
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
     XHR.REQUEST = XMLHttpRequest || ActiveXObject;
     XHR.SUCCESS_CODES = [200, 201];
     return XHR;

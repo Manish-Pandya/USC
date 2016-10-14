@@ -1,6 +1,17 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  All Rights Reserved.
+//
+////////////////////////////////////////////////////////////////////////////////
+'use strict';
 var CompositionMapping = (function () {
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
     /**
-     *
      * Models the relationship between classes, providing URIs to fetch child objects
      *
      * Instances of this utility class should be contructed by your classes in onFullfill or later
@@ -43,12 +54,22 @@ var CompositionMapping = (function () {
             }
         }
     }
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
     CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
     CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
     CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
     return CompositionMapping;
 }());
 var FluxCompositerBase = (function () {
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
     function FluxCompositerBase() {
         this._hasGetAllPermission = null;
         if (!FluxCompositerBase.urlMapping) {
@@ -76,6 +97,11 @@ var FluxCompositerBase = (function () {
         enumerable: true,
         configurable: true
     });
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
     FluxCompositerBase.prototype.getCompMapFromProperty = function (property) {
         var cms = this.allCompMaps;
         var l = cms.length;
@@ -144,6 +170,11 @@ var FluxCompositerBase = (function () {
         });
         return str;
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
     FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");
     return FluxCompositerBase;
 }());

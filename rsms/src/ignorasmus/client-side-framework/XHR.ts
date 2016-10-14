@@ -1,7 +1,19 @@
-﻿class XHR {
+﻿////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  All Rights Reserved.
+//
+////////////////////////////////////////////////////////////////////////////////
+'use strict';
+
+abstract class XHR {
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
 
     static REQUEST: any = XMLHttpRequest || ActiveXObject;
-
     static SUCCESS_CODES: number[] = [200,201]; 
 
     static GET(url): Promise<any> {
@@ -12,8 +24,13 @@
         return this._sendRequest('POST', url, body);
     }
 
-    //-----------  Send Request  -----------//
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
 
+    //-----------  Send Request  -----------//
     private static _sendRequest(method: string, url: string, body: any = null): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             var fullUrl: string = DataStoreManager.baseUrl + url;

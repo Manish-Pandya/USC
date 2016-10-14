@@ -1,4 +1,18 @@
-﻿class CompositionMapping {
+﻿////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  All Rights Reserved.
+//
+////////////////////////////////////////////////////////////////////////////////
+'use strict';
+
+class CompositionMapping {
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+
     static ONE_TO_ONE: "ONE_TO_ONE" = "ONE_TO_ONE";
     static ONE_TO_MANY: "ONE_TO_MANY" = "ONE_TO_MANY";
     static MANY_TO_MANY: "MANY_TO_MANY" = "MANY_TO_MANY";
@@ -17,8 +31,13 @@
     GerundUrl: string;
     callGetAll: boolean;
 
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
+
     /**
-     *
      * Models the relationship between classes, providing URIs to fetch child objects
      *
      * Instances of this utility class should be contructed by your classes in onFullfill or later
@@ -68,6 +87,12 @@
 
 
 abstract class FluxCompositerBase {
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+
     static urlMapping: UrlMapping = new UrlMapping("test", "", "");
 
     UID: number;
@@ -94,6 +119,25 @@ abstract class FluxCompositerBase {
         return this._allCompMaps;
     }
 
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
+
+    constructor() {
+        if (!FluxCompositerBase.urlMapping) {
+            console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
+        }
+        this.thisClass = (<any>this).constructor;
+    }
+
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
+
     getCompMapFromProperty(property: string): CompositionMapping | null {
         var cms: CompositionMapping[] = this.allCompMaps;
         var l: number = cms.length;
@@ -102,13 +146,6 @@ abstract class FluxCompositerBase {
             if (cm.PropertyName == property) return cm;
         }
         return;
-    }
-
-    constructor() {
-        if (!FluxCompositerBase.urlMapping) {
-            console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
-        }
-        this.thisClass = (<any>this).constructor;
     }
 
     onFulfill(): void {
