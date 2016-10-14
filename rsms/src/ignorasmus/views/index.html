@@ -47,7 +47,6 @@
                 return new Promise(resolve, reject).then(() => { return resolve(currentRoles)})
             }
         }
-
         
         var init = function () {
             console.log(currentRoles);
@@ -56,7 +55,6 @@
             pis = [],
             rooms = [],
             piSingle = {};
-
 
             var testEditingUser = function () {
                 pis[0].User.Email = "some@email.foo";
@@ -78,10 +76,9 @@
                         var lp = new window.User();
                         lp.Name = "Tronald Dump";
                         pis[0].LabPersonnel.push(lp);
-                        console.log(pis[0].LabPersonnel);
+                        console.log(pis[0]);
 
                         DataStoreManager.undo(pis[0]);
-                        
 
                         console.log(DataStoreManager.ActualModel.PrincipalInvestigator.Data[0], pis[0]);
                         /*
@@ -102,7 +99,6 @@
         }
 
         getCurrentRoles().then(init);
-        
 
     </script>
 </head>

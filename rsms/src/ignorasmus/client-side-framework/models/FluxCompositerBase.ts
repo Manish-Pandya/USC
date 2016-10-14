@@ -66,7 +66,6 @@
 
 }
 
-
 abstract class FluxCompositerBase {
     static urlMapping: UrlMapping = new UrlMapping("foot", "", "");
 
