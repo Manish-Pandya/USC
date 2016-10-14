@@ -11,7 +11,8 @@
                     {{selectedPiAuth.Authorizations.length}} authorized rad material<span ng-if="selectedPiAuth.Authorizations.length != 1">s</span>
                     under Authorization #{{selectedPiAuth.Authorization_number}}
                 </span>
-                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(mappedAmendments)" ng-options="piAuth.weight as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
+
+                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorization)" ng-options="mappedAmendments.indexOf(piAuth) as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
                     <option style="display:none" value="">Select Amendment</option>
                 </select>
 

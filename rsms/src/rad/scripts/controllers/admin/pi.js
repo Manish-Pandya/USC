@@ -26,18 +26,6 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
                         $rootScope.pi = pi;
-
-                        $scope.auths = $scope.pi.Pi_authorization;
-                        $scope.mappedAmendments = [];
-                        for (var i = 0; i < $scope.pi.Pi_authorization.length; i++) {
-                            var amendment = $scope.auths[i];
-                            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date");
-                            amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
-                            amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
-                            amendment.weight = parseInt(amendment.Amendment_number || "0");
-                            $scope.mappedAmendments[parseInt(amendment.weight)] = amendment;
-                        }
-                        
                         //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;
                     },
@@ -54,7 +42,8 @@ angular.module('00RsmsAngularOrmApp')
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
-    $scope.openModal = function(templateName, object, isAmendment){
+    $scope.openModal = function (templateName, object, isAmendment) {
+
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
@@ -67,22 +56,20 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.getHighestAmendmentNumber = function (amendments) {
-        var highestAuthNumber;
-        if (!amendments) {
-            $scope.selectedPiAuth = $scope.mappedAmendments[0];
-            return $scope.selectedAmendment = 0;
-        }
-
+        if (!amendments)  return;
+               
         var highestAuthNumber = 0;
-        _.sortBy(amendments, [function (o) {
-            return moment(o.Approval_date).valueOf();
+        _.sortBy(amendments, [function (amendment) {
+            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
+            amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
+            amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
+            return moment(amendment.Approval_date).valueOf();
         }]);
-
-        console.log(amendments)
+        $scope.mappedAmendments = amendments;
 
         $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
-        console.log()
-        return $scope.selectedAmendment = amendments.length - 1;
+        $scope.selectedAmendment = amendments.length - 1;
+        return $scope.selectedAmendment;
         
     }
 
