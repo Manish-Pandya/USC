@@ -29,7 +29,7 @@ class CarboyUseCycle extends RadCrud {
 		"volume"						=> "float",
         "comments"                      => "text",
         "hot_isotope_id"                => "integer",
-
+        "drum_id"						=> "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -80,6 +80,8 @@ class CarboyUseCycle extends RadCrud {
 	/** Reference to the room this carboy was sent to. */
 	private $room;
 	private $room_id;
+
+    private $drum_id;
 
 	/** Reference to the pickup that removed this carboy from the lab. */
 	private $pickup;
@@ -200,6 +202,9 @@ class CarboyUseCycle extends RadCrud {
 
 	public function getRoom_id() { return $this->room_id; }
 	public function setRoom_id($newId) { $this->room_id = $newId; }
+
+    public function getDrum_id() { return $this->drum_id; }
+	public function setDrum_id($newId) { $this->drum_id = $newId; }
 
 	public function getPickup() {
 		if($this->pickup == null) {

@@ -2,9 +2,9 @@
 <div cg-busy="{promise: DrumWipeTestSaving, message: 'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
-    <div class="well two-thirds">
+    <div class="well three-fourths">
         <h3>Drum {{drum.Label}}</h3>
-        <h4 class="padding">Wipe Test <a ng-if="!drum.Wipe_test[0] && !drum.Creating_wipe" class="btn-success btn left" ng-click="editDrumWipeTest(drum)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
+        <h4 class="padding">Area Survey <a ng-if="!drum.Wipe_test[0] && !drum.Creating_wipe" class="btn-success btn left" ng-click="editDrumWipeTest(drum)"><i class="icon-plus-2"></i><i class="icon-paper"></i>New Wipe Test</a></h4>
         <div class="fake-table" ng-if="drum.Wipe_test[0] || drum.Creating_wipe">
             <div class="table-header">
                 <h3>Edit</h3>
@@ -22,7 +22,8 @@
                     {{drum.Wipe_test[0].Reading_type}}
                 </div>
                 <div ng-if="drum.Creating_wipe" class="small-extra-top">
-                    <select ng-init="DrumWipeTestCopy.Reading_type = Constants.WIPE_TEST.READING_TYPE.LSC" ng-model="DrumWipeTestCopy.Reading_type" style="width:100px">
+                    <select ng-init="DrumWipeTestCopy.Reading_type = Constants.WIPE_TEST.READING_TYPE.GM_METER" ng-model="DrumWipeTestCopy.Reading_type" style="width:100px">
+                        <option value="{{Constants.WIPE_TEST.READING_TYPE.GM_METER}}">{{Constants.WIPE_TEST.READING_TYPE.GM_METER}}</option>
                         <option value="{{Constants.WIPE_TEST.READING_TYPE.LSC}}">{{Constants.WIPE_TEST.READING_TYPE.LSC}}</option>
                         <option value="{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}">{{Constants.WIPE_TEST.READING_TYPE.ALPHA_BETA}}</option>
                         <option value="{{Constants.WIPE_TEST.READING_TYPE.MCA}}">{{Constants.WIPE_TEST.READING_TYPE.MCA}}</option>
@@ -64,11 +65,12 @@
         </div>
 
 
-        <h4 ng-if="drum.Wipe_test[0]" class="padding">Smears <a class="btn btn-success left" ng-click="editDrumWipe(drum.Wipe_test[0])"><i class="icon-plus-2"></i>Add Smear</a></h4>
+        <h4 ng-if="drum.Wipe_test[0]" class="padding">Wipe Tests <a class="btn btn-success left" ng-click="editDrumWipe(drum.Wipe_test[0])"><i class="icon-plus-2"></i>Add Smear</a></h4>
         <div class="fake-table" ng-if="drum.Wipe_test[0].Drum_wipes.length && drum.Wipe_test[0]">
             <div class="table-header">
                 <h3>Edit</h3>
                 <h3>Instrument</h3>
+                <h3>Location</h3>
                 <h3>Radioactivity</h3>
                 <h3>Comments</h3>
                 <h3></h3>
@@ -80,7 +82,21 @@
                 </div>
 
                 <div>
-                    {{drum.Wipe_test[0].Reading_type}}
+                    LSC
+                </div>
+
+                <div ng-if="!smear.edit || $first">
+                    <span ng-if="$first" ng-init="smear.Location = 'Background'"></span>
+                    <span ng-if="!$first" ng-init="smear.Location = ''"></span>
+                    {{smear.Location}}
+                </div>
+                <div ng-if="smear.edit && !$first">
+                    <div class="control-group">
+                        <div class="controls">
+                            <input class="span3" ng-if="!DrumWipeCopy" ng-model="smear.Location">
+                            <input class="span3" ng-if="DrumWipeCopy" ng-model="DrumWipeCopy.Location">
+                        </div>
+                    </div>
                 </div>
 
                 <div ng-if="!smear.edit">

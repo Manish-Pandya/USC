@@ -9,12 +9,16 @@
 	</select>	
 	<select ng-if="modalData.ScintVialCollectionCopy" ng-model="modalData.ScintVialCollectionCopy.Drum_id">
 		<option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
-	</select>		
+	</select>
+    <select ng-if="modalData.CarboyUseCycleCopy" ng-model="modalData.CarboyUseCycleCopy.Drum_id">
+        <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
+    </select>	
 </div>
 
 <div class="modal-footer">
   <a class="btn btn-success btn-large left" ng-if="modalData.WasteBagCopy" ng-click="saveWasteBag(modalData.WasteBag, modalData.WasteBagCopy)"><i class="icon-checkmark"></i></a>
   <a class="btn btn-success btn-large left" ng-if="modalData.ScintVialCollectionCopy" ng-click="saveSVCollection(modalData.ScintVialCollection, modalData.ScintVialCollectionCopy)"><i class="icon-checkmark"></i></a>
+  <a class="btn btn-success btn-large left" ng-if="modalData.CarboyUseCycleCopy" ng-click="saveCarboyUseCycle(modalData.CarboyUseCycle, modalData.CarboyUseCycleCopy)"><i class="icon-checkmark"></i></a>
 
-  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

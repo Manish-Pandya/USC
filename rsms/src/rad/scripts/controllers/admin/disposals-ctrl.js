@@ -87,7 +87,6 @@ angular.module('00RsmsAngularOrmApp')
     $scope.date = new Date();
 
     $scope.assignDrum = function(object){
-        console.log(object);
         var modalData = {};
         if(object)modalData[object.Class] = object;
         af.setModalData(modalData);
@@ -142,7 +141,8 @@ angular.module('00RsmsAngularOrmApp')
         af.createCopy(reading);
     }
 
-    $scope.addReading = function(cycle){
+    $scope.addReading = function (cycle) {
+        cycle.readingEdit = true;
         $rootScope.CarboyReadingAmountCopy = new window.CarboyReadingAmount();
         $rootScope.CarboyReadingAmountCopy.Carboy_use_cycle_id = cycle.Key_id;
         $rootScope.CarboyReadingAmountCopy.edit = true;
@@ -187,6 +187,13 @@ angular.module('00RsmsAngularOrmApp')
         $scope.saveWasteBag = function(bag, copy){
             $scope.close();
             $rootScope.saving = af.saveWasteBag(bag, copy)
+                                    .then(reloadDrum)
+        }
+
+        $scope.saveCarboyUseCycle = function (cycle, copy) {
+            console.log(cycle, copy);
+            $scope.close();
+            $rootScope.saving = af.saveCarboyUseCycle(copy, cycle)
                                     .then(reloadDrum)
         }
 

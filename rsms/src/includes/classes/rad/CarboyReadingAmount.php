@@ -186,6 +186,7 @@ include_once 'RadCrud.php';
 	}
 
     public function getCarboy_uci(){
+        $l = Logger::getLogger(__FUNCTION__);
         $volume =  $this->getCarboy_use_cycle()->getVolume();
 
         //multiply this sample's dpm by 100, because the sample is 1/100th of a ml
@@ -199,11 +200,13 @@ include_once 'RadCrud.php';
         //get the total microcuries in the whole carboy, at the time the analysis was performed
         $this->carboy_uci = $sampleUci * $volume;
 
+        $stuff = array($volume, $dpmPerML, $sampleMci, $this->carboy_uci);
+        $l->fatal($stuff);
         return $this->carboy_uci;
     }
 
     public function getDecayed_carboy_uci(){
-        if($this->hasPrimaryKeyValue() && !$this->decayed_carboy_uci){
+        if($this->hasPrimaryKeyValue()){
             $cycle = $this->getCarboy_use_cycle();
             $LOG = Logger::getLogger(__FUNCTION__);
             //get the date we want to decay to.

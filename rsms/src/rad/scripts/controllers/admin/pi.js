@@ -60,11 +60,15 @@ angular.module('00RsmsAngularOrmApp')
                
         var highestAuthNumber = 0;
         _.sortBy(amendments, [function (amendment) {
+            return moment(amendment.Approval_date).valueOf();
+        }]);
+        for (var i = 0; i < amendments.length; i++) {
+            var amendment = amendments[i];
             convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
             amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
-            return moment(amendment.Approval_date).valueOf();
-        }]);
+        }
+
         $scope.mappedAmendments = amendments;
 
         $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];

@@ -1449,13 +1449,15 @@ angular
                     .then(
                         function(returnedCycle){
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
-                            if(cycle){
-                                var i = returnedCycle.Carboy_reading_amounts.length;
-                                while(i--){
-                                    dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                            if (cycle) {
+                                if (returnedCycle.Carboy_reading_amounts) {
+                                    var i = returnedCycle.Carboy_reading_amounts.length;
+                                    while (i--) {
+                                        dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                                    }
                                 }
-                                
                                 angular.extend(cycle, returnedCycle);
+                                return cycle;
                                 cycle.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
