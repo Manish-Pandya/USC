@@ -226,8 +226,10 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
 		if($roomIds == NULL && $hazardId == NULL){
 			return new ActionError("roomId and hazardId params both required");
 		}
+        $LOG->fatal("asdfasdfasdfasdfasdfasdf");
 
 		$piDao = $this->getDao(new PrincipalInvestigator());
+        $LOG->fatal($roomIds);
 		$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
 
 

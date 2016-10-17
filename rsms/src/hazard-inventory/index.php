@@ -299,11 +299,12 @@ echo "</script>";
                             </span>
 
                             <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)">
-                                <i class="icon-info" ng-click="openMultiplePIHazardsModal(child)"></i>
+                                <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
-                            <li ng-show="relevantRooms.length"><span ng-show="relevantRooms.length">{{ key }}:</span> <span ng-repeat="room in relevantRooms = ( rooms | filter: {ContainsHazard: true})"><a ng-click="openMultiplePIHazardsModal(child)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span>
+                            <li ng-show="relevantRooms.length">
+                                <span ng-show="relevantRooms.length">{{ key }}:</span> <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)"><a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab}">{{ room.Room_name }}<span ng-if="room.OtherLab">(Other Lab's Hazard)</span></a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span>
                             </li>
                         </ul>
                        <ul>
@@ -338,12 +339,12 @@ echo "</script>";
                             </span>
 
                             <span ng-if="child.IsPresent && child.HasMultiplePis">
-                                <i class="icon-info" ng-click="openMultiplePIHazardsModal(child)"></i>
+                                <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
-                                <span ng-show="relevantRooms.length">{{ key }}:</span> <span ng-repeat="room in relevantRooms = ( rooms | filter: {ContainsHazard: true})"><a ng-click="openMultiplePIHazardsModal(child)" ng-if="room.HasMultiplePis">{{ room.Room_name }}</a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span>
+                                <span ng-show="relevantRooms.length">{{ key }}:</span> <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)"><a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab}">{{ room.Room_name }}<span ng-if="room.OtherLab">(Other Lab's Hazard)</span></a><span ng-if="!room.HasMultiplePis">{{ room.Room_name }}</span><span ng-if="!$last">, </span></span>
                             </li>   
                         </ul>                     
                         <ul>

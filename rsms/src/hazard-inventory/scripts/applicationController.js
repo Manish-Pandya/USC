@@ -303,12 +303,15 @@ angular
             var urlSegment = "getPisByHazardAndRoomIDs&piId=" + piId + "&hazardId=" + hazardDto.Hazard_id;
             var ids = [];
 
-            
-            var i = hazardDto.InspectionRooms.length;
-            while (i--) {
-                ids.push(hazardDto.InspectionRooms[i].Room_id);
+            if (!room) {
+                var i = hazardDto.InspectionRooms.length;
+                while (i--) {
+                    ids.push(hazardDto.InspectionRooms[i].Room_id);
+                }
+            } else {
+                ids = [room.Room_id];
             }
-            urlSegment += "&" + $.param({ roomIds: ids });          
+            urlSegment += "&" + $.param({ roomIds: ids });
 
             return genericAPIFactory.read(urlSegment)
                     .then(

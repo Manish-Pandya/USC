@@ -93,7 +93,7 @@ angular.module('HazardInventory')
             var i = hazard.InspectionRooms.length;
             while (i--) {
                 var room = hazard.InspectionRooms[i];
-                if (room.Building_name == building && room.ContainsHazard) {
+                if (room.Building_name == building && (room.ContainsHazard || room.OtherLab)) {
                     atLeastOne = true;
                 } else {
                     notAll = true;
@@ -157,11 +157,12 @@ angular.module('HazardInventory')
 
         }
 
-        $scope.openMultiplePIHazardsModal = function (hazardDto) {
+        $scope.openMultiplePIHazardsModal = function (hazardDto, room) {
             var modalData = {};
             modalData.HazardDto = hazardDto;
             modalData.PI = $scope.PI;
-            $scope.pisPromise = af.getPiHazards(hazardDto, $scope.PI.Key_id)
+            if (!room) room = null;
+            $scope.pisPromise = af.getPiHazards(hazardDto, $scope.PI.Key_id, room)
                 .then(function (pHRS) {
                     modalData.pHRS = pHRS;
                     af.setModalData(modalData);

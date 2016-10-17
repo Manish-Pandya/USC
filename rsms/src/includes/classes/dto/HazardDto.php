@@ -56,7 +56,7 @@ class HazardDto {
     	$LOG = Logger::getLogger( __CLASS__ );
 
         //$LOG->fatal($this->getHazard_name());
-        $this->filterRooms($rooms);
+        $rooms = $this->filterRooms($rooms);
         $this->inspectionRooms = $rooms;
 
     }
@@ -120,6 +120,10 @@ class HazardDto {
             		}
             		if($relation->getHasMultiplePis() == true){
             			$room->setHasMultiplePis(true);
+                        if($relation->getPrincipal_investigator_id() != $this->principal_investigator_id){
+                            //array_push($this->inspectionRooms, $room);
+                            $room->setOtherLab(true);
+                        }
             		}
             	}
             }
@@ -134,6 +138,7 @@ class HazardDto {
         if($this->isPresent == true && $storedOnly == true){
         	$this->stored_only = true;
         }
+        return $rooms;
     }
 
 }

@@ -64,3 +64,10 @@ angular
             }
         };
     })
+
+    .filter('relevantRooms', function () {
+        return function (rooms) {
+            console.log(rooms.length)
+            return rooms;
+        }
+    })
