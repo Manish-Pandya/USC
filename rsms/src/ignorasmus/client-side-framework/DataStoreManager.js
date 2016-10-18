@@ -156,15 +156,9 @@ var DataStoreManager = (function () {
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
                 .then(function (d) {
+                d = InstanceFactory.convertToClasses(d);
+                _this.commitToActualModel(d);
                 if (compMaps) {
-                    d = InstanceFactory.convertToClasses(d);
-                    var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
-                    if (existingIndex > -1) {
-                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
-                    }
-                    else {
-                        DataStoreManager._actualModel[type].Data.push(d);
-                    }
                     var allComps = [];
                     var allCompMaps = DataStoreManager._actualModel[type].Data[0].allCompMaps;
                     var l = allCompMaps.length;
@@ -183,29 +177,22 @@ var DataStoreManager = (function () {
                             d.viewModelWatcher = _.cloneDeep(d);
                         }
                         d.doCompose(compMaps);
-                        viewModelParent.push(d.viewModelWatcher);
-                        return viewModelParent;
+                        viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                        return InstanceFactory.convertToClasses(viewModelParent);
                     })
                         .catch(function (reason) {
                         console.log("getById (inner promise):", reason);
                     });
                 }
                 else {
-                    d = InstanceFactory.convertToClasses(d);
-                    var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
-                    if (existingIndex > -1) {
-                        DataStoreManager._actualModel[type].Data[existingIndex] = d;
-                    }
-                    else {
-                        DataStoreManager._actualModel[type].Data.push(d);
-                    }
                     if (!d.viewModelWatcher) {
                         d.viewModelWatcher = _.cloneDeep(d);
                     }
                     //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
                     viewModelParent.test = d.viewModelWatcher;
-                    d.doCompose(compMaps);
+                    viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                     //DataStoreManager._actualModel[type].Data = d;
+                    console.log("yup");
                     return _this.promisifyData(d);
                 }
             })
@@ -231,16 +218,17 @@ var DataStoreManager = (function () {
             return DataStoreManager.commitToActualModel(d);
         });
     };
-    // TODO: Doesn't always work, as drills into object nest before moving to next object.
     /**
-     * Returns the actualModel instance equivalent of a given viewModel.
+     * Returns the actualModel instance equivalent of a given viewModel, if found.
      *
      * @param viewModelObj
      */
     DataStoreManager.getActualModelEquivalent = function (viewModelObj) {
         if (viewModelObj[this.classPropName] && InstanceFactory._classNames.indexOf(viewModelObj[this.classPropName]) > -1) {
-            viewModelObj = this.findByPropValue(this._actualModel[viewModelObj[this.classPropName]].Data, this.uidString, viewModelObj[this.uidString]);
-            return viewModelObj;
+            var existingIndex = _.findIndex(DataStoreManager._actualModel[viewModelObj[this.classPropName]].Data, function (o) { return o.UID == viewModelObj.UID; });
+            if (existingIndex > -1) {
+                return DataStoreManager._actualModel[viewModelObj[this.classPropName]].Data[existingIndex];
+            }
         }
         else {
             console.log("dang dude... I'm not familiar with this class or object type");
@@ -255,15 +243,15 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
-        var existingIndex = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
-        if (existingIndex > -1) {
-            vmParent = InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex], vmParent);
-            InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex].viewModelWatcher, DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex]);
+        var actualModelInstance = this.getActualModelEquivalent(vmParent);
+        if (actualModelInstance) {
+            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
+            InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
         }
         else {
-            existingIndex = _.findIndex(DataStoreManager._actualModel[vmParent.TypeName].Data, function (o) { return o.UID == vmParent.UID; });
-            DataStoreManager._actualModel[vmParent.TypeName].Data.push(vmParent);
-            vmParent = InstanceFactory.copyProperties(DataStoreManager._actualModel[vmParent.TypeName].Data[existingIndex], vmParent);
+            DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
+            actualModelInstance = this.getActualModelEquivalent(vmParent);
+            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
             vmParent.viewModelWatcher = _.cloneDeep(vmParent);
         }
         //update vm watcher
@@ -276,9 +264,8 @@ var DataStoreManager = (function () {
      * @param viewModelParent
      */
     DataStoreManager.undo = function (viewModelParent) {
-        var existingIndex = _.findIndex(DataStoreManager._actualModel[viewModelParent.TypeName].Data, function (o) { return o.UID == viewModelParent.UID; });
-        if (existingIndex > -1) {
-            var actualModelInstance = DataStoreManager._actualModel[viewModelParent.TypeName].Data[existingIndex];
+        var actualModelInstance = this.getActualModelEquivalent(viewModelParent);
+        if (actualModelInstance) {
             InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, actualModelInstance, ["viewModelWatcher"]);
         }
     };

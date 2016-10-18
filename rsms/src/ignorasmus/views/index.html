@@ -23,19 +23,7 @@
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         //console.log("approved classNames:", classNames);
-        /*
-        var firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
-            .then(
-                function (whateverGotReturned) {
-                    console.log(firstPI);
-                }
-            )
-            .catch(
-                function (reason) {
-                    console.log("bad getById:", reason);
-                }
-            );
-*/
+        
         var currentRoles;
         function getCurrentRoles() {
             if (!currentRoles) {
@@ -53,13 +41,25 @@
             rooms = [],
             piSingle = {};
 
+            var firstPI = {};
+            firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
+            .then(
+                function (whateverGotReturned) {
+                    console.log(firstPI, whateverGotReturned);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad getById:", reason);
+                }
+            );
+
             var testEditingUser = function () {
                 pis[0].User.Email = "some@email.foo";
                 console.log(pis[0].User);
                 //var user = DataStoreManager.getActualModelEquivalent(pis[0].User);
                 console.log(user);
                 console.log(pis[0].User);
-
             }
 
             var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
@@ -73,9 +73,8 @@
                         var lp = new window.User();
                         lp.Name = "Tronald Dump";
                         pis[0].LabPersonnel.push(lp);
-                        console.log(pis[0]);
 
-                        DataStoreManager.undo(pis[0]);
+                        //DataStoreManager.undo(pis[0]);
                         console.log(DataStoreManager.getActualModelEquivalent(pis[0]), pis[0]);
                         /*
                         DataStoreManager.save(pis[0]).then((savedJunk) => {
