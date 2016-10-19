@@ -99,13 +99,11 @@ var DataStoreManager = (function () {
                         }
                         return Promise.all(allComps)
                             .then(function (whateverGotReturned) {
-                            DataStoreManager._actualModel[type].Data.forEach(function (value, index, array) {
+                            d.forEach(function (value, index, array) {
+                                value.doCompose(compMaps);
                                 if (!value.viewModelWatcher) {
                                     value.viewModelWatcher = _.cloneDeep(value);
                                 }
-                                value.doCompose(compMaps);
-                                if (index == 0)
-                                    console.log(value, value.viewModelWatcher);
                                 viewModelParent[index] = value.viewModelWatcher;
                             });
                             DataStoreManager._actualModel[type].Data = d;
@@ -133,10 +131,10 @@ var DataStoreManager = (function () {
         else {
             var d = DataStoreManager._actualModel[type].Data;
             d.forEach(function (value, index, array) {
+                value.doCompose(compMaps);
                 if (!value.viewModelWatcher) {
                     value.viewModelWatcher = _.cloneDeep(value);
                 }
-                value.doCompose(compMaps);
                 viewModelParent[index] = value.viewModelWatcher;
             });
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
@@ -175,10 +173,10 @@ var DataStoreManager = (function () {
                     }
                     return Promise.all(allComps)
                         .then(function (whateverGotReturned) {
+                        d.doCompose(compMaps);
                         if (!d.viewModelWatcher) {
                             d.viewModelWatcher = _.cloneDeep(d);
                         }
-                        d.doCompose(compMaps);
                         viewModelParent = d.viewModelWatcher;
                         return viewModelParent;
                     })

@@ -107,15 +107,13 @@ var InstanceFactory = (function (_super) {
     InstanceFactory.getChildInstances = function (compMap, parent) {
         var _this = this;
         parent[compMap.PropertyName] = []; // clear property
-        parent.viewModelWatcher[compMap.PropertyName] = [];
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
             var len = childStore.length;
             for (var i = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (DataStoreManager._actualModel[compMap.ChildType].Data[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                if (childStore[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                     parent[compMap.PropertyName].push(childStore[i]);
-                    parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
                 }
             }
         }
@@ -128,6 +126,7 @@ var InstanceFactory = (function (_super) {
                         DataStoreManager._actualModel[manyTypeToManyChildType] = {}; // clear property
                         DataStoreManager._actualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                             .then(function (d) {
+                            parent.viewModelWatcher[compMap.PropertyName] = []; // clear property
                             DataStoreManager._actualModel[manyTypeToManyChildType].Data = d;
                             var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
                             var gerundLen = d.length;
@@ -161,8 +160,6 @@ var InstanceFactory = (function (_super) {
                                     }
                                 }
                             }
-                            // clone collection from actualModel to viewModel
-                            parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
                         });
                     }
                     return;
@@ -177,15 +174,21 @@ var InstanceFactory = (function (_super) {
                         var current = d[i];
                         _this.commitToActualModel(current);
                         parent[compMap.PropertyName].push(current);
-                        parent.viewModelWatcher[compMap.PropertyName].push(current.viewModelWatcher);
                     }
                     return d;
                 });
             }
         }
         else {
-            // clone collection from actualModel to viewModel
-            parent[compMap.PropertyName] = parent.viewModelWatcher[compMap.PropertyName] = InstanceFactory.copyProperties(parent.viewModelWatcher[compMap.PropertyName], parent[compMap.PropertyName]);
+            // CompMap is CompositionMapping.ONE_TO_ONE
+            var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
+            var len = childStore.length;
+            for (var i = 0; i < len; i++) {
+                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
+                if (childStore[i][compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
+                    parent[compMap.PropertyName] = childStore[i];
+                }
+            }
         }
     };
     /**
