@@ -49,7 +49,6 @@ var DataStoreManager = (function () {
     //  Methods
     //
     //----------------------------------------------------------------------
-    // TODO: Consider method overload to allow multiple types and viewModelParents
     /**
      * Gets all instances of a given type and passes them to the given viewModelParent.
      * Optionally composes child classes based on passed CompositionMapping.
@@ -69,7 +68,8 @@ var DataStoreManager = (function () {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then(function (d) {
-                    DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
+                    d = InstanceFactory.convertToClasses(d);
+                    DataStoreManager._actualModel[type].Data = d;
                     if (compMaps) {
                         var allComps = [];
                         var allCompMaps = DataStoreManager._actualModel[type].Data[0].allCompMaps;
@@ -103,8 +103,10 @@ var DataStoreManager = (function () {
                                 if (!value.viewModelWatcher) {
                                     value.viewModelWatcher = _.cloneDeep(value);
                                 }
-                                viewModelParent[index] = value.viewModelWatcher;
                                 value.doCompose(compMaps);
+                                if (index == 0)
+                                    console.log(value, value.viewModelWatcher);
+                                viewModelParent[index] = value.viewModelWatcher;
                             });
                             DataStoreManager._actualModel[type].Data = d;
                             return viewModelParent;
@@ -134,8 +136,8 @@ var DataStoreManager = (function () {
                 if (!value.viewModelWatcher) {
                     value.viewModelWatcher = _.cloneDeep(value);
                 }
-                viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
+                viewModelParent[index] = value.viewModelWatcher;
             });
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
@@ -177,8 +179,8 @@ var DataStoreManager = (function () {
                             d.viewModelWatcher = _.cloneDeep(d);
                         }
                         d.doCompose(compMaps);
-                        viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                        return InstanceFactory.convertToClasses(viewModelParent);
+                        viewModelParent = d.viewModelWatcher;
+                        return viewModelParent;
                     })
                         .catch(function (reason) {
                         console.log("getById (inner promise):", reason);
@@ -244,18 +246,12 @@ var DataStoreManager = (function () {
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
         var actualModelInstance = this.getActualModelEquivalent(vmParent);
-        if (actualModelInstance) {
-            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-            InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
-        }
-        else {
+        if (!actualModelInstance) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelInstance = this.getActualModelEquivalent(vmParent);
-            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
         }
-        //update vm watcher
-        console.log(vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
+        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
         return vmParent.viewModelWatcher;
     };
     /**

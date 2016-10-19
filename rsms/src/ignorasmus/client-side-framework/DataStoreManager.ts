@@ -62,7 +62,6 @@ abstract class DataStoreManager {
     //
     //----------------------------------------------------------------------
 
-    // TODO: Consider method overload to allow multiple types and viewModelParents
     /**
      * Gets all instances of a given type and passes them to the given viewModelParent.
      * Optionally composes child classes based on passed CompositionMapping.
@@ -82,7 +81,8 @@ abstract class DataStoreManager {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
                     .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
-                        DataStoreManager._actualModel[type].Data = InstanceFactory.convertToClasses(d);
+                        d = InstanceFactory.convertToClasses(d);
+                        DataStoreManager._actualModel[type].Data = d;
                         if (compMaps) {
                             var allComps: any[] = [];
                             var allCompMaps: CompositionMapping[] = (<FluxCompositerBase>DataStoreManager._actualModel[type].Data[0]).allCompMaps;
@@ -100,7 +100,6 @@ abstract class DataStoreManager {
                                                 } else {
                                                     allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
                                                 }
-
                                             } else {
                                                 console.log(type + " in else looking for " + compMap.ChildType);
                                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
@@ -115,14 +114,15 @@ abstract class DataStoreManager {
                                         if (!value.viewModelWatcher) {
                                             value.viewModelWatcher = _.cloneDeep(value);
                                         }
-                                        viewModelParent[index] = value.viewModelWatcher;
                                         value.doCompose(compMaps);
+                                        if (index == 0) console.log(value, value.viewModelWatcher);
+                                        viewModelParent[index] = value.viewModelWatcher;
                                     });
                                     DataStoreManager._actualModel[type].Data = d;
+                                    
                                     return viewModelParent;
                                 })
-                                .catch(
-                                function (reason) {
+                                .catch((reason) => {
                                     console.log("getAll (inner promise):", reason);
                                 })
                         } else {
@@ -134,7 +134,7 @@ abstract class DataStoreManager {
                             return viewModelParent;
                         }
                     })
-                    .catch((d: FluxCompositerBase[]) => {
+                    .catch((d) => {
                         console.log("getAll:", d);
                         return d;
                     })
@@ -145,13 +145,12 @@ abstract class DataStoreManager {
                 if (!value.viewModelWatcher) {
                     value.viewModelWatcher = _.cloneDeep(value);
                 }
-                viewModelParent[index] = value.viewModelWatcher;
                 value.doCompose(compMaps);
+                viewModelParent[index] = value.viewModelWatcher;
             });
 
             return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
-
     }
 
     /**
@@ -167,7 +166,7 @@ abstract class DataStoreManager {
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
-                .then((d: FluxCompositerBase) => {
+                .then((d: FluxCompositerBase): FluxCompositerBase | Promise<any> => {
                     d = InstanceFactory.convertToClasses(d);
                     this.commitToActualModel(d);
                     if (compMaps) {
@@ -190,8 +189,9 @@ abstract class DataStoreManager {
                                         d.viewModelWatcher = _.cloneDeep(d);
                                     }
                                     d.doCompose(compMaps);
-                                    viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                                    return InstanceFactory.convertToClasses(viewModelParent);
+                                    viewModelParent = d.viewModelWatcher;
+                                    
+                                    return viewModelParent;
                                 }
                             )
                             .catch((reason) => {
@@ -209,7 +209,7 @@ abstract class DataStoreManager {
                         return this.promisifyData(d);
                     }
                 })
-                .catch((d: FluxCompositerBase) => {
+                .catch((d) => {
                     console.log("getById:", d);
                     return d;
                 })
@@ -259,17 +259,13 @@ abstract class DataStoreManager {
     static commitToActualModel(viewModelParent: any): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         var actualModelInstance: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
-        if (actualModelInstance) {
-            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-            InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
-        } else {
+        if (!actualModelInstance) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelInstance = this.getActualModelEquivalent(vmParent);
-            vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
         }
-        //update vm watcher
-        console.log(vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
+        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
+
         return vmParent.viewModelWatcher;
     }
 

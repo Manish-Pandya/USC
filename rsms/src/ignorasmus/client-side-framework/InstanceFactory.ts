@@ -88,8 +88,7 @@ abstract class InstanceFactory extends DataStoreManager {
                     if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
                         var instance: FluxCompositerBase = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
-                            instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
-                            parentNode[prop] = instance; // set instance
+                            instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
                             instance.onFulfill();
                         }
                     }
@@ -128,9 +127,9 @@ abstract class InstanceFactory extends DataStoreManager {
                     // Get the gerunds.then
                     var manyTypeToManyChildType: string = parent.TypeName + "To" + compMap.ChildType;
                     if (typeof DataStoreManager._actualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager._actualModel[manyTypeToManyChildType].promise) {
-                        DataStoreManager._actualModel[manyTypeToManyChildType] = {};
+                        DataStoreManager._actualModel[manyTypeToManyChildType] = {}; // clear property
                         DataStoreManager._actualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
-                            .then(function (d: any[]) {
+                            .then( (d: any[]) => {
                                 DataStoreManager._actualModel[manyTypeToManyChildType].Data = d;
                                 var childStore: FluxCompositerBase[] = DataStoreManager._actualModel[compMap.ChildType].Data;
                                 var gerundLen: number = d.length;
@@ -177,7 +176,7 @@ abstract class InstanceFactory extends DataStoreManager {
                     d = InstanceFactory.convertToClasses(d);
                     var len: number = d.length;
                     for (let i: number = 0; i < len; i++) {
-                        var current: any = d[i];
+                        var current: FluxCompositerBase = d[i];
                         this.commitToActualModel(current);
                         parent[compMap.PropertyName].push(current);
                         parent.viewModelWatcher[compMap.PropertyName].push(current.viewModelWatcher);

@@ -87,8 +87,7 @@ var InstanceFactory = (function (_super) {
                     if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
                         var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                         if (instance) {
-                            instance = InstanceFactory.copyProperties(instance, parentNode[prop]);
-                            parentNode[prop] = instance; // set instance
+                            instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
                             instance.onFulfill();
                         }
                     }
@@ -126,7 +125,7 @@ var InstanceFactory = (function (_super) {
                     // Get the gerunds.then
                     var manyTypeToManyChildType = parent.TypeName + "To" + compMap.ChildType;
                     if (typeof DataStoreManager._actualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager._actualModel[manyTypeToManyChildType].promise) {
-                        DataStoreManager._actualModel[manyTypeToManyChildType] = {};
+                        DataStoreManager._actualModel[manyTypeToManyChildType] = {}; // clear property
                         DataStoreManager._actualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
                             .then(function (d) {
                             DataStoreManager._actualModel[manyTypeToManyChildType].Data = d;

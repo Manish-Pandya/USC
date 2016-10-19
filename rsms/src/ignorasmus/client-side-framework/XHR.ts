@@ -65,4 +65,5 @@ abstract class XHR {
             xhr.send(postBody);           
         })
     }
+
 }

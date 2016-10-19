@@ -41,18 +41,19 @@
             rooms = [],
             piSingle = {};
 
-            var firstPI = {};
-            firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
+            /*var firstPI = {};
+            DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
             .then(
                 function (whateverGotReturned) {
-                    console.log(firstPI, whateverGotReturned);
+                    firstPI = whateverGotReturned;
+                    console.log(firstPI);
                 }
             )
             .catch(
                 function (reason) {
                     console.log("bad getById:", reason);
                 }
-            );
+            );*/
 
             var testEditingUser = function () {
                 pis[0].User.Email = "some@email.foo";

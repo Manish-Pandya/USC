@@ -38,12 +38,7 @@ var CompositionMapping = (function () {
         this.ChildUrl = childUrl;
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;
-        if (parentIdProp) {
-            this.ParentIdProp = parentIdProp;
-        }
-        else {
-            this.ParentIdProp = DataStoreManager.uidString;
-        }
+        this.ParentIdProp = parentIdProp ? parentIdProp : DataStoreManager.uidString;
         if (this.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!gerundName || !gerundUrl) {
                 throw new Error("You must provide a gerundName and gerundUrl to fullfill this MANY TO MANY compositional relationship");
@@ -88,8 +83,7 @@ var FluxCompositerBase = (function () {
                     if (this.thisClass[instanceProp] instanceof CompositionMapping) {
                         var cm = this.thisClass[instanceProp];
                         if (cm.ChildUrl == window[cm.ChildType].urlMapping.urlGetAll) {
-                            // flag that getAll will be called
-                            cm.callGetAll = true;
+                            cm.callGetAll = true; // flag that getAll will be called
                         }
                         this._allCompMaps.push(cm);
                     }
@@ -167,12 +161,7 @@ var FluxCompositerBase = (function () {
     FluxCompositerBase.prototype.hasGetAllPermission = function (evaluator) {
         if (evaluator === void 0) { evaluator = false; }
         if (this._hasGetAllPermission == null) {
-            if (typeof evaluator == "function") {
-                this._hasGetAllPermission = evaluator();
-            }
-            else {
-                this._hasGetAllPermission = evaluator;
-            }
+            this._hasGetAllPermission = (typeof evaluator == "function") ? evaluator() : evaluator;
         }
         return this._hasGetAllPermission;
     };
