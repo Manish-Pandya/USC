@@ -60,10 +60,34 @@ abstract class XHR {
                 });
             };
 
-            //handle posted data if needed
-            var postBody = body ? JSON.stringify(body) : null;
+            // handle posted data if needed, removing circular references
+            var postBody = body ? this.stringifyCircularFix(body) : null;
             xhr.send(postBody);           
         })
     }
+
+    /**
+     * Returns JSON string with circular reference entries are replaced with null.
+     * Same parameters as JSON.stringify, so default replacer method can be substituted.
+     *
+     * @param obj
+     * @param replacer
+     * @param space
+     */
+    public static stringifyCircularFix(obj: any, replacer?: (key: string, value: any) => any, space?: string | number): string {
+        var cache: any[] = [];
+        var json = JSON.stringify(obj, function (key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    return; // circular reference found, discard key
+                }
+                cache.push(value); // store value in our collection
+            }
+            return replacer ? replacer(key, value) : value;
+        }, space);
+        cache = null;
+
+        return json;
+    };
 
 }
