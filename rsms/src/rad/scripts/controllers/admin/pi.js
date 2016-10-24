@@ -67,9 +67,11 @@ angular.module('00RsmsAngularOrmApp')
             convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
             amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
+            amendment.weight = i;
         }
 
         $scope.mappedAmendments = amendments;
+        console.log($scope.mappedAmendments);
 
         $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
         $scope.selectedAmendment = amendments.length - 1;

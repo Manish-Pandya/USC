@@ -35,13 +35,13 @@
   					|| cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.PICKED_UP
                     || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
                     || (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE && !cycle.Drum_id))">
-                        <a ng-click="af.createCopy(cycle)" class="btn btn-primary left"><i class="icon-pencil primary"></i>Edit</a>
+                        <a ng-click="af.unedit(pourCarboys); af.createCopy(cycle)" class="btn btn-primary left"><i class="icon-pencil primary"></i>Edit</a>
                     </div>
 					<div>
 						{{cycle.Carboy.Carboy_number}}
 					</div>
 					<div>
-                        <span ng-if="!cycle.edit">{{cycle.Status}} {{Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE}}</span>
+                        <span ng-if="!cycle.edit">{{cycle.Status}}</span>
                         <select style="max-width:80%" ng-model="CarboyUseCycleCopy.Status" ng-if="cycle.edit" 
                                 ng-options="status as status for (key,status) in Constants.CARBOY_USE_CYCLE.STATUS | disposalStatuses">
                             <option value=""> -- Select a status -- </option>
@@ -114,9 +114,9 @@
                     </div>
 				</div>
 			</div>
-                <h3 class="card-header padding" ng-if="cycle.edit || showReadings == true && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
+                <h3 class="card-header padding" ng-if="(cycle.edit && CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING) || (showReadings && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
                 <!-- this carboy's readings -->
-                <div class="fake-table bordered" ng-if="cycle.edit || showReadings == true && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">
+                <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit && CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING) || (showReadings && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">
                     <div class="table-header">
                         <h3 ng-if="!cycle.readingEdit">Edit</h3>
                         <h3>Isotope</h3>

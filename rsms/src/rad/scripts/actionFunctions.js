@@ -27,8 +27,15 @@ angular
 
             af.createCopy = function(obj)
             {
+                var l = dataStore[obj.Class].length;
+                for (var i = 0 ; i < l; i++) {
+                    dataStore[obj.Class][i].edit = false;
+                }
+
                 obj.edit = true;
-                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
+                $rootScope[obj.Class + 'Copy'] = null;
+                $rootScope[obj.Class + 'Copy'] = dataStoreManager.createCopy(obj);
+                return $rootScope[obj.Class + 'Copy'];
             }
 
             af.cancelEdit = function( obj )
@@ -1457,8 +1464,8 @@ angular
                                     }
                                 }
                                 angular.extend(cycle, returnedCycle);
-                                return cycle;
                                 cycle.edit = false;
+                                return cycle;                               
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
                             }

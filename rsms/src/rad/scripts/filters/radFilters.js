@@ -79,7 +79,6 @@ angular.module('00RsmsAngularOrmApp')
     })
     .filter('disposalStatuses', function () {
         return function (statuses) {
-            console.log(statuses)
             if (!statuses) return;
             var disposalStatuses = [];
             var i = statuses.length;

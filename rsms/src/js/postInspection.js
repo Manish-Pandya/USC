@@ -454,6 +454,8 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
             correcteds: 0,
             uncorrecteds: 0,
             unSelectedSumplementals: [],
+            noDefs: [],
+            noDefIDS:[],
             unselectedIDS:[],
             readyToSubmit: false
         }
@@ -507,11 +509,11 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
                     }
 
                     //question is answered "No" with no Defiency or SupplementalDeficiency selectd
-                    if (ready.unselectedIDS.indexOf(question.Key_id) < 0 &&
+                    if (ready.noDefIDS.indexOf(question.Key_id) < 0 &&
                         (!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length)
                         && (!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)) {
-                        ready.unselectedIDS.push(question.Key_id);
-                        ready.unSelectedSumplementals.push({ question_id: question.Key_id,checklist: checklist.Name, question: question.Text });
+                        ready.noDefIDS.push(question.Key_id);
+                        ready.noDefs.push({ question_id: question.Key_id, checklist: checklist.Name, question: question.Text });
                     }
                     
                 }
@@ -812,7 +814,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                           .then(
                             function () {                                
                                 $scope.recommendations = postInspectionFactory.getRecommendations();
-                                if(postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals.length){                                   
+                                if (postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals.length || postInspectionFactory.getIsReadyToSubmit($scope.inspection).noDefs.length) {
                                     var modalData = {
                                         inspection:$scope.inspection,
                                         uncheckeds: postInspectionFactory.getIsReadyToSubmit($scope.inspection).unSelectedSumplementals

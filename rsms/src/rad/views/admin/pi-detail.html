@@ -62,11 +62,9 @@
                         <h3>Revocation Date</h3>
                         <h3>Form</h3>
                     </div>
-                    <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'" ng-class="{'inactive':!auth.Is_active}">
+                    <div class="table-row" ng-repeat="auth in piAuth.Authorizations | filter: {'Is_active': true} | orderBy: 'Isotope.Name'" ng-class="{'inactive':!auth.Is_active}">
                         <div>
                             <a class="btn btn-primary" ng-click="openAuthModal('views/admin/admin-modals/authorization-modal', piAuth, auth)"><i class="icon-pencil"></i></a>
-                            <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
-                            <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
                         </div>
 
                         <div>

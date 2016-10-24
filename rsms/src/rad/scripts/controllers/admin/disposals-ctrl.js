@@ -278,6 +278,11 @@ angular.module('00RsmsAngularOrmApp')
           $rootScope.DrumWipeTestCopy = {}
       }
 
+      $scope.cancelDrumWipeEdit = function (test, smear) {
+          smear.edit = false;
+          $rootScope.DrumWipeTestCopy = {}
+      }
+
       $scope.editDrumWipe = function (wipeTest, wipe) {
           if (!wipeTest.Drum_wipes) wipeTest.Drum_wipes = [];
 
