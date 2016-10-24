@@ -31,9 +31,9 @@ require_once '../top_view.php';
         <h2 class="row" ng-if="!question.beingEdited && !noQuestion" ng-hide="!question" id="currentQuestion"><span class="span4 bold">Question:</span><span class="span9" id="questionText">{{question.Text}}</span>
         </h2>
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>
-        <h2 class="row" ><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9">{{question.Reference}}</span></h2>
+        <h2 class="row" ><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Reference:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Reference | sanitize"></span></h2>
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer small"></span>
-        <h2 class="row"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Description | sanitize">{{}}</span></h2>
+        <h2 class="row"><span ng-if="!question.beingEdited && !noQuestion" class="bold span4">Compliance Description:</span><span ng-if="!question.beingEdited && question.Reference" class="span9" ng-bind-html="question.Description | sanitize"></span></h2>
 
 
         <span ng-if="!question.beingEdited && !noQuestion" class="spacer med"></span>

@@ -1737,10 +1737,12 @@ class ActionManager {
 
     public function getUsersForUserHub(){
         $userDao = $this->getDao( new User() );
-        $users = $userDao->getAll('last_name');
+        $group = new WhereClauseGroup(
+            new WhereClause("last_name", "IS NOT", "")
+        );
+        $users = $userDao->getAllWhere($group, "AND", "last_name");
 
         $entityMaps = array();
-        $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
         $entityMaps[] = new EntityMap("eager","getInspector");
         $entityMaps[] = new EntityMap("lazy","getSupervisor");
         $entityMaps[] = new EntityMap("eager","getRoles");
@@ -1768,7 +1770,8 @@ class ActionManager {
                 $piMaps[] = new EntityMap("lazy","getVerifications");
                 $piMaps[] = new EntityMap("lazy","getBuidling");
                 $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
-                $entityMaps[] = new EntityMap("lazy","getWipeTests");
+                $piMaps[] = new EntityMap("lazy","getWipeTests");
+                $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 
                 $pi->setEntityMaps($piMaps);
             }

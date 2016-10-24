@@ -67,7 +67,13 @@ angular
 
     .filter('relevantRooms', function () {
         return function (rooms) {
-            console.log(rooms.length)
-            return rooms;
+            if (!rooms) return;
+            var l = rooms.length;
+            var relevantRooms = [];
+            for (var i = 0; i < l; i++) {
+                var room = rooms[i];
+                if (room.ContainsHazard || room.OtherLab) relevantRooms.push(room);
+            }
+            return relevantRooms;
         }
     })
