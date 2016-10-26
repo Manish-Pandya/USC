@@ -694,6 +694,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
               var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
             }
 
+            if (deficiency.Class == "SupplementalDeficiency") {
+                url = url + "&supplemental=true";
+            }
+
             convenienceMethods.getDataAsPromise( url )
                   .then(
                       function(){
