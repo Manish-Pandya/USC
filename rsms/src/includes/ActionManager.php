@@ -568,10 +568,16 @@ class ActionManager {
 
                 $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
-                $piDao  = $this->getDao(new PrincipalInvestigator());
                 $depts = $pi->getDepartments();
 
                 $newPi = $this->savePI($pi);
+
+                //set hazard relationships for any rooms the pi has
+                foreach($newPi->getRooms() as $room){
+
+                    $room->getHazardTypesArePresent();
+                    $room = $this->saveRoom($room);
+                }
 
                 foreach($depts as $department){
                 	$dto = new RelationshipDto();
@@ -1344,16 +1350,22 @@ class ActionManager {
         }
     }
 
-    public function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
+    public function addCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL, $supplemental = null ){
         $LOG = Logger::getLogger('Action:' . __function__);
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $deficiencyId = $this->getValueFromRequest('deficiencyId', $deficiencyId);
+        $supplemental = $this->getValueFromRequest('supplemental', $supplemental);
 
         if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 
             // Find the deficiencySelection
-            $ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+            if($supplemental == null){
+                $ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+            }else{
+                $sd = new GenericDAO(new SupplementalDeficiency());
+                $ds = $sd->getById($deficiencyId);
+            }
 
             if ($ds == null){
                 return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -2029,7 +2041,7 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new PrincipalInvestigator());
-            $dao->save($decodedObject);
+            $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
     }
@@ -4586,6 +4598,16 @@ class ActionManager {
     	return null;
     	//return $this->saveHazard($hazard);
 
+    }
+
+    public function setHazardTypes(){
+        $l = Logger::getLogger("yo");
+        $rooms = $this->getAllRooms(true);
+        foreach($rooms as $key=>$room){
+            $room->getHazardTypesArePresent();
+            $room = $this->saveRoom($room);
+        }
+        return $rooms;
     }
 }
 ?>
