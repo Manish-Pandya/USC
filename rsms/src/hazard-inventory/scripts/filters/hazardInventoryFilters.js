@@ -73,6 +73,10 @@ angular
             for (var i = 0; i < l; i++) {
                 var room = rooms[i];
                 if (room.ContainsHazard || room.OtherLab) relevantRooms.push(room);
+                //console.log(room.Hazard_id)
+                if (room.Hazard_id == "10013" && room.OtherLab) {
+                    console.log(room.OtherLab, room);
+                }
             }
             return relevantRooms;
         }
