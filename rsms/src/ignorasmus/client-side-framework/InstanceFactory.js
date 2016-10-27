@@ -13,9 +13,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 //abstract specifies singleton in ts 1.x (ish)
 var InstanceFactory = (function (_super) {
     __extends(InstanceFactory, _super);
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
     function InstanceFactory() {
-        _super.apply(this, arguments);
-    }
+        _super.call(this);
+    } // Static class cannot be instantiated
     //----------------------------------------------------------------------
     //
     //  Methods

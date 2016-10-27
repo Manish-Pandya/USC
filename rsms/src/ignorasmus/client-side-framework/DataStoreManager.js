@@ -6,8 +6,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
 var PermissionMap = (function () {
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
     function PermissionMap() {
-    }
+    } // Static class cannot be instantiated
     //----------------------------------------------------------------------
     //
     //  Methods
@@ -35,8 +40,13 @@ var PermissionMap = (function () {
 }());
 //abstract specifies singleton in ts 1.x (ish)
 var DataStoreManager = (function () {
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
     function DataStoreManager() {
-    }
+    } // Static class cannot be instantiated
     Object.defineProperty(DataStoreManager, "ActualModel", {
         set: function (value) {
             this._actualModel = InstanceFactory.convertToClasses(value);

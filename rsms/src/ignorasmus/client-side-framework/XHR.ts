@@ -26,6 +26,14 @@ abstract class XHR {
 
     //----------------------------------------------------------------------
     //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
+
+    private constructor() { } // Static class cannot be instantiated
+
+    //----------------------------------------------------------------------
+    //
     //  Methods
     //
     //----------------------------------------------------------------------
@@ -74,7 +82,7 @@ abstract class XHR {
      * @param replacer
      * @param space
      */
-    public static stringifyCircularFix(obj: any, replacer?: (key: string, value: any) => any, space?: string | number): string {
+    private static stringifyCircularFix(obj: any, replacer?: (key: string, value: any) => any, space?: string | number): string {
         var cache: any[] = [];
         var json = JSON.stringify(obj, function (key, value) {
             if (typeof value === 'object' && value !== null) {

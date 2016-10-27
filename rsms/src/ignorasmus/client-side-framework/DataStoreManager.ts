@@ -17,6 +17,14 @@ abstract class PermissionMap {
 
     //----------------------------------------------------------------------
     //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
+
+    private constructor() { } // Static class cannot be instantiated
+
+    //----------------------------------------------------------------------
+    //
     //  Methods
     //
     //----------------------------------------------------------------------
@@ -55,6 +63,14 @@ abstract class DataStoreManager {
     static set ActualModel(value: any) {
         this._actualModel = InstanceFactory.convertToClasses(value);
     }
+
+    //----------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //----------------------------------------------------------------------
+
+    private constructor() { } // Static class cannot be instantiated
 
     //----------------------------------------------------------------------
     //
