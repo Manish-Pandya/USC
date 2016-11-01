@@ -65,13 +65,13 @@ angular.module('00RsmsAngularOrmApp')
         for (var i = 0; i < amendments.length; i++) {
             var amendment = amendments[i];
             convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
+            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Termination_date", true);
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
-            amendment.Amendment_label = amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
+            amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
             amendment.weight = i;
         }
 
         $scope.mappedAmendments = amendments;
-        console.log($scope.mappedAmendments);
 
         $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
         $scope.selectedAmendment = amendments.length - 1;
@@ -202,7 +202,7 @@ angular.module('00RsmsAngularOrmApp')
             )
 
         $scope.getTerminationDate = function (piAuth) {
-            if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.getDateString(piAuth.Termination_date).formattedDate;
+            if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.dateToIso(piAuth.Termination_date);
         }
 
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
@@ -234,8 +234,16 @@ angular.module('00RsmsAngularOrmApp')
             $scope.modalData.PIAuthorizationCopy.Authorizations.push(newAuth);
         }
 
-        $scope.close = function(){
+        $scope.close = function(auth){
             af.deleteModalData();
+            if (auth) {
+                var i = auth.Authorizations.length;
+                while (i--) {
+                    var is = auth.Authorizations[i];
+                    if (!is.Key_id) auth.Authorizations.splice(i,1);
+                }
+            }
+
             $modalInstance.dismiss();
         }
 
@@ -249,7 +257,6 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 }
             }else{
-                console.log(terminated);
                 copy.Is_active = false;
                 copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
@@ -257,7 +264,6 @@ angular.module('00RsmsAngularOrmApp')
                     copy.Authorizations[n].Is_active = false;                    
                 }
             }
-            console.log(copy);
             af.savePIAuthorization(copy, auth, pi);
             $modalInstance.dismiss();
             af.deleteModalData();
@@ -376,35 +382,6 @@ angular.module('00RsmsAngularOrmApp')
             console.log($scope.suggestedAmendmentNumber);
             return $scope.suggestedAmendmentNumber
         }
-/*
-        $scope.checkboxChange = function(thing, authorization){
-            if(thing.isAuthorized){
-                if(!authorization[thing.Class+'s']){
-                    authorization[thing.Class+'s'] = [thing];
-                }else{
-                    var thingFound = false;
-                    var i = authorization[thing.Class+'s'].length;
-                    while(i--){
-                        if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                            thingFound = true;
-                        }
-                    }
-                    if(!thingFound){
-                        authorization[thing.Class+'s'].push(thing)
-                    }
-                }
-            }else{
-                var thingFound = false;
-                var i = authorization[thing.Class+'s'].length;
-                while(i--){
-                    if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                        authorization[thing.Class+'s'].splice(i,1);
-                        thing.isAuthorized = false;
-                    }
-                }
-            }
-        }
-        */
 
   }])
 

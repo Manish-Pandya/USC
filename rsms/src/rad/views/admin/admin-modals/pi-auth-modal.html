@@ -47,15 +47,13 @@
         <div>
             <a class="btn btn-success left" ng-click="addIsotope(modalData.PIAuthorizationCopy.Key_id)"><i class="icon-plus-2"></i>Add Isotope</a>
         </div>
-        <div class="fake-table striped bordered" ng-if="modalData.PIAuthorizationCopy.Authorizations.length && modalData.isAmendment">
+        <div class="fake-table striped bordered" ng-if="modalData.PIAuthorizationCopy.Authorizations.length">
             <div class="table-header">
                 <h3>Included</h3>
                 <h3>Isotope</h3>
                 <h3>Half Life</h3>
                 <h3>Emitter Type</h3>
                 <h3>Maximum Quantity</h3>
-                <h3>Approval Date</h3>
-                <h3>Revocation Date</h3>
                 <h3>Form</h3>
             </div>
             <div class="table-row" ng-repeat="auth in modalData.PIAuthorizationCopy.Authorizations" ng-class="{'inactive':!auth.Is_active}">
@@ -95,14 +93,6 @@
                 </div>
 
                 <div>
-                    {{modalData.PIAuthorizationCopy.Form_Approval_date}}
-                </div>
-
-                <div>
-                    {{auth.Revocation_date | dateToISO}}
-                </div>
-
-                <div>
                     <div class="control-group">
                         <label class="control-label" for="inputEmail">Form</label>
                         <div class="controls input-append">
@@ -116,6 +106,6 @@
 
     <div class="modal-footer">
         <button ng-click="authForm.$submitted=true;" type="submit" class="btn btn-large btn-success left" ><i class="icon-checkmark"></i>Save</button>
-        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+        <a class="btn btn-large btn-danger left" ng-click="close(modalData.PIAuthorizationCopy)"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>

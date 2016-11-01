@@ -329,9 +329,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         *	@param (date, Date)  JS Date to convert
         */
         setMysqlTime: function (date) {
-            if (!date) return null;
-            var date;
+            if (!date && date !== false) return null;
             //console.log(date);
+            if (!date) var date = new Date();
             date = new Date(Date.parse(date));
             date = date.getFullYear() + '-' +
                 ('00' + (date.getMonth()+1)).slice(-2) + '-' +
@@ -398,9 +398,14 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 window.location = "http://" + location.host + "/rsms";
             }
         },
-        dateToIso: function (input, object, propertyName, setToString) {
+        dateToIso: function (input, object, propertyName, setToString, nullable) {
 
-            if (!input) return "N/A";
+            if (!input && !nullable) {
+                return "N/A";
+            } else if (!input && nullable) {
+                return null;
+            }
+
             // Split timestamp into [ Y, M, D, h, m, s ]
             var t = input.split(/[- :]/);
             // Apply each element to the Date function
@@ -415,7 +420,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                     object["view_" + propertyName] = input;
                 }
             }
-            if (t[0] == "0000") return "N/A";
+            if (t[0] == "0000" && !nullable) return "N/A";
             return input
         }
         

@@ -100,7 +100,7 @@
 						{{cycle.Pour_allowed_date | dateToISO}}asdf
 					</div>
 					<div ng-if="cycle.edit || (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
-						<button ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING" ng-click="pour(cycle)" ng-disabled="cycle.edit || !cycle.pourable" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
+						<button ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING" ng-click="pour(cycle)" ng-disabled="cycle.edit" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
                         <button ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE" ng-click="assignDrum(cycle)" ng-disabled="cycle.edit" class="btn btn-success left"><i class="icon-checkmark"></i>Place in drum</button>
                         <span ng-if="cycle.edit && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING 
   					                || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
@@ -143,7 +143,7 @@
                         </div>
 
                         <div ng-if="!reading.edit">
-                            {{reading.Curie_level}}DPM
+                            {{reading.Curie_level}} DPM
                         </div>
                         <div ng-if="reading.edit">
                             <div class="control-group">
@@ -153,14 +153,24 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div ng-if="!reading.edit">
+                            {{reading.Date_read | dateToISO:reading:'Date_read':true:true}}
+                        </div>
+                        <div ng-if="reading.edit">
+                            <div class="control-group">
+                                <div class="controls input-append">
+                                    <input ng-init="CarboyReadingAmountCopy.view_Date_read = getDateRead(reading)" style="width: 90px;padding: 0px 3px;" ng-model="CarboyReadingAmountCopy.view_Date_read">
+                                    <span class="add-on">mm/dd/yy</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
-                            {{reading.Date_created | dateToISO}}
+                            {{reading.Carboy_uci}} uCi
                         </div>
                         <div>
-                            {{reading.Carboy_uci}}uCi
-                        </div>
-                        <div>
-                            {{reading.Decayed_carboy_uci}}uCi
+                            {{reading.Decayed_carboy_uci}} uCi
                         </div>                       
 
                         <div>

@@ -1530,8 +1530,9 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyReadingAmount());
+            $decodedObject->setDecayed_carboy_uci(null);
             $decodedObject = $dao->save($decodedObject);
-
+            $LOG->fatal($decodedObject);
             $cycle = $decodedObject->getCarboy_use_cycle();
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy", "getCarboy");
@@ -2314,40 +2315,18 @@ class Rad_ActionManager extends ActionManager {
 			$authDao = new GenericDAO(new Authorization());
 
 			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
-			if($needsSaveAmendment && $decodedObject->getAuthorizations() != NULL){
+			if($decodedObject->getAuthorizations() != NULL){
 				foreach($decodedObject->getAuthorizations() as $auth){
 					$newAuth = new Authorization();
 					$newAuth->setPi_authorization_id($piAuth->getKey_id());
 					$newAuth->setIsotope_id($auth["Isotope_id"]);
 					$newAuth->setMax_quantity($auth["Max_quantity"]);
 					$newAuth->setApproval_date($auth["Approval_date"]);
-					$newAuth->setIs_active($auth["Is_active"]);
-					$newAuth->setKey_id(null);
+                    $newAuth->setForm($auth["Form"]);
+					$newAuth->setIs_active($decodedObject->getTermination_date == null);
+					$newAuth->setKey_id($auth["Key_id"]);
 					$authDao->save($newAuth);
-				}
-			}else if($piAuth->getTermination_date() != null){
-                foreach($decodedObject->getAuthorizations() as $auth){
-                    $newAuth = new Authorization();
-					$newAuth->setKey_id($auth["Key_id"]);
-                    $newAuth->setPi_authorization_id($piAuth->getKey_id());
-					$newAuth->setIsotope_id($auth["Isotope_id"]);
-					$newAuth->setMax_quantity($auth["Max_quantity"]);
-					$newAuth->setApproval_date($auth["Approval_date"]);
-					$newAuth->setIs_active(false);
-					$authDao->save($newAuth);;
-				}
-            }else if($previouslyDeactivated){
-                foreach($decodedObject->getAuthorizations() as $auth){
-                    $LOG->fatal("HELLO???!!?!?!?!?!?");
-                    $newAuth = new Authorization();
-					$newAuth->setKey_id($auth["Key_id"]);
-                    $newAuth->setPi_authorization_id($piAuth->getKey_id());
-					$newAuth->setIsotope_id($auth["Isotope_id"]);
-					$newAuth->setMax_quantity($auth["Max_quantity"]);
-					$newAuth->setApproval_date($auth["Approval_date"]);
-					$newAuth->setIs_active(true);
-					$authDao->save($newAuth);;
-				}
+                }
             }
             //force reload of authorizations from db
             $piAuth->setAuthorizations(null);

@@ -12,6 +12,7 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.cv = convenienceMethods;
 
     var getAllDrums = function(){
        return af.getAllDrums()
@@ -43,7 +44,6 @@ angular.module('00RsmsAngularOrmApp')
         return af.getAllCarboyUseCycles()
             .then(
                 function(cycles){
-                    console.log(cycles);
                     if (!dataStore.CarboyUseCycle) dataStore.CarboyUseCycle = [];
                     $scope.cycles = dataStoreManager.get("CarboyUseCycle");
                     return cycles;
@@ -71,7 +71,6 @@ angular.module('00RsmsAngularOrmApp')
         return af.getAllIsotopes()
             .then(
                 function(isotopes){
-                    console.log(isotopes);
                     $rootScope.isotopes = dataStore.Isotope;
                     return isotopes;
                 }
@@ -97,7 +96,6 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.drumModal = function(object){
-        console.log(object);
         var modalData = {};
         if(object)modalData[object.Class] = object;
         af.setModalData(modalData);
@@ -108,7 +106,6 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.editDrum = function (object) {
-        console.log(object);
         var modalData = {};
         if (!object) {
             object = new window.Drum();
@@ -131,9 +128,18 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyUseCycleCopy = {}
     }
 
-    $scope.pour = function(cycle){
-        af.createCopy(cycle);
-        af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle, true)
+    $scope.pour = function (cycle) {
+        if (!cycle.pourable) {
+            if (window.confirm("This carboy will not decay until "+convenienceMethods.dateToIso(cycle.Pour_allowed_date) + ". Are you sure you want to pour it now?")) {
+                pour(cycle);
+            }
+        } else {
+            pour(cycle);
+        }
+        function pour(cycle) {
+            af.createCopy(cycle);
+            af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle, true)
+        }
     }
 
     $scope.editReading = function(reading){
@@ -169,7 +175,6 @@ angular.module('00RsmsAngularOrmApp')
         todayAtMidnight.setHours(0, 0, 0, 0);
         var date = cycle.Hot_check_date;
         var hotCheckSeconds = convenienceMethods.getDate(date).getTime();
-        console.log(hotCheckSeconds);
         return hotCheckSeconds < todayAtMidnight.getTime();
     }
     $scope.resetHotRoomDate = function (cycle) {
@@ -177,13 +182,15 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.CarboyUseCycleCopy.Hot_check_date = convenienceMethods.setMysqlTime(new Date());
         af.saveCarboyUseCycle($rootScope.CarboyUseCycleCopy, cycle);
     }
+    $scope.getDateRead = function (reading) {
+        if (reading.Date_read) return convenienceMethods.dateToIso(reading.Date_read);
+        return convenienceMethods.dateToIso(convenienceMethods.setMysqlTime(new Date()));
+    }
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log($scope.modalData);
-
         $scope.saveWasteBag = function(bag, copy){
             $scope.close();
             $rootScope.saving = af.saveWasteBag(bag, copy)
@@ -191,7 +198,6 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveCarboyUseCycle = function (cycle, copy) {
-            console.log(cycle, copy);
             $scope.close();
             $rootScope.saving = af.saveCarboyUseCycle(copy, cycle)
                                     .then(reloadDrum)
@@ -268,7 +274,6 @@ angular.module('00RsmsAngularOrmApp')
               $rootScope.DrumWipeTestCopy.Is_active = true;
           } else {
               af.createCopy(test);
-              console.log($rootScope.DrumWipeTestCopy);
           }
           drum.Creating_wipe = true;
       }

@@ -74,7 +74,7 @@ angular
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
                         .then(
-                            function( returnedData ){
+                            function( returnedData){
                                 return returnedData.data;
                             },
                             function( error )
@@ -2224,7 +2224,12 @@ angular
             af.saveCarboyReadingAmount = function (cycle, copy) {
 
                 af.clearError();
-                copy.Date_read = convenienceMethods.setMysqlTime(new Date());
+                console.log(convenienceMethods.dateToIso(copy.view_Date_read));
+                if (copy.view_Date_read) {
+                    console.log(copy);
+
+                    copy.Date_read = convenienceMethods.setMysqlTime(copy.view_Date_read)
+                }
                 return $rootScope.saving = this.save(copy)
                     .then(
                         function (returnedCycle) {
@@ -2387,7 +2392,8 @@ angular
                     )
             }
 
-            af.savePIAuthorization = function(copy, auth, pi){
+            af.savePIAuthorization = function (copy, auth, pi) {
+                console.log(copy);
                 copy.Rooms = [];
                 copy.Departments = [];
                 if(pi.Rooms){
@@ -2407,17 +2413,19 @@ angular
                 af.clearError();
                 return this.save(copy)
                     .then(
-                        function(returnedAuth){
-                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(copy.Key_id){
+                        function (returnedAuth) {
+                            if (copy.Key_id) {
                                 angular.extend(auth, returnedAuth, true);
                                 auth.Rooms = copy.Rooms.slice();
-                                for (var i = 0; i < returnedAuth.Authorizations; i++) {
+                                auth.Authorizations = [];
+                                for (var i = 0; i < returnedAuth.Authorizations.length; i++) {
+                                    returnedAuth.Authorizations[i] = modelInflatorFactory.instateAllObjectsFromJson(returnedAuth.Authorizations[i]);
                                     store.store(modelInflatorFactory.instateAllObjectsFromJson(returnedAuth.Authorizations[i]));
-                                    auth.Authorizations[i] = returnedAuth.Authorizations[i];
+                                    auth.Authorizations.push(returnedAuth.Authorizations[i]);
                                     angular.extend(auth.Authorizations[i], returnedAuth.Authorizations[i]);
                                 }
-                            }else{
+                            } else {
+                                returnedAuth = modelInflatorFactory.instateAllObjectsFromJson(returnedAuth);
                                 dataStoreManager.store(returnedAuth);
                                 if (!pi.Pi_authorization) pi.Pi_authorization = [];
                                 pi.Pi_authorization.push(returnedAuth);
