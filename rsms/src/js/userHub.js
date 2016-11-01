@@ -134,19 +134,25 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     if(!users)return;
     var uncat = [];
     var i = users.length
-    while(i--){
-      if(!users[i].Roles || !users[i].Roles.length){
+    while (i--) {
+        console.log(users[i].Inspector);
+        if (!users[i].Roles || !users[i].Roles.length) {
+        console.log(users[i].Name, "no roles")
         uncat.unshift(users[i]);
       }
 
       if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
-        if(!users[i].PrincipalInvestigator){
+          if (!users[i].PrincipalInvestigator) {
+              console.log(users[i].Name, "no pi")
+
           uncat.unshift(users[i]);
         }
       }
 
       if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_INSPECTOR) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.SAFETY_INSPECTOR) ){
-         if(!users[i].Inspector){
+          if (!users[i].Inspector) {
+              console.log(users[i].Name, "no inspector")
+
           uncat.unshift(users[i]);
         }
       }

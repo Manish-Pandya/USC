@@ -30,6 +30,10 @@
                 <input class="span2" ng-model="searchText.Supervisor.Name" placeholder="Filter by PI"/>
             </th>
             <th>
+                <a ng-click="order = 'Position'; reverse=!reverse">Position<i ng-class="{ 'icon-arrow-up':Position.reverse, 'icon-arrow-down':!Position.reverse }"></i></a><br>
+                <input class="span2" ng-model="searchText.Position" placeholder="Filter by PI" />
+            </th>
+            <th>
                 <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
                 <input class="span2" ng-model="searchText.Primary_department.Name" placeholder="Filter by Department"/>
             </th>
@@ -58,6 +62,10 @@
             </td>
             <td style="width:14%;" >
                 <a once-href="'PIHub.php#/personnel?pi='+personnel.Supervisor.PrincipalInvestigator.Key_id" once-text="personnel.Supervisor.Name"></a>
+            </td>
+
+            <td style="width:17%;">
+                {{personnel.Position}}
             </td>
 
             <td style="width:17%;">

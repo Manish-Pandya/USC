@@ -204,9 +204,11 @@ class User extends GenericCrud{
 	public function setPosition($position){ $this->position = $position;}
 
 	public function getPrimary_department() {
-		if($this->primary_department === NULL && $this->hasPrimaryKeyValue()) {
-			$deptartmentDAO = new GenericDAO(new Department());
-			$this->primary_department = $deptartmentDAO->getById($this->primary_department_id);
+		if($this->getSupervisor_id() != NULL && $this->hasPrimaryKeyValue()) {
+            $super = $this->getSupervisor();
+            if($super != null){
+                $this->primary_department = reset($super->getDepartments());
+            }
 		}
 		return $this->primary_department;
 	}

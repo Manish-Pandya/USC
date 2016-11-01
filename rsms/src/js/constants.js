@@ -20,6 +20,17 @@ var Constants = (function () {
         }
     };
 
+    constants.POSITION = ["Undergraduate", 
+        "Graduate Student", 
+        "Post-Doctoral Fellow", 
+        "Research Professor", 
+        "Research Associate", 
+        "Laboratory Technician", 
+        "Research Specialist",
+        "Scientific Staff", 
+        "Intern",
+        "Other"
+    ];
 
     constants.ROLE = {
         NAME:{
