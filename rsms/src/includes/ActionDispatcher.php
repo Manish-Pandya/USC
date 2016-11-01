@@ -101,7 +101,7 @@ class ActionDispatcher {
     /**
      * Dispatch to the named action.
      *
-     * @param unknown $actionName
+     * @param  $actionName
      * @return ActionResult: Descriptor of the result
      *
      * @see ActionMappingFactory

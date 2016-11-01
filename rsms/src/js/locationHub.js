@@ -72,7 +72,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                         item.matched = false;
                         console.log('set false because no building or campus')
                     }
-                    if( item.Building && item.Building.Campus && item.Building.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
+                    if (item.Building && item.Building.Campus && item.Building.Campus.Name && item.Building.Campus.Name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
                         item.matched = false;
                         console.log('set false because of lack of match');
                     }

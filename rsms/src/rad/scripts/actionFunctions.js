@@ -27,8 +27,15 @@ angular
 
             af.createCopy = function(obj)
             {
+                var l = dataStore[obj.Class].length;
+                for (var i = 0 ; i < l; i++) {
+                    dataStore[obj.Class][i].edit = false;
+                }
+
                 obj.edit = true;
-                $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
+                $rootScope[obj.Class + 'Copy'] = null;
+                $rootScope[obj.Class + 'Copy'] = dataStoreManager.createCopy(obj);
+                return $rootScope[obj.Class + 'Copy'];
             }
 
             af.cancelEdit = function( obj )
@@ -67,7 +74,7 @@ angular
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
                         .then(
-                            function( returnedData ){
+                            function( returnedData){
                                 return returnedData.data;
                             },
                             function( error )
@@ -1341,13 +1348,12 @@ angular
                 return this.save(copy)
                     .then(
                         function (returnedDWT) {
-                            if (drum.Wipe_test) {
+                            if (drum.Wipe_test && drum.Wipe_test.length) {
                                 returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
-                                angular.extend(drum.Wipe_test, copy)
+                                angular.extend(drum.Wipe_test[0], copy)
                             } else {
                                 returnedDWT.Drum_wipes = [];
                                 returnedDWT = modelInflatorFactory.instateAllObjectsFromJson(returnedDWT);
-                                drum.Wipe_test = returnedDWT;
                                 dataStoreManager.store(returnedDWT);
 
                                 //by default, DrumWipeTests have a collection of 6 ParcelWipes, hence the magic number
@@ -1362,7 +1368,7 @@ angular
                                 }
 
                                 returnedDWT.adding = true;
-                                console.log(returnedDWT.Drum_wipes);
+                                drum.Wipe_test = [returnedDWT];
                             }
                             drum.Creating_wipe = false;
                         },
@@ -1372,7 +1378,7 @@ angular
 
             af.saveDrumWipesAndChildren = function (copy) {
                 console.log(copy);
-                var drum = dataStoreManager.getById("Drum", copy.Drum_id);
+                var drum = dataStoreManager.getById("Drum", copy.Key_id);
                 af.clearError();
                 return $rootScope.SavingParcelWipe = genericAPIFactory.save(copy, 'saveDrumWipesAndChildren')
                    .then(
@@ -1381,12 +1387,14 @@ angular
                            if (drum) {
                                angular.extend(drum, copy, true);
                                drum.edit = false;
-                               drum.Wipe_test.edit = false;
-                               var i = drum.Wipe_test.Drum_wipes.length;
+                               drum.Wipe_test[0].edit = false;
+                               drum.Creating_wipe = false;
+                               var i = drum.Wipe_test[0].Drum_wipes.length;
                                while (i--) {
-                                   drum.Wipe_test.Drum_wipes[i].edit = false;
-                                   angular.extend(drum.Wipe_test.Drum_wipes[i], copy.Wipe_test.Drum_wipes);
+                                   angular.extend(drum.Wipe_test[0].Drum_wipes[i], copy.Wipe_test[0].Drum_wipes);
+                                   drum.Wipe_test[0].Drum_wipes[i].edit = false;
                                }
+                               console.log(drum);
                            }
                        },
                        af.setError('The drum wipes could not be saved')
@@ -1448,14 +1456,16 @@ angular
                     .then(
                         function(returnedCycle){
                             returnedCycle = modelInflatorFactory.instateAllObjectsFromJson( returnedCycle );
-                            if(cycle){
-                                var i = returnedCycle.Carboy_reading_amounts.length;
-                                while(i--){
-                                    dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                            if (cycle) {
+                                if (returnedCycle.Carboy_reading_amounts) {
+                                    var i = returnedCycle.Carboy_reading_amounts.length;
+                                    while (i--) {
+                                        dataStoreManager.getById("CarboyReadingAmount", returnedCycle.Carboy_reading_amounts[i].Key_id).Pour_allowed_date = returnedCycle.Carboy_reading_amounts[i].Pour_allowed_date;
+                                    }
                                 }
-                                
                                 angular.extend(cycle, returnedCycle);
                                 cycle.edit = false;
+                                return cycle;                               
                             }else{
                                 dataStoreManager.addOnSave(returnedCycle);
                             }
@@ -2214,7 +2224,12 @@ angular
             af.saveCarboyReadingAmount = function (cycle, copy) {
 
                 af.clearError();
-                copy.Date_read = convenienceMethods.setMysqlTime(new Date());
+                console.log(convenienceMethods.dateToIso(copy.view_Date_read));
+                if (copy.view_Date_read) {
+                    console.log(copy);
+
+                    copy.Date_read = convenienceMethods.setMysqlTime(copy.view_Date_read)
+                }
                 return $rootScope.saving = this.save(copy)
                     .then(
                         function (returnedCycle) {
@@ -2377,7 +2392,8 @@ angular
                     )
             }
 
-            af.savePIAuthorization = function(copy, auth, pi){
+            af.savePIAuthorization = function (copy, auth, pi) {
+                console.log(copy);
                 copy.Rooms = [];
                 copy.Departments = [];
                 if(pi.Rooms){
@@ -2397,17 +2413,19 @@ angular
                 af.clearError();
                 return this.save(copy)
                     .then(
-                        function(returnedAuth){
-                            returnedAuth = modelInflatorFactory.instateAllObjectsFromJson( returnedAuth );
-                            if(copy.Key_id){
+                        function (returnedAuth) {
+                            if (copy.Key_id) {
                                 angular.extend(auth, returnedAuth, true);
                                 auth.Rooms = copy.Rooms.slice();
-                                for (var i = 0; i < returnedAuth.Authorizations; i++) {
+                                auth.Authorizations = [];
+                                for (var i = 0; i < returnedAuth.Authorizations.length; i++) {
+                                    returnedAuth.Authorizations[i] = modelInflatorFactory.instateAllObjectsFromJson(returnedAuth.Authorizations[i]);
                                     store.store(modelInflatorFactory.instateAllObjectsFromJson(returnedAuth.Authorizations[i]));
-                                    auth.Authorizations[i] = returnedAuth.Authorizations[i];
+                                    auth.Authorizations.push(returnedAuth.Authorizations[i]);
                                     angular.extend(auth.Authorizations[i], returnedAuth.Authorizations[i]);
                                 }
-                            }else{
+                            } else {
+                                returnedAuth = modelInflatorFactory.instateAllObjectsFromJson(returnedAuth);
                                 dataStoreManager.store(returnedAuth);
                                 if (!pi.Pi_authorization) pi.Pi_authorization = [];
                                 pi.Pi_authorization.push(returnedAuth);

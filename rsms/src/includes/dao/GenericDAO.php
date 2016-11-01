@@ -982,8 +982,9 @@ class GenericDAO {
 		global $db;
 		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
 
+        $LOG->fatal("yop");
 
-
+        $LOG->fatal($inQuery);
 		if($hazardId != null){
 			$queryString .= " AND hazard_id = $hazardId";
 			//get this pi's rooms

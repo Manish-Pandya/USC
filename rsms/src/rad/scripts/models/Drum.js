@@ -41,7 +41,7 @@ Drum.prototype = {
         }
     },
     loadDrumWipeTest: function () {
-        dataLoader.loadChildObject(this, "Wipe_test", "DrumWipeTest", this.Key_id);
+        dataLoader.loadOneToManyRelationship(this, 'Wipe_test', this.DrumWipeTestRelationship);
     }
 }
 

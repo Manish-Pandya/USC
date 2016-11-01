@@ -87,7 +87,6 @@ angular
                             }
                             // add returned data to cache
                             dataStoreManager.store(instatedObjects, true);
-                            console.log(dataStore.RadModelDto);
                             if (instatedObjects) {
                                 var type = typeof instatedObjects == "array" ? instatedObjects[0].Class : instatedObjects.Class;
                                 deferred.resolve(dataStoreManager.get(type));

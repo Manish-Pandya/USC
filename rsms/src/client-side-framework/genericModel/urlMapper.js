@@ -38,7 +38,7 @@
         'PIWipe'                : { getById:"getPIWipeById"                , getAll: "getAllPIWipes"                , save: "savePIWipe"                 },
         'ParcelWipe'            : { getById: "getParcelWipeById"           , getAll: "getAllParcelWipes"            , save: "saveParcelWipe"             },
         'DrumWipe'              : { getById: "getDrumWipeById"             , getAll: "getAllDrumWipes"              , save: "saveDrumWipe"               },
-        'DrumWipeTest'          : { getById: "getDrumWipeTestById"         , getAll: "getAllDrumlWipeTests"         , save: "saveDrumWipeTest"           },
+        'DrumWipeTest'          : { getById: "getDrumWipeTestById"         , getAll: "getAllDrumWipeTests"         , save: "saveDrumWipeTest"           },
         'InspectionWipeTest'    : { getById: "getInspectionWipeTestById"   , getAll: "getAllInspectionWipeTests"    , save: "saveInspectionWipeTest"     },
         'InspectionWipe'        : {getById: "getInspectionWipeById"        , getAll: "getAllInspectionWipes"        , save: "saveInspectionWipe"         },
         'MiscellaneousWipeTest' : {getById: "getMiscellaneousWipeTestById" , getAll: "getAllMiscellaneousWipeTests" , save: "saveMiscellaneousWipeTest"  },

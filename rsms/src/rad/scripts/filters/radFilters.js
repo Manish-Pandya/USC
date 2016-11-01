@@ -57,7 +57,8 @@ angular.module('00RsmsAngularOrmApp')
                 if (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
                     || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
                     || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.PICKED_UP
-                    || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM) {
+                    || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
+                    || (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE && !cycle.Drum_id)) {
 
                     if (cycle.Pour_allowed_date) {
                         pourDay = convenienceMethods.getDate(cycle.Pour_allowed_date)
@@ -78,7 +79,6 @@ angular.module('00RsmsAngularOrmApp')
     })
     .filter('disposalStatuses', function () {
         return function (statuses) {
-            console.log(statuses)
             if (!statuses) return;
             var disposalStatuses = [];
             var i = statuses.length;
@@ -86,7 +86,8 @@ angular.module('00RsmsAngularOrmApp')
                 var status = statuses[prop];
                 if (status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
   					|| status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
-                    || status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM) {
+                    || status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
+                    || status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE) {
                     disposalStatuses.unshift(status);
                 }
             }

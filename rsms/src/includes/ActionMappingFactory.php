@@ -72,7 +72,7 @@ class ActionMappingFactory {
 
                 //convenience method to split all usernames into first and last names
                 "makeFancyNames"=>new ActionMapping("makeFancyNames", "", "",$this::$ROLE_GROUPS["ADMIN"]),
-
+                "setHazardTypes"=>new ActionMapping("setHazardTypes", "", "",$this::$ROLE_GROUPS["ADMIN"]),
 
 
                 // PI Hub

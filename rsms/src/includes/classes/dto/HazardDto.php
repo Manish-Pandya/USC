@@ -56,7 +56,7 @@ class HazardDto {
     	$LOG = Logger::getLogger( __CLASS__ );
 
         //$LOG->fatal($this->getHazard_name());
-        $this->filterRooms($rooms);
+        $rooms = $this->filterRooms($rooms);
         $this->inspectionRooms = $rooms;
 
     }
@@ -78,7 +78,7 @@ class HazardDto {
 						ON a.principal_investigator_id = b.principal_investigator_id
                         LEFT JOIN principal_investigator c
                         ON c.key_id = a.principal_investigator_id
-						WHERE c.is_active = 1 AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
+						WHERE (c.is_active = 1 OR c.key_id = $this->principal_investigator_id) AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
@@ -120,6 +120,10 @@ class HazardDto {
             		}
             		if($relation->getHasMultiplePis() == true){
             			$room->setHasMultiplePis(true);
+                        if($relation->getPrincipal_investigator_id() != $this->principal_investigator_id){
+                            //array_push($this->inspectionRooms, $room);
+                            $room->setOtherLab(true);
+                        }
             		}
             	}
             }
@@ -134,6 +138,7 @@ class HazardDto {
         if($this->isPresent == true && $storedOnly == true){
         	$this->stored_only = true;
         }
+        return $rooms;
     }
 
 }

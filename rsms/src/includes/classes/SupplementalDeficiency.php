@@ -12,8 +12,9 @@ class SupplementalDeficiency extends GenericCrud
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"text"		=> "text",
-		"response_id"	=>	"integer",
+		"text"		                => "text",
+		"response_id"	            =>	"integer",
+        "corrected_in_inspection"	=>	"boolean",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -52,6 +53,8 @@ class SupplementalDeficiency extends GenericCrud
     private $roomIds;
     private $correctiveActions;
     private $showRooms;
+	private $corrected_in_inspection;
+
 
 	public function __construct(){
 

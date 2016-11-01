@@ -19,6 +19,17 @@ var Constants = (function (thing) {
         }
     };
 
+    constants.POSITION = ["Undergraduate", 
+        "Graduate Student", 
+        "Post-Doctoral Fellow", 
+        "Research Professor", 
+        "Research Associate", 
+        "Laboratory Technician", 
+        "Research Specialist",
+        "Scientific Staff", 
+        "Intern",
+        "Other"
+    ];
 
     constants.ROLE = {
         NAME:{
@@ -37,13 +48,14 @@ var Constants = (function (thing) {
     };
 
     constants.CARBOY_USE_CYCLE = {
-        STATUS:{
-            AVAILABLE:"Available",
-            IN_USE:"In Use",
-            DECAYING:"Decaying",
-            PICKED_UP:"Picked Up",
+        STATUS: {
+            AVAILABLE: "Available",
+            IN_USE: "In Use",
+            DECAYING: "Decaying",
+            PICKED_UP: "Picked Up",
             AT_RSO: "AT RSO",
-            HOT_ROOM: "In Hot Room"
+            HOT_ROOM: "In Hot Room",
+            MIXED_WASTE: "Mixed Waste"
         }
     };
 
@@ -145,7 +157,8 @@ var Constants = (function (thing) {
         READING_TYPE:{
             LSC:"LSC",
             ALPHA_BETA:"Alpha/Beta",
-            MCA:"MCA"
+            MCA: "MCA",
+            GM_METER: "GM Meter"
         }
     };
 

@@ -12,15 +12,15 @@ define('ADMIN_MAIL', 'hoke@graysail.com');
 
 if(isProduction()){
 	define('WEB_ROOT', '/rsms/');
-	define('LOGIN_PAGE', 'http://radon.qa.sc.edu/rsms');
+	define('LOGIN_PAGE', '/rsms/');
 	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', getcwd().'/biosafety-committees/protocol-documents/');
-	
-	
+
+
 }else{
 	define('WEB_ROOT', '/rsms/src/');
 	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');
 	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', 'D:/git/00_rsms/rsms/src/biosafety-committees/protocol-documents/');
-	
+
 }
 define('UPLOAD_DIR_PATH', getcwd());
 
@@ -49,7 +49,7 @@ require_once dirname(__FILE__) . '/includes/conf/connector.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Autoload 
+//  Autoload
 //
 ////////////////////////////////////////////////////////////////////////////////
 require_once(dirname(__FILE__) . '/Autoloader.php');
@@ -76,7 +76,7 @@ function isAdminUser(){
 function securityCheck(){
 	$LOG = Logger::getLogger('security');
 	$LOG->fatal("test");
-	
+
 	if (!isset($_SESSION["USER"])){
 		$LOG->fatal( $_SERVER['HTTP_COOKIE']);
 		//Forward to login page

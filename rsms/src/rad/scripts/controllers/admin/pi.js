@@ -26,44 +26,7 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadCarboyUseCycles();
                         pi.loadSolidsContainers();
                         $rootScope.pi = pi;
-
-                        $scope.auths = $scope.pi.Pi_authorization;
-                        $scope.mappedAmendments = [];
-                        for (var i = 0; i < $scope.pi.Pi_authorization.length; i++) {
-                            var amendment = $scope.auths[i];
-                            console.log(amendment)
-                            amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
-                            amendment.weight = parseInt(amendment.Amendment_number || "0");
-                            $scope.mappedAmendments[parseInt(amendment.weight)] = amendment;
-                        }
-
-                        $scope.getHighestAmendmentNumber = function (amendments) {
-                            if (!amendments) var highestAuthNumber = "0";
-
-                            if (amendments.length == 1) {
-                                $scope.selectedAmendment = parseInt(0);
-                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(0)];
-                                var highestAuthNumber = "0";
-                            } else {
-                                var highestAuthNumber = 0;
-                                for (var i = 0; i < amendments.length; i++) {
-                                    var auth = amendments[i];
-                                    if (auth.Amendment_number && auth.Amendment_number > highestAuthNumber) {
-                                        highestAuthNumber = auth.Amendment_number;
-                                    }
-                                    console.log(i);
-
-                                }
-                                $scope.selectedAmendment = parseInt(highestAuthNumber);;
-                                $scope.selectedPiAuth = $scope.mappedAmendments[parseInt(highestAuthNumber)];
-                                console.log(highestAuthNumber);
-                                return highestAuthNumber;
-
-                            }
-                        }
-                        $scope.getHighestAmendmentNumber($scope.mappedAmendments);
-
-
+                        //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;
                     },
                     function(){
@@ -79,11 +42,12 @@ angular.module('00RsmsAngularOrmApp')
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
-    $scope.openModal = function(templateName, object, isAmendment){
+    $scope.openModal = function (templateName, object, isAmendment) {
+
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
-        if(object)modalData[object.Class] = object;
+        if (object) modalData[object.Class] = object;
         af.setModalData(modalData);
         var modalInstance = $modal.open({
           templateUrl: templateName+'.html',
@@ -91,6 +55,29 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
+    $scope.getHighestAmendmentNumber = function (amendments) {
+        if (!amendments)  return;
+               
+        var highestAuthNumber = 0;
+        _.sortBy(amendments, [function (amendment) {
+            return moment(amendment.Approval_date).valueOf();
+        }]);
+        for (var i = 0; i < amendments.length; i++) {
+            var amendment = amendments[i];
+            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
+            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Termination_date", true);
+            amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
+            amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
+            amendment.weight = i;
+        }
+
+        $scope.mappedAmendments = amendments;
+
+        $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
+        $scope.selectedAmendment = amendments.length - 1;
+        return $scope.selectedAmendment;
+        
+    }
 
     $scope.openAuthModal = function (templateName, piAuth, auth) {
         var modalData = {};
@@ -170,11 +157,18 @@ angular.module('00RsmsAngularOrmApp')
         if (!$scope.modalData.PIAuthorizationCopy) {
             $scope.modalData.PIAuthorizationCopy = {
                 Class: 'PIAuthorization',
-                Rooms: null,
+                Rooms: [],
                 Authorization_number: null,
                 Is_active: true,
-                Principal_investigator_id: $scope.modalData.pi.Key_id
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Authorizations:[]
             }
+        }
+        $scope.getApprovalDate = function (a, isAmendment) {
+            if (isAmendment) {
+                return "";
+            }
+            return a.Approval_date;
         }
 
         if(!$scope.modalData.AuthorizationCopy){
@@ -208,8 +202,9 @@ angular.module('00RsmsAngularOrmApp')
             )
 
         $scope.getTerminationDate = function (piAuth) {
-            if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.getDateString(piAuth.Termination_date).formattedDate;
+            if (piAuth.Termination_date) piAuth.Form_Termination_date = convenienceMethods.dateToIso(piAuth.Termination_date);
         }
+
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
         console.log(af.getCachedCollection('CarboyUseCycle'));
 
@@ -239,8 +234,16 @@ angular.module('00RsmsAngularOrmApp')
             $scope.modalData.PIAuthorizationCopy.Authorizations.push(newAuth);
         }
 
-        $scope.close = function(){
+        $scope.close = function(auth){
             af.deleteModalData();
+            if (auth) {
+                var i = auth.Authorizations.length;
+                while (i--) {
+                    var is = auth.Authorizations[i];
+                    if (!is.Key_id) auth.Authorizations.splice(i,1);
+                }
+            }
+
             $modalInstance.dismiss();
         }
 
@@ -254,14 +257,13 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 }
             }else{
-                console.log(terminated);
                 copy.Is_active = false;
+                copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
                 for (var n = 0; n < copy.Authorizations; n++) {                    
                     copy.Authorizations[n].Is_active = false;                    
                 }
             }
-            console.log(copy);
             af.savePIAuthorization(copy, auth, pi);
             $modalInstance.dismiss();
             af.deleteModalData();
@@ -380,35 +382,6 @@ angular.module('00RsmsAngularOrmApp')
             console.log($scope.suggestedAmendmentNumber);
             return $scope.suggestedAmendmentNumber
         }
-/*
-        $scope.checkboxChange = function(thing, authorization){
-            if(thing.isAuthorized){
-                if(!authorization[thing.Class+'s']){
-                    authorization[thing.Class+'s'] = [thing];
-                }else{
-                    var thingFound = false;
-                    var i = authorization[thing.Class+'s'].length;
-                    while(i--){
-                        if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                            thingFound = true;
-                        }
-                    }
-                    if(!thingFound){
-                        authorization[thing.Class+'s'].push(thing)
-                    }
-                }
-            }else{
-                var thingFound = false;
-                var i = authorization[thing.Class+'s'].length;
-                while(i--){
-                    if(authorization[thing.Class+'s'][i].Key_id == thing.Key_id){
-                        authorization[thing.Class+'s'].splice(i,1);
-                        thing.isAuthorized = false;
-                    }
-                }
-            }
-        }
-        */
 
   }])
 

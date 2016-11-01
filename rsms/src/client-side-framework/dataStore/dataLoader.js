@@ -150,7 +150,9 @@ dataLoader.loadChildObject = function (parent, property, className, id) {
         var getString = parent.api.fetchActionString("getById", className);
         var idParam = '&id=' + id;
         parent.api.read(getString, idParam).then(function (returnedPromise) {
-            parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+            if (returnedPromise && returnedPromise.data) {
+                parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+            }
         });
     }
 }

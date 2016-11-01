@@ -1660,8 +1660,9 @@ td.corrective-action.corrected-during-inspection{
 }
 table tr td table.nested-table td{
     margin:0;
-    width: 50%;
+    width: 100%;
     vertical-align: middle !important;
+    height: 100%;
 }
 
 table tr td table.nested-table td > div{/* Internet Explorer 10 */
@@ -4063,5 +4064,6 @@ table.quickdate-calendar td:hover {
 }
 
 .question-hub h2.row ul li{
+  line-height: normal;
   margin-bottom:8px;
 }

@@ -21,9 +21,24 @@ angular
 
             rac.createCopy = function(obj)
             {
+                var l = dataStoreManager[obj.Class].length;
+                for (var i = 0 ; i < l; i++) {
+                    dataStoreManager[obj.Class][i].edit = false;
+                }
+
                 obj.edit = true;
+                $rootScope[obj.Class + 'Copy'] = null;
                 $rootScope[obj.Class+'Copy'] = dataStoreManager.createCopy(obj);
                 return $rootScope[obj.Class+'Copy'];
+            }
+
+            rac.unedit = function (collection) {
+                var l = collection.length;
+                for (var i = 0 ; i < l; i++) {
+                    collection[i].edit = false;
+                    console.log(collection[i]);
+
+                }
             }
 
             rac.cancelEdit = function( obj )

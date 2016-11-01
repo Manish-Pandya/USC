@@ -79,8 +79,11 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                         }
                         if(question.Responses.SupplementalRecommendations && question.Responses.SupplementalRecommendations.length){
                             var j = question.Responses.SupplementalRecommendations.length;
-                            while(j--){
-                                if(question.Responses.SupplementalRecommendations.Is_active)question.isComplete = true;
+                            while (j--) {
+                                if (question.Responses.SupplementalRecommendations[j].Is_active) {
+                                    question.isComplete = true;
+                                    break;
+                                }
                             }
                         }
                         if(question.isComplete){
@@ -94,12 +97,15 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                     //question is answered "no"
                     else{
                         //question has no deficiencies to select, or none selected if it does have ones to select
-                        if ((!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length) && (!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)){
+                        if ((!question.Responses.DeficiencySelections || !question.Responses.DeficiencySelections.length)
+                            && ((!question.Responses.SupplementalDeficiencies || !question.Responses.SupplementalDeficiencies.length)
+                            || (question.Responses.SupplementalDeficiencies.length && question.Responses.SupplementalDeficiencies.every(function (sd) { return !sd.Is_active })))) {
                             question.isComplete = false;
                         }
                         
                         //question has one or more deficiencies selected
-                        else{
+                        else {
+
                             question.isComplete = true;
                             checklist.completedQuestions++;
                         }
@@ -686,6 +692,10 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
             }else{
               //we unset corrected during inspection
               var url = '../../ajaxaction.php?action=removeCorrectedInInspection&deficiencyId='+def_id+'&inspectionId='+this.inspection.Key_id+'&callback=JSON_CALLBACK';
+            }
+
+            if (deficiency.Class == "SupplementalDeficiency") {
+                url = url + "&supplemental=true";
             }
 
             convenienceMethods.getDataAsPromise( url )

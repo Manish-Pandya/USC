@@ -6,25 +6,22 @@
         <span ng-init="selectedAmendment" />
         <div ng-class="{'inactive': selectedPiAuth.Termination_date != null}">
             <h3 class="card-header padding">
-                <i class="icon-unlocked-2"></i>{{pi.User.Name}} has
                 <span class="bold">
-                    {{selectedPiAuth.Authorizations.length}} authorized rad material<span ng-if="selectedPiAuth.Authorizations.length != 1">s</span>
+                    {{selectedPiAuth.Authorizations.length}} Rad Material<span ng-if="selectedPiAuth.Authorizations.length != 1">s</span>
                     under Authorization #{{selectedPiAuth.Authorization_number}}
+                    <span style="margin-left:20px" ng-if="selectedPiAuth.Termination_date">(Terminated {{selectedPiAuth.Termination_date | dateToISO}})</span>
                 </span>
-                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorizations)" ng-options="piAuth.weight as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
+
+                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorization)" ng-options="mappedAmendments.indexOf(piAuth) as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
                     <option style="display:none" value="">Select Amendment</option>
-                </select>       
-                <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-pencil"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
-                <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
+                </select>
+
+                <a class="btn btn-primary left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-pencil"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
+                <a class="btn btn-success left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
+                <a class="btn btn-primary left" ng-if="selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-pencil"></i>Edit Termination</a>
                 <a class="btn btn-danger left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-cancel-2"></i>Terminate Authorization</a>
                 <a class="btn btn-info left" ng-if="selectedPiAuth.Termination_date" ng-click="reopenAuth(selectedPiAuth)"><i class="icon-checkmark"></i>Reopen Authorization</a>
 
-                <div style="margin-left:20px" ng-if="selectedPiAuth.Termination_date">(Terminated {{selectedPiAuth.Termination_date | dateToISO}})</div>
-            </h3>
-            <h3 class="card-header padding auths" ng-if="!mappedAmendments.length">
-                <i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="piAuth">under Authorization #{{piAuth.Authorization_number}}</span>
-                <a class="btn btn-primary left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-unlocked-2"></i><span ng-if="!piAuth">Add</span><span ng-if="piAuth">Edit</span> Authorization</a>
-                <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
             </h3>
             <div class="card-content" ng-repeat="piAuth in mappedAmendments" ng-if="selectedView == 'authorizations' && selectedAmendment == piAuth.weight">
                 <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="mappedAmendments.length">
@@ -45,7 +42,6 @@
                 </div>
                 <h3 style="margin-bottom:5px;">
                     Authorized Isotopes
-                    <a class="btn btn-success left" ng-click="openAuthModal('views/admin/admin-modals/authorization-modal', piAuth)"><i class="icon-unlocked-2"></i>Add Isotope Authorization</a>
                 </h3>
                 <div class="fake-table striped bordered" ng-if="piAuth.Authorizations.length">
                     <div class="table-header">
@@ -54,15 +50,11 @@
                         <h3>Half Life</h3>
                         <h3>Emitter Type</h3>
                         <h3>Maximum Quantity</h3>
-                        <h3>Approval Date</h3>
-                        <h3>Revocation Date</h3>
                         <h3>Form</h3>
                     </div>
-                    <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'" ng-class="{'inactive':!auth.Is_active}">
+                    <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'">
                         <div>
                             <a class="btn btn-primary" ng-click="openAuthModal('views/admin/admin-modals/authorization-modal', piAuth, auth)"><i class="icon-pencil"></i></a>
-                            <a ng-if="auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-danger"><i class="icon-remove"></i></a>
-                            <a ng-if="!auth.Is_active" ng-click="af.setObjectActiveState(auth)" class="btn btn-success"><i class="icon-checkmark"></i></a>
                         </div>
 
                         <div>
@@ -82,14 +74,6 @@
                         </div>
 
                         <div>
-                            {{auth.Approval_date | dateToISO}}
-                        </div>
-
-                        <div>
-                            {{auth.Revocation_date | dateToISO}}
-                        </div>
-
-                        <div>
                             {{auth.Form}}
                         </div>
                     </div>
@@ -98,8 +82,8 @@
         </div>    
     </div>
     <div class="card full pos" ng-click="af.setSelectedView('orders')">
-        <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has <span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
-        <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
+        <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i><span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
+        <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>No Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
         <div class="card-content" ng-if="selectedView == 'orders'">
             <div class="fake-table striped bordered" ng-if="pi.PurchaseOrders.length">
                 <div class="table-header">
@@ -136,8 +120,8 @@
         </div>
     </div>
     <div class="card full parcels" ng-click="af.setSelectedView('parcels')">
-        <h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i>{{pi.User.Name}} has <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
-        <h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>{{pi.User.Name}} has no Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+        <h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i><span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+        <h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>No Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
         <div class="card-content" ng-if="selectedView == 'parcels'">
             <div class="fake-table striped bordered" ng-if="pi.ActiveParcels.length">
                 <div class="table-header">
@@ -204,7 +188,7 @@
 
     <div class="card full carboys" ng-click="af.setSelectedView('carboys')">
         <h3 class="card-header padding " ng-if="pi.CarboyUseCycles.length">
-            <i class="icon-carboy"></i>{{pi.User.Name}} has <span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
+            <i class="icon-carboy"></i><span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
         </h3>
         <h3 class="card-header padding carboys" ng-if="!pi.CarboyUseCycles.length">
@@ -221,11 +205,6 @@
                     <h3>mCi</h3>
                 </div>
                 <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
-                    <!-- do we need to remove carboys from labs here?
-                                        <div>
-                                            <a ng-if="cycle.Is_active && cycle.Status=='In Use'" ng-click="af.removeCarboyFromLab(cycle)" class="btn btn-danger"><i class="icon-remove"></i></a>
-                                        </div>
-                    -->
                     <div>{{cycle.Carboy.Carboy_number}}</div>
                     <div>{{cycle.Room.Name}}</div>
                     <div>{{cycle.Lab_date | dateToISO}}</div>
@@ -236,7 +215,7 @@
     </div>
     <div class="card half solids-containers" ng-click="af.setSelectedView('containers')">
         <h3 class="card-header padding " ng-if="pi.SolidsContainers">
-            <i class="icon-remove-2"></i>{{pi.User.Name}} has <span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
+            <i class="icon-remove-2"></i><span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/containers-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Assign Container</a>
         </h3>
         <h3 class="card-header padding solids-containers" ng-if="!pi.SolidsContainers.length">

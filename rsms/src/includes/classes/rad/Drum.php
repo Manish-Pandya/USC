@@ -57,6 +57,13 @@ class Drum extends RadCrud {
 			"foreignKeyName" => "drum_id"
 	);
 
+    public static $CARBOY_USE_CYCLE_RELATIONSHIP = array(
+        "className" => "CarboyUseCycle",
+        "tableName" => "carboy_use_cycle",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "drum_id"
+    );
+
     protected static $WIPE_TEST_RELATIONSHIP = array(
         "className" => "DrumWipeTest",
         "tableName" => "drum_wipe_test",
@@ -90,6 +97,9 @@ class Drum extends RadCrud {
 
 	/** Array of Scint Vial collections in this drum */
 	private $scintVialCollections;
+
+    /** Array of CarboyUseCycles in this drum */
+	private $carboyUseCycles;
 
     /** Is this a drum for scint_vials?  if not it is one for solids */
     private $is_scint_vial;
@@ -182,6 +192,23 @@ class Drum extends RadCrud {
 		$this->scintVialCollections = $collections;
 	}
 
+    public function getCarboyUseCycles(){
+		if($this->carboyUseCycles === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->carboyUseCycles = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$CARBOY_USE_CYCLE_RELATIONSHIP)
+			);
+		}
+		return $this->carboyUseCycles;
+	}
+	public function setCarboyUseCycles($cycles) {
+		$this->carboyUseCycles = $cycles;
+	}
+
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for drum');
@@ -193,12 +220,16 @@ class Drum extends RadCrud {
 			}
 		}
 		foreach($this->getScintVialCollections() as $collection){
-			$LOG->debug($collection);
-
 			if($collection->getParcel_use_amounts() != NULL){
 				$amounts = array_merge($amounts, $collection->getParcel_use_amounts());
 			}
 		}
+        foreach($this->getCarboyUseCycles() as $cycle){
+			if($cycle->getParcelUseAmounts() != NULL){
+				$amounts = array_merge($amounts, $cycle->getParcel_use_amounts());
+			}
+		}
+
 		$this->contents = $this->sumUsages($amounts);
 		return $this->contents;
 	}
@@ -222,7 +253,7 @@ class Drum extends RadCrud {
 	}
 
 	public function setWipe_test($test){
-		$this->wipe_test = array($test);
+		$this->wipe_test = $test;
 	}
 
     public function getIs_scint_vial(){return $this->is_scint_vial;}

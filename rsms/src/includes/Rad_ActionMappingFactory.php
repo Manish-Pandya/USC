@@ -44,6 +44,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPIAuthorizationByPIId"		=> new ActionMapping("getPIAuthorizationByPIId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllCarboyReadingAmounts"		=> new ActionMapping("getAllCarboyReadingAmounts", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+
 
 				// getAll functions
 				"getAllAuthorizations"			=> new ActionMapping("getAllAuthorizations", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
