@@ -115,51 +115,21 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- TODO include everything in certain directories by default -->
 
 <!-- app -->
-<script type="text/javascript" src="./scripts/app.js"></script>
+<script type="text/javascript" src="scripts/app.js"></script>
 
 <!-- business logic-->
-<script type="text/javascript" src="./scripts/actionFunctions.js"></script>
+<!--script type="text/javascript" src="scripts/actionFunctions.js"><script>-->
 
 <!-- controllers -->
-<script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
-<script type="text/javascript" src="./scripts/controllers/main.js"></script>
-<script type="text/javascript" src="./scripts/controllers/about.js"></script>
-<script type="text/javascript" src="./scripts/controllers/users.js"></script>
-<script type="text/javascript" src="./scripts/controllers/hazardHub.js"></script>
-<script type="text/javascript" src="./scripts/controllers/hazardInventory.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/InventoryViewCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/admin-pickup-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/wipe-test-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
+<script src="scripts/controllers/IBCCtrl.js"></script>
 
-
-<script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
-<script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
-<script src="scripts/controllers/pi/AuthCtrl.js"></script>
 <!-- directives -->
-<script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
-<script type="text/javascript" src="./scripts/directives/combobox.js"></script>
-<script type="text/javascript" src="scripts/directives/piAuths.js"></script>
+<!--script type="text/javascript" src="./scripts/directives/dateInput.js"><script>-->
 
 
 
 <!-- filters -->
-<script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
-<script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
-<script type="text/javascript" src="./scripts/filters/radFilters.js"></script>
+<!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>
@@ -175,7 +145,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 
 <!-- models -->
-<script src="./scripts/models/Authorization.js"></script>
+<!--script src="./scripts/models/Authorization.js"></!--script>
 <script src="./scripts/models/Carboy.js"></script>
 <script src="./scripts/models/CarboyUseCycle.js"></script>
 <script src="./scripts/models/CarboyReadingAmount.js"></script>
@@ -184,7 +154,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/Isotope.js"></script>
 <script src="./scripts/models/Parcel.js"></script>
 <script src="./scripts/models/ParcelUse.js"></script>
-<script src="./scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
+<script src="./scripts/models/ParcelUseAmount.js"></script>
 <script src="./scripts/models/Pickup.js"></script>
 <script src="./scripts/models/PrincipalInvestigator.js"></script>
 <script src="./scripts/models/PurchaseOrder.js"></script>
@@ -207,7 +177,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/PIWipeTest.js"></script>
 <script src="./scripts/models/PIWipe.js"></script>
 <script src="scripts/models/DrumWipe.js"></script>
-<script src="scripts/models/DrumWipeTest.js"></script>
+<script src="scripts/models/DrumWipeTest.js"></script>-->
 </head>
 <body>
 
