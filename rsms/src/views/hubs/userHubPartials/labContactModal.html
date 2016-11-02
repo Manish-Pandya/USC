@@ -3,9 +3,7 @@
         <h2 style="padding:5px" ng-show="modalData.Key_id" class="greenBg">Editing {{modalData.Name}}</h2>
         <h2 style="padding:5px" ng-hide="modalData.Key_id" class="greenBg">Create a New Lab Contact</h2>
     </div>
-    <div class="modal-body">
-        <form class="form-horizontal form">
-
+        <div class="modal-body">
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Username</label>
                 <div class="controls">
@@ -56,12 +54,10 @@
                     <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Lab_phone|tel">
                 </div>
             </div>
-
-            <div class="control-group">
+            <div class="control-group" ng-if="!modalData.piHub">
                 <label class="control-label" for="inputEmail">Principal Investigator</label>
                 <div class="controls span4" style="padding-left: 5px;">
                     <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
-
                     <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)">
                         <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                         <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
@@ -98,12 +94,12 @@
                     </select>
                 </div>
             </div>
+        </div>
 
-        </form>
         <div class="modal-footer">
             <h3 class="alert alert-danger" ng-if="modalError" style="text-align:left">{{modalError}}</h3>
             <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
             <button class="btn btn-success left btn-large" ng-disabled="form.$invalid"><i class="icon-checkmark" />Save</button>
             <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
-</form>
+    </form>

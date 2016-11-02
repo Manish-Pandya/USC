@@ -5,11 +5,11 @@
     <div class="modal-body" style="height:300px;">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         <div class="control-group">
-         <label class="control-label" for="inputEmail">Username</label>
+         <label class="control-label" for="inputEmail">Select a {{modalData.type}}</label>
          <div class="controls">
                 <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="down" ng-if="users" on-select="save($item)">
                     <ui-select-match placeholder="Select a {{modalData.type}}">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="user in users | isNotContact | propsFilter: {Name: $select.search}">
+                    <ui-select-choices repeat="user in users | noSupervisor | propsFilter: {Name: $select.search}">
                         <div ng-bind-html="user.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>

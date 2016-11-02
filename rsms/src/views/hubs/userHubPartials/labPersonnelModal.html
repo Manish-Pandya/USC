@@ -5,106 +5,104 @@
     </div>
     <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
-        <form class="form-horizontal form">
 
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Username</label>
-                <div class="controls">
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Username</label>
+            <div class="controls">
 
-                    <div class="input-append" ng-if="isProductionServer && !modalData.Username">
-                        <input type="text" name="userName" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username" required>
-                        <a class="add-on orangeBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
-                        <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif" />
-                    </div>
-                    <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" name="userName" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
+                <div class="input-append" ng-if="isProductionServer && !modalData.Username">
+                    <input type="text" name="userName" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username" required>
+                    <a class="add-on orangeBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
+                    <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif" />
                 </div>
+                <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" name="userName" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
             </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">First Name</label>
-                <div class="controls">
-                    <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="First Name" required>
-                    <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="!isProductionServer || modalData.Username" placeholder="First Name" required>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Last Name</label>
-                <div class="controls">
-                    <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Last Name" required>
-                    <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="!isProductionServer || modalData.Username" placeholder="Last Name" required>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Email</label>
-                <div class="controls">
-                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
-                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
-                    <span class="help-block" ng-show="form.email.$error.pattern">{{emailErrorMsg}}</span>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Emergency Phone</label>
-                <div class="controls">
-                    <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Emergency_phone|tel">
-                    <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Emergency_phone|tel">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Lab Phone</label>
-                <div class="controls">
-                    <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Lab_phone | tel">
-                    <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Lab_phone | tel">
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Principal Investigator</label>
-                <div class="controls span4" style="padding-left: 5px;">
-                    <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
-
-                    <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)" required>
-                        <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
-                            <div ng-bind-html="pi.Name | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Roles(s)</label>
-                <div class="controls span4" style="padding-left: 5px;">
-                    <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-
-                    <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
-                        <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="role in roles | orderBy:'Name'  | propsFilter: {Name: $select.search}">
-                            <div ng-bind-html="role.Name | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-
-                    <ul style="margin-top:3px;">
-                        <li ng-repeat="role in modalData.Roles | orderBy:'Name' ">
-                            <button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == Constants.ROLE.NAME.LAB_PERSONNEL" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">Position</label>
-                <div class="controls span4" style="padding-left: 5px;">
-                    <select ng-model="modalData.Position" ng-options="position as position for position in Constants.POSITION">
-                        <option value="" style="display:none">--Select a Position--</option>
-                    </select>
-                </div>
-            </div>
-
-        </form>
-        <div class="modal-footer">
-            <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
-            <button class="btn btn-success left btn-large" ng-disabled="form.$invalid || !modalData.Supervisor"><i class="icon-checkmark" />Save</button>
-            <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">First Name</label>
+            <div class="controls">
+                <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="First Name" required>
+                <input type="text" name="firstName" id="inputEmail" ng-model="modalData.First_name" ng-if="!isProductionServer || modalData.Username" placeholder="First Name" required>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Last Name</label>
+            <div class="controls">
+                <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Last Name" required>
+                <input type="text" name="lastName" id="inputEmail" ng-model="modalData.Last_name" ng-if="!isProductionServer || modalData.Username" placeholder="Last Name" required>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
+                <span class="help-block" ng-show="form.email.$error.pattern">{{emailErrorMsg}}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Emergency Phone</label>
+            <div class="controls">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Emergency_phone|tel">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Emergency_phone|tel">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Lab Phone</label>
+            <div class="controls">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Lab_phone | tel">
+                <input type="text" name="phone" id="inputEmail" ng-model="modalData.Lab_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Lab_phone | tel">
+            </div>
+        </div>
+
+        <div class="control-group" ng-if="!modalData.piHub">
+            <label class="control-label" for="inputEmail">Principal Investigator</label>
+            <div class="controls span4" style="padding-left: 5px;">
+                <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
+
+                <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)" required>
+                    <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
+                        <div ng-bind-html="pi.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Roles(s)</label>
+            <div class="controls span4" style="padding-left: 5px;">
+                <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
+
+                <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
+                    <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="role in roles | orderBy:'Name'  | propsFilter: {Name: $select.search}">
+                        <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+
+                <ul style="margin-top:3px;">
+                    <li ng-repeat="role in modalData.Roles | orderBy:'Name' ">
+                        <button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == Constants.ROLE.NAME.LAB_PERSONNEL" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Position</label>
+            <div class="controls span4" style="padding-left: 5px;">
+                <select ng-model="modalData.Position" ng-options="position as position for position in Constants.POSITION">
+                    <option value="" style="display:none">--Select a Position--</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <i class="icon-spinnery-dealie spinner small" style="margin: 3px;" ng-if="modalData.IsDirty"></i>
+        <button class="btn btn-success left btn-large" ng-disabled="form.$invalid || !modalData.Supervisor"><i class="icon-checkmark" />Save</button>
+        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+    </div>
 </form>

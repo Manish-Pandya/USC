@@ -36,15 +36,11 @@
     </div>
     <div class="modal-body">
         <div class="control-group">
-         <label class="control-label" for="inputEmail">Select Building</label>
          <div class="controls span4">
-
-             <ui-select ng-model="building.selected" class="building" theme="selectize" ng-disabled="disabled" style="width:350px;" on-select="onSelectBuilding($item)">
-                <ui-select-match placeholder="Select or search for a Buidling">{{$select.selected.Name}}</ui-select-match>
-                <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search}">
-                    <div ng-bind-html="building.Name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+             <label class="control-label" for="inputEmail">Select Building</label>
+             <select ng-change="onSelectBuilding(chosenBuilding)" ng-options="building as building.Name for building in buildings | orderBy: 'Name'" ng-model="chosenBuilding">
+                 <option style="display:none" value="">Select Building</option>
+             </select>
 
             <span ng-if="!buildings">
                 <input class="span4" style="background:white;border-color:#999; width:350px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
@@ -52,10 +48,10 @@
             </span>
          </div>
         </div>
-
+        {{chosenBuilding.roomsByFloor}}
        <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
        <ul ng-show="!addRoom" style="margin-top:5px">
-            <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
+            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
                 <h3>Floor: {{key}}</h3>
                 <ul class="create-room">
                     <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
