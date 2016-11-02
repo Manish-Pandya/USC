@@ -426,6 +426,115 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         $rootScope.dtoCopy = false;
     }
 
+    factory.parseDtos = function (dto) {
+        console.log(dto);
+        var dtos = [];
+        var l = dto.Pis.length;
+        for (var i = 0; i < l; i++) {
+            var pi = dto.Pis[i];
+            pi = factory.getInspectionsByPi(pi, dto.Inpsections);       
+            
+            
+            //create a dto obj for each inspection that the pi has
+            //cache an obj of uninspected rooms, grouped by building
+            var n = pi.Inspections.length;
+            for(var j = 0; j < n; j++){
+                var dtoTemplate = {
+                    Pi_name: pi.User.Name,
+                    pi_key_id: pi.User.Key_id,
+
+                }
+
+            }
+
+
+            //create a dto obj for each inspection the pi still needs
+        }
+        dtos = dto.Pis;
+        console.log(dtos);
+        return dtos;
+    }
+  /*
+    private $pi_name;
+
+
+    private $pi_key_id;
+	
+    private $building_name;
+	
+    private $building_key_id;
+	
+    private $campus_key_id;
+	
+    private $campus_name;
+
+    private $building_rooms;
+
+
+    private $inspection_rooms;
+
+
+    private $inspections;
+	
+    private $inspection_id;
+    private $bio_hazards_present;
+    private $chem_hazards_present;
+    private $rad_hazards_present;
+    private $deficiency_selection_count;	
+
+    
+    */
+
+    factory.getInspectionsByPi = function (pi, inspections) {
+        var l = inspections.length;
+        pi.Inspections = [];
+        for (var i = 0 ; i < l; i++) {
+            var insp = inspections[i];
+            if (insp.Principal_investigator_id == pi.Key_id) {
+                pi.Inspections.push(insp);
+            }
+        }
+        return pi;
+    }
+
+    factory.collapseDtos = function (dtos) {
+        var l = dtos.length;
+        var ids = [];
+        var duplicateIds = [];
+        for (var i = 0; i < l; i++) {
+            var d = dtos[i];
+            if (!d.Inspections) continue;
+            if (ids.indexOf(d.Inspections.Key_id) < 0) {
+                ids.push(d.Inspections.Key_id)
+            } else if (duplicateIds.indexOf(d.Inspections.Key_id) < 0) {
+                duplicateIds.push(d.Inspections.Key_id);
+            }
+        }
+        var l = duplicateIds.length;
+        for (var i = 0; i < l; i++) {
+            var id = duplicateIds[i];
+            factory.collapseDto(id, dtos);
+        }
+
+        return dtos;
+    }
+
+    factory.collapseDto = function (id, dtos) {
+        //find the dtos that match this 
+        var relevantDtos = dtos.reduce(function (relevantDtos, dto) {
+            if (dto.Inspections && dto.Inspections.Key_id == id) {
+                relevantDtos.push(dto);
+            }
+            return relevantDtos;
+        }, []);
+
+        var masterDto = relevantDtos[0];
+
+
+        console.log(masterDto);
+        return relevantDtos
+    }
+
     return factory;
 })
 
@@ -442,6 +551,8 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         return manageInspectionsFactory.getInspectionScheduleDtos(year)
             .then(
                 function (dtos) {
+                    //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
+                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
                     $scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);

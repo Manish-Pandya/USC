@@ -35,7 +35,6 @@ require_once '../top_view.php';
         </li>
     </ul>
 </div>
-
     <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px; z-index:9999">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
