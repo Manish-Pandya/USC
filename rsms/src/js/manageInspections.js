@@ -510,29 +510,92 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 duplicateIds.push(d.Inspections.Key_id);
             }
         }
+        
+        var masterIndex;
         var l = duplicateIds.length;
         for (var i = 0; i < l; i++) {
             var id = duplicateIds[i];
-            factory.collapseDto(id, dtos);
+            var relevantDtos = dtos.reduce(function (relevantDtos, dto, index) {
+                if (dto.Inspections && dto.Inspections.Key_id == id) {
+                    relevantDtos.push(dto);
+                    if (!masterIndex) {
+                        var masterIndex = index;
+                    }
+                    dtos.splice(index, 1);
+                }
+                return relevantDtos;
+            }, []);
+            var masterDto = JSON.parse(JSON.stringify(relevantDtos[0]));
+            map = {
+                Building_rooms: null,
+                Campus_name: null,
+                Building_name: null,
+                Campus_key_id: null,
+                Building_key_id: null,
+                Campuses: invertRooms(relevantDtos),
+                IsMultiple:true,
+                Bio_hazards_present: relevantDtos.some(function(dto){return dto.Bio_hazards_present }),
+                Chem_hazards_present: relevantDtos.some(function (dto) { return dto.Chem_hazards_present }),
+                Rad_hazards_present: relevantDtos.some(function (dto) { return dto.Rad_hazards_present }),
+                Deficiency_selection_count: null
+            }
+            angular.extend(masterDto, map);
+            console.log(masterDto);
+
+            dtos.splice(masterIndex, 0, masterDto);
+        }
+
+        function invertRooms(dtos) {
+            campuses = dtos.map(function (dto, idx) {
+                var campus = {
+                    Campus_id: dto.Campus_key_id,
+                    Campus_name:dto.Campus_name,
+                    Buildings:[]
+                }
+                campus.Buildings.push({ Building_id: dto.Building_key_id, Buidling_name: dto.Building_name });
+                
+                campus.Buildings = campus.Buildings.map(function (building, idxInner) {
+                    var rooms = dto.Inspection_rooms;
+                    building.Rooms = rooms.map(function (room) {
+                        var innerRoom = room;
+                        return room;
+                    })
+                    return building;
+                })
+                
+                return campus;
+            })
+
+            return campuses;
+
+        }
+
+        function invertRoomForNonMultiples(dto) {
+            var rooms = dto.Inspection_rooms || dto.Building_rooms;
+            campuses = rooms.map(function (dto, idx) {
+                var campus = {
+                    Campus_id: dto.Campus_key_id,
+                    Campus_name: dto.Campus_name,
+                    Buildings: []
+                }
+                campus.Buildings.push({ Building_id: dto.Building_key_id, Buidling_name: dto.Building_name });
+
+                campus.Buildings = campus.Buildings.map(function (building, idxInner) {
+                    var rooms = dto.Inspection_rooms;
+                    building.Rooms = rooms.map(function (room) {
+                        var innerRoom = room;
+                        return room;
+                    })
+                    return building;
+                })
+
+                return campus;
+            })
+
+            return campuses;
         }
 
         return dtos;
-    }
-
-    factory.collapseDto = function (id, dtos) {
-        //find the dtos that match this 
-        var relevantDtos = dtos.reduce(function (relevantDtos, dto) {
-            if (dto.Inspections && dto.Inspections.Key_id == id) {
-                relevantDtos.push(dto);
-            }
-            return relevantDtos;
-        }, []);
-
-        var masterDto = relevantDtos[0];
-
-
-        console.log(masterDto);
-        return relevantDtos
     }
 
     return factory;
@@ -553,7 +616,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 function (dtos) {
                     //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
                     $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
-                    $scope.dtos = dtos;
+                    //$scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);
                 }
