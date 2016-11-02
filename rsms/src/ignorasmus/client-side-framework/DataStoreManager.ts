@@ -70,7 +70,6 @@ abstract class DataStoreManager {
     //
     //----------------------------------------------------------------------
 
-    private constructor() { } // Static class cannot be instantiated
 
     //----------------------------------------------------------------------
     //
