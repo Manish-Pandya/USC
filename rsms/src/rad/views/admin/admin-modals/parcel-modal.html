@@ -1,5 +1,5 @@
 <div class="modal-header" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px; background:rgba(153, 96, 40, 1); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an parcel for {{modalData.pi.User.Name}}</h2>
+    <h2 ng-show="!addRoom" style="padding:5px; background:rgba(153, 96, 40, 1); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> n parcel for {{modalData.pi.User.Name}}</h2>
 </div>
 
 <div class="modal-body">
@@ -15,7 +15,7 @@
     <div class="control-group">
         <label class="control-label">Authorization</label>
         <div class="controls">
-            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in modalData.pi.Pi_authorization.Authorizations" ng-change="selectAuth()">
+            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="selectAuth()">
                 <option selected="selected" value="">Select an authorization</option>
             </select>
         </div>
