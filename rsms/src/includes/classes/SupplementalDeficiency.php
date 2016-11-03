@@ -117,8 +117,8 @@ class SupplementalDeficiency extends GenericCrud
 	}
 	public function setRooms($rooms){ $this->rooms = $rooms; }
 
-	public function getCorrected_in_inspection() {return $this->corrected_in_inspection;}
-	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = $corrected; }
+	public function getCorrected_in_inspection() {return (bool) $this->corrected_in_inspection;}
+	public function setCorrected_in_inspection($corrected) { $this->corrected_in_inspection = (boolean) $corrected; }
 
 	public function getShow_rooms(){return $this->show_rooms;}
 	public function setShow_rooms($show_rooms){$this->show_rooms = $show_rooms;}

@@ -11,15 +11,13 @@
     <span ng-if="!deficiency.edit && deficiency.Is_active && getNeedsRooms(deficiency, checklist, question)" style="margin-top:0" class="deficiency-rooms-list">
         (Room<span ng-if="rooms.length != 1">s</span>:
         <span ng-repeat="room in rooms = (deficiency.InspectionRooms | roomChecked:question:deficiency)">
-            {{room.Name}}
-            <span ng-if="!$last">,&nbsp;</span>
-        </span>)
+            {{room.Name}}<span ng-if="!$last" style="margin-right:-2px">,</span></span>)
     </span>
     <i ng-if="!deficiency.edit && deficiency.Is_active" class="fa fa-door-open primary checklistRoomIcon" ng-click="showRooms($event, deficiency, $element, checklist, question)"></i>
    
     <span ng-if="deficiency.edit" style="margin: 8px 0 ;display: block;">
         <textarea ng-model="SupplementalDeficiencyCopy.Text" style="width:50%"></textarea><br>
-        <a ng-show="deficiency.edit" ng-click="cf.saveSupplementalDeficiency(question, false, deficiency, checklist)" class="btn btn-success">Save</a>
+        <button ng-show="deficiency.edit" ng-disabled="!SupplementalDeficiencyCopy.Text" ng-click="cf.saveSupplementalDeficiency(question, false, deficiency, checklist)" class="btn btn-success">Save</button>
         <a ng-show="deficiency.edit" ng-click="cf.objectNullifactor(deficiency, question)" class="btn btn-danger">Cancel</a><i ng-if="deficiency.IsDirty" class="icon-spinnery-dealie spinner small"></i>
     </span>
 
@@ -38,7 +36,7 @@
     <ul style="margin:4px 0 9px 25px;" ng-if="deficiency.checked">
         <li>
             <label class="checkbox inline">
-                <input type="checkbox" value="true" ng-model="deficiency.CorrectedDuringInspection" ng-checked="deficiency.Corrected_in_inspection" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />
+                <input type="checkbox" value="true" ng-model="deficiency.correctedDuringInspection" ng-init="deficiency.correctedDuringInspection = deficiency.Corrected_in_inspection" ng-change="cf.handleCorrectedDurringInspection(deficiency, question)" />
                 <span class="metro-radio">corrected during inspection</span>
             </label>
         </li>
