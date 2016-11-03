@@ -4,6 +4,7 @@ require_once '../top_view.php';
 <style>
     .hidey-thing{height:150px !important;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/manageInspections.js"></script>
 <div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
 <div class="alert savingBox" ng-if="saving">
@@ -64,20 +65,22 @@ require_once '../top_view.php';
             </tr>
             <tr>
                 <th>
+                    Investigator<br>
+                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()" /><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                </th>
+                <th class="triple">
                     <div>
-                        Investigator<br>
-                        <span><input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()" /><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                    </div>
-                    <div>
-                        Campus<br>
-                        <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                    </div>
-                    <div>
-                        Building<br>
-                        <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                    </div>
-                    <div>
-                        Lab Room(s)<br>
+                        <span>
+                            Campus<br>
+                            <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                        </span>
+                        <span>
+                            Building<br>
+                            <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                        </span>
+                        <span>
+                            Lab Room(s)<br>
+                        </span>
                     </div>
                 </th>
                 <th>
@@ -106,8 +109,9 @@ require_once '../top_view.php';
         <tbody>
 
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
-				<!--
+				
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
+                <!--
                 <td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
                 <td style="width:6.5%">
@@ -120,20 +124,22 @@ require_once '../top_view.php';
                     <pre>{{dto.Campuses | json}}</pre>
                 </td>
 					-->
-				<td style="width:33%">
-					<ul>
-						<li ng-repeat="campus in dto.Campuses">
-							{{campus.Campus_name}}
-							<ul>
-								<li ng-repeat="buildiing in campus.Buildings">
-									{{building.Building_name}}
-									<ul>
-										<li ng-repeat="room in building.Rooms">{{room.Name}}</li>
-									</ul>
-								</li>
-							</ul>
-						</li>
-					</ul>
+				<td style="width:24.5%" class="triple">
+					<table>
+						<tr ng-repeat="campus in dto.Campuses">
+                            <td class="triple-inner">{{campus.Campus_name}}</td>
+							<td class="triple-inner-2">
+                                <table>
+                                    <tr ng-repeat="building in campus.Buildings">
+                                        <td class="triple-inner-inner">{{building.Building_name}}</td>
+                                        <td class="triple-inner-inner-2">
+                                            <div ng-repeat="room in building.Rooms">{{room.Name}}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+							</td>
+						</tr>
+					</table>
 				</td>
                 <td style="width:6.5%">
                     <span ng-if="dto.Inspection_id">

@@ -3322,6 +3322,69 @@ table.large tr th{
 .manage-inspections-table tr th i.icon-magnifying-glass:hover {
     color:black;
 }
+.manage-inspections-table .triple{
+  padding:0 !important;
+  /* box-sizing:border-box; */
+}
+.manage-inspections-table .triple > div,.manage-inspections-table .triple > table{
+  padding:0 !important;
+  box-sizing:border-box;
+  /* margin-top: -50px; */
+}
+
+.manage-inspections-table td.triple tr{
+  background:transparent !important;
+}
+.manage-inspections-table td.triple td.{
+    background-color:transparent !important;
+}
+.manage-inspections-table td.triple .triple-inner{
+  width: 300px;
+  width: 190px;
+  border: 0;
+  padding:0 5px;
+}
+.manage-inspections-table th.triple div span{
+  height: 56px;
+  display:inline;
+  float:left;
+  border-left:solid #dddddd 1px;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+th.triple div span:nth-of-type(1){
+  width: 198px;
+}
+th.triple div span:nth-of-type(2){
+  width:370px;
+}
+th.triple div span:nth-of-type(2){
+  width: 187px;
+}
+.manage-inspections-table td.triple .triple-inner-2{
+  width: 370px;
+  border-right: none;
+  padding:0
+}
+.manage-inspections-table td.triple tr:last-child .triple-inner,
+.manage-inspections-table td.triple tr:last-child .triple-inner-2{
+  border-bottom:none;
+}
+
+.manage-inspections-table td.triple .triple-inner-inner{
+   width:200px;
+   border-right:solid 1px  #dddddd
+}
+
+.manage-inspections-table td.triple .triple-inner-inner-2{
+    width: 200px;
+    border-right:none;
+}
+.manage-inspections-table td.triple table tr td table tr td{
+  border:none;
+  background-color:transparent !important;
+}
+
 .absolute{
   position:absolute;
 }

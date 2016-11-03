@@ -503,6 +503,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         var duplicateIds = [];
         for (var i = 0; i < l; i++) {
             var d = dtos[i];
+            invertRoomForNonMultiples(d);
             if (!d.Inspections) continue;
             if (ids.indexOf(d.Inspections.Key_id) < 0) {
                 ids.push(d.Inspections.Key_id)
@@ -532,67 +533,83 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 Building_name: null,
                 Campus_key_id: null,
                 Building_key_id: null,
-                Campuses: invertRooms(relevantDtos),
                 IsMultiple:true,
                 Bio_hazards_present: relevantDtos.some(function(dto){return dto.Bio_hazards_present }),
                 Chem_hazards_present: relevantDtos.some(function (dto) { return dto.Chem_hazards_present }),
                 Rad_hazards_present: relevantDtos.some(function (dto) { return dto.Rad_hazards_present }),
-                Deficiency_selection_count: null
+                Inspection_rooms:relevantDtos.every(function(room){return room}),
+                Deficiency_selection_count: null,
+                Campuses: invertRooms(relevantDtos)
             }
             angular.extend(masterDto, map);
-            console.log(masterDto);
-
             dtos.splice(masterIndex, 0, masterDto);
         }
 
         function invertRooms(dtos) {
-            campuses = dtos.map(function (dto, idx) {
-                var campus = {
-                    Campus_id: dto.Campus_key_id,
-                    Campus_name:dto.Campus_name,
-                    Buildings:[]
+            var campuses = [];
+            var campusIds = [];
+            var buildingIds = [];
+            var buildings = [];
+            var rooms = [];
+            dtos.forEach(function (dto) {
+                rooms = rooms.concat(dto.Inspection_rooms);
+                if (campusIds.indexOf(dto.Campus_key_id) == -1) {
+                    var campus = {
+                        Campus_key_id: dto.Campus_key_id,
+                        Campus_name: dto.Campus_name,
+                        Buildings: [],
+                    }
+                    campuses.push(campus);
+                    campusIds.push(dto.Campus_key_id);
                 }
-                campus.Buildings.push({ Building_id: dto.Building_key_id, Buidling_name: dto.Building_name });
-                
-                campus.Buildings = campus.Buildings.map(function (building, idxInner) {
-                    var rooms = dto.Inspection_rooms;
-                    building.Rooms = rooms.map(function (room) {
-                        var innerRoom = room;
-                        return room;
-                    })
-                    return building;
+                if (buildingIds.indexOf(dto.Building_id) == -1) {
+                    var bldg = {
+                        Building_name: dto.Building_name,
+                        Building_id: dto.Building_key_id,
+                        Campus_id: dto.Campus_key_id,
+                        Campus_name: dto.Campus_name,
+                        Rooms: []
+                    }
+                    buildings.push(bldg);
+                }
+            });
+            rooms.forEach(function (room, idx) {
+                buildings.forEach(function(bldg){
+                    if (room.Building_id == bldg.Building_id) {
+                        bldg.Rooms.push(room);
+                        campuses.forEach(function (c) {
+                            if (c.Buildings.indexOf(bldg) == -1 && c.Campus_key_id == bldg.Campus_id) {
+                                c.Buildings.push(bldg)
+                            }
+                        })
+                    }
                 })
-                
-                return campus;
             })
-
+            
             return campuses;
 
         }
 
         function invertRoomForNonMultiples(dto) {
             var rooms = dto.Inspection_rooms || dto.Building_rooms;
-            campuses = rooms.map(function (dto, idx) {
-                var campus = {
-                    Campus_id: dto.Campus_key_id,
-                    Campus_name: dto.Campus_name,
-                    Buildings: []
-                }
-                campus.Buildings.push({ Building_id: dto.Building_key_id, Buidling_name: dto.Building_name });
+            var l = rooms.length;
+            dto.Campuses = [{
+                Campus_key_id: dto.Campus_key_id,
+                Campus_name: dto.Campus_name,
+                Buildings: [
+                    {
+                        Building_name: dto.Building_name,
+                        Building_id: dto.Building_id,
+                        Rooms: rooms.map(function (room, idx) {
+                            return room;
+                        })
+                    }
+                ]
+            }]
+            
 
-                campus.Buildings = campus.Buildings.map(function (building, idxInner) {
-                    var rooms = dto.Inspection_rooms;
-                    building.Rooms = rooms.map(function (room) {
-                        var innerRoom = room;
-                        return room;
-                    })
-                    return building;
-                })
 
-                return campus;
-            })
-
-            return campuses;
+            return dto.Campuses;
         }
 
         return dtos;
@@ -707,9 +724,17 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     matched = true;
 
                     if (search.building) {
-                        if (item.Building_name && item.Building_name.toLowerCase().indexOf(search.building.toLowerCase()) < 0) {
-                            matched = false;
-                            continue;
+                        
+                        matched = false
+                        if (item.Campuses && item.Campuses.length) {
+                            item.Campuses.forEach(function (campus) {
+                                campus.Buildings.forEach(function (b) {
+                                    if (b.Building_name.toLowerCase().indexOf(search.building.toLowerCase()) > -1) {
+                                        matched = true;
+                                        return;
+                                    }
+                                })
+                            });
                         }
 
                     }
@@ -767,10 +792,16 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
 
                     if (matched && search.campus) {
-                        if (item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
-                            matched = false;
-                            continue;
+                        matched = false
+                        if (item.Campuses && item.Campuses.length) {
+                            item.Campuses.forEach(function (campus) {
+                                if (campus.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) > -1) {
+                                    matched = true;
+                                    return;
+                                }
+                            });
                         }
+
                     }
 
                     if (matched && search.pi && item.Pi_name) {
