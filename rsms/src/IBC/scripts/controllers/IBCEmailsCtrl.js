@@ -5,13 +5,14 @@
  * @name IBCCtrl.controller:IBCCtrl
  * @description
  * # IBCDetailCtrl
- * Controller of the IBC protocals home view
+ * Controller of the IBC protocal Emails view
  */
 angular.module('ng-IBC')
-    .controller('IBCCtrl', function ($scope, $modal, $location) {
-        
+    .controller('IBCEmailCtrl', function ($scope, $modal, $location) {
+
+        //$scope.loading = DataStoreManger.getAll([])
     })
-    .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
+    .controller('IBCEmailModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
         var rbf = roleBasedFactory;
 
