@@ -24,7 +24,7 @@
     <div class="roomsModal popUp" ng-if="deficiency.showRoomsModal && deficiency.InspectionRooms && !question.edit && !deficiency.edit" style="width:200px;margin-left:{{deficiency.calculatedOffset.x}};margin-top:-20px;padding:0;border:none;">
         <div class="alert alert-danger" style="margin-bottom:0; padding:5px;"><h3>Rooms<i class="icon-cancel-2" style="margin:5px 2px;; float:right" ng-click="deficiency.showRoomsModal = !deficiency.showRoomsModal"></i></h3></div>
         <ul>
-            <li ng-repeat="room in deficiency.InspectionRooms | orderBy: 'Building.Name'">
+            <li ng-repeat="room in deficiency.InspectionRooms | orderBy: ['Building.Name', 'Name']">
                 <label class="checkbox inline">
                     <input type="checkbox" ng-init="room.checked = cf.evaluateDeficiencyRoomChecked( room, question, deficiency )" ng-change="cf.saveSupplementalDeficiency(question, false, deficiency, checklist, room)" ng-model="room.checked" />
                     <span class="metro-checkbox"><span once-text="room.Name"></span>, <span once-text="room.Building.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
