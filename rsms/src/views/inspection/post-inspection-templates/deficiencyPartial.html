@@ -80,9 +80,9 @@
                 </ul>
             </td>
 
-            <td style="padding:15px !important;" class="{{def.CorrectiveActions[0].Status}}" ng-if="def.Corrected_in_inspection < 1">
+            <td style="padding:15px !important;" class="{{def.CorrectiveActions[0].Status}}">
                 <div>
-                    <div class="inner-action" ng-if="!def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
+                    <div class="inner-action" ng-if="def.Corrected_in_inspection < 1 && !def.CorrectiveActions.length || def.CorrectiveActions[0].Status == Constants.CORRECTIVE_ACTION.STATUS.INCOMPLETE">
                         <div style="text-align:center">
                             <a class="btn btn-danger btn-larger left" ng-if="!inspection.Date_closed" ng-click="openModal(question, def)">
                                 <i class="icon-plus-2"></i>Add Corrective Action
@@ -111,21 +111,22 @@
                         <h4 class="bold">Completion Date:</h4>
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
                     </div>
+
+                    <div class="inner-action" ng-if="def.Corrected_in_inspection > 0">
+                        <h3 class="bold">
+                            Corrected during inspection
+                        </h3>
+                    </div>
+
                 </div>
                 <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_closed">
                     <a class="btn btn-small btn-primary" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
                     <a class="btn btn-small btn-danger" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
                 </div>
+
+                
             </td>
-            <td class="corrective-action" ng-if="def.Corrected_in_inspection > 0" style="padding:15px !important;">
-                <div>
-                    <div>
-                        <h3 class="bold inner-action">
-                            Corrected during inspection
-                        </h3>
-                    </div>
-                </div>
-            </td>
+            
         </tr>
     </table>
 </td>

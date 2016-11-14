@@ -83,7 +83,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- included javascript libraries
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"></script>-->
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.js"></script>
+<script src="../js/lib/lodash.min.js"></script>
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 <!--
@@ -113,6 +113,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/ac-select.js"></script>
 
 
 <!-- Required for the ORM framework -->
@@ -140,6 +141,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
+<script type="text/javascript" src="./scripts/controllers/admin/transfers-ctrl.js"></script>
+
 <script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
 
 
@@ -212,15 +215,18 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/PIWipe.js"></script>
 <script src="scripts/models/DrumWipe.js"></script>
 <script src="scripts/models/DrumWipeTest.js"></script>
-</head>
-<body>
+<script src="scripts/models/MiscellaneousWaste.js"></script>
 
-<div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
-<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<!-- NAVIGATION -->
-  <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-    <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
-  </div>
-<!-- VIEW NESTING -->
-    <div ui-view class="noBg"></div>
-</div>
+</head>
+    <body>
+        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
+        <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+        <!-- NAVIGATION -->
+        <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
+            <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+        </div>
+        <!-- VIEW NESTING -->
+        <div ui-view class="noBg"></div>
+        </div>
+    </body>
+</html>

@@ -57,7 +57,7 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
         toolbar: 'bold | italic | underline | link | bullist | numlist',
         menubar: false,
         elementpath: false,
-        content_style: "p,ul li {font-size:14px}"
+        content_style: "p,ul li, ol li {font-size:14px}"
     };
 
     $scope.tinymceOptionsComplianceReference = {
@@ -65,7 +65,7 @@ function QuestionHubController($scope, $q, $rootElement, $location, convenienceM
         toolbar: 'link',
         menubar: false,
         elementpath: false,
-        content_style: "p,ul li {font-size:14px}; html{max-height:100px}",
+        content_style: "p,ul li, ol li {font-size:14px}; html{max-height:100px}",
         max_height: 100
     };
 

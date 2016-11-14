@@ -129,7 +129,6 @@ var Constants = (function (thing) {
         STATUS: {
             REQUESTED: "Requested",
             ARRIVED:"Arrived",
-            PRE_ORDER:"Pre-order",
             ORDERED:"Ordered",
             WIPE_TESTED:"Wipe Tested",
             DELIVERED:"Delivered",

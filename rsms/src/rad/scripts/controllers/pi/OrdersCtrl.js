@@ -43,6 +43,16 @@ angular.module('00RsmsAngularOrmApp')
 
         $scope.modalData = af.getModalData();
 
+        $scope.getHighestAuth = function (pi) {
+            if (pi.Pi_authorization && pi.Pi_authorization.length) {
+                var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
+                    return moment(amendment.Approval_date).valueOf();
+                }]);
+
+                return auths[auths.length - 1];
+            }
+        }
+
         if(!$scope.modalData.ParcelCopy){
             $scope.modalData.ParcelCopy = {
                 Class: 'Parcel',

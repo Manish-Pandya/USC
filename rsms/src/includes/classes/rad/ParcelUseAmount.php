@@ -22,7 +22,9 @@ include_once 'RadCrud.php';
     	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
         "scint_vial_collection_id"  => "integer",
+        "miscellaneous_waste_id"  => "integer",
     	"comments"					=> "text",
+        "isotope_id"                => "integer",
 
         //GenericCrud
         "key_id"                    => "integer",
@@ -40,8 +42,8 @@ include_once 'RadCrud.php';
     		"keyName"	=> "key_id",
     		"foreignKeyName" => "parcel_id"
     );
-    
-    
+
+
     //access information
 
     /** Float amount of radiation in curies */
@@ -63,20 +65,22 @@ include_once 'RadCrud.php';
 
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
-    
+
     private $container_name;
-    
+
     //comments field used to describe ParcelUseAmounts with Waste_type "Other"
     private $comments;
-    
+
     /* The name of the isotope up in this ParcelUseAmount */
     private $isotope_name;
-    
+
     /* The key_id of the isotope up in this ParcelUseAmount */
     private $isotope_id;
 
     /** boolean to indicate if this ParcelUseAmount's container has been picked up **/
     private $isPickedUp;
+
+    private $miscellaneous_waste_id;
 
     public function __construct() {
 
@@ -127,11 +131,11 @@ include_once 'RadCrud.php';
     	$this->carboy = $newCarboy;
     }
 
-    public function getCarboy_id() { 
+    public function getCarboy_id() {
     	$LOG = Logger::getLogger(__CLASS__);
     	$LOG->debug('carboy id is '.$this->carboy_id);
-    	 
-    	return $this->carboy_id; 
+
+    	return $this->carboy_id;
     }
     public function setCarboy_id($newValue) { $this->carboy_id = $newValue; }
 
@@ -149,7 +153,7 @@ include_once 'RadCrud.php';
 	public function setScint_vial_collection_id($scint_vial_collection_id){
 		$this->scint_vial_collection_id = $scint_vial_collection_id;
 	}
-    
+
     public function getContainer_name(){
     	if($this->getWaste_bag_id() != NULL && $this->container_name == NULL){
     		$wasteBagDao = new GenericDAO(new WasteBag());
@@ -163,26 +167,40 @@ include_once 'RadCrud.php';
     }
 	public function getComments() {	return $this->comments;	}
 	public function setComments($comments) {$this->comments = $comments;}
-	
+
 	public function getIsotope_name() {
-		$useDao = new GenericDAO(new ParcelUse());
-		$use = $useDao->getById($this->getParcel_use_id());
-		$parcel = $use->getParcel();
-		$isotope = $parcel->getIsotope();
-        if($isotope != null){
-            $this->isotope_name = $isotope->getName();
+        if($this->isotope_id == null){
+		    $useDao = new GenericDAO(new ParcelUse());
+		    $use = $useDao->getById($this->getParcel_use_id());
+		    $parcel = $use->getParcel();
+		    $isotope = $parcel->getIsotope();
+            if($isotope != null){
+                $this->isotope_name = $isotope->getName();
+            }
+        }
+         //this ParcelUseAmount belongs to MiscellaneousWaste as opposed to a parcel
+        else{
+            $isotopeDao = new GenericDAO(new Isotope());
+            $isotope = $isotopeDao->getById($this->isotope_id);
+            if($isotope != null){
+                $this->isotope_name = $isotope->getName();
+            }
         }
 		return $this->isotope_name;
 	}
-	
-	public function getIsoptope_id(){
-		$useDao = new GenericDAO(new ParcelUse());
-		$use = $useDao->getById($this->getParcel_use_id());
-		$parcel = $use->getParcel();
-		$isotope = $parcel->getIsotope();
-		$this->isotope_id = $isotope->getKey_id();
-		return $this->isotope_id;
+
+	public function getIsotope_id(){
+        //ParcelUseAmounts that are used to record miscellaneous waste as opposed to use in lab experiments will have an isotope_id persisted in the db
+        if($this->isotope_id == null){
+            $useDao = new GenericDAO(new ParcelUse());
+            $use = $useDao->getById($this->getParcel_use_id());
+            $parcel = $use->getParcel();
+            $isotope = $parcel->getIsotope();
+            $this->isotope_id = $isotope->getKey_id();
+        }
+        return $this->isotope_id;
 	}
+    public function setIsotope_id($id){$this->isotope_id = $id;}
 
     public function getIsPickedUp(){
         $l = Logger::getLogger(__FUNCTION__);
@@ -208,6 +226,9 @@ include_once 'RadCrud.php';
         $this->isPickedUp = count($stmt->fetchAll(PDO::FETCH_CLASS, "ParcelUseAmount")) != 0;
         return (boolean) $this->isPickedUp;
     }
-    
+
+    public function getMiscellaneous_waste_id(){return $this->miscellaneous_waste_id;}
+	public function setMiscellaneous_waste_id($miscellaneous_waste_id){$this->miscellaneous_waste_id = $miscellaneous_waste_id;}
+
 }
 ?>

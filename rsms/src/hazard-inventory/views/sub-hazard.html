@@ -19,7 +19,7 @@
     </span>
 
     <span ng-if="child.HasMultiplePis">
-        <i class="icon-users" ng-click="openMultiplePIHazardsModal(child, hazard)"></i>
+        <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
     </span>
 </div>
 
@@ -31,8 +31,11 @@
                 {{ room.Room_name }}
                 <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
             </a>
-            <span ng-if="room.ContainsHazard">{{ room.Room_name }}</span>
-            <span ng-if="!$last">, </span>
+            <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
+                {{ room.Room_name }}
+                <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+            </span>
+            <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
         </span>
     </li>
 </ul>

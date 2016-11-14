@@ -154,6 +154,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.transfers',
+                        Label: 'Radiation Administration -- Transfers',
+                        Dashboard: true
+                    },
+                    {
                         Name:'pi-rad-management',
                         Label: 'My Radiation Laboratory',
                         NoHead: true
@@ -2079,6 +2084,36 @@ angular
                 return dataSwitchFactory.getAllObjects('ScintVialCollection');
             }
 
+            af.getAllMiscellaneousWaste = function () {
+                return dataSwitchFactory.getAllObjects('MiscellaneousWaste');
+            }
+
+            af.saveMiscellaneousWaste = function (copy, mw) {
+                af.clearError();
+                return this.save(copy)
+                    .then(
+                        function (returnedMW) {
+                            returnedMW = modelInflatorFactory.instateAllObjectsFromJson(returnedMW, true);
+                            if (mw.Key_id) {
+                                angular.extend(mw, returnedMW);
+                            } else {
+                                store.store(returnedMW);
+                            }
+                            returnedMW.Parcel_use_amounts.forEach(function (amount) {
+                                var origAmt = dataStoreManager.getById("ParcelUseAmount", amount.Key_id);
+                                if (origAmt) {
+                                    angular.extend(origAmt, amount);
+                                } else {
+                                    amount = modelInflatorFactory.instateAllObjectsFromJson(amount);
+                                    store.store(amount);
+                                }
+                            });
+                            return mw;
+                        },
+                        af.setError('The Miscellaneous Waste could not be saved.')
+                    )
+            }
+
             /** PI Wipe Tests performed by lab personnel **/
             af.savePIWipeTest = function(test, pi) {
                 af.clearError();
@@ -2458,7 +2493,8 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Pickup ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.PurchaseOrder ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.User ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.ScintVialCollection ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.ScintVialCollection));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.MiscellaneousWaste));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteBag ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));

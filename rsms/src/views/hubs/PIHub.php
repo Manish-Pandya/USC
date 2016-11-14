@@ -5,6 +5,8 @@ require_once '../top_view.php';
 <script src="../../js/userHub.js"></script>
 
 <span ng-app="piHub" ng-controller="piHubMainController">
+<div cg-busy="{promise:userPromise,message:'Loading...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
+
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
     <li class="span3" style="margin-left:0">
@@ -25,16 +27,19 @@ require_once '../top_view.php';
                     <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
                        <i class="icon-spinnery-dealie spinner small asbolute" style="margin-left:-258px; margin-top:-5px;"></i>
                </span>
-               <span ng-if="PIs && buildings" class="span4 nopad no-pad" style="margin-left:0">
-                    <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
-                        <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                        <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
-                          <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                   <ul ng-if="PI && PI.Departments" class="no-list" style="margin-left:0">
-                       <li><h2 class="bold underline">Department:</h2></li>
-                       <li ng-repeat="dept in PI.Departments"><h3 style="height:auto" once-text="dept.Name"></h3></li>
+               <span ng-if="PIs && buildings" class="span12 nopad no-pad" style="margin-left:0">
+                   <span class="span4 nopad no-pad" style="display:block; margin-left:0">
+                       <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                           <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                           <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
+                               <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                           </ui-select-choices>
+                       </ui-select>
+                   </span>
+                   <br /><br />
+                   <ul ng-if="PI && PI.Departments" class="no-list" style="margin-left:0; display:block; width:100%">
+                       <li style="display:inline-block; float:left"><h2 class="bold underline">Department:</h2></li>
+                       <li style="display:inline-block; float:left; margin-left:5px;" ng-repeat="dept in PI.Departments"><h2 class="bold" style="height:auto">{{dept.Name}}<span ng-if="!$last">,</span></h2></li>
                    </ul>
                </span>
               </div>

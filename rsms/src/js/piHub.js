@@ -1,4 +1,4 @@
-var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','userList'])
+var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'userList', 'cgBusy'])
 
 .config(function($routeProvider){
     $routeProvider
@@ -26,8 +26,21 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBa
             }
         );
 })
-
-.factory('piHubFactory', function(convenienceMethods,$q){
+.filter("noSupervisor", function (userHubFactory) {
+    return function (users) {
+        if (!users || !users.length) return;
+        var l = users.length;
+        var matchedUsers = [];
+        for (var i = 0; i < l; i++) {
+            var u = users[i];
+            if (!u.Supervisor_id && (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_PERSONNEL))) {
+                matchedUsers.push(u);
+            }
+        }
+        return matchedUsers;
+    }
+})
+.factory('piHubFactory', function(convenienceMethods,$q, userHubFactory){
     var factory = {};
     factory.setPI = function(pi){
         this.pi = pi;
@@ -69,6 +82,26 @@ var piHub = angular.module('piHub', ['ui.bootstrap','convenienceMethodWithRoleBa
         );
         return deferred.promise
     }
+
+    factory.getAllUsers = function () {
+        var deferred = $q.defer();
+        if (!factory.users) {
+            userHubFactory.getAllUsers().then(
+                function (promise) {
+                    factory.users = promise;
+                    deferred.resolve(promise);
+                },
+                function (promise) {
+                    deferred.reject();
+                }
+            );
+        } else {
+            deferred.resolve(factory.users);
+        }
+        return deferred.promise
+    }
+
+    //factory
 
     return factory;
 });
@@ -288,21 +321,21 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         alert('There was a problem when the system tried to get the list of buildings.')
     }
 
-    $scope.onSelectBuilding = function(item){
+    $scope.onSelectBuilding = function (item) {
         $scope.chosenBuilding = angular.copy(item);
         checkRooms($scope.chosenBuilding, $scope.PI);
     }
 
     function checkRooms(building, pi) {
-        building.roomsByFloor = {};
+        $scope.roomsByFloor = {};
         var lastLabel = '';
-        angular.forEach(building.Rooms, function(room, key){
+        angular.forEach(building.Rooms, function (room, key) {
             if (convenienceMethods.arrayContainsObject(pi.Rooms, room)) room.piHasRel = true;            
             var floorLabel = room.Name.charAt(0);
-            if (lastLabel != floorLabel && !building.roomsByFloor.hasOwnProperty(floorLabel)) {
-                building.roomsByFloor[floorLabel] = [];
+            if (lastLabel != floorLabel && !$scope.roomsByFloor.hasOwnProperty(floorLabel)) {
+                $scope.roomsByFloor[floorLabel] = [];
             }
-            building.roomsByFloor[floorLabel].push(room);            
+            $scope.roomsByFloor[floorLabel].push(room);
             lastLabel = floorLabel;
         });
     }
@@ -443,13 +476,13 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 
 }
 
-piHubPersonnelController = function($scope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
+piHubPersonnelController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
 
     init();
     function init(){
         var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
         convenienceMethods.getData( url, onGetUsers, onFailGetUsers );
-        userHubFactory.getAllUsers();
+        $rootScope.userPromise = piHubFactory.getAllUsers();
     }
 
     function onGetUsers(data){
@@ -562,17 +595,17 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
 
     $scope.openModal = function(user, role){
         if(!user){
-          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
-          getUsers()
+          var user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+          $rootScope.userPromise = getUsers()
           .then(getRoles)
           .then(fireModal);
-        }else{
-            getUsers()
+        } else {
+            $rootScope.userPromise = getUsers()
             .then(fireModal);
         }
 
         function getUsers(){
-            return userHubFactory.getAllUsers()
+            return piHubFactory.getAllUsers()
               .then(
                 function(users){
                   return user;
@@ -580,8 +613,8 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
               )
         }
 
-        function fireModal(user){
-            console.log(user);
+        function fireModal(user) {
+            user.piHub = true;
             if (user.Class == "PrincipalInvestigator"){
                 // pump in PIs Departments
                 var pi = user;
@@ -612,10 +645,11 @@ piHubPersonnelController = function($scope, $location, convenienceMethods, $moda
             });
         }
 
-        function getRoles(user){
+        function getRoles(user) {
+
             return userHubFactory.getAllRoles()
                 .then(
-                    function(roles){
+                    function (roles) {
                         var i = userHubFactory.roles.length;
                         while(i--){
                             if(userHubFactory.roles[i].Name.indexOf(role)>-1){
@@ -845,15 +879,15 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
        }
   }
 
-  var assignUserCtrl = function($scope, modalData, $modalInstance, userHubFactory){
+  var assignUserCtrl = function($scope, modalData, $modalInstance, userHubFactory, piHubFactory){
       $scope.modalData = modalData;
 
       $scope.gettingUsers = true;
-      userHubFactory.getAllUsers()
+      piHubFactory.getAllUsers()
         .then(function(users){$scope.users = users;$scope.modalError="";$scope.gettingUsers = false},function(){$scope.modalError="There was an error getting the list of users.  Please check your internet connection and try again.";})
 
       $scope.save = function(user){
-          console.log(user);
+          console.log($scope.modalData.type);
           if(user.Supervisor_id){
               if(!$scope.needsConfirmation){
                   $scope.selectedUser = user;
@@ -863,7 +897,9 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
           }
           $scope.saving = true;
 
-          user.Supervisor_id = modalData.Key_id;
+          user.Supervisor_id = modalData.Key_id
+
+
 
           userHubFactory.saveUser(user)
             .then(

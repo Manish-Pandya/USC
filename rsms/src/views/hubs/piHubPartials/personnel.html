@@ -20,7 +20,7 @@
 <hr>
 <h2 ng-if="PI" class="alert greenBg">Laboratory Contact(s) <a class="btn left" ng-click="openAssignModal('Lab Contact')"><i class="icon-plus-2"></i>Assign Lab Contact</a><a class="btn left" ng-click="openModal(null, Constants.ROLE.NAME.LAB_CONTACT)"><i class="icon-plus-2"></i>Create Lab Contact</a><div class="clearfix"></div></h2>
 <h3 ng-if="!contacts.length && PI">{{PI.User.Name}} has no laboratory contacts.</h3>
-<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px" >
+<table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>
         <tr ng-if="contacts.length">
             <th>Remove User</th><th>Inactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Emergency Phone</th><th>Edit</th>

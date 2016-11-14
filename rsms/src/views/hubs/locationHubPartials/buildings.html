@@ -58,10 +58,12 @@
             </td>
             <td style="width:15%">
                 <span ng-if="building.edit">
-                    <input style="" class="span4" placeholder="Select A Campus" typeahead-on-select='onSelectCampus($item,building)' type="text" ng-model="copy.Campus" typeahead="campus as campus.Name for campus in campuses | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username" ng-change="lhf.editing(true)">
+                    <select ng-model="copy.Campus_id" ng-options="campus.Key_id as campus.Name for campus in campuses">
+                        <option value="" style="display:none"></option>
+                    </select>
                     <span class="absoluteBtns" style="margin-top:0">
-                        <a ng-if="lhf.isEditing" class="btn-success btn left" ng-click="saveBuilding(building); lhf.editing(false);"><i class="icon-checkmark"></i>Save</a>
-                        <a ng-if="!lhf.isEditing" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
+                        <a ng-if="copy.Name && copy.Campus_id" class="btn-success btn left" ng-click="saveBuilding(building); lhf.editing(false);"><i class="icon-checkmark"></i>Save</a>
+                        <a ng-if="!copy.Name || !copy.Campus_id" class="btn-success btn left" disabled="disabled"><i class="icon-checkmark"></i>Save</a>
                         <a class="btn-danger btn left" ng-click="lhf.cancelEdit(building, buildings); lhf.editing(false);"><i class="icon-cancel-2"></i>Cancel</a>
                         <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="building.IsDirty"></i>
                     </span>
