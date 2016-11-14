@@ -108,6 +108,15 @@ angular.module('00RsmsAngularOrmApp')
         return disposalSolids;
     };
 })
+.filter('disposalMiscs', function () {
+    return function (miscs) {
+        if (!miscs) return;
+        var disposalMiscs = miscs.filter(function (misc) {
+            return !misc.Drum_id;
+        })
+        return disposalMiscs;
+    };
+})
 .filter('inventoryStatus', function (convenienceMethods) {
     return function (piInventories, inventory) {
         if (!piInventories) return;
@@ -232,4 +241,43 @@ angular.module('00RsmsAngularOrmApp')
             }
             return filteredUses;
         };
+    })
+    //parcels that are transfers from other insitutions
+    .filter('transferInParcels', function () {
+        return function (parcels) {
+            if (!parcels) return;
+            filteredParcels = parcels.filter(function (parcel) {
+                return (parcel.Transfer_in_date && !parcel.Original_pi_id);
+            });
+            return filteredParcels;
+        };
+    })
+    //parcels that are transfers from other one pi to another
+    .filter('transferBetweenParcels', function () {
+        return function (parcels) {
+            if (!parcels) return;
+            filteredParcels = parcels.filter(function (parcel) {
+                return (parcel.Transfer_in_date != null && parcel.Original_pi_id != null);
+            });
+            return filteredParcels;
+        };
+    })
+    //transfers out to other institutions
+    .filter('transferOutUses', function () {
+        return function (uses) {
+            if (!uses) return;
+            filteredUses = uses.filter(function (use) {
+                return use.Is_transfer && !use.Destination_pi_id;
+            });
+            return filteredUses;
+        };
+    
+    })
+    .filter('parcelsInLab', function () {
+        return function (parcels) {
+            filteredParcels = parcels.filter(function (p) {
+                return [Constants.PARCEL.STATUS.DELIVERED, Constants.PARCEL.STATUS.DISPOSED].indexOf(p.Status) != -1;
+            })
+            return filteredParcels;
+        }
     });

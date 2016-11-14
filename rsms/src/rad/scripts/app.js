@@ -103,6 +103,11 @@ angular
         templateUrl: "views/admin/isotopes.html",
         controller: "IsotopeCtrl"
       })
+      .state('radmin.transfers', {
+        url: "/transfers",
+        templateUrl: "views/admin/transfers.html",
+        controller: "TransferCtrl"
+      })
       .state('parcel-use-log', {
         url:'/my-lab:pi/use-log:parcel',
         templateUrl: "views/pi/parcel-use-log.html",

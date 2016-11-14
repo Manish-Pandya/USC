@@ -303,6 +303,25 @@ i.solids-containers {
 .left-nav ul li a:hover {
     text-decoration: none;
 }
+
+.left-nav ul li a.transfers {
+    background:rgba(26, 109, 168, 0.63);
+}
+.left-nav ul li a.transfers:hover {
+    background: rgb(53, 128, 182);
+}
+.transfers i{
+    color: rgb(26, 109, 168);
+}
+.card.transfers{
+    padding:5px;
+}
+.card.transfers h1 i:first-child,
+.card.transfers h2 i:first-child,
+.card.transfers h3 i:first-child {
+    color: rgb(26, 109, 168);
+    margin: 3px 5px 0 0;
+}
 .right-column {
     margin-left: 210px;
     padding-bottom: 200px;
