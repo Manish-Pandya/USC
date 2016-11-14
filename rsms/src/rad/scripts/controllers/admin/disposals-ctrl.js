@@ -67,12 +67,22 @@ angular.module('00RsmsAngularOrmApp')
             )
     }
 
-    var getIsotopes = function(){
+    var getIsotopes = function () {
         return af.getAllIsotopes()
             .then(
-                function(isotopes){
+                function (isotopes) {
                     $rootScope.isotopes = dataStore.Isotope;
                     return isotopes;
+                }
+            )
+    }
+
+    var getMiscWaste = function () {
+        return af.getAllMiscellaneousWaste()
+            .then(
+                function (mics) {
+                    $rootScope.miscWastes = dataStore.MiscellaneousWaste;
+                    return mics;
                 }
             )
     }
@@ -81,7 +91,8 @@ angular.module('00RsmsAngularOrmApp')
         .then(getIsotopes)
         .then(getSVCollections)
         .then(getAllDrums)
-        .then(getCycles);
+        .then(getCycles)
+        .then(getMiscWaste);
 
     $scope.date = new Date();
 
@@ -185,6 +196,24 @@ angular.module('00RsmsAngularOrmApp')
     $scope.getDateRead = function (reading) {
         if (reading.Date_read) return convenienceMethods.dateToIso(reading.Date_read);
         return convenienceMethods.dateToIso(convenienceMethods.setMysqlTime(new Date()));
+    }
+
+    $scope.openModal = function (object) {
+        var modalData = {};
+        if (!object) {
+            object = new window.MiscellaneousWaste();
+            object.Class = "MiscellaneousWaste";
+        }
+        modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/misc-waste-modal.html',
+            controller: 'MiscWasteModalCtrl'
+        });
+
+        modalInstance.result.then(function () {
+            getMiscWaste();
+        });
     }
   })
   .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
@@ -312,3 +341,31 @@ angular.module('00RsmsAngularOrmApp')
       }
 
   })
+    .controller('MiscWasteModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
+        var af = actionFunctionsFactory;
+        $scope.af = af;
+        var md = $scope.modalData = af.getModalData();
+
+        var amount = new ParcelUseAmount();
+        if (md.MiscellaneousWasteCopy &&
+            (!md.MiscellaneousWasteCopy.Parcel_use_amountss
+            || !md.MiscellaneousWasteCopy.Parcel_use_amounts.length > 0)) {
+            amount.Miscellaneous_waste_id == md.MiscellaneousWasteCopy || null;
+        } else {
+            angular.extend(amount, md.MiscellaneousWaste.Parcel_use_amounts[0]);
+        }
+        md.MiscellaneousWasteCopy.Parcel_use_amounts = [amount];
+
+        $scope.save = function (copy, mw) {
+            console.log(copy, mw);
+            af.saveMiscellaneousWaste(copy, mw).then(function () {
+                $modalInstance.close(mw);
+            });
+        }
+
+        $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
+    }])

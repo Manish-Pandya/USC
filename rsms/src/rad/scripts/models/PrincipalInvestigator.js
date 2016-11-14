@@ -11,7 +11,7 @@ PrincipalInvestigator.prototype = {
         {method:"loadCarboys", boolean:true},
         {method:"loadSolidsContainers", boolean:true},
         {method:"loadWasteBags", boolean:"SolidsContainers"},
-        {method:"loadRooms", boolean:true},
+        { method: "loadRooms", boolean: true },
     ],
 
     UserRelationship: {
@@ -161,8 +161,8 @@ PrincipalInvestigator.prototype = {
     },
 
     loadUser:  function() {
-        if(!this.User && this.User_id) {
-            dataLoader.loadChildObject( this, 'User', 'User', this.User_id );
+        if (!this.User && this.User_id) {
+            dataLoader.loadChildObject(this, 'User', 'User', this.User_id);
         }
     },
 
@@ -182,6 +182,13 @@ PrincipalInvestigator.prototype = {
     loadCurrentScintVialCollections: function () {
         this.CurrentScintVialCollections = [];
         dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
+    },
+    getName: function () {
+        this.Name = "";
+
+        if (this.User) this.Name = this.User.Name;
+        console.log(this.Name);
+        return this.Name;
     }
 
 }

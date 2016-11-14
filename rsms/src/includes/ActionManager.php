@@ -3847,7 +3847,7 @@ class ActionManager {
 
             //make sure we get the right rooms for our branch level checklists
             //ids of the branch level hazards, excluding general, which is always in every room
-            $realBranchIds = array(1,10009,100010);
+            $realBranchIds = array(1,10009,10010);
             $neededRoomIds = array();
             $neededRooms   = array();
             foreach($orderedChecklists as $list){

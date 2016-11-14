@@ -42,6 +42,16 @@ angular.module('00RsmsAngularOrmApp')
         $state.go('.pi-detail',{pi:pi.Key_id});
     }
 
+    $scope.selectAmendement = function (num) {
+        console.log(num);
+        $scope.mappedAmendments.forEach(function (a) {
+            if (a.weight == num) {
+                $scope.selectedPiAuth = a;
+                return;
+            }
+        })
+    }
+
     $scope.openModal = function (templateName, object, isAmendment) {
 
         var modalData = {};
@@ -53,6 +63,10 @@ angular.module('00RsmsAngularOrmApp')
           templateUrl: templateName+'.html',
           controller: 'PiDetailModalCtrl'
         });
+
+        modalInstance.result.then(function (thing) {
+            $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
+        })
     }
 
     $scope.getHighestAmendmentNumber = function (amendments) {
@@ -65,10 +79,11 @@ angular.module('00RsmsAngularOrmApp')
         for (var i = 0; i < amendments.length; i++) {
             var amendment = amendments[i];
             convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
-            convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Termination_date", true);
+            convenienceMethods.dateToIso(amendment.Termination_date, amendment, "Termination_date", true);
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
             amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
             amendment.weight = i;
+            console.log(i);
         }
 
         $scope.mappedAmendments = amendments;
@@ -128,7 +143,6 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
-        console.log($scope.modalData);
 
         $scope.getHighestAuth = function (pi) {
             if (pi.Pi_authorization && pi.Pi_authorization.length) {
@@ -170,14 +184,15 @@ angular.module('00RsmsAngularOrmApp')
                 Authorization_number: null,
                 Is_active: true,
                 Principal_investigator_id: $scope.modalData.pi.Key_id,
-                Authorizations:[]
+                Authorizations: []
             }
         }
+
         $scope.getApprovalDate = function (a, isAmendment) {
             if (isAmendment) {
                 return "";
             }
-            return a.Approval_date;
+            return a.view_Approval_date;
         }
 
         if(!$scope.modalData.AuthorizationCopy){
@@ -215,7 +230,6 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.carboys = af.getCachedCollection('CarboyUseCycle');
-        console.log(af.getCachedCollection('CarboyUseCycle'));
 
         $scope.selectIsotope = function (auth) {
             auth.Isotope = dataStoreManager.getById("Isotope", auth.Isotope_id);
@@ -259,6 +273,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.savePIAuthorization = function (copy, auth, terminated) {
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment) copy.Key_id = null;
+            copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
             if (!terminated){
                 for (var n = 0; n < copy.Authorizations; n++) {
                     if (!terminated && !copy.Authorizations[n].isIncluded) {
@@ -267,15 +282,16 @@ angular.module('00RsmsAngularOrmApp')
                 }
             }else{
                 copy.Is_active = false;
-                copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
                 for (var n = 0; n < copy.Authorizations; n++) {                    
                     copy.Authorizations[n].Is_active = false;                    
                 }
             }
-            af.savePIAuthorization(copy, auth, pi);
-            $modalInstance.dismiss();
-            af.deleteModalData();
+            af.savePIAuthorization(copy, auth, pi).then(function () {
+                $modalInstance.close();
+                af.deleteModalData();
+            });
+            
         }
 
         $scope.saveAuthorization = function (piAuth, copy, auth) {
@@ -371,7 +387,6 @@ angular.module('00RsmsAngularOrmApp')
             //get a suggetion for amendment number
             $scope.suggestedAmendmentNumber;
             var i = $scope.modalData.PIAuthorizationCopy.Authorizations.length;
-            console.log($scope.modalData.PIAuthorizationCopy.Authorizations);
             var gapFound = false;
             if (i > 1) {
                 while (i--) {
@@ -388,7 +403,6 @@ angular.module('00RsmsAngularOrmApp')
             } else {
                 $scope.suggestedAmendmentNumber = $scope.modalData.PIAuthorizationCopy.Authorizations.length;
             }
-            console.log($scope.suggestedAmendmentNumber);
             return $scope.suggestedAmendmentNumber
         }
 

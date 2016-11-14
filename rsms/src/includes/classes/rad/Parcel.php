@@ -16,6 +16,9 @@ class Parcel extends RadCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"principal_investigator_id"		=> "integer",
+        "original_pi_id"		        => "integer",
+        "transfer_in_date"              => "timestamp",
+
 		"purchase_order_id"				=> "integer",
 		"status"						=> "text",
 		"isotope_id"					=> "integer",
@@ -43,7 +46,7 @@ class Parcel extends RadCrud {
 		"keyName"	=> "key_id",
 		"foreignKeyName" => "parcel_id"
 	);
-	
+
 	protected static $WIPE_TEST_RELATIONSHIP = array(
 			"className" => "ParcelWipeTest",
 			"tableName" => "parcel_wipe_test",
@@ -86,22 +89,29 @@ class Parcel extends RadCrud {
 
 	/* Text field human readable unique ID for orders*/
 	private $rs_number;
-	
+
 	/* collection of IsotopeAmountDTOs that went into scint vials for this parcel */
 	private $svIsotopeAmounts;
-	
+
 	/** wipe test done on this parcel **/
 	private $wipe_test;
-	
+
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
 
     private $catalog_number;
     private $chemical_compound;
     private $comments;
-    
+
     private $hasTests;
-    
+
+
+    /** Is this parcel a transfer? **/
+    private $is_transfer;
+    /** If this parcel was transfered to it's current pi by another pi, what was the key_id of the original parcel? **/
+    private $original_pi_id;
+
+
 	public function __construct() {
 		// Define which subentities to load
 		$entityMaps = array();
@@ -203,9 +213,9 @@ class Parcel extends RadCrud {
 
 	public function getRs_number(){return $this->rs_number;}
 	public function setRs_number($rs_number){$this->rs_number = $rs_number;}
-	
+
 	public function getSVIsotopeAmounts(){
-		
+
 		//get use amounts
 		$svAmounts = array();
 		foreach($this->getParcelUses() as $use){
@@ -218,13 +228,13 @@ class Parcel extends RadCrud {
 			);
 			$svAmounts = array_merge($svAmounts, $innerAmounts);
 		}
-		
+
 		//sum use amounts
 		if($svAmounts != NULL)$this->svIsotopeAmounts = $this->sumUsages($svAmounts);
 		return $this->svIsotopeAmounts;
-		
+
 	}
-	
+
 	public function getWipe_test() {
 		if($this->wipe_tests == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
@@ -232,23 +242,23 @@ class Parcel extends RadCrud {
 		}
 		return $this->wipe_tests;
 	}
-	
+
 	public function setWipe_test($test){
 		$this->wipe_tests = array($test);
 	}
-	
+
 	public function getAuthorization_id() {return $this->authorization_id;}
 	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
-    
+
     public function getCatalog_number() {return $this->catalog_number;}
 	public function setCatalog_number($num) {$this->catalog_number = $num;}
-    
+
     public function getChemical_compound() {return $this->chemical_compound;}
 	public function setChemical_compound($compound) {$this->chemical_compound = $compound;}
-	
+
 	public function getComments(){return $this->comments;}
 	public function setComments($comments){$this->comments = $comments;}
-	
+
 	public function getHasTests(){
 		if($this->hasTests == null){
 			$this->hasTests = false;
@@ -261,7 +271,7 @@ class Parcel extends RadCrud {
 
     public function getAmountOnHand(){
         global $db;
-
+        $totalPickedUp = 0;
 		$queryString = "SELECT ROUND(SUM(a.curie_level),7) from parcel_use_amount a
                         JOIN parcel_use b
                         ON a.parcel_use_id = b.key_id
@@ -285,7 +295,7 @@ class Parcel extends RadCrud {
 			$totalPickedUp = $sum;
 		}
 
-        if($totalPickedUp == null){
+        if($totalPickedUp == 0){
             return $this->getQuantity();
         }
 
@@ -293,6 +303,12 @@ class Parcel extends RadCrud {
 
         return $this->amountOnHand;
     }
-    
+
+    public function getOriginal_pi_id(){return $this->original_pi_id;}
+    public function setOriginal_pi_id($id){$this->original_pi_id = $id;}
+
+    public function getTransfer_in_date(){return $this->transfer_in_date;}
+    public function setTransfer_in_date($date){$this->transfer_in_date = $date;}
+
 }
 ?>

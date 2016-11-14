@@ -27,6 +27,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getPurchaseOrderById"			=> new ActionMapping("getPurchaseOrderById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getWasteTypeById"				=> new ActionMapping("getWasteTypeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getWasteBagById"				=> new ActionMapping("getWasteBagById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+                "getMiscellaneousWasteById"				=> new ActionMapping("getMiscellaneousWasteById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
 				"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getRadPIById"					=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -112,6 +114,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"savePIAuthorization"	=> new ActionMapping("savePIAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveMiscellaneousWaste"	=> new ActionMapping("saveMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllMiscellaneousWaste"	=> new ActionMapping("getAllMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),

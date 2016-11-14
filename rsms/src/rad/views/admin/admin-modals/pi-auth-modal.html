@@ -15,7 +15,7 @@
         <div class="control-group">
             <label class="control-label" for="inputEmail">Amendment Number</label>
             <div class="controls input-append">
-                <input ng-init="modalData.PIAuthorizationCopy.Amendment_number = getSuggestedAmendmentNumber()" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
+                <input formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
                 <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">Please provide Amendment Number</span>
             </div>
         </div>
