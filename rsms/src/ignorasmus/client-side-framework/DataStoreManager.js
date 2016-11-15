@@ -72,6 +72,8 @@ var DataStoreManager = (function () {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }
+        if (!InstanceFactory._classNames)
+            InstanceFactory.getClassNames("/models");
         viewModelParent.splice(0, viewModelParent.length); // clear viewModelParent
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             if (!DataStoreManager._actualModel[type].getAllCalled) {
