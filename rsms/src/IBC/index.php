@@ -140,6 +140,38 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/IBCSection.js"></script>
 
 
+	<script>
+    	var currentRoles;
+    	function getCurrentRoles() {
+    		if (!currentRoles) {
+    			return XHR.GET("getCurrentRoles").then((roles) => { currentRoles = roles; })
+    		} else {
+    			return new Promise(resolve, reject).then(() => { return resolve(currentRoles) })
+    		}
+    	}
+
+    	var init = function () {
+    		console.log(currentRoles);
+    		var protocols = [];
+
+    		var ps = [DataStoreManager.getAll("IBCProtocol", protocols, true)];
+    		Promise.all(ps)
+                .then(
+                    function (whateverGotReturned) {
+                    	console.log(protocols);
+                    }
+                )
+                .catch(
+                    function (reason) {
+                    	console.log("bad Promise.all:", reason);
+                    }
+                );
+
+    	}
+
+    	getCurrentRoles().then(init);
+	</script>
+
 </head>
 <body>
 
