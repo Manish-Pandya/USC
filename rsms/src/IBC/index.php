@@ -76,7 +76,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- included javascript libraries
 -->
 	<script type="text/javascript" src="../js/lib/moment.js"></script>
-	<script src="../js/lib/lodash.4.16.5/content/Scripts/lodash.min.js"></script>
+    <script src="../js/lib/lodash.4.17.0/content/Scripts/lodash.min.js"></script>
 	<script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
 	<script src="../js/lib/promise.min.js"></script>
 
@@ -112,7 +112,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- controllers -->
 	<script src="scripts/controllers/IBCCtrl.js"></script>
 	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
-	<script src="scripts/controllers/IBCEmails.js"></script>
+	<script src="scripts/controllers/IBCEmailsCtrl.js"></script>
 
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/dateInput.js"><script>-->
@@ -135,6 +135,9 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/Role.js"></script>
     <script src="scripts/models/Room.js"></script>
     <script src="scripts/models/User.js"></script>
+    <script src="scripts/models/IBCProtocol.js"></script>
+    <script src="scripts/models/IBCQuestion.js"></script>
+    <script src="scripts/models/IBCSection.js"></script>
 
 
 </head>

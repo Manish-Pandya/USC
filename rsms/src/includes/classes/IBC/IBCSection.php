@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Matt Breeden, GraySail LLC
  */
-class Section extends GenericCrud {
+class IBCSection extends GenericCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "ibc_section";

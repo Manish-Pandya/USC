@@ -8,7 +8,7 @@ include_once 'GenericCrud.php';
  *
  * @author Matt Breeden, GraySail LLC
  */
-class BiosafetyProtocol extends GenericCrud {
+class IBCProtocol extends GenericCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "biosafety_protocol";
