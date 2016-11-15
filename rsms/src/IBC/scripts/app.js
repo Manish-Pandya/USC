@@ -39,4 +39,12 @@ angular
               controller: "IBCEmailCtrl"
           })
     })
-    .controller('NavCtrl', function ($rootScope) { });
+    .controller('NavCtrl', function ($rootScope) {
+        $rootScope.getCurrentRoles = function () {
+            if (!DataStoreManager.CurrentRoles) {
+                return XHR.GET("getCurrentRoles").then((roles) => { DataStoreManager.CurrentRoles = roles; })
+            } else {
+                return new Promise(resolve, reject).then(() => { return resolve(DataStoreManager.CurrentRoles) })
+            }
+        }
+    });

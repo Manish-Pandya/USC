@@ -58,6 +58,8 @@ abstract class DataStoreManager {
     static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
+    static CurrentRoles: any[];
+
     // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
     protected static _actualModel: any = {};
     static set ActualModel(value: any) {
@@ -86,6 +88,7 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
+        console.log(this.CurrentRoles);
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }

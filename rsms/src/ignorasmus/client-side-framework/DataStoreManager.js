@@ -69,6 +69,7 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
+        console.log(this.CurrentRoles);
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }

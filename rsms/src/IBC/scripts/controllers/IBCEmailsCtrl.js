@@ -8,8 +8,8 @@
  * Controller of the IBC protocal Emails view
  */
 angular.module('ng-IBC')
-    .controller('IBCEmailCtrl', function ($scope, $modal, $location) {
-
+    .controller('IBCEmailCtrl', function ($rootScope, $scope, $modal, $location) {
+        console.log("IBCEmailCtrl running");
         //$scope.loading = DataStoreManger.getAll([])
     })
     .controller('IBCEmailModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {

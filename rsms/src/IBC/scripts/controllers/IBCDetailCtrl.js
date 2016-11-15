@@ -8,8 +8,8 @@
  * Controller of the IBC protocal detail view
  */
 angular.module('ng-IBC')
-    .controller('IBCDetailCtrl', function ($scope, $modal, $location) {
-
+    .controller('IBCDetailCtrl', function ($rootScope, $scope, $modal, $location) {
+        console.log("IBCDetailCtrl running");
     })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
