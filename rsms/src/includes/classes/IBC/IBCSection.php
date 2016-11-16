@@ -27,6 +27,15 @@ class IBCSection extends GenericCrud {
 		"created_user_id"		=> "integer",
 	);
 
+    /** Relationships */
+	public static $QUESTIONS_RELATIONSHIP = array(
+		"className"	=>	"IBCQuestion",
+		"tableName"	=>	"ibc_question",
+		"keyName"	=>	"key_id",
+		"foreignKeyName"	=>	"section_id"
+	);
+
+
 	/**
 	 * If this Section is the parent section of a protocol, it will have a relationship with that Protocol's hazard
 	 * @var integer
@@ -38,6 +47,8 @@ class IBCSection extends GenericCrud {
      * @var integer
 	 */
 	private $answer_id;
+
+    private $questions;
 
 
 	public function __construct(){
@@ -61,5 +72,14 @@ class IBCSection extends GenericCrud {
 
 	public function getAnswer_id(){return $this->answer_id;}
 	public function setAnswer_id($answer_id){$this->answer_id = $answer_id;}
+
+    public function getQuestions(){
+        if($this->questions === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP));
+		}
+		return $this->questions;
+    }
+    public function setQuestions($questions){$this->questions = $questions;}
 }
 ?>
