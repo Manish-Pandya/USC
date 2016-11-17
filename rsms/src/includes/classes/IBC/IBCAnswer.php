@@ -14,7 +14,7 @@ class IBCAnswer extends GenericCrud
 
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "ibc_question";
+	protected static $TABLE_NAME = "ibc_answer";
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
