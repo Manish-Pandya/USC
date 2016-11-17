@@ -2,7 +2,7 @@
 
 /**
  * Class that wraps a static accessor that returns all Relationship Mappings
- * 
+ *
  * @author perry
  */
 class RelationshipMappingFactory {
@@ -20,28 +20,30 @@ class RelationshipMappingFactory {
 			new RelationMapping("Response"			   , "Recommendation"	  , "response_recommendation"				, "response_id"               , "recommendation_id"   ),
 			new RelationMapping("User"				   , "Role"				  , "user_role"								, "user_id"                   , "role_id"             ),
 			new RelationMapping("PIAuthorization"	   , "Room"				  , "pi_authorization_room"		            , "pi_authorization_id"       , "room_id"             ),
-			new RelationMapping("PIAuthorization"	   , "Department"		  , "pi_authorization_department"  	  		, "pi_authorization_id"       , "department_id"       )
-		);
+			new RelationMapping("PIAuthorization"	   , "Department"		  , "pi_authorization_department"  	  		, "pi_authorization_id"       , "department_id"       ),
+		    new RelationMapping("IBCProtocol"	       , "IBCProtocol"		  , "protocol_pi"  	  		                , "protocol_id"               , "principal_investigator_id"  )
+
+       );
 	}
-	
+
 	/**
 	 * Given two class names, find the name of the table that contains their
 	 * Many-to-Many relationship, if any.
-	 * 
+	 *
 	 * @param string $classA
 	 * @param string $classB
-	 * 
+	 *
 	 * @return string name of associated table
 	 */
 	public function getRelationship($classA, $classB) {
 		$relationships = $this->getMap();
-		
+
 		foreach($relationships as $relation) {
 			if( $relation->isPresent($classA, $classB) ) {
 				return $relation;
 			}
 		}
-		
+
 		// no match found, return error
 		return new ActionError("No relationship found between " . $classA . " and " . $classB);
 	}
