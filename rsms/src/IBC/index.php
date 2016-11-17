@@ -142,7 +142,7 @@ if(!isset($_SESSION["USER"])){ ?>
 </head>
 <body>
 
-<div ng-app="ng-IBC" ng-controller="NavCtrl" class="container-fluid">
+<div ng-app="ng-IBC" ng-controller="AppCtrl" class="container-fluid">
 <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <!-- NAVIGATION -->
   <div class="banner {{bannerClass}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">

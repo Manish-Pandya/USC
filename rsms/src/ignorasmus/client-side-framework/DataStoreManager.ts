@@ -88,7 +88,6 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
-        console.log(this.CurrentRoles);
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }
