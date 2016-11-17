@@ -178,6 +178,7 @@ var InstanceFactory = (function (_super) {
                     for (var i = 0; i < len; i++) {
                         var current = d[i];
                         _this.commitToActualModel(current);
+                        console.log(current);
                         parent[compMap.PropertyName].push(current);
                     }
                     return d;

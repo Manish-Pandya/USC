@@ -49,7 +49,7 @@ class IBCProtocol extends GenericCrud {
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		$entityMaps[] = new EntityMap("lazy","getHazard");
 		$entityMaps[] = new EntityMap("lazy","getDepartment");
 		$this->setEntityMaps($entityMaps);
@@ -115,8 +115,8 @@ class IBCProtocol extends GenericCrud {
 		}
 		return $this->principalInvestigators;
 	}
-	public function setPrincipalInvestigator($principal_investigator){
-		$this->principalInvestigator = $principal_investigator;
+	public function setPrincipalInvestigators($principal_investigators){
+		$this->principalInvestigators = $principal_investigators;
 	}
 
 	public function getDepartment_id(){
@@ -124,6 +124,13 @@ class IBCProtocol extends GenericCrud {
 	}
 	public function setDepartment_id($department_id){
 		$this->department_id = $department_id;
+	}
+
+	public function getDepartment(){
+		return $this->department;
+	}
+	public function setDepartment($department){
+		$this->department = $department;
 	}
 
 	public function getHazard_id(){

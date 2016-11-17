@@ -61,7 +61,7 @@ abstract class DataStoreManager {
     static CurrentRoles: any[];
 
     // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
-    protected static _actualModel: any = {};
+    public static _actualModel: any = {};
     static set ActualModel(value: any) {
         this._actualModel = InstanceFactory.convertToClasses(value);
     }
@@ -108,7 +108,7 @@ abstract class DataStoreManager {
                             var l: number = allCompMaps.length;
                             for (let n: number = 0; n < l; n++) {
                                 var compMap: CompositionMapping = allCompMaps[n];
-                                if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                                if (compMap.CompositionType) {
                                     if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                         // if compMaps == true or if it's an array with an approved compMap...
                                         if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
@@ -127,6 +127,7 @@ abstract class DataStoreManager {
                                     }
                                 }
                             }
+                            
                             return Promise.all(allComps)
                                 .then((whateverGotReturned) => {
                                     d.forEach((value: any, index: number, array: FluxCompositerBase[]) => {

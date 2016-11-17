@@ -88,7 +88,7 @@ var DataStoreManager = (function () {
                         var l = allCompMaps.length;
                         for (var n = 0; n < l; n++) {
                             var compMap = allCompMaps[n];
-                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE) {
+                            if (compMap.CompositionType) {
                                 if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                     // if compMaps == true or if it's an array with an approved compMap...
                                     if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {

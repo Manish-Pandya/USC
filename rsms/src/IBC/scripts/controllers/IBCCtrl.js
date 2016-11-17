@@ -8,15 +8,16 @@
  * Controller of the IBC protocals home view
  */
 angular.module('ng-IBC')
-    .controller('IBCCtrl', function ($rootScope, $scope, $modal, $location) {
+    .controller('IBCCtrl', function ($rootScope, $scope, $modal, $location, $q) {
         console.log("IBCCtrl running");
 
         function getAllProtocols() {
             $scope.protocols = [];
-            Promise.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, true)])
+            $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, true)])
             .then(
                 function (whateverGotReturned) {
                     console.log($scope.protocols);
+                    //console.log(DataStoreManager._actualModel);
                 }
             )
             .catch(

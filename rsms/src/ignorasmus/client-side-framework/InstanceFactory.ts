@@ -183,6 +183,7 @@ abstract class InstanceFactory extends DataStoreManager {
                     for (let i: number = 0; i < len; i++) {
                         var current: FluxCompositerBase = d[i];
                         this.commitToActualModel(current);
+                        console.log(current);
                         parent[compMap.PropertyName].push(current);
                     }
                         

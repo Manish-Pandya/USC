@@ -16,5 +16,9 @@ var IBCProtocol = (function (_super) {
         return this._hasGetAllPermission;
     };
     IBCProtocol.urlMapping = new UrlMapping("getAllProtocols", "getProtocolById&id=", "saveProtocol");
+    IBCProtocol.HazardMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Hazard", "getHazardById&id=", "Hazard", "Hazard_id");
+    IBCProtocol.DepartmentMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Department", "getDepartmentById&id=", "Department", "Department_id");
+    IBCProtocol.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
+    IBCProtocol.RevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCProtocolRevision&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
     return IBCProtocol;
 }(FluxCompositerBase));
