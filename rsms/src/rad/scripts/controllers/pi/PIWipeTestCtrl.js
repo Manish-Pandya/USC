@@ -18,7 +18,6 @@ angular.module('00RsmsAngularOrmApp')
             return af.getRadPIById(id)
                 .then(
                     function (pi) {
-                        console.log(pi);
                         $scope.pi = pi;
                     },
                     function () { }
@@ -50,7 +49,10 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.addPIWipe = function (test) {
-            
+            $scope.pi.WipeTests.forEach(function (w) {
+                w.showWipes = false;
+                w.adding = false;
+            });
             if (!test.PIWipes) test.PIWipes = [];
             //all wipe tests must have a background wipe
             if (!test.PIWipes[0] || !test.PIWipes[0].Location || test.PIWipes[0].Location != "Background") {

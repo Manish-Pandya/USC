@@ -77,8 +77,8 @@ Parcel.prototype = {
         }
     },
     loadAuthorization: function() {
-        if(!this.Authorization) {
-            this.Authorization = dataStoreManager.getById("Authorization", this.Authorization_id);
+        if (!this.Authorization) {
+            dataLoader.loadChildObject (this, "Authorization", "Authorization", this.Authorization_id);
         }
     },
     loadParcelWipeTest: function() {

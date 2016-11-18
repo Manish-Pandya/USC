@@ -30,7 +30,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     }
 
     // if the required data is already cached get it from there.
-    else if (dataStore[relationship.className] && dataStore[relationship.className].length) {
+    else if (!parent[property] && dataStore[relationship.className] && dataStore[relationship.className].length) {
         if (!whereClause) whereClause = false;
         parent[property] = [];
         parent[property] = dataStoreManager.getChildrenByParentProperty(
@@ -41,7 +41,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     else {
         //the collection is present in the parent, but the objects have not been placed in the dataStore
         if (parent[property] && parent[property].length) {
-
+            
             dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[property]), relationship.className);
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                     relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
@@ -49,6 +49,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
 
         } else {
+
             var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
             parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
                 //cache result so we don't hit the server next time

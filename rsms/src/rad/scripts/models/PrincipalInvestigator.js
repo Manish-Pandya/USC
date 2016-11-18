@@ -156,7 +156,6 @@ PrincipalInvestigator.prototype = {
     },
 
     loadPIWipeTests: function () {
-        console.log(this.Key_id);
         dataLoader.loadOneToManyRelationship(this, 'WipeTests', this.WipeTestsRelationship);
     },
 
