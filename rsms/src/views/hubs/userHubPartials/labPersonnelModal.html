@@ -60,7 +60,7 @@
 
         <div class="control-group" ng-if="!modalData.piHub">
             <label class="control-label" for="inputEmail">Principal Investigator</label>
-            <div class="controls span4" style="padding-left: 5px;">
+            <div class="controls span4">
                 <input style="" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-required="isPIRequired(modalData)">
 
                 <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectPI($item, $model, $label)" required>
@@ -73,7 +73,7 @@
         </div>
         <div class="control-group">
             <label class="control-label" for="inputEmail">Roles(s)</label>
-            <div class="controls span4" style="padding-left: 5px;">
+            <div class="controls span4">
                 <input style="" class="span4" placeholder="Select A Role" typeahead-on-select='onSelectRole($item, $model, $label)' type="text" ng-model="selectedRole" typeahead="role as role.Name for role in roles | filter:$viewValue" ng-init="" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
 
                 <ui-select ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" ng-if="!isProductionServer || modalData.Username" on-select="onSelectRole($item, $model, $label)">
@@ -93,7 +93,7 @@
 
         <div class="control-group">
             <label class="control-label" for="inputEmail">Position</label>
-            <div class="controls span4" style="padding-left: 5px;">
+            <div class="controls span4">
                 <select ng-model="modalData.Position" ng-options="position as position for position in Constants.POSITION">
                     <option value="" style="display:none">--Select a Position--</option>
                 </select>

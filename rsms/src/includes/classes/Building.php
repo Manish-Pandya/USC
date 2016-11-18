@@ -13,6 +13,7 @@ class Building extends GenericCrud {
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"				=> "text",
+        "alias"             => "text",
 		"campus_id"			=> 'integer',
 		"physical_address"  => "text",
 
@@ -45,6 +46,8 @@ class Building extends GenericCrud {
 	/** This Building's Campus  **/
 	private $campus;
 
+    private $alias;
+
 	/** This Building's Address  **/
 	private $physical_address;
 
@@ -70,6 +73,10 @@ class Building extends GenericCrud {
 
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+
+
+	public function getAlias(){ return $this->alias; }
+	public function setAlias($alias){ $this->alias = $alias; }
 
 	public function getRooms(){
 		if($this->rooms == null) {

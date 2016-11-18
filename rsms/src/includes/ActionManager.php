@@ -1453,7 +1453,7 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Building());
-            $dao->save($decodedObject);
+            $decodedObject =$dao->save($decodedObject);
             return $decodedObject;
         }
     }
