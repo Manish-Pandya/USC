@@ -7,129 +7,124 @@
 <div class="card super pickups pickup-collection" ng-if="!activePickups || !activePickups.length">
     <h1 class="card-header accordion-header">No PIs have requested pickups at this time.</h1>
 </div>
-    <div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups)">
-        <div>
-            <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
-                <!--<span class="pull-left">-->
-                <i class="icon-box-remove"></i>{{pickup.PrincipalInvestigator.User.Name}} requested a pickup on {{pickup.Requested_date | dateToISO}}
-                <!--</span>
-                        <i class="pull-right" ng-class="{'icon-minus':pickup.show,'icon-plus':!pickup.show}"></i>
-                -->
-            </h1>
+<div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups)">
+    <div>
+        <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
+            <!--<span class="pull-left">-->
+            <i class="icon-box-remove"></i>{{pickup.PrincipalInvestigator.User.Name}} requested a pickup on {{pickup.Requested_date | dateToISO}}
+            <!--</span>
+                    <i class="pull-right" ng-class="{'icon-minus':pickup.show,'icon-plus':!pickup.show}"></i>
+            -->
+        </h1>
 
-            <div ng-show="pickup.show" class="print-always pickup-form">
-                <h3>
-                    Pickup Status:<label class="checkbox print">
-                        <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                        <span class="metro-checkbox">Picked Up</span>
-                    </label>
-                </h3>
-                <a class="btn btn-large no-print btn-info" ng-click="setStatusAndSave(pickup,Constants.PICKUP.STATUS.PICKED_UP, (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
-                    <label class="checkbox">
-                        <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                        <span class="metro-checkbox">Picked Up</span>
-                    </label>
-                </a>
-                <a class="btn btn-large no-print btn-success" ng-click="setStatusAndSave(pickup, Constants.PICKUP.STATUS.AT_RSO, (pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
-                    <label class="checkbox">
-                        <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                        <span class="metro-checkbox">At RSO</span>
-                    </label>
-                </a>
-            </div>
+        <div ng-show="pickup.show" class="print-always pickup-form">
+            <h3>
+                Pickup Status:<label class="checkbox print">
+                    <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                    <span class="metro-checkbox">Picked Up</span>
+                </label>
+            </h3>
+            <a class="btn btn-large no-print btn-info" ng-click="setStatusAndSave(pickup,Constants.PICKUP.STATUS.PICKED_UP, (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
+                <label class="checkbox">
+                    <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                    <span class="metro-checkbox">Picked Up</span>
+                </label>
+            </a>
+            <a class="btn btn-large no-print btn-success" ng-click="setStatusAndSave(pickup, Constants.PICKUP.STATUS.AT_RSO, (pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
+                <label class="checkbox">
+                    <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                    <span class="metro-checkbox">At RSO</span>
+                </label>
+            </a>
+        </div>
 
-            <div class="print-always" ng-show="pickup.show" ng-if="pickup.Waste_bags.length">
-                <h3>{{pickup.Waste_bags.length}} Waste Bag<span ng-if="pickup.Waste_bags.length!=1">s</span></h3>
-                <div class="fake-table" ng-if="pickup.Waste_bags.length">
-                    <div class="table-row" ng-repeat="bag in pickup.Waste_bags" ng-class="{'inactive':bag.removed}">
-                        <div class="button-cell no-print">
-                            <a ng-if="!bag.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(bag)"><i class="icon-remove"></i>Remove</a>
-                            <a ng-if="bag.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(bag, pickup)"><i class="icon-plus-2"></i>Add</a>
-                        </div>
-                        <div class="pickup-item-contents">
-                            <span class="bag-date" ng-if="bag.Date_removed">Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}</span>
-                            <span class="bag-date"  ng-if="!bag.Date_removed">(Waste Bag still in container)</span>
-                            <p class="pickup-item-contents">Contents: <span ng-if="!bag.Contents">N/A</span><span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span></p>
-                            <div class="pickup-comments" style="padding:0;">
-                                <span ng-if="bag.Comments && !bag.edit">Comments: {{bag.Comments}}<i ng-click="af.createCopy(bag)" class="icon-pencil primary"></i></span>
-                                <span ng-if="!bag.Comments && !bag.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(bag)" ><i class="icon-plus-2 success"></i></a></span>
-                                <div class="control-group" ng-if="bag.edit">
-                                    <label class="control-label">Comments</label>
-                                    <div class="controls">
-                                        <textarea style="width:100%" ng-model="WasteBagCopy.Comments" rows="2" maxlength="255"></textarea>
-                                    </div>
-                                    <button class="btn-success btn left" ng-click="af.saveWasteBag(bag, WasteBagCopy);"><i class="icon-checkmark"></i></button>
-                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(bag)"><i class="icon-cancel-2"></i></button>
+        <div class="print-always" ng-show="pickup.show" ng-if="pickup.Waste_bags.length">
+            <h3>{{pickup.Waste_bags.length}} Waste Bag<span ng-if="pickup.Waste_bags.length!=1">s</span></h3>
+            <div class="fake-table" ng-if="pickup.Waste_bags.length">
+                <div class="table-row" ng-repeat="bag in pickup.Waste_bags" ng-class="{'inactive':bag.removed}">
+                    <div class="button-cell no-print">
+                        <a ng-if="!bag.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(bag)"><i class="icon-remove"></i>Remove</a>
+                        <a ng-if="bag.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(bag, pickup)"><i class="icon-plus-2"></i>Add</a>
+                    </div>
+                    <div class="pickup-item-contents">
+                        <span class="bag-date" ng-if="bag.Date_removed">Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}</span>
+                        <span class="bag-date" ng-if="!bag.Date_removed">(Waste Bag still in container)</span>
+                        <p class="pickup-item-contents">Contents: <span ng-if="!bag.Contents">N/A</span><span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span></p>
+                        <div class="pickup-comments" style="padding:0;">
+                            <span ng-if="bag.Comments && !bag.edit">Comments: {{bag.Comments}}<i ng-click="af.createCopy(bag)" class="icon-pencil primary"></i></span>
+                            <span ng-if="!bag.Comments && !bag.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(bag)"><i class="icon-plus-2 success"></i></a></span>
+                            <div class="control-group" ng-if="bag.edit">
+                                <label class="control-label">Comments</label>
+                                <div class="controls">
+                                    <textarea style="width:100%" ng-model="WasteBagCopy.Comments" rows="2" maxlength="255"></textarea>
                                 </div>
+                                <button class="btn-success btn left" ng-click="af.saveWasteBag(bag, WasteBagCopy);"><i class="icon-checkmark"></i></button>
+                                <button class="btn-danger btn left" ng-click="af.cancelEdit(bag)"><i class="icon-cancel-2"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="print-always" ng-show="pickup.show" ng-if="pickup.Scint_vial_collections.length">
-                <h3>{{pickup.Scint_vial_trays}} Scint Vial Trays:</h3>
-                <div class="fake-table" ng-if="pickup.Scint_vial_collections.length">
-                    <div ng-repeat="collection in pickup.Scint_vial_collections" ng-if="collection.Contents.length" ng-class="{'inactive':collection.removed}" class="table-row">
-                        <div class="button-cell no-print">
-                            <a ng-if="!collection.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(collection)"><i class="icon-remove"></i>Remove</a>
-                            <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Add</a>
-                        </div>
-                        <div class="pickup-item-contents">
-                            Contents: <span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
-                            <div class="pickup-comments" style="padding:0 !important;">
-                                <span ng-if="collection.Comments && !collection.edit">Comments: {{collection.Comments}}<i ng-click="af.createCopy(collection)" class="icon-pencil primary"></i></span>
-                                <span ng-if="!collection.Comments && !collection.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(collection)"><i class="icon-plus-2 success"></i></a></span>
-                                <div class="control-group" ng-if="collection.edit">
-                                    <label class="control-label">Comments</label>
-                                    <div class="controls">
-                                        <textarea style="width:100%" ng-model="ScintVialCollectionCopy.Comments" rows="2" maxlength="255"></textarea>
-                                    </div>
-                                    <button class="btn-success btn left" ng-click="af.saveSVCollection(collection, ScintVialCollectionCopy);"><i class="icon-checkmark"></i></button>
-                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(collection)"><i class="icon-cancel-2"></i></button>
+        <div class="print-always" ng-show="pickup.show" ng-if="pickup.Scint_vial_collections.length">
+            <h3>{{pickup.Scint_vial_trays}} Scint Vial Trays:</h3>
+            <div class="fake-table" ng-if="pickup.Scint_vial_collections.length">
+                <div ng-repeat="collection in pickup.Scint_vial_collections" ng-if="collection.Contents.length" ng-class="{'inactive':collection.removed}" class="table-row">
+                    <div class="button-cell no-print">
+                        <a ng-if="!collection.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(collection)"><i class="icon-remove"></i>Remove</a>
+                        <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Add</a>
+                    </div>
+                    <div class="pickup-item-contents">
+                        Contents: <span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
+                        <div class="pickup-comments" style="padding:0 !important;">
+                            <span ng-if="collection.Comments && !collection.edit">Comments: {{collection.Comments}}<i ng-click="af.createCopy(collection)" class="icon-pencil primary"></i></span>
+                            <span ng-if="!collection.Comments && !collection.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(collection)"><i class="icon-plus-2 success"></i></a></span>
+                            <div class="control-group" ng-if="collection.edit">
+                                <label class="control-label">Comments</label>
+                                <div class="controls">
+                                    <textarea style="width:100%" ng-model="ScintVialCollectionCopy.Comments" rows="2" maxlength="255"></textarea>
                                 </div>
-                            </div>                  
+                                <button class="btn-success btn left" ng-click="af.saveSVCollection(collection, ScintVialCollectionCopy);"><i class="icon-checkmark"></i></button>
+                                <button class="btn-danger btn left" ng-click="af.cancelEdit(collection)"><i class="icon-cancel-2"></i></button>
+                            </div>
                         </div>
-                </div>
-            </div>
-
-            <div class="print-always" ng-show="pickup.show" ng-if="pickup.Carboy_use_cycles.length">
-                <h3>{{pickup.Carboy_use_cycles.length}} Carboy<span ng-if="pickup.Carboy_use_cycles.length>1">s</span></h3>
-                <div class="fake-table" ng-if="pickup.Carboy_use_cycles.length">
-                    <div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles" ng-class="{'inactive':cycle.removed}">
-                        <div class="button-cell no-print">
-                            <a ng-if="!cycle.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(cycle)"><i class="icon-remove"></i>Remove</a>
-                            <a ng-if="cycle.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(cycle, pickup)"><i class="icon-plus-2"></i>Add</a>
-                        </div>
-
-                        <div class="pickup-item-contents">
-                            <span class="bag-date">Carboy Number {{cycle.Carboy.Carboy_number}}</span>
-                            <p ng-if="cycle.Contents.length">
-                                Contents: <span ng-repeat="content in cycle.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
-                            </p>
-                            <div class="pickup-comments">
-                                <span ng-if="cycle.Comments && !cycle.edit">Comments: {{cycle.Comments}}<i ng-click="af.createCopy(cycle)" class="icon-pencil primary"></i></span>
-                                <span ng-if="!cycle.Comments && !cycle.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(cycle)"><i class="icon-plus-2 success"></i></a></span>
-                                <div class="control-group" ng-if="cycle.edit">
-                                    <label class="control-label">Comments</label>
-                                    <div class="controls">
-                                        <textarea style="width:100%" ng-model="CarboyUseCycleCopy.Comments" rows="2" maxlength="255"></textarea>
-                                    </div>
-                                    <button class="btn-success btn left" ng-click="af.saveCarboyUseCycle(CarboyUseCycleCopy, cycle);"><i class="icon-checkmark"></i></button>
-                                    <button class="btn-danger btn left" ng-click="af.cancelEdit(cycle)"><i class="icon-cancel-2"></i></button>
-                                </div>
-                            </div>     
-                        </div>                       
                     </div>
                 </div>
             </div>
-            <div class="print-always" ng-show="pickup.show" ng-if="pickup.Notes">
-                <h3 style="padding-bottom:10px;">Notes:<p>{{pickup.Notes}}</p></h3>
+        </div>
+        <div class="print-always" ng-show="pickup.show" ng-if="pickup.Carboy_use_cycles.length">
+            <h3>{{pickup.Carboy_use_cycles.length}} Carboy<span ng-if="pickup.Carboy_use_cycles.length>1">s</span></h3>
+            <div class="fake-table" ng-if="pickup.Carboy_use_cycles.length">
+                <div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles" ng-class="{'inactive':cycle.removed}">
+                    <div class="button-cell no-print">
+                        <a ng-if="!cycle.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(cycle)"><i class="icon-remove"></i>Remove</a>
+                        <a ng-if="cycle.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(cycle, pickup)"><i class="icon-plus-2"></i>Add</a>
+                    </div>
+
+                    <div class="pickup-item-contents">
+                        <span class="bag-date">Carboy Number {{cycle.Carboy.Carboy_number}}</span>
+                        <p ng-if="cycle.Contents.length">
+                            Contents: <span ng-repeat="content in cycle.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
+                        </p>
+                        <div class="pickup-comments">
+                            <span ng-if="cycle.Comments && !cycle.edit">Comments: {{cycle.Comments}}<i ng-click="af.createCopy(cycle)" class="icon-pencil primary"></i></span>
+                            <span ng-if="!cycle.Comments && !cycle.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(cycle)"><i class="icon-plus-2 success"></i></a></span>
+                            <div class="control-group" ng-if="cycle.edit">
+                                <label class="control-label">Comments</label>
+                                <div class="controls">
+                                    <textarea style="width:100%" ng-model="CarboyUseCycleCopy.Comments" rows="2" maxlength="255"></textarea>
+                                </div>
+                                <button class="btn-success btn left" ng-click="af.saveCarboyUseCycle(CarboyUseCycleCopy, cycle);"><i class="icon-checkmark"></i></button>
+                                <button class="btn-danger btn left" ng-click="af.cancelEdit(cycle)"><i class="icon-cancel-2"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="print-always" ng-show="pickup.show" ng-if="pickup.Notes">
+            <h3 style="padding-bottom:10px;">Notes:<p>{{pickup.Notes}}</p></h3>
+        </div>
     </div>
-    <!--
-    <ul>
-        <li ng-repeat="pickup in pickups | activePickups"><pre>{{pickup | json}}</pre></li>
-    </ul>
-    -->
+</div>

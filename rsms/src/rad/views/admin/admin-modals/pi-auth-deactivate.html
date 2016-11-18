@@ -1,0 +1,28 @@
+﻿<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization, true )">
+    <div class="modal-header" style="padding:0;">
+        <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="redBg">Terminate Authorization #{{modalData.PIAuthorizationCopy.Authorization_number}}?</h2>
+    </div>
+
+    <div class="modal-body">
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Date Terminated:</label>
+            <div class="controls">
+                <input formnovalidate name="date" ng-class="{'error': authForm.date.$error && authForm.$submitted}" ng-init="getTerminationDate(modalData.PIAuthorizationCopy)" ng-model="modalData.PIAuthorizationCopy.Form_Termination_date" required>
+                <span class="help-block" style="">mm/dd/yy</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Notes:</label>
+            <div class="controls">
+                <textarea formnovalidate name="date" ng-class="{'error': authForm.date.$error && authForm.$submitted}" ng-model="modalData.PIAuthorizationCopy.Termination_notes"></textarea>
+            </div>
+        </div>        
+    </div>
+    <div class="modal-footer">
+        <button ng-if="!modalData.PIAuthorization.Termination_date" ng-click="authForm.$submitted=true;" type="submit" class="btn btn-large btn-success left" ><i class="icon-checkmark"></i>Terminate Authorization</button>
+        <button ng-if="modalData.PIAuthorization.Termination_date" ng-click="authForm.$submitted=true;" type="submit" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+
+        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </div>
+</form>

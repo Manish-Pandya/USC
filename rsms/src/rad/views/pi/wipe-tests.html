@@ -12,15 +12,11 @@
             <h3 class="card-header padding">
                 <i class="icon-paper"></i>
                 <span>
-                    {{test.Notes}} started on {{test.Date_created | dateToISO}}
+                    {{test.Notes}} <span ng-if="!test.Key_id || !test.PIWipes.length">started {{test.Date_created | dateToISO}}</span><span ng-if="test.Key_id && test.PIWipes.length">completed {{test.PIWipes[0].Date_created | dateToISO}}</span>
                 </span>
                 <span class='pull-right' style="max-width:406px; padding-bottom:10px;">
                     <a ng-click="openModal(test)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a> 
                     <a ng-disabled="smear.edit" ng-click="addPIWipe(test)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Wipe</a> 
-                    <!--
-                    <a ng-click="clouseOutMWT(test)" class="btn btn-info left"><i class="icon-exit"></i>Close</a>
-                    <a style="margin-left:6px" ng-click="af.setObjectActiveState(test)" class="btn btn-danger left" ng-if="!test.Key_id"><i class="icon-cancel-2"></i>Cancel</a>
-                    -->
                     <button ng-show="test.PIWipes.length" ng-click="test.showWipes = !test.showWipes" class="btn left btn-info">
                         <i ng-class="{'icon-fullscreen-alt':!test.showWipes, 'icon-fullscreen-exit':test.showWipes}"></i>
                         <span ng-if="!test.showWipes">Show</span><span ng-if="test.showWipes">Hide</span> {{smears.length}} Wipes

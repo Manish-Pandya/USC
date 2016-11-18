@@ -2540,7 +2540,8 @@ class Rad_ActionManager extends ActionManager {
         $savedWaste = $dao->save($waste);
 
         $amountDao = $this->getDao(new ParcelUseAmount());
-        foreach($waste->getParcel_use_amounts() as &$amount){
+        $amts = $waste->getParcel_use_amounts();
+        foreach($amts as &$amount){
             if(is_array($amount)){
                 $amt = new ParcelUseAmount();
                 $amt->setCurie_level($amount["Curie_level"]);
