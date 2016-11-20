@@ -4,7 +4,7 @@
         <i ng-if="question.Responses.Answer == 'no'"  class="span3 icon-cancel-2" style="color:#900;"></i>
         <span ng-if="question.Responses.Answer == 'n/a'" class="span3 bold">N/A</span>
     </div>
-    <div class="span11">
+    <div class="span11" style="width:auto;">
     <span once-text="question.Text" class="questionText"></span>
         <ul>
             <li ng-repeat="def in question.Responses.DeficiencySelections">

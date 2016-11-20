@@ -2140,6 +2140,14 @@ detailsReportHeaderTable tr td {
   font-size: 17px;
   cursor: pointer;
 }
+ul.hazInvSubRooms li span i {
+    margin: -2px 1px 0 -1px;
+    font-size: 13px;
+    cursor: auto;
+}
+ul.hazInvSubRooms li span i.icon-users {
+    cursor: pointer;
+}
 /* line 1388, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
   color: rgba(91, 183, 91, 0.61);

@@ -104,7 +104,8 @@ echo "</script>";
 
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
-   
+
+    <script src="../js/lib/lodash.min.js"></script>
 
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-1.10.0.min.js"></script>
@@ -303,16 +304,18 @@ echo "</script>";
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
-                            <li ng-show="relevantRooms.length">
+                            <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
                                     <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
-                                        <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
+                                        {{ room.Room_name }}
+                                        <span ng-if="!room.ContainsHazard"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                     </a>
-                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">{{ room.Room_name }}
-                                        <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
+                                        {{ room.Room_name }}
+                                        <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
                                     </span>
-                                    <span style="margin-right: -4px;margin-left: -4px;" ng-if="!$last">, </span>
+                                    <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
                                 </span>
                             </li>
                         </ul>
@@ -352,18 +355,18 @@ echo "</script>";
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
-                            <li ng-show="relevantRooms.length">
+                            <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
                                     <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
                                         {{ room.Room_name }}
-                                        <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
+                                        <span ng-if="!room.ContainsHazard"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                     </a>
                                     <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
                                         {{ room.Room_name }}
-                                        <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+                                        <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
                                     </span>
-                                    <span style="margin-right: -4px;margin-left: -4px;" ng-if="!$last">, </span>
+                                    <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
                                 </span>
                             </li>
                         </ul>                     

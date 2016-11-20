@@ -42,10 +42,9 @@ angular.module('HazardInventory')
                             hazard.loadSubHazards();
                             $scope.hazard = hazard;
                             var hazards = dataStoreManager.get("HazardDto");
-                            var i = hazards.length;
-                            while (i--) {
-                                if (hazards[i].HasChildren) hazards[i].loadSubHazards();
-                            }
+                            hazards.forEach(function (h) {
+                                if (h.HasChildren) h.loadSubHazards();
+                            })
                         },
                         function () {
                             $scope.error = 'Couldn\'t find the right hazards.'
@@ -236,6 +235,17 @@ angular.module('HazardInventory')
             return false;
         }
 
+        $scope.evaluateStoreOnly = function (h) {
+            var parent = dataStoreManager.getById("HazardDto", h.Parent_hazard_id);
+            //child hazards are stored only if all their rooms are stored only, or if all their parent's rooms are
+            var l = parent.InspectionRooms.length;
+            for (var i = 0; i < l; i++) {
+                var r = parent.InspectionRooms[i];
+                if (r.ContainsHazard && r.Status != Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY) return false;
+            }
+            return h.Stored_only = true;
+        }
+
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
@@ -340,6 +350,10 @@ angular.module('HazardInventory')
             $modalInstance.dismiss();
         }
 
+        $scope.sortRooms = function (rooms) {
+            _.sortBy(rooms, ["Building_name", "Room_name"]);
+            return rooms;
+        }
    
 
 

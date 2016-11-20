@@ -1,7 +1,7 @@
 ﻿<h3 class="redBg">{{modalData.HazardDto.Hazard_name}}</h3>
 <div class="modal-body" style="border-bottom:none">
     <ul>
-        <li ng-repeat="room in modalData.PI.Rooms" ng-show="matches.length">
+        <li ng-repeat="room in modalData.PI.Rooms | orderBy:['Building.Name','Name']" ng-show="matches.length">
             <h3 style="margin-bottom:5px;">{{room.Building.Name}}, Room {{room.Name}}</h3>
             <table class="table table-bordered">
                 <tr ng-repeat="phr in matches = (modalData.pHRS | roomIdMatches:room.Key_id:modalData.PI.Key_id | orderBy:'current')" ng-class="{'new': phr.current}">

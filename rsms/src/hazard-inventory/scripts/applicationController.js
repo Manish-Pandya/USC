@@ -230,6 +230,12 @@ angular
                             }
                         }
                     }
+
+                    if (parent.ActiveSubHazards && parent.ActiveSubHazards.length) {
+                        parent.ActiveSubHazards.forEach(function (h) {
+                            ac.evaluateHazardPresent(h);
+                        })
+                    }
                 }
             }
             if(hazardDto.IsPresent){
