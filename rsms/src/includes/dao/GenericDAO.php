@@ -934,13 +934,13 @@ class GenericDAO {
 
 		//get this pi's rooms
 		if($roomId == null){
-			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, IFNULL(b.alias, b.name) as building_name from room a
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 			$stmt = $db->prepare($roomsQueryString);
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
-			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, IFNULL(b.alias, b.name) as building_name from room a
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id = :roomId";
 			$stmt = $db->prepare($roomsQueryString);
