@@ -67,7 +67,7 @@ class CompositionMapping {
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;
 
-        this.ParentIdProp = parentIdProp ? parentIdProp : DataStoreManager.uidString;
+        this.ParentIdProp = parentIdProp || DataStoreManager.uidString;
         
         if (this.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!gerundName || !gerundUrl) {
