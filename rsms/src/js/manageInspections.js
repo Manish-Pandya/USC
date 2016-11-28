@@ -13,7 +13,6 @@ var monthNames2 = [{val:"01", string:"January"},
                 {val:"11", string:"November"},
                 {val:"12", string:"December"}]
 var getDate = function(time){
-
             Date.prototype.getMonthFormatted = function() {
                 var month = this.getMonth();
                 return month < 10 ? '0' + month : month; // ('' + month) for string result
@@ -26,14 +25,9 @@ var getDate = function(time){
             // create a new javascript Date object based on the timestamp
             var date = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
-
-            // hours part from the timestamp
-            var hours = date.getHours();
-            // minutes part from the timestamp
-            var minutes = date.getMinutes();
-            // seconds part from the timestamp
-            var seconds = date.getSeconds();
-
+            var hours = date.getHours(); // hours part from the timestamp
+            var minutes = date.getMinutes(); // minutes part from the timestamp
+            var seconds = date.getSeconds(); // seconds part from the timestamp
             var month = date.getMonth()+1;
             var day = date.getDate();
             var year = date.getFullYear();
@@ -50,7 +44,6 @@ var getDate = function(time){
             //console.log(formattedTime);
             return formattedTime;
         }
-
 
 var manageInspections = angular.module('manageInspections', ['convenienceMethodWithRoleBasedModule', 'once', 'ui.bootstrap'])
 .filter('toArray', function () {
@@ -105,7 +98,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     scope.$apply(function () {
                         scope.$eval(attrs.blurIt);
                     });
-
                     event.preventDefault();
                 }
 
@@ -114,7 +106,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     scope.$apply(function () {
                         scope.$eval(attrs.blurIt);
                     });
-
                     event.preventDefault();
                 }
             });
@@ -124,7 +115,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     scope.$apply(function () {
                         scope.$eval(attrs.blurIt);
                     });
-
                     event.preventDefault();
                 }
             });
@@ -168,7 +158,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         )
 
         return deferred.promise;
-
     }
 
     factory.getYears = function () {
@@ -202,8 +191,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     factory.getInspectionScheduleDtos = function (year) {
         factory.year = year;
-        //if we don't have a the list of pis, get it from the server
-        console.log(factory.getDtos);
+        //if we don't have the list of pis, get it from the server
         return factory.getDtos(year)
                 .then(factory.getInspectionsByYear)
                 .then(factory.mapInspectionsToDtos)
@@ -236,7 +224,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             deferred.resolve(factory.Inspections);
         } else {
             var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
-            console.log(url)
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function (promise) {
                     console.log(promise)
@@ -335,7 +322,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             Inspectors: inspectors,
             Is_active: true
         }
-
         console.log(dto);
 
         var url = '../../ajaxaction.php?action=scheduleInspection';
@@ -469,7 +455,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             var pi = dto.Pis[i];
             pi = factory.getInspectionsByPi(pi, dto.Inpsections);       
             
-            
             //create a dto obj for each inspection that the pi has
             //cache an obj of uninspected rooms, grouped by building
             var n = pi.Inspections.length;
@@ -477,14 +462,10 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 var dtoTemplate = {
                     Pi_name: pi.User.Name,
                     pi_key_id: pi.User.Key_id,
-
                 }
-
             }
-
-
-            //create a dto obj for each inspection the pi still needs
         }
+        //create a dto obj for each inspection the pi still needs
         dtos = dto.Pis;
         console.log(dtos);
         return dtos;
@@ -593,7 +574,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             })
             
             return campuses;
-
         }
 
         function invertRoomForNonMultiples(dto) {
@@ -612,8 +592,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
                 ]
             }]
-            
-
 
             return dto.Campuses;
         }
@@ -690,7 +668,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     init();
 
-
     $scope.selectYear = function () {
         $scope.loading = true;
         $scope.dtos = [];
@@ -709,7 +686,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     $scope.genericFilter = function (init) {
-
         var filtered = [];
         var defer = $q.defer();
         if (init) {
@@ -735,7 +711,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     matched = true;
 
                     if (search.building) {
-                        
                         matched = false
                         if (item.Campuses && item.Campuses.length) {
                             item.Campuses.forEach(function (campus) {
@@ -747,7 +722,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                                 })
                             });
                         }
-
                     }
 
                     if (search.type) {
@@ -775,8 +749,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                             matched = false;
                             continue;
                         }
-
-                        
                     }
 
                     if (matched && search.inspector) {
@@ -794,12 +766,10 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                                     continue;
                                 }
                             }
-
                         } else {
                             matched = false;
                             continue;
                         }
-
                     }
 
                     if (matched && search.campus) {
@@ -812,7 +782,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                                 }
                             });
                         }
-
                     }
 
                     if (matched && search.pi && item.Pi_name) {
@@ -865,9 +834,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
 
                     if (matched == true) filtered.unshift(item);
-
                 }
-            
             
                 $scope.filtered = filtered;
                 defer.resolve(filtered);
@@ -879,6 +846,5 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             return;
         }
     }
-
 
 });
