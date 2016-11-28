@@ -4289,14 +4289,17 @@ class ActionManager {
         }
                 // Call the database
 		$LOG->fatal('getting schedule for ' . $year);
-
-
-
-
-
-
         $dao = $this->getDao(new Inspection());
-        $inspectionSchedules = $dao->getInspectionsByYear($year);
+        $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
+
+        $roomMaps = array();
+        $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+        $roomMaps[] = new EntityMap("lazy","getHazards");
+        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+        $roomMaps[] = new EntityMap("lazy","getBuilding");
+        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
 
         foreach ($inspectionSchedules as &$is){
             if ($is->getInspection_id() !== null){
@@ -4313,25 +4316,15 @@ class ActionManager {
 
                 $inspection->setEntityMaps($entityMaps);
 
-                $entityMaps = array();
-                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-                $entityMaps[] = new EntityMap("lazy","getHazards");
-                $entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
-                $entityMaps[] = new EntityMap("lazy","getHas_hazards");
-                $entityMaps[] = new EntityMap("lazy","getBuilding");
-                $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
-                $entityMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
-
                 $filteredRooms = array();
                 $rooms = $inspection->getRooms();
-                foreach( $rooms as $key=>$room ){
+                foreach( $rooms as $room ){
                 	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
-                        $room->setEntityMaps($entityMaps);
+                        $room->setEntityMaps($roomMaps);
                 		array_push($filteredRooms, $room);
                 	}
                 }
                 $is->setInspection_rooms($filteredRooms);
-                $is->setInspections($inspection);
                // $LOG->fatal($is);
                 //return $is;
             }
@@ -4341,7 +4334,7 @@ class ActionManager {
             $rooms = $pi->getRooms();
             $pi_bldg_rooms = array();
             foreach ($rooms as $room){
-                $room->setEntityMaps($entityMaps);
+                $room->setEntityMaps($roomMaps);
 
                 if ($room->getBuilding_id() == $is->getBuilding_key_id()){
                     $pi_bldg_rooms[] = $room;
@@ -4350,6 +4343,37 @@ class ActionManager {
             $is->setBuilding_rooms($pi_bldg_rooms);
         }
         return $inspectionSchedules;
+    }
+
+    public function getInspectionsByYear($year = NULL){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        // read the Year value from the request.
+        $year = $this->getValueFromRequest('year', $year);
+
+        // If the year is null, choose the current year.
+        if ($year == null){
+            $year = $this->getCurrentYear();
+        }
+
+        $dao = new GenericDAO(new Inspection());
+        $inspections = $dao->getInspectionsByYear($year);
+        foreach($inspections as $inspection){
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager","getInspectors");
+            $entityMaps[] = new EntityMap("lazy","getRooms");
+            $entityMaps[] = new EntityMap("lazy","getResponses");
+            $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+            $entityMaps[] = new EntityMap("lazy","getChecklists");
+            $entityMaps[] = new EntityMap("eager","getStatus");
+
+            $inspection->setEntityMaps($entityMaps);
+        }
+
+        return $inspections;
+
     }
 
     public function getAllLabLocations(){

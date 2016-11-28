@@ -734,7 +734,7 @@ class GenericDAO {
 		return $result;
 	}
 
-	function getInspectionsByYear($year){
+	function getNeededInspectionsByYear($year){
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
@@ -757,6 +757,28 @@ class GenericDAO {
 
 		return $result;
 	}
+
+    function getInspectionsByYear($year){
+        //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
+        global $db;
+
+		//Prepare to query all from the table
+		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+        $sql = "select * from inspection where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)";
+        $stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		return $result;
+    }
 
 	/*
 	 * @param RelationshipMapping relationship

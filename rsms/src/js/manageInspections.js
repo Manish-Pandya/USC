@@ -135,6 +135,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 .factory('manageInspectionsFactory', function (convenienceMethods, $q, $rootScope) {
     var factory = {};
     factory.InspectionScheduleDtos = [];
+    factory.Inspections = [];
     factory.currentYear;
     factory.years = [];
     factory.Inspectors = [];
@@ -200,33 +201,68 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     factory.getInspectionScheduleDtos = function (year) {
+        factory.year = year;
         //if we don't have a the list of pis, get it from the server
+        console.log(factory.getDtos);
+        return factory.getDtos(year)
+                .then(factory.getInspectionsByYear)
+                .then(factory.mapInspectionsToDtos)
+    }
+
+    factory.getDtos = function (year) {
         var deferred = $q.defer();
         //lazy load
-        if (this.InspectionScheduleDtos.length) {
-            deferred.resolve(this.InspectionScheduleDtos);
+        if (factory.InspectionScheduleDtos.length) {
+            deferred.resolve(factory.InspectionScheduleDtos);
         } else {
             var url = '../../ajaxaction.php?action=getInspectionSchedule&year=' + year.Name + '&callback=JSON_CALLBACK';
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function (promise) {
+                    factory.InspectionScheduleDtos = promise;
                     deferred.resolve(promise);
                 },
                 function (promise) {
-                    console.log('usho')
                     deferred.reject();
                 }
             );
         }
+        return deferred.promise;
+    }
 
-        deferred.promise.then(
-            function (InspectionScheduleDtos) {
-                factory.InspectionScheduleDtos = { Name: parseInt(InspectionScheduleDtos) };
-            },
-            function () {
-                alert('error getting schedule')
-            }
-        )
+    factory.getInspectionsByYear = function () {
+        var deferred = $q.defer();
+        //lazy load
+        if (factory.Inspections.length) {
+            deferred.resolve(factory.Inspections);
+        } else {
+            var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
+            console.log(url)
+            convenienceMethods.getDataAsDeferredPromise(url).then(
+                function (promise) {
+                    console.log(promise)
+                    factory.Inspections = promise;
+                    deferred.resolve(promise);
+                },
+                function (promise) {
+                    deferred.reject();
+                }
+            );
+        }
+        return deferred.promise;
+    }
 
+    factory.mapInspectionsToDtos = function () {
+        var deferred = $q.defer();
+
+        if (!factory.InspectionScheduleDtos || !factory.Inspections) {
+            return $q.reject("There was a problem loading the inspections");
+        }
+
+        factory.InspectionScheduleDtos.forEach(function (d) {
+            d.Inspections = _.find(factory.Inspections, function (i) { return i.Key_id == d.Inspection_id; });
+        })
+
+        deferred.resolve(factory.InspectionScheduleDtos);
         return deferred.promise;
     }
 
@@ -243,7 +279,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     deferred.resolve(promise);
                 },
                 function (promise) {
-                    console.log('usho')
                     deferred.reject();
                 }
             );
@@ -454,36 +489,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         console.log(dtos);
         return dtos;
     }
-  /*
-    private $pi_name;
-
-
-    private $pi_key_id;
-	
-    private $building_name;
-	
-    private $building_key_id;
-	
-    private $campus_key_id;
-	
-    private $campus_name;
-
-    private $building_rooms;
-
-
-    private $inspection_rooms;
-
-
-    private $inspections;
-	
-    private $inspection_id;
-    private $bio_hazards_present;
-    private $chem_hazards_present;
-    private $rad_hazards_present;
-    private $deficiency_selection_count;	
-
-    
-    */
 
     factory.getInspectionsByPi = function (pi, inspections) {
         var l = inspections.length;
@@ -498,6 +503,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     factory.collapseDtos = function (dtos) {
+        console.log(dtos);
         var l = dtos.length;
         var ids = [];
         var duplicateIds = [];
@@ -542,7 +548,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 Campuses: invertRooms(relevantDtos)
             }
             angular.extend(masterDto, map);
-            dtos.splice(masterIndex, 0, masterDto);
+           // dtos.splice(masterIndex, 0, masterDto);
         }
 
         function invertRooms(dtos) {
@@ -575,7 +581,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             });
             rooms.forEach(function (room, idx) {
                 buildings.forEach(function(bldg){
-                    if (room.Building_id == bldg.Building_id) {
+                    if (room && room.Building_id == bldg.Building_id) {
                         bldg.Rooms.push(room);
                         campuses.forEach(function (c) {
                             if (c.Buildings.indexOf(bldg) == -1 && c.Campus_key_id == bldg.Campus_id) {
@@ -633,6 +639,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 function (dtos) {
                     //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
                     $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
+                    console.log(dtos);
                     //$scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);
@@ -666,6 +673,10 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     getMonths = function () {
         $scope.months = manageInspectionsFactory.getMonths();
+
+    },
+
+    getInspectionsByYear = function () {
 
     }
 

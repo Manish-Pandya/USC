@@ -142,7 +142,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
             //use jsonp method of the angularjs $http object to request data from service layer
             $http.jsonp(url)
                 .success(function (data) {
-                    console.log(data);
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
