@@ -26,6 +26,7 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 //TODO: option to encode JSON or not?
 
 // JSON-Encode result
+
 $json = JsonManager::encode($actionResult->actionFunctionResult);
 $LOG = Logger::getLogger('json manager result');
 //$LOG->debug($json);
@@ -56,5 +57,7 @@ http_response_code( $actionResult->statusCode );
 //http_response_code(404);
 
 // Output JSON (with possible callback)
+$LOG = Logger::getLogger('ajax action');
+$LOG->fatal($output[0]);
 echo $output;
 ?>

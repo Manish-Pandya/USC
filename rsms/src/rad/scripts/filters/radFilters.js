@@ -257,7 +257,7 @@ angular.module('00RsmsAngularOrmApp')
         return function (parcels) {
             if (!parcels) return;
             filteredParcels = parcels.filter(function (parcel) {
-                return (parcel.Transfer_in_date != null && parcel.Original_pi_id != null);
+                return (parcel.Transfer_in_date && parcel.Original_pi_id);
             });
             return filteredParcels;
         };

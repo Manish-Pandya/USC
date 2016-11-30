@@ -313,12 +313,18 @@ i.solids-containers {
 .transfers i{
     color: rgb(26, 109, 168);
 }
+.transfers >h1 > i {
+    margin-right: 5px;
+    font-size: 35px;
+    width: auto;
+    line-height: 43px;
+}
 .card.transfers{
     padding:5px;
 }
-.card.transfers h1 i:first-child,
-.card.transfers h2 i:first-child,
-.card.transfers h3 i:first-child {
+.transfers .card h1 i:first-child,
+.transfers .card h2 i:first-child,
+.transfers .card h3 i:first-child {
     color: rgb(26, 109, 168);
     margin: 3px 5px 0 0;
 }

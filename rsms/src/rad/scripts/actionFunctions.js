@@ -2472,6 +2472,10 @@ angular
                     )
             }
 
+            af.getAllPIAuthorizations = function(){
+                return dataSwitchFactory.getAllObjects('PIAuthorization');
+            }
+
             af.getRadModels = function(){
                      return dataSwitchFactory.getAllObjects("RadModelDto")
                         .then(function (dto) {

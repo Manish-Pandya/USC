@@ -432,6 +432,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
         return convenienceMethods.dateToIso(input, object, propertyName, setToString);
     };
 })
+.filter('dateToIso', function (convenienceMethods) {
+    return function (input, object, propertyName, setToString) {
+        return convenienceMethods.dateToIso(input, object, propertyName, setToString);
+    };
+})
 .filter('activeOnly', function() {
     return function(array) {
             if(!array)return;
