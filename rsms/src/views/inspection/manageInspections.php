@@ -133,7 +133,7 @@ require_once '../top_view.php';
                                     <tr ng-repeat="building in campus.Buildings">
                                         <td class="triple-inner-inner">{{building.Building_name}}</td>
                                         <td class="triple-inner-inner-2">
-                                            <div ng-repeat="room in building.Rooms">{{room.Name}}</div>
+                                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms">{{room.Name}}</div>
                                         </td>
                                     </tr>
                                 </table>

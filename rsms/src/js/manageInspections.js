@@ -484,7 +484,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     factory.collapseDtos = function (dtos) {
-        console.log(dtos);
         var l = dtos.length;
         var ids = [];
         var duplicateIds = [];
@@ -493,7 +492,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             invertRoomForNonMultiples(d);
             if (!d.Inspections) continue;
             if (ids.indexOf(d.Inspections.Key_id) < 0) {
-                ids.push(d.Inspections.Key_id)
+                ids.push(d.Inspections.Key_id);
             } else if (duplicateIds.indexOf(d.Inspections.Key_id) < 0) {
                 duplicateIds.push(d.Inspections.Key_id);
             }
@@ -529,7 +528,8 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 Campuses: invertRooms(relevantDtos)
             }
             angular.extend(masterDto, map);
-           // dtos.splice(masterIndex, 0, masterDto);
+            console.log(masterDto);
+            dtos.splice(masterIndex, 0, masterDto);
         }
 
         function invertRooms(dtos) {
@@ -538,13 +538,22 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             var buildingIds = [];
             var buildings = [];
             var rooms = [];
+            var inspectionRooms = [];
             dtos.forEach(function (dto) {
-                rooms = rooms.concat(dto.Inspection_rooms);
+                rooms = rooms.concat(dto.Building_rooms);
+                inspectionRooms = inspectionRooms.concat(dto.Inspection_rooms);
+                top: // loop through all rooms and flag those notInspected
+                for (var i = 0; i < rooms.length; i++) {
+                    for (var j = 0; j < inspectionRooms.length; j++) {
+                        if (rooms[i].Key_id == inspectionRooms[j].Key_id) continue top;
+                    }
+                    rooms[i].notInspected = true;
+                }
                 if (campusIds.indexOf(dto.Campus_key_id) == -1) {
                     var campus = {
                         Campus_key_id: dto.Campus_key_id,
                         Campus_name: dto.Campus_name,
-                        Buildings: [],
+                        Buildings: []
                     }
                     campuses.push(campus);
                     campusIds.push(dto.Campus_key_id);
@@ -566,7 +575,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                         bldg.Rooms.push(room);
                         campuses.forEach(function (c) {
                             if (c.Buildings.indexOf(bldg) == -1 && c.Campus_key_id == bldg.Campus_id) {
-                                c.Buildings.push(bldg)
+                                c.Buildings.push(bldg);
                             }
                         })
                     }
@@ -595,7 +604,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
             return dto.Campuses;
         }
-
         return dtos;
     }
 
@@ -617,7 +625,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 function (dtos) {
                     //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
                     $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
-                    console.log(dtos);
+                    console.log(dtos.length);
                     //$scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);
