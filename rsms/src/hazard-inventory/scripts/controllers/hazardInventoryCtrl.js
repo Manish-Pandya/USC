@@ -237,13 +237,18 @@ angular.module('HazardInventory')
 
         $scope.evaluateStoreOnly = function (h) {
             var parent = dataStoreManager.getById("HazardDto", h.Parent_hazard_id);
-            //child hazards are stored only if all their rooms are stored only, or if all their parent's rooms are
-            var l = parent.InspectionRooms.length;
-            for (var i = 0; i < l; i++) {
-                var r = parent.InspectionRooms[i];
-                if (r.ContainsHazard && r.Status != Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY) return false;
+            /*
+                hazard is stored only if all of its rooms 
+                OR its parents room either don't contain the hazard or have a stored only status
+                AND it is present in at least one room
+             */
+
+            if (h.IsPresent && (parent.InspectionRooms.every(function (r) { return r.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || !r.ContainsHazard })
+                ||
+                h.InspectionRooms.every(function (r) { return r.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || !r.ContainsHazard }))) {
+                return h.Stored_only = true;
             }
-            return h.Stored_only = true;
+            return false;
         }
 
     })

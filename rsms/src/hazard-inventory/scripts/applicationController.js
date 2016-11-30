@@ -378,6 +378,7 @@ angular
 
             if(inspectionId) url+='&inspectionId='+inspectionId;
             var temp = this;
+            console.log(url);
              $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
                                               function( returned ){
                                                   var inspection = returned.data;
