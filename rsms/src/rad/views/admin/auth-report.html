@@ -1,0 +1,36 @@
+﻿<div class="right-column">
+    <div class="well two-thirds">
+        <h1 class="auth-report"><i class="icon-paper"></i>Auth Report<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-carboy"></i>New Auth Report</a></h1>
+        <h3 ng-if="!authReports.length">No auth reports</h3>
+        <div class="card full authReports" ng-if="authReports.length">
+            <div class="fake-table bordered">
+                <div class="table-header">
+                    <h3>Name</h3>
+                    <h3>Department</h3>
+                    <h3>Building</h3>
+                    <h3>Room</h3>
+                    <h3>Auth #</h3>
+                </div>
+                <div class="table-row" ng-repeat="report in authReports">
+                    <div>
+                        {{report.Last_name}}, {{report.First_name}}
+                    </div>
+                    <div>
+                        {{report.Department}}
+                    </div>
+                    <div>
+                        {{report.Building.Name}}
+                    </div>
+                    <div>
+                        {{report.Room.Name}}
+                    </div>
+                    <div>
+                        {{report.Number}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

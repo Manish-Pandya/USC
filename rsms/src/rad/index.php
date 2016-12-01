@@ -142,6 +142,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/transfers-ctrl.js"></script>
+<script type="text/javascript"  src="scripts/controllers/admin/auth-report-ctrl.js"></script>
 
 <script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
 

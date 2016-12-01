@@ -149,6 +149,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.auth-report',
+                        Label: 'Radiation Administration -- Auth Report',
+                        Dashboard: true
+                    },
+                    {
                         Name: 'radmin.drum-detail',
                         Label: 'Radiation Administration -- Drum Detail',
                         Dashboard: true
