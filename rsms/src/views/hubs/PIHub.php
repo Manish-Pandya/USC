@@ -6,6 +6,7 @@ require_once '../top_view.php';
 
 <span ng-app="piHub" ng-controller="piHubMainController">
 <div cg-busy="{promise:userPromise,message:'Loading...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving,message:'Saving...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="navbar">
 <ul class="nav pageMenu bg-color-blue" style="min-height: 50px; background: #86b32d; color:white !important; padding: 4px 0 0 0; width:100%">
