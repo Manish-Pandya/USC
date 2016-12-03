@@ -56,14 +56,17 @@ echo "</script>";
 ?>
 
     <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
-    <?php if($_SESSION != NULL){?>
+    <?php if($_SESSION != NULL){
+        $am = new ActionManager();
+        ?>
         <script>
             var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
             //grab usable properties from the session user object
             var GLOBAL_SESSION_USER = {
                 Name: '<?php echo $_SESSION['USER']->getName(); ?>',
                 Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>',
-                Inspector_id: '<?php echo $_SESSION['USER']->getInspector_id(); ?>'
+                Inspector_id: '<?php echo $_SESSION['USER']->getInspector_id(); ?>',
+                Roles: '<?php echo json_encode($am->getCurrentUserRoles()["userRoles"]);?>'
             }
             var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
         </script>
@@ -174,6 +177,7 @@ echo "</script>";
         <div>
             Signed in as <?php echo $_SESSION['USER']->getName(); ?>
             <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
+            <?php print_r($am->getCurrentUserRoles()["userRoles"]);?>
         </div>
     </div>
     <?php }?>

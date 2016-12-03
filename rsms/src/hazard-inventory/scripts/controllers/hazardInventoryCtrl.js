@@ -326,6 +326,16 @@ angular.module('HazardInventory')
             
         }
 
+        $scope.checkRad = function (pi, id) {
+            $scope.needsConfirmation = false;
+            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
+                af.initialiseInspection(pi, id, false, true);
+            } else {
+                $scope.needsConfirmation = true;
+            }      
+
+        }
+
         var checkInspectors = function (inspection, currentUser) {
             if (!currentUser.Inspector_id) return false;
             var is = false;
