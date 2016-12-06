@@ -62,7 +62,7 @@ angular.module('00RsmsAngularOrmApp')
               var collection = new window.ScintVialCollection();
               collection.Principal_investigator_id = pi.Key_id;
               collection.new = true;
-              pi.CurrentScintVialCollections = [collection];
+              $scope.CurrentScintVialCollections = [collection];
               console.log(pi);
           }
 
