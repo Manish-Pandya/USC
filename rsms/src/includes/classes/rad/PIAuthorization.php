@@ -66,6 +66,7 @@ class PIAuthorization extends RadCrud{
 
     private $approval_date;
 
+    private $piName;
 
 	/** Array of Authorizations entities */
 	private $authorizations;
@@ -139,6 +140,15 @@ class PIAuthorization extends RadCrud{
 
     public function getApproval_date(){return $this->approval_date;}
 	public function setApproval_date($date){$this->approval_date = $date;}
+
+    public function getPiName(){
+        if($this->piName == null && $this->principal_investigator_id != null){
+            $piDao = new GenericDAO(new PrincipalInvestigator());
+            $pi = $piDao->getById($this->principal_investigator_id);
+            $this->piName = $pi->getUser()->getName();
+        }
+        return $this->piName;
+    }
 
 }
 
