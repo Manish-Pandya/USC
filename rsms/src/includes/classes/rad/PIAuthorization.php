@@ -145,7 +145,7 @@ class PIAuthorization extends RadCrud{
         if($this->piName == null && $this->principal_investigator_id != null){
             $piDao = new GenericDAO(new PrincipalInvestigator());
             $pi = $piDao->getById($this->principal_investigator_id);
-            $this->piName = $pi->getUser()->getName();
+            $this->piName = $pi->getUser()->getLast_name() . "," . $pi->getUser()->getFirst_name();
         }
         return $this->piName;
     }
