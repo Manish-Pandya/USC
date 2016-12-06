@@ -113,7 +113,6 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
-<script src="<?php echo WEB_ROOT?>js/lib/ac-select.js"></script>
 
 
 <!-- Required for the ORM framework -->
@@ -168,6 +167,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
 <script type="text/javascript" src="./scripts/filters/radFilters.js"></script>
+<script type="text/javascript" src="../js/lib/angular.filter.js"></script>
 
 <!-- framework -->
 <script src="../client-side-framework/genericModel/inheritance.js"></script>

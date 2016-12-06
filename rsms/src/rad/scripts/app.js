@@ -14,6 +14,7 @@ angular
     'modelInflator',
     'genericAPI',
     'filtersApp',
+    'angular.filter',
     'actionFunctionsModule',
     'dataSwitchModule',
     'cgBusy',

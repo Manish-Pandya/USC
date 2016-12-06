@@ -969,6 +969,7 @@ angular
                 return dataSwitchFactory.getAllObjects('WasteType');
             }
 
+
             /********************************************************************
             **
             **      RAD PI

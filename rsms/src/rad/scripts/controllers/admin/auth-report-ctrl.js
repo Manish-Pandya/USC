@@ -11,17 +11,28 @@ angular.module('00RsmsAngularOrmApp')
   .controller('AuthReportCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
       var af = $scope.af = actionFunctionsFactory;
 
-      var getAllAuthReports = function () {
-          af.getAllCarboys()
+      var getAllPIAuthorizations = function () {
+          af.getAllPIAuthorizations()
           .then(
-              function (carboys) {
-                  $scope.authReports = dataStore.AuthReport;
+              function (piAuths) {
+                  $scope.piAuths = [];
+                  var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
+                  for (var pi_id in piAuths) {
+                      var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
+                          var sortVector = b.Approval_date - a.Approval_date || b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id;
+                          return sortVector;
+                      })[0];
+                      $scope.piAuths.push(newest_pi_auth);
+                  }
+                  console.log($scope.piAuths);
               },
-              function () { }
+              function () {
+                  console.log("dang!");
+              }
           )
       }
 
-      $rootScope.carboysPromise = af.getAllPIs().then(getAllAuthReports);
+      $rootScope.piAuthsPromise = af.getAllPIs().then(getAllPIAuthorizations);
 
       /*$scope.getHighestAmendmentNumber = function (amendments) {
           if (!amendments) return;
