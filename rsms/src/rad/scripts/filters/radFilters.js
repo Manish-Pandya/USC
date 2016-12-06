@@ -80,13 +80,12 @@ angular.module('00RsmsAngularOrmApp')
             for (var prop in statuses) {
                 var status = statuses[prop];
                 if (status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
-  					|| status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
                     || status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
                     || status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE) {
                     disposalStatuses.unshift(status);
                 }
             }
-            return disposalStatuses;
+            return disposalStatuses.sort(function (a, b) { return a > b;});
         };
     })
 .filter('disposalSolids', function () {
