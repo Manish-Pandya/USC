@@ -265,6 +265,9 @@ i.solids-containers {
 .card.pickups h2 > i:first-child, .card.pickups h3 > i:first-child {
     margin: 1px 19px 0 5px !important;
 }
+.card.pickup-collection h3 > i:first-child {
+    margin: 1px 19px 0 -3px !important;
+}
 .left-nav ul li a.pickups {
     background: rgba(91, 183, 91, .64);
 }

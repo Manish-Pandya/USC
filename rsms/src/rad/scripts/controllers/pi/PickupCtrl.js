@@ -57,6 +57,15 @@ angular.module('00RsmsAngularOrmApp')
               return hasPickupItems;
           }
 
+          $scope.setSVCollection = function (pi) {
+              if (pi.CurrentScintVialCollections && pi.CurrentScintVialCollections.length) return;              
+              var collection = new window.ScintVialCollection();
+              collection.Principal_investigator_id = pi.Key_id;
+              collection.new = true;
+              pi.CurrentScintVialCollections = [collection];
+              console.log(pi);
+          }
+
         $scope.svTrays = 0;
 
         $scope.wasteInContainersScheduledScheduled = function (containers) {
