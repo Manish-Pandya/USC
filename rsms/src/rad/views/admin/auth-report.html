@@ -1,15 +1,15 @@
 ﻿<div class="right-column">
-    <div class="well two-thirds">
-        <h1 class="auth-report"><i class="icon-paper"></i>Auth Report<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-carboy"></i>New Auth Report</a></h1>
-        <h3 ng-if="!piAuths.length">No auth reports</h3>
+    <div class="well full auths">
+        <h1 class="auth-report"><i class="icon-paper"></i>Authorizations</h1>
+        <h3 ng-if="!piAuths.length">No Authorizations</h3>
         <div class="card full authReports" ng-if="piAuths.length">
-            <div class="fake-table bordered">
+            <div class="fake-table">
                 <div class="table-header">
                     <h3>Name</h3>
                     <h3>Department</h3>
-                    <h3 class="span6">
-                        <span>Building</span>
-                        <span>Room</span>
+                    <h3>
+                        <span class="span6">Building</span>
+                        <span class="span6">Room</span>
                     </h3>
                     <h3>Auth #</h3>
                 </div>
@@ -27,13 +27,13 @@
                     </div>
                     <div>
                         <ul class="selectedBuildings">
-                            <li ng-repeat="(key, building) in piAuth.Rooms | groupBy: 'Building.Name'">
+                            <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
                                 <div class="span6">
-                                    <h4>{{key}}</h4>
+                                    <h4>{{r[0].Building.Alias || r[0].Building.Name}}</h4>
                                 </div>
                                 <div class="roomsForBuidling span6">
                                     <ul>
-                                        <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')">{{room.Name}}</li>
+                                        <li ng-repeat="(key, room) in rooms = (r | activeOnly | orderBy: 'Name')">{{room.Name}}</li>
                                     </ul>
                                 </div>
                             </li>

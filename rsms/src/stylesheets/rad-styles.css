@@ -836,3 +836,18 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
 .centerIcons.move-down{
     margin-top:100px !important;
 }
+
+
+/* line 819, ../sass/style.scss */
+.auths ul {
+  margin-left: 0;
+  list-style: none;
+}
+/* line 822, ../sass/style.scss */
+.auths ul li{
+    font-weight:bold;
+}
+.auths ul li:last-child {
+  padding: 5px 0;
+  border-bottom: none;
+}
