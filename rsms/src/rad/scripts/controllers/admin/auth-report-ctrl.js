@@ -8,6 +8,38 @@
  * Controller of the 00RsmsAngularOrmApp Radmin
  */
 angular.module('00RsmsAngularOrmApp')
+    .filter('authsFilter', function () {
+        return function (auths, filterObj) {
+            if (!filterObj) return auths;
+            var filtered = auths.filter(function (a) {
+                var include = true;
+                if (filterObj.piName && a.PiName.toLowerCase().indexOf(filterObj.piName.toLowerCase()) == -1) {
+                    include = false;
+                }
+
+                if (filterObj.department) {
+                    if (!a.Departments.some(function (d) {
+                       return d.Name.toLowerCase().indexOf(filterObj.department.toLowerCase()) != -1;
+                    })) include = false;
+                }
+
+                if (filterObj.room) {
+                    if (!a.Rooms.some(function (r) {
+                        return r.Name.toLowerCase().indexOf(filterObj.room.toLowerCase()) != -1;
+                    })) include = false;
+                }
+
+                if (filterObj.building) {
+                    if(!a.Rooms.some(function (r) {
+                        return r.Building.Name.toLowerCase().indexOf(filterObj.building.toLowerCase()) != -1;
+                    })) include = false;
+                }
+
+                return include;
+            })
+            return filtered;
+        }
+    })
   .controller('AuthReportCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
       var af = $scope.af = actionFunctionsFactory;
 

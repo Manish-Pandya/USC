@@ -98,6 +98,17 @@ angular.module('00RsmsAngularOrmApp')
                 .then($scope.close);
         }
 
+        $scope.saveTransferOut = function (copy, parcel) {
+            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            af.saveParcelUse(copy, parcel, $scope.modalData.PI)
+                .then($scope.close);
+        }
+        $scope.saveTransferBetween = function (copy, parcel) {
+            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            af.saveParcelUse(copy, parcel, $scope.modalData.PI)
+                .then($scope.close);
+        }
+
         $scope.close = function () {
             af.deleteModalData();
             $modalInstance.dismiss();

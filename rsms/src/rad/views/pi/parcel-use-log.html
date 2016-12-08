@@ -46,7 +46,7 @@
     </div>
 
     <div class="card full parcels" ng-if="pi">
-        <h3 class="card-header padding">Package Usages <a ng-click="addUsage(parcel)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</a></h3>
+        <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand != 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
         <div class="card-content">
             <table class="table-bordered table parcel-uses" ng-show="parcel.edit || parcel.ParcelUses">
                 <tr class="table-header">

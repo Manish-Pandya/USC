@@ -68,11 +68,12 @@ angular
 
             }
 
-            af.save = function( object, saveChildren )
+            af.save = function( object, saveChildren, seg )
             {
                     if(!saveChildren)saveChildren = false;
+                    if (!seg) seg = false;
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
+                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, seg, saveChildren )
                         .then(
                             function( returnedData){
                                 return returnedData.data;
@@ -1533,12 +1534,13 @@ angular
                 af.clearError();
                 return this.save( bag, false, "changeWasteBag" )
                     .then(
-                        function(returnedBag){
+                        function (returnedBag) {
+                            console.log(returnedBag);
                             returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
                             container.CurrentWasteBags.push(returnedBag);
                             bag.Date_removed = returnedBag.Date_added;
                         },
-                        af.setError('The Waste Bage could not be added to the Receptical.')
+                        af.setError('The Wast Bage could not be removed from the Receptical.')
                     )
             }
 

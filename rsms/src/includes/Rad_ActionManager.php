@@ -1123,18 +1123,15 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
-            $dao = $this->getDao(new WasteBag());
-            $bag = $decodedObject;
-            $container = $bag->getContainer();
-
+            $dao = $this->getDao($decodedObject);
+            $decodedObject->setDate_removed(date('Y-m-d H:i:s'));
             //get the bags for the container and find the one we need to remove
-            $bags = $container->getCurrentWasteBags();
-            foreach($bags as $oldBag){
-                $oldBag->setDate_removed(date('Y-m-d H:i:s'));
-                $dao->save($oldBag);
-            }
+            $bag = $dao->save($decodedObject);
+            $container = $bag->getContainer();
+            $LOG->fatal($bag);
             $newBag = new WasteBag();
             $newBag->setDate_added(date('Y-m-d H:i:s'));
+            $newBag->setIs_active(true);
             $newBag->setContainer_id($container->getKey_id());
             return $dao->save($newBag);
         }

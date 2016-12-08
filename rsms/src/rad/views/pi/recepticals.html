@@ -20,11 +20,11 @@
         </h3>
         <div class="fake-table striped bordered" ng-if="container.CurrentWasteBags.length">
                 <div class="table-header">
-                    <h3>Remove</h3>
+                    <h3>Change Bag</h3>
                     <h3>Date Changed</h3>
                 </div>
                 <div class="table-row" ng-repeat="bag in container.CurrentWasteBags" ng-if="!bag.Date_removed || bag.Date_removed == '0000-00-00 00:00:00'" ng-class="{'inactive':!container.Is_active}">
-                    <div style="width:22%">
+                    <div style="width:28%">
                         <a ng-click="af.changeWasteBag(container, bag)" class="btn btn-danger left"><i class="icon-remove"></i>Change Waste Bag</a>
                     </div>
                     <div>

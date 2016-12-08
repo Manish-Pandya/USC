@@ -331,6 +331,54 @@ i.solids-containers {
     color: rgb(26, 109, 168);
     margin: 3px 5px 0 0;
 }
+
+.left-nav ul li a.auth-report {
+    background: rgba(78, 26, 168, 0.63);
+}
+.left-nav ul li a.auth-report:hover {
+    background: rgba(78, 26, 168, 1);
+}
+.left-nav ul li a.auth-report i {
+    margin: 0px 13px 0 4px;
+}
+.auth-report i{
+    color: rgba(78, 26, 168, 1)
+}
+.auth-report >h1 > i {
+    margin-right: 5px;
+    font-size: 35px;
+    width: auto;
+    line-height: 43px;
+}
+.auth-report.transfers{
+    padding:5px;
+}
+.auth-report .card h1 i:first-child,
+.auth-report .card h2 i:first-child,
+.auth-report .card h3 i:first-child {
+    color: rgb(26, 109, 168);
+    margin: 3px 5px 0 0;
+}
+.authReports div.fake-table{
+
+}
+.authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div > h3{
+    padding:4px !important;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(1){
+   width:13%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(2){
+   width:25%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(3){
+   width:34%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(4){
+   width:10%;
+}
+
+
 .right-column {
     margin-left: 210px;
     padding-bottom: 200px;
