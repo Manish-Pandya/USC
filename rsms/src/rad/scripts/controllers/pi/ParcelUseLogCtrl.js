@@ -13,8 +13,10 @@ angular.module('00RsmsAngularOrmApp')
           var af = actionFunctionsFactory;
           $scope.af = af;
           $scope.constants = Constants;
+          af.clearError();
 
-          var getPi = function(){
+          var getPi = function () {
+
           return af.getRadPIById($stateParams.pi)
                 .then(
                     function(){

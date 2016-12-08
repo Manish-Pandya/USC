@@ -62,63 +62,63 @@ class PrincipalInvestigator extends GenericCrud {
 		"keyName"	=>	"key_id",
 		"foreignKeyName" =>	"principal_investigator_id"
 	);
-	
+
 	public static $ACTIVEPARCELS_RELATIONSHIP = array(
 			"className" => "Parcel",
 			"tableName" => "parcel",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $PURCHACEORDERS_RELATIONSHIP = array(
 			"className" => "PurchaseOrder",
 			"tableName" => "purchase_order",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
 			"className" => "CarboyUseCycle",
 			"tableName" => "carboy_use_cycle",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $SCINT_VIAL_COLLECTION_RELATIONSHIP = array(
 			"className" => "ScintVialCollection",
 			"tableName" => "scint_vial_collection",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
 			"className" => "SolidsContainer",
 			"tableName" => "solids_container",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $PICKUPS_RELATIONSHIP = array(
 			"className" => "Pickup",
 			"tableName" => "pickup",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $QUARTERLY_INVENTORIES_RELATIONSHIP = array(
 			"className" => "PIQuarterlyInventory",
 			"tableName" => "pi_quarterly_inventory",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
 	public static $VERIFICATIONS_RELATIONSHIP = array(
 			"className" => "Verification",
 			"tableName" => "verification",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
-	
+
     public static $WIPE_TESTS_RELATIONSHIP = array(
 			"className" => "PIWipeTest",
 			"tableName" => "pi_wipe_test",
@@ -162,30 +162,30 @@ class PrincipalInvestigator extends GenericCrud {
 
 	/** Notes for inspections.   **/
 	private $inspection_notes;
-	
+
 	/** Array of Pickup entities **/
 	private $pickups;
-	
+
 	/** Array of collections of scint vials that are ready for pickup or were in a given pickup **/
 	private $scintVialCollections;
-	
+
 	/** isotopes in scint vials that are ready for pickup **/
 	private $scintVialAmounts;
-	
+
 	/** collections of scint vials that haven't been picked up **/
 	private $currentScintVialCollections;
-	
+
 	/** QuarterlyInventories for this PI **/
 	private $quarterly_inventories;
-	
+
 	private $buildings;
-	
+
 	private $verifications;
 	private $currentVerifications;
     private $currentIsotopeInventories;
 
     private $wipeTests;
-	
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -207,7 +207,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getWipeTests");
-		
+
 		$this->setEntityMaps($entityMaps);
 
 	}
@@ -325,6 +325,9 @@ class PrincipalInvestigator extends GenericCrud {
 			foreach($this->solidsContainers as $container){
 				$container->setPrincipal_investigator_id($this->getKey_id());
 			}
+            $thisDAO = new GenericDAO($this);
+            $pi_containers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SOLIDS_CONTAINERS_RELATIONSHIP));
+            $this->solidsContainers = array_unique (array_merge ($containers, $pi_containers));
 		}
 		return $this->solidsContainers;
 	}
@@ -338,9 +341,9 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->pickups;
 	}
 	public function setPickups($pickups){$this->pickups = $pickups;}
-	
+
 	public function getScintVialCollections(){
-		
+
 		if($this->scintVialCollections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
@@ -354,19 +357,19 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->scintVialCollections;
 	}
-	
+
 	public function getCurrentScintVialCollections(){
 		//todo:  determine if this should be one-to-many or one to one.
 		$LOG = Logger::getLogger(__CLASS__);
 		$svCollections = $this->getScintVialCollections();
-		
+
 		$this->currentScintVialCollections = array();
 		foreach($svCollections as $collection){
 			if($collection->getPickup_id() == null)$this->currentScintVialCollections[] = $collection;
 		}
 		return $this->currentScintVialCollections;
 	}
-	
+
 	public function getInspection_notes() {
 		return $this->inspection_notes;
 	}
@@ -395,7 +398,7 @@ class PrincipalInvestigator extends GenericCrud {
 
 		return $result;
 	}
-	
+
 	public function getQuarterly_inventories(  ){
 		$LOG = Logger::getLogger(__CLASS__);
 		if($this->quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
@@ -405,7 +408,7 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->quarterly_inventories;
 	}
-	
+
 	public function getBuildings(){return  $this->buildings;}
 	public function setBuildings($buildings){$this->buildings = $buildings;}
 
@@ -416,7 +419,7 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->verifications;
 	}
-	
+
 	public function getCurrentVerifications(){
 		if($this->getCurrentVerifications === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new Verification());
@@ -431,7 +434,7 @@ class PrincipalInvestigator extends GenericCrud {
 		}
 		return $this->getCurrentVerifications;
 	}
-	
+
 	public function getPi_authorization(){
 		if($this->pi_authorization == NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new PIAuthorization());

@@ -23,7 +23,7 @@
                                 <input type="checkbox" ng-true-value="yes" ng-model="container.include" />
                                 <span class="metro-checkbox bold">Bags removed from {{container.Name}} since last pickup:</span>
                                 <p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">
-                                    <span class="metro-checkbox">Waste Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">Empty Bag</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+                                    <span class="metro-checkbox">Waste Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">No Activity</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
                                 </p>
                             </label>
                             
@@ -35,7 +35,7 @@
 
                             <label class="checkbox" ng-if="!container.CurrentWasteBags[0].Pickup_id">
                                 <input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag" />
-                                <span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">Empty Bag</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+                                <span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">No Activity</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
                             </label>
 
                             <label class="checkbox" ng-if="container.CurrentWasteBags[0].Pickup_id">
@@ -128,7 +128,7 @@
                                 <a class="btn btn-danger left" ng-click="af.removeFromPickup(cycle, pickup.Carboy_use_cycles, pi)"><i class="icon-cancel-2"></i>Don't pickup</a>
                             </div>
                             <div>
-                                <p>Carboy Number {{cycle.Carboy.Carboy_number}} Contents: (<span ng-if="!cycle.Contents.length">Empty Bag</span><span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
+                                <p>Carboy Number {{cycle.Carboy.Carboy_number}} Contents: (<span ng-if="!cycle.Contents.length">N/A</span><span ng-repeat="isotope in cycle.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</p>
                             </div>
                         </div>
                     </div>

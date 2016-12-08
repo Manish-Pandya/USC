@@ -35,7 +35,6 @@ angular.module('00RsmsAngularOrmApp')
               )
           $scope.solidsContainerHasPickups = function (container) {
               if (!container) return false;
-
               if ($scope.hasPickupItems(container.WasteBagsForPickup)) return true;
 
               return false;

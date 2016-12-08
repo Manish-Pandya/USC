@@ -53,6 +53,11 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
             parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
+                if (!returnedPromise) {
+                    parent[property] = [];
+                    return;
+                }
+           
                 var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
                 dataStoreManager.store(instatedObjects);
                 if (!whereClause) whereClause = false;
