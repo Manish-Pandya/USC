@@ -2004,7 +2004,7 @@ angular
                         function(returnedIWT){
                             returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                             if(test){
-                                angular.extend(wipe, copy)
+                                angular.extend(inspection.Inspection_wipe_tests[0], copy);
                             }else{
                                 returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                                 if(!inspection.Inspection_wipe_tests)inspection.Inspection_wipe_tests = [];
@@ -2025,6 +2025,7 @@ angular
                                 dataStoreManager.store(returnedIWT);
                                 return returnedIWT;
                             }
+                            inspection.Inspection_wipe_tests[0].edit = false;
                         },
                         af.setError('The Wipe Test could not be saved')
                     )

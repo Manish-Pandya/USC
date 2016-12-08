@@ -134,7 +134,7 @@ include_once 'RadCrud.php';
 		if($isotope == NULL)return;
 
 		//multiply this sample's dpm by 100, because the sample is 1/100th of a ml
-		$dpmPerML = $this->getCurie_level() * 100;
+		$dpmPerML = $this->getCurie_level() * 10;
 		//convert the dpm to MCi
 		$sampleMci = $dpmPerML * (4.5 * pow(10,-10));
 
@@ -191,7 +191,7 @@ include_once 'RadCrud.php';
         $volume =  $this->getCarboy_use_cycle()->getVolume();
 
         //multiply this sample's dpm by 100, because the sample is 1/100th of a ml
-        $dpmPerML = $this->getCurie_level() * 100;
+        $dpmPerML = $this->getCurie_level() * 10;
         //convert the dpm to MCi
         $sampleMci = $dpmPerML * (4.5 * pow(10,-10));
 
