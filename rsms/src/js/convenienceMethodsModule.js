@@ -1,4 +1,4 @@
-angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased','ui.select','ngSanitize'])
+angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','ui.select','ngSanitize'])
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })

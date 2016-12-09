@@ -1,17 +1,13 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!--<script src="../../../../Scripts/promise.min.js"></script>-->
-    <script src="../../../../Scripts/jquery-3.1.1.min.js"></script>
-   <!--<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>-->
+    <script src="../../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="../../js/lib/lodash.4.16.5/content/Scripts/lodash.min.js"></script>
+    <script src="../../js/lib/promise.min.js"></script>
     <script src="../../js/lib/angular.js"></script>
     <script src="../../js/constants.js"></script>
-    <script src="../../../../Scripts/promise.min.js"></script>
-
-    <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../client-side-framework/DataStoreManager.js"></script>
     <script src="../client-side-framework/InstanceFactory.js"></script>
-    <script src="../client-side-framework/CompositionMapping.js"></script>
     <script src="../client-side-framework/UrlMapping.js"></script>
     <script src="../client-side-framework/XHR.js"></script>
     <script src="../client-side-framework/models/FluxCompositerBase.js"></script>
@@ -21,25 +17,12 @@
     <script src="../client-side-framework/models/User.js"></script>
     <script src="../client-side-framework/models/Role.js"></script>
     <script src="../client-side-framework/models/PrincipalInvestigator.js"></script>
-
     <script src="../client-side-framework/models/Room.js"></script>
     <script>
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
         //console.log("approved classNames:", classNames);
-        /*
-        var firstPI = DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
-            .then(
-                function (whateverGotReturned) {
-                    console.log(firstPI);
-                }
-            )
-            .catch(
-                function (reason) {
-                    console.log("bad getById:", reason);
-                }
-            );
-*/
+        
         var currentRoles;
         function getCurrentRoles() {
             if (!currentRoles) {
@@ -48,14 +31,28 @@
                 return new Promise(resolve, reject).then(() => { return resolve(currentRoles)})
             }
         }
-
         
         var init = function () {
             console.log(currentRoles);
-            users = [];
-            hazards = [];
-            pis = [];
-            rooms = [];
+            var users = [],
+            hazards = [],
+            pis = [],
+            rooms = [],
+            piSingle = {};
+
+            /*var firstPI = {};
+            DataStoreManager.getById("PrincipalInvestigator", 1, firstPI, true)
+            .then(
+                function (whateverGotReturned) {
+                    firstPI = whateverGotReturned;
+                    console.log(firstPI);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad getById:", reason);
+                }
+            );*/
 
             var testEditingUser = function () {
                 pis[0].User.Email = "some@email.foo";
@@ -63,35 +60,42 @@
                 //var user = DataStoreManager.getActualModelEquivalent(pis[0].User);
                 console.log(user);
                 console.log(pis[0].User);
-
             }
-            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("User", users, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+
+            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
-                        console.log(pis[0], rooms[9]);
+                        //console.log(whateverGotReturned);
+                        pis = whateverGotReturned[1];
+                        pis[0].Inspection_notes = "dude looks like a lady, but even more fool";
+
+                        var lp = new window.User();
+                        lp.Name = "Tronald Dump";
+                        pis[0].LabPersonnel.push(lp);
+
+                        //DataStoreManager.undo(pis[0]);
+                        setTimeout(function () {
+                            console.log(DataStoreManager.getActualModelEquivalent(pis[0]), pis[0]);
+                        }, 1000);
                         /*
-                        DataStoreManager.getById("User", 1, {}, true).then((d)=>{
-                            console.log(d);
-                        });
-                        DataStoreManager.getById("User", 3, {}, true).then((d) => {
-                            console.log(d);
+                        DataStoreManager.save(pis[0]).then((savedJunk) => {
+                            console.log(pis[0], pis);
                         });
                         */
                     }
-
-
-
                 )//.then(testEditingUser)
                 .catch(
                     function (reason) {
                         console.log("bad Promise.all:", reason);
                     }
                 );
+
+            var relevantMaps = InstanceFactory.createInstance("PrincipalInvestigator").getCompMapFromProperty("Rooms");
+            console.log(relevantMaps);
         }
 
         getCurrentRoles().then(init);
-        
     </script>
 </head>
 <body>

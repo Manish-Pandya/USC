@@ -29,6 +29,7 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
                     }
                 }
             }
+            console.log(factory.roles);
             return factory.roles;
         }
 
@@ -55,7 +56,7 @@ var roleBased = angular.module('roleBased', ['ui.bootstrap'])
             return total;
         }
 
-        factory.getHasPermission = function( elementRoles ){
+        factory.getHasPermission = function (elementRoles) {
             return factory.sumArray(elementRoles) & factory.userPermissions;
         }
 

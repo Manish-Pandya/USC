@@ -3,8 +3,11 @@
 //generic model to be "extended" by "POJOs"
 
 //constructor
-var HazardDto = function(){};
-HazardDto.prototype = {
+var Hazard = function () {
+    Hazard.url = "";
+    Hazard.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllHazards";
+};
+Hazard.prototype = {
 
     ID_prop: "Hazard_id",
     //eagerAccessors:[{method:"loadSubHazards",boolean:"HasChildren"}],
@@ -25,4 +28,6 @@ HazardDto.prototype = {
 }
 
 //inherit from and extend GenericModel
-extend(HazardDto, GenericModel);
+extend(Hazard, GenericModel);
+
+Hazard();

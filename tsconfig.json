@@ -1,0 +1,10 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "watch": true
+  },
+  "filesGlob": [
+    "**/*.ts"
+  ]
+}
