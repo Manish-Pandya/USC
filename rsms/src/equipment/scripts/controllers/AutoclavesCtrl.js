@@ -8,16 +8,17 @@
  * Controller of the EquipmentModule Autoclaves view
  */
 angular.module('EquipmentModule')
-  .controller('AutoclavesCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+      var af = $scope.af = applicationControllerFactory;
     
         var getAllAutoclaves = function(){
-  			af.getAllAutoclaves()
+  			return af.getAllAutoclaves()
   			.then(
-  				function(autoclaves){  	
-  					$scope.autoclaves = dataStore.Autoclave;
-  				},
-  				function(){}
+  				function(){  	
+  				    $scope.autoclaves = dataStoreManager.get("Autoclave");
+  				    if (!$scope.autoclaves) $scope.autoclaves = [];
+  				    return $scope.autoclaves;
+  				}
   			)
   		}
 

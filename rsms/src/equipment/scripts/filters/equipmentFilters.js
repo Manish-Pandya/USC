@@ -61,7 +61,7 @@ angular
         If dateString is currentYear, also accept matches of null Certification_date and Due_date.
         */
         return function (inspections, dateString, currentYear) {
-            console.log(dateString, currentYear, inspections.length);
+            //console.log(dateString, currentYear, inspections.length);
             if (!inspections) {
                 return;
             } else if (dateString != '' && (!dateString)) {
