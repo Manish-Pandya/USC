@@ -150,6 +150,14 @@ function isCommitteesEnabled(){
 	return false;
 }
 
+
+function isIBCEnabled(){
+	$LOG = Logger::getLogger("ibc");
+	$LOG->fatal('ibc enabled');
+	if(	stristr($_SERVER["HTTP_REFERER"], '/ibc/' ) || isset($_GET['ibc']) || isset($_GET['IBC']))return true;
+	return false;
+}
+
 //////////////////////////////////////////////////
 
 //TODO Application functions

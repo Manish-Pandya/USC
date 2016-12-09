@@ -2045,6 +2045,7 @@ class Rad_ActionManager extends ActionManager {
 
         //get the total transfered in since the previous inventory
         $transferInDao = $this->getDao($amount);
+
         //get parcels for this QuarterlyIsotopsAmount's authorization that DON'T have an RSID for the given dates
         $amount->setTransfer_in($transferInDao->getTransferAmounts($startDate, $endDate, false));
 
@@ -2147,12 +2148,13 @@ class Rad_ActionManager extends ActionManager {
                 //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
                 $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
                 $newAmount = $quarterlyAmountDao->save($newAmount);
-
-                $entityMaps = array();
-                $entityMaps[] = new EntityMap("eager", "getIsotope");
-                $newAmount->getAuthorization()->setEntityMaps($entityMaps);
-                $amounts[] = $newAmount;
-
+                $auth = $newAmount->getAuthorization();
+                if($auth != null){
+                    $entityMaps = array();
+                    $entityMaps[] = new EntityMap("eager", "getIsotope");
+                    $newAmount->getAuthorization()->setEntityMaps($entityMaps);
+                    $amounts[] = $newAmount;
+                }
             }
         }
 
@@ -2448,6 +2450,13 @@ class Rad_ActionManager extends ActionManager {
     	return $collections;
     }
 
+
+    public function getAllMiscellaneousWaste(){
+    	$dao = $this->getDao(new MiscellaneousWaste());
+    	$miscs = $dao->getAll();
+    	return $miscs;
+    }
+
     public function getAllParcelWipes(){
     	$dao = $this->getDao(new ParcelWipe());
     	$wipes = $dao->getAll();
@@ -2496,6 +2505,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setQuarterlInventory($this->getMostRecentInventory());
     	$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
     	$dto->setScintVialCollection($this->getAllScintVialCollections());
+        $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
     	$dto->setWasteBag($this->getAllWasteBags());
     	$dto->setSolidsContainer($this->getAllSolidsContainers());
     	$dto->setWasteType($this->getAllWasteTypes());
@@ -2506,6 +2516,53 @@ class Rad_ActionManager extends ActionManager {
 
     	return $dto;
 
+    }
+
+    /*
+     *@param MiscellaneousWaste $waste
+     *@return MiscellaneousWaste $savedWasted
+     */
+    function saveMiscellaneousWaste(MiscellaneousWaste $waste){
+        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        if($waste == null){
+             $waste = $this->convertInputJson();
+        }
+    	if( $waste === NULL ) {
+    		return new ActionError('Error converting input stream to MiscWaste', 202);
+    	}
+    	else if( $waste instanceof ActionError) {
+    		return $waste;
+    	}
+
+        //$LOG->fatal($waste);
+
+        $dao = $this->getDao($waste);
+        $savedWaste = $dao->save($waste);
+
+        $amountDao = $this->getDao(new ParcelUseAmount());
+        foreach($waste->getParcel_use_amounts() as &$amount){
+            if(is_array($amount)){
+                $amt = new ParcelUseAmount();
+                $amt->setCurie_level($amount["Curie_level"]);
+                $amt->setIsotope_id($amount["Isotope_id"]);
+            }else{
+                $amt = clone $amount;
+            }
+            $amt->setMiscellaneous_waste_id($savedWaste->getKey_id());
+            //set the waste type to "Other"
+            $amt->setWaste_type_id(4);
+            $amt = $amountDao->save($amt);
+            $LOG->fatal($amt);
+            $amount = $amt;
+        }
+        $entityMaps = array();
+		$entityMaps[] = new EntityMap("eager", "getParcel_use_amounts");
+		$entityMaps[] = new EntityMap("lazy", "getPickup");
+		$entityMaps[] = new EntityMap("lazy", "getDrum");
+		$entityMaps[] = new EntityMap("eager", "getContents");
+
+		$savedWaste->setEntityMaps($entityMaps);
+        return $savedWaste;
     }
 }
 

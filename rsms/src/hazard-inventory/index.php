@@ -307,11 +307,12 @@ echo "</script>";
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
                                     <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
-                                        {{ room.Room_name }}
                                         <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
                                     </a>
-                                    <span ng-if="room.ContainsHazard">{{ room.Room_name }}</span>
-                                    <span ng-if="!$last">, </span>
+                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">{{ room.Room_name }}
+                                        <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+                                    </span>
+                                    <span style="margin-right: -4px;margin-left: -4px;" ng-if="!$last">, </span>
                                 </span>
                             </li>
                         </ul>
@@ -358,8 +359,11 @@ echo "</script>";
                                         {{ room.Room_name }}
                                         <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
                                     </a>
-                                    <span ng-if="room.ContainsHazard">{{ room.Room_name }}</span>
-                                    <span ng-if="!$last">, </span>
+                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
+                                        {{ room.Room_name }}
+                                        <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+                                    </span>
+                                    <span style="margin-right: -4px;margin-left: -4px;" ng-if="!$last">, </span>
                                 </span>
                             </li>
                         </ul>                     

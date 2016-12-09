@@ -19,6 +19,8 @@ class ParcelUse extends RadCrud {
 		"quantity"						=> "float",
 		"experiment_use"				=> "text",
 		"date_used"						=> "timestamp",
+        "date_transfered"               => "timestamp",
+        "destination_pi_id"             => "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -65,6 +67,12 @@ class ParcelUse extends RadCrud {
 
     /** Amount of parent parcel available for use **/
     private $parcelRemainder;
+
+
+    /** If this ParcelUse is a transfer, when did the transfer take place **/
+    private $date_transfered;
+    /** Is this a transfer? **/
+    private $is_transfer;
 
 	public function __construct() {
 
@@ -136,5 +144,16 @@ class ParcelUse extends RadCrud {
         $this->parcelRemainder = $parent->getRemainder();
         return $this->parcelRemainder;
     }
+
+    public function getDate_transfered(){return $this->date_transfered;}
+	public function setDate_transfered($date_transfered){$this->date_transfered = $date_transfered;}
+
+	public function getIs_transfer(){
+        $this->is_transfer = (bool) $this->getDate_transfered()!= null;
+        return $this->is_transfer;
+    }
+
+
+
 }
 ?>

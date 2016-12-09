@@ -632,16 +632,22 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
 
                                     if(factory.room){
                                         room.checked = !room.checked;
-                                        factory.room = !factory.room;
+                                        factory.room = null;
                                         //f no rooms are left checked for this deficiency, we remove it's key id from the Inspection's array of deficiency_selection ids
                                         if(roomIds.length == 0){
                                             factory.inspection.Deficiency_selections[0].splice( factory.inspection.Deficiency_selections.indexOf( deficiency.Key_id, 1 ) )
                                         }
+                                        for (var i = 0; i < deficiency.InspectionRooms.length; i++) {
+                                            if (deficiency.InspectionRooms[i].Key_id == room.Key_id) {
+                                                deficiency.InspectionRooms[i] = room;
+                                            }
+                                        }
+
                                     } else {
-                                        console.log(returnedDeficiency);
                                         for (var i = 0; i < returnedDeficiency.Rooms.length; i++) {
                                             returnedDeficiency.Rooms[i].checked = true;
                                         }
+                                        deficiency.InspectionRooms = returnedDeficiency.Rooms;
                                         question.Responses.DeficiencySelections.push(returnedDeficiency);
                                     }
 
@@ -728,11 +734,12 @@ var inspectionChecklist = angular.module('inspectionChecklist', ['ui.bootstrap',
                 while (i--) {
                     if (question.Responses.DeficiencySelections[i].Deficiency_id == deficiency.Key_id) {
                         var j = question.Responses.DeficiencySelections[i].Rooms.length;
+                        
                         while (j--) {
                             if (question.Responses.DeficiencySelections[i].Rooms[j].Key_id == room.Key_id) {
                                 if (room.checked != false) {
                                     deficiency.checked = true;
-
+                                    //room.checked = true;
                                     return true;
                                 }
                             }

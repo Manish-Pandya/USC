@@ -4,6 +4,7 @@ require_once '../top_view.php';
 <style>
     .hidey-thing{height:150px !important;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/manageInspections.js"></script>
 <div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
 <div class="alert savingBox" ng-if="saving">
@@ -35,7 +36,6 @@ require_once '../top_view.php';
         </li>
     </ul>
 </div>
-
     <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px; z-index:9999">
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
@@ -66,18 +66,22 @@ require_once '../top_view.php';
             <tr>
                 <th>
                     Investigator<br>
-                    <span><input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()"/><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()" /><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
-                <th>
-                    Campus<br>
-                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()"/><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                </th>
-                <th>
-                    Building<br>
-                    <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                </th>
-                <th>
-                    Lab Room(s)<br>
+                <th class="triple">
+                    <div>
+                        <span>
+                            Campus<br>
+                            <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                        </span>
+                        <span>
+                            Building<br>
+                            <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                        </span>
+                        <span>
+                            Lab Room(s)<br>
+                        </span>
+                    </div>
                 </th>
                 <th>
                     Month Scheduled<br>
@@ -105,7 +109,9 @@ require_once '../top_view.php';
         <tbody>
 
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
+				
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
+                <!--
                 <td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
                 <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
                 <td style="width:6.5%">
@@ -115,13 +121,32 @@ require_once '../top_view.php';
                     <ul ng-if="dto.Inspection_rooms">
                         <li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
                     </ul>
+                    <pre>{{dto.Campuses | json}}</pre>
                 </td>
+					-->
+				<td style="width:24.5%" class="triple">
+					<table>
+						<tr ng-repeat="campus in dto.Campuses">
+                            <td class="triple-inner">{{campus.Campus_name}}</td>
+							<td class="triple-inner-2">
+                                <table>
+                                    <tr ng-repeat="building in campus.Buildings">
+                                        <td class="triple-inner-inner">{{building.Building_name}}</td>
+                                        <td class="triple-inner-inner-2">
+                                            <div ng-repeat="room in building.Rooms">{{room.Name}}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+							</td>
+						</tr>
+					</table>
+				</td>
                 <td style="width:6.5%">
                     <span ng-if="dto.Inspection_id">
                         <span ng-if="dto.Inspections.Date_started">
                             <span ng-repeat="month in months" ng-if="month.val==dto.Inspections.Schedule_month">{{month.string}}</span>
                         </span>
-                        <select ng-if="!dto.Inspections.Date_started && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, yearHolder.selectedYear )" >
+                        <select ng-if="!dto.Inspections.Date_started && rbf.getHasPermission([ R[constants.ROLE.NAME.ADMIN],  R[constants.ROLE.NAME.RADIATION_ADMIN]])" ng-model="dto.Schedule_month" ng-change="mif.scheduleInspection( dto, yearHolder.selectedYear )">
                             <option value="">-- select month --</option>
                             <option ng-selected="month.val==dto.Inspections.Schedule_month" ng-repeat="month in months" value="{{month.val}}">{{month.string}}</option>
                         </select>
@@ -170,9 +195,9 @@ require_once '../top_view.php';
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
-                                <br>Scheduled ({{dto.Inspections.Schedule_month | getMonthName}})
-                                <br>
-                                <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Hazard Inventory</a>
+                            <br>Scheduled ({{dto.Inspections.Schedule_month | getMonthName}})
+                            <br>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Hazard Inventory</a>
                         </span>
 
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
@@ -209,20 +234,20 @@ require_once '../top_view.php';
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SUBMITTED_CAP">
                             <span><br>(CAP Sent: {{dto.Inspections.Cap_submitted_date | dateToISO}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;"  class="icon-clipboard-2"></i>Submitted Report</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="InspectionConfirmation.php#/report?inspection={{dto.Inspections.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png"/>Inventory</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Inventory</a>
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>
                 </td>
                 <td style="width:9.5%" class="hazard-icons">
-                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png"/></span>
-                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png"/></span>
-                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png"/></span>
+                    <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png" /></span>
+                    <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png" /></span>
+                    <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png" /></span>
                 </td>
             </tr>
         </tbody>

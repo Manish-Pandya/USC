@@ -1,4 +1,4 @@
-angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','roleBased','ui.select','ngSanitize'])
+angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','ui.select','ngSanitize'])
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })
@@ -484,7 +484,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','ui.mask','rol
                 $(elem).find('thead').find("th").each(function(index) {
                     $(this).width( firstRow.children("td").eq(index-1).width() );
                 });
-                $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
+                $(elem[0]).find('> tbody').css({"marginTop": $(elem[0]).find('thead').height()});
 
              }
              $(window).load(function() {setWidths();});

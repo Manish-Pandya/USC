@@ -129,6 +129,8 @@ class Inspection extends GenericCrud {
     private $cap_submitter_id;
     private $cap_submitter_name;
 
+    private $roomIds;
+
     public function __construct(){
 
         // Define which subentities to load
@@ -352,5 +354,15 @@ class Inspection extends GenericCrud {
         }
 		return $this->cap_submitter_name;
 	}
+
+    public function getRoomIds(){
+        if($this->roomIds == null && $this->hasPrimaryKeyValue()){
+            $this->roomIds = array();
+            foreach($this->getRooms() as $room){
+                $this->roomIds[] = $room->getKey_id();
+            }
+        }
+        return $this->roomIds;
+    }
 }
 ?>

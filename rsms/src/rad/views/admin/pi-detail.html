@@ -12,7 +12,7 @@
                     <span style="margin-left:20px" ng-if="selectedPiAuth.Termination_date">(Terminated {{selectedPiAuth.Termination_date | dateToISO}})</span>
                 </span>
 
-                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorization)" ng-options="mappedAmendments.indexOf(piAuth) as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment">
+                <select style="margin-bottom:0" ng-init="selectedAmendment = getHighestAmendmentNumber(pi.Pi_authorization)" ng-options="mappedAmendments.indexOf(piAuth) as piAuth.Amendment_label for piAuth in mappedAmendments" ng-model="selectedAmendment" ng-change="selectAmendement(selectedAmendment)">
                     <option style="display:none" value="">Select Amendment</option>
                 </select>
 

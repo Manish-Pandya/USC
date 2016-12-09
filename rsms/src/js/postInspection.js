@@ -753,6 +753,16 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                     }
                 }
 
+                if (question.Responses && question.Responses.SupplementalDeficiencies) {
+                    var k = question.Responses.SupplementalDeficiencies.length;
+                    while (k--) {
+                        if (!question.Responses.SupplementalDeficiencies[k].Corrected_in_inspection) {
+                            console.log(question);
+                            return false;
+                        }
+                    }
+                }
+
             }
         }
         return true;

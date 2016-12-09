@@ -112,8 +112,8 @@ var InstanceFactory = (function (_super) {
     InstanceFactory.getChildInstances = function (compMap, parent) {
         var _this = this;
         parent[compMap.PropertyName] = []; // clear property
+        var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
             var len = childStore.length;
             for (var i = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
@@ -123,56 +123,27 @@ var InstanceFactory = (function (_super) {
             }
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-            if (PermissionMap.getPermission(compMap.ChildType).getAll) {
-                if (!DataStoreManager[compMap.ChildType] || !DataStoreManager[compMap.ChildType].getAllCalled || !DataStoreManager[compMap.ChildType].Data) {
-                    // Get the gerunds.then
-                    var manyTypeToManyChildType = parent.TypeName + "To" + compMap.ChildType;
-                    if (typeof DataStoreManager._actualModel[manyTypeToManyChildType] == "undefined" || !DataStoreManager._actualModel[manyTypeToManyChildType].promise) {
-                        DataStoreManager._actualModel[manyTypeToManyChildType] = {}; // clear property
-                        DataStoreManager._actualModel[manyTypeToManyChildType].promise = XHR.GET(compMap.GerundUrl)
-                            .then(function (d) {
-                            parent.viewModelWatcher[compMap.PropertyName] = []; // clear property
-                            DataStoreManager._actualModel[manyTypeToManyChildType].Data = d;
-                            var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
-                            var gerundLen = d.length;
-                            //loop through all the gerunds
-                            for (var i = 0; i < gerundLen; i++) {
-                                var childLen = childStore.length;
-                                for (var x = 0; x < childLen; x++) {
-                                    if (parent.UID == d[i].ParentId && childStore[x].UID == d[i].ChildId) {
-                                        parent[compMap.PropertyName].push(childStore[x]);
-                                        parent.viewModelWatcher[compMap.PropertyName].push(childStore[i].viewModelWatcher);
-                                    }
-                                }
+            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                // Get the gerunds
+                var manyTypeToManyGerundType = parent.TypeName + "To" + compMap.ChildType;
+                if (DataStoreManager._actualModel[manyTypeToManyGerundType] && DataStoreManager._actualModel[manyTypeToManyGerundType].Data) {
+                    var d = DataStoreManager._actualModel[manyTypeToManyGerundType].Data;
+                    var gerundLen = d.length;
+                    //loop through all the gerunds
+                    for (var i = 0; i < gerundLen; i++) {
+                        var childLen = childStore.length;
+                        for (var x = 0; x < childLen; x++) {
+                            if (parent.UID == d[i].ParentId && childStore[x].UID == d[i].ChildId) {
+                                parent[compMap.PropertyName].push(childStore[x]);
                             }
-                        })
-                            .catch(function (f) {
-                            console.log("getChildInstances:", f);
-                        });
+                        }
                     }
-                    else {
-                        DataStoreManager._actualModel[manyTypeToManyChildType].promise.then(function (d) {
-                            var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
-                            var d = DataStoreManager._actualModel[manyTypeToManyChildType].Data;
-                            var gerundLen = d.length;
-                            //loop through all the gerunds
-                            for (var i = 0; i < gerundLen; i++) {
-                                var childLen = childStore.length;
-                                for (var x = 0; x < childLen; x++) {
-                                    var child = childStore[x];
-                                    if (child.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
-                                        parent[compMap.PropertyName].push(child);
-                                    }
-                                }
-                            }
-                        });
-                    }
-                    return;
                 }
+                return;
             }
             else {
-                var prom = (typeof parent[compMap.PropertyName + "Promise"] == "undefined") ? XHR.GET(parent.getChildUrl(compMap)) : parent[compMap.PropertyName + "Promise"];
-                parent[compMap.PropertyName + "Promise"] = prom.then(function (d) {
+                parent[compMap.PropertyName + "Promise"] = (parent[compMap.PropertyName + "Promise"] || XHR.GET(parent.getChildUrl(compMap)))
+                    .then(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     var len = d.length;
                     for (var i = 0; i < len; i++) {
@@ -185,8 +156,6 @@ var InstanceFactory = (function (_super) {
             }
         }
         else {
-            // CompMap is CompositionMapping.ONE_TO_ONE
-            var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
             var len = childStore.length;
             for (var i = 0; i < len; i++) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses

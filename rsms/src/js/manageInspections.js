@@ -426,6 +426,195 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         $rootScope.dtoCopy = false;
     }
 
+    factory.parseDtos = function (dto) {
+        console.log(dto);
+        var dtos = [];
+        var l = dto.Pis.length;
+        for (var i = 0; i < l; i++) {
+            var pi = dto.Pis[i];
+            pi = factory.getInspectionsByPi(pi, dto.Inpsections);       
+            
+            
+            //create a dto obj for each inspection that the pi has
+            //cache an obj of uninspected rooms, grouped by building
+            var n = pi.Inspections.length;
+            for(var j = 0; j < n; j++){
+                var dtoTemplate = {
+                    Pi_name: pi.User.Name,
+                    pi_key_id: pi.User.Key_id,
+
+                }
+
+            }
+
+
+            //create a dto obj for each inspection the pi still needs
+        }
+        dtos = dto.Pis;
+        console.log(dtos);
+        return dtos;
+    }
+  /*
+    private $pi_name;
+
+
+    private $pi_key_id;
+	
+    private $building_name;
+	
+    private $building_key_id;
+	
+    private $campus_key_id;
+	
+    private $campus_name;
+
+    private $building_rooms;
+
+
+    private $inspection_rooms;
+
+
+    private $inspections;
+	
+    private $inspection_id;
+    private $bio_hazards_present;
+    private $chem_hazards_present;
+    private $rad_hazards_present;
+    private $deficiency_selection_count;	
+
+    
+    */
+
+    factory.getInspectionsByPi = function (pi, inspections) {
+        var l = inspections.length;
+        pi.Inspections = [];
+        for (var i = 0 ; i < l; i++) {
+            var insp = inspections[i];
+            if (insp.Principal_investigator_id == pi.Key_id) {
+                pi.Inspections.push(insp);
+            }
+        }
+        return pi;
+    }
+
+    factory.collapseDtos = function (dtos) {
+        var l = dtos.length;
+        var ids = [];
+        var duplicateIds = [];
+        for (var i = 0; i < l; i++) {
+            var d = dtos[i];
+            invertRoomForNonMultiples(d);
+            if (!d.Inspections) continue;
+            if (ids.indexOf(d.Inspections.Key_id) < 0) {
+                ids.push(d.Inspections.Key_id)
+            } else if (duplicateIds.indexOf(d.Inspections.Key_id) < 0) {
+                duplicateIds.push(d.Inspections.Key_id);
+            }
+        }
+        
+        var masterIndex;
+        var l = duplicateIds.length;
+        for (var i = 0; i < l; i++) {
+            var id = duplicateIds[i];
+            var relevantDtos = dtos.reduce(function (relevantDtos, dto, index) {
+                if (dto.Inspections && dto.Inspections.Key_id == id) {
+                    relevantDtos.push(dto);
+                    if (!masterIndex) {
+                        var masterIndex = index;
+                    }
+                    dtos.splice(index, 1);
+                }
+                return relevantDtos;
+            }, []);
+            var masterDto = JSON.parse(JSON.stringify(relevantDtos[0]));
+            map = {
+                Building_rooms: null,
+                Campus_name: null,
+                Building_name: null,
+                Campus_key_id: null,
+                Building_key_id: null,
+                IsMultiple:true,
+                Bio_hazards_present: relevantDtos.some(function(dto){return dto.Bio_hazards_present }),
+                Chem_hazards_present: relevantDtos.some(function (dto) { return dto.Chem_hazards_present }),
+                Rad_hazards_present: relevantDtos.some(function (dto) { return dto.Rad_hazards_present }),
+                Inspection_rooms:relevantDtos.every(function(room){return room}),
+                Deficiency_selection_count: null,
+                Campuses: invertRooms(relevantDtos)
+            }
+            angular.extend(masterDto, map);
+            dtos.splice(masterIndex, 0, masterDto);
+        }
+
+        function invertRooms(dtos) {
+            var campuses = [];
+            var campusIds = [];
+            var buildingIds = [];
+            var buildings = [];
+            var rooms = [];
+            dtos.forEach(function (dto) {
+                rooms = rooms.concat(dto.Inspection_rooms);
+                if (campusIds.indexOf(dto.Campus_key_id) == -1) {
+                    var campus = {
+                        Campus_key_id: dto.Campus_key_id,
+                        Campus_name: dto.Campus_name,
+                        Buildings: [],
+                    }
+                    campuses.push(campus);
+                    campusIds.push(dto.Campus_key_id);
+                }
+                if (buildingIds.indexOf(dto.Building_id) == -1) {
+                    var bldg = {
+                        Building_name: dto.Building_name,
+                        Building_id: dto.Building_key_id,
+                        Campus_id: dto.Campus_key_id,
+                        Campus_name: dto.Campus_name,
+                        Rooms: []
+                    }
+                    buildings.push(bldg);
+                }
+            });
+            rooms.forEach(function (room, idx) {
+                buildings.forEach(function(bldg){
+                    if (room.Building_id == bldg.Building_id) {
+                        bldg.Rooms.push(room);
+                        campuses.forEach(function (c) {
+                            if (c.Buildings.indexOf(bldg) == -1 && c.Campus_key_id == bldg.Campus_id) {
+                                c.Buildings.push(bldg)
+                            }
+                        })
+                    }
+                })
+            })
+            
+            return campuses;
+
+        }
+
+        function invertRoomForNonMultiples(dto) {
+            var rooms = dto.Inspection_rooms || dto.Building_rooms;
+            var l = rooms.length;
+            dto.Campuses = [{
+                Campus_key_id: dto.Campus_key_id,
+                Campus_name: dto.Campus_name,
+                Buildings: [
+                    {
+                        Building_name: dto.Building_name,
+                        Building_id: dto.Building_id,
+                        Rooms: rooms.map(function (room, idx) {
+                            return room;
+                        })
+                    }
+                ]
+            }]
+            
+
+
+            return dto.Campuses;
+        }
+
+        return dtos;
+    }
+
     return factory;
 })
 
@@ -442,7 +631,9 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         return manageInspectionsFactory.getInspectionScheduleDtos(year)
             .then(
                 function (dtos) {
-                    $scope.dtos = dtos;
+                    //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
+                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
+                    //$scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);
                 }
@@ -533,9 +724,17 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     matched = true;
 
                     if (search.building) {
-                        if (item.Building_name && item.Building_name.toLowerCase().indexOf(search.building.toLowerCase()) < 0) {
-                            matched = false;
-                            continue;
+                        
+                        matched = false
+                        if (item.Campuses && item.Campuses.length) {
+                            item.Campuses.forEach(function (campus) {
+                                campus.Buildings.forEach(function (b) {
+                                    if (b.Building_name.toLowerCase().indexOf(search.building.toLowerCase()) > -1) {
+                                        matched = true;
+                                        return;
+                                    }
+                                })
+                            });
                         }
 
                     }
@@ -593,10 +792,16 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     }
 
                     if (matched && search.campus) {
-                        if (item.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
-                            matched = false;
-                            continue;
+                        matched = false
+                        if (item.Campuses && item.Campuses.length) {
+                            item.Campuses.forEach(function (campus) {
+                                if (campus.Campus_name.toLowerCase().indexOf(search.campus.toLowerCase()) > -1) {
+                                    matched = true;
+                                    return;
+                                }
+                            });
                         }
+
                     }
 
                     if (matched && search.pi && item.Pi_name) {

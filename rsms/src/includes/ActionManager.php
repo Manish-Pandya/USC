@@ -11,6 +11,19 @@
 
 class ActionManager {
 
+	public function getCurrentRoles(){
+		if($_SESSION && $_SESSION['USER']){
+			$user = $_SESSION['USER'];
+			$currentRoles = array();
+			foreach($user->getRoles() as $role){
+				$currentRoles[] = $role->getName();
+			}
+			$this->getPropertyByName("PrincipalInvestigator", 1, "rooms" );
+			return $currentRoles;
+		}
+		return [];
+	}
+
     /**
      * Chooses a return value based on the parameters. If $paramValue
      * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.
@@ -39,8 +52,6 @@ class ActionManager {
             return NULL;
         }
     }
-
-
 
     public function convertInputJson(){
         try{
@@ -1375,7 +1386,6 @@ class ActionManager {
 
             $dao = $this->getDao($ds);
             $ds->setCorrected_in_inspection(true);
-
             $dao->save($ds);
 
             return true;
@@ -1386,16 +1396,22 @@ class ActionManager {
             }
     }
 
-    public function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL ){
+    public function removeCorrectedInInspection( $deficiencyId = NULL, $inspectionId = NULL, $supplemental = null ){
         $LOG = Logger::getLogger('Action:' . __function__);
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $deficiencyId = $this->getValueFromRequest('deficiencyId', $deficiencyId);
+        $supplemental = $this->getValueFromRequest('supplemental', $supplemental);
 
         if( $inspectionId !== NULL  && $deficiencyId!== NULL){
 
             // Find the deficiencySelection
-            $ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+            if($supplemental == null){
+                $ds = $this->getDeficiencySelectionByInspectionIdAndDeficiencyId($inspectionId,$deficiencyId);
+            }else{
+                $sd = new GenericDAO(new SupplementalDeficiency());
+                $ds = $sd->getById($deficiencyId);
+            }
 
             if ($ds == null){
                 return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
@@ -2293,7 +2309,7 @@ class ActionManager {
                         }
 
                         //add Inspector record if role is inspector
-                        if($roleToAdd->getName() == 'Safety Inspector'){
+                        if($roleToAdd->getName() == 'Safety Inspector' || $roleToAdd->getName() == 'Radiation Inspector'){
                             $LOG->debug('trying to save inspector');
                             //if the user already has an Inspector, get that Inspector
                             if($user->getInspector() != NULL){
@@ -3532,7 +3548,12 @@ class ActionManager {
             }
 
             $selection = $dao->getById($ds->getKey_id());
-            $LOG->debug($selection);
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager","getRooms");
+            $entityMaps[] = new EntityMap("lazy","getCorrectiveActions");
+            $entityMaps[] = new EntityMap("lazy","getResponse");
+            $entityMaps[] = new EntityMap("lazy","getDeficiency");
+            $selection->setEntityMaps($entityMaps);
 
             return $selection;
 
@@ -3837,7 +3858,7 @@ class ActionManager {
 
             //make sure we get the right rooms for our branch level checklists
             //ids of the branch level hazards, excluding general, which is always in every room
-            $realBranchIds = array(1,10009,100010);
+            $realBranchIds = array(1,10009,10010);
             $neededRoomIds = array();
             $neededRooms   = array();
             foreach($orderedChecklists as $list){
@@ -4279,6 +4300,12 @@ class ActionManager {
         }
                 // Call the database
 		$LOG->fatal('getting schedule for ' . $year);
+
+
+
+
+
+
         $dao = $this->getDao(new Inspection());
         $inspectionSchedules = $dao->getInspectionsByYear($year);
 
@@ -4609,5 +4636,46 @@ class ActionManager {
         }
         return $rooms;
     }
+
+	public function getPropertyByName( $type = null, $id = null, $property = null){
+		$l = Logger::getLogger(__FUNCTION__);
+
+		if($id == null)$id = $this->getValueFromRequest('id', $id);
+		if($type == null)$type = $this->getValueFromRequest('type', $type);
+		if($property==null)$property = $this->getValueFromRequest('property', $property);
+		if($property==null || $id == null || $type == null)return new ActionError('You forgot a param, yo.');
+
+		$pr = strtolower($property);
+		foreach(get_class_methods($type) as $method ){
+			if( preg_match_all('(get|'.$pr.')', strtolower($method)) > 1 ) {
+				$methodName = $method;
+			}
+		}
+
+		//prevent injection hacks by instantiating a new object of the type provided, clearing any gunk
+
+		if(!$type){
+			$l->fatal("somebody tried calling $methodName something that doesn't exist ");
+			return "no such method";
+		}
+		$objOfType = new $type();
+		if(!$objOfType){
+			$l->fatal("somebody tried calling $methodName on $type");
+			return "no such thing";
+		}
+		$dao = new GenericDAO($objOfType);
+		$objOfType = $dao->getById($id);
+		if(!$objOfType){
+			$l->fatal("somebody tried calling $methodName on $type, which is a valid type, but the id, $obj->getKey_id(),  wasn't valid");
+			return "no such $type";
+		}
+
+		//only call the method if it exists in our defined class matching the passed object's type
+		if(method_exists ( $objOfType , $methodName )){
+			return $objOfType->$methodName();
+		}
+		$l->fatal("somebody tried calling $methodName on $type");
+		return "no such method";
+	}
 }
 ?>

@@ -16,10 +16,9 @@
                     <li ng-repeat="room in def.Rooms">{{room.Name}}</li>
                 </ul>
             </li>
-            <li ng-repeat="def in question.Responses.SupplementalDeficiencies">
+            <li ng-repeat="def in question.Responses.SupplementalDeficiencies | activeOnly">
                 <span style="color:#cc0000;">Deficiency:</span>
-                <span ng-if="def.Deficiency.Text != 'Other'" style="margin-left:10px;" once-text="def.Deficiency.Text"></span>
-                <span ng-if="def.Deficiency.Text == 'Other'" style="margin-left:10px;" once-text="def.Other_text"></span>
+                <span style="margin-left:10px;" once-text="def.Text"></span>
                 <ul ng-if="def.Rooms.length && def.Show_rooms" class="subRooms" style="margin-left:0; height:25px;">
                     <li>Room<span ng-if="def.Rooms.length>1">s</span>:</li>
                     <li ng-repeat="room in def.Rooms">{{room.Name}}</li>

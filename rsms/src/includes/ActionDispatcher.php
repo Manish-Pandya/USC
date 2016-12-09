@@ -39,7 +39,7 @@ class ActionDispatcher {
         // module is enabled.
         if( isRadiationEnabled() ) {
             $this->actionManagerType = "Rad_ActionManager";
-        }else if( isVerificationEnabled() ){ 
+        }else if( isVerificationEnabled() ){
             $this->actionManagerType = "Verification_ActionManager";
         }else if ( isHazardInventoryEnabled() ){
         	$this->actionManagerType = "HazardInventoryActionManager";
@@ -48,6 +48,9 @@ class ActionDispatcher {
         }
         else if ( isCommitteesEnabled() ){
         	$this->actionManagerType = "Committees_ActionManager";
+        }
+        else if ( isIBCEnabled() ){
+        	$this->actionManagerType = "IBC_ActionManager";
         }
         else {
             $this->actionManagerType = "ActionManager";
@@ -72,17 +75,17 @@ class ActionDispatcher {
             if( isRadiationEnabled() ) {
                 $actionMappings = array_merge($actionMappings, Rad_ActionMappingFactory::readActionConfig());
             }
-            
+
 			//Verfication's server-side controller (VerificationActionManager extends HazardInventory's, so we "extend" the ActionMappings as well)
             if( isVerificationEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
 				$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
             }
-            
+
             if( isHazardInventoryEnabled() ) {
             	$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
-            }        
-            
+            }
+
             if( isEquipmentEnabled() ) {
             	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
             }
@@ -90,7 +93,11 @@ class ActionDispatcher {
             if( isCommitteesEnabled() ){
             	$actionMappings = array_merge($actionMappings, Committees_ActionMappingFactory::readActionConfig());
             }
-            
+
+            if( isIBCEnabled() ){
+                $actionMappings = array_merge($actionMappings, IBC_ActionMappingFactory::readActionConfig());
+            }
+
             return $actionMappings;
         }
         else{
