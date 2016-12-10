@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var IBCProtocolRevision = (function (_super) {
     __extends(IBCProtocolRevision, _super);
     function IBCProtocolRevision() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     IBCProtocolRevision.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var IBCProtocolRevision = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    IBCProtocolRevision.urlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");
     return IBCProtocolRevision;
 }(FluxCompositerBase));
+IBCProtocolRevision.urlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");

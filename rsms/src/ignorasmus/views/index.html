@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <script src="../../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
-    <script src="../../js/lib/lodash.4.16.5/content/Scripts/lodash.min.js"></script>
+    <script src="../../js/lib/lodash.min.js"></script>
     <script src="../../js/lib/promise.min.js"></script>
     <script src="../../js/lib/angular.js"></script>
     <script src="../../js/constants.js"></script>
@@ -11,17 +11,15 @@
     <script src="../client-side-framework/UrlMapping.js"></script>
     <script src="../client-side-framework/XHR.js"></script>
     <script src="../client-side-framework/models/FluxCompositerBase.js"></script>
-    <script src="../../client-side-framework/genericModel/inheritance.js"></script>
-    <script src="../../client-side-framework/genericModel/genericModel.js"></script>
-    <script src="../../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
     <script src="../client-side-framework/models/User.js"></script>
     <script src="../client-side-framework/models/Role.js"></script>
     <script src="../client-side-framework/models/PrincipalInvestigator.js"></script>
     <script src="../client-side-framework/models/Room.js"></script>
+    <script src="../client-side-framework/models/Department.js"></script>
     <script>
 
         var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
-        //console.log("approved classNames:", classNames);
+        console.log("approved classNames:", classNames);
         
         var currentRoles;
         function getCurrentRoles() {
@@ -66,7 +64,7 @@
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
-                        //console.log(whateverGotReturned);
+                        console.log(whateverGotReturned);
                         pis = whateverGotReturned[1];
                         pis[0].Inspection_notes = "dude looks like a lady, but even more fool";
 

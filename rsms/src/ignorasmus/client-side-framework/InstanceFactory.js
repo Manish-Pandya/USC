@@ -19,7 +19,7 @@ var InstanceFactory = (function (_super) {
     //
     //----------------------------------------------------------------------
     function InstanceFactory() {
-        _super.call(this);
+        return _super.call(this) || this;
     } // Static class cannot be instantiated
     //----------------------------------------------------------------------
     //
@@ -70,8 +70,7 @@ var InstanceFactory = (function (_super) {
             return new window[className]();
         }
         else {
-            //console.log("No such class as " + className);
-            return null;
+            console.log("No such class as " + className);
         }
     };
     /**

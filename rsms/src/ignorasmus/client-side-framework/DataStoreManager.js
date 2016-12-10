@@ -30,14 +30,14 @@ var PermissionMap = (function () {
         }
         return this.Permissions[className];
     };
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    PermissionMap.Permissions = [];
     return PermissionMap;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+PermissionMap.Permissions = [];
 //abstract specifies singleton in ts 1.x (ish)
 var DataStoreManager = (function () {
     function DataStoreManager() {
@@ -336,16 +336,16 @@ var DataStoreManager = (function () {
             return p;
         }
     };
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    DataStoreManager.classPropName = "Class";
-    DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
-    DataStoreManager.isPromisified = true;
-    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
-    DataStoreManager._actualModel = {};
     return DataStoreManager;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+DataStoreManager.classPropName = "Class";
+DataStoreManager.uidString = "Key_id";
+DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
+DataStoreManager.isPromisified = true;
+// NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
+DataStoreManager._actualModel = {};
