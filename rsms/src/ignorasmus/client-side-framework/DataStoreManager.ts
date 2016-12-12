@@ -37,8 +37,9 @@ abstract class PermissionMap {
     static getPermission(className: string): any {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
-            this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
-            //TODO:  this.Permissions[className].save = new window[className].getHasSavePermissions();
+            var instance: FluxCompositerBase = InstanceFactory.createInstance(className);
+            this.Permissions[className].getAll = instance.hasGetAllPermission();
+            //TODO:  this.Permissions[className].save = instance.getHasSavePermissions();
         }
         return this.Permissions[className];
     }
@@ -97,7 +98,7 @@ abstract class DataStoreManager {
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
-                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
+                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll)
                     .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
                         d = InstanceFactory.convertToClasses(d);
                         DataStoreManager._actualModel[type].Data = d;
@@ -151,11 +152,9 @@ abstract class DataStoreManager {
                                     console.log("getAll (inner promise):", reason);
                                 })
                         } else {
-                            d = InstanceFactory.convertToClasses(d);
-                            //DIG: DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                            DataStoreManager._actualModel[type].Data = d;
                             // Dig this neat way to use viewModelParent as a reference instead of a value!
                             Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                            console.log(type+":", _.cloneDeep(d), d);
                             return viewModelParent;
                         }
                     })
@@ -188,7 +187,7 @@ abstract class DataStoreManager {
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<any> {
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
-            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
+            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id)
                 .then((d: FluxCompositerBase): FluxCompositerBase | Promise<any> => {
                     d = InstanceFactory.convertToClasses(d);
                     this.commitToActualModel(d);

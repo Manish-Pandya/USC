@@ -5,21 +5,20 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ignorasmus;
 (function (ignorasmus) {
-    var Room = (function (_super) {
-        __extends(Room, _super);
-        function Room() {
+    var Department = (function (_super) {
+        __extends(Department, _super);
+        function Department() {
             return _super.call(this) || this;
         }
-        Room.prototype.hasGetAllPermission = function () {
+        Department.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
-                var allowedRoles = [Constants.ROLE.NAME.SAFETY_INSPECTOR, Constants.ROLE.NAME.ADMIN];
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return Room;
+        return Department;
     }(FluxCompositerBase));
-    Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
-    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
-    ignorasmus.Room = Room;
+    Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
+    ignorasmus.Department = Department;
 })(ignorasmus || (ignorasmus = {}));

@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var IBCSection = (function (_super) {
     __extends(IBCSection, _super);
     function IBCSection() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     IBCSection.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var IBCSection = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    IBCSection.urlMapping = new UrlMapping("getAllSections", "getSectionById&id=", "saveSection");
     return IBCSection;
 }(FluxCompositerBase));
+IBCSection.urlMapping = new UrlMapping("getAllSections", "getSectionById&id=", "saveSection");

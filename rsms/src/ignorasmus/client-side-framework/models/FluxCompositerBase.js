@@ -49,16 +49,16 @@ var CompositionMapping = (function () {
             }
         }
     }
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
-    CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
-    CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
     return CompositionMapping;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
+CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
+CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
 var FluxCompositerBase = (function () {
     //----------------------------------------------------------------------
     //
@@ -82,7 +82,7 @@ var FluxCompositerBase = (function () {
                 for (var instanceProp in this.thisClass) {
                     if (this.thisClass[instanceProp] instanceof CompositionMapping) {
                         var cm = this.thisClass[instanceProp];
-                        if (cm.ChildUrl == window[cm.ChildType].urlMapping.urlGetAll) {
+                        if (cm.ChildUrl == InstanceFactory._nameSpace[cm.ChildType].urlMapping.urlGetAll) {
                             cm.callGetAll = true; // flag that getAll will be called
                         }
                         this._allCompMaps.push(cm);
@@ -187,11 +187,11 @@ var FluxCompositerBase = (function () {
         });
         return str;
     };
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");
     return FluxCompositerBase;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");

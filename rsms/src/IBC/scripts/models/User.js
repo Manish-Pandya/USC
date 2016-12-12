@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var User = (function (_super) {
     __extends(User, _super);
     function User() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     User.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,7 +15,7 @@ var User = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
-    User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
     return User;
 }(FluxCompositerBase));
+User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
+User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
