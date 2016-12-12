@@ -131,8 +131,8 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- models -->
     <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
-    <script src="scripts/models/Hazard.js"></script>
     <script src="scripts/models/Department.js"></script>
+    <script src="scripts/models/Hazard.js"></script>
     <script src="scripts/models/PrincipalInvestigator.js"></script>
     <script src="scripts/models/Role.js"></script>
     <script src="scripts/models/Room.js"></script>

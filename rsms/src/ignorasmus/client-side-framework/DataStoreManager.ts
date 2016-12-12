@@ -154,7 +154,7 @@ abstract class DataStoreManager {
                         } else {
                             // Dig this neat way to use viewModelParent as a reference instead of a value!
                             Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                            console.log(type+":", _.cloneDeep(d), d);
+                            
                             return viewModelParent;
                         }
                     })
