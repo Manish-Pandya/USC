@@ -34,25 +34,33 @@ var InstanceFactory = (function (_super) {
     InstanceFactory.getClassNames = function (basePath) {
         if (basePath === void 0) { basePath = ""; }
         if (!this._classNames) {
-            this._classNames = [];
-            var scripts = document.getElementsByTagName('script');
-            if (scripts && scripts.length) {
-                for (var i in scripts) {
-                    if (scripts[i].src && scripts[i].src.indexOf(basePath) > -1) {
-                        var pathArray = scripts[i].src.split("/");
-                        var className = pathArray.pop().split(".")[0];
-                        if (this._classNames.indexOf(className) == -1) {
-                            this._classNames.push(className);
-                            //init DataStoreManager holders
-                            DataStoreManager._actualModel[className] = {};
-                            DataStoreManager._actualModel[className].Data = [];
-                            // initting promises below shouldn't actually be necessary, but is here for completion
-                            DataStoreManager._actualModel[className].getAllPromise = new Promise(function () { });
-                            DataStoreManager._actualModel[className].getByIdPromise = new Promise(function () { });
+            if (basePath && typeof basePath == 'string') {
+                this._classNames = [];
+                var scripts = document.getElementsByTagName('script');
+                if (scripts && scripts.length) {
+                    for (var i in scripts) {
+                        if (scripts[i].src && scripts[i].src.indexOf(basePath) > -1) {
+                            var pathArray = scripts[i].src.split("/");
+                            var className = pathArray.pop().split(".")[0];
+                            if (this._classNames.indexOf(className) == -1) {
+                                this._classNames.push(className);
+                            }
                         }
                     }
                 }
             }
+            else {
+                this._nameSpace = basePath;
+                this._classNames = Object.keys(basePath);
+            }
+            this._classNames.forEach(function (className) {
+                //init DataStoreManager holders
+                DataStoreManager._actualModel[className] = {};
+                DataStoreManager._actualModel[className].Data = [];
+                // initting promises below shouldn't actually be necessary, but is here for completion
+                DataStoreManager._actualModel[className].getAllPromise = new Promise(function () { });
+                DataStoreManager._actualModel[className].getByIdPromise = new Promise(function () { });
+            });
         }
         return this._classNames;
     };
@@ -63,11 +71,11 @@ var InstanceFactory = (function (_super) {
      */
     InstanceFactory.createInstance = function (className) {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
-            return new window[className]();
+            return new this._nameSpace[className]();
         }
-        else if (window[className]) {
+        else if (this._nameSpace[className]) {
             console.log(className + " not in approved ClassNames, but exists. Trying to create...");
-            return new window[className]();
+            return new this._nameSpace[className]();
         }
         else {
             console.log("No such class as " + className);
@@ -191,3 +199,4 @@ var InstanceFactory = (function (_super) {
     };
     return InstanceFactory;
 }(DataStoreManager));
+InstanceFactory._nameSpace = window;

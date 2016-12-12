@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <script src="../../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
-    <script src="../../js/lib/lodash.min.js"></script>
+    <script src="../../../../Scripts/lodash.min.js"></script>
     <script src="../../js/lib/promise.min.js"></script>
     <script src="../../js/lib/angular.js"></script>
     <script src="../../js/constants.js"></script>
@@ -18,13 +18,14 @@
     <script src="../client-side-framework/models/Department.js"></script>
     <script>
 
-        var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
+        //var classNames = InstanceFactory.getClassNames("/client-side-framework/models");
+        var classNames = InstanceFactory.getClassNames(ignorasmus);
         console.log("approved classNames:", classNames);
         
         var currentRoles;
         function getCurrentRoles() {
             if (!currentRoles) {
-                return XHR.GET("getCurrentRoles").then((roles) => {currentRoles = roles; })
+                return XHR.GET("getCurrentRoles").then((roles) => { currentRoles = DataStoreManager.CurrentRoles = roles; })
             } else {
                 return new Promise(resolve, reject).then(() => { return resolve(currentRoles)})
             }
@@ -60,7 +61,7 @@
                 console.log(pis[0].User);
             }
 
-            var ps = [DataStoreManager.getAll("Room", rooms, true), DataStoreManager.getAll("PrincipalInvestigator", pis, true)];
+            var ps = [DataStoreManager.getAll("Room", rooms, false), DataStoreManager.getAll("PrincipalInvestigator", pis, false)];
             Promise.all(ps)
                 .then(
                     function (whateverGotReturned) {
@@ -68,9 +69,10 @@
                         pis = whateverGotReturned[1];
                         pis[0].Inspection_notes = "dude looks like a lady, but even more fool";
 
-                        var lp = new window.User();
+                        var lp = InstanceFactory.createInstance("User");
                         lp.Name = "Tronald Dump";
                         pis[0].LabPersonnel.push(lp);
+                        console.log(lp, _.cloneDeep(lp));
 
                         //DataStoreManager.undo(pis[0]);
                         setTimeout(function () {

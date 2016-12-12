@@ -82,7 +82,7 @@ var FluxCompositerBase = (function () {
                 for (var instanceProp in this.thisClass) {
                     if (this.thisClass[instanceProp] instanceof CompositionMapping) {
                         var cm = this.thisClass[instanceProp];
-                        if (cm.ChildUrl == window[cm.ChildType].urlMapping.urlGetAll) {
+                        if (cm.ChildUrl == InstanceFactory._nameSpace[cm.ChildType].urlMapping.urlGetAll) {
                             cm.callGetAll = true; // flag that getAll will be called
                         }
                         this._allCompMaps.push(cm);

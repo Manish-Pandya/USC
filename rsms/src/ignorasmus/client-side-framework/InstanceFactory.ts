@@ -16,6 +16,8 @@ abstract class InstanceFactory extends DataStoreManager {
 
     static _classNames: string[];
 
+    static _nameSpace: Object = window;
+
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -35,28 +37,36 @@ abstract class InstanceFactory extends DataStoreManager {
      *
      * @param basePath
      */
-    static getClassNames(basePath: string = ""): string[] {
+    static getClassNames(basePath: string | Object = ""): string[] {
         if (!this._classNames) {
-            this._classNames = [];
-            var scripts: NodeListOf<HTMLScriptElement> = document.getElementsByTagName('script');
-            if (scripts && scripts.length) {
-                for (var i in scripts) {
-                    if (scripts[i].src && scripts[i].src.indexOf(basePath) > -1) {
-                        var pathArray: string[] = scripts[i].src.split("/");
-                        var className: string = pathArray.pop().split(".")[0];
-                        if (this._classNames.indexOf(className) == -1) {
-                            this._classNames.push(className);
-                            //init DataStoreManager holders
-                            DataStoreManager._actualModel[className] = {};
-                            DataStoreManager._actualModel[className].Data = [];
-                            // initting promises below shouldn't actually be necessary, but is here for completion
-                            DataStoreManager._actualModel[className].getAllPromise = new Promise<any>(() => {});
-                            DataStoreManager._actualModel[className].getByIdPromise = new Promise<any>(() => {});
+            if (basePath && typeof basePath == 'string') {
+                this._classNames = [];
+                var scripts: NodeListOf<HTMLScriptElement> = document.getElementsByTagName('script');
+                if (scripts && scripts.length) {
+                    for (var i in scripts) {
+                        if (scripts[i].src && scripts[i].src.indexOf(basePath) > -1) {
+                            var pathArray: string[] = scripts[i].src.split("/");
+                            var className: string = pathArray.pop().split(".")[0];
+                            if (this._classNames.indexOf(className) == -1) {
+                                this._classNames.push(className);
+                            }
                         }
                     }
                 }
+            } else {
+                this._nameSpace = basePath;
+                this._classNames = Object.keys(basePath);
             }
+            this._classNames.forEach((className: string) => {
+                //init DataStoreManager holders
+                DataStoreManager._actualModel[className] = {};
+                DataStoreManager._actualModel[className].Data = [];
+                // initting promises below shouldn't actually be necessary, but is here for completion
+                DataStoreManager._actualModel[className].getAllPromise = new Promise<any>(() => { });
+                DataStoreManager._actualModel[className].getByIdPromise = new Promise<any>(() => { });
+            });
         }
+        
         return this._classNames;
     }
 
@@ -67,10 +77,10 @@ abstract class InstanceFactory extends DataStoreManager {
      */
     static createInstance(className: string): FluxCompositerBase {
         if (this._classNames && this._classNames.indexOf(className) > -1) {
-            return new window[className]();
-        } else if (window[className]) {
+            return new this._nameSpace[className]();
+        } else if (this._nameSpace[className]) {
             console.log(className + " not in approved ClassNames, but exists. Trying to create...");
-            return new window[className]();
+            return new this._nameSpace[className]();
         } else {
             console.log("No such class as " + className);
         }
