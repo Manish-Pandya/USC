@@ -66,16 +66,6 @@ angular
       })
 
        $provide.decorator('$q', function ($delegate) {
-           /*
-        if(!$delegate.hasOwnProperty('then')){
-            console.log('adding then function')
-            $delegate.then = function(){
-                return {};
-            };
-        }
-        console.log($delegate.then);
-        console.log($delegate.then());
-        */
            
         var defer = $delegate.defer;
         $delegate.defer = function() {
@@ -96,11 +86,12 @@ angular
 
   })
   .controller('NavCtrl', function ($rootScope, applicationControllerFactory, $state) {
-    $rootScope.$on('$stateChangeStart ',function(){
-      $rootScope.loading = true;
-    });
-    $rootScope.$on('$stateChangeSuccess',
-        function(event, toState, toParams, fromState, fromParams){
+      $rootScope.$on('$stateChangeStart ', function () {
+          $rootScope.loading = true;
+      });
+
+      $rootScope.$on('$stateChangeSuccess',
+        function (event, toState, toParams, fromState, fromParams) {
             $rootScope.loading = false;
             var viewMap = applicationControllerFactory.getViewMap($state.current);
             $rootScope.viewLabel = viewMap.Label;
@@ -108,6 +99,6 @@ angular
             $rootScope.dashboardView = viewMap.Dashboard;
             $rootScope.noHead = viewMap.NoHead;
             console.log($rootScope);
-          });
+        });
 
   });;

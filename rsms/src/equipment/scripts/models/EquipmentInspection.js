@@ -1,7 +1,6 @@
 'use strict';
 /* Auto-generated stub file for the EquipmentInspection class. */
 
-
 //constructor
 var EquipmentInspection = function() {};
 EquipmentInspection.prototype = {
