@@ -1,12 +1,12 @@
 ﻿<div cg-busy="{promise:piAuthsPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
-    <div class="well three-fourths auths">
+    <div class="well full auths">
         <h1 class="auth-report"><i class="icon-copy"></i>Authorizations</h1>
         <h3 ng-if="!piAuths.length">No Authorizations</h3>
         <span ng-init="filterObj"></span>
         <div class="card full authReports" ng-if="piAuths.length">
-            <div class="fake-table">
+            <div class="fake-table striped">
                 <div class="table-header">
                     <h3>Name<br /><input ng-model="filterObj.piName" /></h3>
                     <h3>Department<br /><input ng-model="filterObj.department" /></h3>
@@ -16,7 +16,7 @@
                     </h3>
                     <h3>Auth #</h3>
                 </div>
-                <div class="table-row" ng-repeat="piAuth in piAuths | authsFilter:filterObj">
+                <div class="table-row" ng-repeat="piAuth in piAuths | authsFilter:filterObj | orderBy: 'PiName'">
                     <div>
                         {{piAuth.PiName}}
                     </div>

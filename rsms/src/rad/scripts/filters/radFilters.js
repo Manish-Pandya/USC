@@ -274,4 +274,9 @@ angular.module('00RsmsAngularOrmApp')
             })
             return filteredParcels;
         }
+    })
+    .filter('availableBags', function () {
+        return function (bags) {
+            return bags.filter(function (b) { return !b.Pickup_id})
+        }
     });
