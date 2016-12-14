@@ -8,21 +8,42 @@
  * Controller of the EquipmentModule Autoclaves view
  */
 angular.module('EquipmentModule')
-  .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+  .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
       var af = $scope.af = applicationControllerFactory;
     
-        var getAllAutoclaves = function(){
-  			return af.getAllAutoclaves()
-  			.then(
-  				function(){  	
-  				    $scope.autoclaves = dataStoreManager.get("Autoclave");
-  				    if (!$scope.autoclaves) $scope.autoclaves = [];
-  				    return $scope.autoclaves;
-  				}
-  			)
-  		}
+      function getAllInspections() {
+          $scope.inspections = [];
+          $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.inspections);
+                    console.log(DataStoreManager._actualModel);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
 
-  		getAllAutoclaves();
+        function getAllAutoclaves() {
+            $scope.autoclaves = [];
+            $q.all([DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.autoclaves);
+                    console.log(DataStoreManager._actualModel);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
+        
+        $rootScope.getCurrentRoles().then(getAllInspections()).then(getAllAutoclaves());
 
         $scope.deactivate = function(autoclave) {
             var copy = dataStoreManager.createCopy(autoclave);
