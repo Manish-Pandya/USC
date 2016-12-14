@@ -1,0 +1,34 @@
+﻿<div class="modal-body">
+    <table class="table table-striped table-bordered" ng-show="nodefs.length">
+        <tr>
+            <td style="background:#d00; color:white" colspan="2">The following questions indicated a deficiency with no description(s) selected.</td>
+        </tr>
+        <tr>
+            <th>Checklist</th>
+            <th>Question</th>
+        </tr>
+        <tr ng-repeat="q in nodefs = data.noDefs">
+            <td>{{q.checklist}}</td>
+            <td>{{q.question}}</td>
+        </tr>
+    </table>
+    <table class="table table-striped table-bordered" ng-show="unselecteds.length">
+        <tr>
+            <td style="background:#d00; color:white" colspan="2">The following questions indicated a deficiency with unchecked lab-specific deficiencies.</td>
+        </tr>
+        <tr>
+            <th>Checklist</th>
+            <th>Question</th>
+        </tr>
+        <tr ng-repeat="q in unselecteds = data.unSelectedSumplementals">
+            <td>{{q.checklist}}</td>
+            <td>{{q.question}}</td>
+        </tr>
+    </table>
+   
+    
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-danger" href="InspectionChecklist.php#?inspection={{inspection.Key_id}}">Return To Inspection</a>
+    <a class="btn btn-large" ng-click="cancel()">Close</a>
+</div>

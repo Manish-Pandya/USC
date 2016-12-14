@@ -1,0 +1,54 @@
+﻿<div cg-busy="{promise:piAuthsPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
+<div class="right-column">
+    <div class="well full auths">
+        <h1 class="auth-report"><i class="icon-copy"></i>Authorizations</h1>
+        <h3 ng-if="!piAuths.length">No Authorizations</h3>
+        <span ng-init="filterObj"></span>
+        <div class="card full authReports" ng-if="piAuths.length">
+            <div class="fake-table striped">
+                <div class="table-header">
+                    <h3>Name<br /><input ng-model="filterObj.piName" /></h3>
+                    <h3>Department<br /><input ng-model="filterObj.department" /></h3>
+                    <h3>
+                        <span class="span6">Building<br /><input ng-model="filterObj.building" /></span>
+                        <span class="span6">Room<br /><input ng-model="filterObj.room" /></span>
+                    </h3>
+                    <h3>Auth #</h3>
+                </div>
+                <div class="table-row" ng-repeat="piAuth in piAuths | authsFilter:filterObj | orderBy: 'PiName'">
+                    <div>
+                        {{piAuth.PiName}}
+                    </div>
+                    <div>
+                        <ul>
+                            <li ng-repeat="dept in piAuth.Departments">
+                                {{dept.Name}}
+                            </li>
+                        </ul>
+                        
+                    </div>
+                    <div>
+                        <ul class="selectedBuildings">
+                            <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
+                                <div class="span6">
+                                    <h4>{{r[0].Building.Alias || r[0].Building.Name}}</h4>
+                                </div>
+                                <div class="roomsForBuidling span6">
+                                    <ul>
+                                        <li ng-repeat="(key, room) in rooms = (r | activeOnly | orderBy: 'Name')">{{room.Name}}</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        {{piAuth.Authorization_number}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

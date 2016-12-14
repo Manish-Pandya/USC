@@ -879,15 +879,20 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
        }
   }
 
-  var assignUserCtrl = function($scope, modalData, $modalInstance, userHubFactory, piHubFactory){
+  var assignUserCtrl = function($scope, $rootScope,modalData, $modalInstance, userHubFactory, piHubFactory){
       $scope.modalData = modalData;
 
       $scope.gettingUsers = true;
       piHubFactory.getAllUsers()
         .then(function(users){$scope.users = users;$scope.modalError="";$scope.gettingUsers = false},function(){$scope.modalError="There was an error getting the list of users.  Please check your internet connection and try again.";})
 
-      $scope.save = function(user){
-          console.log($scope.modalData.type);
+      $scope.save = function (user, confirmed) {
+          if (!confirmed) {
+              $scope.selectedUser = user;
+          } else {
+              user = $scope.selectedUser;
+          }
+          if(!confirmed && !checkUserForSave(user)) return;
           if(user.Supervisor_id){
               if(!$scope.needsConfirmation){
                   $scope.selectedUser = user;
@@ -895,21 +900,55 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
                   return;
               }
           }
-          $scope.saving = true;
 
           user.Supervisor_id = modalData.Key_id
+          user.Is_active = true;
 
-
-
-          userHubFactory.saveUser(user)
+          $rootScope.saving = userHubFactory.saveUser(user)
             .then(
               function(user){
-                  $scope.saving = false;
                   user.new = true;
                   $modalInstance.close(user);
               }
             )
       }
+
+      function checkUserForSave(user) {
+          if (user.Is_active && !user.Supervisor) return true;
+          $scope.message = user.Name + " already exists as ";
+          if (!user.Is_active) {
+              $scope.message = $scope.message + "an innactive ";
+          }else{
+              $scope.message = $scope.message + "a ";  
+          }
+
+          if (userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)) {
+              $scope.message = $scope.message + "Lab Contact ";
+          }else{
+              $scope.message = $scope.message + "Lab Personnel ";
+          }
+
+          if (user.Supervisor) {
+              $scope.message = $scope.message + "for " + user.Supervisor.Name;
+          }
+
+          $scope.message = $scope.message + ".  Would you like to ";
+
+          if (!user.Is_active) {
+              $scope.message = $scope.message + "activate and ";
+          }
+
+          if (user.Supervisor) {
+              $scope.message = $scope.message + "re-";
+          }
+
+          $scope.message = $scope.message + "assign them to " + modalData.User.Name + "?" ;
+
+          console.log(modalData, $scope.message);
+
+          return false;
+      }
+
 
       $scope.cancel = function(){
           $modalInstance.dismiss();

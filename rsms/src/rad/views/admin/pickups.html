@@ -70,13 +70,13 @@
         <div class="print-always" ng-show="pickup.show" ng-if="pickup.Scint_vial_collections.length">
             <h3>{{pickup.Scint_vial_trays}} Scint Vial Trays:</h3>
             <div class="fake-table" ng-if="pickup.Scint_vial_collections.length">
-                <div ng-repeat="collection in pickup.Scint_vial_collections" ng-if="collection.Contents.length" ng-class="{'inactive':collection.removed}" class="table-row">
+                <div ng-repeat="collection in pickup.Scint_vial_collections"  ng-class="{'inactive':collection.removed}" class="table-row">
                     <div class="button-cell no-print">
                         <a ng-if="!collection.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(collection)"><i class="icon-remove"></i>Remove</a>
                         <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Add</a>
                     </div>
                     <div class="pickup-item-contents">
-                        Contents: <span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
+                        Contents: <span ng-if="!collection.Contents">No Activity</span><span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
                         <div class="pickup-comments" style="padding:0 !important;">
                             <span ng-if="collection.Comments && !collection.edit">Comments: {{collection.Comments}}<i ng-click="af.createCopy(collection)" class="icon-pencil primary"></i></span>
                             <span ng-if="!collection.Comments && !collection.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(collection)"><i class="icon-plus-2 success"></i></a></span>

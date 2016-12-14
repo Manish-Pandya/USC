@@ -13,10 +13,10 @@
     <div class="control-group">
         <label class="control-label">Principal Investigator</label>
         <div class="controls">
-            <ui-select class="span3" style="margin-left:0" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
+            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span12">
                 <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
-                  <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'User.Name' | propsFilter: {User.Name: $select.search} track by $index">
+                    <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
         </div>

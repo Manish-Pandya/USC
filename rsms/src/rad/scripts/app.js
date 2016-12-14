@@ -14,6 +14,7 @@ angular
     'modelInflator',
     'genericAPI',
     'filtersApp',
+    'angular.filter',
     'actionFunctionsModule',
     'dataSwitchModule',
     'cgBusy',
@@ -61,6 +62,11 @@ angular
         templateUrl: "views/admin/parcels.html",
         controller: "AllOrdersCtrl"
       })
+        .state('radmin.auth-report', {
+            url: "/auth-report",
+            templateUrl: "views/admin/auth-report.html",
+            controller: "AuthReportCtrl"
+        })
       //admin overview for a QuarterlyInventories
       .state('radmin.inventories', {
         url: "/inventories",

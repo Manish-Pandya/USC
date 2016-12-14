@@ -29,7 +29,7 @@
         <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
             <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
                 {{ room.Room_name }}
-                <span ng-if="!room.ContainsHazard"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
+                <span><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
             </a>
             <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
                 {{ room.Room_name }}

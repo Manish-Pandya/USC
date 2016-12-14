@@ -1757,7 +1757,8 @@ class ActionManager {
         $group = new WhereClauseGroup(
             new WhereClause("last_name", "IS NOT", "")
         );
-        $users = $userDao->getAllWhere($group, "AND", "last_name");
+        //$users = $userDao->getAllWhere($group, "AND", "last_name");
+        $users = $this->getAllUsers();
 
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getInspector");
@@ -1772,7 +1773,7 @@ class ActionManager {
                 $piMaps[] = new EntityMap("eager","getLabPersonnel");
                 $piMaps[] = new EntityMap("eager","getRooms");
                 $piMaps[] = new EntityMap("eager","getDepartments");
-                $piMaps[] = new EntityMap("eager","getUser");
+                $piMaps[] = new EntityMap("lazy","getUser");
                 $piMaps[] = new EntityMap("lazy","getInspections");
                 $piMaps[] = new EntityMap("lazy","getPi_authorization");
                 $piMaps[] = new EntityMap("lazy", "getActiveParcels");
@@ -1788,6 +1789,7 @@ class ActionManager {
                 $piMaps[] = new EntityMap("lazy","getBuidling");
                 $piMaps[] = new EntityMap("lazy","getCurrentVerifications");
                 $piMaps[] = new EntityMap("lazy","getWipeTests");
+
                 $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
 
                 $pi->setEntityMaps($piMaps);

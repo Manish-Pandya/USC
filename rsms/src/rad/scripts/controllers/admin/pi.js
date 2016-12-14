@@ -91,7 +91,6 @@ angular.module('00RsmsAngularOrmApp')
         $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
         $scope.selectedAmendment = amendments.length - 1;
         return $scope.selectedAmendment;
-        
     }
 
     $scope.openAuthModal = function (templateName, piAuth, auth) {

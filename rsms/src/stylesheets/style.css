@@ -770,6 +770,7 @@ tr.notedit, tr.notedit td {
 /* line 462, ../sass/style.scss */
 .modal-content .form-horizontal .control-label {
   width: 137px;
+  margin-right: 5px;
 }
 /* line 465, ../sass/style.scss */
 .modal-content .form-horizontal .controls {

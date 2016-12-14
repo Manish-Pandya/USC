@@ -39,7 +39,6 @@ include_once 'RadCrud.php';
     		"foreignKeyName" => "parcel_id"
     );
 
-
     //access information
 
     /** Float amount of radiation in curies */
@@ -131,48 +130,26 @@ include_once 'RadCrud.php';
 
 		$isotope = $this->getIsotope();
 		//if we don't have a volume or isotope, return NULL
-		if($isotope == NULL)return;
+		if($isotope == NULL)return '';
 
-		//multiply this sample's dpm by 100, because the sample is 1/100th of a ml
+		//multiply this sample's dpm by 10, because the sample is 1/10th of a ml
 		$dpmPerML = $this->getCurie_level() * 100;
 		//convert the dpm to MCi
-		$sampleMci = $dpmPerML * (4.5 * pow(10,-10));
+		$sampleMci = $dpmPerML / 2220000000;
 
-        //get the CURRENT total microcuries in the carboy;
+		//high energy isotope with short half-life, defined by RSO as those with half-lives longer than 120 days (must decay as much as possible)
+		if($isotope->getHalf_life() < 120){
+            $daysToDecay = $this->getDecayTime($isotope->getHalf_life(), $sampleMci);
+            //isotopes cannot be held for more than 18 months, which is a floor of 547 days
+            if($daysToDecay >= 547){
+                $daysToDecay = 547;
+            }
+		}else{
+            $daysToDecay = 0;
+        }
 
-		$daysToDecay = $this->getDecayTime($isotope->getHalf_life(), $sampleMci);
-
-		//18 months is the max time allowed for keeping waste on hand.
-		$maxDate = clone $originalDate;
-		$maxDate = $maxDate->add(new DateInterval("P18M"));
-
-		//get the number of days between the date the reading was taken and 18 months from now
-		$diff = $maxDate->diff($originalDate)->format('%a');
-
-		if($daysToDecay >= $diff){
-			//high energy isotope with short half-life, defined by RSO as those with half-lives longer than 120 days (must decay as much as possible)
-			if($isotope->getHalf_life() < 120){
-				$daysToDecay = $diff;
-			}
-			//low energy isotope with long half-life (can be poured immediately)
-			else{
-				$daysToDecay = 0;
-			}
-		}
-
-		if($daysToDecay == 0 ){
-			$this->pour_allowed_date  = date("Y-m-d H:i:s",$originalDate->getTimestamp());
-		}
-		//the pour allowed date has passed.  amount can be poured
-		elseif($daysToDecay < 3){
-            $now = new DateTime();
-			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $now->sub(new DateInterval('P'.abs($daysToDecay).'D'))->getTimestamp());
-		}
-		//pour date is in the future or now.
-		else{
-            $date = $originalDate->add(DateInterval::createFromDateString($daysToDecay." days"));
-			$this->pour_allowed_date  = date("Y-m-d H:i:s" , $date->getTimestamp());
-		}
+        $date = $originalDate->add(DateInterval::createFromDateString($daysToDecay." days"));
+		$this->pour_allowed_date  = date("Y-m-d H:i:s" , $date->getTimestamp());
 		return $this->pour_allowed_date;
 		//mCi per liter = mCi/(carboy volume in ml / 1000)?
 
@@ -189,19 +166,15 @@ include_once 'RadCrud.php';
     public function getCarboy_uci(){
         $l = Logger::getLogger(__FUNCTION__);
         $volume =  $this->getCarboy_use_cycle()->getVolume();
-
         //multiply this sample's dpm by 100, because the sample is 1/100th of a ml
-        $dpmPerML = $this->getCurie_level() * 100;
+        $dpmPerML = $this->getCurie_level() * 10;
         //convert the dpm to MCi
-        $sampleMci = $dpmPerML * (4.5 * pow(10,-10));
-
+        $sampleMci = $dpmPerML / 2220000000;
         //convert the mCi in the sample to uCi
         $sampleUci = $sampleMci * 1000;
-
         //get the total microcuries in the whole carboy, at the time the analysis was performed
         $this->carboy_uci = $sampleUci * $volume;
 
-        $stuff = array($volume, $dpmPerML, $sampleMci, $this->carboy_uci);
         return $this->carboy_uci;
     }
 
@@ -210,7 +183,6 @@ include_once 'RadCrud.php';
         if($this->hasPrimaryKeyValue() && ($this->decayed_carboy_uci == null || floatval($this->decayed_carboy_uci) == 0 )){
             $cycle = $this->getCarboy_use_cycle();
             $LOG = Logger::getLogger(__FUNCTION__);
-            $LOG->fatal("calculating decay uci");
             //get the date we want to decay to.
             //if the carboy has been poured, we stop decaying at the pour date. In that case, we persist the value after calculating it
             if($cycle != null && $cycle->getPour_date() != null

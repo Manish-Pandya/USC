@@ -20,10 +20,8 @@
 				</select>
 
 				<a ng-if="!InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, null, inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Create Wipe Test</a>
-
-				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, inspection.Inspection_wipe_tests[0], inspection)" class="left btn btn-success"><i class="icon-plus-2"></i>Save Wipe Test</a>
-
-				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="cancelEditInspectionWipeTest(inspection.Inspection_wipe_tests[0])" class="left btn btn-success"><i class="icon-plus-2"></i>Save Wipe Test</a>
+				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="af.saveInspectionWipeTest(InspectionWipeTestCopy, inspection.Inspection_wipe_tests[0], inspection)" class="left btn btn-success"><i class="icon-checkmark"></i>Save Wipe Test</a>
+				<a ng-if="InspectionWipeTestCopy.Key_id" ng-click="cancelEditInspectionWipeTest(inspection.Inspection_wipe_tests[0])" class="left btn btn-danger"><i class="icon-cancel-2"></i>Cancel</a>
 
 			</form>
 

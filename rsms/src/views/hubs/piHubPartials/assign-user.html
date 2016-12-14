@@ -2,26 +2,22 @@
     <div class="modal-header" style="padding:0;" class="">
         <h2 style="padding:5px" class="redBg">Assign a {{modalData.type}} to {{modalData.User.Name}}</h2>
     </div>
-    <div class="modal-body" style="height:300px;">
+    <div class="modal-body" style="height:220px;">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         <div class="control-group">
          <label class="control-label" for="inputEmail">Select a {{modalData.type}}</label>
          <div class="controls">
-                <ui-select ng-model="pis[piIndex]" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="down" ng-if="users" on-select="save($item)">
+                <ui-select ng-model="selectedUser" theme="selectize" ng-disabled="disabled" style="width:300px; margin-left:10px" direction="down" ng-if="users" on-select="save($item)">
                     <ui-select-match placeholder="Select a {{modalData.type}}">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="user in users | noSupervisor | propsFilter: {Name: $select.search}">
+                    <ui-select-choices repeat="user in users | isLabPersonnel | propsFilter: {Name: $select.search} | limitTo:20">
                         <div ng-bind-html="user.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
                 <input type="text" ng-if="!users" id="inputEmail" name="userName" disabled="disabled" placeholder="Loading Users">
                 <i class="icon-spinnery-dealie spinner small" ng-if="!users"></i>
          </div>
-        <h1 ng-if="saving"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i> Saving </h1>
+         <h3 style="margin-top:20px" ng-if="message">{{message}}</h3>
+          <a ng-if="message" style="margin-left:4px;" class="btn btn-success left" ng-click="save(selectedUser, true)" ng-if="message"><i class="icon-checkmark" />Yes</a><a ng-if="message" style="margin-left:4px;" class="btn btn-danger left" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
         </div>
-        <h3 ng-if="needsConfirmation">{{selectedUser.Name}} is currently assigned to another Principal Invenstigator.  Are you sure you wish to assing him/her to {{modalData.User.Name}} instead?</h3>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-success left btn-large" ng-click="save(selectedUser)" ng-if="needsConfirmation"><i class="icon-checkmark"/>Confirm Reassignment</button>
-        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
     </div>
 </form>
