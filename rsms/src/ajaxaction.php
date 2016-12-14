@@ -58,6 +58,5 @@ http_response_code( $actionResult->statusCode );
 
 // Output JSON (with possible callback)
 $LOG = Logger::getLogger('ajax action');
-$LOG->fatal($output[0]);
 echo $output;
 ?>
