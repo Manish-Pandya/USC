@@ -66,6 +66,11 @@ angular
                 return;
             } else if (dateString != '' && (!dateString)) {
                 return inspections;
+            } else if (dateString == "Not Yet Certified") {
+                return inspections.filter(function (i) {
+                    console.log(i);
+                    return !i.Certification_date;
+                });
             }
             var year = dateString.split('-')[0];
             var matches = [];
@@ -95,6 +100,13 @@ angular
                 return;
             } else if (dateString != '' && (!dateString || !dateProp)) {
                 return equipments;
+            } else if (dateString == "Not Yet Certified") {
+                
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.every(function (i) {
+                        return !i.Certification_date;
+                    })
+                });
             }
             
             var year = dateString.split('-')[0];

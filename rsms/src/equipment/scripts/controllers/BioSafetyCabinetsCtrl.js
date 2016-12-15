@@ -110,6 +110,7 @@ angular.module('EquipmentModule')
                 $scope.certYears.push(currentYearString);
             }
             $scope.selectedCertificationDate = currentYearString;
+            $scope.certYears.unshift("Not Yet Certified");
             $scope.selectedDueDate = currentYearString;
         }
         

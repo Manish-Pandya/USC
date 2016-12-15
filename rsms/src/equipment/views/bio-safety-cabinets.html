@@ -6,6 +6,7 @@
         <i class="icon-cabinet"></i>Biological Safety Cabinets
         <select ng-options="certYear as certYear for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate">
             <option value="">All</option>
+            <option value="UNCERTIFIED">Uncertified cabinets</option>
         </select>
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
         <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
