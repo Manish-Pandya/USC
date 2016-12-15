@@ -29,12 +29,13 @@ SolidsContainer.prototype = {
 	},
 
 	loadWasteBagsForPickup: function () {
-	    this.WasteBagsForPickup = [];
+        //alert('?')
+	   // this.WasteBagsForPickup = [];
 	    dataLoader.loadOneToManyRelationship(this, 'WasteBagsForPickup', this.WasteBagsForPickupRelationship, this.WasteBagsForPickupRelationship.where);
 	},	
     
 	loadCurrentWasteBags: function () {
-	    this.CurrentWasteBags = [];
+	   // this.CurrentWasteBags = [];
 	    dataLoader.loadOneToManyRelationship(this, 'CurrentWasteBags', this.WasteBagsForPickupRelationship, this.CurrentWasteBagsRelationship.where);
 	}
 

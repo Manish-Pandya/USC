@@ -118,9 +118,9 @@
                     </div>
                 </div>
             </div>
-            <h3 class="card-header padding" ng-if="(cycle.edit && CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING) || (showReadings && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
+            <h3 class="card-header padding" ng-if="(cycle.edit || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
             <!-- this carboy's readings -->
-            <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit && CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING) || (showReadings && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING)">
+            <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
                 <div class="table-header">
                     <h3 ng-if="!cycle.readingEdit">Edit</h3>
                     <h3>Isotope</h3>
@@ -134,7 +134,6 @@
                 <div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
                     <div ng-if="!cycle.readingEdit">
                         <button ng-click="af.createCopy(reading); cycle.readingEdit = true;" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
-                        <button ng-click="removeReading(cycle, reading); cycle.readingEdit = false;" ng-disabled="reading.edit" class="btn btn-danger left"><i class="icon-remove"></i>Remove</button>
                     </div>
 
                     <div ng-if="!reading.edit">

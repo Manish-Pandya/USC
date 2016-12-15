@@ -108,6 +108,8 @@ class Parcel extends RadCrud {
 
     /** Is this parcel a transfer? **/
     private $is_transfer;
+    private $receivingPiName;
+
     /** If this parcel was transfered to it's current pi by another pi, what was the key_id of the original parcel? **/
     private $original_pi_id;
 
@@ -309,6 +311,22 @@ class Parcel extends RadCrud {
 
     public function getTransfer_in_date(){return $this->transfer_in_date;}
     public function setTransfer_in_date($date){$this->transfer_in_date = $date;}
+
+    public function getReceivingPiName(){
+        if($this->transfer_in_date != null && $this->authorization_id != null){
+            $authDao = new GenericDAO(new Authorization());
+            $auth = $authDao->getById($this->authorization_id);
+            if($auth != null){
+                $piAUthDao = new GenericDAO(new PIAuthorization());
+                $piAuth = $piAUthDao->getById($auth->getPi_authorization_id());
+                if($piAuth != null){
+                    $piDao = new GenericDAO(new PrincipalInvestigator());
+                    $this->receivingPiName = $piDao->getById($piAuth->getPrincipal_investigator_id())->getUser()->getName();
+                }
+            }
+        }
+        return $this->receivingPiName;
+    }
 
 }
 ?>

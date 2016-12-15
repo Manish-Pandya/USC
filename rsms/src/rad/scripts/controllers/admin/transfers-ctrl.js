@@ -17,38 +17,51 @@ angular.module('00RsmsAngularOrmApp')
             return af.getAllParcels()
                 .then(
                     function (parcels) {
+                        dataStore.Parcel.forEach(function (p) {
+                            p.loadAuthorization();
+                        })
                         return $scope.parcels = dataStore.Parcel;
                     }
                 );
         }
         var getAllPis = function () {
-            return af.getAllParcels()
-                .then(
-                    function (parcels) {
-                        return $scope.parcels = dataStore.Parcel;
-                    }
-                );
-        }
-        var getUses = function () {
             return af.getAllPIs().then(
-                function (pis) {
+            function (pis) {
                     return $scope.pis = dataStore.PrincipalInvestigator;
                 }
             )
         }
+        var getUses = function () {
+            return af.getAllParcelUses().then(
+                function (pis) {
+                    return $scope.uses = dataStore.ParcelUse;
+                }
+            )
+        }
+        var getAuths = function () {
+            return af.getAllPIAuthorizations().then(
+                function (pis) {
+                    return $scope.auths = dataStore.PIAuthorization;
+                }
+            )
+        }
 
-        $scope.loading = getParcels()
-            .then(getAllPis)
-            .then(getUses);
+        $scope.loading = getAllPis()
+            .then(getUses)
+            .then(getAuths)
+            .then(getParcels);
 
-        $scope.openModal = function (object) {
+        $scope.openTransferInModal = function (object) {
             console.log(object);
             var modalData = {};
-            if (object) modalData[object.Class] = object;
-           
+            if (object) {
+                modalData.Parcel = object;
+            } else {
+                modalData.Parcel = { Class: "Parcel" };
+            }
             af.setModalData(modalData);
             var modalInstance = $modal.open({
-                templateUrl: 'views/admin/admin-modals/transfer-modal.html',
+                templateUrl: 'views/admin/admin-modals/transfer-in-modal.html',
                 controller: 'TransferModalCtrl'
             });
         }
@@ -61,9 +74,38 @@ angular.module('00RsmsAngularOrmApp')
         $scope.af = af;
         $scope.dataStore = dataStore;
         $scope.modalData = af.getModalData();
+        $scope.cv = convenienceMethods;
 
-        $scope.save = function (test) {
-            af.saveParcelWipeTest(test)
+        $scope.onSelectPi = function (pi) {
+            pi.loadPIAuthorizations();
+            pi.loadActiveParcels();
+            $scope.modalData.PI = pi;
+        }
+
+        $scope.getHighestAuth = function (pi) {
+            if (pi && pi.Pi_authorization && pi.Pi_authorization.length) {
+                var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
+                    return moment(amendment.Approval_date).valueOf();
+                }]);
+
+                return auths[auths.length - 1];
+            }
+        }
+
+        $scope.saveTransferIn = function (copy, parcel) {
+            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            af.saveParcel(copy, parcel, $scope.modalData.PI)
+                .then($scope.close);
+        }
+
+        $scope.saveTransferOut = function (copy, parcel) {
+            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            af.saveParcelUse(copy, parcel, $scope.modalData.PI)
+                .then($scope.close);
+        }
+        $scope.saveTransferBetween = function (copy, parcel) {
+            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            af.saveParcelUse(copy, parcel, $scope.modalData.PI)
                 .then($scope.close);
         }
 

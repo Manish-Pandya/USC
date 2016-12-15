@@ -2,15 +2,10 @@ angular.module('00RsmsAngularOrmApp')
 	.filter('activePickups', function () {
 	    return function (pickups) {
 	        if (!pickups) return;
-	        var activePickups = [];
-	        var i = pickups.length;
-
-	        while (i--) {
-	            var pickup = pickups[i];
-	            if (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.REQUESTED && pickup.Waste_bags.length || pickup.Scint_vial_collections.length || pickup.Carboy_use_cycles.length) {
-	                activePickups.push(pickup);
-	            }
-	        }
+	        var activePickups = pickups.filter(function (pickup) {
+	            var d = moment(pickup.Pickup_date);
+	            return ( (moment(d).add(1, 'day').isAfter() ) ) || (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.REQUESTED);
+	        })
 	        return activePickups;
 	    };
 	})
@@ -85,13 +80,12 @@ angular.module('00RsmsAngularOrmApp')
             for (var prop in statuses) {
                 var status = statuses[prop];
                 if (status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
-  					|| status == Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO
                     || status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
                     || status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE) {
                     disposalStatuses.unshift(status);
                 }
             }
-            return disposalStatuses;
+            return disposalStatuses.sort(function (a, b) { return a > b;});
         };
     })
 .filter('disposalSolids', function () {
@@ -257,7 +251,7 @@ angular.module('00RsmsAngularOrmApp')
         return function (parcels) {
             if (!parcels) return;
             filteredParcels = parcels.filter(function (parcel) {
-                return (parcel.Transfer_in_date != null && parcel.Original_pi_id != null);
+                return (parcel.Transfer_in_date && parcel.Original_pi_id);
             });
             return filteredParcels;
         };
@@ -279,5 +273,10 @@ angular.module('00RsmsAngularOrmApp')
                 return [Constants.PARCEL.STATUS.DELIVERED, Constants.PARCEL.STATUS.DISPOSED].indexOf(p.Status) != -1;
             })
             return filteredParcels;
+        }
+    })
+    .filter('availableBags', function () {
+        return function (bags) {
+            return bags.filter(function (b) { return !b.Pickup_id})
         }
     });

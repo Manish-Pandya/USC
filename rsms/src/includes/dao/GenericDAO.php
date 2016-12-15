@@ -399,21 +399,23 @@ class GenericDAO {
 	 *
 	 * @param string $startDate mysql timestamp formatted date representing beginning of the period
 	 * @param string $enddate mysql timestamp formatted date representing end of the period
-	 * @param bool $hasRsNumber true if we are looking for parcels with an Rs_number (those that count as orders), false if those without one (parcels that count as transfer)
+	 * @param bool $hasTransferDate true if we are looking for parcels with an transfer_in_date (those that count as transfer), false if those without one (parcels that count as orders), or null for all parcels
 	 * @return int $sum
 	 */
-	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
+	public function getTransferAmounts( $startDate, $endDate, $hasTransferDate = null ){
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
 				AND `arrival_date` BETWEEN ? AND ?";
 
-		if($hasRsNumber == true){
-			$sql .= " AND rs_number IS NOT NULL";
-		}else{
-			$sql .= " AND rs_number IS NULL";
-		}
+        if($hasTransferDate != null){
+            if($hasTransferDate == true){
+                $sql .= " AND transfer_in_date IS NOT NULL";
+            }elseif($hasTransferDate === false){
+                $sql .= " AND transfer_in_date IS NULL";
+            }
+        }
 
 		// Get the db connection
 		global $db;
@@ -734,7 +736,75 @@ class GenericDAO {
 		return $result;
 	}
 
-	function getInspectionsByYear($year){
+	public function getInspectionSchedule($year = NULL){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        // read the Year value from the request.
+        $year = $this->getValueFromRequest('year', $year);
+
+        // If the year is null, choose the current year.
+        if ($year == null){
+            $year = $this->getCurrentYear();
+        }
+        // Call the database
+		$LOG->fatal('getting schedule for ' . $year);
+        $dao = $this->getDao(new Inspection());
+        $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
+
+        $roomMaps = array();
+        $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+        $roomMaps[] = new EntityMap("lazy","getHazards");
+        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+        $roomMaps[] = new EntityMap("lazy","getBuilding");
+        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+
+        foreach ($inspectionSchedules as &$is){
+            if ($is->getInspection_id() !== null){
+                $inspection = $dao->getById($is->getInspection_id());
+
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("eager","getInspectors");
+                $entityMaps[] = new EntityMap("lazy","getRooms");
+                $entityMaps[] = new EntityMap("lazy","getResponses");
+                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+                $entityMaps[] = new EntityMap("lazy","getChecklists");
+                $entityMaps[] = new EntityMap("eager","getStatus");
+
+                $inspection->setEntityMaps($entityMaps);
+
+                $filteredRooms = array();
+                $rooms = $inspection->getRooms();
+                foreach( $rooms as $room ){
+                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                        $room->setEntityMaps($roomMaps);
+                		array_push($filteredRooms, $room);
+                	}
+                }
+                $is->setInspection_rooms($filteredRooms);
+                // $LOG->fatal($is);
+                //return $is;
+            }
+
+            $piDao = $this->getDao(new PrincipalInvestigator());
+            $pi = $piDao->getById($is->getPi_key_id());
+            $rooms = $pi->getRooms();
+            $pi_bldg_rooms = array();
+            foreach ($rooms as $room){
+                $room->setEntityMaps($roomMaps);
+
+                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
+                    $pi_bldg_rooms[] = $room;
+                }
+            }
+            $is->setBuilding_rooms($pi_bldg_rooms);
+        }
+        return $inspectionSchedules;
+    }
+
+    function getNeededInspectionsByYear($year){
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
@@ -757,6 +827,28 @@ class GenericDAO {
 
 		return $result;
 	}
+
+    function getInspectionsByYear($year){
+        //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
+        global $db;
+
+		//Prepare to query all from the table
+		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+        $sql = "select * from inspection where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)";
+        $stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		return $result;
+    }
 
 	/*
 	 * @param RelationshipMapping relationship

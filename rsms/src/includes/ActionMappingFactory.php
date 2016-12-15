@@ -209,6 +209,9 @@ class ActionMappingFactory {
                 //INSPECTION MANAGEMENT HUB
                 "getCurrentYear"=>new ActionMapping("getCurrentYear", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getInspectionSchedule"=>new ActionMapping("getInspectionSchedule", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "getInspectionsByYear"=>new ActionMapping("getInspectionsByYear", "", "", $this::$ROLE_GROUPS["EHS"]),
+
+
                 "scheduleInspection"=>new ActionMapping("scheduleInspection", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
 
