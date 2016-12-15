@@ -736,7 +736,75 @@ class GenericDAO {
 		return $result;
 	}
 
-	function getInspectionsByYear($year){
+	public function getInspectionSchedule($year = NULL){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        // read the Year value from the request.
+        $year = $this->getValueFromRequest('year', $year);
+
+        // If the year is null, choose the current year.
+        if ($year == null){
+            $year = $this->getCurrentYear();
+        }
+        // Call the database
+		$LOG->fatal('getting schedule for ' . $year);
+        $dao = $this->getDao(new Inspection());
+        $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
+
+        $roomMaps = array();
+        $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+        $roomMaps[] = new EntityMap("lazy","getHazards");
+        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+        $roomMaps[] = new EntityMap("lazy","getBuilding");
+        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+
+        foreach ($inspectionSchedules as &$is){
+            if ($is->getInspection_id() !== null){
+                $inspection = $dao->getById($is->getInspection_id());
+
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("eager","getInspectors");
+                $entityMaps[] = new EntityMap("lazy","getRooms");
+                $entityMaps[] = new EntityMap("lazy","getResponses");
+                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+                $entityMaps[] = new EntityMap("lazy","getChecklists");
+                $entityMaps[] = new EntityMap("eager","getStatus");
+
+                $inspection->setEntityMaps($entityMaps);
+
+                $filteredRooms = array();
+                $rooms = $inspection->getRooms();
+                foreach( $rooms as $room ){
+                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                        $room->setEntityMaps($roomMaps);
+                		array_push($filteredRooms, $room);
+                	}
+                }
+                $is->setInspection_rooms($filteredRooms);
+                // $LOG->fatal($is);
+                //return $is;
+            }
+
+            $piDao = $this->getDao(new PrincipalInvestigator());
+            $pi = $piDao->getById($is->getPi_key_id());
+            $rooms = $pi->getRooms();
+            $pi_bldg_rooms = array();
+            foreach ($rooms as $room){
+                $room->setEntityMaps($roomMaps);
+
+                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
+                    $pi_bldg_rooms[] = $room;
+                }
+            }
+            $is->setBuilding_rooms($pi_bldg_rooms);
+        }
+        return $inspectionSchedules;
+    }
+
+    function getNeededInspectionsByYear($year){
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
@@ -744,62 +812,7 @@ class GenericDAO {
 
 		//Prepare to query all from the table
 		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
-        $sql = "select `a`.`key_id` AS `pi_key_id`,
-                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
-                 `d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,
-                 `e`.`name` AS `campus_name`,
-                 `e`.`key_id` AS `campus_key_id`,
-                 bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
-                 bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
-                 year(curdate()) AS `year`,
-                 NULL AS `inspection_id` from ((((((`principal_investigator` `a`
-                 join `erasmus_user` `b`)
-                 join `room` `c`)
-                 join `building` `d`)
-                 join `campus` `e`)
-                 join `principal_investigator_room` `f`)
-                 join `inspection_room` `g`)
-                 where ((`a`.`is_active` = 1)
-                 and (`c`.`is_active` = 1)
-                 and (`b`.`key_id` = `a`.`user_id`)
-                 and (`f`.`principal_investigator_id` = `a`.`key_id`)
-                 and (`f`.`room_id` = `c`.`key_id`)
-                 and (`c`.`building_id` = `d`.`key_id`)
-                 and (`d`.`campus_id` = `e`.`key_id`)
-                 and (not(`d`.`key_id` IN
-                 (select `building_id` from `room` where `key_id` in
-                 (select `room_id` from `inspection_room`
-                 where `inspection_id` IN (select `inspection`.`key_id` from `inspection`
-                 where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
-                 AND`room_id` IN (select `room_id` from `principal_investigator_room` where `principal_investigator_id` = `a`.`key_id`
-                 )))))))
-                 group by `a`.`key_id`, concat(`b`.`last_name`,', ',`b`.`first_name`), `d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),NULL
-                 union select `a`.`key_id` AS `pi_key_id`,
-                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
-                 `d`.`name` AS `building_name`,
-                 `d`.`key_id` AS `building_key_id`,
-                 `e`.`name` AS `campus_name`,
-                 `e`.`key_id` AS `campus_key_id`,
-                 bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
-                 bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
-                 bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
-                 coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,
-                 `g`.`key_id` AS `inspection_id`
-                 from ((((((`principal_investigator` `a`
-                 join `erasmus_user` `b`)
-                 join `room` `c`)
-                 join `building` `d`)
-                 join `campus` `e`)
-                 join `inspection_room` `f`)
-                 join `inspection` `g`)
-                 where ((`a`.`key_id` = `g`.`principal_investigator_id`)
-                 and (`b`.`key_id` = `a`.`user_id`)
-                 and (`g`.`key_id` = `f`.`inspection_id`)
-                 and (`c`.`key_id` = `f`.`room_id`)
-                 and (`c`.`building_id` = `d`.`key_id`)
-                 and (`d`.`campus_id` = `e`.`key_id`))
-                 group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id`
-                 ORDER BY `campus_name`, `building_name`, `pi_name`;";
+        $sql = "select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,year(curdate()) AS `year`,NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`) where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id` from `inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),NULL union select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id` AS `inspection_id` from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`) where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`)) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
         $stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
 
@@ -814,6 +827,28 @@ class GenericDAO {
 
 		return $result;
 	}
+
+    function getInspectionsByYear($year){
+        //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
+        global $db;
+
+		//Prepare to query all from the table
+		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+        $sql = "select * from inspection where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)";
+        $stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		return $result;
+    }
 
 	/*
 	 * @param RelationshipMapping relationship
