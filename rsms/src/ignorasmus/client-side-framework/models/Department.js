@@ -3,22 +3,22 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var equipment;
-(function (equipment) {
-    var ChemFumeHood = (function (_super) {
-        __extends(ChemFumeHood, _super);
-        function ChemFumeHood() {
+var ignorasmus;
+(function (ignorasmus) {
+    var Department = (function (_super) {
+        __extends(Department, _super);
+        function Department() {
             return _super.call(this) || this;
         }
-        ChemFumeHood.prototype.hasGetAllPermission = function () {
+        Department.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return ChemFumeHood;
+        return Department;
     }(FluxCompositerBase));
-    ChemFumeHood.urlMapping = new UrlMapping("getAllChemFumeHoods", "getChemFumeHoodById&id=", "saveChemFumeHood");
-    equipment.ChemFumeHood = ChemFumeHood;
-})(equipment || (equipment = {}));
+    Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
+    ignorasmus.Department = Department;
+})(ignorasmus || (ignorasmus = {}));

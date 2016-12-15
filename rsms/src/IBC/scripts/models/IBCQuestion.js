@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var IBCQuestion = (function (_super) {
     __extends(IBCQuestion, _super);
     function IBCQuestion() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     IBCQuestion.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var IBCQuestion = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    IBCQuestion.urlMapping = new UrlMapping("getAllQuestions", "getQuestionById&id=", "saveQuestion");
     return IBCQuestion;
 }(FluxCompositerBase));
+IBCQuestion.urlMapping = new UrlMapping("getAllQuestions", "getQuestionById&id=", "saveQuestion");

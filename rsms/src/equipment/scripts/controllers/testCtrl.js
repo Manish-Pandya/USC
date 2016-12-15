@@ -14,9 +14,9 @@
 
 
 angular.module('EquipmentModule')
-.controller('TestCtrl', function ($scope, actionFunctionsFactory, dataSwitchFactory) {
+.controller('TestCtrl', function ($scope, applicationControllerFactory, dataSwitchFactory) {
     // allow calling action functions in the scope
-    $scope.af = actionFunctionsFactory;
+    $scope.af = applicationControllerFactory;
     $scope.callLoader = function() {
         $scope.testData[$scope.loaderName]();
     }

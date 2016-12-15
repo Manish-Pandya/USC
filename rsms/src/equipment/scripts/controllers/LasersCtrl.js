@@ -8,8 +8,8 @@
  * Controller of the EquipmentModule Lasers view
  */
 angular.module('EquipmentModule')
-  .controller('LasersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('LasersCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+      var af = $scope.af = applicationControllerFactory;
 
         $scope.lasers = [];
     

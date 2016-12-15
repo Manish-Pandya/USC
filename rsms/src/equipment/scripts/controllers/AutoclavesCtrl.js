@@ -8,20 +8,42 @@
  * Controller of the EquipmentModule Autoclaves view
  */
 angular.module('EquipmentModule')
-  .controller('AutoclavesCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
+      var af = $scope.af = applicationControllerFactory;
     
-        var getAllAutoclaves = function(){
-  			af.getAllAutoclaves()
-  			.then(
-  				function(autoclaves){  	
-  					$scope.autoclaves = dataStore.Autoclave;
-  				},
-  				function(){}
-  			)
-  		}
+      function getAllInspections() {
+          $scope.inspections = [];
+          $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.inspections);
+                    console.log(DataStoreManager._actualModel);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
 
-  		getAllAutoclaves();
+        function getAllAutoclaves() {
+            $scope.autoclaves = [];
+            $q.all([DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.autoclaves);
+                    console.log(DataStoreManager._actualModel);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
+        
+        $rootScope.getCurrentRoles().then(getAllInspections()).then(getAllAutoclaves());
 
         $scope.deactivate = function(autoclave) {
             var copy = dataStoreManager.createCopy(autoclave);

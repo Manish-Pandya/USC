@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Role = (function (_super) {
     __extends(Role, _super);
     function Role() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     Role.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var Role = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
     return Role;
 }(FluxCompositerBase));
+Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");

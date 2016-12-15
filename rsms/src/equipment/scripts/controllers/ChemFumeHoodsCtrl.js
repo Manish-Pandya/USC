@@ -8,8 +8,8 @@
  * Controller of the EquipmentModule Chemical Fume Hoods view
  */
 angular.module('EquipmentModule')
-  .controller('ChemFumeHoodsCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('ChemFumeHoodsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+      var af = $scope.af = applicationControllerFactory;
 
         $scope.hoods = [];
     

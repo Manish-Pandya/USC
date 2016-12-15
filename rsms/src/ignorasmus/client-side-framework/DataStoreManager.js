@@ -26,18 +26,19 @@ var PermissionMap = (function () {
     PermissionMap.getPermission = function (className) {
         if (!_.has(this.Permissions, className)) {
             this.Permissions[className] = {};
-            this.Permissions[className].getAll = new window[className]().hasGetAllPermission();
+            var instance = InstanceFactory.createInstance(className);
+            this.Permissions[className].getAll = instance.hasGetAllPermission();
         }
         return this.Permissions[className];
     };
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    PermissionMap.Permissions = [];
     return PermissionMap;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+PermissionMap.Permissions = [];
 //abstract specifies singleton in ts 1.x (ish)
 var DataStoreManager = (function () {
     function DataStoreManager() {
@@ -78,7 +79,7 @@ var DataStoreManager = (function () {
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
-                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(window[type].urlMapping.urlGetAll)
+                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll)
                     .then(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     DataStoreManager._actualModel[type].Data = d;
@@ -134,11 +135,9 @@ var DataStoreManager = (function () {
                         });
                     }
                     else {
-                        d = InstanceFactory.convertToClasses(d);
-                        //DIG: DataStoreManager._actualModel[type].Data is the holder for the actual data of this type.
-                        DataStoreManager._actualModel[type].Data = d;
                         // Dig this neat way to use viewModelParent as a reference instead of a value!
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                        console.log(type + ":", _.cloneDeep(d), d);
                         return viewModelParent;
                     }
                 })
@@ -173,7 +172,7 @@ var DataStoreManager = (function () {
         if (compMaps === void 0) { compMaps = null; }
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
-            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(window[type].urlMapping.urlGetById + id)
+            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id)
                 .then(function (d) {
                 d = InstanceFactory.convertToClasses(d);
                 _this.commitToActualModel(d);
@@ -336,16 +335,16 @@ var DataStoreManager = (function () {
             return p;
         }
     };
-    //----------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //----------------------------------------------------------------------
-    DataStoreManager.classPropName = "Class";
-    DataStoreManager.uidString = "Key_id";
-    DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
-    DataStoreManager.isPromisified = true;
-    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
-    DataStoreManager._actualModel = {};
     return DataStoreManager;
 }());
+//----------------------------------------------------------------------
+//
+//  Properties
+//
+//----------------------------------------------------------------------
+DataStoreManager.classPropName = "Class";
+DataStoreManager.uidString = "Key_id";
+DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
+DataStoreManager.isPromisified = true;
+// NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
+DataStoreManager._actualModel = {};

@@ -106,7 +106,7 @@ angular
                 return autoclave;
             }
             
-            af.getAllAutoclaves = function(key_id) {
+            af.getAllAutoclaves = function() {
                 return dataSwitchFactory.getAllObjects('Autoclave');
             }
             

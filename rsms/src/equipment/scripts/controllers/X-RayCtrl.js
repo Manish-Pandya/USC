@@ -8,8 +8,8 @@
  * Controller of the EquipmentModule X-Ray Machines view
  */
 angular.module('EquipmentModule')
-  .controller('X-RayCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('X-RayCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+      var af = $scope.af = applicationControllerFactory;
 
         $scope.xrays = [];
     

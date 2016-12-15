@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Hazard = (function (_super) {
     __extends(Hazard, _super);
     function Hazard() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     Hazard.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var Hazard = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
-    Hazard.urlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
     return Hazard;
 }(FluxCompositerBase));
+Hazard.urlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
