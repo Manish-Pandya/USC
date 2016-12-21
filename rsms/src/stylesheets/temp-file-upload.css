@@ -35,7 +35,7 @@
 }
 
 .inputfile + label i {
-   margin: 3px 5px 0 0;
+   margin: 0;
    font-size: 23px;
    width:25px;
 }
@@ -44,41 +44,49 @@
 /* style 1 */
 
 .inputfile-1 + label {
+    margin-top: -6px;
+    padding: 7px 7px 6px;
     color: #f1e5e6;
-    background-color: #d3394c;
+}
+.inputfile-1 + label.glued{
+    border-left: #999 1px solid;
+    border-radius: 0 3px 3px !important;
+    margin-left: -4px;
+}
+.report-button{
+    border-radius:3px 0 0 3px !important;
 }
 
 .inputfile-1:focus + label,
 .inputfile-1.has-focus + label,
 .inputfile-1 + label:hover {
-    background-color: #722040;
+    //background-color: #722040;
 }
 
 
 /* style 2 */
 
 .inputfile-2 + label {
-    color: #d3394c;
     border: 2px solid currentColor;
 }
 
 .inputfile-2:focus + label,
 .inputfile-2.has-focus + label,
 .inputfile-2 + label:hover {
-    color: #722040;
+    //color: #722040;
 }
 
 
 /* style 3 */
 
 .inputfile-3 + label {
-    color: #d3394c;
+    //color: #d3394c;
 }
 
 .inputfile-3:focus + label,
 .inputfile-3.has-focus + label,
 .inputfile-3 + label:hover {
-    color: #722040;
+    //color: #722040;
 }
 
 

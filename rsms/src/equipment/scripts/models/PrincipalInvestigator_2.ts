@@ -23,8 +23,8 @@
 
         hasGetAllPermission(): boolean {
             if (this._hasGetAllPermission == null) {
-                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
-                super.hasGetAllPermission(_.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
+                //var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+                super.hasGetAllPermission(true);
             }
 
             return this._hasGetAllPermission;

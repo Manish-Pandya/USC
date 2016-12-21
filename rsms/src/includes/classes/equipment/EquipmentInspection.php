@@ -15,6 +15,8 @@ class EquipmentInspection extends GenericCrud{
         "room_id"		            	=> "integer",
         "principal_investigator_id"		=> "principal_investigator_id",
         "certification_date"          	=> "timestamp",
+        "fail_date"          	        => "timestamp",
+
         "due_date"     		    		=> "timestamp",
         "report_path"		        	=> "text",
         "equipment_id"                  => "integer",
@@ -48,6 +50,7 @@ class EquipmentInspection extends GenericCrud{
     private $room_id;
     private $principal_investigator_id;
     private $certification_date;
+    private $fail_date;
     private $due_date;
     private $report_path;
     private $equipment_id;
@@ -85,6 +88,14 @@ class EquipmentInspection extends GenericCrud{
 	}
 	public function setCertification_date($certification_date){
 		$this->certification_date = $certification_date;
+        // new instance will be spawned in the controller
+	}
+
+    public function getFail_date(){
+		return $this->fail_date;
+	}
+	public function setFail_date($fail_date){
+		$this->fail_date = $fail_date;
         // new instance will be spawned in the controller
 	}
 
@@ -132,7 +143,7 @@ class EquipmentInspection extends GenericCrud{
 
             //cabinets that haven't yet been certified, ever, or had a due date assigned are new
             if($this->getDue_date() == NULL && $this->getCertification_date() == null){
-                $this->status = "NEW BSC";
+                $this->status = "NOT YET CERTIFIED";
             }
             //all other cabinets that don't have a persisted status are either Overdue or pending a certification
             else {

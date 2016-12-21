@@ -46,7 +46,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../js/lib/lodash.4.17.0/content/Scripts/lodash.min.js"></script>
 <script src="../js/lib/promise.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
-
+    <script src="../js/lib/moment.js"></script>
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>

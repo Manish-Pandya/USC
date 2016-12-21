@@ -50,22 +50,18 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
-        	if($decodedObject->getCertification_date() == NULL){
-        		$decodedObject->setCertification_date(date('Y-m-d H:i:s'));
-        	} else {
-                // make new inspection
-                $newInspection = new EquipmentInspection($decodedObject->getEquipment_class(), $decodedObject->getFrequency(), $decodedObject->getEquipment_id());
-                if($decodedObject->getPrincipal_investigator_id() != null) $newInspection->setPrincipal_investigator_id($decodedObject->getPrincipal_investigator_id());
-                if($decodedObject->getRoom_id() != null)                  $newInspection->setRoom_id($decodedObject->getRoom_id());
+            $LOG->fatal($decodedObject);
+            $type = $decodedObject->getEquipment_class();
+            $equipment = new $type();
+            $equipmentDao = $this->getDao($equipment);
+            $equipment = $equipmentDao->getById($decodedObject->getEquipment_id());
+            $equipment->setCertification_date($decodedObject->getCertification_date());
+            $equipment->setFrequency($decodedObject->getFrequency());
 
-                $newInspectionDao = new GenericDao($newInspection);
-                $newInspection = $newInspectionDao->save($newInspection);
-            }
-        	$dao = $this->getDao(new EquipmentInspection());
-            $decodedObject = $dao->save($decodedObject);
-            $decodedObjects = array($decodedObject);
-            if ($newInspection) array_push($decodedObjects, $newInspection);
-            return $decodedObjects;
+            //certify and create subsequent inspection as well
+            $equipment->conditionallyCreateEquipmentInspection($decodedObject);
+            //force reload of all inspections for relevant equipment by client
+            return $equipment->getEquipmentInspections();
         }
     }
 
@@ -95,7 +91,11 @@ class Equipment_ActionManager extends ActionManager {
             $LOG->fatal($decodedObject);
             //for newly created cabinets, we create a certification.
             //if the client specifies that the new cabinet had already been certified, we create TWO certifications
-            $inspection = $decodedObject->conditionallyCreateEquipmentInspection();
+
+            $id = $this->getValueFromRequest('id', $id);
+
+            $inspection = $decodedObject->conditionallyCreateEquipmentInspection($decodedObject->getSelectedInspection());
+
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
             $entityMaps[] = new EntityMap("lazy","getFirstInspection");
@@ -144,7 +144,7 @@ class Equipment_ActionManager extends ActionManager {
     //upload the document for a BiosafteyProtocol
 	public function uploadReportCertDocument( $id = NULL){
         $l = Logger::getLogger("upload cert doc");
-        define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/equipment/documents");
+       // define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/biosafety-protocols/protocol-documents");
 		$LOG = Logger::getLogger('Action:' . __function__);
 		//verify that this file is of a type we consider safe
 
@@ -185,7 +185,7 @@ class Equipment_ActionManager extends ActionManager {
 		// already in use, keep incrementing the timstamp until we find an unused filename.
 		// 99.999% of the time, this should work the first time, but better safe than sorry.
 		$now = time();
-		while(file_exists($filename = UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
+		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
 		{
 			$now++;
 		}
@@ -210,14 +210,14 @@ class Equipment_ActionManager extends ActionManager {
 		//get just the name of the file
 		$name = basename($filename);
 
-		//if so, update the path of that report cert now and save it.
+		//update the path of that report cert now and save it.
         $protocolDao = $this->getDao( new EquipmentInspection() );
         $protocol = $this->getEquipmentInspectionById( $id );
         $protocol->setReport_path( $name );
         $LOG->fatal($protocol);
         $protocolDao->save($protocol);
 
-		//either way, return the name of the saved document so that it can be added to the client
+		//return the name of the saved document so that it can be added to the client
 		return $name;
 	}
 }

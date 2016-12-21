@@ -1,12 +1,12 @@
 <div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:#428642; color:white">Create or Edit Cabinet</h2>
+    <h2 style="padding:5px; background:#428642; color:white"><span ng-if="!modalData.BioSafetyCabinetCopy.Key_id">Create</span><span ng-if="modalData.BioSafetyCabinetCopy.Key_id">Edit</span> Biosafety Cabinet</h2>
 </div>
 
 <div class="modal-body">
     <div class="control-group">
         <label class="control-label">Principal Investigator</label>
         <div class="controls">
-            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" >
+            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span3" style="margin-left:0">
                 <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                 <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                   <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
@@ -17,10 +17,10 @@
     <div class="control-group">
         <label class="control-label">Building</label>
         <div class="controls">
-            <select ng-if="modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-init="getBuilding()" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
+            <select class="span2" ng-if="modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-init="getBuilding()" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
                 <option value="">--Select Building--</option>
             </select>   
-            <select title="Please select a principal investigator first." disabled="disabled" ng-if="!modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
+            <select class="span2" title="Please select a principal investigator first." disabled="disabled" ng-if="!modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
                 <option value="">--Select PI--</option>
             </select>       
         </div>
@@ -30,10 +30,10 @@
     <div class="control-group">
         <label class="control-label">Room</label>
         <div class="controls">
-            <select ng-init="getRoom()" ng-if="modalData.selectedBuilding" ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as room.Name for room in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms | matchBuilding:modalData.selectedBuilding">
+            <select class="span1" ng-init="getRoom()" ng-if="modalData.selectedBuilding" ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as room.Name for room in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms | matchBuilding:modalData.selectedBuilding">
                 <option value="">--Select Room--</option>
             </select>  
-            <select title="Please select a principal investigator and building first." disabled="disabled" ng-if="!modalData.selectedBuilding" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
+            <select class="span1" title="Please select a principal investigator and building first." disabled="disabled" ng-if="!modalData.selectedBuilding" ng-model="modalData.selectedBuilding" ng-change="onSelectBuilding()" ng-options="building as building for building in modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Buildings">
                 <option value="">--Select Room--</option>
             </select>   
         </div>
@@ -72,19 +72,19 @@
             <option value="">--Select--</option>
         </select>
     </div>
+        <!--
 
     <div class="control-group">
         <label class="control-label">Certification Date</label>
-        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.Certification_date' disable-timepicker='true' ng-if="!modalData.BioSafetyCabinet.Key_id"></datepicker2>
-        <span ng-if="modalData.BioSafetyCabinet.Key_id">{{modalData.BioSafetyCabinetCopy.Certification_date | dateToISO}}</span>
+        <datepicker2 ng-model='modalData.BioSafetyCabinetCopy.Certification_date' disable-timepicker='true'></datepicker2>
     </div>
-
-    <div class="control-group">
+    <div class="control-group" ng-init="modalData.BioSafetyCabinetCopy.SelectedInspection.Comment = getMostRecentComment()">
         <label class="control-label">Comments</label>
         <div class="controls">
-            <textarea ng-model="modalData.BioSafetyCabinetCopy.Comments" placehold="Label"></textarea>
+            <textarea ng-model="modalData.BioSafetyCabinetCopy.SelectedInspection.Comment" placehold="Label"></textarea>
         </div>
     </div>
+        -->
 </div>
 
 <div class="modal-footer">

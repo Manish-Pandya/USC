@@ -11,14 +11,18 @@ angular.module('EquipmentModule')
     .directive('fileUpload', function (applicationControllerFactory) {
         return {
             restrict: 'A',
-            scope: true,
+            scope: { clickTarget: "=" },
+            
             link: function (scope, element, attr) {
                 element.bind('change', function () {
+                    var data = {};
                     var formData = new FormData();
                     formData.append('file', element[0].files[0]);
                     element.blur();
-                    $("label[for='"+element.attr('id')+"']").blur();
-                    scope.$emit("fileUpload",formData);
+                    $("label[for='" + element.attr('id') + "']").blur();
+                    data.clickTarget = scope.clickTarget;
+                    data.formData = formData;
+                    scope.$emit("fileUpload",data);
                     return;
                 });
 
@@ -82,7 +86,7 @@ angular.module('EquipmentModule')
                     );
         },
         getYears = function () {
-            var currentYearString = $scope.currentYearString = new Date().getFullYear().toString();
+            var currentYearString = $rootScope.currentYearString = new Date().getFullYear().toString();
             var inspections = dataStoreManager.get("EquipmentInspection");
             $scope.certYears = [];
             if (!inspections) return;
@@ -109,9 +113,8 @@ angular.module('EquipmentModule')
             if ($scope.certYears.indexOf(currentYearString) < 0) {
                 $scope.certYears.push(currentYearString);
             }
-            $scope.selectedCertificationDate = currentYearString;
-            $scope.certYears.unshift("Not Yet Certified");
-            $scope.selectedDueDate = currentYearString;
+            $rootScope.selectedCertificationDate = currentYearString;
+            $rootScope.selectedDueDate = currentYearString;
         }
         
         //init load
@@ -121,10 +124,11 @@ angular.module('EquipmentModule')
                             .then(getAllBioSafetyCabinets())
                             .then(getAllCampuses());
 
-        $scope.deactivate = function(cabinet) {
+        $scope.deactivate = function (cabinet) {
             var copy = dataStoreManager.createCopy(cabinet);
             copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
-            af.saveBioSafetyCabinet(cabinet.pi, copy, cabinet);
+            copy.Is_active = !copy.Is_active;
+            $scope.Saving = af.saveBioSafetyCabinet(copy, cabinet);
         }
         
         $scope.openModal = function (object, inspection, isCabinet) {
@@ -168,6 +172,48 @@ angular.module('EquipmentModule')
             return false;
         }
 
+        $scope.save = function (copy, original) {
+            if (!original) original = null;
+            copy.Certification_date = convenienceMethods.setMysqlTime($scope.certDate);
+            af.saveBioSafetyCabinet(copy, original)
+                    .then(function () { $scope.close() })
+        }
+        
+        $scope.certify = function (original) {
+            var copy = dataStoreManager.createCopy(original);
+            copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
+            $scope.Saving = af.saveEquipmentInspection(copy, original)
+        }
+
+        $scope.$on('fileUpload', function (event, data) {
+            var formData = data.formData;
+            data.clickTarget.Is_active = false;
+            var insp = data.clickTarget;
+            insp.reportUploaded = false;
+            insp.reportUploading = true;
+            $scope.$apply();
+
+            var xhr = new XMLHttpRequest;
+            var url = '../ajaxaction.php?action=uploadReportCertDocument';
+            if (insp.Key_id) url = url + "&id=" + insp.Key_id;
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState !== XMLHttpRequest.DONE) {
+                    return;
+                }
+                if (xhr.status !== 200) {
+                    return;
+                }
+                if (xhr.status == 200) {
+                    insp.reportUploaded = true;
+                    insp.reportUploading = false;
+                    insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                    $scope.$apply();
+                }
+            }
+        });
+
   })
   .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
@@ -176,7 +222,8 @@ angular.module('EquipmentModule')
         $scope.modalData = af.getModalData();
         $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
     
-        $scope.onSelectPi = function(pi){
+        $scope.onSelectPi = function (pi) {
+            console.log(pi);
             pi.loadRooms();
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigator = pi;
             $scope.modalData.BioSafetyCabinetCopy.PrincipalInvestigatorId = pi.Key_id;
@@ -208,6 +255,16 @@ angular.module('EquipmentModule')
                 $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date(convenienceMethods.getDate($scope.modalData.inspection.Certification_date));
             }else{
                 $scope.modalData.BioSafetyCabinetCopy.viewDate = new Date();
+            }
+
+            if ($rootScope.selectedCertificationDate) {
+                if (!$scope.modalData.inspectionCopy) {
+                    $scope.modalData.BioSafetyCabinetCopy.SelectedInspection = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections.filter(function (i) {
+                        return moment(i.Certification_date).format("YYYY") == $rootScope.selectedCertificationDate;
+                    })[0];
+                } else {
+                    $scope.modalData.BioSafetyCabinetCopy.SelectedInspection = $scope.modalData.inspectionCopy;
+                }
             }
         }
         
@@ -258,14 +315,13 @@ angular.module('EquipmentModule')
         }
         
         $scope.certify = function (copy, original) {
+
             $scope.message = null;
-            if (!copy.Report_path) {
-                $scope.message = "Please upload a report.";
-                return;
-            }
 
             if(!original)original = null;
-            copy.Certification_date = convenienceMethods.setMysqlTime(copy.Certification_date);
+            copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
+            copy.Fail_date = convenienceMethods.setMysqlTime(copy.viewFailDate);
+
             af.saveEquipmentInspection(copy, original)
                     .then(function(){$scope.close()})
         }
@@ -275,32 +331,15 @@ angular.module('EquipmentModule')
             af.deleteModalData();
         }
         
-        $scope.$on('fileUpload', function(event, formData) {
-            $scope.modalData.BioSafetyCabinetCopy.reportUploaded = false;
-            $scope.modalData.BioSafetyCabinetCopy.reportUploading = true;
-            $scope.$apply();
+        $scope.getMostRecentComment = function () {
+            if ($scope.modalDat.inspectionCopy && $scope.modalDat.inspectionCopy.Comment) return $scope.modalDat.inspectionCopy.Comment;
+            var thing = $scope.modalData.BioSafetyCabinetCopy.EquipmentInspections.filter(function (i) {
+                return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+            })[0];
+            console.log(thing);
+            if (thing) return thing.Comment || $scope.modalData.BioSafetyCabinetCopy.Comment || "";
 
-            var xhr = new XMLHttpRequest;
-            var url = '../ajaxaction.php?action=uploadReportCertDocument';
-            if($scope.modalData.BioSafetyCabinetCopy.Key_id)url = url + "&id="+$scope.modalData.BioSafetyCabinetCopy.Key_id;
-            xhr.open('POST', url, true);
-            xhr.send(formData);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState !== XMLHttpRequest.DONE) {
-                    return;
-                }
-                if (xhr.status !== 200) {
-                    return;
-                }
-                if (xhr.status == 200){
-                    $scope.modalData.BioSafetyCabinetCopy.reportUploaded = true;
-                    $scope.modalData.BioSafetyCabinetCopy.reportUploading = false;
-                    $scope.modalData.inspection.Report_path = xhr.responseText.replace(/['"]+/g, '');
-                    $scope.modalData.inspectionCopy.Report_path = xhr.responseText.replace(/['"]+/g, '');
-                    $scope.$apply();
-                }
-            }
-        });
+        }
 
         console.log($scope.modalData);
 

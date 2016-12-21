@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Department = (function (_super) {
     __extends(Department, _super);
     function Department() {
-        return _super.call(this) || this;
+        _super.call(this);
     }
     Department.prototype.hasGetAllPermission = function () {
         if (this._hasGetAllPermission == null) {
@@ -15,6 +15,6 @@ var Department = (function (_super) {
         }
         return this._hasGetAllPermission;
     };
+    Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
     return Department;
 }(FluxCompositerBase));
-Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
